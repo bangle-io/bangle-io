@@ -1,8 +1,7 @@
+import { cn } from '@bangle.io/ui-misc';
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { ChevronDown } from 'lucide-react';
 import React from 'react';
-
-import { cn } from './cn';
 
 const Accordion = AccordionPrimitive.Root;
 

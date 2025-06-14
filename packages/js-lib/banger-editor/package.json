@@ -45,5 +45,6 @@
     "prosemirror-test-builder": "^1.1.1",
     "prosemirror-transform": "^1.10.4",
     "prosemirror-view": "^1.40.0"
-  }
+  },
+  "devDependencies": {}
 }

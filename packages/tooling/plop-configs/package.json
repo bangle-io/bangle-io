@@ -25,5 +25,6 @@
     "execa": "9.6.0",
     "fs-extra": "^11.3.0",
     "plop": "^4.0.1"
-  }
+  },
+  "devDependencies": {}
 }

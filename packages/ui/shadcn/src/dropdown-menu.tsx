@@ -1,8 +1,7 @@
+import { cn } from '@bangle.io/ui-misc';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { Check, ChevronRight, Circle } from 'lucide-react';
 import React from 'react';
-
-import { cn } from './cn';
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 

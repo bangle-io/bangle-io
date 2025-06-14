@@ -1,5 +1,5 @@
+import type { buttonVariants } from '@bangle.io/shadcn';
 import type { VariantProps } from 'class-variance-authority';
-import type { buttonVariants } from './button';
 
 // Extract the variant prop from Button but only include the subset we commonly use
 type ButtonVariant = VariantProps<typeof buttonVariants>['variant'];

@@ -1006,29 +1006,14 @@ importers:
         specifier: ^3.0.2
         version: 3.0.2
 
-  packages/ui/ui-components:
+  packages/ui/shadcn:
     dependencies:
-      '@bangle.io/base-utils':
-        specifier: workspace:*
-        version: link:../../shared/base-utils
-      '@bangle.io/constants':
-        specifier: workspace:*
-        version: link:../../shared/constants
       '@bangle.io/translations':
         specifier: workspace:*
         version: link:../../shared/translations
-      '@bangle.io/types':
+      '@bangle.io/ui-misc':
         specifier: workspace:*
-        version: link:../../shared/types
-      '@bangle.io/ws-path':
-        specifier: workspace:*
-        version: link:../../shared/ws-path
-      '@dnd-kit/core':
-        specifier: ^6.3.1
-        version: 6.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@dnd-kit/modifiers':
-        specifier: ^9.0.0
-        version: 9.0.0(@dnd-kit/core@6.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
+        version: link:../ui-misc
       '@radix-ui/react-accordion':
         specifier: ^1.2.11
         version: 1.2.11(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -1065,6 +1050,67 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.2.7
         version: 1.2.7(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      cmdk:
+        specifier: ^1.1.1
+        version: 1.1.1(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      lucide-react:
+        specifier: ^0.515.0
+        version: 0.515.0(react@19.1.0)
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+    devDependencies:
+      '@storybook/react':
+        specifier: ^8.6.14
+        version: 8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)
+
+  packages/ui/ui-components:
+    dependencies:
+      '@bangle.io/base-utils':
+        specifier: workspace:*
+        version: link:../../shared/base-utils
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+      '@bangle.io/shadcn':
+        specifier: workspace:*
+        version: link:../shadcn
+      '@bangle.io/translations':
+        specifier: workspace:*
+        version: link:../../shared/translations
+      '@bangle.io/types':
+        specifier: workspace:*
+        version: link:../../shared/types
+      '@bangle.io/ui-misc':
+        specifier: workspace:*
+        version: link:../ui-misc
+      '@bangle.io/ws-path':
+        specifier: workspace:*
+        version: link:../../shared/ws-path
+      '@dnd-kit/core':
+        specifier: ^6.3.1
+        version: 6.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@dnd-kit/modifiers':
+        specifier: ^9.0.0
+        version: 9.0.0(@dnd-kit/core@6.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-collapsible':
+        specifier: ^1.1.11
+        version: 1.1.11(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-dialog':
+        specifier: ^1.1.14
+        version: 1.1.14(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-dropdown-menu':
+        specifier: ^2.1.15
+        version: 2.1.15(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-separator':
+        specifier: ^1.1.7
+        version: 1.1.7(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-slot':
+        specifier: ^1.2.3
+        version: 1.2.3(@types/react@19.1.8)(react@19.1.0)
       '@storybook/types':
         specifier: ^8.6.14
         version: 8.6.14(storybook@8.6.14(prettier@3.5.3))
@@ -1074,9 +1120,6 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
-      cmdk:
-        specifier: ^1.1.1
-        version: 1.1.1(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       lucide-react:
         specifier: ^0.515.0
         version: 0.515.0(react@19.1.0)
@@ -1093,6 +1136,21 @@ importers:
       '@storybook/react':
         specifier: ^8.6.14
         version: 8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)
+
+  packages/ui/ui-misc:
+    dependencies:
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      tailwind-merge:
+        specifier: ^3.3.1
+        version: 3.3.1
 
 packages:
 

@@ -39,17 +39,17 @@ bangel.io is an opensource local browser based note taking web app.
 ## Guidelines
 
 - Write complete code; avoid shortcuts.
-- Avoid deleting existing code comments unless explicitly instructed to remove.
+
 - React components use kebab case for file names.
 - Prefer to write modular, functional and reusable code.
 - Prefer KISS over DRY.
 - Avoid writing unsafe typescript code that leverages `as any` or other lint suppresions.
 - Mocking/stubbing is not good and prefer using real stuff when writing unit tests.
 - project is a monorepo with many `@bangle.io/*` packages. 
-- For `@bangle.io/*` packages, we PREFER importing like this `import {x} from @bangle.io/mini-js-utils` and we AVOID importing paths `import {x} from @bangle.io/mini-js-utils/src/some-path`.
-- DONOT `cd ` into a package to run tests or lint, instead run the commands like `pnpm test:ci` or `pnpm lint:ci` from the `root`.
-- avoid type unsafe code like `any` or doing `as XYZ` where possible. 
-
+- Whenever you are running commands like `find` or similar commands  be mindful of `node_modules` and ignore it as pnpm can create deeply nested `node_modules`.
+- Most packages are named `@bangle.io/<dir-name>`. So for example the path `packages/core/app` is `@bangle.io/app`.
+- We use imports like `import { isNil } from '@bangle.io/mini-js-utils';` AND NOT of imports like `import { isNil } from '@bangle.io/mini-js-utils/src/is-nil';` or path imports like `import { isNil } from '../../mini-js-utils/is-nil';`.
+- We use the global `t` object for translations. That is defined in `@bangle.io/translations` package. DONOT do an import of `t` as it is global.
 ## Running tests and other commands
 
 We have a monorepo structure, so tests or any scripts should be run from root. See the [package.json](mdc:package.json) scripts the find relevant test

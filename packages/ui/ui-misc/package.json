@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/omni-search",
-  "description": "",
+  "name": "@bangle.io/ui-misc",
+  "description": "Common utilities for UI packages",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/core/omni-search"
+    "directory": "packages/ui/ui-misc"
   },
   "authors": [
     {
@@ -19,23 +19,19 @@
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "env": "browser",
-    "kind": "app"
+    "kind": "library"
   },
-  "main": "src/index.tsx",
-  "module": "src/index.tsx",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/context": "workspace:*",
-    "@bangle.io/fuzzysearch": "workspace:*",
-    "@bangle.io/types": "workspace:*",
-    "@bangle.io/ui-components": "workspace:*",
-    "@tanstack/react-virtual": "^3.13.10",
-    "@types/react": "^19.1.8",
-    "jotai": "^2.12.5",
-    "react": "19.1.0"
+    "@bangle.io/constants": "workspace:*",
+    "clsx": "^2.1.1",
+    "react": "19.1.0",
+    "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {}
 }

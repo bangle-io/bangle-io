@@ -1,3 +1,13 @@
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+  cn,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@bangle.io/shadcn';
 import { WsPath } from '@bangle.io/ws-path';
 import {
   DndContext,
@@ -15,18 +25,6 @@ import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { ChevronRight, FileIcon, Folder, MoreHorizontal } from 'lucide-react';
 import React, { useCallback, useMemo, useState } from 'react';
 import type { TreeItem } from './build-tree';
-import { cn } from './cn';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from './collapsible';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from './dropdown-menu';
 import {
   SidebarMenuAction,
   SidebarMenuButton,

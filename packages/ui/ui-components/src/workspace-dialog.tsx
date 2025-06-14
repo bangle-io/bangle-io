@@ -1,18 +1,18 @@
-import type { WorkspaceStorageType } from '@bangle.io/types';
-import { Check, FolderOpen } from 'lucide-react';
-import React, { useEffect, useId, useReducer, useRef } from 'react';
-import { Button } from './button';
-import { cn } from './cn';
 import {
+  Button,
+  cn,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from './dialog';
-import { Input } from './input';
-import { Label } from './label';
+  Input,
+  Label,
+} from '@bangle.io/shadcn';
+import type { WorkspaceStorageType } from '@bangle.io/types';
+import { Check, FolderOpen } from 'lucide-react';
+import React, { useEffect, useId, useReducer, useRef } from 'react';
 
 const DEFAULT_STORAGE = 'browser';
 

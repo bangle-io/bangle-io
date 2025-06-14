@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,7 +7,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from './alert-dialog';
+} from '@bangle.io/shadcn';
+import * as React from 'react';
 
 export interface AppAlertDialogProps {
   dialogId?: `dialog::${string}`;

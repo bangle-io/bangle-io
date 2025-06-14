@@ -108,9 +108,23 @@ pnpm biome check --fix --unsafe && pnpm local-ci-check
 
 ## Code & UI Guidelines
 
+- Write complete code; avoid shortcuts.
+
+- React components use kebab case for file names.
+- Prefer to write modular, functional and reusable code.
+- Prefer KISS over DRY.
+- Avoid writing unsafe typescript code that leverages `as any` or other lint suppresions.
+- Mocking/stubbing is not good and prefer using real stuff when writing unit tests.
+- project is a monorepo with many `@bangle.io/*` packages.
+- Whenever you are running commands like `find` or similar commands be mindful of `node_modules` and ignore it as pnpm can create deeply nested `node_modules`.
+- Most packages are named `@bangle.io/<dir-name>`. So for example the path `packages/core/app` is `@bangle.io/app`.
+- We use imports like `import { isNil } from '@bangle.io/mini-js-utils';` AND NOT of imports like `import { isNil } from '@bangle.io/mini-js-utils/src/is-nil';` or path imports like `import { isNil } from '../../mini-js-utils/is-nil';`.
+- We use the global `t` object for translations. That is defined in `@bangle.io/translations` package. DONOT do an import of `t` as it is global.
+
 ### Code Style
 
-- Strict TypeScript (`noUncheckedIndexedAccess`, etc.).
+- Strict TypeScript (`noUncheckedIndexedAccess`, no `as any`, no `any`).
+
 - Keep functions small and composable (_KISS > DRY_).
 - Leave existing comments intact unless explicitly asked to remove them.
 - Command IDs are kebab‑case (`command::ui:toggle-sidebar`).
@@ -213,7 +227,10 @@ pnpm --filter "@bangle.io/e2e-tests" run test --debug
 All user‑visible strings must be wrapped in the global `t` function.
 Add new keys to `packages/shared/translations/src/languages/en.ts`.
 
----
+## Guidelines
+
+- Whenever you are running commands like `find` or similar be mindful of `node_modules` and ignore it as pnpm can create deeply nested `node_modules`.
+- ***
 
 ## Custom Maintenance Scripts
 

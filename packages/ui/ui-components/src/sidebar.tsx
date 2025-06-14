@@ -1,20 +1,21 @@
-import { Slot } from '@radix-ui/react-slot';
-import { cva, type VariantProps } from 'class-variance-authority';
-import { PanelLeft } from 'lucide-react';
-import React from 'react';
-import { Button } from './button';
-import { cn } from './cn';
-import { Input } from './input';
-import { Separator } from './separator';
-import { Sheet, SheetContent } from './sheet';
-import { Skeleton } from './skeleton';
 import {
+  Button,
+  cn,
+  Input,
+  Separator,
+  Sheet,
+  SheetContent,
+  Skeleton,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from './tooltip';
-import { useIsMobile } from './use-mobile';
+} from '@bangle.io/shadcn';
+import { useIsMobile } from '@bangle.io/ui-misc';
+import { Slot } from '@radix-ui/react-slot';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { PanelLeft } from 'lucide-react';
+import React from 'react';
 
 const SIDEBAR_WIDTH = '17rem';
 const SIDEBAR_WIDTH_MOBILE = '18rem';

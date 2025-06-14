@@ -1,9 +1,8 @@
+import { cn } from '@bangle.io/ui-misc';
 import type { MenubarMenuProps } from '@radix-ui/react-menubar';
 import * as MenubarPrimitive from '@radix-ui/react-menubar';
 import { Check, ChevronRight, Circle } from 'lucide-react';
 import React from 'react';
-
-import { cn } from './cn';
 
 const MenubarMenu: (props: MenubarMenuProps) => React.ReactNode =
   MenubarPrimitive.Menu;

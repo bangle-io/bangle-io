@@ -1,19 +1,19 @@
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
-import { ChevronsUpDown, GalleryVerticalEnd, Plus, Search } from 'lucide-react';
-import React, { useId, useMemo } from 'react';
-import bangleIcon from './bangle-transparent_x512.png';
-import { buildTree, type TreeItem } from './build-tree';
-import { cn } from './cn';
 import {
+  cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from './dropdown-menu';
+  Label,
+} from '@bangle.io/shadcn';
+import { ChevronsUpDown, GalleryVerticalEnd, Plus, Search } from 'lucide-react';
+import React, { useId, useMemo } from 'react';
+import bangleIcon from './bangle-transparent_x512.png';
+import { buildTree, type TreeItem } from './build-tree';
 import { KbdShortcut } from './kbd';
-import { Label } from './label';
 import {
   Sidebar,
   SidebarContent,

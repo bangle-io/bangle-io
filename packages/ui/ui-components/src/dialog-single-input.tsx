@@ -1,14 +1,14 @@
 import { cx } from '@bangle.io/base-utils';
-import { CommandGroup } from 'cmdk';
-import React from 'react';
 import {
   CommandBadge,
   CommandDialog,
+  CommandGroup,
   CommandHints,
   CommandInput,
   CommandItem,
   CommandList,
-} from './command';
+} from '@bangle.io/shadcn';
+import React from 'react';
 
 export type DialogSingleInputProps = {
   open: boolean;

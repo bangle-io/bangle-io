@@ -47,5 +47,6 @@
     "jotai": "^2.12.5",
     "react": "19.1.0",
     "wait-for-expect": "^3.0.2"
-  }
+  },
+  "devDependencies": {}
 }

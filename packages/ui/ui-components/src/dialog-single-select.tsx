@@ -1,6 +1,4 @@
 import { cx } from '@bangle.io/base-utils';
-import { Check } from 'lucide-react';
-import React from 'react';
 import {
   CommandBadge,
   CommandDialog,
@@ -10,7 +8,9 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from './command';
+} from '@bangle.io/shadcn';
+import { Check } from 'lucide-react';
+import React from 'react';
 
 export type DialogSingleSelectProps = {
   open: boolean;

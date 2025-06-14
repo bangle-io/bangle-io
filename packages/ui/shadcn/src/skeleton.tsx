@@ -1,5 +1,5 @@
+import { cn } from '@bangle.io/ui-misc';
 import React from 'react';
-import { cn } from './cn';
 
 function Skeleton({
   className,
