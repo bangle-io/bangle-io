@@ -32,8 +32,8 @@
     "@bangle.io/fuzzysearch": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
-    "@tanstack/react-virtual": "^3.13.9",
-    "@types/react": "^19.1.6",
+    "@tanstack/react-virtual": "^3.13.10",
+    "@types/react": "^19.1.8",
     "jotai": "^2.12.5",
     "react": "19.1.0"
   }
