@@ -5,7 +5,7 @@ while read script; do \
     if ! pnpm run "$script"; then \
         failed_scripts+=("$script"); \
     fi; \
-done < <(jq -r '.scripts | keys[] | select(endswith(":ci"))' package.json); \
+done < <(jq -r '.scripts | keys[] | select(endswith(":ci"))' package.json|  sort -r); \
 if [ ${#failed_scripts[@]} -ne 0 ]; then \
     echo "The following scripts failed:"; \
     for script in "${failed_scripts[@]}"; do \

@@ -1,5 +1,6 @@
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
+import type { TreeItem } from '@bangle.io/ui-components';
 import {
   type Action,
   DropdownMenu,
@@ -26,7 +27,6 @@ import {
   Twitter,
 } from 'lucide-react';
 import React, { useMemo } from 'react';
-import type { TreeItem } from '@bangle.io/ui-components/src/build-tree';
 
 const MAX_WS_PATHS = 800;
 
@@ -72,7 +72,6 @@ export const AppSidebar = ({ children }: SidebarProps) => {
         const actions: ItemAction[] = [];
 
         if (!item.isDir) {
-          // File actions
           actions.push({
             id: 'rename',
             label: 'Rename',
