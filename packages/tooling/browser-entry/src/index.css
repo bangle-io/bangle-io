@@ -1,12 +1,10 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @plugin 'tailwindcss-animate';
 
 @source '../../../**/*.{jsx,ts,tsx,html}';
-
-@custom-variant dark (&:is(.BU_dark-scheme *));
 
 @custom-variant dark (&:is(.BU_dark-scheme *));
 
@@ -61,7 +59,7 @@
   --radius-sm: calc(var(--BV-radius) - 4px);
 
   --font-sans: var(--BV-font-sans), ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
