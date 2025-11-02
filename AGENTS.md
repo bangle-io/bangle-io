@@ -230,7 +230,6 @@ Add new keys to `packages/shared/translations/src/languages/en.ts`.
 ## Guidelines
 
 - Whenever you are running commands like `find` or similar be mindful of `node_modules` and ignore it as pnpm can create deeply nested `node_modules`.
-- ***
 
 ## Custom Maintenance Scripts
 
