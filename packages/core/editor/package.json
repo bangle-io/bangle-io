@@ -42,7 +42,7 @@
     "@types/react": "^19.1.8",
     "date-fns": "^4.1.0",
     "jotai": "^2.12.5",
-    "lucide-react": "^0.515.0",
+    "lucide-react": "^0.552.0",
     "prosemirror-view": "^1.40.0",
     "react": "19.1.0"
   },
