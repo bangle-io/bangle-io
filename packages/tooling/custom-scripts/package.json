@@ -16,7 +16,7 @@
   },
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "dependencies": {
-    "@jest/globals": "^29.7.0",
+    "@jest/globals": "^30.2.0",
     "@tsconfig/node18": "^18.2.4",
     "@types/fs-extra": "^11.0.4",
     "colord": "^2.9.3",
