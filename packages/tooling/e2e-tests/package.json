@@ -38,7 +38,7 @@
     "@bangle.io/ui-components": "workspace:*",
     "@playwright/experimental-ct-react": "^1.52.0",
     "@playwright/test": "^1.52.0",
-    "@storybook/react": "^8.6.14",
+    "@storybook/react": "^10.0.2",
     "@tailwindcss/vite": "^4.1.10",
     "@types/node": "^24.0.1",
     "@types/react": "^19.1.8",
