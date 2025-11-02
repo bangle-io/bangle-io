@@ -161,15 +161,26 @@ pnpm e2e-ct-test --ui
 
 **Deployment**
 
+(for myself)
+
+
 App is deployed via cloudflare pages.
 
 Push to `staging` branch will deploy to https://staging.app.bangle.io/
 
 Push to `production` branch will deploy to https://app.bangle.io/
 
+
+This pushes to all 3 branches:
+
+```bash
+git push bangle-io main && git push bangle-io main:staging && git push bangle-io main:production
+```
+
 ## Custom Scripts
 
 The project includes several utility scripts in `packages/tooling/custom-scripts/scripts/` for maintaining code quality and managing dependencies. All scripts should be run using `bun`:
+
 
 ### All-in-One Maintenance
 
