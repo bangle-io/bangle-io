@@ -22,6 +22,7 @@ import {
   setupSelectionMenu,
   setupStrike,
   setupSuggestions,
+  setupTable,
   setupUnderline,
   setupWikiLink,
   type WikiLinkConfig,
@@ -67,6 +68,7 @@ export function setupExtensions(
     heading: setupHeading(),
     history: setupHistory(),
     paragraph: setupParagraph(),
+    table: setupTable(),
     strike: setupStrike(),
     suggestions: setupSuggestions({
       providerId: 'slash-command',
