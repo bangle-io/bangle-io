@@ -21,6 +21,7 @@ import {
   setupPlaceholder,
   setupStrike,
   setupSuggestions,
+  setupTable,
   setupUnderline,
 } from '@bangle.io/prosemirror-plugins';
 import { setupCodeHighlight } from './code-highlight';
@@ -63,6 +64,7 @@ export function setupExtensions(
     heading: setupHeading(),
     history: setupHistory(),
     paragraph: setupParagraph(),
+    table: setupTable(),
     strike: setupStrike(),
     suggestions: setupSuggestions({
       markName: 'slash_command',

@@ -30,4 +30,5 @@ export * from './pm-utils';
 export * from './store';
 export * from './strike';
 export * from './suggestions';
+export * from './table';
 export * from './underline';

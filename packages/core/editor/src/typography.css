@@ -153,6 +153,30 @@ div.ProseMirror {
     padding-top: 1.7rem;
   }
 
+  & table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+  }
+
+  & th,
+  & td {
+    border: 1px solid hsl(var(--BV-border) / 0.7);
+    padding: 0.45rem 0.6rem;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  & th {
+    background-color: hsl(var(--BV-accent) / 0.55);
+    font-weight: 600;
+  }
+
+  & tr:nth-child(even) td {
+    background-color: hsl(var(--BV-accent) / 0.25);
+  }
+
   & hr {
     margin: 2em 0;
   }
