@@ -1,5 +1,5 @@
 import { type CollectionType, collection } from '../common';
-import type { EditorProps, Mark, MarkSpec, PMNode } from '../pm';
+import type { EditorProps, EditorView, Mark, MarkSpec, PMNode } from '../pm';
 import {
   type Command,
   type EditorState,
@@ -87,6 +87,15 @@ export type LinkConfig = {
    * Whether to apply link marks on matching markdown patterns in the clipboard. Defaults to true.
    */
   markdownPaste?: boolean;
+
+  /**
+   * Optional callback to handle links before browser navigation.
+   * Return true to indicate the link was handled internally.
+   */
+  onOpenLink?: (
+    href: string,
+    context: { event: MouseEvent; view: EditorView },
+  ) => boolean | Promise<boolean>;
 };
 
 type RequiredConfig = Required<LinkConfig>;
@@ -98,6 +107,7 @@ const DEFAULT_CONFIG: RequiredConfig = {
   autoLink: true,
   pasteLink: true,
   markdownPaste: true,
+  onOpenLink: () => false,
 };
 
 /**
@@ -107,6 +117,7 @@ export function setupLink(userConfig?: LinkConfig) {
   const config = {
     ...DEFAULT_CONFIG,
     ...userConfig,
+    onOpenLink: userConfig?.onOpenLink ?? DEFAULT_CONFIG.onOpenLink,
   };
 
   const { name } = config;
@@ -447,13 +458,54 @@ function pluginOpenOnClick(config: RequiredConfig) {
           const attrs = readLinkAttrs(linkMark);
           const href = attrs?.href;
           if (href) {
-            if (
+            const canOpenExternal =
               config.openOnClick === true ||
               (config.openOnClick === 'meta' &&
-                (event.metaKey || event.ctrlKey))
-            ) {
+                (event.metaKey || event.ctrlKey));
+
+            if (!canOpenExternal) {
+              const handled = config.onOpenLink(href, { event, view });
+              if (handled instanceof Promise) {
+                handled
+                  .then((isHandled) => {
+                    if (isHandled) {
+                      event.preventDefault();
+                    }
+                  })
+                  .catch(() => {
+                    // ignore and let editor keep default click behavior
+                  });
+                return false;
+              }
+              if (handled) {
+                event.preventDefault();
+                return true;
+              }
+              return false;
+            }
+
+            if (canOpenExternal) {
               event.preventDefault();
-              window.open(href, config.openNewTab ? '_blank' : '_self');
+              const openExternal = () => {
+                window.open(href, config.openNewTab ? '_blank' : '_self');
+              };
+              const handled = config.onOpenLink(href, { event, view });
+              if (handled instanceof Promise) {
+                handled
+                  .then((isHandled) => {
+                    if (!isHandled) {
+                      openExternal();
+                    }
+                  })
+                  .catch(() => {
+                    openExternal();
+                  });
+                return true;
+              }
+              if (handled) {
+                return true;
+              }
+              openExternal();
               return true;
             }
           }

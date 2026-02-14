@@ -1,7 +1,10 @@
 import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
 import type { NodeType, PMNode } from '@bangle.io/prosemirror-plugins';
-import type { FileSystemService } from '@bangle.io/service-core';
+import type {
+  FileSystemService,
+  NavigationService,
+} from '@bangle.io/service-core';
 import type { Store, WorkspaceAttachmentConfig } from '@bangle.io/types';
 import { WsPath } from '@bangle.io/ws-path';
 
@@ -11,6 +14,7 @@ import {
   resolveWorkspaceAttachmentConfig,
 } from './attachments';
 import { setupExtensions } from './extensions';
+import { getResolvedNoteLinkWsPathCandidates } from './note-links';
 import { createEditor } from './pm-setup';
 
 export type PmEditorServiceConfig = {
@@ -21,7 +25,7 @@ export type PmEditorServiceConfig = {
  * Manages ProseMirror editor instances and state
  */
 export class PmEditorService extends BaseService {
-  static deps = ['fileSystem'] as const;
+  static deps = ['fileSystem', 'navigation'] as const;
   public readonly extensions: ReturnType<typeof setupExtensions>;
 
   private editors = new Map<
@@ -34,6 +38,7 @@ export class PmEditorService extends BaseService {
     context: BaseServiceContext,
     private dependencies: {
       fileSystem: FileSystemService;
+      navigation: NavigationService;
     },
     private config: PmEditorServiceConfig,
   ) {
@@ -119,6 +124,10 @@ export class PmEditorService extends BaseService {
               ),
             resolveImageNodeSrc: async (src: string) =>
               this.resolveImageNodeSrc(wsPath, src, getAttachmentConfig),
+          },
+          link: {
+            onOpenLink: async (href: string) =>
+              this.openWorkspaceNoteLink(wsPath, href),
           },
         }),
       });
@@ -238,6 +247,38 @@ export class PmEditorService extends BaseService {
 
   private encodeMarkdownImagePath(path: string): string {
     return encodeURI(path).replace(/#/g, '%23');
+  }
+
+  private async openWorkspaceNoteLink(
+    noteWsPath: string,
+    href: string,
+  ): Promise<boolean> {
+    const candidates = getResolvedNoteLinkWsPathCandidates(noteWsPath, href);
+    this.logger.debug('Resolving note link', {
+      noteWsPath,
+      href,
+      candidates,
+    });
+    if (candidates.length === 0) {
+      return false;
+    }
+
+    for (const wsPath of candidates) {
+      try {
+        if (await this.dependencies.fileSystem.exists(wsPath)) {
+          this.logger.debug('Resolved note link to workspace path', {
+            href,
+            wsPath,
+          });
+          this.dependencies.navigation.goWsPath(wsPath);
+          return true;
+        }
+      } catch {
+        // ignore invalid/non-file candidates and continue to next fallback
+      }
+    }
+
+    return false;
   }
 
   private getTimestampForFileName(): string {

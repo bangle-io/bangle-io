@@ -27,13 +27,14 @@ import { funPlaceholder } from './utils';
 
 type SetupExtensionsOptions = {
   image?: Parameters<typeof setupImage>[0];
+  link?: Parameters<typeof setupLink>[0];
 };
 
 export function setupExtensions(
   logger: Logger,
   options?: SetupExtensionsOptions,
 ) {
-  const link = setupLink();
+  const link = setupLink(options?.link);
   return {
     image: setupImage(options?.image),
     activeNode: setupActiveNode({

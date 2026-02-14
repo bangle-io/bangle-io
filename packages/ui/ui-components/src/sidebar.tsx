@@ -17,15 +17,20 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { PanelLeft } from 'lucide-react';
 import React from 'react';
 
-const SIDEBAR_WIDTH = '17rem';
+const SIDEBAR_WIDTH = 272;
 const SIDEBAR_WIDTH_MOBILE = '18rem';
 const SIDEBAR_WIDTH_ICON = '3rem';
+const SIDEBAR_MIN_WIDTH = 220;
+const SIDEBAR_MAX_WIDTH = 560;
+const SIDEBAR_WIDTH_STORAGE_KEY = 'bangle:sidebar-width';
 type SidebarContext = {
   state: 'expanded' | 'collapsed';
   open: boolean;
   setOpen: (open: boolean | ((currentOpen: boolean) => boolean)) => void;
   isMobile: boolean;
   toggleSidebar: () => void;
+  sidebarWidth: number;
+  setSidebarWidth: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const SidebarContext = React.createContext<SidebarContext | null>(null);
@@ -48,6 +53,34 @@ const SidebarProvider = React.forwardRef<
 >(({ open, setOpen, className, style, children, ...props }, ref) => {
   const isMobile = useIsMobile();
   const [openMobile, setOpenMobile] = React.useState(false);
+  const [sidebarWidth, setSidebarWidth] = React.useState(SIDEBAR_WIDTH);
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const stored = Number(
+      window.localStorage.getItem(SIDEBAR_WIDTH_STORAGE_KEY),
+    );
+    if (
+      Number.isFinite(stored) &&
+      stored >= SIDEBAR_MIN_WIDTH &&
+      stored <= SIDEBAR_MAX_WIDTH
+    ) {
+      setSidebarWidth(stored);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    window.localStorage.setItem(
+      SIDEBAR_WIDTH_STORAGE_KEY,
+      String(sidebarWidth),
+    );
+  }, [sidebarWidth]);
 
   const toggleSidebar = React.useCallback(() => {
     return setOpen((open) => !open);
@@ -61,11 +94,13 @@ const SidebarProvider = React.forwardRef<
       open,
       setOpen,
       isMobile,
+      sidebarWidth,
+      setSidebarWidth,
       openMobile,
       setOpenMobile,
       toggleSidebar,
     }),
-    [state, open, setOpen, isMobile, openMobile, toggleSidebar],
+    [state, open, setOpen, isMobile, sidebarWidth, openMobile, toggleSidebar],
   );
 
   return (
@@ -74,7 +109,7 @@ const SidebarProvider = React.forwardRef<
         <div
           style={
             {
-              '--sidebar-width': SIDEBAR_WIDTH,
+              '--sidebar-width': `${sidebarWidth}px`,
               '--sidebar-width-icon': SIDEBAR_WIDTH_ICON,
               ...style,
             } as React.CSSProperties
@@ -113,7 +148,52 @@ const Sidebar = React.forwardRef<
     },
     ref,
   ) => {
-    const { isMobile, open, setOpen, state } = useSidebar();
+    const { isMobile, open, setOpen, state, setSidebarWidth } = useSidebar();
+    const resizeStateRef = React.useRef<{
+      startX: number;
+      startWidth: number;
+    } | null>(null);
+
+    const handleResizePointerDown = (
+      event: React.PointerEvent<HTMLDivElement>,
+    ) => {
+      if (state !== 'expanded') {
+        return;
+      }
+
+      event.preventDefault();
+      resizeStateRef.current = {
+        startX: event.clientX,
+        startWidth:
+          event.currentTarget.parentElement?.getBoundingClientRect().width ??
+          SIDEBAR_WIDTH,
+      };
+
+      const onPointerMove = (moveEvent: PointerEvent) => {
+        if (!resizeStateRef.current) {
+          return;
+        }
+        const { startX, startWidth } = resizeStateRef.current;
+        const rawWidth =
+          side === 'left'
+            ? startWidth + (moveEvent.clientX - startX)
+            : startWidth - (moveEvent.clientX - startX);
+        const clamped = Math.max(
+          SIDEBAR_MIN_WIDTH,
+          Math.min(SIDEBAR_MAX_WIDTH, rawWidth),
+        );
+        setSidebarWidth(clamped);
+      };
+
+      const onPointerUp = () => {
+        resizeStateRef.current = null;
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('pointerup', onPointerUp);
+      };
+
+      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('pointerup', onPointerUp);
+    };
 
     if (collapsible === 'none') {
       return (
@@ -189,6 +269,15 @@ const Sidebar = React.forwardRef<
             className="flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow-sm"
           >
             {children}
+            <div
+              aria-hidden="true"
+              onPointerDown={handleResizePointerDown}
+              className={cn(
+                'absolute inset-y-0 hidden w-2 cursor-col-resize md:block',
+                side === 'left' ? '-right-1' : '-left-1',
+                state !== 'expanded' && 'pointer-events-none opacity-0',
+              )}
+            />
           </div>
         </div>
       </div>
