@@ -101,7 +101,9 @@ export class PmEditorService extends BaseService {
   ): ReturnType<typeof setupExtensions> {
     return setupExtensions(this.logger, {
       image,
-      onOpenLink: (href, view) => this.openLink(view, href),
+      link: {
+        onOpenLink: (href, { view }) => this.openLink(view, href),
+      },
       wikiLinkConfig: {
         onActivate: (view, attrs) => {
           void this.openWikiLink(view, attrs.target);
@@ -373,12 +375,12 @@ export class PmEditorService extends BaseService {
   }
 
   /** Opens a web link externally or routes a relative Markdown link in-app. */
-  openLink(editorView: ReturnType<typeof createEditor>, href: string): void {
+  openLink(editorView: ReturnType<typeof createEditor>, href: string): boolean {
     const editor = [...this.editors.values()].find(
       (entry) => 'editorView' in entry && entry.editorView === editorView,
     );
     if (!editor || !('editorView' in editor)) {
-      return;
+      return false;
     }
 
     const target = normalizeStoredMarkdownLinkTarget(href);
@@ -390,17 +392,16 @@ export class PmEditorService extends BaseService {
           if (fragment) {
             this.navigateToHeading(editorView, fragment);
           }
-          return;
+          return true;
         }
         this.pendingHeading = fragment ? { fragment, wsPath } : undefined;
         this.dependencies.navigation.goWsPath(wsPath);
+        return true;
       }
-      return;
+      return false;
     }
 
-    if (target?.kind === 'external') {
-      window.open(target.href, '_blank', 'noopener,noreferrer');
-    }
+    return false;
   }
 
   /** Opens an existing wiki target, or creates a safe missing Markdown target. */

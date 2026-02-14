@@ -1,6 +1,5 @@
 import type { Logger } from '@bangle.io/logger';
 import {
-  type LinkConfig,
   setupActiveNode,
   setupBase,
   setupBlockquote,
@@ -31,7 +30,7 @@ import { funPlaceholder } from './utils';
 
 type SetupExtensionsOptions = {
   image?: Parameters<typeof setupImage>[0];
-  onOpenLink?: LinkConfig['onOpenLink'];
+  link?: Parameters<typeof setupLink>[0];
   wikiLinkConfig?: WikiLinkConfig;
 };
 
@@ -39,7 +38,7 @@ export function setupExtensions(
   logger: Logger,
   options: SetupExtensionsOptions = {},
 ) {
-  const link = setupLink({ onOpenLink: options.onOpenLink });
+  const link = setupLink(options.link);
   return {
     image: setupImage(options?.image),
     activeNode: setupActiveNode({

@@ -89,9 +89,6 @@ export type LinkConfig = {
    */
   openNewTab?: boolean;
 
-  /** Handles an activated link. When omitted, browser links use window.open. */
-  onOpenLink?: (href: string, view: EditorView) => void;
-
   /**
    * Whether to auto-link typed text, e.g., "example.com ". Defaults to true.
    */
@@ -106,6 +103,15 @@ export type LinkConfig = {
    * Whether to apply link marks on matching markdown patterns in the clipboard. Defaults to true.
    */
   markdownPaste?: boolean;
+
+  /**
+   * Optional callback to handle links before browser navigation.
+   * Return true to indicate the link was handled internally.
+   */
+  onOpenLink?: (
+    href: string,
+    context: { event: MouseEvent; view: EditorView },
+  ) => boolean | Promise<boolean>;
 };
 
 type RequiredConfig = Required<Omit<LinkConfig, 'onOpenLink'>> &
@@ -120,6 +126,7 @@ const DEFAULT_CONFIG: RequiredConfig = {
   autoLink: true,
   pasteLink: true,
   markdownPaste: true,
+  onOpenLink: () => false,
 };
 
 /**
@@ -129,6 +136,7 @@ export function setupLink(userConfig?: LinkConfig) {
   const config = {
     ...DEFAULT_CONFIG,
     ...userConfig,
+    onOpenLink: userConfig?.onOpenLink ?? DEFAULT_CONFIG.onOpenLink,
   };
 
   const { name } = config;
@@ -494,21 +502,58 @@ function pluginOpenOnClick(config: RequiredConfig) {
           const attrs = readLinkAttrs(linkMark);
           const href = attrs?.href;
           if (href) {
-            if (
+            const canOpenExternal =
               config.openOnClick === true ||
               (config.openOnClick === 'meta' &&
-                (event.metaKey || event.ctrlKey))
-            ) {
+                (event.metaKey || event.ctrlKey));
+
+            if (!canOpenExternal) {
+              const handled = config.onOpenLink(href, { event, view });
+              if (handled instanceof Promise) {
+                handled
+                  .then((isHandled) => {
+                    if (isHandled) {
+                      event.preventDefault();
+                    }
+                  })
+                  .catch(() => {
+                    // ignore and let editor keep default click behavior
+                  });
+                return false;
+              }
+              if (handled) {
+                event.preventDefault();
+                return true;
+              }
+              return false;
+            }
+
+            if (canOpenExternal) {
               event.preventDefault();
-              if (config.onOpenLink) {
-                config.onOpenLink(href, view);
-              } else {
+              const openExternal = () => {
                 window.open(
                   href,
                   config.openNewTab ? '_blank' : '_self',
                   config.openNewTab ? 'noopener,noreferrer' : undefined,
                 );
+              };
+              const handled = config.onOpenLink(href, { event, view });
+              if (handled instanceof Promise) {
+                handled
+                  .then((isHandled) => {
+                    if (!isHandled) {
+                      openExternal();
+                    }
+                  })
+                  .catch(() => {
+                    openExternal();
+                  });
+                return true;
               }
+              if (handled) {
+                return true;
+              }
+              openExternal();
               return true;
             }
           }
