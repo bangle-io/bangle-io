@@ -23,6 +23,7 @@ import {
   setupSuggestions,
   setupUnderline,
 } from '@bangle.io/prosemirror-plugins';
+import { setupCodeHighlight } from './code-highlight';
 import { funPlaceholder } from './utils';
 
 type SetupExtensionsOptions = {
@@ -75,7 +76,10 @@ export function setupExtensions(
       placeholder: funPlaceholder(),
     }),
     code: setupCode(),
-    codeBlock: setupCodeBlock(),
+    codeBlock: setupCodeBlock({
+      keyExit: false,
+    }),
+    codeHighlight: setupCodeHighlight(),
     italic: setupItalic(),
     link,
     linkMenu: setupLinkMenu({ link }),

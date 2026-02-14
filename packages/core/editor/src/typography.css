@@ -105,9 +105,11 @@ div.ProseMirror {
 
   & pre {
     margin: 0.5rem 0;
-    padding: 1.2rem 1.2rem;
+    padding: 0.95rem 1rem;
     overflow-x: auto;
     border-radius: 0.375rem;
+    border: 1px solid hsl(var(--BV-border) / 0.7);
+    position: relative;
   }
 
   & pre,
@@ -124,6 +126,31 @@ div.ProseMirror {
 
   & pre code {
     font-weight: inherit;
+    display: block;
+    line-height: 1.35;
+    font-size: 0.95rem;
+  }
+
+  & pre[data-language]:not([data-language=""])::before {
+    content: attr(data-language);
+    display: inline-flex;
+    align-items: center;
+    position: absolute;
+    top: 0.55rem;
+    left: 0.75rem;
+    border: 1px solid hsl(var(--BV-border) / 0.8);
+    border-radius: 9999px;
+    padding: 0.1rem 0.5rem;
+    color: hsl(var(--BV-muted-foreground));
+    font-size: 0.68rem;
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    z-index: 1;
+  }
+
+  & pre[data-language]:not([data-language=""]) code {
+    padding-top: 1.7rem;
   }
 
   & hr {
