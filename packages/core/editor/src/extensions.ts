@@ -29,14 +29,19 @@ import {
 } from '@bangle.io/prosemirror-plugins';
 import { funPlaceholder } from './utils';
 
+type SetupExtensionsOptions = {
+  image?: Parameters<typeof setupImage>[0];
+  onOpenLink?: LinkConfig['onOpenLink'];
+  wikiLinkConfig?: WikiLinkConfig;
+};
+
 export function setupExtensions(
   logger: Logger,
-  onOpenLink?: LinkConfig['onOpenLink'],
-  wikiLinkConfig?: WikiLinkConfig,
+  options: SetupExtensionsOptions = {},
 ) {
-  const link = setupLink({ onOpenLink });
+  const link = setupLink({ onOpenLink: options.onOpenLink });
   return {
-    image: setupImage(),
+    image: setupImage(options?.image),
     activeNode: setupActiveNode({
       excludedNodes: ['horizontal_rule', 'code_block', 'blockquote'],
     }),
@@ -79,7 +84,7 @@ export function setupExtensions(
       installKeymap: false,
       logger: logger.child('wiki-link-suggestions'),
     }),
-    wikiLink: setupWikiLink(wikiLinkConfig),
+    wikiLink: setupWikiLink(options.wikiLinkConfig),
     underline: setupUnderline(),
     horizontalRule: setupHorizontalRule(),
     placeholder: setupPlaceholder({

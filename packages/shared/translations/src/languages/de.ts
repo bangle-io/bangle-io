@@ -195,6 +195,15 @@ export const t = {
           'Verzeichnisauswahl wird nicht unterstützt.',
         pickDirectoryButton: 'Verzeichnis auswählen',
         invalidDirectoryDefault: 'Ungültige Verzeichnisauswahl',
+        attachmentSettingsTitle: 'Anhangseinstellungen',
+        attachmentModeLabel: 'Anhangspfadmodus',
+        attachmentModeRelative: 'Relativ',
+        attachmentModeRoot: 'Arbeitsbereichs-Root',
+        attachmentDirectoryLabel: 'Anhangsordner',
+        attachmentFilePrefixLabel: 'Dateinamenspräfix für Einfügen',
+        attachmentDirectoryRequired: 'Anhangsordner ist erforderlich',
+        attachmentFilePrefixRequired:
+          'Dateinamenspräfix für Anhänge ist erforderlich',
       },
       allFiles: {
         title: 'Alle Dateien',
