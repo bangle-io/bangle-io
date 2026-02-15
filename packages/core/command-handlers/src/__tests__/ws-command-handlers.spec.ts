@@ -6,6 +6,118 @@ import { describe, expect, test, vi } from 'vitest';
 import { setupTest } from './test-utils';
 
 describe('WS command handlers', () => {
+  describe('directory ws path operations', () => {
+    test('renames all files under a directory prefix', async () => {
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ws:rename-ws-path',
+        workspaces: [
+          {
+            name: 'test-ws',
+            notes: [
+              'test-ws:dir/a.md',
+              'test-ws:dir/sub/b.md',
+              'test-ws:other.md',
+            ],
+          },
+        ],
+        autoNavigate: 'ws-path',
+      });
+
+      services.navigation.goWsPath('test-ws:dir/sub/b.md');
+      await vi.waitFor(() => {
+        expect(services.navigation.resolveAtoms().wsPath?.wsPath).toBe(
+          'test-ws:dir/sub/b.md',
+        );
+      });
+
+      dispatch('command::ws:rename-ws-path', {
+        wsPath: 'test-ws:dir',
+        newWsPath: 'test-ws:renamed',
+      });
+
+      await vi.waitFor(() => {
+        const wsPaths = services.workspaceState
+          .resolveAtoms()
+          .wsPaths.map((item) => item.wsPath);
+        expect(wsPaths).toContain('test-ws:renamed/a.md');
+        expect(wsPaths).toContain('test-ws:renamed/sub/b.md');
+        expect(wsPaths).not.toContain('test-ws:dir/a.md');
+        expect(wsPaths).not.toContain('test-ws:dir/sub/b.md');
+        expect(services.navigation.resolveAtoms().wsPath?.wsPath).toBe(
+          'test-ws:renamed/sub/b.md',
+        );
+      });
+    });
+
+    test('moves a directory into another directory', async () => {
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ws:move-ws-path',
+        workspaces: [
+          {
+            name: 'test-ws',
+            notes: [
+              'test-ws:source/a.md',
+              'test-ws:source/sub/b.md',
+              'test-ws:dest/existing.md',
+            ],
+          },
+        ],
+        autoNavigate: 'ws-path',
+      });
+
+      services.navigation.goWsPath('test-ws:source/sub/b.md');
+      await vi.waitFor(() => {
+        expect(services.navigation.resolveAtoms().wsPath?.wsPath).toBe(
+          'test-ws:source/sub/b.md',
+        );
+      });
+
+      dispatch('command::ws:move-ws-path', {
+        wsPath: 'test-ws:source',
+        destDirWsPath: 'test-ws:dest',
+      });
+
+      await vi.waitFor(() => {
+        const wsPaths = services.workspaceState
+          .resolveAtoms()
+          .wsPaths.map((item) => item.wsPath);
+        expect(wsPaths).toContain('test-ws:dest/source/a.md');
+        expect(wsPaths).toContain('test-ws:dest/source/sub/b.md');
+        expect(wsPaths).not.toContain('test-ws:source/a.md');
+        expect(wsPaths).not.toContain('test-ws:source/sub/b.md');
+        expect(services.navigation.resolveAtoms().wsPath?.wsPath).toBe(
+          'test-ws:dest/source/sub/b.md',
+        );
+      });
+    });
+
+    test('deletes all files under a directory prefix', async () => {
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ws:delete-ws-path',
+        workspaces: [
+          {
+            name: 'test-ws',
+            notes: ['test-ws:dir/a.md', 'test-ws:dir/sub/b.md', 'test-ws:c.md'],
+          },
+        ],
+        autoNavigate: 'ws-path',
+      });
+
+      dispatch('command::ws:delete-ws-path', {
+        wsPath: 'test-ws:dir',
+      });
+
+      await vi.waitFor(() => {
+        const wsPaths = services.workspaceState
+          .resolveAtoms()
+          .wsPaths.map((item) => item.wsPath);
+        expect(wsPaths).not.toContain('test-ws:dir/a.md');
+        expect(wsPaths).not.toContain('test-ws:dir/sub/b.md');
+        expect(wsPaths).toContain('test-ws:c.md');
+      });
+    });
+  });
+
   describe('command::ws:clone-note', () => {
     test.each([
       {
