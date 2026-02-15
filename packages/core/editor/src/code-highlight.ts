@@ -348,11 +348,7 @@ function applyLanguageChange(codeBlockPos: number, value: string) {
   }
 
   const nextLanguage = value.trim().toLowerCase();
-  setCodeBlockLanguage(
-    editorView,
-    codeBlockPos,
-    nextLanguage || DEFAULT_LANG,
-  );
+  setCodeBlockLanguage(editorView, codeBlockPos, nextLanguage || DEFAULT_LANG);
   editorView.focus();
 }
 
