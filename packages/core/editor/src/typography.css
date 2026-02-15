@@ -263,10 +263,6 @@ div.ProseMirror {
   & .prosemirror-horizontal-rule {
     padding: 1em 0;
     margin: 1em 0;
-
-    & hr {
-      margin: 0;
-    }
   }
 
   & .prosemirror-flat-list {
