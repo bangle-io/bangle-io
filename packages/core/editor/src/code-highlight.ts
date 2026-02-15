@@ -6,12 +6,14 @@ import {
   PluginKey,
   type PMNode,
 } from '@bangle.io/prosemirror-plugins';
+import type { EditorView } from 'prosemirror-view';
 import { createHighlighter } from 'shiki';
 
 const CODE_HIGHLIGHT_PLUGIN_KEY = new PluginKey('code-highlight');
 const CODE_THEME = 'github-dark';
 const COPY_LABEL = 'Copy';
 const COPIED_LABEL = 'Copied';
+const EDIT_LANGUAGE_LABEL = 'Edit language';
 const COPY_FEEDBACK_TIMEOUT_MS = 1200;
 const SUPPORTED_LANGS = [
   'text',
@@ -59,6 +61,9 @@ type CopyDocument = {
   } | null;
   execCommand?: (command: string) => boolean;
 };
+type MinimalEditorView = Pick<EditorView, 'state' | 'dispatch' | 'focus'>;
+
+let activeEditorView: EditorView | undefined;
 
 function getHighlighter() {
   if (!highlighterPromise) {
@@ -95,6 +100,7 @@ export function setupCodeHighlight() {
           },
         },
         view(view) {
+          activeEditorView = view;
           void getHighlighter()
             .then(() => {
               view.dispatch(
@@ -105,7 +111,13 @@ export function setupCodeHighlight() {
               // Fallback: plain code styling.
             });
 
-          return {};
+          return {
+            destroy() {
+              if (activeEditorView === view) {
+                activeEditorView = undefined;
+              }
+            },
+          };
         },
       }),
     },
@@ -121,8 +133,24 @@ function createDecorations(doc: PMNode): DecorationSet {
       return true;
     }
 
-    const language = normalizeLanguage(node.attrs.language);
+    const rawLanguage = getRawLanguage(node.attrs.language);
+    const language = normalizeLanguage(rawLanguage);
     const text = node.textContent || '';
+    decorations.push(
+      Decoration.widget(
+        pos + 1,
+        () => createLanguageBadgeWidget(rawLanguage, pos),
+        {
+          side: -1,
+          ignoreSelection: true,
+          stopEvent: (event) =>
+            event.type === 'mousedown' ||
+            event.type === 'pointerdown' ||
+            event.type === 'touchstart' ||
+            event.type === 'click',
+        },
+      ),
+    );
     decorations.push(
       Decoration.widget(pos + 1, () => createCopyButtonWidget(text), {
         side: -1,
@@ -245,6 +273,111 @@ function createCopyButtonWidget(text: string): HTMLElement {
   return wrapper;
 }
 
+function createLanguageBadgeWidget(
+  language: string,
+  codeBlockPos: number,
+): HTMLElement {
+  const wrapper = document.createElement('span');
+  wrapper.className = 'prosemirror-code-language-widget';
+  wrapper.contentEditable = 'false';
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'prosemirror-code-language-button';
+  button.textContent = (language || DEFAULT_LANG).toUpperCase();
+  button.setAttribute('aria-label', EDIT_LANGUAGE_LABEL);
+  button.setAttribute('title', EDIT_LANGUAGE_LABEL);
+  button.tabIndex = -1;
+  button.addEventListener('mousedown', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  });
+  button.addEventListener('pointerdown', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  });
+  button.addEventListener('touchstart', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  });
+  button.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    showLanguageEditor(wrapper, codeBlockPos, language);
+  });
+
+  wrapper.append(button);
+  return wrapper;
+}
+
+function showLanguageEditor(
+  container: HTMLElement,
+  codeBlockPos: number,
+  initialLanguage: string,
+) {
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'prosemirror-code-language-input';
+  input.value = initialLanguage || '';
+  input.placeholder = DEFAULT_LANG;
+  input.setAttribute('aria-label', EDIT_LANGUAGE_LABEL);
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      applyLanguageChange(codeBlockPos, input.value);
+      return;
+    }
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      activeEditorView?.focus();
+    }
+  });
+  input.addEventListener('blur', () => {
+    applyLanguageChange(codeBlockPos, input.value);
+  });
+
+  container.replaceChildren(input);
+  input.focus();
+  input.select();
+}
+
+function applyLanguageChange(codeBlockPos: number, value: string) {
+  const editorView = activeEditorView;
+  if (!editorView || editorView.isDestroyed) {
+    return;
+  }
+
+  const nextLanguage = value.trim().toLowerCase();
+  setCodeBlockLanguage(
+    editorView,
+    codeBlockPos,
+    nextLanguage || DEFAULT_LANG,
+  );
+  editorView.focus();
+}
+
+function setCodeBlockLanguage(
+  editorView: MinimalEditorView,
+  codeBlockPos: number,
+  language: string,
+): boolean {
+  const node = editorView.state.doc.nodeAt(codeBlockPos);
+  if (!node || node.type.name !== 'code_block') {
+    return false;
+  }
+
+  const nextAttrs = {
+    ...node.attrs,
+    language,
+  };
+  editorView.dispatch(
+    editorView.state.tr
+      .setNodeMarkup(codeBlockPos, undefined, nextAttrs)
+      .setMeta(CODE_HIGHLIGHT_PLUGIN_KEY, true),
+  );
+  return true;
+}
+
 export async function copyTextToClipboard(
   text: string,
   options?: {
@@ -291,6 +424,13 @@ export async function copyTextToClipboard(
   } finally {
     textarea.remove();
   }
+}
+
+function getRawLanguage(language: unknown): string {
+  if (typeof language !== 'string') {
+    return '';
+  }
+  return language.trim().toLowerCase();
 }
 
 function getCopyDocument(value: unknown): CopyDocument | undefined {
