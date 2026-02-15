@@ -192,13 +192,21 @@ div.ProseMirror {
     padding-right: 3.6rem;
   }
 
-  & pre[data-language]:not([data-language=""])::before {
-    content: attr(data-language);
-    display: inline-flex;
-    align-items: center;
+  & .prosemirror-code-copy-widget {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.75rem;
+    z-index: 1;
+  }
+
+  & .prosemirror-code-language-widget {
     position: absolute;
     top: 0.55rem;
     left: 0.75rem;
+    z-index: 1;
+  }
+
+  & .prosemirror-code-language-button {
     border: 1px solid hsl(var(--BV-border) / 0.8);
     border-radius: 9999px;
     padding: 0.1rem 0.5rem;
@@ -207,14 +215,27 @@ div.ProseMirror {
     line-height: 1.1;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    z-index: 1;
+    background-color: hsl(var(--BV-background) / 0.92);
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
   }
 
-  & .prosemirror-code-copy-widget {
-    position: absolute;
-    top: 0.55rem;
-    right: 0.75rem;
-    z-index: 1;
+  & .prosemirror-code-language-button:hover {
+    color: hsl(var(--BV-foreground));
+    background-color: hsl(var(--BV-background));
+  }
+
+  & .prosemirror-code-language-input {
+    width: 7.5rem;
+    border: 1px solid hsl(var(--BV-border) / 0.8);
+    border-radius: 9999px;
+    padding: 0.12rem 0.55rem;
+    font-size: 0.68rem;
+    line-height: 1.1;
+    color: hsl(var(--BV-foreground));
+    background-color: hsl(var(--BV-background));
+    text-transform: lowercase;
   }
 
   & .prosemirror-code-copy-button {
