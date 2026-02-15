@@ -3,6 +3,7 @@ export * from './browser-local-storage-sync-database';
 export * from './file-storage-indexeddb';
 export * from './file-storage-memory';
 export * from './file-storage-nativefs';
+export * from './file-storage-serverfs';
 export * from './idb-database';
 export * from './memory-database';
 export * from './memory-sync-database';

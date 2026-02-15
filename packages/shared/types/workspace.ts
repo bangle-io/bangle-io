@@ -8,6 +8,7 @@ export type WorkspaceAttachmentConfig = {
 
 export type WorkspaceMetadata = Record<string, unknown> & {
   rootDirHandle?: FileSystemDirectoryHandle;
+  serverPath?: string;
   attachments?: Partial<WorkspaceAttachmentConfig>;
 };
 
