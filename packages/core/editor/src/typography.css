@@ -129,6 +129,8 @@ div.ProseMirror {
     display: block;
     line-height: 1.35;
     font-size: 0.95rem;
+    padding-top: 1.7rem;
+    padding-right: 3.6rem;
   }
 
   & pre[data-language]:not([data-language=""])::before {
@@ -149,8 +151,29 @@ div.ProseMirror {
     z-index: 1;
   }
 
-  & pre[data-language]:not([data-language=""]) code {
-    padding-top: 1.7rem;
+  & .prosemirror-code-copy-widget {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.75rem;
+    z-index: 1;
+  }
+
+  & .prosemirror-code-copy-button {
+    border: 1px solid hsl(var(--BV-border) / 0.75);
+    border-radius: 9999px;
+    padding: 0.12rem 0.5rem;
+    font-size: 0.68rem;
+    line-height: 1.1;
+    color: hsl(var(--BV-muted-foreground));
+    background-color: hsl(var(--BV-background) / 0.92);
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  & .prosemirror-code-copy-button:hover {
+    color: hsl(var(--BV-foreground));
+    background-color: hsl(var(--BV-background));
   }
 
   & table {

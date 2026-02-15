@@ -10,6 +10,9 @@ import { createHighlighter } from 'shiki';
 
 const CODE_HIGHLIGHT_PLUGIN_KEY = new PluginKey('code-highlight');
 const CODE_THEME = 'github-dark';
+const COPY_LABEL = 'Copy';
+const COPIED_LABEL = 'Copied';
+const COPY_FEEDBACK_TIMEOUT_MS = 1200;
 const SUPPORTED_LANGS = [
   'text',
   'plaintext',
@@ -32,6 +35,30 @@ let highlighterInstance:
   | Awaited<ReturnType<typeof createHighlighter>>
   | undefined;
 type LoadedHighlighter = Awaited<ReturnType<typeof createHighlighter>>;
+type ClipboardApi = {
+  writeText: (text: string) => Promise<void>;
+};
+type CopyTextarea = {
+  value: string;
+  setAttribute: (name: string, value: string) => void;
+  style: {
+    position: string;
+    left: string;
+    top: string;
+    opacity: string;
+    pointerEvents: string;
+  };
+  focus: () => void;
+  select: () => void;
+  remove: () => void;
+};
+type CopyDocument = {
+  createElement: (tagName: 'textarea') => CopyTextarea;
+  body: {
+    appendChild: (node: CopyTextarea) => void;
+  } | null;
+  execCommand?: (command: string) => boolean;
+};
 
 function getHighlighter() {
   if (!highlighterPromise) {
@@ -87,10 +114,6 @@ export function setupCodeHighlight() {
 
 function createDecorations(doc: PMNode): DecorationSet {
   const highlighter = highlighterInstance;
-  if (!highlighter) {
-    return DecorationSet.empty;
-  }
-
   const decorations: Decoration[] = [];
 
   doc.descendants((node, pos) => {
@@ -100,7 +123,19 @@ function createDecorations(doc: PMNode): DecorationSet {
 
     const language = normalizeLanguage(node.attrs.language);
     const text = node.textContent || '';
-    if (!text) {
+    decorations.push(
+      Decoration.widget(pos + 1, () => createCopyButtonWidget(text), {
+        side: -1,
+        ignoreSelection: true,
+        stopEvent: (event) =>
+          event.type === 'mousedown' ||
+          event.type === 'pointerdown' ||
+          event.type === 'touchstart' ||
+          event.type === 'click',
+      }),
+    );
+
+    if (!highlighter || !text) {
       return true;
     }
 
@@ -167,6 +202,112 @@ function createDecorations(doc: PMNode): DecorationSet {
   });
 
   return DecorationSet.create(doc, decorations);
+}
+
+function createCopyButtonWidget(text: string): HTMLElement {
+  const wrapper = document.createElement('span');
+  wrapper.className = 'prosemirror-code-copy-widget';
+  wrapper.contentEditable = 'false';
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'prosemirror-code-copy-button';
+  button.textContent = COPY_LABEL;
+  button.setAttribute('aria-label', COPY_LABEL);
+  button.setAttribute('title', COPY_LABEL);
+  button.tabIndex = -1;
+  button.addEventListener('mousedown', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  });
+  button.addEventListener('pointerdown', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  });
+  button.addEventListener('touchstart', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  });
+  button.addEventListener('click', async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const copied = await copyTextToClipboard(text);
+    if (!copied) {
+      return;
+    }
+    button.textContent = COPIED_LABEL;
+    globalThis.setTimeout(() => {
+      button.textContent = COPY_LABEL;
+    }, COPY_FEEDBACK_TIMEOUT_MS);
+  });
+
+  wrapper.append(button);
+  return wrapper;
+}
+
+export async function copyTextToClipboard(
+  text: string,
+  options?: {
+    clipboard?: ClipboardApi;
+    document?: CopyDocument;
+  },
+): Promise<boolean> {
+  const clipboard =
+    options?.clipboard ?? globalThis.navigator?.clipboard ?? undefined;
+
+  if (clipboard?.writeText) {
+    try {
+      await clipboard.writeText(text);
+      return true;
+    } catch {
+      // Fall through to the document fallback.
+    }
+  }
+
+  const doc = options?.document ?? getCopyDocument(globalThis.document);
+  if (!doc || !doc.body) {
+    return false;
+  }
+
+  const textarea = doc.createElement('textarea');
+  textarea.value = text;
+  textarea.setAttribute('readonly', 'readonly');
+  textarea.style.position = 'fixed';
+  textarea.style.left = '-9999px';
+  textarea.style.top = '0';
+  textarea.style.opacity = '0';
+  textarea.style.pointerEvents = 'none';
+  doc.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+
+  try {
+    if (typeof doc.execCommand !== 'function') {
+      return false;
+    }
+    return doc.execCommand('copy');
+  } catch {
+    return false;
+  } finally {
+    textarea.remove();
+  }
+}
+
+function getCopyDocument(value: unknown): CopyDocument | undefined {
+  if (!isCopyDocument(value)) {
+    return undefined;
+  }
+
+  return value;
+}
+
+function isCopyDocument(value: unknown): value is CopyDocument {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'createElement' in value &&
+    'body' in value
+  );
 }
 
 function normalizeLanguage(language: unknown): SupportedLang {
