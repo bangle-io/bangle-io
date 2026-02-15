@@ -49,6 +49,7 @@ export interface WorkspaceConfig {
   name: string;
   type: WorkspaceStorageType;
   dirHandle?: FileSystemDirectoryHandle;
+  serverPath?: string;
   attachments: WorkspaceAttachmentConfig;
 }
 
@@ -70,9 +71,11 @@ type SelectTypeState = BaseState & {
   selected?: WorkspaceStorageType;
 };
 
-type BrowserState = BaseState & {
-  stage: 'selected-browser';
+type NamedStorageState = BaseState & {
+  stage: 'selected-name';
+  storageType: WorkspaceStorageType;
   name: string;
+  serverPath: string;
   attachments: WorkspaceAttachmentConfig;
 };
 
@@ -82,15 +85,16 @@ type NativeFsState = BaseState & {
   attachments: WorkspaceAttachmentConfig;
 };
 
-type State = SelectTypeState | BrowserState | NativeFsState;
+type State = SelectTypeState | NamedStorageState | NativeFsState;
 
 type Action =
   | { type: 'RESET_TO_TYPE_SELECT'; defaultStorage: WorkspaceStorageType }
   | { type: 'NAVIGATE_TO_TYPE_SELECT' }
-  | { type: 'NAVIGATE_TO_BROWSER' }
+  | { type: 'NAVIGATE_TO_NAMED_STORAGE'; storageType: WorkspaceStorageType }
   | { type: 'NAVIGATE_TO_NATIVEFS' }
   | { type: 'UPDATE_SELECTED_STORAGE'; storage: WorkspaceStorageType }
   | { type: 'UPDATE_WORKSPACE_NAME'; name: string }
+  | { type: 'UPDATE_SERVER_PATH'; serverPath: string }
   | { type: 'UPDATE_DIRECTORY_HANDLE'; dirHandle?: FileSystemDirectoryHandle }
   | { type: 'UPDATE_ATTACHMENT_MODE'; mode: WorkspaceAttachmentConfig['mode'] }
   | { type: 'UPDATE_ATTACHMENT_DIRECTORY'; directory: string }
@@ -113,10 +117,12 @@ function reducer(state: State, action: Action): State {
         selected: undefined,
         error: undefined,
       };
-    case 'NAVIGATE_TO_BROWSER':
+    case 'NAVIGATE_TO_NAMED_STORAGE':
       return {
-        stage: 'selected-browser',
+        stage: 'selected-name',
+        storageType: action.storageType,
         name: '',
+        serverPath: '',
         attachments: getDefaultAttachmentConfig(),
         error: undefined,
       };
@@ -132,8 +138,13 @@ function reducer(state: State, action: Action): State {
       }
       return state;
     case 'UPDATE_WORKSPACE_NAME':
-      if (state.stage === 'selected-browser') {
+      if (state.stage === 'selected-name') {
         return { ...state, name: action.name, error: undefined };
+      }
+      return state;
+    case 'UPDATE_SERVER_PATH':
+      if (state.stage === 'selected-name') {
+        return { ...state, serverPath: action.serverPath, error: undefined };
       }
       return state;
     case 'UPDATE_DIRECTORY_HANDLE':
@@ -143,7 +154,7 @@ function reducer(state: State, action: Action): State {
       return state;
     case 'UPDATE_ATTACHMENT_MODE':
       if (
-        state.stage === 'selected-browser' ||
+        state.stage === 'selected-name' ||
         state.stage === 'selected-nativefs'
       ) {
         return {
@@ -155,7 +166,7 @@ function reducer(state: State, action: Action): State {
       return state;
     case 'UPDATE_ATTACHMENT_DIRECTORY':
       if (
-        state.stage === 'selected-browser' ||
+        state.stage === 'selected-name' ||
         state.stage === 'selected-nativefs'
       ) {
         return {
@@ -167,7 +178,7 @@ function reducer(state: State, action: Action): State {
       return state;
     case 'UPDATE_ATTACHMENT_FILE_NAME_PREFIX':
       if (
-        state.stage === 'selected-browser' ||
+        state.stage === 'selected-name' ||
         state.stage === 'selected-nativefs'
       ) {
         return {
@@ -250,7 +261,7 @@ export function CreateWorkspaceDialog({
             defaultStorage={defaultStorage}
           />
         )}
-        {state.stage === 'selected-browser' && (
+        {state.stage === 'selected-name' && (
           <StageEnterWorkspaceName
             state={state}
             dispatch={dispatch}
@@ -293,9 +304,17 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
   };
 
   const handleNext = () => {
+    if (!selected) {
+      return;
+    }
+    if (selected === 'nativefs') {
+      dispatch({ type: 'NAVIGATE_TO_NATIVEFS' });
+      return;
+    }
+
     dispatch({
-      type:
-        selected === 'browser' ? 'NAVIGATE_TO_BROWSER' : 'NAVIGATE_TO_NATIVEFS',
+      type: 'NAVIGATE_TO_NAMED_STORAGE',
+      storageType: selected,
     });
   };
 
@@ -339,7 +358,7 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
 };
 
 interface StageEnterWorkspaceNameProps {
-  state: BrowserState;
+  state: NamedStorageState;
   dispatch: React.Dispatch<Action>;
   validateWorkspace: CreateWorkspaceDialogProps['validateWorkspace'];
   onDone: CreateWorkspaceDialogProps['onDone'];
@@ -355,6 +374,7 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
 
   const ref = useRef<HTMLInputElement>(null);
   const workspaceNameId = useId();
+  const serverPathId = useId();
 
   useEffect(() => {
     ref.current?.focus();
@@ -380,9 +400,21 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
       return;
     }
 
+    const normalizedServerPath = state.serverPath.trim();
+    if (state.storageType === 'privatefs' && !normalizedServerPath) {
+      dispatch({
+        type: 'UPDATE_ERROR',
+        error: {
+          message: t.app.dialogs.createWorkspace.serverFsPathRequired,
+        },
+      });
+      return;
+    }
+
     const config: WorkspaceConfig = {
-      type: 'browser',
+      type: state.storageType,
       name,
+      serverPath: normalizedServerPath || undefined,
       attachments: normalizeAttachmentConfig(attachments),
     };
     const validation = validateWorkspace(config);
@@ -398,8 +430,9 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
       return;
     }
     onDone({
-      type: 'browser',
+      type: state.storageType,
       name,
+      serverPath: normalizedServerPath || undefined,
       attachments: normalizeAttachmentConfig(attachments),
     });
   };
@@ -432,6 +465,27 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
             className="col-span-3"
           />
         </div>
+        {state.storageType === 'privatefs' && (
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor={serverPathId} className="text-right">
+              {t.app.dialogs.createWorkspace.serverFsPathLabel}
+            </Label>
+            <Input
+              id={serverPathId}
+              value={state.serverPath}
+              onChange={(event) =>
+                dispatch({
+                  type: 'UPDATE_SERVER_PATH',
+                  serverPath: event.target.value,
+                })
+              }
+              placeholder={
+                t.app.dialogs.createWorkspace.serverFsPathPlaceholder
+              }
+              className="col-span-3"
+            />
+          </div>
+        )}
         <AttachmentSettingsFields
           attachments={attachments}
           dispatch={dispatch}

@@ -344,8 +344,10 @@ export class FileSystemService extends BaseService {
       case WORKSPACE_STORAGE_TYPE.Memory: {
         return getDep(WORKSPACE_STORAGE_TYPE.Memory);
       }
+      case WORKSPACE_STORAGE_TYPE.PrivateFS: {
+        return getDep(WORKSPACE_STORAGE_TYPE.PrivateFS);
+      }
       case WORKSPACE_STORAGE_TYPE.Help:
-      case WORKSPACE_STORAGE_TYPE.PrivateFS:
       case WORKSPACE_STORAGE_TYPE.Github: {
         throwAppError(
           'error::workspace:unknown-ws-type',

@@ -46,6 +46,7 @@ export const SERVICE_NAME = {
   fileStorageIndexedDBService: 'file-storage-indexeddb',
   fileStorageMemoryService: 'file-storage-memory',
   fileStorageNativeFsService: 'file-storage-nativefs',
+  fileStorageServerFsService: 'file-storage-serverfs',
   fileSystemService: 'file-system-service',
   idbDatabaseService: 'idb-database',
   memoryDatabaseService: 'memory-database',

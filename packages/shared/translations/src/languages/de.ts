@@ -179,6 +179,12 @@ export const t = {
         nativeFsTitle: 'Natives Dateisystem',
         nativeFsDescription:
           'Arbeitsbereichsdaten im nativen Dateisystem speichern',
+        serverFsTitle: 'Server-Dateisystem',
+        serverFsDescription:
+          'Arbeitsbereichsdaten im Dateisystem des Servers speichern',
+        serverFsPathLabel: 'Server-Ordnerpfad',
+        serverFsPathPlaceholder: '/mnt/workspace-a/notizen',
+        serverFsPathRequired: 'Server-Ordner ist erforderlich',
         errorTitle: 'Fehler',
         noStorageTypes: 'Keine Speicherarten verfügbar.',
         selectTypeTitle: 'Wählen Sie einen Arbeitsbereichstyp',
