@@ -274,6 +274,49 @@ pnpm tsc -b -w
 - **production** branch → [https://app.bangle.io/](https://app.bangle.io/)
   Deployment is handled automatically by **Cloudflare Pages** on push.
 
+### Deployment Notes For Agents
+
+- There is no checked-in Wrangler or Cloudflare config in this repo; Cloudflare Pages is configured outside the repository.
+- `packages/tooling/env-vars/index.ts` maps `production` builds from the `production` branch to `appEnv: "production"`.
+- `main` and `staging` builds map to `appEnv: "staging"`, so use `production` for the production MVP deploy path.
+- Before deploying, verify the branch and remote target:
+
+  ```bash
+  git remote -v
+  git branch -vv --all
+  git ls-remote --heads origin 'main' 'production' 'staging'
+  ```
+
+- Run the local preflight from the repo root:
+
+  ```bash
+  pnpm install
+  pnpm typecheck
+  pnpm build
+  ```
+
+- To deploy the MVP production app, push the intended commit to `origin/production`.
+- After Cloudflare Pages finishes, verify the live site with Playwright CLI:
+
+  ```bash
+  playwright-cli open https://app.bangle.io/
+  playwright-cli snapshot
+  ```
+
+- Minimal production smoke checklist:
+  1. The page title is `Bangle App`.
+  2. The welcome screen renders with `Create Workspace`.
+  3. Console build config reports `appEnv: production`, `deployBranch: production`, and the expected commit hash.
+  4. Create a `Browser` workspace.
+  5. Create a note.
+  6. Type editor content.
+  7. Reload and confirm the content is still visible.
+
+- Known non-blocking console noise during current MVP smoke tests:
+  - Radix dialog accessibility warnings for missing dialog description/title wiring.
+  - Editor/plugin order debug logs.
+  - Transient `Note Not Found` render during reload before browser storage finishes initializing.
+
 ---
 
 ## Pull‑Request Checklist
