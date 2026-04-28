@@ -260,9 +260,26 @@ pnpm tsc -b -w
 
 ## Deployment
 
-- **staging** branch → [https://staging.app.bangle.io/](https://staging.app.bangle.io/)
-- **production** branch → [https://app.bangle.io/](https://app.bangle.io/)
-  Deployment is handled automatically by **Cloudflare Pages** on push.
+- Cloudflare Pages is connected to **`kepta/bangle-io-2`**, not `bangle-io/bangle-io`.
+- **production** branch on `kepta/bangle-io-2` → [https://app.bangle.io/](https://app.bangle.io/)
+- Automatic deployments are enabled in Cloudflare Pages for the `production` branch.
+
+Production deploy:
+
+```bash
+pnpm install
+pnpm run lint:ci
+pnpm build
+git remote get-url deploy 2>/dev/null || git remote add deploy https://github.com/kepta/bangle-io-2.git
+git push deploy HEAD:production
+```
+
+Verify with Playwright CLI:
+
+```bash
+playwright-cli open https://app.bangle.io/
+playwright-cli snapshot
+```
 
 ---
 
