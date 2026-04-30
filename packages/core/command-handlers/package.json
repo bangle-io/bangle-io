@@ -43,6 +43,6 @@
   "devDependencies": {
     "@bangle.io/service-core": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
-    "@testing-library/jest-dom": "^6.6.3"
+    "@testing-library/jest-dom": "^6.9.1"
   }
 }

@@ -43,7 +43,7 @@
     "@bangle.io/service-platform": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
-    "@testing-library/react": "^16.3.0",
+    "@testing-library/react": "^16.3.2",
     "jotai": "^2.12.5",
     "react": "19.1.0",
     "wait-for-expect": "^3.0.2"

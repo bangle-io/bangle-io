@@ -22,9 +22,9 @@
   },
   "scripts": {},
   "dependencies": {
-    "execa": "9.6.0",
-    "fs-extra": "^11.3.0",
-    "plop": "^4.0.1"
+    "execa": "9.6.1",
+    "fs-extra": "^11.3.4",
+    "plop": "^4.0.5"
   },
   "devDependencies": {}
 }
