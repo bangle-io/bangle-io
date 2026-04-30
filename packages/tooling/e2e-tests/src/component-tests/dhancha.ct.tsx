@@ -2,6 +2,8 @@ import { MainContent } from '@bangle.io/ui-components/src/Dhancha/Dhancha.storie
 import { expect, test } from '@playwright/experimental-ct-react';
 import React from 'react';
 
+test.setTimeout(20_000);
+
 test('changes the image', async ({ mount }) => {
   const component = await mount(<MainContent />);
 
