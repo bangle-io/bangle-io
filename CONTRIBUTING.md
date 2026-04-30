@@ -166,9 +166,16 @@ pnpm e2e-ct-test --ui
 
 App is deployed via cloudflare pages.
 
-Push to `staging` branch will deploy to https://staging.app.bangle.io/
+Cloudflare Pages is connected to `kepta/bangle-io-2`, not `bangle-io/bangle-io`.
 
-Push to `production` branch will deploy to https://app.bangle.io/
+Push to the `production` branch on `kepta/bangle-io-2` will deploy to https://app.bangle.io/
+
+```bash
+pnpm run lint:ci
+pnpm build
+git remote get-url deploy 2>/dev/null || git remote add deploy https://github.com/kepta/bangle-io-2.git
+git push deploy HEAD:production
+```
 
 
 This pushes to all 3 branches:

@@ -269,9 +269,60 @@ pnpm tsc -b -w
 
 ## Deployment
 
-- **staging** branch → [https://staging.app.bangle.io/](https://staging.app.bangle.io/)
-- **production** branch → [https://app.bangle.io/](https://app.bangle.io/)
-  Deployment is handled automatically by **Cloudflare Pages** on push.
+- Cloudflare Pages is connected to **`kepta/bangle-io-2`**, not `bangle-io/bangle-io`.
+- **production** branch on `kepta/bangle-io-2` → [https://app.bangle.io/](https://app.bangle.io/)
+- Automatic deployments are enabled in Cloudflare Pages for the `production` branch.
+
+### Deployment Notes For Agents
+
+- There is no checked-in Wrangler or Cloudflare config in this repo; Cloudflare Pages is configured outside the repository.
+- `packages/tooling/env-vars/index.ts` maps `production` builds from the `production` branch to `appEnv: "production"`.
+- `main` and `staging` builds map to `appEnv: "staging"`, so use `production` for the production MVP deploy path.
+- Before deploying, verify the branch and remote targets:
+
+  ```bash
+  git remote -v
+  git branch -vv --all
+  git ls-remote --heads origin 'production'
+  git ls-remote --heads https://github.com/kepta/bangle-io-2.git 'production'
+  ```
+
+- Run the local preflight from the repo root:
+
+  ```bash
+  pnpm install
+  pnpm typecheck
+  pnpm build
+  ```
+
+- To deploy the MVP production app, push the intended commit to `production` on `kepta/bangle-io-2`:
+
+  ```bash
+  git remote get-url deploy 2>/dev/null || git remote add deploy https://github.com/kepta/bangle-io-2.git
+  git push deploy HEAD:production
+  ```
+
+- Pushing only to `origin` (`bangle-io/bangle-io`) does **not** update `app.bangle.io`.
+- After Cloudflare Pages finishes, verify the live site with Playwright CLI:
+
+  ```bash
+  playwright-cli open https://app.bangle.io/
+  playwright-cli snapshot
+  ```
+
+- Minimal production smoke checklist:
+  1. The page title is `Bangle App`.
+  2. The welcome screen renders with `Create Workspace`.
+  3. Console build config reports `appEnv: production`, `deployBranch: production`, and the expected commit hash.
+  4. Create a `Browser` workspace.
+  5. Create a note.
+  6. Type editor content.
+  7. Reload and confirm the content is still visible.
+
+- Known non-blocking console noise during current MVP smoke tests:
+  - Radix dialog accessibility warnings for missing dialog description/title wiring.
+  - Editor/plugin order debug logs.
+  - Transient `Note Not Found` render during reload before browser storage finishes initializing.
 
 ---
 

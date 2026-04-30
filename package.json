@@ -36,6 +36,9 @@
   "homepage": "https://bangle.io",
   "license": "AGPL-3.0-or-later",
   "pnpm": {
+    "overrides": {
+      "react-dom": "19.1.0"
+    },
     "onlyBuiltDependencies": [
       "@biomejs/biome",
       "@swc/core",
