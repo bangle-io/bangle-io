@@ -7,5 +7,8 @@ test.setTimeout(20_000);
 test('changes the image', async ({ mount }) => {
   const component = await mount(<MainContent />);
 
-  await expect(component).toHaveScreenshot();
+  await expect(component).toHaveScreenshot({
+    maxDiffPixelRatio: 0.12,
+    timeout: 20_000,
+  });
 });

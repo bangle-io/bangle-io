@@ -1079,7 +1079,7 @@ importers:
         version: 19.1.0(react@19.1.0)
     devDependencies:
       '@storybook/react':
-        specifier: ^8.6.14
+        specifier: ^8.6.18
         version: 8.6.18(@storybook/test@8.6.18(storybook@8.6.18(prettier@3.5.3)))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(storybook@8.6.18(prettier@3.5.3))(typescript@5.8.3)
 
   packages/ui/ui-components:
@@ -1127,8 +1127,8 @@ importers:
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.2.14)(react@19.1.0)
       '@storybook/types':
-        specifier: ^8.6.14
-        version: 8.6.14(storybook@8.6.18(prettier@3.5.3))
+        specifier: ^8.6.18
+        version: 8.6.18(storybook@8.6.18(prettier@3.5.3))
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1152,7 +1152,7 @@ importers:
         version: 3.5.0
     devDependencies:
       '@storybook/react':
-        specifier: ^8.6.14
+        specifier: ^8.6.18
         version: 8.6.18(@storybook/test@8.6.18(storybook@8.6.18(prettier@3.5.3)))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(storybook@8.6.18(prettier@3.5.3))(typescript@5.8.3)
 
   packages/ui/ui-misc:
@@ -2982,11 +2982,6 @@ packages:
 
   '@storybook/theming@8.6.18':
     resolution: {integrity: sha512-n6OEjEtHupa2PdTwWzRepr7cO8NkDd4rgF6BKLitRbujOspLxzMBEqdphs+QLcuiCIgf33SqmEA64QWnbSMhPw==}
-    peerDependencies:
-      storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
-
-  '@storybook/types@8.6.14':
-    resolution: {integrity: sha512-33kzHZa7h6/EygeLZDcm1PNRTlybokz8dzAh2JYjpETf77pG8jhPmEfrI2oHSAdgNeK7A3OMcGA/EwEN7EJdzw==}
     peerDependencies:
       storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
 
@@ -8687,10 +8682,6 @@ snapshots:
       storybook: 8.6.18(prettier@3.5.3)
 
   '@storybook/theming@8.6.18(storybook@8.6.18(prettier@3.5.3))':
-    dependencies:
-      storybook: 8.6.18(prettier@3.5.3)
-
-  '@storybook/types@8.6.14(storybook@8.6.18(prettier@3.5.3))':
     dependencies:
       storybook: 8.6.18(prettier@3.5.3)
 

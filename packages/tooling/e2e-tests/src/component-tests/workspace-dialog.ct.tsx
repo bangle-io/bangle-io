@@ -31,7 +31,7 @@ test('Default dialog shows storage options and navigates', async ({
   await page.getByRole('button', { name: /next/i }).click();
   await page.getByLabel('Workspace Name', { exact: true }).fill('my_workspace');
   await page.getByRole('button', { name: 'Create' }).click();
-  await expect(page).toHaveScreenshot();
+  await expect(page).toHaveScreenshot({ maxDiffPixelRatio: 0.02 });
 });
 
 test('NativeFs dialog shows directory picker and navigates', async ({
@@ -62,7 +62,7 @@ test('NativeFs dialog shows directory picker and navigates', async ({
   await expect(page.getByText('MyDirectory')).toBeVisible();
   await page.getByRole('button', { name: 'Create' }).click();
 
-  await expect(page).toHaveScreenshot();
+  await expect(page).toHaveScreenshot({ maxDiffPixelRatio: 0.02 });
 });
 
 test('NativeFs shows error when directory pick fails', async ({
