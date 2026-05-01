@@ -14,7 +14,7 @@
     "@bangle.io/plop-configs": "workspace:*",
     "@bangle.io/translations": "workspace:*",
     "@bangle.io/types": "workspace:*",
-    "@biomejs/biome": "2.0.0-beta.6",
+    "@biomejs/biome": "2.4.13",
     "@swc/jest": "^0.2.39",
     "@testing-library/jest-dom": "^6.9.1",
     "@types/bun": "^1.3.13",

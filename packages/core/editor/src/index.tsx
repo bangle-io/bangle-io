@@ -20,7 +20,7 @@ export function Editor({
   const { pmEditorService } = useCoreServices();
 
   return (
-    <div className="box-border flex h-full min-h-36 w-full flex-col ">
+    <div className="box-border flex h-full min-h-36 w-full flex-col">
       <div className="relative box-border w-full flex-1">
         <div
           // in react 19 callback change retriggers this callback

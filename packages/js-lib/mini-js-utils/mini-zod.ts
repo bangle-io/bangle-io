@@ -86,6 +86,5 @@ export const T = {
   Null: NullValidator,
 };
 
-export type InferType<T extends Validator<any>> = T extends Validator<infer U>
-  ? U
-  : never;
+export type InferType<T extends Validator<any>> =
+  T extends Validator<infer U> ? U : never;

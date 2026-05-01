@@ -88,19 +88,16 @@ describe('matchAllPlus', () => {
     ['hello https://google.com two s', 1],
     ["hello https://google.com'", 1],
     ["hello https://google.com' two", 1],
-  ])(
-    '%# string start and end positions should be correct',
-    (string, matchCount) => {
-      const result = matchAllPlus(
-        /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-zA-Z]{2,}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/g,
-        string,
-      );
+  ])('%# string start and end positions should be correct', (string, matchCount) => {
+    const result = matchAllPlus(
+      /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-zA-Z]{2,}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/g,
+      string,
+    );
 
-      expect(result.filter((r) => r.match)).toHaveLength(matchCount);
+    expect(result.filter((r) => r.match)).toHaveLength(matchCount);
 
-      expect(mergeStartEnd(string, result)).toBe(string);
-    },
-  );
+    expect(mergeStartEnd(string, result)).toBe(string);
+  });
 
   test('1 misc cases', () => {
     const regex = /t(e)(st(\d?))/g;

@@ -201,14 +201,14 @@ CommandHints.displayName = 'CommandHints';
 
 export {
   Command,
-  CommandDialog,
-  CommandInput,
   CommandBadge,
-  CommandList,
+  CommandDialog,
   CommandEmpty,
   CommandGroup,
-  CommandItem,
-  CommandShortcut,
-  CommandSeparator,
   CommandHints,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
 };
