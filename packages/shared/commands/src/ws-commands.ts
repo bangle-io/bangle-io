@@ -86,7 +86,7 @@ export const wsCommands = narrow([
     id: 'command::ws:delete-ws-path',
     title: 'Delete Note',
     omniSearch: false,
-    dependencies: { services: ['fileSystem', 'navigation'] },
+    dependencies: { services: ['fileSystem', 'navigation', 'workspaceState'] },
     args: {
       wsPath: T.String,
     },
@@ -95,7 +95,7 @@ export const wsCommands = narrow([
     id: 'command::ws:rename-ws-path',
     title: 'Rename Note',
     omniSearch: false,
-    dependencies: { services: ['fileSystem', 'navigation'] },
+    dependencies: { services: ['fileSystem', 'navigation', 'workspaceState'] },
     args: {
       wsPath: T.String,
       newWsPath: T.String,

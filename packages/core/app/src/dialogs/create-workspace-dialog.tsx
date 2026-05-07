@@ -1,6 +1,9 @@
 import { pickADirectory, supportsNativeBrowserFs } from '@bangle.io/baby-fs';
 import { throwAppError } from '@bangle.io/base-utils';
-import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
+import {
+  DEFAULT_WORKSPACE_ATTACHMENT_CONFIG,
+  WORKSPACE_STORAGE_TYPE,
+} from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import { CreateWorkspaceDialog as UICreateWorkspaceDialog } from '@bangle.io/ui-components';
 import { WsPath } from '@bangle.io/ws-path';
@@ -31,8 +34,10 @@ export function CreateWorkspaceDialog() {
             t.app.dialogs.createWorkspace.invalidName,
         };
       }}
-      onDone={({ name: wsName, type, dirHandle }) => {
+      onDone={({ name: wsName, type, dirHandle, attachments }) => {
         setOpenWsDialog(false);
+        const attachmentConfig =
+          attachments || DEFAULT_WORKSPACE_ATTACHMENT_CONFIG;
         if (type === WORKSPACE_STORAGE_TYPE.NativeFS) {
           if (!dirHandle) {
             throwAppError(
@@ -50,6 +55,7 @@ export function CreateWorkspaceDialog() {
               type,
               metadata: {
                 rootDirHandle: dirHandle,
+                attachments: attachmentConfig,
               },
             })
             .then(() => {
@@ -61,7 +67,9 @@ export function CreateWorkspaceDialog() {
         if (type === WORKSPACE_STORAGE_TYPE.Browser) {
           coreServices.workspaceOps
             .createWorkspaceInfo({
-              metadata: {},
+              metadata: {
+                attachments: attachmentConfig,
+              },
               name: wsName,
               type: WORKSPACE_STORAGE_TYPE.Browser,
             })

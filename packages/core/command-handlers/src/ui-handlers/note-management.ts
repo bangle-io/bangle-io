@@ -4,6 +4,8 @@ import { FilePlus, Trash2 } from 'lucide-react';
 import { c, getCtx } from '../helper';
 import { validateInputPath } from '../utils';
 
+const DELETE_FOLDER_OPTION_PREFIX = 'delete-folder::';
+
 export const noteManagementHandlers = [
   c(
     'command::ui:create-note-dialog',
@@ -35,6 +37,32 @@ export const noteManagementHandlers = [
     'command::ui:delete-note-dialog',
     ({ workbenchState, workspaceState }, { wsPath }, key) => {
       const { store, dispatch } = getCtx(key);
+      const selectedWsPath = wsPath ? WsPath.fromString(wsPath) : undefined;
+      const selectedDir = selectedWsPath?.asDir();
+
+      if (selectedDir) {
+        store.set(workbenchState.$singleSelectDialog, undefined);
+        store.set(workbenchState.$alertDialog, () => {
+          return {
+            dialogId: 'dialog::alert',
+            title: t.app.dialogs.confirmDelete.title,
+            tone: 'destructive',
+            description: t.app.dialogs.confirmDelete.description({
+              fileName: selectedDir.name || t.app.common.unknown,
+            }),
+            continueText: t.app.dialogs.confirmDelete.continueText,
+            onContinue: () => {
+              dispatch('command::ws:delete-ws-path', {
+                wsPath: selectedDir.wsPath,
+              });
+              dispatch('command::ui:focus-editor', null);
+            },
+            onCancel: () => {},
+          };
+        });
+        return;
+      }
+
       const wsPaths = store.get(workspaceState.$wsPaths);
       const wsName = store.get(workspaceState.$currentWsName);
 
@@ -46,7 +74,60 @@ export const noteManagementHandlers = [
         );
       }
 
+      const folderDeleteCandidate = wsPath
+        ? getFolderDeleteCandidateWsPath({
+            wsPath,
+            wsName,
+            fileWsPaths: wsPaths.map((path) => path.wsPath),
+          })
+        : undefined;
+
+      const showDeleteAlert = ({
+        targetWsPath,
+        targetName,
+      }: {
+        targetWsPath: string;
+        targetName: string;
+      }) => {
+        store.set(workbenchState.$alertDialog, () => {
+          return {
+            dialogId: 'dialog::alert',
+            title: t.app.dialogs.confirmDelete.title,
+            tone: 'destructive',
+            description: t.app.dialogs.confirmDelete.description({
+              fileName: targetName || t.app.common.unknown,
+            }),
+            continueText: t.app.dialogs.confirmDelete.continueText,
+            onContinue: () => {
+              dispatch('command::ws:delete-ws-path', {
+                wsPath: targetWsPath,
+              });
+              dispatch('command::ui:focus-editor', null);
+            },
+            onCancel: () => {},
+          };
+        });
+      };
+
       store.set(workbenchState.$singleSelectDialog, () => {
+        const options: Array<{
+          title: string;
+          id: string;
+          icon?: typeof Trash2;
+        }> = wsPaths.map((path) => ({
+          title: path.filePath,
+          id: path.wsPath,
+        }));
+
+        if (folderDeleteCandidate) {
+          const folderPath = WsPath.fromString(folderDeleteCandidate).path;
+          options.unshift({
+            title: `Delete entire folder: ${folderPath}`,
+            id: `${DELETE_FOLDER_OPTION_PREFIX}${folderDeleteCandidate}`,
+            icon: Trash2,
+          });
+        }
+
         return {
           dialogId: 'dialog::delete-ws-path-dialog',
           placeholder: t.app.dialogs.deleteNote.placeholder,
@@ -54,32 +135,30 @@ export const noteManagementHandlers = [
           badgeTone: 'destructive',
           groupHeading: t.app.dialogs.deleteNote.groupHeading,
           emptyMessage: t.app.dialogs.deleteNote.emptyMessage,
-          options: wsPaths.map((path) => ({
-            title: path.filePath,
-            id: path.wsPath,
-          })),
+          options,
           Icon: Trash2,
           hints: [t.app.dialogs.deleteNote.hintDelete],
           initialSearch: wsPath ? WsPath.fromString(wsPath).path : undefined,
           onSelect: (option) => {
-            const wsPath = WsPath.fromString(option.id);
-            const fileName = wsPath.asFile()?.fileNameWithoutExtension;
+            if (option.id.startsWith(DELETE_FOLDER_OPTION_PREFIX)) {
+              const folderWsPath = option.id.slice(
+                DELETE_FOLDER_OPTION_PREFIX.length,
+              );
+              showDeleteAlert({
+                targetWsPath: folderWsPath,
+                targetName:
+                  WsPath.fromString(folderWsPath).asDir()?.name ||
+                  t.app.common.unknown,
+              });
+              return;
+            }
 
-            store.set(workbenchState.$alertDialog, () => {
-              return {
-                dialogId: 'dialog::alert',
-                title: t.app.dialogs.confirmDelete.title,
-                tone: 'destructive',
-                description: t.app.dialogs.confirmDelete.description({
-                  fileName: fileName || t.app.common.unknown,
-                }),
-                continueText: t.app.dialogs.confirmDelete.continueText,
-                onContinue: () => {
-                  dispatch('command::ws:delete-ws-path', { wsPath: option.id });
-                  dispatch('command::ui:focus-editor', null);
-                },
-                onCancel: () => {},
-              };
+            const parsedWsPath = WsPath.fromString(option.id);
+            showDeleteAlert({
+              targetWsPath: option.id,
+              targetName:
+                parsedWsPath.asFile()?.fileNameWithoutExtension ||
+                t.app.common.unknown,
             });
           },
         };
@@ -105,8 +184,8 @@ export const noteManagementHandlers = [
         );
       }
       const fileOldWsPath = oldWsPath.asFile();
-
-      if (!fileOldWsPath) {
+      const dirOldWsPath = oldWsPath.asDir();
+      if (!fileOldWsPath && !dirOldWsPath) {
         throwAppError(
           'error::file:invalid-note-path',
           t.app.errors.file.invalidNotePath,
@@ -115,15 +194,19 @@ export const noteManagementHandlers = [
           },
         );
       }
+      const oldName =
+        fileOldWsPath?.fileNameWithoutExtension ||
+        dirOldWsPath?.name ||
+        t.app.common.unknown;
 
       store.set(workbenchState.$singleInputDialog, () => {
         return {
           dialogId: 'dialog::rename-note-dialog',
           placeholder: t.app.dialogs.renameNote.placeholder,
           badgeText: t.app.dialogs.renameNote.badgeText({
-            fileNameWithoutExtension: fileOldWsPath.fileNameWithoutExtension,
+            fileNameWithoutExtension: oldName,
           }),
-          initialSearch: fileOldWsPath.fileNameWithoutExtension,
+          initialSearch: oldName,
           Icon: FilePlus,
           option: {
             id: 'rename-note-dialog',
@@ -143,42 +226,50 @@ export const noteManagementHandlers = [
               );
             }
 
-            const newName =
-              trimmedInput +
-              (trimmedInput.endsWith(WsPath.DEFAULT_NOTE_EXTENSION)
-                ? ''
-                : WsPath.DEFAULT_NOTE_EXTENSION);
-
-            const parentDirPath = fileOldWsPath.getParent();
-
-            // Construct the relative path for validation
-            const relativeNewPath = parentDirPath
-              ? WsPath.pathJoin(parentDirPath.path, newName)
-              : newName;
-
-            // Validate the constructed relative path
-            validateInputPath(relativeNewPath);
-
-            if (!parentDirPath) {
-              // This case should ideally be handled by validateInputPath if newName contains '/',
-              // but we keep the check for clarity and robustness.
-              // If parentDirPath is null, it means the original file was at the root.
-              // We construct the new path directly from the newName.
-              if (newName.includes('/')) {
-                // Prevent creating subdirectories during rename implicitly
-                throwAppError(
-                  'error::file:invalid-operation',
-                  t.app.errors.file.cannotMoveDuringRename,
-                  {
-                    oldWsPath: oldWsPath.wsPath,
-                    newWsPath: input,
-                    operation: 'rename',
-                  },
-                );
-              }
+            if (trimmedInput.includes('/')) {
+              throwAppError(
+                'error::file:invalid-operation',
+                t.app.errors.file.cannotMoveDuringRename,
+                {
+                  oldWsPath: oldWsPath.wsPath,
+                  newWsPath: input,
+                  operation: 'rename',
+                },
+              );
             }
 
-            const newWsPath = fileOldWsPath.replaceFileName(newName);
+            let newWsPath: WsPath;
+            if (fileOldWsPath) {
+              const newName =
+                trimmedInput +
+                (trimmedInput.endsWith(WsPath.DEFAULT_NOTE_EXTENSION)
+                  ? ''
+                  : WsPath.DEFAULT_NOTE_EXTENSION);
+              const parentDirPath = fileOldWsPath.getParent();
+              const relativeNewPath = parentDirPath
+                ? WsPath.pathJoin(parentDirPath.path, newName)
+                : newName;
+              validateInputPath(relativeNewPath);
+              newWsPath = fileOldWsPath.replaceFileName(newName);
+            } else if (dirOldWsPath) {
+              const parentDirPath = dirOldWsPath.getParent();
+              const relativeNewPath = parentDirPath
+                ? WsPath.pathJoin(parentDirPath.path, trimmedInput)
+                : trimmedInput;
+              validateInputPath(relativeNewPath);
+              newWsPath = WsPath.fromParts(
+                dirOldWsPath.wsName,
+                relativeNewPath,
+              );
+            } else {
+              throwAppError(
+                'error::file:invalid-note-path',
+                t.app.errors.file.invalidNotePath,
+                {
+                  invalidWsPath: oldWsPath.wsPath,
+                },
+              );
+            }
 
             dispatch('command::ws:rename-ws-path', {
               newWsPath: newWsPath.wsPath,
@@ -215,17 +306,29 @@ export const noteManagementHandlers = [
           (existingWsPaths || []).map((path) => {
             const wsPath = WsPath.fromString(path.wsPath);
             const parent = wsPath.getParent();
-            return parent ? parent.path : '';
+            return parent ? normalizeDirPath(parent.path) : '';
           }),
         ),
       ].filter((dirPath) => dirPath !== '');
 
-      const filePath = WsPath.assertFile(oldWsPath.wsPath);
-      const oldDirPath = filePath.getParent()?.path || '';
+      const filePath = oldWsPath.asFile();
+      const directoryPath = oldWsPath.asDir();
+      const oldDirPath = filePath
+        ? normalizeDirPath(filePath.getParent()?.path || '')
+        : normalizeDirPath(directoryPath?.path || '');
       const isAtRoot = oldDirPath === '';
 
       const options = dirPaths
-        .filter((dirPath) => dirPath !== oldDirPath)
+        .filter((dirPath) => {
+          if (dirPath === oldDirPath) {
+            return false;
+          }
+          if (directoryPath) {
+            const sourcePath = normalizeDirPath(directoryPath.path);
+            return !dirPath.startsWith(`${sourcePath}/`);
+          }
+          return true;
+        })
         .map((dirPath) => ({
           title: dirPath,
           id: dirPath,
@@ -245,7 +348,10 @@ export const noteManagementHandlers = [
           dialogId: 'dialog::move-note-dialog',
           placeholder: t.app.dialogs.moveNote.placeholder,
           badgeText: t.app.dialogs.moveNote.badgeText({
-            fileNameWithoutExtension: filePath.fileNameWithoutExtension,
+            fileNameWithoutExtension:
+              filePath?.fileNameWithoutExtension ||
+              directoryPath?.name ||
+              t.app.common.unknown,
           }),
           emptyMessage: t.app.dialogs.moveNote.emptyMessage,
           options,
@@ -311,3 +417,42 @@ export const noteManagementHandlers = [
     },
   ),
 ];
+
+function normalizeDirPath(path: string): string {
+  if (!path) {
+    return '';
+  }
+  return path.endsWith('/') ? path.slice(0, -1) : path;
+}
+
+function getFolderDeleteCandidateWsPath({
+  wsPath,
+  wsName,
+  fileWsPaths,
+}: {
+  wsPath: string;
+  wsName: string;
+  fileWsPaths: string[];
+}): string | undefined {
+  const parsed = WsPath.fromString(wsPath);
+  const directDir = parsed.asDir();
+  if (directDir) {
+    return directDir.wsPath;
+  }
+
+  const candidatePath = normalizeDirPath(parsed.path);
+  if (!candidatePath) {
+    return undefined;
+  }
+
+  const hasChildren = fileWsPaths.some((fileWsPath) => {
+    const filePath = WsPath.fromString(fileWsPath).asFile();
+    return !!filePath && filePath.path.startsWith(`${candidatePath}/`);
+  });
+
+  if (!hasChildren) {
+    return undefined;
+  }
+
+  return WsPath.fromParts(wsName, `${candidatePath}/`).wsPath;
+}

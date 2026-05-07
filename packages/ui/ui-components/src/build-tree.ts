@@ -15,6 +15,10 @@ type SortComparator = (
   optA: { name: string; isDir: boolean },
   optB: { name: string; isDir: boolean },
 ) => number;
+type TreeNodeEntry = {
+  children: Map<string, TreeNodeEntry>;
+  isDir: boolean;
+};
 
 export function buildTree(
   wsPaths: string[],
@@ -34,7 +38,7 @@ export function buildTree(
     });
   }
 
-  const root = new Map<string, any>();
+  const root = new Map<string, TreeNodeEntry>();
 
   for (const filePath of filePaths) {
     const parts = filePath.split('/');
@@ -43,12 +47,15 @@ export function buildTree(
     parts.forEach((part, index) => {
       if (!current.has(part)) {
         current.set(part, {
-          children: new Map(),
+          children: new Map<string, TreeNodeEntry>(),
           isDir: index < parts.length - 1,
         });
       }
       if (index < parts.length - 1) {
-        current = current.get(part).children;
+        const next = current.get(part);
+        if (next) {
+          current = next.children;
+        }
       }
     });
   }
@@ -69,7 +76,7 @@ export function buildTree(
   }
 
   function convertToTreeItem(
-    map: Map<string, any>,
+    map: Map<string, TreeNodeEntry>,
     pathParts: string[] = [],
   ): TreeItem[] {
     const items: TreeItem[] = [];
@@ -103,7 +110,7 @@ export function buildTree(
         const isOpen =
           isPathOpen(newPathParts) || hasOpenDescendant(newPathParts);
 
-        const { wsPath } = WsPath.fromParts(
+        const wsPath = createDirWsPath(
           wsName,
           WsPath.pathJoin(...newPathParts),
         );
@@ -133,4 +140,13 @@ export function buildTree(
   }
 
   return convertToTreeItem(root);
+}
+
+function createDirWsPath(wsName: string, path: string): string {
+  const candidate = WsPath.fromParts(wsName, path);
+  if (candidate.asDir()) {
+    return candidate.wsPath;
+  }
+
+  return WsPath.fromParts(wsName, `${path}/`).wsPath;
 }

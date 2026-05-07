@@ -21,14 +21,24 @@ import {
   setupPlaceholder,
   setupStrike,
   setupSuggestions,
+  setupTable,
   setupUnderline,
 } from '@bangle.io/prosemirror-plugins';
+import { setupCodeHighlight } from './code-highlight';
 import { funPlaceholder } from './utils';
 
-export function setupExtensions(logger: Logger) {
-  const link = setupLink();
+type SetupExtensionsOptions = {
+  image?: Parameters<typeof setupImage>[0];
+  link?: Parameters<typeof setupLink>[0];
+};
+
+export function setupExtensions(
+  logger: Logger,
+  options?: SetupExtensionsOptions,
+) {
+  const link = setupLink(options?.link);
   return {
-    image: setupImage(),
+    image: setupImage(options?.image),
     activeNode: setupActiveNode({
       excludedNodes: ['horizontal_rule', 'code_block', 'blockquote'],
     }),
@@ -54,6 +64,7 @@ export function setupExtensions(logger: Logger) {
     heading: setupHeading(),
     history: setupHistory(),
     paragraph: setupParagraph(),
+    table: setupTable(),
     strike: setupStrike(),
     suggestions: setupSuggestions({
       markName: 'slash_command',
@@ -67,7 +78,10 @@ export function setupExtensions(logger: Logger) {
       placeholder: funPlaceholder(),
     }),
     code: setupCode(),
-    codeBlock: setupCodeBlock(),
+    codeBlock: setupCodeBlock({
+      keyExit: false,
+    }),
+    codeHighlight: setupCodeHighlight(),
     italic: setupItalic(),
     link,
     linkMenu: setupLinkMenu({ link }),
