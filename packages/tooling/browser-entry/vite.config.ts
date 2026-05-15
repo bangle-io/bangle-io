@@ -4,8 +4,8 @@ import { languages } from '@bangle.io/translations';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 // @ts-ignore - moduleResolution error
 import tailwindcss from '@tailwindcss/vite';
+// @ts-ignore - moduleResolution error
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 
 // Custom serializer to handle functions
@@ -33,7 +33,7 @@ function serializeTranslationObjection(obj: any): string {
   return `{${parts.join(',')}}`;
 }
 
-export default defineConfig(async (env) => {
+export default async (env: { mode: string }) => {
   const isProduction = env.mode === 'production';
   const themeInline = ThemeManager.getInlineScript();
 
@@ -76,4 +76,4 @@ export default defineConfig(async (env) => {
       ...envVars.globalIdentifiers,
     },
   };
-});
+};

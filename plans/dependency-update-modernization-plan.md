@@ -90,12 +90,24 @@ After updates:
 Major updates only, one dependency family at a time. Each family should be its
 own commit or pull request when possible.
 
+Phase 3 progress:
+
+- [x] Biome beta to stable latest v2.
+- [x] Vite 6 to latest compatible major and `@vitejs/plugin-react` latest compatible major.
+- [ ] Vitest 3 to 4, including `@vitest/browser` and `@vitest/coverage-v8`.
+- [ ] TypeScript 5.8 to 6.
+- [ ] Storybook 8 to latest major.
+- [ ] Sentry major updates.
+- [ ] Jest 29 to 30 if still needed.
+- [ ] Zod 3 to 4.
+- [ ] `lucide-react` major update.
+- [ ] `@types/node` major update only if the runtime/tooling supports it.
+
 Candidate hard updates:
 
-- Vite 6 to latest major and `@vitejs/plugin-react` latest major.
+- Vite 6 to latest compatible major and `@vitejs/plugin-react` latest compatible major. Keep Storybook on its own compatible Vite line unless the Storybook major update is part of the PR.
 - Vitest 3 to 4, including `@vitest/browser` and `@vitest/coverage-v8`.
 - TypeScript 5.8 to 6.
-- Biome beta to stable latest v2.
 - Storybook 8 to latest major.
 - Sentry major updates.
 - Jest 29 to 30 if still needed.
