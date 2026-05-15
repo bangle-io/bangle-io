@@ -27,7 +27,7 @@ export function NoticeView({
     <ContentSection hasPadding>
       <PageHeader title={title} illustration={illustration} />
       {description ? (
-        <p className="mt-2 text-muted-foreground">{description}</p>
+        <div className="mt-2 text-muted-foreground">{description}</div>
       ) : null}
       {actions ? <Actions actions={actions} /> : null}
     </ContentSection>

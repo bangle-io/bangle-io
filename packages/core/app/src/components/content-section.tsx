@@ -17,7 +17,7 @@ export function ContentSection({
     <section
       className={cx(
         hasPadding && 'p-8',
-        'flex flex-col items-center justify-center gap-4 text-center ',
+        'flex flex-col items-center justify-center gap-4 text-center',
         className,
       )}
     >

@@ -35,7 +35,7 @@ import {
 import { type ItemAction, Tree, type TreeProps } from './Tree';
 import type { Action } from './types';
 
-export type { ItemAction, Action };
+export type { Action, ItemAction };
 
 export type NavItem = {
   title: string;
@@ -322,8 +322,8 @@ function CommandButton({ onClick }: { onClick: () => void }) {
             className="pointer-events-none pr-8 pl-8"
             readOnly
           />
-          <Search className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-2 size-4 select-none opacity-50" />
-          <div className="-translate-y-1/2 absolute top-1/2 right-2 rounded-sm opacity-70">
+          <Search className="pointer-events-none absolute top-1/2 left-2 size-4 -translate-y-1/2 select-none opacity-50" />
+          <div className="absolute top-1/2 right-2 -translate-y-1/2 rounded-sm opacity-70">
             <KbdShortcut keys={KEYBOARD_SHORTCUTS.toggleOmniSearch.keys} />
           </div>
         </SidebarGroupContent>

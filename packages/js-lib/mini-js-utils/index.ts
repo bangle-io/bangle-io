@@ -91,11 +91,8 @@ export function intersect<T>(main: T[] | Set<T>, sub: T[] | Set<T>): T[] {
 declare const __brand: unique symbol;
 export type Brand<T, K> = T & { [__brand]: K };
 
-export type IfEquals<T, U, Y = unknown, N = never> = (<G>() => G extends T
-  ? 1
-  : 2) extends <G>() => G extends U ? 1 : 2
-  ? Y
-  : N;
+export type IfEquals<T, U, Y = unknown, N = never> =
+  (<G>() => G extends T ? 1 : 2) extends <G>() => G extends U ? 1 : 2 ? Y : N;
 
 export const expectType = <Expected, Actual>(
   _actual: IfEquals<Actual, Expected, Actual>,

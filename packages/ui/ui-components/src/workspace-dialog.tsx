@@ -172,7 +172,10 @@ export function CreateWorkspaceDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl">
+      <DialogContent
+        className="sm:max-w-xl"
+        screenReaderTitle={t.app.dialogs.createWorkspace.selectTypeTitle}
+      >
         {state.stage === 'select-type' && (
           <StageSelectStorage
             state={state}

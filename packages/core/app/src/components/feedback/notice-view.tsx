@@ -27,7 +27,9 @@ export function NoticeView({
     <ContentSection hasPadding className="mx-auto w-full max-w-lg">
       <PageHeader title={title} illustration={illustration} />
       {description && (
-        <p className="mt-2 text-center text-muted-foreground">{description}</p>
+        <div className="mt-2 text-center text-muted-foreground">
+          {description}
+        </div>
       )}
       {actions && actions.length > 0 && <Actions actions={actions} />}
     </ContentSection>
