@@ -29,7 +29,7 @@
   "scripts": {},
   "dependencies": {
     "@bangle.dev/prosemirror-all": "2.0.0-alpha.18",
-    "jotai": "^2.12.5",
+    "jotai": "^2.20.0",
     "orderedmap": "^2.1.1",
     "prosemirror-commands": "^1.7.1",
     "prosemirror-dropcursor": "^1.8.2",

@@ -292,6 +292,67 @@ Copy this section for each modernization session.
 - [ ] Follow-up:
 
 
+### Session: 2026-05-16 - Jotai state stack upgrade
+
+- [x] Branch: `deps/aggressive-modernization`.
+- [x] Base commit: `9d50c406`.
+- [x] Dependency family: Jotai state stack only.
+- [x] PR/issue: upgrade branch commit only; no PR opened yet.
+- [x] Manifest/lockfile changes intended: `jotai` `^2.12.5` to `^2.20.0` in
+  `packages/core/app`, `packages/core/editor`, `packages/core/omni-search`,
+  `packages/core/service-core`, `packages/js-lib/banger-editor`,
+  `packages/platform/service-platform`, `packages/shared/base-utils`,
+  `packages/shared/types`, `packages/tooling/browser-entry`, and
+  `packages/tooling/test-utils`; `jotai-effect` `^2.0.4` to `^2.3.1` in
+  `packages/core/service-core`; `pnpm-lock.yaml` resolves the matching package
+  versions.
+- [x] Code migrations needed: none.
+- [x] Baseline known warnings: existing cyclic workspace dependency warning,
+  deprecated subdependency warnings, Storybook/Vite peer warning, Node
+  `url.parse()` deprecation warning from install tooling, existing
+  `MODULE_TYPELESS_PACKAGE_JSON` warning from Vitest/env-vars, Sentry auth-token
+  and chunk-size build warnings, CT `use client`/Storybook eval warnings, Radix
+  dialog title/description warnings, nested `<p>` console warning, and local
+  Sentry/telemetry 403.
+- [x] Commands run: install, frozen install, package version check, targeted
+  Jotai specs, broader service-core/service-platform Vitest specs, custom
+  validation via `npm exec --package bun`, typecheck, Biome CI, build, test CI,
+  e2e/CT, browser smoke, responsive smoke, console review, and `git diff
+  --check`.
+- [x] `pnpm install`: passed with
+  `PATH=/tmp/bangle-pnpm-shim:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games corepack pnpm install`;
+  frozen install passed with the same PATH and `--frozen-lockfile`.
+- [x] `pnpm run custom-validation`: passed via `npm exec --yes --package bun --
+  bun packages/tooling/custom-scripts/scripts/validate-all.ts` because local
+  `bun` is not installed on PATH.
+- [x] `pnpm run lint:ci`: equivalent gates passed manually: custom validation,
+  global typecheck, and `pnpm exec biome ci . --diagnostic-level=error`.
+- [x] `pnpm run typecheck`: passed.
+- [x] `pnpm run build`: passed; Sentry auth-token and chunk-size warnings remain.
+- [x] `pnpm run test:ci`: passed, 73 files / 726 passed / 1 skipped; targeted
+  direct Jotai tests passed, 2 files / 16 tests, and broader service package
+  tests passed, 13 files / 69 tests.
+- [ ] `pnpm run e2e-install`: not rerun; Playwright browsers were already
+  installed from the prior Playwright commit.
+- [x] `pnpm run e2e:ci`: passed, 4 E2E tests and 5 component tests.
+- [x] Playwright browser smoke: passed on local dev server at
+  `http://localhost:5173`; created Browser workspace, created note, typed editor
+  content, opened command/search UI, toggled sidebar state, reloaded, confirmed
+  persistence, and reviewed console.
+- [x] Responsive smoke: passed one-off Playwright checks at 390x844 and
+  1440x1000: welcome/create-workspace visible with no horizontal overflow;
+  baseline Radix/Sentry warnings observed.
+- [ ] Production preview smoke: not run for this isolated Jotai stack bump.
+- [ ] Supply-chain audit: not run for this isolated Jotai stack bump.
+- [x] `git diff --check`: passed.
+- [x] Skipped gates and why: production preview and audit skipped because this
+  commit only changes Jotai package versions and lockfile metadata; full local
+  validation/build/test/e2e plus browser and responsive smoke passed.
+- [x] Result: Jotai is updated to `^2.20.0` in all requested manifests, and
+  `jotai-effect` is updated to `^2.3.1` only in `@bangle.io/service-core`.
+- [x] Follow-up: choose next dependency family after pushing this commit.
+
+
 ### Session: 2026-05-16 - fake-indexeddb 6.2.5 storage test helper upgrade
 
 - [x] Branch: `deps/aggressive-modernization`.
