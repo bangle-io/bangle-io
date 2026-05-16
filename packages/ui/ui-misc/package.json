@@ -30,7 +30,7 @@
   "dependencies": {
     "@bangle.io/constants": "workspace:*",
     "clsx": "^2.1.1",
-    "react": "19.1.0",
+    "react": "19.2.6",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {}

@@ -45,9 +45,9 @@
     "date-fns": "^4.1.0",
     "jotai": "^2.20.0",
     "lucide-react": "^1.16.0",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "react-error-boundary": "^6.0.0"
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "react-error-boundary": "^6.1.1"
   },
   "devDependencies": {
     "@bangle.io/test-utils": "workspace:*"

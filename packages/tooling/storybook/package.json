@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "^5.2.0",
-    "react": "19.1.0"
+    "react": "19.2.6"
   },
   "devDependencies": {
     "@bangle.io/browser-entry": "workspace:*",

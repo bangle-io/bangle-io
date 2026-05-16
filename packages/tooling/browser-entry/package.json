@@ -62,8 +62,8 @@
     "class-variance-authority": "^0.7.1",
     "jotai": "^2.20.0",
     "lucide-react": "^1.16.0",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
     "vite": "^7.3.3",
     "vite-plugin-html": "^3.2.2"
   },

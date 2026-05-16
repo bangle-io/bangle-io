@@ -37,7 +37,7 @@
   "license": "AGPL-3.0-or-later",
   "pnpm": {
     "overrides": {
-      "react-dom": "19.1.0"
+      "react-dom": "19.2.6"
     },
     "onlyBuiltDependencies": [
       "@biomejs/biome",

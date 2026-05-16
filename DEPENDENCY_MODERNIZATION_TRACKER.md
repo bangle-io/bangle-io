@@ -333,6 +333,58 @@ Copy this section for each modernization session.
 - [ ] Follow-up:
 
 
+### Session: 2026-05-16 - React 19.2 runtime stack upgrade
+
+- [x] Branch: `deps/aggressive-modernization`.
+- [x] Base commit: `47d800ee`.
+- [x] Dependency family: React runtime stack only.
+- [x] PR/issue: upgrade branch commit only; no PR opened yet.
+- [x] Manifest/lockfile changes intended: `react` `19.1.0` to `19.2.6`
+  everywhere it is directly declared, `react-dom` `19.1.0` to `19.2.6`
+  everywhere it is directly declared, root `pnpm.overrides.react-dom`
+  `19.1.0` to `19.2.6`, and `react-error-boundary` `^6.0.0` to `^6.1.1`
+  in `packages/core/app/package.json`, plus `pnpm-lock.yaml`.
+- [x] Code migrations needed: none.
+- [x] Baseline known warnings: existing cyclic workspace dependency warning,
+  deprecated subdependency warnings, Storybook/Vite peer warning, Node
+  `url.parse()` deprecation warning from install tooling, Sentry auth-token and
+  chunk-size build warnings, Playwright `NO_COLOR`/`FORCE_COLOR` warnings, CT
+  `use client` bundling warnings, and Storybook eval warnings.
+- [x] Commands run: install, frozen install, focused React package list,
+  stale-version/scope search, custom validation via `npm exec --package bun`,
+  Biome CI, typecheck, build, test CI, e2e/CT, and `git diff --check`.
+- [x] `pnpm install`: passed with
+  `PATH=/tmp/bangle-pnpm-shim:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games corepack pnpm install`;
+  frozen install passed with the same PATH and `--frozen-lockfile`.
+- [x] `pnpm run custom-validation`: passed via
+  `npm exec --yes --package bun -- bun packages/tooling/custom-scripts/scripts/validate-all.ts`
+  because local `bun` is not installed on PATH.
+- [x] `pnpm run lint:ci`: equivalent gates passed manually: custom validation,
+  global typecheck, and `pnpm exec biome ci . --diagnostic-level=error`.
+- [x] `pnpm run typecheck`: passed.
+- [x] `pnpm run build`: passed; Sentry auth-token and chunk-size warnings remain.
+- [x] `pnpm run test:ci`: passed, 73 files / 726 passed / 1 skipped; existing
+  React `act(...)` warnings remain in `page-ws-home.spec.tsx`.
+- [ ] `pnpm run e2e-install`: not rerun; browsers were already installed from
+  prior Playwright verification on this branch.
+- [x] `pnpm run e2e:ci`: passed, 4 E2E tests and 5 component tests.
+- [ ] Playwright browser smoke: not run separately; covered by the full
+  Playwright E2E/CT gate for this focused React runtime bump.
+- [ ] Responsive smoke: not run separately for this focused React runtime bump.
+- [ ] Production preview smoke: not run for this focused React runtime bump.
+- [ ] Supply-chain audit: not run for this isolated dependency-family commit.
+- [x] `git diff --check`: passed.
+- [x] Skipped gates and why: separate browser smoke, responsive smoke,
+  production preview, and audit skipped to keep the commit focused; full install,
+  frozen install, version inventory, custom validation, Biome CI, typecheck,
+  build, unit tests, and full E2E/CT passed.
+- [x] Result: React and React DOM are pinned to `19.2.6` throughout direct
+  runtime manifests and the lockfile; `react-error-boundary` is updated to
+  `^6.1.1`; no direct compatibility fallout was needed.
+- [x] Follow-up: commit and push as a separate React runtime stack dependency
+  modernization commit.
+
+
 ### Session: 2026-05-16 - lucide-react 1.16 icon package upgrade
 
 - [x] Branch: `deps/aggressive-modernization`.
