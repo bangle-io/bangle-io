@@ -202,6 +202,47 @@ Verification on 2026-05-16:
 - Responsive smoke passed with Playwright headless checks at `390x844` and `1440x1000`; mobile and desktop rendered the welcome screen and expected controls. Baseline local console noise remained: Radix dialog title warnings on mobile and a Sentry 403 in local dev.
 - `pnpm --filter "@bangle.io/storybook" run build-storybook` remains blocked before CSS processing by `.storybook/main.ts` evaluation: `ReferenceError: require is not defined in ES module scope` from `packages/tooling/env-vars/index.ts`.
 
+## Repo Tooling Patch/Minor Session
+
+As of 2026-05-16, the next separate dependency modernization commit on
+`deps/aggressive-modernization` is the repo tooling patch/minor refresh.
+
+- [x] Scope: `@biomejs/biome` 2.4.13 -> 2.4.15, `@types/bun` ^1.3.13 ->
+  ^1.3.14, `fs-extra` ^11.3.4 -> ^11.3.5, `prettier` 3.5.3 -> 3.8.3, and
+  `tsx` ^4.21.0 -> ^4.22.0.
+- [x] Manifests: root `package.json`,
+  `packages/tooling/custom-scripts/package.json`,
+  `packages/tooling/plop-configs/package.json`, and
+  `packages/tooling/e2e-tests/package.json`.
+- [x] Keep React, Storybook/Chromatic/test-runner, Vite/`@vitejs/plugin-react`,
+  Sentry, Jest/`@jest/globals`/`@types/jest`, TypeScript/`@types/node`,
+  `happy-dom`/`jsdom`, `lucide-react`, `globby`, `syncpack`,
+  `wait-for-expect`, `globals`, `eslint-plugin-react-refresh`, and unrelated
+  dependencies out of scope.
+- [x] Run `pnpm install` with the pinned pnpm/corepack path.
+- [x] Run `pnpm install --frozen-lockfile` with the pinned pnpm/corepack path.
+- [x] Run focused tooling and e2e CT checks as practical.
+
+Verification on 2026-05-16:
+
+- `pnpm install` passed with pnpm 10.12.1; existing cyclic workspace warnings,
+  deprecated subdependency warnings, Storybook 8/Vite 7 peer warnings, and a
+  Node `url.parse()` deprecation warning remain.
+- `pnpm install --frozen-lockfile` passed with pnpm 10.12.1; existing cyclic
+  workspace warnings and the Node `url.parse()` deprecation warning remain.
+- `pnpm run custom-validation` remains blocked because `bun` is not installed on
+  the specified PATH; equivalent validation passed via
+  `npm exec --yes --package bun -- bun packages/tooling/custom-scripts/scripts/validate-all.ts`.
+- `pnpm exec biome ci . --diagnostic-level=error` passed with Biome 2.4.15.
+- `pnpm run typecheck` passed.
+- `pnpm run build` passed; Sentry auth-token and chunk-size warnings remain.
+- `pnpm run test:ci` passed, 73 files / 726 passed / 1 skipped.
+- `pnpm -w run e2e:ci` passed, 4 E2E tests and 5 component tests; CT also
+  passed during focused Codex verification.
+- Direct compatibility fallout: `packages/tooling/e2e-tests/playwright-ct.config.ts`
+  now unwraps the nested default export shape returned by `tsx` 4.22
+  `tsImport('@bangle.io/env-vars', import.meta.url)`.
+
 ## Suggested Branch and PR Slicing
 
 - `deps/baseline-modernization-audit`: no dependency changes; record inventory,
@@ -290,6 +331,50 @@ Copy this section for each modernization session.
 - [ ] Skipped gates and why:
 - [ ] Result:
 - [ ] Follow-up:
+
+
+### Session: 2026-05-16 - Repo tooling patch/minor refresh
+
+- [x] Branch: `deps/aggressive-modernization`.
+- [x] Base commit: `f23ff396`.
+- [x] Dependency family: repo tooling patch/minor refresh only.
+- [x] PR/issue: upgrade branch commit only; no PR opened yet.
+- [x] Manifest/lockfile changes intended: root `@biomejs/biome` `2.4.13` to
+  `2.4.15`, root `@types/bun` `^1.3.13` to `^1.3.14`, `fs-extra` `^11.3.4` to
+  `^11.3.5` in `packages/tooling/custom-scripts` and
+  `packages/tooling/plop-configs`, `prettier` `3.5.3` to `3.8.3` in
+  `packages/tooling/custom-scripts`, `tsx` `^4.21.0` to `^4.22.0` in
+  `packages/tooling/e2e-tests`, plus `pnpm-lock.yaml`.
+- [x] Code migrations needed: `packages/tooling/e2e-tests/playwright-ct.config.ts`
+  unwraps the nested default export shape returned by `tsx` 4.22
+  `tsImport('@bangle.io/env-vars', import.meta.url)`.
+- [x] Baseline known warnings: existing cyclic workspace dependency warning,
+  deprecated subdependency warnings, Storybook/Vite peer warning, Node
+  `url.parse()` deprecation warning from install tooling, Sentry auth-token and
+  chunk-size build warnings, and CT `use client`/Storybook eval warnings.
+- [x] Commands run: install, frozen install, package version check, custom
+  validation via `npm exec --package bun`, Biome CI, typecheck, build, test CI,
+  e2e/CT, and `git diff --check`.
+- [x] `pnpm install`: passed with `PATH=/tmp/bangle-pnpm-shim:$PATH corepack pnpm install`; frozen install passed with `--frozen-lockfile`.
+- [x] `pnpm run custom-validation`: passed via `npm exec --yes --package bun -- bun packages/tooling/custom-scripts/scripts/validate-all.ts` because local `bun` is not installed on PATH.
+- [x] `pnpm run lint:ci`: equivalent gates passed manually: custom validation,
+  global typecheck, and `pnpm exec biome ci . --diagnostic-level=error`.
+- [x] `pnpm run typecheck`: passed.
+- [x] `pnpm run build`: passed; Sentry auth-token and chunk-size warnings remain.
+- [x] `pnpm run test:ci`: passed, 73 files / 726 passed / 1 skipped.
+- [ ] `pnpm run e2e-install`: not rerun; Playwright browsers were already installed from the prior Playwright commit.
+- [x] `pnpm run e2e:ci`: passed, 4 E2E tests and 5 component tests.
+- [ ] Playwright browser smoke: not run for this isolated repo tooling refresh.
+- [ ] Responsive smoke: not run for this isolated repo tooling refresh.
+- [ ] Production preview smoke: not run for this isolated repo tooling refresh.
+- [ ] Supply-chain audit: not run for this isolated repo tooling refresh.
+- [x] `git diff --check`: passed.
+- [x] Skipped gates and why: e2e-install, browser/responsive/production smoke,
+  and audit skipped because this commit changes repo tooling package versions,
+  lockfile metadata, and the CT config compatibility shim; full local
+  validation/build/test/e2e passed.
+- [x] Result: requested repo tooling patch/minor refresh is applied and verified locally.
+- [x] Follow-up: choose next dependency family after pushing this commit.
 
 
 ### Session: 2026-05-16 - Jotai state stack upgrade
