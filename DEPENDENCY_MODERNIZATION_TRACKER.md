@@ -110,7 +110,7 @@ Candidate aggressive families:
 - [ ] Storybook latest major, including React/Vite integration, addons,
   Chromatic, and test runner.
 - [ ] Jest 30 family or removal plan if Jest is no longer needed.
-- [ ] Zod major upgrade for custom scripts and validation schemas.
+- [x] Zod major upgrade for custom scripts and validation schemas.
 - [ ] Sentry major alignment across browser, tracing, and Vite plugin packages.
 - [ ] `lucide-react` and icon/UI package major or large minor updates.
 - [ ] Playwright major or large-version jumps, including container image and
@@ -155,16 +155,17 @@ As of 2026-05-16, after refreshing `main` to PR #298 and capturing
 `pnpm outdated -r --format json`, the recommended next breaking-major PR is
 Zod 4 only.
 
-- [ ] Branch: `deps/zod-4`.
-- [ ] PR title: `chore(deps): update zod to v4`.
-- [ ] Scope: `packages/tooling/custom-scripts/package.json`, `pnpm-lock.yaml`,
+- [x] Branch: `deps/zod-4` (completed on shared branch
+  `deps/aggressive-modernization`).
+- [x] PR title: `chore(deps): update zod to v4`.
+- [x] Scope: `packages/tooling/custom-scripts/package.json`, `pnpm-lock.yaml`,
   and direct Zod 4 fallout in `packages/tooling/custom-scripts/config.ts` or its
-  schema consumers.
-- [ ] Do not mix Storybook, TypeScript, Jest, Sentry, Playwright, Tailwind,
+  schema consumers. No code compatibility edits were needed.
+- [x] Do not mix Storybook, TypeScript, Jest, Sentry, Playwright, Tailwind,
   React, Jotai, ProseMirror, or unrelated custom-script dependency updates.
-- [ ] Stop if Zod 4 requires broader custom-validation redesign, repo-wide
+- [x] Stop if Zod 4 requires broader custom-validation redesign, repo-wide
   package metadata edits, or type fallout outside `packages/tooling/custom-scripts`.
-- [ ] Before starting, re-run the outdated inventory and confirm Zod remains a
+- [x] Before starting, re-run the outdated inventory and confirm Zod remains a
   small isolated major update.
 
 ## Suggested Branch and PR Slicing
@@ -255,3 +256,31 @@ Copy this section for each modernization session.
 - [ ] Skipped gates and why:
 - [ ] Result:
 - [ ] Follow-up:
+
+
+### Session: 2026-05-16 - Zod 4 custom-scripts upgrade
+
+- [x] Branch: `deps/aggressive-modernization`.
+- [x] Base commit: `36a76b4` (`docs: add dependency modernization tracker`).
+- [x] Dependency family: Zod major upgrade.
+- [x] PR/issue: upgrade branch commit only; no PR opened yet.
+- [x] Manifest/lockfile changes intended: `zod` `^3.25.64` to `^4.4.3` in `packages/tooling/custom-scripts/package.json` plus `pnpm-lock.yaml`.
+- [x] Code migrations needed: none; `config.ts` schema usage is compatible.
+- [x] Baseline known warnings: browser smoke still reports existing Radix dialog title/description warnings and nested `<p>` warning unrelated to Zod.
+- [x] Commands run: install, Zod version/list, custom-scripts Vitest specs, Zod schema runtime smoke, custom validation via `npm exec --package bun`, typecheck, Biome CI, build, test CI, e2e/CT, browser smoke, `git diff --check`.
+- [x] `pnpm install`: passed with `corepack pnpm install --frozen-lockfile`.
+- [x] `pnpm run custom-validation`: passed via `npm exec --yes --package bun -- bun packages/tooling/custom-scripts/scripts/validate-all.ts` because `bun` is not installed on PATH locally.
+- [x] `pnpm run lint:ci`: equivalent gates passed manually: custom validation, `pnpm run typecheck`, and `biome ci . --diagnostic-level=error`.
+- [x] `pnpm run typecheck`: passed.
+- [x] `pnpm run build`: passed.
+- [x] `pnpm run test:ci`: passed, 73 files / 726 passed / 1 skipped.
+- [ ] `pnpm run e2e-install`: not run; browsers were already installed.
+- [x] `pnpm run e2e:ci`: passed, 4 E2E tests and 5 component tests.
+- [x] Playwright browser smoke: passed on local dev server at `http://localhost:5173`; created Browser workspace, created note, typed content, reloaded, confirmed persistence, opened command/search UI, checked console.
+- [ ] Responsive smoke: not run for Zod-only tooling change.
+- [ ] Production preview smoke: not run for Zod-only tooling change.
+- [ ] Supply-chain audit: not run for this isolated Zod commit.
+- [x] `git diff --check`: passed.
+- [x] Skipped gates and why: responsive/production/audit skipped because this commit only changes custom-scripts Zod; `e2e-install` skipped because installed browsers were available.
+- [x] Result: Zod 4 verified and ready to commit.
+- [x] Follow-up: choose next dependency family after pushing this commit.
