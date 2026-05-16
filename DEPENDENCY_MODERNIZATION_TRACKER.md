@@ -258,6 +258,34 @@ Copy this section for each modernization session.
 - [ ] Follow-up:
 
 
+### Session: 2026-05-16 - ProseMirror banger-editor runtime patch upgrade
+
+- [x] Branch: `deps/aggressive-modernization`.
+- [x] Base commit: `dfbdd81e`.
+- [x] Dependency family: ProseMirror editor runtime patch family in `@bangle.io/banger-editor` only.
+- [x] PR/issue: upgrade branch commit only; no PR opened yet.
+- [x] Manifest/lockfile changes intended: `prosemirror-model` `^1.25.4` to `^1.25.6`, `prosemirror-gapcursor` `^1.3.2` to `^1.4.1`, and `prosemirror-history` `^1.4.1` to `^1.5.0` in `packages/js-lib/banger-editor/package.json` plus `pnpm-lock.yaml`.
+- [x] Code migrations needed: none. Lockfile keeps the ProseMirror runtime graph on `prosemirror-model` `1.25.6` to avoid duplicate nominal ProseMirror model types.
+- [x] Baseline known warnings: existing cyclic workspace dependency warning and Storybook/Vite peer warning during install; Node `url.parse()` deprecation warning from install tooling.
+- [x] Commands run: install, frozen install, package version check, targeted banger-editor Vitest specs, custom validation via `npm exec --package bun`, typecheck, Biome CI, build, test CI, targeted simple editor E2E, full e2e/CT, browser smoke, console review, `git diff --check`.
+- [x] `pnpm install`: passed with `corepack pnpm install`; then `corepack pnpm install --frozen-lockfile` passed.
+- [x] `pnpm run custom-validation`: passed via `npm exec --yes --package bun -- bun packages/tooling/custom-scripts/scripts/validate-all.ts` because `bun` is not installed on PATH locally.
+- [x] `pnpm run lint:ci`: equivalent gates passed manually: custom validation, `pnpm run typecheck`, and `biome ci . --diagnostic-level=error`.
+- [x] `pnpm run typecheck`: passed globally.
+- [x] `pnpm run build`: passed.
+- [x] `pnpm run test:ci`: passed, 73 files / 726 passed / 1 skipped; targeted banger-editor specs also passed, 3 files / 36 tests.
+- [ ] `pnpm run e2e-install`: not rerun; Playwright browsers were already installed from the prior Playwright commit.
+- [x] `pnpm run e2e:ci`: passed, 4 E2E tests and 5 component tests; targeted `simple-workspace-creation-worflow.e2e.ts` also passed.
+- [x] Playwright browser smoke: passed on local dev server at `http://localhost:5173`; created Browser workspace, created note, typed editor content, reloaded, confirmed persistence, opened command/search UI, checked console.
+- [ ] Responsive smoke: not run for this isolated editor runtime patch bump.
+- [ ] Production preview smoke: not run for this isolated editor runtime patch bump.
+- [ ] Supply-chain audit: not run for this isolated editor runtime patch bump.
+- [x] `git diff --check`: passed.
+- [x] Skipped gates and why: `e2e-install`, responsive smoke, production preview, and audit skipped because this commit only changes ProseMirror runtime patch versions; full local CI-style gates, full E2E/CT, and browser smoke passed.
+- [x] Result: requested ProseMirror runtime patch upgrades are applied and verified locally.
+- [x] Follow-up: choose next dependency family after pushing this commit.
+
+
 ### Session: 2026-05-16 - Playwright 1.60 e2e upgrade
 
 - [x] Branch: `deps/aggressive-modernization`.
