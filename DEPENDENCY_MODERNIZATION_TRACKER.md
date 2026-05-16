@@ -292,6 +292,49 @@ Copy this section for each modernization session.
 - [ ] Follow-up:
 
 
+### Session: 2026-05-16 - fake-indexeddb 6.2.5 storage test helper upgrade
+
+- [x] Branch: `deps/aggressive-modernization`.
+- [x] Base commit: `a7c2f07c`.
+- [x] Dependency family: `fake-indexeddb` only.
+- [x] PR/issue: upgrade branch commit only; no PR opened yet.
+- [x] Manifest/lockfile changes intended: root `package.json` updates
+  `fake-indexeddb` from `^6.0.1` to `^6.2.5`; `pnpm-lock.yaml` resolves the
+  matching package version.
+- [x] Code migrations needed: none.
+- [x] Baseline known warnings: existing cyclic workspace dependency warning,
+  Storybook/Vite peer warning, deprecated subdependency warnings, and Node
+  `url.parse()` deprecation warning from install tooling.
+- [x] Commands run: install, frozen install, package version check, targeted
+  IndexedDB/fake storage Vitest specs, custom validation via `npm exec --package
+  bun`, typecheck, Biome CI, build, test CI, and `git diff --check`.
+- [x] `pnpm install`: passed with `corepack pnpm install`; frozen install passed
+  with `corepack pnpm install --frozen-lockfile`.
+- [x] `pnpm run custom-validation`: passed via `npm exec --yes --package bun --
+  bun packages/tooling/custom-scripts/scripts/validate-all.ts` because local
+  `bun` is not installed on PATH.
+- [x] `pnpm run lint:ci`: equivalent gates passed manually: custom validation,
+  global typecheck, and `pnpm exec biome ci . --diagnostic-level=error`.
+- [x] `pnpm run typecheck`: passed.
+- [x] `pnpm run build`: passed; Sentry auth-token and chunk-size warnings remain.
+- [x] `pnpm run test:ci`: passed, 73 files / 726 passed / 1 skipped; targeted
+  IndexedDB/fake storage Vitest specs passed, 3 files / 17 tests.
+- [ ] `pnpm run e2e-install`: not run for this isolated root test helper patch bump.
+- [ ] `pnpm run e2e:ci`: not run for this isolated root test helper patch bump.
+- [ ] Playwright browser smoke: not run for this isolated root test helper patch bump.
+- [ ] Responsive smoke: not run for this isolated root test helper patch bump.
+- [ ] Production preview smoke: not run for this isolated root test helper patch bump.
+- [ ] Supply-chain audit: not run for this isolated root test helper patch bump.
+- [x] `git diff --check`: passed.
+- [x] Skipped gates and why: E2E/CT, browser smoke, responsive smoke, production
+  preview, and audit skipped because this commit only changes the root fake
+  IndexedDB test helper; full local validation/build/test and targeted IndexedDB
+  Vitest coverage passed.
+- [x] Result: `fake-indexeddb` is updated to `^6.2.5` and resolved to `6.2.5`
+  with no direct compatibility fallout.
+- [x] Follow-up: choose next dependency family after pushing this commit.
+
+
 ### Session: 2026-05-16 - ProseMirror banger-editor runtime patch upgrade
 
 - [x] Branch: `deps/aggressive-modernization`.

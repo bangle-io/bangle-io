@@ -54,8 +54,8 @@ importers:
         specifier: 4.1.6
         version: 4.1.6(@vitest/browser@4.1.6)(vitest@4.1.6)
       fake-indexeddb:
-        specifier: ^6.0.1
-        version: 6.0.1
+        specifier: ^6.2.5
+        version: 6.2.5
       happy-dom:
         specifier: ^17.6.3
         version: 17.6.3
@@ -4356,8 +4356,8 @@ packages:
   extend@3.0.2:
     resolution: {integrity: sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==}
 
-  fake-indexeddb@6.0.1:
-    resolution: {integrity: sha512-He2AjQGHe46svIFq5+L2Nx/eHDTI1oKgoevBP+TthnjymXiKkeJQ3+ITeWey99Y5+2OaPFbI1qEsx/5RsGtWnQ==}
+  fake-indexeddb@6.2.5:
+    resolution: {integrity: sha512-CGnyrvbhPlWYMngksqrSSUT1BAVP49dZocrHuK0SvtR0D5TMs5wP0o3j7jexDJW01KSadjBp1M/71o/KR3nD1w==}
     engines: {node: '>=18'}
 
   fast-check@3.23.2:
@@ -10244,7 +10244,7 @@ snapshots:
 
   extend@3.0.2: {}
 
-  fake-indexeddb@6.0.1: {}
+  fake-indexeddb@6.2.5: {}
 
   fast-check@3.23.2:
     dependencies:
