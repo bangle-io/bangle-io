@@ -60,7 +60,7 @@ jobs:
   e2e-tests:
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    container: mcr.microsoft.com/playwright:v1.52.0-noble
+    container: mcr.microsoft.com/playwright:v1.60.0-noble
     steps:
       - uses: actions/checkout@v4
       - name: Install pnpm

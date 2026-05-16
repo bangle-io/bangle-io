@@ -113,7 +113,7 @@ Candidate aggressive families:
 - [x] Zod major upgrade for custom scripts and validation schemas.
 - [ ] Sentry major alignment across browser, tracing, and Vite plugin packages.
 - [ ] `lucide-react` and icon/UI package major or large minor updates.
-- [ ] Playwright major or large-version jumps, including container image and
+- [x] Playwright major or large-version jumps, including container image and
   component test behavior.
 - [ ] GitHub Actions major updates for checkout, setup-node, upload-artifact,
   cache, setup-bun, and setup-biome.
@@ -256,6 +256,34 @@ Copy this section for each modernization session.
 - [ ] Skipped gates and why:
 - [ ] Result:
 - [ ] Follow-up:
+
+
+### Session: 2026-05-16 - Playwright 1.60 e2e upgrade
+
+- [x] Branch: `deps/aggressive-modernization`.
+- [x] Base commit: `b91447e`.
+- [x] Dependency family: Playwright E2E/CT packages and matching CI container image only.
+- [x] PR/issue: upgrade branch commit only; no PR opened yet.
+- [x] Manifest/lockfile changes intended: `@playwright/test` and `@playwright/experimental-ct-react` `^1.59.1` to `^1.60.0` in `packages/tooling/e2e-tests/package.json` plus `pnpm-lock.yaml`; CI container image to `mcr.microsoft.com/playwright:v1.60.0-noble`.
+- [x] Code migrations needed: none.
+- [x] Baseline known warnings: existing Storybook/Vite peer warning during install, Playwright `NO_COLOR`/`FORCE_COLOR` warning, CT build `use client` and Storybook eval warnings, Radix dialog title/description warnings, and nested `<p>` warning unrelated to Playwright.
+- [x] Commands run: frozen install, Playwright version check, custom validation via `npm exec --package bun`, typecheck, Biome CI, build, test CI, Playwright browser install, e2e/CT, browser smoke, console review, `git diff --check`.
+- [x] `pnpm install`: passed with `corepack pnpm install --frozen-lockfile`.
+- [x] `pnpm run custom-validation`: passed via `npm exec --yes --package bun -- bun packages/tooling/custom-scripts/scripts/validate-all.ts` because `bun` is not installed on PATH locally.
+- [x] `pnpm run lint:ci`: equivalent gates passed manually: custom validation, `pnpm run typecheck`, and `biome ci . --diagnostic-level=error`.
+- [x] `pnpm run typecheck`: passed.
+- [x] `pnpm run build`: passed.
+- [x] `pnpm run test:ci`: passed, 73 files / 726 passed / 1 skipped.
+- [x] `pnpm run e2e-install`: passed via `corepack pnpm -w run e2e-install`; installed/verified Playwright Chromium v1223.
+- [x] `pnpm run e2e:ci`: passed, 4 E2E tests and 5 component tests.
+- [x] Playwright browser smoke: passed on local dev server at `http://localhost:5173`; created Browser workspace, created note, typed content, reloaded, confirmed persistence, opened command/search UI, checked console.
+- [ ] Responsive smoke: not run for Playwright-only dependency bump.
+- [ ] Production preview smoke: not run for Playwright-only dependency bump.
+- [ ] Supply-chain audit: not run for this isolated Playwright commit.
+- [x] `git diff --check`: passed.
+- [x] Skipped gates and why: responsive/production/audit skipped because this commit only changes Playwright E2E/CT tooling and CI image.
+- [x] Result: Playwright package family and matching CI image are updated and verified locally.
+- [x] Follow-up: choose next dependency family after pushing this commit.
 
 
 ### Session: 2026-05-16 - Zod 4 custom-scripts upgrade
