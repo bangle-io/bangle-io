@@ -425,6 +425,56 @@ Copy this section for each modernization session.
 - [ ] Follow-up:
 
 
+### Session: 2026-05-16 - globby 16 tooling upgrade
+
+- [x] Branch: `deps/aggressive-modernization`.
+- [x] Base commit: `067c9639`.
+- [x] Dependency family: `globby` only.
+- [x] PR/issue: upgrade branch commit only; no PR opened yet.
+- [x] Manifest/lockfile changes intended: `globby` `^14.1.0` to `^16.2.0`
+  in `packages/tooling/custom-scripts/package.json` and
+  `packages/tooling/storybook/package.json`, plus `pnpm-lock.yaml`.
+- [x] Code migrations needed: none. `packages/tooling/custom-scripts/lib/workspace-helper.ts`
+  remains compatible with `globbySync` v16; custom validation exercises the
+  workspace package discovery path.
+- [x] Baseline known warnings: existing cyclic workspace dependency warning,
+  deprecated subdependency warnings, Storybook 8/Vite 7 peer warning, Node
+  `url.parse()` deprecation warning from install tooling, Sentry auth-token and
+  chunk-size build warnings, Playwright `NO_COLOR`/`FORCE_COLOR` warnings, CT
+  `use client`/sourcemap/Storybook eval warnings.
+- [x] Commands run: install, frozen install, stale `globby` version search,
+  custom validation via `npm exec --package bun`, Biome CI, typecheck, build,
+  test CI, e2e/CT, and `git diff --check`.
+- [x] `pnpm install`: passed with
+  `PATH=/tmp/bangle-pnpm-shim:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games corepack pnpm install`;
+  frozen install passed with the same PATH and `--frozen-lockfile`.
+- [x] `pnpm run custom-validation`: passed via
+  `npm exec --yes --package bun -- bun packages/tooling/custom-scripts/scripts/validate-all.ts`.
+- [x] `pnpm run lint:ci`: equivalent gates passed manually: custom validation,
+  global typecheck, and `pnpm exec biome ci . --diagnostic-level=error`.
+- [x] `pnpm run typecheck`: passed.
+- [x] `pnpm run build`: passed; Sentry auth-token and chunk-size warnings remain.
+- [x] `pnpm run test:ci`: passed, 73 files / 726 passed / 1 skipped.
+- [ ] `pnpm run e2e-install`: not rerun; Playwright browsers were already
+  installed from prior verification on this branch.
+- [x] `pnpm run e2e:ci`: passed, 4 E2E tests and 5 component tests.
+- [ ] Playwright browser smoke: not run separately for this isolated tooling
+  dependency bump.
+- [ ] Responsive smoke: not run separately for this isolated tooling dependency bump.
+- [ ] Production preview smoke: not run for this isolated tooling dependency bump.
+- [ ] Supply-chain audit: not run for this isolated tooling dependency bump.
+- [x] `git diff --check`: passed.
+- [x] Skipped gates and why: e2e-install, separate browser/responsive/
+  production smoke, and audit skipped because this commit only changes direct
+  `globby` manifests and lockfile metadata; full validation/build/test/e2e
+  passed.
+- [x] Result: both direct `globby` declarations now use `^16.2.0` and resolve
+  to `16.2.0`; stale direct-version search found no remaining direct
+  `globby@14.1.0`. The remaining lockfile `globby@14.1.0` is transitive under
+  `syncpack@13.0.4`, which was intentionally left out of scope.
+- [x] Follow-up: commit as a separate `globby` dependency modernization commit.
+
+
 ### Session: 2026-05-16 - React 19.2 runtime stack upgrade
 
 - [x] Branch: `deps/aggressive-modernization`.

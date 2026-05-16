@@ -57,7 +57,7 @@
     "@storybook/types": "^8.6.18",
     "autoprefixer": "^10.5.0",
     "chromatic": "^11.29.0",
-    "globby": "^14.1.0",
+    "globby": "^16.2.0",
     "prop-types": "^15.8.1",
     "storybook": "^8.6.18",
     "tailwindcss": "^4.3.0",
