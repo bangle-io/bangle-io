@@ -113,7 +113,7 @@ Candidate aggressive families:
 - [x] DOM test environment major update for `happy-dom` and `jsdom`.
 - [x] Tailwind/CSS support stack patch-minor refresh.
 - [x] Zod major upgrade for custom scripts and validation schemas.
-- [ ] Sentry major alignment across browser, tracing, and Vite plugin packages.
+- [x] Sentry major alignment across browser, tracing, and Vite plugin packages.
 - [x] `lucide-react` and icon/UI package major or large minor updates.
 - [x] Playwright major or large-version jumps, including container image and
   component test behavior.
@@ -883,6 +883,51 @@ Copy this section for each modernization session.
 - [x] Result: `fake-indexeddb` is updated to `^6.2.5` and resolved to `6.2.5`
   with no direct compatibility fallout.
 - [x] Follow-up: choose next dependency family after pushing this commit.
+
+
+### Session: 2026-05-16 - Sentry browser-entry family upgrade
+
+- [x] Branch: `deps/aggressive-modernization`.
+- [x] Base commit: `325ef748`.
+- [x] Dependency family: Sentry browser-entry family only.
+- [x] PR/issue: upgrade branch commit only; no PR opened yet.
+- [x] Manifest/lockfile changes intended: `@sentry/browser` `^9.47.1` to
+  `^10.53.1`, `@sentry/vite-plugin` `^3.6.1` to `^5.3.0`, and remove unused
+  `@sentry/tracing` from `packages/tooling/browser-entry/package.json` plus
+  `pnpm-lock.yaml`.
+- [x] Code migrations needed: none.
+- [x] Baseline known warnings: existing cyclic workspace dependency warning,
+  Storybook/Vite peer warning, deprecated subdependency warnings, Node
+  `url.parse()` deprecation warning from install tooling, Sentry missing auth
+  token/source-map warnings, and existing chunk-size warning.
+- [x] Commands run: install, frozen install, focused `@sentry/tracing` usage
+  search, custom validation, Biome CI, typecheck, browser-entry build, root
+  build, test CI, E2E/CT, and `git diff --check`.
+- [x] `pnpm install`: passed with
+  `PATH=/tmp/bangle-pnpm-shim:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games corepack pnpm install`.
+- [x] `pnpm install --frozen-lockfile`: passed with the same PATH.
+- [x] Focused `@sentry/tracing` usage search: only manifest/lockfile entries
+  before removal when excluding generated `packages/tooling/browser-entry/dist`.
+- [x] Focused `@sentry/tracing` usage search after removal: only this tracker
+  session mentions `@sentry/tracing` when excluding generated
+  `packages/tooling/browser-entry/dist`.
+- [x] `pnpm run typecheck`: passed.
+- [x] Custom validation passed via
+  `npm exec --yes --package bun -- bun packages/tooling/custom-scripts/scripts/validate-all.ts`.
+- [x] `pnpm exec biome ci . --diagnostic-level=error`: passed.
+- [x] `pnpm --filter "@bangle.io/browser-entry" run build`: passed.
+- [x] `pnpm run build`: passed.
+- [x] `pnpm run test:ci`: passed, 73 files / 726 passed / 1 skipped.
+- [x] `pnpm -w run e2e:ci`: passed, 4 E2E tests and 5 component tests;
+  existing Playwright CT `use client`, sourcemap, and Storybook eval warnings
+  remain.
+- [x] Build output inspection: browser-entry and root builds only reported
+  Sentry telemetry, missing auth-token/release/source-map warnings, and the
+  existing chunk-size warning; no Sentry plugin errors.
+- [x] `git diff --check`: passed.
+- [x] Result: Sentry browser-entry family is updated to `@sentry/browser`
+  `^10.53.1` and `@sentry/vite-plugin` `^5.3.0`; unused `@sentry/tracing` is
+  removed with no direct compatibility fallout.
 
 
 ### Session: 2026-05-16 - ProseMirror banger-editor runtime patch upgrade
