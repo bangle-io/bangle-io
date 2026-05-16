@@ -110,6 +110,7 @@ Candidate aggressive families:
 - [ ] Storybook latest major, including React/Vite integration, addons,
   Chromatic, and test runner.
 - [ ] Jest 30 family or removal plan if Jest is no longer needed.
+- [x] Tailwind/CSS support stack patch-minor refresh.
 - [x] Zod major upgrade for custom scripts and validation schemas.
 - [ ] Sentry major alignment across browser, tracing, and Vite plugin packages.
 - [ ] `lucide-react` and icon/UI package major or large minor updates.
@@ -167,6 +168,39 @@ Zod 4 only.
   package metadata edits, or type fallout outside `packages/tooling/custom-scripts`.
 - [x] Before starting, re-run the outdated inventory and confirm Zod remains a
   small isolated major update.
+
+## Tailwind/CSS Support Stack Session
+
+As of 2026-05-16, the next separate dependency modernization commit on
+`deps/aggressive-modernization` is the Tailwind/CSS support stack refresh.
+
+- [x] Scope: `tailwindcss` 4.2.4 -> 4.3.0, `@tailwindcss/vite` 4.2.4 ->
+  4.3.0, `postcss` 8.5.12 -> 8.5.14, `autoprefixer` 10.4.21 -> 10.5.0, and
+  `tailwind-merge` 3.5.0 -> 3.6.0.
+- [x] Manifests: `packages/tooling/browser-entry/package.json`,
+  `packages/tooling/e2e-tests/package.json`,
+  `packages/tooling/storybook/package.json`,
+  `packages/tooling/custom-scripts/package.json`,
+  `packages/ui/ui-components/package.json`, and
+  `packages/ui/ui-misc/package.json`.
+- [x] Keep Vite, `@vitejs/plugin-react`, Storybook, React/React DOM,
+  `lucide-react`, Jotai, Sentry, Jest/jsdom/happy-dom, TypeScript, Node types,
+  and unrelated dependencies out of scope.
+- [x] Run `pnpm install` with the pinned pnpm/corepack path.
+- [x] Run focused CSS/build validation and record any skipped checks.
+
+Verification on 2026-05-16:
+
+- `pnpm install --frozen-lockfile` passed with pnpm 10.12.1; Storybook 8/Vite 7 peer warnings remain.
+- `pnpm run custom-validation` equivalent passed via `npm exec --yes --package bun -- bun packages/tooling/custom-scripts/scripts/validate-all.ts` because local `bun` is not installed on PATH.
+- `pnpm run lint:ci` equivalent gates passed manually: custom validation, global typecheck, and `pnpm exec biome ci . --diagnostic-level=error`.
+- `pnpm run typecheck` passed.
+- `pnpm run build` passed; Sentry auth-token and chunk-size warnings remain.
+- `pnpm run test:ci` passed, 73 files / 726 passed / 1 skipped.
+- `pnpm -w run e2e:ci` passed, 4 E2E tests and 5 component tests; targeted `simple-workspace-creation-worflow.e2e.ts` passed when run through the package script.
+- Browser smoke passed on local dev server at `http://localhost:5173`: title/welcome screen, Browser workspace creation, note creation, editor typing, reload persistence, command/search UI, and console review.
+- Responsive smoke passed with Playwright headless checks at `390x844` and `1440x1000`; mobile and desktop rendered the welcome screen and expected controls. Baseline local console noise remained: Radix dialog title warnings on mobile and a Sentry 403 in local dev.
+- `pnpm --filter "@bangle.io/storybook" run build-storybook` remains blocked before CSS processing by `.storybook/main.ts` evaluation: `ReferenceError: require is not defined in ES module scope` from `packages/tooling/env-vars/index.ts`.
 
 ## Suggested Branch and PR Slicing
 
