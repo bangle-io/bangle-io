@@ -476,6 +476,63 @@ Copy this section for each modernization session.
 - [ ] Follow-up:
 
 
+### Session: 2026-05-16 - browser-entry ESLint helper pair upgrade
+
+- [x] Branch: `deps/aggressive-modernization`.
+- [x] Base commit: `93f551c6`.
+- [x] Dependency family: browser-entry ESLint helper pair only:
+  `globals` and `eslint-plugin-react-refresh`.
+- [x] PR/issue: upgrade branch commit only; no PR opened yet.
+- [x] Manifest/lockfile changes intended: `globals` `^16.2.0` to `^17.6.0`
+  and `eslint-plugin-react-refresh` `^0.4.20` to `^0.5.2` in
+  `packages/tooling/browser-entry/package.json`, plus `pnpm-lock.yaml`.
+- [x] Code migrations needed: none.
+- [x] Baseline known warnings: existing cyclic workspace dependency warning,
+  deprecated subdependency warnings, Storybook/Vite peer warning, Node
+  `url.parse()` deprecation warning from install tooling, Sentry auth-token and
+  chunk-size build warnings, CT `use client`/sourcemap/Storybook eval warnings,
+  and Playwright `NO_COLOR`/`FORCE_COLOR` warnings.
+- [x] Commands run: install, frozen install, stale direct version search,
+  browser-entry lint attempt, custom validation via `npm exec --package bun`,
+  Biome CI, typecheck, build, test CI, e2e/CT, and `git diff --check`.
+- [x] `pnpm install`: passed with
+  `PATH=/tmp/bangle-pnpm-shim:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games corepack pnpm install`;
+  frozen install passed with the same PATH and `--frozen-lockfile`.
+- [x] Stale direct version searches: passed; no remaining direct references to
+  `globals` `^16.2.0`/`globals@16.2.0` or
+  `eslint-plugin-react-refresh` `^0.4.20`/`0.4.20` were found.
+- [ ] Browser-entry package lint: attempted with
+  `pnpm --filter @bangle.io/browser-entry run lint`; failed before linting
+  because ESLint 9 could not find `eslint.config.(js|mjs|cjs)` for the package.
+- [x] `pnpm run custom-validation`: passed via
+  `npm exec --yes --package bun -- bun packages/tooling/custom-scripts/scripts/validate-all.ts`
+  because local `bun` is not installed on PATH.
+- [x] `pnpm run lint:ci`: equivalent gates passed manually: custom validation,
+  global typecheck, and `pnpm exec biome ci . --diagnostic-level=error`.
+- [x] `pnpm run typecheck`: passed.
+- [x] `pnpm run build`: passed; Sentry auth-token and chunk-size warnings remain.
+- [x] `pnpm run test:ci`: passed, 73 files / 726 passed / 1 skipped.
+- [ ] `pnpm run e2e-install`: not rerun; Playwright browsers were already
+  installed from prior verification on this branch.
+- [x] `pnpm run e2e:ci`: passed, 4 E2E tests and 5 component tests.
+- [ ] Playwright browser smoke: not run separately; full Playwright E2E/CT gate
+  passed for this focused lint-helper dependency bump.
+- [ ] Responsive smoke: not run separately for this isolated lint-helper bump.
+- [ ] Production preview smoke: not run for this isolated lint-helper bump.
+- [ ] Supply-chain audit: not run for this isolated lint-helper bump.
+- [x] `git diff --check`: passed.
+- [x] Skipped gates and why: e2e-install, separate manual browser/responsive/
+  production smoke, and audit skipped because this commit only updates the
+  browser-entry ESLint helper pair; browser-entry package lint is blocked by the
+  existing missing ESLint 9 flat-config setup, while repo validation, Biome,
+  typecheck, build, unit tests, and E2E/CT passed.
+- [x] Result: `packages/tooling/browser-entry` now specifies `globals`
+  `^17.6.0` and `eslint-plugin-react-refresh` `^0.5.2`; the lockfile resolves
+  to `17.6.0` and `0.5.2` respectively, with no direct compatibility fallout.
+- [x] Follow-up: commit this as a separate browser-entry ESLint helper
+  dependency modernization commit after review.
+
+
 ### Session: 2026-05-16 - globby 16 tooling upgrade
 
 - [x] Branch: `deps/aggressive-modernization`.
