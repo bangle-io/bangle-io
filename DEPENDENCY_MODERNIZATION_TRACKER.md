@@ -244,6 +244,60 @@ Verification on 2026-05-16:
   now unwraps the nested default export shape returned by `tsx` 4.22
   `tsImport('@bangle.io/env-vars', import.meta.url)`.
 
+## Wait For Expect Session
+
+As of 2026-05-16, the next separate dependency modernization commit on
+`deps/aggressive-modernization` is the `wait-for-expect` major update.
+
+- [x] Scope: `packages/tooling/test-utils` `wait-for-expect` `^3.0.2` ->
+  `^4.0.0`.
+- [x] Manifests: `packages/tooling/test-utils/package.json` and
+  `pnpm-lock.yaml`.
+- [x] Direct import/export fallout: no code changes needed in
+  `packages/tooling/test-utils/common-opts.ts` or
+  `packages/tooling/test-utils/test-service-setup.ts`; v4 still exposes a
+  default export and matching `lib/index.d.ts`.
+- [x] Keep Storybook/Chromatic/test-runner, Jest/`@jest/globals`/`@types/jest`,
+  Sentry, TypeScript/`@types/node`, Vite/`@vitejs/plugin-react`,
+  `globals`/`globby`/`syncpack`/`eslint-plugin-react-refresh`, and unrelated
+  dependencies out of scope.
+- [x] Run `pnpm install` with the pinned pnpm/corepack path.
+- [x] Run `pnpm install --frozen-lockfile` with the pinned pnpm/corepack path.
+- [x] Run a focused `wait-for-expect` export smoke or test-utils test.
+- [x] Run custom validation via
+  `npm exec --yes --package bun -- bun packages/tooling/custom-scripts/scripts/validate-all.ts`.
+- [x] Run `pnpm exec biome ci . --diagnostic-level=error`.
+- [x] Run `pnpm run typecheck`.
+- [x] Run `pnpm run build`.
+- [x] Run `pnpm run test:ci`.
+- [x] Run `pnpm -w run e2e:ci`.
+
+Verification on 2026-05-16:
+
+- `pnpm --filter @bangle.io/test-utils add wait-for-expect@^4.0.0` passed
+  with pnpm 10.12.1; existing Storybook 8/Vite 7 peer warnings,
+  deprecated-subdependency warnings, and Node `url.parse()` deprecation warning
+  remain.
+- `pnpm install` passed with pnpm 10.12.1; existing cyclic workspace warnings
+  and Node `url.parse()` deprecation warning remain.
+- `pnpm install --frozen-lockfile` passed with pnpm 10.12.1; existing cyclic
+  workspace warnings and Node `url.parse()` deprecation warning remain.
+- Direct export smoke passed through the `@bangle.io/test-utils` workspace:
+  `pnpm --filter @bangle.io/test-utils exec node --input-type=module ...`.
+- Focused Vitest usage check passed:
+  `pnpm vitest run --configLoader runner packages/shared/base-utils/__tests__/index.spec.ts`
+  (1 file / 4 tests passed).
+- Custom validation passed via
+  `npm exec --yes --package bun -- bun packages/tooling/custom-scripts/scripts/validate-all.ts`.
+- `pnpm exec biome ci . --diagnostic-level=error` passed.
+- `pnpm run typecheck` passed.
+- `pnpm run build` passed; Sentry auth-token and chunk-size warnings remain.
+- `pnpm run test:ci` passed, 73 files / 726 passed / 1 skipped; existing
+  React `act(...)` warnings remain in `page-ws-home.spec.tsx`.
+- `pnpm -w run e2e:ci` passed, 4 E2E tests and 5 component tests; existing
+  Vite/Storybook component-test warnings about `use client` directives and
+  Storybook `eval` remain.
+
 ## DOM Test Environment Session
 
 As of 2026-05-16, the next separate dependency modernization commit on

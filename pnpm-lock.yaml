@@ -1015,8 +1015,8 @@ importers:
         specifier: 19.2.6
         version: 19.2.6(react@19.2.6)
       wait-for-expect:
-        specifier: ^3.0.2
-        version: 3.0.2
+        specifier: ^4.0.0
+        version: 4.0.0
 
   packages/ui/shadcn:
     dependencies:
@@ -6915,8 +6915,8 @@ packages:
     resolution: {integrity: sha512-o8qghlI8NZHU1lLPrpi2+Uq7abh4GGPpYANlalzWxyWteJOCsr/P+oPBA49TOLu5FTZO4d3F9MnWJfiMo4BkmA==}
     engines: {node: '>=18'}
 
-  wait-for-expect@3.0.2:
-    resolution: {integrity: sha512-cfS1+DZxuav1aBYbaO/kE06EOS8yRw7qOFoD3XtjTkYvCvh3zUvNST8DXK/nPaeqIzIv3P3kL3lRJn8iwOiSag==}
+  wait-for-expect@4.0.0:
+    resolution: {integrity: sha512-mcH2HYUUHhdFGHVJkgwkBxRihZO4VSuPyh6xhYHz7LEnYkcaLbTAEEsTpYiFw4UY45XdTZYYIaquuMucw9wWMw==}
 
   wait-on@7.2.0:
     resolution: {integrity: sha512-wCQcHkRazgjG5XoAq9jbTMLpNIjoSlZslrJ2+N9MxDsGEv1HnFoVjOCexL0ESva7Y9cu350j+DWADdk54s4AFQ==}
@@ -13144,7 +13144,7 @@ snapshots:
     dependencies:
       xml-name-validator: 5.0.0
 
-  wait-for-expect@3.0.2: {}
+  wait-for-expect@4.0.0: {}
 
   wait-on@7.2.0:
     dependencies:
