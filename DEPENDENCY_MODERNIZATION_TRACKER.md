@@ -298,6 +298,57 @@ Verification on 2026-05-16:
   Vite/Storybook component-test warnings about `use client` directives and
   Storybook `eval` remain.
 
+## Syncpack Session
+
+As of 2026-05-16, the next separate dependency modernization commit on
+`deps/aggressive-modernization` is the `syncpack` major update.
+
+- [x] Scope: `packages/tooling/custom-scripts` `syncpack` `^13.0.4` ->
+  `^15.1.2`.
+- [x] Manifests: `packages/tooling/custom-scripts/package.json` and
+  `pnpm-lock.yaml`.
+- [x] Direct compatibility fallout: no code changes needed; custom validation
+  passed and the only direct `syncpack` usage is the package declaration.
+- [x] Keep Storybook/Chromatic/test-runner, Jest/`@jest/globals`/`@types/jest`,
+  Sentry, TypeScript/`@types/node`, Vite/`@vitejs/plugin-react`,
+  `globals`/`globby`/`eslint-plugin-react-refresh`, and unrelated dependencies
+  out of scope.
+- [x] Run `pnpm install` with the pinned pnpm/corepack path.
+- [x] Run `pnpm install --frozen-lockfile` with the pinned pnpm/corepack path.
+- [x] Run stale direct `syncpack` version search.
+- [x] Run focused `syncpack --version` smoke.
+- [x] Run custom validation via
+  `npm exec --yes --package bun -- bun packages/tooling/custom-scripts/scripts/validate-all.ts`.
+- [x] Run `pnpm exec biome ci . --diagnostic-level=error`.
+- [x] Run `pnpm run typecheck`.
+- [x] Run `pnpm run build`.
+- [x] Run `pnpm run test:ci`.
+- [x] Run `pnpm -w run e2e:ci`.
+
+Verification on 2026-05-16:
+
+- `pnpm install` passed with
+  `PATH=/tmp/bangle-pnpm-shim:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games corepack pnpm install`;
+  existing cyclic workspace warnings, deprecated subdependency warnings, Node
+  `url.parse()` deprecation warning, and Storybook 8/Vite 7 peer warnings
+  remain.
+- `pnpm install --frozen-lockfile` passed with the same PATH; existing cyclic
+  workspace warnings and Node `url.parse()` deprecation warning remain.
+- Stale direct `syncpack` search passed: no `syncpack` `^13.0.4` manifest
+  declarations and no `syncpack@13.0.4` lockfile entry remain.
+- Focused CLI smoke passed:
+  `pnpm --filter @bangle.io/custom-scripts exec syncpack --version` reported
+  `syncpack 15.1.2`.
+- Custom validation passed via
+  `npm exec --yes --package bun -- bun packages/tooling/custom-scripts/scripts/validate-all.ts`.
+- `pnpm exec biome ci . --diagnostic-level=error` passed.
+- `pnpm run typecheck` passed.
+- `pnpm run build` passed; Sentry auth-token and chunk-size warnings remain.
+- `pnpm run test:ci` passed, 73 files / 726 passed / 1 skipped.
+- `pnpm -w run e2e:ci` passed, 4 E2E tests and 5 component tests; existing
+  Vite/Storybook component-test warnings about `use client` directives and
+  Storybook `eval` remain.
+
 ## DOM Test Environment Session
 
 As of 2026-05-16, the next separate dependency modernization commit on
