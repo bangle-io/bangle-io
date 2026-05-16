@@ -110,6 +110,7 @@ Candidate aggressive families:
 - [ ] Storybook latest major, including React/Vite integration, addons,
   Chromatic, and test runner.
 - [ ] Jest 30 family or removal plan if Jest is no longer needed.
+- [x] DOM test environment major update for `happy-dom` and `jsdom`.
 - [x] Tailwind/CSS support stack patch-minor refresh.
 - [x] Zod major upgrade for custom scripts and validation schemas.
 - [ ] Sentry major alignment across browser, tracing, and Vite plugin packages.
@@ -242,6 +243,43 @@ Verification on 2026-05-16:
 - Direct compatibility fallout: `packages/tooling/e2e-tests/playwright-ct.config.ts`
   now unwraps the nested default export shape returned by `tsx` 4.22
   `tsImport('@bangle.io/env-vars', import.meta.url)`.
+
+## DOM Test Environment Session
+
+As of 2026-05-16, the next separate dependency modernization commit on
+`deps/aggressive-modernization` is the DOM test environment refresh.
+
+- [x] Scope: root `happy-dom` `^17.6.3` -> `^20.9.0` and root `jsdom`
+  `^26.1.0` -> `^29.1.1`.
+- [x] Manifests: root `package.json` and `pnpm-lock.yaml`.
+- [x] Keep Jest, `@jest/globals`, `@types/jest`, `@swc/jest`, TypeScript,
+  `@types/node`, Vite, `@vitejs/plugin-react`, Storybook, Chromatic,
+  Storybook test runner, Sentry, and unrelated tooling packages out of scope.
+- [x] Run `pnpm install` with the pinned pnpm/corepack path.
+- [x] Run `pnpm install --frozen-lockfile` with the pinned pnpm/corepack path.
+- [x] Run focused DOM environment tests before broader gates.
+
+Verification on 2026-05-16:
+
+- `pnpm install` passed with
+  `PATH=/tmp/bangle-pnpm-shim:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games corepack pnpm install`;
+  existing cyclic workspace warnings, deprecated subdependency warnings,
+  Storybook 8/Vite 7 peer warnings, and the Node `url.parse()` deprecation
+  warning remain.
+- `pnpm install --frozen-lockfile` passed with the same PATH; existing cyclic
+  workspace warnings and the Node `url.parse()` deprecation warning remain.
+- Focused DOM environment Vitest files passed: 15 files / 87 tests.
+- `pnpm run custom-validation` equivalent passed via
+  `npm exec --yes --package bun -- bun packages/tooling/custom-scripts/scripts/validate-all.ts`.
+- `pnpm run lint:ci` equivalent gates passed manually: custom validation,
+  global typecheck, and `pnpm exec biome ci . --diagnostic-level=error`.
+- `pnpm run typecheck` passed.
+- `pnpm run build` passed; Sentry auth-token and chunk-size warnings remain.
+- `pnpm run test:ci` passed, 73 files / 726 passed / 1 skipped.
+- `pnpm -w run e2e:ci` passed, 4 E2E tests and 5 component tests; existing
+  Playwright `NO_COLOR`/`FORCE_COLOR`, CT `use client`, sourcemap, and
+  Storybook eval warnings remain.
+- Direct compatibility fallout: none.
 
 ## Suggested Branch and PR Slicing
 
