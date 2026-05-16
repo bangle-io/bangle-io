@@ -113,7 +113,7 @@ Candidate aggressive families:
 - [x] Tailwind/CSS support stack patch-minor refresh.
 - [x] Zod major upgrade for custom scripts and validation schemas.
 - [ ] Sentry major alignment across browser, tracing, and Vite plugin packages.
-- [ ] `lucide-react` and icon/UI package major or large minor updates.
+- [x] `lucide-react` and icon/UI package major or large minor updates.
 - [x] Playwright major or large-version jumps, including container image and
   component test behavior.
 - [ ] GitHub Actions major updates for checkout, setup-node, upload-artifact,
@@ -331,6 +331,52 @@ Copy this section for each modernization session.
 - [ ] Skipped gates and why:
 - [ ] Result:
 - [ ] Follow-up:
+
+
+### Session: 2026-05-16 - lucide-react 1.16 icon package upgrade
+
+- [x] Branch: `deps/aggressive-modernization`.
+- [x] Base commit: `7354710f`.
+- [x] Dependency family: `lucide-react` only.
+- [x] PR/issue: upgrade branch commit only; no PR opened yet.
+- [x] Manifest/lockfile changes intended: `lucide-react` `^0.515.0` to
+  `^1.16.0` in `packages/core/app`, `packages/core/command-handlers`,
+  `packages/core/editor`, `packages/tooling/browser-entry`,
+  `packages/ui/shadcn`, and `packages/ui/ui-components`, plus `pnpm-lock.yaml`.
+- [x] Code migrations needed: `packages/core/app/src/layout/app-sidebar.tsx`
+  replaces removed brand icon exports `Github` and `Twitter` with
+  `ExternalLink`.
+- [x] Baseline known warnings: existing cyclic workspace dependency warning,
+  deprecated subdependency warnings, Storybook/Vite peer warning, Node
+  `url.parse()` deprecation warning from install tooling, Sentry auth-token and
+  chunk-size build warnings.
+- [x] Commands run: install, frozen install, source lucide export smoke, custom
+  validation via `npm exec --package bun`, Biome CI, typecheck, build, test CI,
+  e2e/CT, and `git diff --check`.
+- [x] `pnpm install`: passed with
+  `PATH=/tmp/bangle-pnpm-shim:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games corepack pnpm install`;
+  frozen install passed with the same PATH and `--frozen-lockfile`.
+- [x] `pnpm run custom-validation`: passed via `npm exec --yes --package bun -- bun packages/tooling/custom-scripts/scripts/validate-all.ts` because local `bun` is not installed on PATH.
+- [x] `pnpm run lint:ci`: equivalent gates passed manually: custom validation,
+  global typecheck, and `pnpm exec biome ci . --diagnostic-level=error`.
+- [x] `pnpm run typecheck`: passed.
+- [x] `pnpm run build`: passed; Sentry auth-token and chunk-size warnings remain.
+- [x] `pnpm run test:ci`: passed, 73 files / 726 passed / 1 skipped.
+- [ ] `pnpm run e2e-install`: not rerun; Playwright browsers were already installed from the prior Playwright commit.
+- [x] `pnpm run e2e:ci`: passed, 4 E2E tests and 5 component tests.
+- [ ] Playwright browser smoke: not run separately; existing Playwright E2E/CT coverage passed for this icon package bump.
+- [ ] Responsive smoke: not run separately for this isolated icon package bump.
+- [ ] Production preview smoke: not run for this isolated icon package bump.
+- [ ] Supply-chain audit: not run for this isolated icon package bump.
+- [x] `git diff --check`: passed.
+- [x] Skipped gates and why: e2e-install, separate manual browser/responsive/
+  production smoke, and audit skipped because this commit only changes the icon
+  package and one direct import compatibility fix; frozen install, lucide export
+  smoke, custom validation, Biome CI, typecheck, build, unit tests, and E2E/CT
+  passed.
+- [x] Result: `lucide-react` is updated to `^1.16.0` in all requested manifests,
+  resolves to `1.16.0`, and direct source imports/build are compatible.
+- [x] Follow-up: choose next dependency family after pushing this commit.
 
 
 ### Session: 2026-05-16 - Repo tooling patch/minor refresh

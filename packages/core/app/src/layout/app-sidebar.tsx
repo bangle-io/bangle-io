@@ -15,8 +15,8 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
   BugPlay,
   Command,
+  ExternalLink,
   Folder,
-  Github,
   MessageCircle,
   Move,
   Paintbrush2,
@@ -24,7 +24,6 @@ import {
   PlusIcon,
   Search,
   Trash2,
-  Twitter,
 } from 'lucide-react';
 import React, { useMemo } from 'react';
 
@@ -267,7 +266,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
                 window.open('https://github.com/bangle-io/bangle-io', '_blank')
               }
             >
-              <Github className="mr-2 h-4 w-4" />
+              <ExternalLink className="mr-2 h-4 w-4" />
               <span>{t.app.sidebar.githubProject}</span>
             </DropdownMenu.DropdownMenuItem>
             <DropdownMenu.DropdownMenuItem
@@ -286,7 +285,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
                 window.open('https://twitter.com/bangle_io', '_blank')
               }
             >
-              <Twitter className="mr-2 h-4 w-4" />
+              <ExternalLink className="mr-2 h-4 w-4" />
               <span>{t.app.sidebar.twitter}</span>
             </DropdownMenu.DropdownMenuItem>
             <DropdownMenu.DropdownMenuItem
