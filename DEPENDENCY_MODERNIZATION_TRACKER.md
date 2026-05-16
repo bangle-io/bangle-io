@@ -109,7 +109,7 @@ Candidate aggressive families:
 - [ ] TypeScript major upgrade and project-reference fallout.
 - [ ] Storybook latest major, including React/Vite integration, addons,
   Chromatic, and test runner.
-- [ ] Jest 30 family or removal plan if Jest is no longer needed.
+- [x] Jest 30 family or removal plan if Jest is no longer needed.
 - [x] DOM test environment major update for `happy-dom` and `jsdom`.
 - [x] Tailwind/CSS support stack patch-minor refresh.
 - [x] Zod major upgrade for custom scripts and validation schemas.
@@ -385,6 +385,62 @@ Verification on 2026-05-16:
   Playwright `NO_COLOR`/`FORCE_COLOR`, CT `use client`, sourcemap, and
   Storybook eval warnings remain.
 - Direct compatibility fallout: none.
+
+## Jest Family Removal Session
+
+As of 2026-05-16, the next separate dependency modernization commit on
+`deps/aggressive-modernization` is removal of the unused direct Jest family.
+
+- [x] Scope: root direct devDependencies `jest`, `@types/jest`, and
+  `@swc/jest`, plus `packages/tooling/custom-scripts` direct dependency
+  `@jest/globals`.
+- [x] Manifests: root `package.json`,
+  `packages/tooling/custom-scripts/package.json`, and `pnpm-lock.yaml`.
+- [x] Keep `@testing-library/jest-dom`, Storybook/Chromatic/test-runner,
+  Sentry, TypeScript/`@types/node`, Vite/`@vitejs/plugin-react`, Vitest,
+  Playwright, Testing Library, and unrelated dependencies out of scope.
+- [x] Focused usage search excluding `node_modules`, `dist`, `build`, and
+  `pnpm-lock.yaml`: no direct Jest usage found outside target manifests and
+  documentation references; `@testing-library/jest-dom` usage remains through
+  Vitest entrypoints.
+- [x] Run `pnpm install` with the pinned pnpm/corepack path.
+- [x] Run `pnpm install --frozen-lockfile` with the pinned pnpm/corepack path.
+- [x] Run custom validation via
+  `npm exec --yes --package bun -- bun packages/tooling/custom-scripts/scripts/validate-all.ts`.
+- [x] Run `pnpm exec biome ci . --diagnostic-level=error`.
+- [x] Run `pnpm run typecheck`.
+- [x] Run `pnpm run build`.
+- [x] Run `pnpm run test:ci`.
+- [x] Run `pnpm -w run e2e:ci`.
+- [x] Run `git diff --check`.
+- [x] Direct compatibility fallout: none.
+
+Verification on 2026-05-16:
+
+- `pnpm remove -w -D jest @types/jest @swc/jest` and
+  `pnpm --filter @bangle.io/custom-scripts remove @jest/globals` passed with
+  pnpm 10.12.1.
+- `pnpm install` passed with
+  `PATH=/tmp/bangle-pnpm-shim:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games corepack pnpm install`;
+  existing cyclic workspace warnings and Node `url.parse()` deprecation warning
+  remain.
+- `pnpm install --frozen-lockfile` passed with the same PATH; existing cyclic
+  workspace warnings and Node `url.parse()` deprecation warning remain.
+- Focused Jest usage search passed for code/config scope: no direct Jest usage
+  remains outside documentation references; `@testing-library/jest-dom` remains
+  intentionally present and used through Vitest entrypoints.
+- Transitive Jest 29 lockfile entries remain through `@storybook/test-runner`
+  `0.22.1`; those are intentionally left for the Storybook/test-runner family.
+- Custom validation passed via
+  `npm exec --yes --package bun -- bun packages/tooling/custom-scripts/scripts/validate-all.ts`.
+- `pnpm exec biome ci . --diagnostic-level=error` passed.
+- `pnpm run typecheck` passed.
+- `pnpm run build` passed; Sentry auth-token and chunk-size warnings remain.
+- `pnpm run test:ci` passed, 73 files / 726 passed / 1 skipped.
+- `pnpm -w run e2e:ci` passed, 4 E2E tests and 5 component tests; existing
+  Playwright `NO_COLOR`/`FORCE_COLOR`, CT `use client`, sourcemap, and
+  Storybook eval warnings remain.
+- `git diff --check` passed.
 
 ## Suggested Branch and PR Slicing
 

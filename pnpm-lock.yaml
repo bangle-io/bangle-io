@@ -26,18 +26,12 @@ importers:
       '@biomejs/biome':
         specifier: 2.4.15
         version: 2.4.15
-      '@swc/jest':
-        specifier: ^0.2.39
-        version: 0.2.39(@swc/core@1.11.31)
       '@testing-library/jest-dom':
         specifier: ^6.9.1
         version: 6.9.1
       '@types/bun':
         specifier: ^1.3.14
         version: 1.3.14
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
       '@types/node':
         specifier: ^24.12.2
         version: 24.12.2
@@ -59,9 +53,6 @@ importers:
       happy-dom:
         specifier: ^20.9.0
         version: 20.9.0
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.12.2)(ts-node@10.9.2(@swc/core@1.11.31)(@types/node@24.12.2)(typescript@5.8.3))
       jsdom:
         specifier: ^29.1.1
         version: 29.1.1
@@ -748,9 +739,6 @@ importers:
 
   packages/tooling/custom-scripts:
     dependencies:
-      '@jest/globals':
-        specifier: ^29.7.0
-        version: 29.7.0
       '@tsconfig/node18':
         specifier: ^18.2.4
         version: 18.2.6
@@ -3550,9 +3538,6 @@ packages:
 
   '@types/istanbul-reports@3.0.4':
     resolution: {integrity: sha512-pk2B1NWalF9toCRu6gjBzR69syFjP4Od8WRAX+0mmf9lAjCRicLOWc+ZrxZHx/0XRjotgkF9t6iaMJ+aXcOdZQ==}
-
-  '@types/jest@29.5.14':
-    resolution: {integrity: sha512-ZN+4sdnLUbo8EVvVc2ao0GFW6oVrQRPn4K2lglySj7APvSrgzxHiNNK99us4WDMi57xxA2yggblIAMNhXOotLQ==}
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -9366,11 +9351,6 @@ snapshots:
   '@types/istanbul-reports@3.0.4':
     dependencies:
       '@types/istanbul-lib-report': 3.0.3
-
-  '@types/jest@29.5.14':
-    dependencies:
-      expect: 29.7.0
-      pretty-format: 29.7.0
 
   '@types/json-schema@7.0.15': {}
 
