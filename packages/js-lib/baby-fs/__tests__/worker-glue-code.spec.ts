@@ -10,7 +10,7 @@ function mockWorker(onMessage: {
     result: any;
   };
 }) {
-  return vi.fn(() => {
+  return vi.fn(function WorkerMock() {
     const obj: any = {};
 
     obj.postMessage = vi.fn();

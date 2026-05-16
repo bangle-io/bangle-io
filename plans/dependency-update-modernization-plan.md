@@ -94,7 +94,7 @@ Phase 3 progress:
 
 - [x] Biome beta to stable latest v2.
 - [x] Vite 6 to latest compatible major and `@vitejs/plugin-react` latest compatible major.
-- [ ] Vitest 3 to 4, including `@vitest/browser` and `@vitest/coverage-v8`.
+- [x] Vitest 3 to 4, including `@vitest/browser` and `@vitest/coverage-v8`.
 - [ ] TypeScript 5.8 to 6.
 - [ ] Storybook 8 to latest major.
 - [ ] Sentry major updates.

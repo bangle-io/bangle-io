@@ -9,9 +9,25 @@ import { createStore } from 'jotai';
 
 export * from './test-service-setup';
 
-export type MockLog = ReturnType<typeof getMockLog>;
+export type MockLog = Record<
+  'debug' | 'info' | 'warn' | 'error',
+  (...args: unknown[]) => void
+>;
 
-const getMockLog = () => {
+export type TestCommonOpts = {
+  commonOpts: BaseServiceCommonOptions;
+  mockLog: MockLog;
+  controller: AbortController;
+  rootEmitter: RootEmitter;
+  testServiceContext: {
+    ctx: BaseServiceCommonOptions;
+    serviceContext: {
+      abortSignal: AbortSignal;
+    };
+  };
+};
+
+const getMockLog = (): MockLog => {
   const mockLog = {
     debug: vi.fn(),
     info: vi.fn(),
@@ -24,7 +40,7 @@ const getMockLog = () => {
 export const sleep = (ms = 15): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
-export function makeTestLogger() {
+export function makeTestLogger(): { logger: Logger; mockLog: MockLog } {
   const mockLog = getMockLog();
   return {
     logger: new Logger('', 'debug', mockLog as any),
@@ -36,7 +52,7 @@ export const makeTestCommonOpts = ({
   controller = new AbortController(),
 }: {
   controller?: AbortController;
-} = {}) => {
+} = {}): TestCommonOpts => {
   const { logger, mockLog } = makeTestLogger();
   const rootEmitter = new RootEmitter({
     abortSignal: controller.signal,
