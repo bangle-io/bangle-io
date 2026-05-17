@@ -17,7 +17,7 @@
     "@biomejs/biome": "2.4.15",
     "@testing-library/jest-dom": "^6.9.1",
     "@types/bun": "^1.3.14",
-    "@types/node": "^24.12.2",
+    "@types/node": "^25.8.0",
     "@types/react": "^19.2.14",
     "@types/wicg-file-system-access": "^2023.10.7",
     "@vitest/browser": "^4.1.6",

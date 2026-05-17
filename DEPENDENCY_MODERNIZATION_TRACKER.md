@@ -532,6 +532,67 @@ Copy this section for each modernization session.
 - [ ] Follow-up:
 
 
+### Session: 2026-05-16 - Node ambient types upgrade
+
+- [x] Branch: `deps/aggressive-modernization`.
+- [x] Base commit: `ebd630b1`.
+- [x] Dependency family: `@types/node` only.
+- [x] PR/issue: upgrade branch commit only; no PR opened yet.
+- [x] Manifest/lockfile changes intended: root `package.json` and
+  `packages/tooling/e2e-tests/package.json` `@types/node` `^24.12.2` to
+  `^25.8.0`, plus `pnpm-lock.yaml`.
+- [x] Code migrations needed: none.
+- [x] Baseline known warnings: existing cyclic workspace dependency warning,
+  deprecated subdependency warnings, Storybook/Vite peer warning, Node
+  `url.parse()` deprecation warning from install tooling, Sentry auth-token and
+  chunk-size build warnings, Playwright `NO_COLOR`/`FORCE_COLOR` warnings, CT
+  `use client`/sourcemap/Storybook eval warnings.
+- [x] Commands run: install, frozen install, stale direct version search, custom
+  validation via `npm exec --package bun`, Biome CI, typecheck, build, test CI,
+  full E2E/CT, and `git diff --check`.
+- [x] `pnpm install`: passed with
+  `PATH=/tmp/bangle-pnpm-shim:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games corepack pnpm install`;
+  existing cyclic workspace warnings, deprecated subdependency warnings, Node
+  `url.parse()` deprecation warning, and Storybook 8/Vite 7 peer warnings
+  remain.
+- [x] `pnpm install --frozen-lockfile`: passed with the same PATH; existing
+  cyclic workspace warnings and Node `url.parse()` deprecation warning remain.
+- [x] Stale direct version search: passed; no `24.12.2`,
+  `@types/node@24.12.2`, or `^24.12.2` references remain in root
+  `package.json`, `packages/tooling/e2e-tests/package.json`, or
+  `pnpm-lock.yaml`.
+- [x] `pnpm run custom-validation`: passed via
+  `npm exec --yes --package bun -- bun packages/tooling/custom-scripts/scripts/validate-all.ts`.
+- [ ] `pnpm run lint:ci`: not run as an aggregate; equivalent gates were run
+  directly: custom validation, typecheck, and
+  `pnpm exec biome ci . --diagnostic-level=error`.
+- [x] `pnpm exec biome ci . --diagnostic-level=error`: passed.
+- [x] `pnpm run typecheck`: passed.
+- [x] `pnpm run build`: passed; Sentry auth-token and chunk-size warnings remain.
+- [x] `pnpm run test:ci`: passed, 73 files / 726 passed / 1 skipped.
+- [ ] `pnpm run e2e-install`: not rerun; Playwright browsers were already
+  installed from prior verification on this branch.
+- [x] `pnpm run e2e:ci`: passed, 4 E2E tests and 5 component tests; existing
+  Playwright CT `use client`, sourcemap, and Storybook eval warnings remain.
+- [x] Playwright CT: passed via `pnpm run e2e-ct-test`, 5 component tests.
+- [ ] Playwright browser smoke: not run separately for this isolated
+  ambient-types dependency bump.
+- [ ] Responsive smoke: not run separately for this isolated ambient-types
+  dependency bump.
+- [ ] Production preview smoke: not run for this isolated ambient-types
+  dependency bump.
+- [ ] Supply-chain audit: not run for this isolated dependency bump.
+- [x] `git diff --check`: passed.
+- [x] Skipped gates and why: aggregate lint CI, e2e-install, separate
+  browser/responsive/production smoke, and audit skipped because this commit only
+  updates Node ambient types; custom validation, Biome CI, typecheck, root build,
+  unit tests, full E2E/CT, and diff hygiene passed.
+- [x] Result: root and e2e-tests direct `@types/node` declarations now use
+  `^25.8.0`; the lockfile resolves to `25.8.0` with peer suffixes updated, and
+  no direct compatibility fallout was needed.
+- [x] Follow-up: commit and push after Hermes inspection and verification.
+
+
 ### Session: 2026-05-16 - browser-entry ESLint helper pair upgrade
 
 - [x] Branch: `deps/aggressive-modernization`.
