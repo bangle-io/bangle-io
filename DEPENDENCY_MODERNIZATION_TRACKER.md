@@ -532,6 +532,50 @@ Copy this section for each modernization session.
 - [ ] Follow-up:
 
 
+### Session: 2026-05-16 - GitHub Actions major refresh
+
+- [x] Branch: `deps/aggressive-modernization`.
+- [x] Base commit: `2cdce619`.
+- [x] Dependency family: GitHub Actions major refresh in `.github/workflows/node.js.yml` only.
+- [x] PR/issue: upgrade branch commit only; no PR opened yet.
+- [x] Manifest/lockfile changes intended: none; workflow-only action major updates.
+- [x] Code migrations needed: none.
+- [x] Baseline known warnings: not applicable locally; CI must verify action
+  runtime behavior.
+- [x] Commands run: `git diff --check`, attempted
+  `npx --yes actionlint .github/workflows/node.js.yml` and
+  `npx --yes @rhysd/actionlint .github/workflows/node.js.yml` but npm could not
+  run/find those packages, `npx --yes github-actionlint
+  .github/workflows/node.js.yml` passed, `git diff --stat`, and
+  `git status --short --branch`.
+- [ ] `pnpm install`: not run; no package manifests or lockfile changed.
+- [ ] `pnpm run custom-validation`: not run; workflow-only change.
+- [ ] `pnpm run lint:ci`: not run locally; GitHub Actions CI must verify the lint
+  job on refreshed action versions after push.
+- [ ] `pnpm run typecheck`: not run; workflow-only change.
+- [ ] `pnpm run build`: not run; workflow-only change.
+- [ ] `pnpm run test:ci`: not run locally; GitHub Actions CI must verify the test
+  job on refreshed action versions after push.
+- [ ] `pnpm run e2e-install`: not run locally; GitHub Actions CI must verify the
+  Playwright install step in the container job after push.
+- [ ] `pnpm run e2e:ci`: not run locally; GitHub Actions CI must verify the E2E
+  job on refreshed action versions after push.
+- [ ] Playwright browser smoke: not run; workflow-only change.
+- [ ] Responsive smoke: not run; workflow-only change.
+- [ ] Production preview smoke: not run; workflow-only change.
+- [ ] Supply-chain audit: not run; workflow-only change.
+- [x] `git diff --check`: passed.
+- [x] Skipped gates and why: local app/package/build/test gates skipped because
+  this commit only changes GitHub Actions action versions and has no local
+  package, app, build, test, or E2E behavior change.
+- [x] Result: `actions/checkout`, `actions/setup-node`, `actions/cache`, and
+  `actions/upload-artifact` are updated to their current major versions while
+  preserving the existing Node 22, pnpm/corepack, Playwright container, Bun, and
+  Biome setup.
+- [ ] Follow-up: after this branch is pushed, GitHub Actions CI must verify lint,
+  test, and E2E jobs on the refreshed action versions.
+
+
 ### Session: 2026-05-16 - Node ambient types upgrade
 
 - [x] Branch: `deps/aggressive-modernization`.
