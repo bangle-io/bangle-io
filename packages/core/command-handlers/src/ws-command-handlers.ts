@@ -83,16 +83,52 @@ export const wsCommandHandlers = [
     },
   ),
 
-  c('command::ws:delete-ws-path', ({ fileSystem, navigation }, { wsPath }) => {
-    if (navigation.resolveAtoms().wsPath?.wsPath === wsPath) {
-      navigation.goWorkspace();
-    }
-    fileSystem.deleteFile(wsPath);
-  }),
+  c(
+    'command::ws:delete-ws-path',
+    async ({ fileSystem, navigation, workspaceState }, { wsPath }, key) => {
+      const { store } = getCtx(key);
+      const parsedPath = WsPath.fromString(wsPath);
+      const currentWsPath = navigation.resolveAtoms().wsPath?.wsPath;
+
+      if (!parsedPath.isDir) {
+        if (currentWsPath === wsPath) {
+          navigation.goWorkspace();
+        }
+        await fileSystem.deleteFile(wsPath);
+        return;
+      }
+
+      const dirPath = parsedPath.asDir();
+      if (!dirPath) {
+        return;
+      }
+
+      const wsPaths = store
+        .get(workspaceState.$wsPaths)
+        .map((path) => path.wsPath);
+      const targets = getDirectoryTargets(wsPaths, dirPath);
+      const currentFile = currentWsPath
+        ? WsPath.fromString(currentWsPath).asFile()
+        : undefined;
+
+      if (currentFile?.path.startsWith(dirPath.path)) {
+        navigation.goWorkspace();
+      }
+
+      for (const target of targets) {
+        await fileSystem.deleteFile(target);
+      }
+    },
+  ),
 
   c(
     'command::ws:rename-ws-path',
-    ({ fileSystem, navigation }, { wsPath, newWsPath }) => {
+    (
+      { fileSystem, navigation, workspaceState },
+      { wsPath, newWsPath },
+      key,
+    ) => {
+      const { store } = getCtx(key);
       const oldPath = WsPath.fromString(wsPath);
       const newPath = WsPath.fromString(newWsPath);
 
@@ -118,21 +154,73 @@ export const wsCommandHandlers = [
         );
       }
 
+      if (oldPath.isDir !== newPath.isDir) {
+        throwAppError(
+          'error::file:invalid-operation',
+          t.app.errors.file.invalidNotePath,
+          {
+            operation: 'rename',
+            oldWsPath: wsPath,
+            newWsPath,
+          },
+        );
+      }
+
+      if (!oldPath.isDir) {
+        const needsRedirect =
+          navigation.resolveAtoms().wsPath?.wsPath === wsPath;
+        if (needsRedirect) {
+          navigation.goWorkspace();
+        }
+
+        void fileSystem
+          .renameFile({
+            oldWsPath: wsPath,
+            newWsPath,
+          })
+          .then(() => {
+            if (needsRedirect) {
+              navigation.goWsPath(newWsPath);
+            }
+          });
+        return;
+      }
+
+      const oldDir = oldPath.asDir();
+      const newDir = newPath.asDir();
+      if (!oldDir || !newDir) {
+        return;
+      }
+      const wsPaths = store
+        .get(workspaceState.$wsPaths)
+        .map((path) => path.wsPath);
+      const renameTargets = buildDirectoryRenameTargets(
+        wsPaths,
+        oldDir,
+        newDir,
+      );
+      const currentWsPath = navigation.resolveAtoms().wsPath?.wsPath;
+      const currentRenamedWsPath = currentWsPath
+        ? renameTargets.get(currentWsPath)
+        : undefined;
+
       const needsRedirect = navigation.resolveAtoms().wsPath?.wsPath === wsPath;
-      if (needsRedirect) {
+      if (needsRedirect || !!currentRenamedWsPath) {
         navigation.goWorkspace();
       }
 
-      void fileSystem
-        .renameFile({
-          oldWsPath: wsPath,
-          newWsPath,
-        })
-        .then(() => {
-          if (needsRedirect) {
-            navigation.goWsPath(newWsPath);
-          }
-        });
+      void Promise.all(
+        Array.from(renameTargets.entries()).map(([oldTarget, newTarget]) =>
+          fileSystem.renameFile({
+            oldWsPath: oldTarget,
+            newWsPath: newTarget,
+          }),
+        ),
+      ).then(() => {
+        if (currentRenamedWsPath) {
+          navigation.goWsPath(currentRenamedWsPath);
+        }
+      });
     },
   ),
 
@@ -145,7 +233,7 @@ export const wsCommandHandlers = [
     ) => {
       const { store } = getCtx(key);
 
-      const filePath = WsPath.assertFile(wsPath);
+      const sourcePath = WsPath.fromString(wsPath);
       const destDir = WsPath.fromString(destDirWsPath).asDir();
       if (!destDir) {
         throwAppError(
@@ -157,40 +245,100 @@ export const wsCommandHandlers = [
         );
       }
 
-      const newWsPath = destDir.createFilePath(filePath.fileName).wsPath;
+      if (!sourcePath.isDir) {
+        const filePath = WsPath.assertFile(wsPath);
+        const newWsPath = destDir.createFilePath(filePath.fileName).wsPath;
 
-      if (wsPath === newWsPath) {
+        if (wsPath === newWsPath) {
+          return;
+        }
+
+        const existingWsPaths = store
+          .get(workspaceState.$wsPaths)
+          .map((path) => path.wsPath);
+        if (existingWsPaths.includes(newWsPath)) {
+          throwAppError(
+            'error::file:already-existing',
+            t.app.errors.file.alreadyExistsInDest,
+            {
+              wsPath: newWsPath,
+            },
+          );
+        }
+
+        const needsRedirect =
+          navigation.resolveAtoms().wsPath?.wsPath === wsPath;
+        if (needsRedirect) {
+          navigation.goWorkspace();
+        }
+
+        void fileSystem
+          .renameFile({
+            oldWsPath: wsPath,
+            newWsPath,
+          })
+          .then(() => {
+            if (needsRedirect) {
+              navigation.goWsPath(newWsPath);
+            }
+          });
+        return;
+      }
+
+      const sourceDir = sourcePath.asDir();
+      if (!sourceDir) {
+        return;
+      }
+
+      if (destDir.path.startsWith(sourceDir.path)) {
+        throwAppError(
+          'error::file:invalid-operation',
+          t.app.errors.file.invalidNotePath,
+          {
+            operation: 'move',
+            oldWsPath: sourceDir.wsPath,
+            newWsPath: destDir.wsPath,
+          },
+        );
+      }
+
+      const targetDir = WsPath.fromParts(
+        sourceDir.wsName,
+        WsPath.pathJoin(destDir.path, sourceDir.name),
+      ).asDir();
+      if (!targetDir || sourceDir.wsPath === targetDir.wsPath) {
         return;
       }
 
       const existingWsPaths = store
         .get(workspaceState.$wsPaths)
         .map((path) => path.wsPath);
-      if (existingWsPaths.includes(newWsPath)) {
-        throwAppError(
-          'error::file:already-existing',
-          t.app.errors.file.alreadyExistsInDest,
-          {
-            wsPath: newWsPath,
-          },
-        );
-      }
+      const renameTargets = buildDirectoryRenameTargets(
+        existingWsPaths,
+        sourceDir,
+        targetDir,
+      );
+      const currentWsPath = navigation.resolveAtoms().wsPath?.wsPath;
+      const currentRenamedWsPath = currentWsPath
+        ? renameTargets.get(currentWsPath)
+        : undefined;
 
-      const needsRedirect = navigation.resolveAtoms().wsPath?.wsPath === wsPath;
-      if (needsRedirect) {
+      if (currentRenamedWsPath) {
         navigation.goWorkspace();
       }
 
-      void fileSystem
-        .renameFile({
-          oldWsPath: wsPath,
-          newWsPath,
-        })
-        .then(() => {
-          if (needsRedirect) {
-            navigation.goWsPath(newWsPath);
-          }
-        });
+      void Promise.all(
+        Array.from(renameTargets.entries()).map(([oldTarget, newTarget]) =>
+          fileSystem.renameFile({
+            oldWsPath: oldTarget,
+            newWsPath: newTarget,
+          }),
+        ),
+      ).then(() => {
+        if (currentRenamedWsPath) {
+          navigation.goWsPath(currentRenamedWsPath);
+        }
+      });
     },
   ),
 
@@ -392,3 +540,56 @@ export const wsCommandHandlers = [
     },
   ),
 ];
+
+function getDirectoryTargets(wsPaths: string[], dir: WsPath): string[] {
+  const dirPath = dir.asDir();
+  if (!dirPath) {
+    return [];
+  }
+
+  return wsPaths.filter((wsPath) => {
+    const filePath = WsPath.fromString(wsPath).asFile();
+    return !!filePath && filePath.path.startsWith(dirPath.path);
+  });
+}
+
+function buildDirectoryRenameTargets(
+  wsPaths: string[],
+  oldDir: WsPath,
+  newDir: WsPath,
+): Map<string, string> {
+  const oldDirPath = oldDir.asDir();
+  const newDirPath = newDir.asDir();
+  if (!oldDirPath || !newDirPath) {
+    return new Map();
+  }
+
+  const targets = getDirectoryTargets(wsPaths, oldDirPath);
+  const targetSet = new Set(targets);
+  const result = new Map<string, string>();
+
+  for (const target of targets) {
+    const filePath = WsPath.assertFile(target);
+    const relativePath = filePath.path.slice(oldDirPath.path.length);
+    const newFilePath = WsPath.pathJoin(newDirPath.path, relativePath);
+    const newWsPath: string = WsPath.fromParts(
+      oldDirPath.wsName,
+      newFilePath,
+    ).wsPath;
+    if (result.has(target)) {
+      continue;
+    }
+    if (!targetSet.has(newWsPath) && wsPaths.includes(newWsPath)) {
+      throwAppError(
+        'error::file:already-existing',
+        t.app.errors.file.alreadyExistsInDest,
+        {
+          wsPath: newWsPath,
+        },
+      );
+    }
+    result.set(target, newWsPath);
+  }
+
+  return result;
+}

@@ -141,6 +141,12 @@ export const t = {
         nativeFsTitle: 'Natives Dateisystem',
         nativeFsDescription:
           'Arbeitsbereichsdaten im nativen Dateisystem speichern',
+        serverFsTitle: 'Server-Dateisystem',
+        serverFsDescription:
+          'Arbeitsbereichsdaten im Dateisystem des Servers speichern',
+        serverFsPathLabel: 'Server-Ordnerpfad',
+        serverFsPathPlaceholder: '/mnt/workspace-a/notizen',
+        serverFsPathRequired: 'Server-Ordner ist erforderlich',
         errorTitle: 'Fehler',
         noStorageTypes: 'Keine Speicherarten verfügbar.',
         selectTypeTitle: 'Wählen Sie einen Arbeitsbereichstyp',
@@ -157,6 +163,15 @@ export const t = {
           'Verzeichnisauswahl wird nicht unterstützt.',
         pickDirectoryButton: 'Verzeichnis auswählen',
         invalidDirectoryDefault: 'Ungültige Verzeichnisauswahl',
+        attachmentSettingsTitle: 'Anhangseinstellungen',
+        attachmentModeLabel: 'Anhangspfadmodus',
+        attachmentModeRelative: 'Relativ',
+        attachmentModeRoot: 'Arbeitsbereichs-Root',
+        attachmentDirectoryLabel: 'Anhangsordner',
+        attachmentFilePrefixLabel: 'Dateinamenspräfix für Einfügen',
+        attachmentDirectoryRequired: 'Anhangsordner ist erforderlich',
+        attachmentFilePrefixRequired:
+          'Dateinamenspräfix für Anhänge ist erforderlich',
       },
       allFiles: {
         title: 'Alle Dateien',

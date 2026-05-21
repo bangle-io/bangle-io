@@ -29,15 +29,27 @@ export type ImageConfig = {
     imageType: NodeType,
     view: EditorView,
   ) => Promise<PMNode[]>;
+  /**
+   * Optional resolver used to turn markdown/local image paths into a displayable src.
+   * This is useful when the image source is backed by an API like Native File System.
+   */
+  resolveImageNodeSrc?: (
+    src: string,
+    view: EditorView,
+  ) => Promise<string | undefined> | string | undefined;
 };
 
 type RequiredConfig = Required<ImageConfig>;
+
+const DEFAULT_RESOLVE_IMAGE_NODE_SRC: RequiredConfig['resolveImageNodeSrc'] =
+  () => undefined;
 
 const DEFAULT_CONFIG: RequiredConfig = {
   name: 'image',
   handleDragAndDrop: true,
   acceptFileType: 'image/*',
   createImageNodes: defaultCreateImageNodes,
+  resolveImageNodeSrc: DEFAULT_RESOLVE_IMAGE_NODE_SRC,
 };
 
 export function setupImage(userConfig?: ImageConfig) {
@@ -82,6 +94,7 @@ export function setupImage(userConfig?: ImageConfig) {
     inputRules: pluginInputRules(config),
     handleDragAndDrop: pluginHandleDragAndDrop(config),
     handlePaste: pluginHandlePaste(config),
+    resolveImageNodeSrc: pluginResolveImageNodeSrc(config),
   };
 
   return collection({
@@ -189,8 +202,8 @@ function pluginHandlePaste(config: RequiredConfig) {
     return new Plugin({
       key: new PluginKey(`${name}-drop-paste`),
       props: {
-        handlePaste: (view: EditorView, rawEvent: any) => {
-          const event = rawEvent;
+        handlePaste: (view: EditorView, rawEvent: Event) => {
+          const event = rawEvent as ClipboardEvent;
           if (!event.clipboardData) {
             return false;
           }
@@ -204,6 +217,90 @@ function pluginHandlePaste(config: RequiredConfig) {
 
           return true;
         },
+      },
+    });
+  };
+}
+
+function pluginResolveImageNodeSrc(config: RequiredConfig) {
+  return () => {
+    const { name, resolveImageNodeSrc } = config;
+    if (resolveImageNodeSrc === DEFAULT_RESOLVE_IMAGE_NODE_SRC) {
+      return null;
+    }
+
+    return new Plugin({
+      key: new PluginKey(`${name}-resolve-image-node-src`),
+      view: (view) => {
+        let destroyed = false;
+        const blobUrls = new Set<string>();
+
+        const cleanupUrl = (url: string | null) => {
+          if (!url || !url.startsWith('blob:')) {
+            return;
+          }
+          URL.revokeObjectURL(url);
+          blobUrls.delete(url);
+        };
+
+        const syncImages = () => {
+          const images = Array.from(view.dom.querySelectorAll('img[src]'));
+          for (const imageEl of images) {
+            if (!(imageEl instanceof HTMLImageElement)) {
+              continue;
+            }
+            const originalSrc = imageEl.getAttribute('src') || '';
+            if (
+              !originalSrc ||
+              originalSrc.startsWith('blob:') ||
+              originalSrc.startsWith('data:') ||
+              /^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(originalSrc)
+            ) {
+              continue;
+            }
+
+            if (imageEl.dataset.bangleResolvedFrom === originalSrc) {
+              continue;
+            }
+
+            void Promise.resolve(resolveImageNodeSrc(originalSrc, view))
+              .then((resolvedSrc) => {
+                if (!resolvedSrc || destroyed || !imageEl.isConnected) {
+                  return;
+                }
+
+                const previousBlobUrl =
+                  imageEl.dataset.bangleResolvedBlobUrl || null;
+                cleanupUrl(previousBlobUrl);
+
+                imageEl.dataset.bangleResolvedFrom = originalSrc;
+                if (resolvedSrc.startsWith('blob:')) {
+                  imageEl.dataset.bangleResolvedBlobUrl = resolvedSrc;
+                  blobUrls.add(resolvedSrc);
+                } else {
+                  imageEl.dataset.bangleResolvedBlobUrl = '';
+                }
+
+                imageEl.setAttribute('src', resolvedSrc);
+              })
+              .catch(() => {
+                // Ignore resolution failures; fallback keeps original src.
+              });
+          }
+        };
+
+        syncImages();
+
+        return {
+          update: syncImages,
+          destroy: () => {
+            destroyed = true;
+            for (const url of blobUrls) {
+              URL.revokeObjectURL(url);
+            }
+            blobUrls.clear();
+          },
+        };
       },
     });
   };

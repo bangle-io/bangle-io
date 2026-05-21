@@ -44,7 +44,8 @@
     "jotai": "^2.12.5",
     "lucide-react": "^0.515.0",
     "prosemirror-view": "^1.40.0",
-    "react": "19.1.0"
+    "react": "19.1.0",
+    "shiki": "^3.22.0"
   },
   "devDependencies": {}
 }

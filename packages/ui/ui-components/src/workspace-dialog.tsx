@@ -1,4 +1,8 @@
 import {
+  DEFAULT_WORKSPACE_ATTACHMENT_CONFIG,
+  WORKSPACE_ATTACHMENT_MODE,
+} from '@bangle.io/constants';
+import {
   Button,
   cn,
   Dialog,
@@ -10,7 +14,10 @@ import {
   Input,
   Label,
 } from '@bangle.io/shadcn';
-import type { WorkspaceStorageType } from '@bangle.io/types';
+import type {
+  WorkspaceAttachmentConfig,
+  WorkspaceStorageType,
+} from '@bangle.io/types';
 import { Check, FolderOpen } from 'lucide-react';
 import React, { useEffect, useId, useReducer, useRef } from 'react';
 
@@ -42,6 +49,8 @@ export interface WorkspaceConfig {
   name: string;
   type: WorkspaceStorageType;
   dirHandle?: FileSystemDirectoryHandle;
+  serverPath?: string;
+  attachments: WorkspaceAttachmentConfig;
 }
 
 export interface CreateWorkspaceDialogProps {
@@ -62,27 +71,43 @@ type SelectTypeState = BaseState & {
   selected?: WorkspaceStorageType;
 };
 
-type BrowserState = BaseState & {
-  stage: 'selected-browser';
+type NamedStorageState = BaseState & {
+  stage: 'selected-name';
+  storageType: WorkspaceStorageType;
   name: string;
+  serverPath: string;
+  attachments: WorkspaceAttachmentConfig;
 };
 
 type NativeFsState = BaseState & {
   stage: 'selected-nativefs';
   dirHandle?: FileSystemDirectoryHandle;
+  attachments: WorkspaceAttachmentConfig;
 };
 
-type State = SelectTypeState | BrowserState | NativeFsState;
+type State = SelectTypeState | NamedStorageState | NativeFsState;
 
 type Action =
   | { type: 'RESET_TO_TYPE_SELECT'; defaultStorage: WorkspaceStorageType }
   | { type: 'NAVIGATE_TO_TYPE_SELECT' }
-  | { type: 'NAVIGATE_TO_BROWSER' }
+  | { type: 'NAVIGATE_TO_NAMED_STORAGE'; storageType: WorkspaceStorageType }
   | { type: 'NAVIGATE_TO_NATIVEFS' }
   | { type: 'UPDATE_SELECTED_STORAGE'; storage: WorkspaceStorageType }
   | { type: 'UPDATE_WORKSPACE_NAME'; name: string }
+  | { type: 'UPDATE_SERVER_PATH'; serverPath: string }
   | { type: 'UPDATE_DIRECTORY_HANDLE'; dirHandle?: FileSystemDirectoryHandle }
+  | { type: 'UPDATE_ATTACHMENT_MODE'; mode: WorkspaceAttachmentConfig['mode'] }
+  | { type: 'UPDATE_ATTACHMENT_DIRECTORY'; directory: string }
+  | { type: 'UPDATE_ATTACHMENT_FILE_NAME_PREFIX'; fileNamePrefix: string }
   | { type: 'UPDATE_ERROR'; error?: ErrorInfo };
+
+function getDefaultAttachmentConfig(): WorkspaceAttachmentConfig {
+  return {
+    mode: DEFAULT_WORKSPACE_ATTACHMENT_CONFIG.mode,
+    directory: DEFAULT_WORKSPACE_ATTACHMENT_CONFIG.directory,
+    fileNamePrefix: DEFAULT_WORKSPACE_ATTACHMENT_CONFIG.fileNamePrefix,
+  };
+}
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
@@ -92,23 +117,78 @@ function reducer(state: State, action: Action): State {
         selected: undefined,
         error: undefined,
       };
-    case 'NAVIGATE_TO_BROWSER':
-      return { stage: 'selected-browser', name: '', error: undefined };
+    case 'NAVIGATE_TO_NAMED_STORAGE':
+      return {
+        stage: 'selected-name',
+        storageType: action.storageType,
+        name: '',
+        serverPath: '',
+        attachments: getDefaultAttachmentConfig(),
+        error: undefined,
+      };
     case 'NAVIGATE_TO_NATIVEFS':
-      return { stage: 'selected-nativefs', error: undefined };
+      return {
+        stage: 'selected-nativefs',
+        attachments: getDefaultAttachmentConfig(),
+        error: undefined,
+      };
     case 'UPDATE_SELECTED_STORAGE':
       if (state.stage === 'select-type') {
         return { ...state, selected: action.storage, error: undefined };
       }
       return state;
     case 'UPDATE_WORKSPACE_NAME':
-      if (state.stage === 'selected-browser') {
+      if (state.stage === 'selected-name') {
         return { ...state, name: action.name, error: undefined };
+      }
+      return state;
+    case 'UPDATE_SERVER_PATH':
+      if (state.stage === 'selected-name') {
+        return { ...state, serverPath: action.serverPath, error: undefined };
       }
       return state;
     case 'UPDATE_DIRECTORY_HANDLE':
       if (state.stage === 'selected-nativefs') {
         return { ...state, dirHandle: action.dirHandle, error: undefined };
+      }
+      return state;
+    case 'UPDATE_ATTACHMENT_MODE':
+      if (
+        state.stage === 'selected-name' ||
+        state.stage === 'selected-nativefs'
+      ) {
+        return {
+          ...state,
+          attachments: { ...state.attachments, mode: action.mode },
+          error: undefined,
+        };
+      }
+      return state;
+    case 'UPDATE_ATTACHMENT_DIRECTORY':
+      if (
+        state.stage === 'selected-name' ||
+        state.stage === 'selected-nativefs'
+      ) {
+        return {
+          ...state,
+          attachments: { ...state.attachments, directory: action.directory },
+          error: undefined,
+        };
+      }
+      return state;
+    case 'UPDATE_ATTACHMENT_FILE_NAME_PREFIX':
+      if (
+        state.stage === 'selected-name' ||
+        state.stage === 'selected-nativefs'
+      ) {
+        return {
+          ...state,
+          attachments: {
+            ...state.attachments,
+            fileNamePrefix: action.fileNamePrefix,
+          },
+          error: undefined,
+        };
       }
       return state;
     case 'UPDATE_ERROR':
@@ -181,7 +261,7 @@ export function CreateWorkspaceDialog({
             defaultStorage={defaultStorage}
           />
         )}
-        {state.stage === 'selected-browser' && (
+        {state.stage === 'selected-name' && (
           <StageEnterWorkspaceName
             state={state}
             dispatch={dispatch}
@@ -224,9 +304,17 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
   };
 
   const handleNext = () => {
+    if (!selected) {
+      return;
+    }
+    if (selected === 'nativefs') {
+      dispatch({ type: 'NAVIGATE_TO_NATIVEFS' });
+      return;
+    }
+
     dispatch({
-      type:
-        selected === 'browser' ? 'NAVIGATE_TO_BROWSER' : 'NAVIGATE_TO_NATIVEFS',
+      type: 'NAVIGATE_TO_NAMED_STORAGE',
+      storageType: selected,
     });
   };
 
@@ -270,7 +358,7 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
 };
 
 interface StageEnterWorkspaceNameProps {
-  state: BrowserState;
+  state: NamedStorageState;
   dispatch: React.Dispatch<Action>;
   validateWorkspace: CreateWorkspaceDialogProps['validateWorkspace'];
   onDone: CreateWorkspaceDialogProps['onDone'];
@@ -282,10 +370,11 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
   validateWorkspace,
   onDone,
 }) => {
-  const { name, error } = state;
+  const { name, error, attachments } = state;
 
   const ref = useRef<HTMLInputElement>(null);
   const workspaceNameId = useId();
+  const serverPathId = useId();
 
   useEffect(() => {
     ref.current?.focus();
@@ -302,9 +391,31 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
   };
 
   const handleSubmit = () => {
+    const attachmentValidation = validateAttachmentConfig(attachments);
+    if (!attachmentValidation.isValid) {
+      dispatch({
+        type: 'UPDATE_ERROR',
+        error: { message: attachmentValidation.message },
+      });
+      return;
+    }
+
+    const normalizedServerPath = state.serverPath.trim();
+    if (state.storageType === 'privatefs' && !normalizedServerPath) {
+      dispatch({
+        type: 'UPDATE_ERROR',
+        error: {
+          message: t.app.dialogs.createWorkspace.serverFsPathRequired,
+        },
+      });
+      return;
+    }
+
     const config: WorkspaceConfig = {
-      type: 'browser',
+      type: state.storageType,
       name,
+      serverPath: normalizedServerPath || undefined,
+      attachments: normalizeAttachmentConfig(attachments),
     };
     const validation = validateWorkspace(config);
     if (!validation.isValid) {
@@ -318,7 +429,12 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
       });
       return;
     }
-    onDone({ type: 'browser', name });
+    onDone({
+      type: state.storageType,
+      name,
+      serverPath: normalizedServerPath || undefined,
+      attachments: normalizeAttachmentConfig(attachments),
+    });
   };
 
   const handleBack = () => {
@@ -349,6 +465,31 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
             className="col-span-3"
           />
         </div>
+        {state.storageType === 'privatefs' && (
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor={serverPathId} className="text-right">
+              {t.app.dialogs.createWorkspace.serverFsPathLabel}
+            </Label>
+            <Input
+              id={serverPathId}
+              value={state.serverPath}
+              onChange={(event) =>
+                dispatch({
+                  type: 'UPDATE_SERVER_PATH',
+                  serverPath: event.target.value,
+                })
+              }
+              placeholder={
+                t.app.dialogs.createWorkspace.serverFsPathPlaceholder
+              }
+              className="col-span-3"
+            />
+          </div>
+        )}
+        <AttachmentSettingsFields
+          attachments={attachments}
+          dispatch={dispatch}
+        />
         <ErrorMessage error={error} />
       </div>
       <DialogFooter className="flex justify-between">
@@ -382,7 +523,7 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
   validateWorkspace,
   onDone,
 }) => {
-  const { dirHandle, error } = state;
+  const { dirHandle, error, attachments } = state;
 
   const handlePickDirectory = async () => {
     if (!onDirectoryPick) {
@@ -414,11 +555,21 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
   };
 
   const handleSubmit = () => {
+    const attachmentValidation = validateAttachmentConfig(attachments);
+    if (!attachmentValidation.isValid) {
+      dispatch({
+        type: 'UPDATE_ERROR',
+        error: { message: attachmentValidation.message },
+      });
+      return;
+    }
+
     const dirName = dirHandle?.name || '';
     const config: WorkspaceConfig = {
       type: 'nativefs',
       name: dirName,
       dirHandle,
+      attachments: normalizeAttachmentConfig(attachments),
     };
     const validation = validateWorkspace(config);
     if (!validation.isValid) {
@@ -432,7 +583,12 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
       });
       return;
     }
-    onDone({ type: 'nativefs', name: dirName, dirHandle });
+    onDone({
+      type: 'nativefs',
+      name: dirName,
+      dirHandle,
+      attachments: normalizeAttachmentConfig(attachments),
+    });
   };
 
   return (
@@ -466,6 +622,10 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
             </Button>
           </div>
         )}
+        <AttachmentSettingsFields
+          attachments={attachments}
+          dispatch={dispatch}
+        />
         <ErrorMessage error={error} />
       </div>
 
@@ -545,6 +705,137 @@ const ErrorMessage: React.FC<{ error?: ErrorInfo }> = ({ error }) => {
     <div className="rounded-sm bg-destructive p-2 text-destructive-foreground text-sm">
       {error.title && <strong>{error.title}: </strong>}
       {error.message}
+    </div>
+  );
+};
+
+function normalizeAttachmentConfig(
+  attachments: WorkspaceAttachmentConfig,
+): WorkspaceAttachmentConfig {
+  return {
+    mode:
+      attachments.mode === WORKSPACE_ATTACHMENT_MODE.root
+        ? WORKSPACE_ATTACHMENT_MODE.root
+        : WORKSPACE_ATTACHMENT_MODE.relative,
+    directory:
+      attachments.directory.trim() ||
+      DEFAULT_WORKSPACE_ATTACHMENT_CONFIG.directory,
+    fileNamePrefix:
+      attachments.fileNamePrefix.trim() ||
+      DEFAULT_WORKSPACE_ATTACHMENT_CONFIG.fileNamePrefix,
+  };
+}
+
+function validateAttachmentConfig(attachments: WorkspaceAttachmentConfig): {
+  isValid: boolean;
+  message: string;
+} {
+  if (!attachments.directory.trim()) {
+    return {
+      isValid: false,
+      message: t.app.dialogs.createWorkspace.attachmentDirectoryRequired,
+    };
+  }
+
+  if (!attachments.fileNamePrefix.trim()) {
+    return {
+      isValid: false,
+      message: t.app.dialogs.createWorkspace.attachmentFilePrefixRequired,
+    };
+  }
+
+  return { isValid: true, message: '' };
+}
+
+const AttachmentSettingsFields: React.FC<{
+  attachments: WorkspaceAttachmentConfig;
+  dispatch: React.Dispatch<Action>;
+}> = ({ attachments, dispatch }) => {
+  const modeId = useId();
+  const attachmentDirId = useId();
+  const attachmentPrefixId = useId();
+
+  return (
+    <div className="space-y-3 rounded-md border border-border p-3">
+      <Label className="font-semibold text-sm">
+        {t.app.dialogs.createWorkspace.attachmentSettingsTitle}
+      </Label>
+
+      <div className="grid gap-2">
+        <Label htmlFor={modeId} className="text-xs">
+          {t.app.dialogs.createWorkspace.attachmentModeLabel}
+        </Label>
+        <div id={modeId} className="flex gap-2">
+          <Button
+            type="button"
+            variant={
+              attachments.mode === WORKSPACE_ATTACHMENT_MODE.relative
+                ? 'default'
+                : 'outline'
+            }
+            size="sm"
+            onClick={() =>
+              dispatch({
+                type: 'UPDATE_ATTACHMENT_MODE',
+                mode: WORKSPACE_ATTACHMENT_MODE.relative,
+              })
+            }
+          >
+            {t.app.dialogs.createWorkspace.attachmentModeRelative}
+          </Button>
+          <Button
+            type="button"
+            variant={
+              attachments.mode === WORKSPACE_ATTACHMENT_MODE.root
+                ? 'default'
+                : 'outline'
+            }
+            size="sm"
+            onClick={() =>
+              dispatch({
+                type: 'UPDATE_ATTACHMENT_MODE',
+                mode: WORKSPACE_ATTACHMENT_MODE.root,
+              })
+            }
+          >
+            {t.app.dialogs.createWorkspace.attachmentModeRoot}
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor={attachmentDirId} className="text-xs">
+          {t.app.dialogs.createWorkspace.attachmentDirectoryLabel}
+        </Label>
+        <Input
+          id={attachmentDirId}
+          value={attachments.directory}
+          onChange={(event) =>
+            dispatch({
+              type: 'UPDATE_ATTACHMENT_DIRECTORY',
+              directory: event.target.value,
+            })
+          }
+          placeholder={DEFAULT_WORKSPACE_ATTACHMENT_CONFIG.directory}
+        />
+      </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor={attachmentPrefixId} className="text-xs">
+          {t.app.dialogs.createWorkspace.attachmentFilePrefixLabel}
+        </Label>
+        <Input
+          id={attachmentPrefixId}
+          value={attachments.fileNamePrefix}
+          onChange={(event) =>
+            dispatch({
+              type: 'UPDATE_ATTACHMENT_FILE_NAME_PREFIX',
+              fileNamePrefix: event.target.value,
+            })
+          }
+          placeholder={DEFAULT_WORKSPACE_ATTACHMENT_CONFIG.fileNamePrefix}
+        />
+      </div>
     </div>
   );
 };

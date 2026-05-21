@@ -97,20 +97,42 @@ export class WorkspaceStateService extends BaseService {
           const abortController = new AbortController();
           get(this.fileSystem.$fileTreeChangeCount);
           const wsName = get(this.$currentWsName);
+
+          const refreshPaths = () => {
+            if (!wsName) {
+              return Promise.resolve();
+            }
+            return wrapPromiseInAppErrorHandler(
+              this.fileSystem.listFiles(wsName, abortController.signal),
+              EMPTY_STRING_ARRAY,
+              this.emitAppError,
+            ).then((paths) => {
+              if (!abortController.signal.aborted) {
+                set(this.$rawWsPaths, [...paths]);
+              }
+            });
+          };
+
+          const delayedRefreshIds = [120, 420, 1200].map((delayMs) =>
+            globalThis.setTimeout(() => {
+              void refreshPaths();
+            }, delayMs),
+          );
+
           if (!wsName) {
             set(this.$rawWsPaths, EMPTY_STRING_ARRAY);
+            for (const timeoutId of delayedRefreshIds) {
+              clearTimeout(timeoutId);
+            }
             return;
           }
-          wrapPromiseInAppErrorHandler(
-            this.fileSystem.listFiles(wsName, abortController.signal),
-            EMPTY_STRING_ARRAY,
-            this.emitAppError,
-          ).then((paths) => {
-            if (!abortController.signal.aborted) {
-              set(this.$rawWsPaths, paths);
-            }
-          });
+
+          void refreshPaths();
+
           return () => {
+            for (const timeoutId of delayedRefreshIds) {
+              clearTimeout(timeoutId);
+            }
             abortController.abort();
           };
         }),

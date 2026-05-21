@@ -68,50 +68,48 @@ export const AppSidebar = ({ children }: SidebarProps) => {
 
   const getActionsForItem = useMemo(
     () =>
-      (item: TreeItem): ItemAction[] => {
+      (_item: TreeItem): ItemAction[] => {
         const actions: ItemAction[] = [];
 
-        if (!item.isDir) {
-          actions.push({
-            id: 'rename',
-            label: 'Rename',
-            Icon: Pencil,
-            onClick: (item) => {
-              commandDispatcher.dispatch(
-                'command::ui:rename-note-dialog',
-                { wsPath: item.wsPath },
-                'ui',
-              );
-            },
-          });
+        actions.push({
+          id: 'rename',
+          label: 'Rename',
+          Icon: Pencil,
+          onClick: (item) => {
+            commandDispatcher.dispatch(
+              'command::ui:rename-note-dialog',
+              { wsPath: item.wsPath },
+              'ui',
+            );
+          },
+        });
 
-          actions.push({
-            id: 'move',
-            label: 'Move',
-            Icon: Move,
-            onClick: (item) => {
-              commandDispatcher.dispatch(
-                'command::ui:move-note-dialog',
-                { wsPath: item.wsPath },
-                'ui',
-              );
-            },
-          });
+        actions.push({
+          id: 'move',
+          label: 'Move',
+          Icon: Move,
+          onClick: (item) => {
+            commandDispatcher.dispatch(
+              'command::ui:move-note-dialog',
+              { wsPath: item.wsPath },
+              'ui',
+            );
+          },
+        });
 
-          actions.push({
-            id: 'delete',
-            label: 'Delete',
-            Icon: Trash2,
-            variant: 'destructive' as const,
-            onClick: (item) => {
-              commandDispatcher.dispatch(
-                'command::ui:delete-note-dialog',
-                { wsPath: item.wsPath },
-                'ui',
-              );
-            },
-          });
-        }
+        actions.push({
+          id: 'delete',
+          label: 'Delete',
+          Icon: Trash2,
+          variant: 'destructive' as const,
+          onClick: (item) => {
+            commandDispatcher.dispatch(
+              'command::ui:delete-note-dialog',
+              { wsPath: item.wsPath },
+              'ui',
+            );
+          },
+        });
 
         return actions;
       },
