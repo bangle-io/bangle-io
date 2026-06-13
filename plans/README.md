@@ -13,14 +13,14 @@ multiple commits, agents, or sessions.
 
 ## Naming
 
-Use a stable numeric prefix followed by a kebab-case topic:
+Use a stable numeric prefix followed by a kebab-case topic. Keep related work in
+one plan unless it is genuinely a separate initiative.
 
 ```text
 001-dependency-update-modernization.md
-002-storybook-major-upgrade.md
-003-typescript-major-upgrade.md
 ```
 
+Add `002-*` only when a new plan cannot reasonably live inside an existing plan.
 Do not renumber existing plans after they are referenced by commits, issues, or
 pull requests.
 
