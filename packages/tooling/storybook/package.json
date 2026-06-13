@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "^5.2.0",
-    "react": "19.1.0"
+    "react": "19.2.6"
   },
   "devDependencies": {
     "@bangle.io/browser-entry": "workspace:*",
@@ -55,12 +55,12 @@
     "@storybook/test-runner": "^0.22.1",
     "@storybook/theming": "^8.6.18",
     "@storybook/types": "^8.6.18",
-    "autoprefixer": "^10.4.21",
+    "autoprefixer": "^10.5.0",
     "chromatic": "^11.29.0",
-    "globby": "^14.1.0",
+    "globby": "^16.2.0",
     "prop-types": "^15.8.1",
     "storybook": "^8.6.18",
-    "tailwindcss": "^4.2.4",
+    "tailwindcss": "^4.3.0",
     "tailwindcss-animate": "^1.0.7",
     "tailwindcss-react-aria-components": "^2.1.0",
     "vite": "^7.3.3"

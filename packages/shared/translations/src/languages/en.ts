@@ -281,7 +281,7 @@ export const t = {
     workspaceNotFoundView: {
       title: 'Workspace Not Found',
       description: ({ wsName }: { wsName: string }) =>
-        `The workspace "${wsName}" doesn\'t exist or was renamed.`,
+        `The workspace "${wsName}" doesn't exist or was renamed.`,
       genericDescription: "This workspace doesn't exist or was renamed.",
       goHomeButton: 'Go to Welcome Screen',
       switchWorkspaceButton: 'Switch Workspace',

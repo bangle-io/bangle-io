@@ -1,3 +1,16 @@
+---
+title: Dependency Update Modernization Plan
+status: active
+type: plan
+archived: false
+created: 2026-05-25
+updated: 2026-06-13
+owner: mixed
+related_prs:
+  - https://github.com/kepta/bangle-io-2/pull/299
+related_issues: []
+---
+
 # Dependency Update Modernization Plan
 
 ## Summary
@@ -9,6 +22,19 @@ app's core local-first workflow.
 
 Before updating anything, capture the baseline from `pnpm outdated -r`, the
 current lockfile state, and a Playwright CLI smoke run against the existing app.
+
+## Current Status
+
+PR #299 completed the broad aggressive dependency modernization slice on
+2026-06-13. Automated CI is green for lint, unit tests, and E2E tests.
+
+This plan is not archived yet because the remaining follow-up work is still
+tracked here:
+
+- [ ] TypeScript major upgrade.
+- [ ] Storybook latest major upgrade.
+- [ ] Final hardening after merge, including clean-checkout verification,
+  production-preview smoke, and supply-chain review.
 
 ## Phase 0: Baseline Gate
 
@@ -95,13 +121,19 @@ Phase 3 progress:
 - [x] Biome beta to stable latest v2.
 - [x] Vite 6 to latest compatible major and `@vitejs/plugin-react` latest compatible major.
 - [x] Vitest 3 to 4, including `@vitest/browser` and `@vitest/coverage-v8`.
+- [x] Playwright packages and browser/component test fallout.
+- [x] Tailwind/CSS support stack refresh.
+- [x] React runtime stack compatibility refresh.
+- [x] ProseMirror and editor package stack.
+- [x] DOM test environment major updates for `happy-dom` and `jsdom`.
+- [x] Sentry major updates.
+- [x] Jest removal plan for unused Jest dependencies.
+- [x] Zod 3 to 4.
+- [x] `lucide-react` major update.
+- [x] `@types/node` major update.
+- [x] GitHub Actions major updates.
 - [ ] TypeScript 5.8 to 6.
 - [ ] Storybook 8 to latest major.
-- [ ] Sentry major updates.
-- [ ] Jest 29 to 30 if still needed.
-- [ ] Zod 3 to 4.
-- [ ] `lucide-react` major update.
-- [ ] `@types/node` major update only if the runtime/tooling supports it.
 
 Candidate hard updates:
 

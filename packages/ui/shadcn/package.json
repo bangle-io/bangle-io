@@ -44,9 +44,9 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "class-variance-authority": "^0.7.1",
     "cmdk": "^1.1.1",
-    "lucide-react": "^0.515.0",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "lucide-react": "^1.16.0",
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
   },
   "devDependencies": {
     "@storybook/react": "^8.6.18"

@@ -36,7 +36,7 @@
     "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "jotai": "^2.12.5",
+    "jotai": "^2.20.0",
     "page-lifecycle": "^0.1.2",
     "wouter": "^3.9.0"
   },

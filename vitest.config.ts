@@ -29,7 +29,7 @@ export default defineConfig((env) => {
       include: ['**/*.{vitest,spec}.?(c|m)[jt]s?(x)'],
       clearMocks: true,
       restoreMocks: true,
-      onUnhandledError: (error) => {
+      onUnhandledError: (error: unknown) => {
         if (isAbortError(error)) {
           return false;
         }

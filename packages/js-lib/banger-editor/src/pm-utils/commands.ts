@@ -331,7 +331,7 @@ export function cutEmptyCommand(type: NodeType): Command {
 
     const parent = findParentNodeOfType(type)(state.selection);
 
-    if (!parent || !parent.node) {
+    if (!parent?.node) {
       return false;
     }
 

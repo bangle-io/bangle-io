@@ -108,9 +108,11 @@ function scrollIntoViewIfNeededPolyfill(
   const parentComputedStyle = window.getComputedStyle(parent, null);
   const parentBorderTopWidth = Number.parseInt(
     parentComputedStyle.getPropertyValue('border-top-width'),
+    10,
   );
   const parentBorderLeftWidth = Number.parseInt(
     parentComputedStyle.getPropertyValue('border-left-width'),
+    10,
   );
   const overTop = element.offsetTop - parent.offsetTop < parent.scrollTop;
   const overBottom =

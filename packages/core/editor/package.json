@@ -41,9 +41,9 @@
     "@floating-ui/dom": "^1.7.6",
     "@types/react": "^19.2.14",
     "date-fns": "^4.1.0",
-    "jotai": "^2.12.5",
-    "lucide-react": "^0.515.0",
+    "jotai": "^2.20.0",
+    "lucide-react": "^1.16.0",
     "prosemirror-view": "^1.41.8",
-    "react": "19.1.0"
+    "react": "19.2.6"
   }
 }
