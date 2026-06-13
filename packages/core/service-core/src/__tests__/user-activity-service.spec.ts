@@ -251,7 +251,7 @@ describe('UserActivityService', () => {
   });
 
   describe('Starring', () => {
-    test('should record starred ws paths', async () => {
+    it('should record starred ws paths', async () => {
       const { userActivityService, goWsPath } = await setupUserActivityService({
         controller,
       });
@@ -266,7 +266,7 @@ describe('UserActivityService', () => {
       });
     });
 
-    test('should unstar a previously starred ws path', async () => {
+    it('should unstar a previously starred ws path', async () => {
       const { userActivityService, goWsPath } = await setupUserActivityService({
         controller,
       });
@@ -283,7 +283,7 @@ describe('UserActivityService', () => {
       });
     });
 
-    test('should allow starring multiple ws paths', async () => {
+    it('should allow starring multiple ws paths', async () => {
       const { userActivityService, goWsPath } = await setupUserActivityService({
         controller,
       });
@@ -301,7 +301,7 @@ describe('UserActivityService', () => {
       });
     });
 
-    test('should toggle star status correctly on multiple calls', async () => {
+    it('should toggle star status correctly on multiple calls', async () => {
       const { userActivityService, goWsPath } = await setupUserActivityService({
         controller,
       });
@@ -319,7 +319,7 @@ describe('UserActivityService', () => {
       });
     });
 
-    test('should handle starring in different workspaces correctly', async () => {
+    it('should handle starring in different workspaces correctly', async () => {
       const { userActivityService, goWsPath } = await setupUserActivityService({
         controller,
       });

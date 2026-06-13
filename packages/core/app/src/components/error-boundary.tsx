@@ -9,12 +9,22 @@ interface ErrorBoundaryProps {
   children: React.ReactNode;
 }
 
+function toError(error: unknown): Error {
+  if (error instanceof Error) {
+    return error;
+  }
+
+  return new Error(String(error));
+}
+
 /** Catches JavaScript errors anywhere in its child component tree and displays a fallback UI. */
 export function ErrorBoundary({ children }: ErrorBoundaryProps) {
   const logger = useLogger();
   return (
     <ReactErrorBoundary
       fallbackRender={({ error }) => {
+        const reportError = toError(error);
+
         return (
           <NoticeView
             title={t.app.common.somethingWentWrong}
@@ -31,7 +41,7 @@ export function ErrorBoundary({ children }: ErrorBoundaryProps) {
                 label: t.app.common.report,
                 variant: 'outline',
                 onClick: () => {
-                  window.open(getGithubUrl(error, logger), '_blank');
+                  window.open(getGithubUrl(reportError, logger), '_blank');
                 },
               },
             ]}

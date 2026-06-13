@@ -2,9 +2,9 @@ import { ThemeManager } from '@bangle.io/color-scheme-manager';
 import getEnvVars from '@bangle.io/env-vars';
 import { languages } from '@bangle.io/translations';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
-// @ts-ignore - moduleResolution error
+// @ts-expect-error - moduleResolution error
 import tailwindcss from '@tailwindcss/vite';
-// @ts-ignore - moduleResolution error
+// @ts-expect-error - moduleResolution error
 import react from '@vitejs/plugin-react';
 import { createHtmlPlugin } from 'vite-plugin-html';
 

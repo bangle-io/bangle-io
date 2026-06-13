@@ -30,7 +30,7 @@ export class PmEditorService extends BaseService {
     private dependencies: {
       fileSystem: FileSystemService;
     },
-    private config: PmEditorServiceConfig,
+    _config: PmEditorServiceConfig,
   ) {
     super(SERVICE_NAME.pmEditorService, context, dependencies);
 

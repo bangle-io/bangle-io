@@ -18,7 +18,7 @@ export class WorkspaceService extends BaseService {
 
   constructor(
     context: BaseServiceContext,
-    private dep: {
+    dep: {
       fileSystem: FileSystemService;
       navigation: NavigationService;
       workspaceOps: WorkspaceOpsService;

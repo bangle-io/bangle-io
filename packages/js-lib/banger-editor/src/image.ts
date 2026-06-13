@@ -299,9 +299,9 @@ function readFileAsBinaryString(file: File): Promise<string> {
       reader.onload = onLoadDataUrl;
       reader.readAsDataURL(file);
     } else {
-      // @ts-ignore reader was incorrectly inferred as 'never'
+      // @ts-expect-error reader was incorrectly inferred as 'never'
       reader.onload = onLoadBinaryString;
-      // @ts-ignore
+      // @ts-expect-error
       reader.readAsBinaryString(file);
     }
   });

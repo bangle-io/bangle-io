@@ -19,10 +19,7 @@ import { CommandDispatchService } from '../command-dispatch-service';
 import { CommandRegistryService } from '../command-registry-service';
 
 class TestService extends BaseService {
-  constructor(
-    context: BaseServiceContext,
-    private dependencies: null,
-  ) {
+  constructor(context: BaseServiceContext, _dependencies: null) {
     super('file-system-test', context, null);
   }
 

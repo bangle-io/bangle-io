@@ -202,7 +202,7 @@ export const wsCommandHandlers = [
       .map((path) => path.fileNameWithoutExtension)
       .filter((name) => name.startsWith('untitled-'))
       .map((name) => {
-        const num = Number.parseInt(name.replace('untitled-', ''));
+        const num = Number.parseInt(name.replace('untitled-', ''), 10);
         return Number.isNaN(num) ? 0 : num;
       });
 

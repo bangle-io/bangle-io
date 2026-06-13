@@ -68,7 +68,7 @@ function buildDeco(
 
   // If that parent is not actually a block node, skip
   const parentNode = $from.node(range.depth);
-  if (!parentNode || !parentNode.isBlock) {
+  if (!parentNode?.isBlock) {
     return DecorationSet.empty;
   }
 

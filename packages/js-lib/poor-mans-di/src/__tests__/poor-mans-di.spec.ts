@@ -307,8 +307,8 @@ describe('Container', () => {
     class OriginalService implements Service<TestContext> {
       config!: { value: number };
       constructor(
-        private context: { ctx: TestContext; serviceContext: ServiceContext },
-        private _deps: Record<string, never>,
+        _context: { ctx: TestContext; serviceContext: ServiceContext },
+        _deps: Record<string, never>,
       ) {}
       getValue() {
         return this.config.value;
@@ -321,8 +321,8 @@ describe('Container', () => {
         value2: boolean;
       };
       constructor(
-        private context: { ctx: TestContext; serviceContext: ServiceContext },
-        private _deps: {
+        _context: { ctx: TestContext; serviceContext: ServiceContext },
+        _deps: {
           serviceA: ServiceA;
         },
       ) {}
