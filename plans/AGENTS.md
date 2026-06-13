@@ -1,12 +1,13 @@
 ---
-title: Plans Index
+title: Plans Directory Instructions
 status: active
-type: convention
+type: instructions
+archived: false
 created: 2026-06-13
 updated: 2026-06-13
 ---
 
-# Plans
+# Plans Directory Instructions
 
 This directory stores durable planning and handoff notes for work that spans
 multiple commits, agents, or sessions.
@@ -33,6 +34,7 @@ Every plan must start with YAML frontmatter:
 title: Human-readable title
 status: planned | active | blocked | completed | superseded
 type: plan
+archived: false
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 owner: agent | human | mixed
@@ -56,3 +58,31 @@ Prefer short, durable sections:
 
 Keep transient scratch notes out of plans. If a plan is completed, update its
 status and final verification instead of deleting it.
+
+## Archiving
+
+When a plan is fully complete, move it to `plans/archived/`, set
+`archived: true`, set `status: completed`, and prepend a DONE blockquote
+immediately after the YAML frontmatter:
+
+```md
+---
+title: Example Plan
+status: completed
+type: plan
+archived: true
+created: 2026-01-01
+updated: 2026-06-13
+owner: mixed
+related_prs: []
+related_issues: []
+---
+
+> DONE Completed on 2026-06-13 in PR #123. Final verification passed with
+> `pnpm run lint:ci`, `pnpm test:ci`, and Playwright CLI smoke testing.
+
+# Example Plan
+```
+
+Use the DONE note for future context: what finished, when, which PR/commit
+completed it, and any caveats worth preserving.
