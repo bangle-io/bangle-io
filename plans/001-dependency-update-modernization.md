@@ -1,3 +1,15 @@
+---
+title: Dependency Update Modernization Plan
+status: active
+type: plan
+created: 2026-05-25
+updated: 2026-06-13
+owner: mixed
+related_prs:
+  - https://github.com/kepta/bangle-io-2/pull/299
+related_issues: []
+---
+
 # Dependency Update Modernization Plan
 
 ## Summary

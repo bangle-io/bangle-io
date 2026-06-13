@@ -12,7 +12,7 @@ the time of the update.
   (`chore(deps): update vitest to v4`), after the Biome v2 and browser Vite
   toolchain upgrades.
 - The existing modernization plan lives at
-  `plans/dependency-update-modernization-plan.md` and should remain the phase
+  `plans/001-dependency-update-modernization.md` and should remain the phase
   source of truth for the already-completed Biome, Vite, and Vitest work.
 - Historical local/remote branches still visible at the time this tracker was
   created include `dependency-update-phase-1`, `dependency-update-phase-2`,
