@@ -85,6 +85,9 @@ Compatibility slice result on 2026-06-14:
   under the `tsgo` config.
 - `pnpm exec tsgo -b tsconfig.tsgo.json` now passes.
 - `pnpm run typecheck:tsgo` now passes.
+- Added experimental CI job `tsgo-typecheck` with `continue-on-error: true` to
+  run `pnpm run typecheck:tsgo` without blocking the existing TypeScript 6 CI
+  path.
 - Existing `pnpm run typecheck` still passes on TypeScript 6.
 - Broader validation passed with `pnpm audit --audit-level low`,
   `pnpm run lint:ci`, `pnpm build`, `pnpm run test:ci`, and
@@ -156,10 +159,9 @@ If package or lockfile changes are made:
 
 ## Next Steps
 
-1. Add an experimental, non-blocking CI job for `pnpm run typecheck:tsgo`.
-2. Track replacement/removal of the `@bangle.io/config-template` path mapping
+1. Track replacement/removal of the `@bangle.io/config-template` path mapping
    when that package publishes a `types` export condition.
-3. Track removal of the Playwright CT Vite override when Playwright CT supports
+2. Track removal of the Playwright CT Vite override when Playwright CT supports
    Vite 7 directly.
-4. Plan a separate root `moduleResolution` migration away from `"node"` after
+3. Plan a separate root `moduleResolution` migration away from `"node"` after
    the TS 7 experiment is stable.
