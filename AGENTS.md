@@ -6,6 +6,18 @@
 
 Bangle.io is a **local‑first** note‑taking app that persists notes to the browser’s file‑system (IndexedDB / Native File System API) while giving users a seamless, rich‑text editing experience via **ProseMirror** and **bangle.dev**.
 
+## Core Priorities
+
+1. Protect user data first.
+2. Preserve Markdown fidelity between storage and the WYSIWYG editor.
+3. Keep local-first behavior predictable across reloads, browser storage, and file-system adapters.
+
+If a tradeoff is required, choose correctness, data safety, and clear recovery paths over short-term convenience.
+
+## Maintainability
+
+Long-term maintainability is a core priority. Prefer small, composable modules that respect workspace boundaries and existing package APIs. Avoid one-off local fixes when shared behavior belongs in `shared`, `js-lib`, `platform`, or a service layer. Keep changes simple, typed, tested, and aligned with the monorepo dependency hierarchy.
+
 ---
 
 ## Tech Stack
