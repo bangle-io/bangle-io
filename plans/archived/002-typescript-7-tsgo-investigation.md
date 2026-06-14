@@ -1,14 +1,21 @@
 ---
 title: TypeScript 7 tsgo Investigation
-status: active
+status: completed
 type: plan
-archived: false
+archived: true
 created: 2026-06-14
 updated: 2026-06-14
 owner: mixed
 related_prs: []
 related_issues: []
 ---
+
+> DONE Completed on 2026-06-14 in commit `a31a078a`. `tsgo` is now the
+> canonical `pnpm run typecheck` path, the root `typescript` dev dependency was
+> removed, validation passed with `pnpm run typecheck`, `pnpm run lint:ci`,
+> `pnpm audit --audit-level low`, `pnpm build`, `pnpm run test:ci`, and
+> `pnpm run e2e:ci`, and production was deployed and smoked at
+> `https://app.bangle.io/?deployCheck=a31a078a`.
 
 # TypeScript 7 tsgo Investigation
 
@@ -167,9 +174,4 @@ If package or lockfile changes are made:
 
 ## Next Steps
 
-1. Track replacement/removal of the `@bangle.io/config-template` path mapping
-   when that package publishes a `types` export condition.
-2. Track removal of the Playwright CT Vite override when Playwright CT supports
-   Vite 7 directly.
-3. Plan a separate root `moduleResolution` migration away from `"node"` after
-   the TS 7 experiment is stable.
+Follow-up cleanup moved to `plans/003-upgrade-wrap-up.md`.

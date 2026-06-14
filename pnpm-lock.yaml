@@ -26,6 +26,11 @@ overrides:
   uuid: 11.1.1
   yaml: 2.8.3
 
+patchedDependencies:
+  '@bangle.io/config-template@0.0.7':
+    hash: 0a38520ebfadd7609c241ee1e3d54cda505b50cadb57a967b8966ac9b17c6ad8
+    path: patches/@bangle.io__config-template@0.0.7.patch
+
 importers:
 
   .:
@@ -559,7 +564,7 @@ importers:
     dependencies:
       '@bangle.io/config-template':
         specifier: ^0.0.7
-        version: 0.0.7
+        version: 0.0.7(patch_hash=0a38520ebfadd7609c241ee1e3d54cda505b50cadb57a967b8966ac9b17c6ad8)
 
   packages/shared/constants:
     dependencies:
@@ -857,7 +862,7 @@ importers:
     dependencies:
       '@bangle.io/config-template':
         specifier: ^0.0.7
-        version: 0.0.7
+        version: 0.0.7(patch_hash=0a38520ebfadd7609c241ee1e3d54cda505b50cadb57a967b8966ac9b17c6ad8)
 
   packages/tooling/plop-configs:
     dependencies:
@@ -7099,7 +7104,7 @@ snapshots:
       prosemirror-transform: 1.12.0
       prosemirror-view: 1.41.8
 
-  '@bangle.io/config-template@0.0.7': {}
+  '@bangle.io/config-template@0.0.7(patch_hash=0a38520ebfadd7609c241ee1e3d54cda505b50cadb57a967b8966ac9b17c6ad8)': {}
 
   '@bcoe/v8-coverage@0.2.3': {}
 

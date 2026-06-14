@@ -71,6 +71,9 @@
         "x64",
         "arm64"
       ]
+    },
+    "patchedDependencies": {
+      "@bangle.io/config-template@0.0.7": "patches/@bangle.io__config-template@0.0.7.patch"
     }
   },
   "prettier": {

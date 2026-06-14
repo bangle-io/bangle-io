@@ -2,9 +2,7 @@ import { ThemeManager } from '@bangle.io/color-scheme-manager';
 import getEnvVars from '@bangle.io/env-vars';
 import { languages } from '@bangle.io/translations';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
-// @ts-ignore - stable TypeScript 6 node resolution cannot resolve this ESM package.
 import tailwindcss from '@tailwindcss/vite';
-// @ts-ignore - stable TypeScript 6 node resolution cannot resolve this ESM package.
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';

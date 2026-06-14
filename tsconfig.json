@@ -14,7 +14,7 @@
     "esModuleInterop": true,
     "allowImportingTsExtensions": true,
     "module": "ES2022",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "ignoreDeprecations": "6.0",
     "moduleDetection": "force",
     "resolveJsonModule": false,

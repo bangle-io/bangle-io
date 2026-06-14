@@ -1,7 +1,5 @@
 import { defineConfig, devices } from '@playwright/experimental-ct-react';
-// @ts-ignore - stable TypeScript 6 node resolution cannot resolve this ESM package.
 import tailwindcss from '@tailwindcss/vite';
-// @ts-ignore - stable TypeScript 6 node resolution cannot resolve this ESM package.
 import { tsImport } from 'tsx/esm/api';
 
 type EnvVarsGetter = typeof import('@bangle.io/env-vars').default;

@@ -1,0 +1,12 @@
+diff --git a/package.json b/package.json
+index dc56ab2752333c63b52a0f5e9a4c43f18ce42ad8..15bc761eb7b846f373f15e6f1d3cc5fc7f23f7aa 100644
+--- a/package.json
++++ b/package.json
+@@ -16,6 +16,7 @@
+   "module": "./dist/bangle-io-config-template.mjs",
+   "exports": {
+     ".": {
++      "types": "./dist/src/index.d.ts",
+       "require": "./dist/bangle-io-config-template.cjs",
+       "import": "./dist/bangle-io-config-template.mjs"
+     }

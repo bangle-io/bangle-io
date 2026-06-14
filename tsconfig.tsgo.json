@@ -1,14 +1,6 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "moduleResolution": "bundler",
-    "paths": {
-      "@bangle.io/config-template": [
-        "./packages/shared/config/node_modules/@bangle.io/config-template/dist/src/index.d.ts"
-      ],
-      "vite": [
-        "./node_modules/vite/dist/node/index.d.ts"
-      ]
-    }
+    "moduleResolution": "bundler"
   }
 }
