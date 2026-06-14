@@ -4,7 +4,7 @@ status: active
 type: plan
 archived: false
 created: 2026-05-25
-updated: 2026-06-13
+updated: 2026-06-14
 owner: mixed
 related_prs:
   - https://github.com/kepta/bangle-io-2/pull/299
@@ -32,7 +32,7 @@ This plan is not archived yet because the remaining follow-up work is still
 tracked here:
 
 - [ ] TypeScript major upgrade.
-- [ ] Storybook latest major upgrade.
+- [x] Storybook latest major upgrade.
 - [ ] Final hardening after merge, including clean-checkout verification,
   production-preview smoke, and supply-chain review.
 
@@ -133,7 +133,7 @@ Phase 3 progress:
 - [x] `@types/node` major update.
 - [x] GitHub Actions major updates.
 - [ ] TypeScript 5.8 to 6.
-- [ ] Storybook 8 to latest major.
+- [x] Storybook 8 to latest major.
 
 Candidate hard updates:
 

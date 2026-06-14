@@ -1,6 +1,6 @@
 import '@bangle.io/browser-entry/src/default-theme.processed.css';
 import { t } from '@bangle.io/translations';
-import type { Decorator, Preview } from '@storybook/react';
+import type { Decorator, Preview, StoryContext } from '@storybook/react';
 import React, { useLayoutEffect } from 'react';
 
 (window as any).t = t;
@@ -18,12 +18,14 @@ function checkWidescreen(): boolean {
   return currentWidth >= WIDESCREEN_WIDTH;
 }
 
-const WithThemeProvider: Decorator = (Story, context) => {
+const WithThemeProvider: Decorator = (
+  Story: React.ComponentType,
+  context: StoryContext,
+) => {
   const theme = context.globals.themeSwitcher;
 
   useLayoutEffect(() => {
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    const el = document.firstElementChild!;
+    const el = document.documentElement;
     el.classList.remove('BU_widescreen', 'BU_smallscreen');
     el.classList.add(checkWidescreen() ? 'BU_widescreen' : 'BU_smallscreen');
     if (theme === 'light') {
