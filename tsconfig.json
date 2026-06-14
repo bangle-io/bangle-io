@@ -15,6 +15,7 @@
     "allowImportingTsExtensions": true,
     "module": "ES2022",
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "moduleDetection": "force",
     "resolveJsonModule": false,
     "isolatedModules": true,

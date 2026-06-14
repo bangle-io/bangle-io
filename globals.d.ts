@@ -12,6 +12,21 @@ declare var __BANGLE_BUILD_TIME_CONFIG__: string | undefined;
 // biome-ignore lint/style/noVar: <explanation>
 declare var __BANGLE_INJECTED_CONFIG__: string | undefined;
 
+interface FileSystemHandle {
+  queryPermission(
+    descriptor?: FileSystemHandlePermissionDescriptor,
+  ): Promise<PermissionState>;
+  requestPermission(
+    descriptor?: FileSystemHandlePermissionDescriptor,
+  ): Promise<PermissionState>;
+}
+
+interface Window {
+  showDirectoryPicker(
+    options?: DirectoryPickerOptions,
+  ): Promise<FileSystemDirectoryHandle>;
+}
+
 declare module '@storybook/react' {
   export type Decorator<TArgs = import('storybook/internal/types').StrictArgs> =
     import('./packages/tooling/e2e-tests/node_modules/@storybook/react/dist/index').Decorator<TArgs>;

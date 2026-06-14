@@ -31,10 +31,11 @@ PR #299 completed the broad aggressive dependency modernization slice on
 This plan is not archived yet because the remaining follow-up work is still
 tracked here:
 
-- [ ] TypeScript major upgrade.
+- [x] TypeScript major upgrade to 6.
 - [x] Storybook latest major upgrade.
 - [ ] Final hardening after merge, including clean-checkout verification,
   production-preview smoke, and supply-chain review.
+- [ ] Follow-up TS 7/tsgo investigation plan after TypeScript 6 lands.
 
 ## Phase 0: Baseline Gate
 
@@ -132,14 +133,30 @@ Phase 3 progress:
 - [x] `lucide-react` major update.
 - [x] `@types/node` major update.
 - [x] GitHub Actions major updates.
-- [ ] TypeScript 5.8 to 6.
+- [x] TypeScript 5.8 to 6.
 - [x] Storybook 8 to latest major.
+
+TypeScript 6 notes:
+
+- Use `typescript@^6.0.3` as the focused major upgrade.
+- Keep `moduleResolution: "node"` for this slice and explicitly set
+  `ignoreDeprecations: "6.0"`. A trial move to `moduleResolution: "bundler"`
+  exposed unrelated package export typing gaps and Vite 6/7 type duplication.
+- Restore local ambient declarations for File System Access API permission
+  methods and `window.showDirectoryPicker`, which TypeScript 6 no longer
+  provides through the selected lib/types combination.
+- Do not introduce `tsgo` in this branch. Treat TS 7/tsgo as a separate
+  follow-up after TypeScript 6 is merged and stable.
+- Local validation passed on 2026-06-14 with `pnpm run lint:ci`,
+  `pnpm build`, `pnpm run test:ci`, `pnpm run e2e:ci`, and Playwright CLI
+  smoke testing against the Vite dev server on `http://localhost:5173/`.
 
 Candidate hard updates:
 
 - Vite 6 to latest compatible major and `@vitejs/plugin-react` latest compatible major. Keep Storybook on its own compatible Vite line unless the Storybook major update is part of the PR.
 - Vitest 3 to 4, including `@vitest/browser` and `@vitest/coverage-v8`.
 - TypeScript 5.8 to 6.
+- TypeScript 7/tsgo investigation after TS 6 is merged.
 - Storybook 8 to latest major.
 - Sentry major updates.
 - Jest 29 to 30 if still needed.
