@@ -2,10 +2,11 @@ import { ThemeManager } from '@bangle.io/color-scheme-manager';
 import getEnvVars from '@bangle.io/env-vars';
 import { languages } from '@bangle.io/translations';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
-// @ts-expect-error - moduleResolution error
+// @ts-ignore - stable TypeScript 6 node resolution cannot resolve this ESM package.
 import tailwindcss from '@tailwindcss/vite';
-// @ts-expect-error - moduleResolution error
+// @ts-ignore - stable TypeScript 6 node resolution cannot resolve this ESM package.
 import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 
 // Custom serializer to handle functions
@@ -33,7 +34,7 @@ function serializeTranslationObjection(obj: any): string {
   return `{${parts.join(',')}}`;
 }
 
-export default async (env: { mode: string }) => {
+export default defineConfig(async (env) => {
   const isProduction = env.mode === 'production';
   const themeInline = ThemeManager.getInlineScript();
 
@@ -76,4 +77,4 @@ export default async (env: { mode: string }) => {
       ...envVars.globalIdentifiers,
     },
   };
-};
+});
