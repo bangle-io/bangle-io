@@ -1,8 +1,8 @@
 ---
 title: Dependency Update Modernization Plan
-status: active
+status: completed
 type: plan
-archived: false
+archived: true
 created: 2026-05-25
 updated: 2026-06-14
 owner: mixed
@@ -10,6 +10,14 @@ related_prs:
   - https://github.com/kepta/bangle-io-2/pull/299
 related_issues: []
 ---
+
+> DONE Completed on 2026-06-14 after TypeScript 6 deployment commit
+> `e3d52a47`. Final verification passed with clean-checkout install/lint/build,
+> `pnpm audit --audit-level low`, `pnpm run lint:ci`, `pnpm build`,
+> `pnpm run test:ci`, `pnpm run e2e:ci`, and Playwright CLI production-preview
+> smoke testing. Local preview console retained one Sentry ingest `403` from
+> the unauthenticated local build; production smoke for `e3d52a47` was already
+> clean aside from known editor/plugin debug logs.
 
 # Dependency Update Modernization Plan
 
@@ -28,14 +36,81 @@ current lockfile state, and a Playwright CLI smoke run against the existing app.
 PR #299 completed the broad aggressive dependency modernization slice on
 2026-06-13. Automated CI is green for lint, unit tests, and E2E tests.
 
-This plan is not archived yet because the remaining follow-up work is still
-tracked here:
+This plan is archived because all tracked modernization and hardening work is
+complete:
 
 - [x] TypeScript major upgrade to 6.
 - [x] Storybook latest major upgrade.
-- [ ] Final hardening after merge, including clean-checkout verification,
+- [x] Final hardening after merge, including clean-checkout verification,
   production-preview smoke, and supply-chain review.
-- [ ] Follow-up TS 7/tsgo investigation plan after TypeScript 6 lands.
+- [x] Follow-up TS 7/tsgo investigation plan after TypeScript 6 lands.
+
+Final hardening progress on 2026-06-14:
+
+- [x] Clean-checkout verification of `e3d52a47` passed from
+  `/tmp/bangle-io-clean-e3d52a47` with `pnpm install --frozen-lockfile`,
+  `pnpm run lint:ci`, and `pnpm build`.
+- [x] Local production-preview smoke passed from the clean checkout with
+  `pnpm preview-production -- --host 127.0.0.1 --port 4173` and Playwright CLI
+  against `http://localhost:4173/?previewCheck=e3d52a47`.
+  - Verified title `Bangle App`.
+  - Verified welcome screen and `Create Workspace`.
+  - Created Browser workspace `Preview Smoke e3d52a4`.
+  - Created note `preview-smoke.md`.
+  - Typed `Production preview smoke e3d52a4 persisted content.`
+  - Opened the omni/search UI and verified recent note, commands, and all notes
+    rendered.
+  - Reload confirmed the workspace, note, and exact editor content persisted.
+  - Console after reload had one local-preview-only Sentry ingest `403` error
+    from `https://o573373.ingest.us.sentry.io/.../envelope/`, with zero
+    warnings; app runtime logs were otherwise editor/plugin debug output.
+- [x] Supply-chain review was run with `pnpm audit --audit-level moderate`.
+  The first run failed with 61 advisories (`7` low, `22` moderate, `30` high,
+  `2` critical), concentrated in `vite-plugin-html`/`ejs`/`jake`,
+  `@storybook/test-runner` transitive packages, root
+  `plop`/`node-plop`/`handlebars`, and `tsx`/`vite`/`esbuild` build tooling
+  paths.
+- [x] Supply-chain audit remediation completed with targeted `pnpm.overrides`
+  and lockfile refresh. `pnpm audit --audit-level low` now reports no known
+  vulnerabilities.
+- [x] Post-remediation validation passed with `pnpm run lint:ci`,
+  `pnpm build`, `pnpm run test:ci`, and `pnpm run e2e:ci`.
+- [x] Post-remediation local production-preview smoke passed with
+  `pnpm preview-production -- --host 127.0.0.1 --port 4174` and Playwright CLI
+  against `http://localhost:4174/?auditFixCheck=e3d52a47`.
+  - Created Browser workspace `Audit Fix Smoke e3d52a4`.
+  - Created note `audit-fix-smoke.md`.
+  - Typed `Audit override smoke e3d52a4 persisted content.`
+  - Opened the omni/search UI.
+  - Reload confirmed the workspace, note, and exact editor content persisted.
+  - Console after reload had one local-preview-only Sentry ingest `403` error
+    from `https://o573373.ingest.us.sentry.io/.../envelope/`, with zero
+    warnings.
+
+## TypeScript 7 / tsgo Follow-up Investigation
+
+Do not start this as part of the TypeScript 6 stabilization branch. Treat it as
+the next separate dependency experiment after this plan is archived.
+
+Official TypeScript 7 beta guidance on 2026-06-14:
+
+- Install side-by-side with TypeScript 6 using
+  `pnpm add -D @typescript/native-preview@beta`.
+- Use `pnpm exec tsgo --version` and `pnpm exec tsgo -b` as the first CLI
+  parity check against the existing `pnpm run typecheck` / `tsc -b` flow.
+- Keep the `typescript` package on TypeScript 6 while validating `tsgo`; do not
+  swap `typescript` to TypeScript 7 in the first investigation slice.
+- Compare diagnostics and timings between `pnpm run typecheck` and
+  `pnpm exec tsgo -b`.
+- If `tsgo -b` passes, run `pnpm run lint:ci`, `pnpm build`, `pnpm run test:ci`,
+  and the Playwright CLI smoke checklist.
+- Check ecosystem/tooling compatibility before any production migration:
+  `typescript-eslint`/Biome integration, Vite and Vitest compiler API usage,
+  Storybook test-runner, project references, declaration emit, watch mode, and
+  any packages that import `typescript` directly.
+- Use `@typescript/native-preview@beta` for the planned branch. The npm
+  `latest` dist-tag was `7.0.0-dev.20260614.1` on 2026-06-14 and may be used
+  only for a separate nightly comparison after the beta check.
 
 ## Phase 0: Baseline Gate
 
