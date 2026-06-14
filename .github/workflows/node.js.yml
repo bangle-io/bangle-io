@@ -39,25 +39,6 @@ jobs:
           version: latest
       - name: Lint
         run: pnpm run lint:ci
-  tsgo-typecheck:
-    continue-on-error: true
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install pnpm
-        id: pnpm-install
-        run: |
-          corepack enable
-          corepack prepare --activate
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm install
-      - name: Typecheck with tsgo
-        run: pnpm run typecheck:tsgo
   test:
     runs-on: ubuntu-latest
     steps:

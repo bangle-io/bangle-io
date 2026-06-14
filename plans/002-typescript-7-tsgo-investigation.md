@@ -14,12 +14,12 @@ related_issues: []
 
 ## Summary
 
-Investigate TypeScript 7's native compiler preview (`tsgo`) as a side-by-side
-validation path after the TypeScript 6 upgrade has shipped and stabilized.
+Migrate Bangle.io's canonical typecheck path to TypeScript 7's native compiler
+preview (`tsgo`) after the TypeScript 6 upgrade shipped and stabilized.
 
-The first slice must not replace the `typescript` package. Keep TypeScript 6 as
-the repo's canonical compiler while validating `@typescript/native-preview`
-with the `tsgo` binary.
+The repo should use `@typescript/native-preview` for `pnpm run typecheck`.
+The JavaScript `typescript` package should not remain a root dev dependency
+unless a tool proves it needs the compiler API directly.
 
 ## Current Status
 
@@ -29,6 +29,8 @@ with the `tsgo` binary.
 - [x] Add `@typescript/native-preview@beta` side-by-side.
 - [x] Compare `pnpm run typecheck` with `pnpm exec tsgo -b`.
 - [x] Decide whether TypeScript 7 beta is ready for CI experimentation.
+- [x] Make `tsgo` the canonical `pnpm run typecheck` path.
+- [x] Remove root `typescript` dev dependency.
 
 Initial result on 2026-06-14:
 
@@ -79,16 +81,18 @@ Compatibility slice result on 2026-06-14:
 - Flattened `tailwindcss()` in
   `packages/tooling/e2e-tests/playwright-ct.config.ts` from
   `plugins: [tailwindcss()]` to `plugins: tailwindcss()`.
-- Kept TS 6-compatible `@ts-ignore` comments on ESM package imports that the
-  root `moduleResolution: "node"` compiler path cannot resolve yet; `tsgo`
-  does not need them, but unlike `@ts-expect-error`, they do not fail as unused
-  under the `tsgo` config.
+- Kept temporary `@ts-ignore` comments on ESM package imports that older
+  TypeScript/node-resolution tooling could not resolve. These should be
+  removed once all typechecking paths use `tsgo`/bundler-compatible resolution
+  cleanly.
 - `pnpm exec tsgo -b tsconfig.tsgo.json` now passes.
-- `pnpm run typecheck:tsgo` now passes.
-- Added experimental CI job `tsgo-typecheck` with `continue-on-error: true` to
-  run `pnpm run typecheck:tsgo` without blocking the existing TypeScript 6 CI
-  path.
-- Existing `pnpm run typecheck` still passes on TypeScript 6.
+- `pnpm run typecheck` now runs `tsgo -b tsconfig.tsgo.json` and passes.
+- Removed root `typescript` dev dependency. `pnpm why typescript` still shows a
+  transitive peer resolution through Vitest/MSW tooling, but the project no
+  longer declares TypeScript 6 directly.
+- After removing root `typescript`, validation passed with
+  `pnpm run typecheck`, `pnpm run lint:ci`, `pnpm audit --audit-level low`,
+  `pnpm build`, `pnpm run test:ci`, and `pnpm run e2e:ci`.
 - Broader validation passed with `pnpm audit --audit-level low`,
   `pnpm run lint:ci`, `pnpm build`, `pnpm run test:ci`, and
   `pnpm run e2e:ci`.
@@ -102,28 +106,36 @@ Compatibility slice result on 2026-06-14:
   - Console after reload had one local-preview-only Sentry ingest `403` error
     from `https://o573373.ingest.us.sentry.io/.../envelope/`, with zero
     warnings.
+- After making `tsgo` canonical and removing root `typescript`, Playwright CLI
+  production-preview smoke passed again against
+  `http://localhost:4173/?tsgoCanonical=ef16dfb`:
+  - Created Browser workspace `TSGO Canonical ef16dfb`.
+  - Created note `tsgo-canonical.md`.
+  - Typed `Canonical tsgo smoke ef16dfb persisted content.`
+  - Opened omni/search UI.
+  - Reload confirmed the workspace, note, and exact editor content persisted.
+  - Console after reload had one local-preview-only Sentry ingest `403` error
+    from `https://o573373.ingest.us.sentry.io/.../envelope/`, with zero
+    warnings.
 
 Decision:
 
-- TypeScript 7 beta is ready for the experimental `pnpm run typecheck:tsgo`
-  script as a non-production validation job.
-- It is not ready to replace `typescript` or the existing `pnpm run typecheck`
-  path. Keep TypeScript 6 as canonical until the root config can move away from
-  `moduleResolution: "node"` and upstream packages expose types through
-  `exports`.
+- `tsgo` is now the canonical typecheck path for this branch.
+- The repo no longer keeps `typescript@6` as a root dev dependency.
+- Do not add a separate non-blocking `tsgo` CI job; the existing `lint` job
+  already runs `pnpm run lint:ci`, which runs `pnpm run typecheck`, which now
+  uses `tsgo`.
 
 ## Scope
 
 - Add the native preview package on a branch.
 - Run `tsgo` against the existing project references build.
-- Compare diagnostics, exit codes, and timing against TypeScript 6.
 - Identify tooling that still depends on the JavaScript TypeScript compiler API.
-- Run broader validation only if `tsgo -b` has diagnostics parity.
+- Make the repo's canonical typecheck script use `tsgo`.
+- Remove the root JavaScript `typescript` dev dependency if validation passes.
 
 ## Out of Scope
 
-- Do not replace `typescript` with TypeScript 7 in this first slice.
-- Do not change `moduleResolution` or unrelated `tsconfig` behavior.
 - Do not deploy a TypeScript 7 build to production.
 - Do not refactor app code unless a `tsgo` compatibility issue is isolated and
   clearly necessary.
@@ -135,13 +147,10 @@ Initial parity checks:
 - `pnpm install`
 - `pnpm run typecheck`
 - `pnpm exec tsgo --version`
-- `pnpm exec tsgo -b`
-
-If `tsgo -b` passes:
-
 - `pnpm run lint:ci`
 - `pnpm build`
 - `pnpm run test:ci`
+- `pnpm run e2e:ci`
 - Playwright CLI smoke against the local app or production preview.
 
 If package or lockfile changes are made:
@@ -153,9 +162,8 @@ If package or lockfile changes are made:
 - TypeScript 7 beta is distributed through `@typescript/native-preview` and may
   have behavior differences from the stable TypeScript 6 compiler.
 - Existing tooling may import `typescript` directly and continue to require the
-  JavaScript compiler API.
-- `tsgo` build mode and project references need explicit validation in this
-  monorepo before any CI path changes.
+  JavaScript compiler API even though app typechecking is now handled by
+  `tsgo`.
 
 ## Next Steps
 

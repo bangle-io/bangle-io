@@ -28,7 +28,6 @@
     "jsdom": "^29.1.1",
     "plop": "^4.0.5",
     "tslib": "^2.8.1",
-    "typescript": "^6.0.3",
     "vitest": "^4.1.6"
   },
   "homepage": "https://bangle.io",
@@ -102,8 +101,7 @@
     "preview-production": "pnpm -r --filter \"browser-entry\" run preview-production",
     "start": "pnpm -r --filter \"browser-entry\" run dev",
     "storybook": "pnpm -r --filter \"storybook\" run storybook",
-    "typecheck": "tsc -b",
-    "typecheck:tsgo": "tsgo -b tsconfig.tsgo.json"
+    "typecheck": "tsgo -b tsconfig.tsgo.json"
   },
   "module": "index.ts",
   "type": "module",
