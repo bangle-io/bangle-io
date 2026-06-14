@@ -36,6 +36,7 @@
   "pnpm": {
     "overrides": {
       "@eslint/plugin-kit": "0.3.4",
+      "@playwright/experimental-ct-core>vite": "7.3.3",
       "axios": "1.17.0",
       "brace-expansion@>=2.0.0 <2.0.3": "2.0.3",
       "diff": "4.0.4",
@@ -101,7 +102,8 @@
     "preview-production": "pnpm -r --filter \"browser-entry\" run preview-production",
     "start": "pnpm -r --filter \"browser-entry\" run dev",
     "storybook": "pnpm -r --filter \"storybook\" run storybook",
-    "typecheck": "tsc -b"
+    "typecheck": "tsc -b",
+    "typecheck:tsgo": "tsgo -b tsconfig.tsgo.json"
   },
   "module": "index.ts",
   "type": "module",
