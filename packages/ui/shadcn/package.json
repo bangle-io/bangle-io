@@ -49,6 +49,6 @@
     "react-dom": "19.2.6"
   },
   "devDependencies": {
-    "@storybook/react": "^8.6.18"
+    "@storybook/react": "^10.4.4"
   }
 }
