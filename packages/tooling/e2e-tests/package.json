@@ -40,16 +40,15 @@
     "@playwright/test": "^1.60.0",
     "@storybook/react": "^10.4.4",
     "@tailwindcss/vite": "^4.3.1",
-    "@types/node": "^25.8.0",
-    "@types/react": "^19.2.14",
+    "@types/node": "^25.9.3",
+    "@types/react": "^19.2.17",
     "autoprefixer": "^10.5.0",
-    "postcss": "^8.5.14",
-    "react": "19.2.6",
-    "react-dom": "19.2.6",
-    "tailwindcss": "^4.3.0",
+    "postcss": "^8.5.15",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "tailwindcss": "^4.3.1",
     "tailwindcss-animate": "^1.0.7",
-    "tailwindcss-react-aria-components": "^2.1.0",
-    "tsx": "^4.22.0"
-  },
-  "devDependencies": {}
+    "tailwindcss-react-aria-components": "^2.1.1",
+    "tsx": "^4.22.4"
+  }
 }

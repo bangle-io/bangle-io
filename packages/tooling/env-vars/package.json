@@ -21,6 +21,7 @@
     "env": "nodejs",
     "kind": "build"
   },
+  "type": "module",
   "main": "index.ts",
   "module": "index.ts",
   "publishConfig": {},

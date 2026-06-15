@@ -5,3 +5,53 @@ packages:
   - 'packages/shared/*'
   - 'packages/tooling/*'
   - 'packages/ui/*'
+
+overrides:
+  '@eslint/plugin-kit': 0.3.4
+  '@playwright/experimental-ct-react>@vitejs/plugin-react': 6.0.2
+  '@playwright/experimental-ct-core>vite': 8.0.16
+  axios: 1.17.0
+  'brace-expansion@>=2.0.0 <2.0.3': 2.0.3
+  diff: 4.0.4
+  esbuild: 0.28.1
+  follow-redirects: 1.16.0
+  form-data: 4.0.6
+  handlebars: 4.7.9
+  jake: 10.9.4
+  js-yaml: 3.14.2
+  joi: 17.13.4
+  lodash: 4.18.1
+  markdown-it: 14.2.0
+  'minimatch@<3.1.4': 3.1.4
+  'minimatch@>=5.0.0 <5.1.8': 5.1.8
+  'minimatch@>=9.0.0 <9.0.7': 9.0.7
+  react-dom: 19.2.7
+  uuid: 11.1.1
+  yaml: 2.8.3
+
+onlyBuiltDependencies:
+  - '@biomejs/biome'
+  - '@swc/core'
+  - '@tailwindcss/oxide'
+  - esbuild
+  - msw
+
+supportedArchitectures:
+  os:
+    - darwin
+    - linux
+  cpu:
+    - x64
+    - arm64
+
+patchedDependencies:
+  '@bangle.io/config-template@0.0.7': patches/@bangle.io__config-template@0.0.7.patch
+
+minimumReleaseAge: 0
+
+allowBuilds:
+  '@sentry/cli': true
+  '@swc/core': true
+  esbuild: true
+  msw: true
+  unrs-resolver: true

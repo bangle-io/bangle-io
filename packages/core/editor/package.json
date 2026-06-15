@@ -39,11 +39,11 @@
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "@floating-ui/dom": "^1.7.6",
-    "@types/react": "^19.2.14",
-    "date-fns": "^4.1.0",
-    "jotai": "^2.20.0",
-    "lucide-react": "^1.16.0",
-    "prosemirror-view": "^1.41.8",
-    "react": "19.2.6"
+    "@types/react": "^19.2.17",
+    "date-fns": "^4.4.0",
+    "jotai": "^2.20.1",
+    "lucide-react": "^1.18.0",
+    "prosemirror-view": "^1.41.9",
+    "react": "19.2.7"
   }
 }

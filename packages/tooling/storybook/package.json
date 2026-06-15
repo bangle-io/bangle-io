@@ -36,27 +36,27 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "^6.0.2",
-    "react": "19.2.6",
-    "react-dom": "19.2.6"
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
   },
   "devDependencies": {
     "@bangle.io/browser-entry": "workspace:*",
     "@bangle.io/env-vars": "workspace:*",
     "@bangle.io/translations": "workspace:*",
     "@chromatic-com/storybook": "^5.2.1",
-    "@tailwindcss/postcss": "^4.3.0",
     "@storybook/addon-links": "^10.4.4",
     "@storybook/addon-onboarding": "^10.4.4",
     "@storybook/react": "^10.4.4",
     "@storybook/react-vite": "^10.4.4",
     "@storybook/test-runner": "^0.24.4",
+    "@tailwindcss/postcss": "^4.3.1",
     "autoprefixer": "^10.5.0",
-    "chromatic": "^11.29.0",
+    "chromatic": "^17.4.1",
     "prop-types": "^15.8.1",
     "storybook": "^10.4.4",
-    "tailwindcss": "^4.3.0",
+    "tailwindcss": "^4.3.1",
     "tailwindcss-animate": "^1.0.7",
-    "tailwindcss-react-aria-components": "^2.1.0",
+    "tailwindcss-react-aria-components": "^2.1.1",
     "vite": "^8.0.16"
   }
 }

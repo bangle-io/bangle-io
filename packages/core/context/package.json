@@ -30,7 +30,6 @@
   "dependencies": {
     "@bangle.io/base-utils": "workspace:*",
     "@bangle.io/types": "workspace:*",
-    "react": "19.2.6"
-  },
-  "devDependencies": {}
+    "react": "19.2.7"
+  }
 }

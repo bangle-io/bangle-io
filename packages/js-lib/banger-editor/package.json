@@ -29,22 +29,21 @@
   "scripts": {},
   "dependencies": {
     "@bangle.dev/prosemirror-all": "2.0.0-alpha.18",
-    "jotai": "^2.20.0",
+    "jotai": "^2.20.1",
     "orderedmap": "^2.1.1",
     "prosemirror-commands": "^1.7.1",
     "prosemirror-dropcursor": "^1.8.2",
-    "prosemirror-flat-list": "^0.5.8",
+    "prosemirror-flat-list": "^0.6.0",
     "prosemirror-gapcursor": "^1.4.1",
     "prosemirror-history": "^1.5.0",
     "prosemirror-inputrules": "^1.5.1",
     "prosemirror-keymap": "^1.2.3",
     "prosemirror-markdown": "^1.13.4",
-    "prosemirror-model": "^1.25.6",
+    "prosemirror-model": "^1.25.8",
     "prosemirror-schema-basic": "^1.2.4",
     "prosemirror-state": "^1.4.4",
     "prosemirror-test-builder": "^1.1.1",
     "prosemirror-transform": "^1.12.0",
-    "prosemirror-view": "^1.41.8"
-  },
-  "devDependencies": {}
+    "prosemirror-view": "^1.41.9"
+  }
 }
