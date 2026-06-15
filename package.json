@@ -35,7 +35,8 @@
   "pnpm": {
     "overrides": {
       "@eslint/plugin-kit": "0.3.4",
-      "@playwright/experimental-ct-core>vite": "7.3.3",
+      "@playwright/experimental-ct-react>@vitejs/plugin-react": "6.0.2",
+      "@playwright/experimental-ct-core>vite": "8.0.16",
       "axios": "1.17.0",
       "brace-expansion@>=2.0.0 <2.0.3": "2.0.3",
       "diff": "4.0.4",
