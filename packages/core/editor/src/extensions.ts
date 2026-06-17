@@ -25,10 +25,18 @@ import {
 } from '@bangle.io/prosemirror-plugins';
 import { funPlaceholder } from './utils';
 
-export function setupExtensions(logger: Logger) {
-  const link = setupLink();
+type SetupExtensionsOptions = {
+  image?: Parameters<typeof setupImage>[0];
+  link?: Parameters<typeof setupLink>[0];
+};
+
+export function setupExtensions(
+  logger: Logger,
+  options?: SetupExtensionsOptions,
+) {
+  const link = setupLink(options?.link);
   return {
-    image: setupImage(),
+    image: setupImage(options?.image),
     activeNode: setupActiveNode({
       excludedNodes: ['horizontal_rule', 'code_block', 'blockquote'],
     }),

@@ -24,6 +24,17 @@ export const WORKSPACE_STORAGE_TYPE = {
 export type WorkspaceStorageType =
   (typeof WORKSPACE_STORAGE_TYPE)[keyof typeof WORKSPACE_STORAGE_TYPE];
 
+export const WORKSPACE_ATTACHMENT_MODE = {
+  relative: 'relative',
+  root: 'root',
+} as const;
+
+export const DEFAULT_WORKSPACE_ATTACHMENT_CONFIG = {
+  mode: WORKSPACE_ATTACHMENT_MODE.relative,
+  directory: '_anexos',
+  fileNamePrefix: 'Pasted image',
+} as const;
+
 // Add all service names here
 export const SERVICE_NAME = {
   browserErrorHandlerService: 'browser-error-handler',
