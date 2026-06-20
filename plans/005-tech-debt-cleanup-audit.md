@@ -1,6 +1,6 @@
 ---
 title: Tech Debt Cleanup Audit
-status: planned
+status: active
 type: plan
 archived: false
 created: 2026-06-15
@@ -29,7 +29,18 @@ land before broader UI or tooling cleanup.
 
 - Audit completed across architecture/package boundaries, editor and storage
   safety, React UI/state, and tooling/test hygiene.
-- No code changes have been made as part of this plan.
+- P0.1 started with an editor-owned per-`wsPath` save queue that serializes
+  writes, coalesces rapid edits to the latest pending document, exposes
+  `clean`, `pending`, and `failed` save states, and emits app errors when the
+  latest save fails. Failed latest saves retain the unsaved document in memory
+  for explicit retry, and `PmEditorService` exposes save status/dirty APIs and
+  change subscriptions. Pending or failed saves now activate browser
+  navigation/reload protection, failed saves show a persistent translated retry
+  action, and a successful retry clears protection.
+- P0.2 started with explicit editor load rejection handling that emits an app
+  error instead of leaving the mount promise silently pending. Failed load
+  status and a same-node retry API are now exposed. Parse-failure isolation and
+  the user-facing recovery view remain.
 - Findings are grouped by priority and theme below.
 
 ## Scope
@@ -68,19 +79,33 @@ Evidence:
 
 Plan:
 
-- Introduce a per-`wsPath` save queue owned by editor or service-core.
-- Debounce or coalesce rapid document changes before writing.
+- [x] Introduce a per-`wsPath` save queue owned by editor or service-core.
+- [x] Debounce or coalesce rapid document changes before writing.
 - Track monotonically increasing save revisions and ignore stale completions.
-- Surface save states: clean, pending, failed, retrying.
-- Route failures through the app error system and keep a persistent unsaved
+- [x] Surface save states: clean, pending, failed.
+- [x] Retain the latest failed save body for explicit retry.
+- Surface retrying save state if/when automatic retry is added.
+- [x] Route failures through the app error system and keep a persistent unsaved
   state until the write succeeds or the user chooses a recovery action.
-- Add navigation/reload protection when a note has pending or failed writes.
+- [x] Expose a service API that navigation/reload protection can query for
+  pending or failed writes.
+- [x] Add navigation/reload protection UI wiring when a note has pending or
+  failed writes.
+- [x] Show a persistent translated failed-save recovery action that retries the
+  retained latest body.
 
 Verification:
 
-- Unit test ordered save completion with intentionally delayed writes.
-- Unit test rejected writes produce an app error and do not clear dirty state.
-- E2E test edit, reload, and confirm latest content persists.
+- [x] Unit test ordered save completion with intentionally delayed writes.
+- [x] Unit test rejected writes produce an app error and do not clear dirty
+  state.
+- [x] Unit test latest failed save retry writes the retained unsaved body.
+- [x] Unit/integration test save-status subscriptions activate protection once
+  and clear it after save or successful retry.
+- [x] Playwright CLI verified successful edit navigation/reload persistence,
+  forced-write-failure dirty state and retry UI, protected reload and full-page
+  navigation, retained-body persistence after retry, and protection clearing
+  after retry.
 
 ### P0.2 Handle Editor Load And Parse Failures
 
@@ -99,7 +124,10 @@ Evidence:
 
 Plan:
 
-- Catch initial read failures and show a note-load error state.
+- [x] Catch initial read failures, store failed load state, and emit a note-load
+  app error.
+- [x] Expose a same-node load retry API.
+- Show a note-load error state.
 - Catch Markdown parse failures separately from storage failures.
 - Offer recovery actions that preserve raw content, such as opening raw
   Markdown, copying raw text, or downloading the file before normalization.

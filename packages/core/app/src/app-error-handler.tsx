@@ -46,6 +46,27 @@ export function AppErrorHandler({ rootEmitter }: { rootEmitter: RootEmitter }) {
       logger.error(error);
       return handleAppError(error, (appError, error) => {
         switch (appError.name) {
+          case 'error::editor:save-failed': {
+            const toastId = `editor-save-failed:${appError.payload.wsPath}`;
+            toast.error(t.app.toasts.saveFailed, {
+              id: toastId,
+              duration: Number.POSITIVE_INFINITY,
+              action: {
+                label: t.app.toasts.retrySave,
+                onClick: () => {
+                  if (
+                    coreServices.pmEditorService.retryFailedSave(
+                      appError.payload.wsPath,
+                    )
+                  ) {
+                    toast.dismiss(toastId);
+                  }
+                },
+              },
+            });
+            return;
+          }
+
           case 'error::workspace:native-fs-auth-needed': {
             coreServices.commandDispatcher.dispatch(
               'command::ui:native-fs-auth',

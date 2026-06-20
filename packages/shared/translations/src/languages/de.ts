@@ -234,6 +234,9 @@ export const t = {
     },
     toasts: {
       permissionNotGranted: 'Berechtigung nicht erteilt',
+      retrySave: 'Speichern erneut versuchen',
+      saveFailed:
+        'Änderungen konnten nicht gespeichert werden. Versuchen Sie es erneut, um Ihre letzte Änderung zu behalten.',
     },
     pageWelcome: {
       newUser: 'Willkommen bei Bangle',

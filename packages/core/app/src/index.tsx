@@ -25,6 +25,7 @@ import {
   PageWsHome,
   PageWsPathNotFound,
 } from './pages';
+import { SaveProtection } from './save-protection';
 
 export function App({
   logger,
@@ -47,6 +48,7 @@ export function App({
               <OmniSearch />
               <Toaster position="top-center" />
               <AppErrorHandler rootEmitter={rootEmitter} />
+              <SaveProtection />
               <AppSidebar>
                 <AppRoutes />
               </AppSidebar>

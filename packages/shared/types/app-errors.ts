@@ -122,6 +122,22 @@ export type AppError =
       };
     }
 
+  // Editor errors
+  | {
+      name: `error::editor:load-failed`;
+      payload: {
+        error: Error;
+        wsPath: string;
+      };
+    }
+  | {
+      name: `error::editor:save-failed`;
+      payload: {
+        error: Error;
+        wsPath: string;
+      };
+    }
+
   // WS Path errors
   | {
       name: `error::ws-path:invalid-ws-path`;

@@ -229,6 +229,8 @@ export const t = {
     },
     toasts: {
       permissionNotGranted: 'Permission not granted',
+      retrySave: 'Retry save',
+      saveFailed: 'Changes could not be saved. Retry to keep your latest edit.',
     },
     pageWelcome: {
       newUser: 'Welcome to Bangle',
