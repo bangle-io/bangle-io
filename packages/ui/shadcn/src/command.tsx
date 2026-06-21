@@ -25,16 +25,28 @@ const CommandDialog = ({
   shouldFilter = true,
   loop = true,
   screenReaderTitle,
+  onOpenAutoFocus,
+  onCloseAutoFocus,
   ...props
 }: DialogProps & {
   shouldFilter?: boolean;
   loop?: boolean;
   screenReaderTitle: string;
+  onOpenAutoFocus?: React.ComponentPropsWithoutRef<
+    typeof DialogContent
+  >['onOpenAutoFocus'];
+  onCloseAutoFocus?: React.ComponentPropsWithoutRef<
+    typeof DialogContent
+  >['onCloseAutoFocus'];
 }) => {
   return (
     <Dialog {...props}>
       <DialogTitle className="sr-only">{screenReaderTitle}</DialogTitle>
-      <DialogContent className="overflow-hidden p-0 shadow-lg">
+      <DialogContent
+        className="overflow-hidden p-0 shadow-lg"
+        onOpenAutoFocus={onOpenAutoFocus}
+        onCloseAutoFocus={onCloseAutoFocus}
+      >
         <Command
           loop={loop}
           shouldFilter={shouldFilter}

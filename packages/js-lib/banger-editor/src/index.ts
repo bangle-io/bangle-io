@@ -27,6 +27,7 @@ export * from './list';
 export * from './paragraph';
 export * from './placeholder';
 export * from './pm-utils';
+export * from './selection-menu';
 export * from './store';
 export * from './strike';
 export * from './suggestions';

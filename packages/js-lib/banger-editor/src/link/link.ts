@@ -7,6 +7,7 @@ import {
   inputRules,
   PluginKey,
   Plugin as PMPlugin,
+  TextSelection,
 } from '../pm';
 import {
   filterCommand,
@@ -21,6 +22,14 @@ import { LINK_INPUT_REGEX, URL_REGEX } from './url-regex';
  * Typed attributes for the link mark
  */
 type LinkAttrs = {
+  href: string | null;
+  title: string | null;
+};
+
+/** The complete contiguous link run around the current selection. */
+export type LinkRange = {
+  from: number;
+  to: number;
   href: string | null;
   title: string | null;
 };
@@ -161,6 +170,7 @@ export function setupLink(userConfig?: LinkConfig) {
     command: {
       updateLink: updateLink(config),
       createLink: createLink(config),
+      expandLinkSelection: expandLinkSelectionFor(config.name),
     },
     query: {
       isLinkActive: isLinkActive(config),
@@ -168,6 +178,7 @@ export function setupLink(userConfig?: LinkConfig) {
       linkAllowedInRange: linkAllowedInRange(config),
       getLinkDetails: getLinkDetails(config),
       getLinkMark: getLinkMark(config),
+      getLinkRangeAtSelection: getLinkRangeAtSelectionFor(config.name),
     },
     markdown: markdown(config),
   });
@@ -223,23 +234,20 @@ function updateLink(config: RequiredConfig) {
   return (href?: string): Command => {
     return (state, dispatch) => {
       if (!state.selection.empty) {
+        const linkRange = getLinkRangeAtSelectionFor(config.name)(state);
         return setLink(
           config,
-          state.selection.from,
-          state.selection.to,
+          linkRange?.from ?? state.selection.from,
+          linkRange?.to ?? state.selection.to,
           href,
         )(state, dispatch);
       }
 
-      const { $from } = state.selection;
-      const pos = $from.pos - $from.textOffset;
-      const node = state.doc.nodeAt(pos);
-      let to = pos;
-      if (node) {
-        to += node.nodeSize;
+      const range = getLinkRangeAtSelectionFor(config.name)(state);
+      if (!range) {
+        return false;
       }
-
-      return setLink(config, pos, to, href)(state, dispatch);
+      return setLink(config, range.from, range.to, href)(state, dispatch);
     };
   };
 }
@@ -529,6 +537,130 @@ function getLinkMark(config: RequiredConfig) {
     const linkMark = getMarkType(state.schema, config.name);
     return linkMark;
   };
+}
+
+function getLinkRangeAtSelectionFor(name: string) {
+  return (state: EditorState): LinkRange | undefined => {
+    const linkType = state.schema.marks[name];
+    if (!linkType) {
+      return undefined;
+    }
+
+    const { selection } = state;
+    if (selection.$from.parent !== selection.$to.parent) {
+      return undefined;
+    }
+
+    let candidate: Mark | undefined;
+    if (selection.empty) {
+      candidate = linkType.isInSet(selection.$from.marks());
+    } else {
+      let foundInline = false;
+      let invalid = false;
+      state.doc.nodesBetween(selection.from, selection.to, (node, pos) => {
+        if (!node.isInline) {
+          return !invalid;
+        }
+        const nodeFrom = pos;
+        const nodeTo = pos + node.nodeSize;
+        if (nodeTo <= selection.from || nodeFrom >= selection.to) {
+          return false;
+        }
+        foundInline = true;
+        const mark = linkType.isInSet(node.marks);
+        if (!mark || (candidate && !candidate.eq(mark))) {
+          invalid = true;
+          return false;
+        }
+        candidate ??= mark;
+        return false;
+      });
+      if (!foundInline || invalid) {
+        return undefined;
+      }
+    }
+
+    if (!candidate) {
+      return undefined;
+    }
+    const linkMark = candidate;
+
+    const parent = selection.$from.parent;
+    const parentStart = selection.$from.start();
+    let offset = 0;
+    let runFrom: number | undefined;
+    let runTo: number | undefined;
+    const runs: Array<{ from: number; to: number }> = [];
+
+    parent.forEach((node) => {
+      const nodeFrom = parentStart + offset;
+      const nodeTo = nodeFrom + node.nodeSize;
+      const mark = node.isInline ? linkType.isInSet(node.marks) : undefined;
+
+      if (mark?.eq(linkMark)) {
+        if (runFrom === undefined) {
+          runFrom = nodeFrom;
+        }
+        runTo = nodeTo;
+      } else if (runFrom !== undefined && runTo !== undefined) {
+        runs.push({ from: runFrom, to: runTo });
+        runFrom = undefined;
+        runTo = undefined;
+      }
+
+      offset += node.nodeSize;
+    });
+
+    if (runFrom !== undefined && runTo !== undefined) {
+      runs.push({ from: runFrom, to: runTo });
+    }
+
+    const run = runs.find(
+      ({ from, to }) => selection.from >= from && selection.to <= to,
+    );
+
+    if (!run) {
+      return undefined;
+    }
+
+    const attrs = readLinkAttrs(linkMark);
+    return {
+      from: run.from,
+      to: run.to,
+      href: attrs?.href ?? null,
+      title: attrs?.title ?? null,
+    };
+  };
+}
+
+/**
+ * Returns a range only when the selection is wholly contained by one
+ * contiguous link run with identical attributes.
+ */
+export function getLinkRangeAtSelection(
+  state: EditorState,
+): LinkRange | undefined {
+  return getLinkRangeAtSelectionFor('link')(state);
+}
+
+function expandLinkSelectionFor(name: string): Command {
+  return (state, dispatch) => {
+    const range = getLinkRangeAtSelectionFor(name)(state);
+    if (!range) {
+      return false;
+    }
+    dispatch?.(
+      state.tr.setSelection(
+        TextSelection.create(state.doc, range.from, range.to),
+      ),
+    );
+    return true;
+  };
+}
+
+/** Selects the complete contiguous link run without changing the document. */
+export function expandLinkSelection(): Command {
+  return expandLinkSelectionFor('link');
 }
 
 /**

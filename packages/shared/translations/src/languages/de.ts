@@ -34,6 +34,26 @@ export const t = {
     toolbar: {
       toggleMaxWidth: 'Maximale Breite umschalten',
     },
+    editor: {
+      selectionMenu: {
+        label: 'Textformatierung',
+        bold: 'Fett',
+        italic: 'Kursiv',
+        strike: 'Durchgestrichen',
+        inlineCode: 'Inline-Code',
+        link: 'Link',
+      },
+      linkEditor: {
+        label: 'Link bearbeiten',
+        inputLabel: 'Link-URL',
+        placeholder: 'beispiel.de',
+        copy: 'Link kopieren',
+        copied: 'Kopiert!',
+        open: 'Link öffnen',
+        remove: 'Link entfernen',
+        invalidUrl: 'Geben Sie eine gültige Webadresse ein.',
+      },
+    },
     sidebar: {
       newLabel: 'Neu',
       appActionsLabel: 'App-Aktionen',

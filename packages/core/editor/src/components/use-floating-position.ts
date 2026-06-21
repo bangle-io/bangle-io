@@ -2,16 +2,21 @@ import {
   autoUpdate,
   computePosition,
   flip,
+  inline as inlineMiddleware,
   offset,
+  type Placement,
   shift,
   type VirtualElement,
 } from '@floating-ui/dom';
 import { useEffect, useRef } from 'react';
 
-type UseFloatingPositionProps = {
+export type UseFloatingPositionProps = {
   show: boolean;
   anchorEl: () => HTMLElement | VirtualElement | null;
-  boundarySelector: string;
+  boundaryElement?: Element | null;
+  boundarySelector?: string;
+  placement?: Placement;
+  inline?: boolean;
 };
 
 export const FLOATING_INITIAL_STYLE = {
@@ -26,7 +31,10 @@ export const FLOATING_INITIAL_STYLE = {
 export function useFloatingPosition({
   show,
   anchorEl,
+  boundaryElement,
   boundarySelector,
+  placement = 'bottom-start',
+  inline = false,
 }: UseFloatingPositionProps) {
   const floatingRef = useRef<HTMLDivElement | null>(null);
 
@@ -40,9 +48,11 @@ export function useFloatingPosition({
     }
 
     const anchor = anchorEl();
-    const boundary = document.querySelector(boundarySelector);
+    const boundary =
+      boundaryElement ??
+      (boundarySelector ? document.querySelector(boundarySelector) : null);
 
-    if (!anchor || !boundary) {
+    if (!anchor) {
       return;
     }
 
@@ -50,13 +60,14 @@ export function useFloatingPosition({
       // drawRectangle(anchor); // for debugging
       const { x, y } = await computePosition(anchor, floating, {
         strategy: 'absolute',
-        placement: 'bottom-start',
+        placement,
         middleware: [
+          ...(inline ? [inlineMiddleware()] : []),
           offset({
             mainAxis: 8,
           }),
           flip(),
-          shift({ boundary }),
+          shift(boundary ? { boundary } : undefined),
         ],
       });
 
@@ -71,7 +82,7 @@ export function useFloatingPosition({
     return () => {
       cleanup();
     };
-  }, [show, anchorEl, boundarySelector]);
+  }, [show, anchorEl, boundaryElement, boundarySelector, placement, inline]);
 
   return floatingRef;
 }

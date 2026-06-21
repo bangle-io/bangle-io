@@ -39,6 +39,26 @@ export const t = {
     toolbar: {
       toggleMaxWidth: 'Toggle Max Width',
     },
+    editor: {
+      selectionMenu: {
+        label: 'Text formatting',
+        bold: 'Bold',
+        italic: 'Italic',
+        strike: 'Strikethrough',
+        inlineCode: 'Inline code',
+        link: 'Link',
+      },
+      linkEditor: {
+        label: 'Edit link',
+        inputLabel: 'Link URL',
+        placeholder: 'example.com',
+        copy: 'Copy link',
+        copied: 'Copied!',
+        open: 'Open link',
+        remove: 'Remove link',
+        invalidUrl: 'Enter a valid web address.',
+      },
+    },
     sidebar: {
       newLabel: 'New',
       appActionsLabel: 'App Actions',

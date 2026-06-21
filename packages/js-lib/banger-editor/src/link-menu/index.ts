@@ -1,10 +1,14 @@
 import { collection } from '../common';
 import type { setupLink } from '../link';
-import { type Command, Plugin, PluginKey } from '../pm';
 import {
-  clampRange,
+  type Command,
+  type EditorState,
+  type EditorView,
+  Plugin,
+  PluginKey,
+} from '../pm';
+import {
   createVirtualElementFromRange,
-  setupScrollAndResizeHandlers,
   type VirtualElement,
 } from '../pm-utils';
 import { store } from '../store';
@@ -18,13 +22,33 @@ export type LinkMenuState = {
   position: number;
   href: string;
   anchorEl: () => VirtualElement | null;
-  refresh: number;
 };
 
-// Internal mutable atom
-const $internalLinkMenu = store.atom<LinkMenuState | undefined>(undefined);
+type LinkMenuStates = ReadonlyMap<EditorView, LinkMenuState>;
+
+// Menu state is keyed by view because every editor shares the application store.
+const $internalLinkMenu = store.atom<LinkMenuStates>(new Map());
 
 export const $linkMenu = store.atom((get) => get($internalLinkMenu));
+
+function setLinkMenuForView(
+  state: EditorState,
+  view: EditorView,
+  value: LinkMenuState | undefined,
+) {
+  const current = store.get(state, $internalLinkMenu);
+  if (value === undefined && !current.has(view)) {
+    return;
+  }
+
+  const next = new Map(current);
+  if (value) {
+    next.set(view, value);
+  } else {
+    next.delete(view);
+  }
+  store.set(state, $internalLinkMenu, next);
+}
 
 /**
  * This plugin checks if the selection is empty and inside a link,
@@ -36,74 +60,41 @@ function linkMenuPlugin(options: LinkMenuOptions) {
   return new Plugin({
     key: pluginKey,
     view: (view) => {
-      const abortController = new AbortController();
+      const sync = () => {
+        const { state } = view;
 
-      setupScrollAndResizeHandlers((refresh_counter) => {
-        const linkMenu = store.get(view.state, $internalLinkMenu);
-        if (linkMenu) {
-          store.set(view.state, $internalLinkMenu, {
-            ...linkMenu,
-            refresh: refresh_counter,
-          });
+        // We only show the menu if the selection is empty & inside a link mark.
+        if (!state.selection.empty) {
+          setLinkMenuForView(state, view, undefined);
+          return;
         }
-      }, abortController.signal);
+
+        const range = options.link.query.getLinkRangeAtSelection(state);
+        if (!range) {
+          setLinkMenuForView(state, view, undefined);
+          return;
+        }
+
+        const anchorEl = () =>
+          createVirtualElementFromRange(view, range.from, range.to);
+        if (!anchorEl()) {
+          setLinkMenuForView(state, view, undefined);
+          return;
+        }
+
+        setLinkMenuForView(state, view, {
+          show: true,
+          position: state.selection.from,
+          href: range.href ?? '',
+          anchorEl,
+        });
+      };
+
+      sync();
 
       return {
-        destroy: () => {
-          abortController.abort();
-        },
-        update: (view, prevState) => {
-          const { state } = view;
-          // If doc + selection hasn't changed, do nothing.
-          if (
-            prevState.doc?.eq(state.doc) &&
-            prevState.selection.eq(state.selection)
-          ) {
-            return;
-          }
-
-          // We only show the menu if the selection is empty & inside a link mark.
-          if (!state.selection.empty) {
-            store.set(state, $internalLinkMenu, undefined);
-            return;
-          }
-
-          const linkActive = options.link.query.isLinkActive(state);
-          if (!linkActive) {
-            store.set(state, $internalLinkMenu, undefined);
-            return;
-          }
-
-          console.log('linkActive', linkActive);
-          // Find the link mark, get its href.
-          const linkType = options.link.query.getLinkMark(state);
-          const $pos = state.selection.$from;
-          const mark = linkType.isInSet($pos.marks());
-          if (!mark) {
-            store.set(state, $internalLinkMenu, undefined);
-            return;
-          }
-
-          const href = mark.attrs.href ?? '';
-          const startPos = $pos.pos;
-
-          const anchorElFn = () => {
-            const [start, end] = clampRange(
-              startPos,
-              startPos + 1,
-              view.state.doc.content.size,
-            );
-            return createVirtualElementFromRange(view, start, end);
-          };
-
-          store.set(state, $internalLinkMenu, {
-            show: true,
-            position: startPos,
-            href,
-            anchorEl: anchorElFn,
-            refresh: store.get(state, $internalLinkMenu)?.refresh ?? 0,
-          });
-        },
+        destroy: () => setLinkMenuForView(view.state, view, undefined),
+        update: sync,
       };
     },
   });
@@ -131,8 +122,16 @@ export function setupLinkMenu(options: LinkMenuOptions) {
 
 // COMMANDS
 function dismissLinkMenu(): Command {
-  return (state) => {
-    store.set(state, $internalLinkMenu, undefined);
+  return (state, _dispatch, view) => {
+    const menus = store.get(state, $internalLinkMenu);
+    const owner =
+      view && view.state === state
+        ? view
+        : [...menus.keys()].find((candidate) => candidate.state === state);
+    if (!owner || !menus.has(owner)) {
+      return false;
+    }
+    setLinkMenuForView(state, owner, undefined);
     return true;
   };
 }

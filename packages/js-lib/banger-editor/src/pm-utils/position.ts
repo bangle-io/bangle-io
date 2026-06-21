@@ -7,6 +7,8 @@ import type { EditorView } from 'prosemirror-view';
  */
 export interface VirtualElement {
   getBoundingClientRect(): DOMRect;
+  getClientRects(): DOMRectList | DOMRect[];
+  contextElement?: Element;
 }
 
 /**
@@ -26,26 +28,75 @@ export function createVirtualElementFromRange(
   if (view.isDestroyed) {
     return null;
   }
-  const coordsStart = view.coordsAtPos(start);
-  if (!coordsStart) {
-    return null;
-  }
-  const coordsEnd = view.coordsAtPos(end);
-  if (!coordsEnd) {
-    return null;
-  }
-  const left = Math.min(coordsStart.left, coordsEnd.left);
-  const top = Math.min(coordsStart.top, coordsEnd.top);
-  const right = Math.max(
-    coordsStart.right ?? coordsStart.left,
-    coordsEnd.right ?? coordsEnd.left,
-  );
-  const bottom = Math.max(coordsStart.bottom, coordsEnd.bottom);
+  try {
+    const coordsStart = view.coordsAtPos(start);
+    if (!coordsStart) {
+      return null;
+    }
+    const coordsEnd = view.coordsAtPos(end);
+    if (!coordsEnd) {
+      return null;
+    }
+    const left = Math.min(coordsStart.left, coordsEnd.left);
+    const top = Math.min(coordsStart.top, coordsEnd.top);
+    const right = Math.max(
+      coordsStart.right ?? coordsStart.left,
+      coordsEnd.right ?? coordsEnd.left,
+    );
+    const bottom = Math.max(coordsStart.bottom, coordsEnd.bottom);
 
-  return {
-    getBoundingClientRect: () =>
-      new DOMRect(left, top, right - left, bottom - top),
-  };
+    const getBoundingClientRect = () =>
+      new DOMRect(left, top, right - left, bottom - top);
+    return {
+      contextElement: view.dom,
+      getBoundingClientRect,
+      getClientRects: () => [getBoundingClientRect()],
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Creates a Floating UI virtual element for the current DOM selection when it
+ * belongs to `view`. A coordinate-based element is used when the browser range
+ * is unavailable (for example while the editor is temporarily unfocused).
+ */
+export function createVirtualElementFromSelection(
+  view: EditorView,
+  from: number,
+  to: number,
+): VirtualElement | null {
+  if (view.isDestroyed) {
+    return null;
+  }
+
+  try {
+    const selection = view.dom.ownerDocument.defaultView?.getSelection();
+    if (selection && !selection.isCollapsed && selection.rangeCount > 0) {
+      const sourceRange = selection.getRangeAt(0);
+      const containsNode = (node: Node) =>
+        node === view.dom || view.dom.contains(node);
+
+      if (
+        containsNode(sourceRange.startContainer) &&
+        containsNode(sourceRange.endContainer)
+      ) {
+        // Returning a clone prevents later browser selection mutations from
+        // changing the geometry object held by Floating UI.
+        const range = sourceRange.cloneRange();
+        return {
+          contextElement: view.dom,
+          getBoundingClientRect: () => range.getBoundingClientRect(),
+          getClientRects: () => range.getClientRects(),
+        };
+      }
+    }
+  } catch {
+    // Coordinate fallback below is intentionally non-throwing.
+  }
+
+  return createVirtualElementFromRange(view, from, to);
 }
 
 /**

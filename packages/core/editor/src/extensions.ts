@@ -19,6 +19,7 @@ import {
   setupList,
   setupParagraph,
   setupPlaceholder,
+  setupSelectionMenu,
   setupStrike,
   setupSuggestions,
   setupUnderline,
@@ -71,5 +72,6 @@ export function setupExtensions(logger: Logger) {
     italic: setupItalic(),
     link,
     linkMenu: setupLinkMenu({ link }),
+    selectionMenu: setupSelectionMenu(),
   };
 }
