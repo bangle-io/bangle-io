@@ -1,4 +1,6 @@
+import { readdir, readFile, stat } from 'node:fs/promises';
 import os from 'node:os';
+import path from 'node:path';
 import { expect, type Page } from '@playwright/test';
 
 export const isDarwin = os.platform() === 'darwin';
@@ -66,6 +68,17 @@ export async function createBrowserWorkspaceAndNote(
   page: Page,
   { workspaceName, noteName }: { workspaceName: string; noteName: string },
 ) {
+  await createBrowserWorkspace(page, { workspaceName });
+  await page.getByRole('button', { name: 'New Note' }).click();
+  await page.getByPlaceholder('Input a note name').fill(noteName);
+  await page.getByRole('option', { name: 'Create' }).click();
+  await expect(getEditorLocator(page, {})).toBeVisible();
+}
+
+export async function createBrowserWorkspace(
+  page: Page,
+  { workspaceName }: { workspaceName: string },
+) {
   await page.goto('/');
   // The responsive sidebar opens as a modal sheet on touch-sized viewports.
   // Close it so the welcome-page workflow remains user-observable.
@@ -79,10 +92,110 @@ export async function createBrowserWorkspaceAndNote(
   await page.getByRole('button', { name: 'Next' }).click();
   await page.getByLabel('Workspace Name', { exact: true }).fill(workspaceName);
   await page.getByRole('button', { name: 'Create' }).click();
-  await page.getByRole('button', { name: 'New Note' }).click();
-  await page.getByPlaceholder('Input a note name').fill(noteName);
-  await page.getByRole('option', { name: 'Create' }).click();
-  await expect(getEditorLocator(page, {})).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: workspaceName }),
+  ).toBeVisible();
+}
+
+type WorkspaceFixtureFile = {
+  relativePath: string;
+  bytes: number[];
+};
+
+async function readWorkspaceFixtureFiles(
+  fixtureDirectory: string,
+): Promise<WorkspaceFixtureFile[]> {
+  const fixtureStat = await stat(fixtureDirectory);
+  if (!fixtureStat.isDirectory()) {
+    throw new Error(
+      `Workspace fixture is not a directory: ${fixtureDirectory}`,
+    );
+  }
+
+  const files: WorkspaceFixtureFile[] = [];
+  const visit = async (directory: string) => {
+    const entries = await readdir(directory, { withFileTypes: true });
+    for (const entry of entries.sort((a, b) => a.name.localeCompare(b.name))) {
+      const absolutePath = path.join(directory, entry.name);
+      if (entry.isDirectory()) {
+        await visit(absolutePath);
+        continue;
+      }
+      if (!entry.isFile()) {
+        throw new Error(
+          `Workspace fixtures cannot contain links: ${absolutePath}`,
+        );
+      }
+
+      files.push({
+        relativePath: path
+          .relative(fixtureDirectory, absolutePath)
+          .split(path.sep)
+          .join('/'),
+        bytes: [...(await readFile(absolutePath))],
+      });
+    }
+  };
+
+  await visit(fixtureDirectory);
+  return files;
+}
+
+/**
+ * Creates a Browser workspace from a directory fixture and reloads the app.
+ * Every regular file below the fixture directory is preserved byte-for-byte,
+ * with its relative path becoming its path inside the workspace.
+ */
+export async function loadBrowserWorkspaceFixture(
+  page: Page,
+  fixtureDirectory: string,
+  options: { workspaceName?: string } = {},
+) {
+  const workspaceName =
+    options.workspaceName ?? path.basename(path.resolve(fixtureDirectory));
+  const files = await readWorkspaceFixtureFiles(fixtureDirectory);
+  if (files.length === 0) {
+    throw new Error(`Workspace fixture contains no files: ${fixtureDirectory}`);
+  }
+
+  await createBrowserWorkspace(page, { workspaceName });
+  await page.evaluate(
+    async ({ workspace, fixtureFiles }) => {
+      const request = indexedDB.open('baby-idb-db-3');
+      const database = await new Promise<IDBDatabase>((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+      await new Promise<void>((resolve, reject) => {
+        const transaction = database.transaction(
+          'baby-idb-db-store-3',
+          'readwrite',
+        );
+        transaction.oncomplete = () => resolve();
+        transaction.onerror = () => reject(transaction.error);
+        transaction.onabort = () => reject(transaction.error);
+        const store = transaction.objectStore('baby-idb-db-store-3');
+        for (const fixtureFile of fixtureFiles) {
+          const fileName = fixtureFile.relativePath.split('/').at(-1);
+          if (!fileName) {
+            transaction.abort();
+            throw new Error(
+              `Invalid fixture path: ${fixtureFile.relativePath}`,
+            );
+          }
+          store.put(
+            new File([new Uint8Array(fixtureFile.bytes)], fileName),
+            `${workspace}/${fixtureFile.relativePath}`,
+          );
+        }
+      });
+      database.close();
+    },
+    { workspace: workspaceName, fixtureFiles: files },
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  return { workspaceName, files: files.map((file) => file.relativePath) };
 }
 
 /** Selects the first exact text occurrence through a real browser Range. */

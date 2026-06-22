@@ -4,7 +4,10 @@ import {
   createAppError,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
-import type { FileSystemService } from '@bangle.io/service-core';
+import type {
+  FileSystemService,
+  NavigationService,
+} from '@bangle.io/service-core';
 import type { Store } from '@bangle.io/types';
 import { WsPath } from '@bangle.io/ws-path';
 
@@ -14,6 +17,7 @@ import {
   type EditorSaveStatus,
 } from './editor-save-queue';
 import { setupExtensions } from './extensions';
+import { normalizeLinkTarget, resolveInternalLink } from './link-target';
 import { createEditor } from './pm-setup';
 
 const editorSaveQueueStore = createEditorSaveQueueStore();
@@ -26,7 +30,7 @@ export type PmEditorServiceConfig = {
  * Manages ProseMirror editor instances and state
  */
 export class PmEditorService extends BaseService {
-  static deps = ['fileSystem'] as const;
+  static deps = ['fileSystem', 'navigation'] as const;
 
   public readonly extensions: ReturnType<typeof setupExtensions>;
 
@@ -47,12 +51,15 @@ export class PmEditorService extends BaseService {
     context: BaseServiceContext,
     private dependencies: {
       fileSystem: FileSystemService;
+      navigation: NavigationService;
     },
     _config: PmEditorServiceConfig,
   ) {
     super(SERVICE_NAME.pmEditorService, context, dependencies);
 
-    this.extensions = setupExtensions(this.logger);
+    this.extensions = setupExtensions(this.logger, (href, view) => {
+      this.openLink(view, href);
+    });
     this.saveQueue = new EditorSaveQueue(
       async (wsPath, doc) => {
         const fileName = WsPath.assertFile(wsPath).fileName;
@@ -239,6 +246,29 @@ export class PmEditorService extends BaseService {
       }
     }
     return undefined;
+  }
+
+  /** Opens a web link externally or routes a relative Markdown link in-app. */
+  openLink(editorView: ReturnType<typeof createEditor>, href: string): void {
+    const editor = [...this.editors.values()].find(
+      (entry) => 'editorView' in entry && entry.editorView === editorView,
+    );
+    if (!editor || !('editorView' in editor)) {
+      return;
+    }
+
+    const target = normalizeLinkTarget(href);
+    if (target?.kind === 'internal') {
+      const wsPath = resolveInternalLink(editor.wsPath, target.href);
+      if (wsPath) {
+        this.dependencies.navigation.goWsPath(wsPath);
+      }
+      return;
+    }
+
+    if (target?.kind === 'external') {
+      window.open(target.href, '_blank', 'noopener,noreferrer');
+    }
   }
 
   focusEditor() {

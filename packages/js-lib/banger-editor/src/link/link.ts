@@ -1,5 +1,5 @@
 import { type CollectionType, collection } from '../common';
-import type { EditorProps, Mark, MarkSpec, PMNode } from '../pm';
+import type { EditorProps, EditorView, Mark, MarkSpec, PMNode } from '../pm';
 import {
   type Command,
   type EditorState,
@@ -82,6 +82,9 @@ export type LinkConfig = {
    */
   openNewTab?: boolean;
 
+  /** Handles an activated link. When omitted, browser links use window.open. */
+  onOpenLink?: (href: string, view: EditorView) => void;
+
   /**
    * Whether to auto-link typed text, e.g., "example.com ". Defaults to true.
    */
@@ -98,7 +101,10 @@ export type LinkConfig = {
   markdownPaste?: boolean;
 };
 
-type RequiredConfig = Required<LinkConfig>;
+type RequiredConfig = Required<Omit<LinkConfig, 'onOpenLink'>> &
+  Pick<LinkConfig, 'onOpenLink'>;
+
+export const LINK_OPEN_MODIFIER_CLASS = 'bangle-link-open-modifier';
 
 const DEFAULT_CONFIG: RequiredConfig = {
   name: 'link',
@@ -425,6 +431,32 @@ function pluginOpenOnClick(config: RequiredConfig) {
     }
     return new PMPlugin({
       key: new PluginKey('link-openOnClick'),
+      view: (view) => {
+        const ownerDocument = view.dom.ownerDocument;
+        const ownerWindow = ownerDocument.defaultView;
+        const setModifierActive = (active: boolean) => {
+          view.dom.classList.toggle(LINK_OPEN_MODIFIER_CLASS, active);
+        };
+        const syncModifier = (event: KeyboardEvent | MouseEvent) => {
+          setModifierActive(event.metaKey || event.ctrlKey);
+        };
+        const clearModifier = () => setModifierActive(false);
+
+        ownerDocument.addEventListener('keydown', syncModifier);
+        ownerDocument.addEventListener('keyup', syncModifier);
+        ownerDocument.addEventListener('mousemove', syncModifier);
+        ownerWindow?.addEventListener('blur', clearModifier);
+
+        return {
+          destroy: () => {
+            clearModifier();
+            ownerDocument.removeEventListener('keydown', syncModifier);
+            ownerDocument.removeEventListener('keyup', syncModifier);
+            ownerDocument.removeEventListener('mousemove', syncModifier);
+            ownerWindow?.removeEventListener('blur', clearModifier);
+          },
+        };
+      },
       props: {
         handleClick: (view, pos, event) => {
           // Check if we're in a browser environment
@@ -461,7 +493,15 @@ function pluginOpenOnClick(config: RequiredConfig) {
                 (event.metaKey || event.ctrlKey))
             ) {
               event.preventDefault();
-              window.open(href, config.openNewTab ? '_blank' : '_self');
+              if (config.onOpenLink) {
+                config.onOpenLink(href, view);
+              } else {
+                window.open(
+                  href,
+                  config.openNewTab ? '_blank' : '_self',
+                  config.openNewTab ? 'noopener,noreferrer' : undefined,
+                );
+              }
               return true;
             }
           }

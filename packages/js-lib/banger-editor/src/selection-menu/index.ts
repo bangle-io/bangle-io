@@ -65,16 +65,19 @@ function endpointIsInCodeBlock(selection: Selection): boolean {
   });
 }
 
-function selectionContainsInlineContent(selection: Selection): boolean {
-  let containsInline = false;
+function selectionContainsEligibleInlineContent(selection: Selection): boolean {
+  let containsEligibleInline = false;
   selection.$from.doc.nodesBetween(selection.from, selection.to, (node) => {
-    if (node.isInline) {
-      containsInline = true;
+    if (node.type.spec.code) {
       return false;
     }
-    return !containsInline;
+    if (node.isInline) {
+      containsEligibleInline = true;
+      return false;
+    }
+    return !containsEligibleInline;
   });
-  return containsInline;
+  return containsEligibleInline;
 }
 
 function selectionMenuPlugin() {
@@ -124,7 +127,7 @@ function selectionMenuPlugin() {
           ) ||
           selection.empty ||
           endpointIsInCodeBlock(selection) ||
-          !selectionContainsInlineContent(selection) ||
+          !selectionContainsEligibleInlineContent(selection) ||
           (dismissed?.anchor === selection.anchor &&
             dismissed.head === selection.head)
         ) {

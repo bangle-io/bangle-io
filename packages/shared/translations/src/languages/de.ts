@@ -49,9 +49,10 @@ export const t = {
         placeholder: 'beispiel.de',
         copy: 'Link kopieren',
         copied: 'Kopiert!',
+        copyFailed: 'Kopieren fehlgeschlagen',
         open: 'Link öffnen',
         remove: 'Link entfernen',
-        invalidUrl: 'Geben Sie eine gültige Webadresse ein.',
+        invalidUrl: 'Webadresse oder Markdown-Pfad eingeben.',
       },
     },
     sidebar: {

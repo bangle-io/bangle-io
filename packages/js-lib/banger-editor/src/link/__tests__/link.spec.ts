@@ -1,13 +1,16 @@
+// @vitest-environment happy-dom
+
 import { MarkdownSerializer } from 'prosemirror-markdown';
 import { describe, expect, it } from 'vitest';
 import { setupBase } from '../../base';
 import { setupBold } from '../../bold';
 import { resolve } from '../../common';
 import { setupParagraph } from '../../paragraph';
-import { EditorState, Schema, TextSelection } from '../../pm';
+import { EditorState, EditorView, Schema, TextSelection } from '../../pm';
 import {
   expandLinkSelection,
   getLinkRangeAtSelection,
+  LINK_OPEN_MODIFIER_CLASS,
   setupLink,
 } from '../link';
 
@@ -189,5 +192,94 @@ describe('link commands and Markdown', () => {
     expect(markdown.serialize(state.doc)).toBe(
       '[linked plain](https://two.example)',
     );
+  });
+});
+
+describe('link activation', () => {
+  function createLinkView(onOpenLink?: (href: string) => void) {
+    const configuredLink = setupLink({ onOpenLink });
+    const configuredResolved = resolve([base, paragraph, configuredLink]);
+    const configuredSchema = new Schema({
+      nodes: configuredResolved.nodes,
+      marks: configuredResolved.marks,
+    });
+    const href = 'https://example.com/path';
+    const doc = configuredSchema.node('doc', null, [
+      configuredSchema.node('paragraph', null, [
+        configuredSchema.text('linked', [
+          configuredSchema.mark('link', { href, title: null }),
+        ]),
+      ]),
+    ]);
+    const mount = document.createElement('div');
+    document.body.appendChild(mount);
+    const view = new EditorView(
+      { mount },
+      {
+        state: EditorState.create({
+          doc,
+          schema: configuredSchema,
+          plugins: configuredResolved.resolvePlugins({
+            schema: configuredSchema,
+          }),
+        }),
+      },
+    );
+    const openPlugin = view.state.plugins.find(
+      (plugin) => plugin.props.handleClick,
+    );
+    if (!openPlugin?.props.handleClick) {
+      throw new Error('Link activation plugin was not created');
+    }
+    return { href, mount, openPlugin, view };
+  }
+
+  it('opens only modifier-clicks through the configured callback', () => {
+    const opened: string[] = [];
+    const { href, mount, openPlugin, view } = createLinkView((value) =>
+      opened.push(value),
+    );
+
+    expect(
+      openPlugin.props.handleClick?.call(
+        openPlugin,
+        view,
+        2,
+        new MouseEvent('click', { button: 0 }),
+      ),
+    ).toBe(false);
+    expect(opened).toEqual([]);
+
+    expect(
+      openPlugin.props.handleClick?.call(
+        openPlugin,
+        view,
+        2,
+        new MouseEvent('click', { button: 0, ctrlKey: true }),
+      ),
+    ).toBe(true);
+    expect(opened).toEqual([href]);
+
+    view.destroy();
+    mount.remove();
+  });
+
+  it('tracks modifier state and cleans up on blur and destroy', () => {
+    const { mount, view } = createLinkView();
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true }));
+    expect(view.dom.classList.contains(LINK_OPEN_MODIFIER_CLASS)).toBe(true);
+
+    window.dispatchEvent(new Event('blur'));
+    expect(view.dom.classList.contains(LINK_OPEN_MODIFIER_CLASS)).toBe(false);
+
+    document.dispatchEvent(new MouseEvent('mousemove', { ctrlKey: true }));
+    expect(view.dom.classList.contains(LINK_OPEN_MODIFIER_CLASS)).toBe(true);
+
+    view.destroy();
+    expect(view.dom.classList.contains(LINK_OPEN_MODIFIER_CLASS)).toBe(false);
+    document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true }));
+    expect(view.dom.classList.contains(LINK_OPEN_MODIFIER_CLASS)).toBe(false);
+    mount.remove();
   });
 });

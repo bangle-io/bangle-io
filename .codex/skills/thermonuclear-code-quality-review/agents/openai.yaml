@@ -1,0 +1,4 @@
+interface:
+  display_name: "Thermonuclear Code Quality Review"
+  short_description: "Strict structural maintainability audit"
+  default_prompt: "Use $thermonuclear-code-quality-review to audit the current branch for structural complexity and maintainability regressions."

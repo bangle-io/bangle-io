@@ -54,9 +54,10 @@ export const t = {
         placeholder: 'example.com',
         copy: 'Copy link',
         copied: 'Copied!',
+        copyFailed: 'Copy failed',
         open: 'Open link',
         remove: 'Remove link',
-        invalidUrl: 'Enter a valid web address.',
+        invalidUrl: 'Enter a web address or Markdown path.',
       },
     },
     sidebar: {

@@ -7,8 +7,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@bangle.io/ui-components';
-import { Check, Copy, ExternalLink, Unlink } from 'lucide-react';
-import React, { useId, useRef, useState } from 'react';
+import { Check, CircleAlert, Copy, ExternalLink, Unlink } from 'lucide-react';
+import React, { useEffect, useId, useRef, useState } from 'react';
+import { normalizeLinkTarget } from '../link-target';
 import type { PmEditorService } from '../pm-editor-service';
 import {
   FLOATING_INITIAL_STYLE,
@@ -21,36 +22,10 @@ type EditorView = NonNullable<ReturnType<PmEditorService['getEditor']>>;
 type Extensions = PmEditorService['extensions'];
 
 /**
- * Normalizes a user-entered web address to HTTP(S). Bare domains and
- * host/port values default to HTTPS; explicit non-HTTP schemes are rejected.
+ * Normalizes a user-entered web address or relative Markdown file path.
  */
 export function normalizeHttpUrl(urlString: string): string | undefined {
-  const input = urlString.trim();
-  if (!input) {
-    return undefined;
-  }
-
-  const hasHttpScheme = /^https?:\/\//i.test(input);
-  const hasExplicitScheme = /^[a-z][a-z\d+.-]*:/i.test(input);
-  const looksLikeHostWithPort = /^[^/:\s]+:\d+(?:\/|$)/.test(input);
-  if (hasExplicitScheme && !hasHttpScheme && !looksLikeHostWithPort) {
-    return undefined;
-  }
-
-  const candidate = hasHttpScheme ? input : `https://${input}`;
-  try {
-    const url = new URL(candidate);
-    if (
-      (url.protocol !== 'http:' && url.protocol !== 'https:') ||
-      !url.hostname ||
-      /[%\s]/.test(url.hostname)
-    ) {
-      return undefined;
-    }
-    return url.href;
-  } catch {
-    return undefined;
-  }
+  return normalizeLinkTarget(urlString)?.href;
 }
 
 export function isValidHttpUrl(urlString: string): boolean {
@@ -68,6 +43,8 @@ type LinkEditorProps = {
   autoFocus?: boolean;
 };
 
+type CopyFeedback = 'failure' | 'idle' | 'success';
+
 /** A controlled, draft-only link input. */
 export function LinkEditor({
   value,
@@ -83,9 +60,23 @@ export function LinkEditor({
   const [invalid, setInvalid] = useState(
     () => Boolean(value.trim()) && !normalizeHttpUrl(value),
   );
-  const [copySuccess, setCopySuccess] = useState(false);
+  const [copyFeedback, setCopyFeedback] = useState<CopyFeedback>('idle');
+  const copyFeedbackTimerRef = useRef<number | undefined>(undefined);
+  const copyRequestRef = useRef(0);
+  const mountedRef = useRef(false);
   const normalizedValue = normalizeHttpUrl(value);
   const valid = Boolean(normalizedValue);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      copyRequestRef.current += 1;
+      if (copyFeedbackTimerRef.current !== undefined) {
+        window.clearTimeout(copyFeedbackTimerRef.current);
+      }
+    };
+  }, []);
 
   const submit = () => {
     if (!normalizedValue) {
@@ -98,6 +89,36 @@ export function LinkEditor({
 
   const preserveSelection = (event: React.PointerEvent) => {
     event.preventDefault();
+  };
+
+  const copy = async () => {
+    if (!normalizedValue || !onCopy) {
+      return;
+    }
+
+    if (copyFeedbackTimerRef.current !== undefined) {
+      window.clearTimeout(copyFeedbackTimerRef.current);
+    }
+    setCopyFeedback('idle');
+    const request = ++copyRequestRef.current;
+
+    try {
+      await onCopy(normalizedValue);
+      if (!mountedRef.current || request !== copyRequestRef.current) {
+        return;
+      }
+      setCopyFeedback('success');
+    } catch {
+      if (!mountedRef.current || request !== copyRequestRef.current) {
+        return;
+      }
+      setCopyFeedback('failure');
+    }
+
+    copyFeedbackTimerRef.current = window.setTimeout(() => {
+      setCopyFeedback('idle');
+      copyFeedbackTimerRef.current = undefined;
+    }, 2000);
   };
 
   return (
@@ -145,21 +166,23 @@ export function LinkEditor({
               <LinkEditorButton
                 disabled={!valid}
                 label={
-                  copySuccess
+                  copyFeedback === 'success'
                     ? t.app.editor.linkEditor.copied
-                    : t.app.editor.linkEditor.copy
+                    : copyFeedback === 'failure'
+                      ? t.app.editor.linkEditor.copyFailed
+                      : t.app.editor.linkEditor.copy
                 }
-                onClick={() => {
-                  if (normalizedValue) {
-                    void onCopy(normalizedValue);
-                  }
-                  setCopySuccess(true);
-                  window.setTimeout(() => setCopySuccess(false), 2000);
-                }}
+                onClick={() => void copy()}
                 onPointerDown={preserveSelection}
                 type="button"
               >
-                {copySuccess ? <Check className="text-green-600" /> : <Copy />}
+                {copyFeedback === 'success' ? (
+                  <Check className="text-green-600" />
+                ) : copyFeedback === 'failure' ? (
+                  <CircleAlert className="text-destructive-foreground" />
+                ) : (
+                  <Copy />
+                )}
               </LinkEditorButton>
             ) : null}
 
@@ -243,6 +266,7 @@ type FloatingLinkEditorProps = {
   autoFocus?: boolean;
   placement?: UseFloatingPositionProps['placement'];
   inline?: boolean;
+  onOpen?: (href: string) => void;
 };
 
 /** Shared floating controller for cursor and selection link editing. */
@@ -256,6 +280,7 @@ export function FloatingLinkEditor({
   autoFocus = false,
   placement,
   inline = false,
+  onOpen,
 }: FloatingLinkEditorProps) {
   const [draft, setDraft] = useState(initialHref);
   const popupRef = useRef<HTMLDivElement | null>(null);
@@ -274,7 +299,9 @@ export function FloatingLinkEditor({
 
   const close = (reason: FloatingLinkEditorCloseReason) => {
     onClose(reason);
-    editorView.focus();
+    if (reason !== 'outside') {
+      editorView.focus();
+    }
   };
 
   const updateLink = (href?: string) => {
@@ -333,11 +360,7 @@ export function FloatingLinkEditor({
             ? (value) => navigator.clipboard.writeText(value)
             : undefined
         }
-        onOpen={
-          editingLink
-            ? (value) => window.open(value, '_blank', 'noopener,noreferrer')
-            : undefined
-        }
+        onOpen={editingLink && onOpen ? onOpen : undefined}
       />
     </div>
   );

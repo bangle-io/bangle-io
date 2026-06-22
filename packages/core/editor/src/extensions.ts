@@ -1,5 +1,6 @@
 import type { Logger } from '@bangle.io/logger';
 import {
+  type LinkConfig,
   setupActiveNode,
   setupBase,
   setupBlockquote,
@@ -26,8 +27,11 @@ import {
 } from '@bangle.io/prosemirror-plugins';
 import { funPlaceholder } from './utils';
 
-export function setupExtensions(logger: Logger) {
-  const link = setupLink();
+export function setupExtensions(
+  logger: Logger,
+  onOpenLink?: LinkConfig['onOpenLink'],
+) {
+  const link = setupLink({ onOpenLink });
   return {
     image: setupImage(),
     activeNode: setupActiveNode({

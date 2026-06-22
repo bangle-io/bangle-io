@@ -27,6 +27,7 @@ export function LinkMenu({ editorName }: { editorName: string }) {
       editorView={editorView}
       ext={pmEditorService.extensions}
       href={linkMenu.href}
+      onOpen={(href) => pmEditorService.openLink(editorView, href)}
       anchorEl={linkMenu.anchorEl}
       key={`${linkMenu.position}:${linkMenu.href}`}
     />
@@ -38,11 +39,13 @@ function CursorLinkMenu({
   ext,
   href,
   anchorEl,
+  onOpen,
 }: {
   editorView: NonNullable<ReturnType<PmEditorService['getEditor']>>;
   ext: PmEditorService['extensions'];
   href: string;
   anchorEl: LinkMenuState['anchorEl'];
+  onOpen: (href: string) => void;
 }) {
   return (
     <FloatingLinkEditor
@@ -51,6 +54,7 @@ function CursorLinkMenu({
       editorView={editorView}
       ext={ext}
       initialHref={href}
+      onOpen={onOpen}
       onClose={() => {
         ext.linkMenu.command.dismissLinkMenu()(
           editorView.state,

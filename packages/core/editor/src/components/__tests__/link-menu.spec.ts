@@ -18,12 +18,20 @@ describe('normalizeHttpUrl', () => {
     );
   });
 
+  it('preserves relative Markdown file paths', () => {
+    expect(normalizeHttpUrl('note.md')).toBe('note.md');
+    expect(normalizeHttpUrl('./notes/note.md')).toBe('./notes/note.md');
+    expect(normalizeHttpUrl('../note.markdown')).toBe('../note.markdown');
+    expect(normalizeHttpUrl('/notes/note.md')).toBe('/notes/note.md');
+  });
+
   it('rejects empty, malformed, and non-HTTP schemes', () => {
     expect(normalizeHttpUrl('')).toBeUndefined();
     expect(normalizeHttpUrl('google com')).toBeUndefined();
     expect(normalizeHttpUrl('google%20com')).toBeUndefined();
     expect(normalizeHttpUrl('javascript:alert(1)')).toBeUndefined();
     expect(normalizeHttpUrl('mailto:user@example.com')).toBeUndefined();
+    expect(normalizeHttpUrl('note.md#heading')).toBeUndefined();
     expect(isValidHttpUrl('javascript:alert(1)')).toBe(false);
   });
 });

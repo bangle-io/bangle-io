@@ -43,6 +43,10 @@ div.ProseMirror {
     font-weight: 500;
   }
 
+  &.bangle-link-open-modifier a {
+    cursor: pointer;
+  }
+
   & p,
   & ul,
   & ol,
