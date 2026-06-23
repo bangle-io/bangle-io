@@ -7,18 +7,28 @@ const leafNodeReplacementCharacter = '\ufffc';
 export function triggerInputRule({
   trigger,
   markName,
+  requireTriggerBoundary = true,
 }: {
   trigger: string;
   markName: string;
+  requireTriggerBoundary?: boolean;
 }) {
   const regexStart = new RegExp(
-    `(^|[.!?\\s${leafNodeReplacementCharacter}])(${escapeRegExp(trigger)})$`,
+    requireTriggerBoundary
+      ? `(^|[.!?\\s${leafNodeReplacementCharacter}])(${escapeRegExp(trigger)})$`
+      : `(${escapeRegExp(trigger)})$`,
   );
 
   const startRule = new InputRule(
     regexStart,
     (editorState: EditorState, match: string[]) => {
-      const trigger = match[3] || match[2];
+      if (
+        editorState.selection.$from.parent.type.spec.code ||
+        editorState.selection.$from.marks().some((mark) => mark.type.spec.code)
+      ) {
+        return null;
+      }
+      const trigger = match[3] || match[2] || match[1];
       if (!trigger) {
         return null;
       }

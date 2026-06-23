@@ -2,6 +2,7 @@ import { keybinding, PRIORITY } from '../common';
 import { store } from '../store';
 import {
   $suggestion,
+  $suggestions,
   $suggestionUi,
   removeSuggestMark,
 } from './plugin-suggestion';
@@ -12,7 +13,9 @@ export const suggestionKeymap = () =>
       [
         'Escape',
         (state, dispatch, view) => {
-          const suggestion = store.get(state, $suggestion);
+          const suggestion = view
+            ? store.get(state, $suggestions).get(view)
+            : store.get(state, $suggestion);
           if (suggestion) {
             return removeSuggestMark({
               markName: suggestion.markName,
@@ -24,13 +27,24 @@ export const suggestionKeymap = () =>
       ],
       [
         'ArrowDown',
-        (state) => {
-          const suggestion = store.get(state, $suggestion);
+        (state, _dispatch, view) => {
+          if (!view) return false;
+          const suggestions = store.get(state, $suggestions);
+          const suggestion = suggestions.get(view);
           if (suggestion) {
-            store.set(state, $suggestion, {
+            const optionCount =
+              store.get(state, $suggestionUi).get(view)?.[suggestion.markName]
+                ?.optionCount ?? Number.POSITIVE_INFINITY;
+            const selectedIndex = Math.min(
+              suggestion.selectedIndex + 1,
+              Math.max(0, optionCount - 1),
+            );
+            const next = new Map(suggestions);
+            next.set(view, {
               ...suggestion,
-              selectedIndex: suggestion.selectedIndex + 1,
+              selectedIndex,
             });
+            store.set(state, $suggestions, next);
             return true;
           }
           return false;
@@ -38,13 +52,17 @@ export const suggestionKeymap = () =>
       ],
       [
         'ArrowUp',
-        (state) => {
-          const suggestion = store.get(state, $suggestion);
+        (state, _dispatch, view) => {
+          if (!view) return false;
+          const suggestions = store.get(state, $suggestions);
+          const suggestion = suggestions.get(view);
           if (suggestion) {
-            store.set(state, $suggestion, {
+            const next = new Map(suggestions);
+            next.set(view, {
               ...suggestion,
-              selectedIndex: suggestion.selectedIndex - 1,
+              selectedIndex: Math.max(0, suggestion.selectedIndex - 1),
             });
+            store.set(state, $suggestions, next);
             return true;
           }
           return false;
@@ -52,11 +70,12 @@ export const suggestionKeymap = () =>
       ],
       [
         'Enter',
-        (state) => {
-          const suggestion = store.get(state, $suggestion);
+        (state, _dispatch, view) => {
+          if (!view) return false;
+          const suggestion = store.get(state, $suggestions).get(view);
           if (suggestion) {
-            const ui = store.get(state, $suggestionUi);
-            const onSelect = ui[suggestion.markName]?.onSelect;
+            const ui = store.get(state, $suggestionUi).get(view);
+            const onSelect = ui?.[suggestion.markName]?.onSelect;
             if (onSelect) {
               onSelect(suggestion);
               return true;

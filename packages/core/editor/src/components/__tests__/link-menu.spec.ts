@@ -16,6 +16,12 @@ describe('normalizeHttpUrl', () => {
     expect(normalizeHttpUrl('https://example.com/path')).toBe(
       'https://example.com/path',
     );
+    expect(normalizeHttpUrl('https://example.com/search?q=test#results')).toBe(
+      'https://example.com/search?q=test#results',
+    );
+    expect(normalizeHttpUrl('github.com/project/readme.md')).toBe(
+      'https://github.com/project/readme.md',
+    );
   });
 
   it('preserves relative Markdown file paths', () => {
@@ -23,6 +29,11 @@ describe('normalizeHttpUrl', () => {
     expect(normalizeHttpUrl('./notes/note.md')).toBe('./notes/note.md');
     expect(normalizeHttpUrl('../note.markdown')).toBe('../note.markdown');
     expect(normalizeHttpUrl('/notes/note.md')).toBe('/notes/note.md');
+    expect(normalizeHttpUrl('./folder.bundle/note.md')).toBe(
+      './folder.bundle/note.md',
+    );
+    expect(normalizeHttpUrl('note.md#heading')).toBe('note.md#heading');
+    expect(normalizeHttpUrl('#current-heading')).toBe('#current-heading');
   });
 
   it('rejects empty, malformed, and non-HTTP schemes', () => {
@@ -31,7 +42,7 @@ describe('normalizeHttpUrl', () => {
     expect(normalizeHttpUrl('google%20com')).toBeUndefined();
     expect(normalizeHttpUrl('javascript:alert(1)')).toBeUndefined();
     expect(normalizeHttpUrl('mailto:user@example.com')).toBeUndefined();
-    expect(normalizeHttpUrl('note.md#heading')).toBeUndefined();
+    expect(normalizeHttpUrl('note.md#')).toBeUndefined();
     expect(isValidHttpUrl('javascript:alert(1)')).toBe(false);
   });
 });

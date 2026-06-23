@@ -18,10 +18,13 @@ export * from './plugin-suggestion';
 export * from './suggestions-mark';
 
 export type SuggestionConfig = {
+  providerId?: string;
   markName: string;
   trigger: string;
   markClassName: string;
   logger?: Logger;
+  requireTriggerBoundary?: boolean;
+  installKeymap?: boolean;
 };
 
 export function setupSuggestions(config: SuggestionConfig) {
@@ -35,12 +38,14 @@ export function setupSuggestions(config: SuggestionConfig) {
 
   const plugin = {
     inputRules: inputRules({ rules: [triggerInputRule(config)] }),
-    keybindings: suggestionKeymap(),
+    ...(config.installKeymap === false
+      ? {}
+      : { keybindings: suggestionKeymap() }),
     suggestion: pluginSuggestion(config),
   };
 
   return collection({
-    id: 'suggestions',
+    id: `suggestions-${config.providerId ?? config.markName}`,
     marks,
     plugin,
     command: {

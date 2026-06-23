@@ -157,6 +157,16 @@ test('follows interoperable relative Markdown link forms', async ({ page }) => {
   await modifierClick('Interoperability paths');
   await expectHeading('Interoperable Markdown links');
 
+  await modifierClick('Jump within this note');
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const view = Reflect.get(globalThis, 'editorView');
+        return view?.state.selection.$from.parent.textContent;
+      }),
+    )
+    .toBe('Current File Target: punctuation!');
+
   await modifierClick('Angle-bracket path with spaces');
   await expectHeading('Linked note with spaces');
   await modifierClick('Back to overview');

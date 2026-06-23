@@ -7,7 +7,12 @@ import {
   wrapPromiseInAppErrorHandler,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
-import { type WsFilePath, WsPath } from '@bangle.io/ws-path';
+import {
+  createWikiLinkIndex,
+  type WikiLinkIndex,
+  type WsFilePath,
+  WsPath,
+} from '@bangle.io/ws-path';
 import { atom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
 import type { FileSystemService } from './file-system-service';
@@ -42,6 +47,11 @@ export class WorkspaceStateService extends BaseService {
     return get(this.$rawWsPaths)
       .map((path) => WsPath.fromString(path).asFile())
       .filter((path) => path !== undefined);
+  });
+
+  $wikiLinkIndex = atom<WikiLinkIndex | undefined>((get) => {
+    const wsName = get(this.$currentWsName);
+    return wsName ? createWikiLinkIndex(get(this.$wsPaths), wsName) : undefined;
   });
 
   $activeWsPaths = atom<WsFilePath[]>((get) => {

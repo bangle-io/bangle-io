@@ -24,12 +24,15 @@ import {
   setupStrike,
   setupSuggestions,
   setupUnderline,
+  setupWikiLink,
+  type WikiLinkConfig,
 } from '@bangle.io/prosemirror-plugins';
 import { funPlaceholder } from './utils';
 
 export function setupExtensions(
   logger: Logger,
   onOpenLink?: LinkConfig['onOpenLink'],
+  wikiLinkConfig?: WikiLinkConfig,
 ) {
   const link = setupLink({ onOpenLink });
   return {
@@ -61,11 +64,22 @@ export function setupExtensions(
     paragraph: setupParagraph(),
     strike: setupStrike(),
     suggestions: setupSuggestions({
+      providerId: 'slash-command',
       markName: 'slash_command',
       trigger: '/',
       markClassName: 'text-pop',
       logger: logger.child('suggestions'),
     }),
+    wikiSuggestions: setupSuggestions({
+      providerId: 'wiki-link',
+      markName: 'wiki_link_suggestion',
+      trigger: '[[',
+      markClassName: 'text-primary',
+      requireTriggerBoundary: false,
+      installKeymap: false,
+      logger: logger.child('wiki-link-suggestions'),
+    }),
+    wikiLink: setupWikiLink(wikiLinkConfig),
     underline: setupUnderline(),
     horizontalRule: setupHorizontalRule(),
     placeholder: setupPlaceholder({

@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { normalizeLinkTarget, resolveInternalLink } from '../link-target';
+import {
+  getInternalLinkHeading,
+  normalizeLinkTarget,
+  resolveInternalLink,
+} from '../link-target';
 
 describe('normalizeLinkTarget', () => {
   it('normalizes web links and preserves relative Markdown paths', () => {
@@ -19,7 +23,10 @@ describe('normalizeLinkTarget', () => {
 
   it('rejects unsupported schemes, fragments, and malformed links', () => {
     expect(normalizeLinkTarget('javascript:alert(1)')).toBeUndefined();
-    expect(normalizeLinkTarget('note.md#heading')).toBeUndefined();
+    expect(normalizeLinkTarget('note.md#heading')).toEqual({
+      kind: 'internal',
+      href: 'note.md#heading',
+    });
     expect(normalizeLinkTarget('google com')).toBeUndefined();
   });
 
@@ -31,7 +38,7 @@ describe('normalizeLinkTarget', () => {
     'mailto:user@example.com',
     'other-workspace:note.md',
     'note.md?redirect=https://example.com',
-    'note.md#fragment',
+    'note.md#',
     '',
     '   ',
   ])('rejects unsafe or unsupported target %j', (href) => {
@@ -41,6 +48,15 @@ describe('normalizeLinkTarget', () => {
   it.each([
     ['HTTP://EXAMPLE.COM/note.md', 'http://example.com/note.md'],
     ['https://example.com/path', 'https://example.com/path'],
+    [
+      'https://example.com/search?q=test#results',
+      'https://example.com/search?q=test#results',
+    ],
+    ['github.com/project/readme.md', 'https://github.com/project/readme.md'],
+    [
+      'github.com/project/readme.md?raw=1#source',
+      'https://github.com/project/readme.md?raw=1#source',
+    ],
     ['localhost:5173/note', 'https://localhost:5173/note'],
   ])('normalizes external target %j', (href, expected) => {
     expect(normalizeLinkTarget(href)).toEqual({
@@ -57,11 +73,32 @@ describe('normalizeLinkTarget', () => {
     [' notes/child.md ', 'notes/child.md'],
     ['notes%20with%20spaces/note.md', 'notes%20with%20spaces/note.md'],
     ['NOTE.MD', 'NOTE.MD'],
+    ['note.md#target-heading', 'note.md#target-heading'],
+    ['#current-heading', '#current-heading'],
   ])('preserves internal target %j', (href, expected) => {
     expect(normalizeLinkTarget(href)).toEqual({
       kind: 'internal',
       href: expected,
     });
+  });
+});
+
+describe('getInternalLinkHeading', () => {
+  it.each([
+    ['#heading', 'heading'],
+    ['note.md#heading-with-punctuation', 'heading-with-punctuation'],
+    ['note.md#unicode-%F0%9F%98%80-heading', 'unicode-😀-heading'],
+  ])('decodes heading fragment from %j', (href, expected) => {
+    expect(getInternalLinkHeading(href)).toBe(expected);
+  });
+
+  it.each([
+    'note.md',
+    'note.md#',
+    'note.md#bad%encoding',
+    '#line%0Abreak',
+  ])('rejects missing or malformed heading in %j', (href) => {
+    expect(getInternalLinkHeading(href)).toBeUndefined();
   });
 });
 
@@ -78,6 +115,8 @@ describe('resolveInternalLink', () => {
     ],
     ['../root.md', 'workspace:root.md'],
     ['/docs/readme.md', 'workspace:docs/readme.md'],
+    ['#current-heading', 'workspace:notes/current.md'],
+    ['other.md#other-heading', 'workspace:notes/other.md'],
   ])('resolves %s inside the current workspace', (href, expected) => {
     expect(resolveInternalLink(current, href)).toBe(expected);
   });
@@ -106,7 +145,7 @@ describe('resolveInternalLink', () => {
     ['upper.MD', 'workspace:notes/upper.MD'],
     ['upper.MARKDOWN', 'workspace:notes/upper.MARKDOWN'],
     ['.hidden/note.md', 'workspace:notes/.hidden/note.md'],
-    ['three...dots/note.md', 'workspace:notes/three...dots/note.md'],
+    ['./three...dots/note.md', 'workspace:notes/three...dots/note.md'],
     [' spaced.md ', 'workspace:notes/spaced.md'],
     ['/root.markdown', 'workspace:root.markdown'],
   ])('handles encoded target %j', (href, expected) => {
@@ -126,7 +165,7 @@ describe('resolveInternalLink', () => {
     ],
     [
       'workspace:source.md',
-      'folder.bundle/dotted-note.md',
+      './folder.bundle/dotted-note.md',
       'workspace:folder.bundle/dotted-note.md',
     ],
     ['workspace:nested/source.md', '/root-note.md', 'workspace:root-note.md'],
@@ -187,7 +226,6 @@ describe('resolveInternalLink', () => {
     'file.txt',
     'file.md.txt',
     'file.md?query',
-    'file.md#fragment',
     '//example.com/file.md',
     'https://example.com/file.md',
     'HTTPS://example.com/file.md',

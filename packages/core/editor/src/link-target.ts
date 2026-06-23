@@ -1,4 +1,4 @@
-import { WsPath } from '@bangle.io/ws-path';
+import { resolveInternalWsPath } from '@bangle.io/ws-path';
 
 const HTTP_PROTOCOLS = new Set(['http:', 'https:']);
 
@@ -15,19 +15,56 @@ function hasMarkdownExtension(value: string): boolean {
   return lowerValue.endsWith('.md') || lowerValue.endsWith('.markdown');
 }
 
+export function getInternalLinkHeading(href: string): string | undefined {
+  const hashIndex = href.indexOf('#');
+  if (hashIndex < 0 || hashIndex === href.length - 1) {
+    return undefined;
+  }
+
+  try {
+    const heading = decodeURIComponent(href.slice(hashIndex + 1));
+    const hasControlCharacter = [...heading].some(
+      (character) => character.charCodeAt(0) <= 0x1f,
+    );
+    return heading && !hasControlCharacter ? heading : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export function normalizeLinkTarget(value: string): LinkTarget | undefined {
   const input = value.trim();
-  if (!input || /[?#]/.test(input)) {
+  if (!input) {
     return undefined;
   }
 
   const hasHttpScheme = /^https?:\/\//i.test(input);
   const looksLikeHostWithPort = /^[^/:\s]+:\d+(?:\/|$)/.test(input);
+  const markdownPath = input.split(/[?#]/, 1)[0] ?? input;
+  const hasRelativePathPrefix = /^(?:\.\.?\/|\/)/.test(markdownPath);
+  const firstPathSegment = markdownPath.split('/')[0] ?? '';
+  const looksLikeHostname = /^[^\s.][^/\s]*\.[a-z]{2,}$/i.test(
+    firstPathSegment,
+  );
+  const looksLikeWebMarkdownPath =
+    !hasRelativePathPrefix && markdownPath.includes('/') && looksLikeHostname;
+  if (input.startsWith('#')) {
+    return !input.includes('?') && getInternalLinkHeading(input)
+      ? { kind: 'internal', href: input }
+      : undefined;
+  }
   if (
     !hasHttpScheme &&
     !hasExplicitScheme(input) &&
-    hasMarkdownExtension(input)
+    hasMarkdownExtension(markdownPath) &&
+    !looksLikeWebMarkdownPath
   ) {
+    if (
+      input.includes('?') ||
+      (input.includes('#') && !getInternalLinkHeading(input))
+    ) {
+      return undefined;
+    }
     return { kind: 'internal', href: input };
   }
 
@@ -61,45 +98,5 @@ export function resolveInternalLink(
   ) {
     return undefined;
   }
-  const targetHref = normalizedTarget.href;
-
-  const currentFile = WsPath.safeParse(currentWsPath).data?.asFile();
-  if (!currentFile) {
-    return undefined;
-  }
-
-  const targetSegments = targetHref.startsWith('/')
-    ? []
-    : (currentFile.getParent()?.path.split('/').filter(Boolean) ?? []);
-
-  for (const encodedSegment of targetHref.replace(/^\//, '').split('/')) {
-    let segment: string;
-    try {
-      segment = decodeURIComponent(encodedSegment);
-    } catch {
-      return undefined;
-    }
-
-    if (segment.includes('/') || segment.includes('\\')) {
-      return undefined;
-    }
-    if (!segment || segment === '.') {
-      continue;
-    }
-    if (segment === '..') {
-      if (!targetSegments.pop()) {
-        return undefined;
-      }
-      continue;
-    }
-    targetSegments.push(segment);
-  }
-
-  const target = WsPath.safeFromParts(
-    currentFile.wsName,
-    targetSegments.join('/'),
-  ).data;
-  return target && hasMarkdownExtension(target.path)
-    ? target.wsPath
-    : undefined;
+  return resolveInternalWsPath(currentWsPath, normalizedTarget.href)?.wsPath;
 }

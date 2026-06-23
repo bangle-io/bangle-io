@@ -2,6 +2,7 @@ import type { Logger } from '../common';
 import {
   type Command,
   type EditorState,
+  type EditorView,
   Fragment,
   type MarkType,
   Plugin,
@@ -33,14 +34,94 @@ export type Suggestion = {
   selectedIndex: number;
 };
 
+export type SuggestionUiHandlers = Record<
+  string,
+  { onSelect: (selected: Suggestion) => void; optionCount?: number }
+>;
+
 // for better performance we scan a range around the selection
 const MARK_SCAN_RANGE_PADDING = 500;
 
-export const $suggestion = store.atom<Suggestion | undefined>();
+const $internalSuggestions = store.atom<ReadonlyMap<EditorView, Suggestion>>(
+  new Map(),
+);
 
-export const $suggestionUi = store.atom<
-  Record<string, { onSelect: (selected: Suggestion) => void }>
->({});
+const $internalSuggestionUi = store.atom<
+  ReadonlyMap<EditorView, SuggestionUiHandlers>
+>(new Map());
+
+export const $suggestions = store.atom(
+  (get) => get($internalSuggestions),
+  (
+    get,
+    set,
+    update:
+      | ReadonlyMap<EditorView, Suggestion>
+      | ((
+          existing: ReadonlyMap<EditorView, Suggestion>,
+        ) => ReadonlyMap<EditorView, Suggestion>),
+  ) => {
+    set(
+      $internalSuggestions,
+      typeof update === 'function' ? update(get($internalSuggestions)) : update,
+    );
+  },
+);
+
+export const $suggestion = store.atom((get) => {
+  for (const suggestion of get($internalSuggestions).values()) {
+    return suggestion;
+  }
+  return undefined;
+});
+
+export const $suggestionUi = store.atom(
+  (get) => get($internalSuggestionUi),
+  (
+    get,
+    set,
+    update:
+      | ReadonlyMap<EditorView, SuggestionUiHandlers>
+      | ((
+          existing: ReadonlyMap<EditorView, SuggestionUiHandlers>,
+        ) => ReadonlyMap<EditorView, SuggestionUiHandlers>),
+  ) => {
+    set(
+      $internalSuggestionUi,
+      typeof update === 'function'
+        ? update(get($internalSuggestionUi))
+        : update,
+    );
+  },
+);
+
+function getSuggestionForView(
+  state: EditorState,
+  view: EditorView | undefined,
+) {
+  if (!view) {
+    return store.get(state, $suggestion);
+  }
+  return store.get(state, $internalSuggestions).get(view);
+}
+
+function setSuggestionForView(
+  state: EditorState,
+  view: EditorView,
+  suggestion: Suggestion | undefined,
+) {
+  const current = store.get(state, $internalSuggestions);
+  if (!suggestion && !current.has(view)) {
+    return;
+  }
+  const next = new Map(current);
+  if (suggestion) {
+    next.set(view, suggestion);
+  } else {
+    next.delete(view);
+  }
+  store.set(state, $internalSuggestions, next);
+}
 
 // TODO current if the query is /sdsd /s dasdlkasd and the user moves out the second subquery is selected
 export function pluginSuggestion({
@@ -58,9 +139,9 @@ export function pluginSuggestion({
       const abortController = new AbortController();
 
       setupScrollAndResizeHandlers((refresh_counter) => {
-        const suggestion = store.get(view.state, $suggestion);
+        const suggestion = getSuggestionForView(view.state, view);
         if (suggestion) {
-          store.set(view.state, $suggestion, {
+          setSuggestionForView(view.state, view, {
             ...suggestion,
             refresh: refresh_counter,
           });
@@ -70,6 +151,7 @@ export function pluginSuggestion({
       return {
         destroy: () => {
           abortController.abort();
+          setSuggestionForView(view.state, view, undefined);
         },
         update: (view, lastState) => {
           const { state } = view;
@@ -114,7 +196,7 @@ export function pluginSuggestion({
             return;
           }
 
-          const suggestion = store.get(state, $suggestion);
+          const suggestion = getSuggestionForView(state, view);
           if (isMarkActive) {
             const [scanRangeStart, scanRangeEnd] = clampRange(
               state.selection.from - MARK_SCAN_RANGE_PADDING,
@@ -140,8 +222,12 @@ export function pluginSuggestion({
               return;
             }
 
-            store.set(state, $suggestion, {
-              selectedIndex: suggestion?.selectedIndex ?? 0,
+            setSuggestionForView(state, view, {
+              selectedIndex:
+                suggestion?.markName === markName &&
+                suggestion.text === result.text
+                  ? suggestion.selectedIndex
+                  : 0,
               markName,
               trigger,
               show: true,
@@ -159,7 +245,7 @@ export function pluginSuggestion({
             });
           } else {
             if (suggestion !== undefined) {
-              store.set(state, $suggestion, undefined);
+              setSuggestionForView(state, view, undefined);
             }
           }
         },
@@ -217,7 +303,9 @@ export function removeSuggestMark({
       selection.to,
     );
 
-    store.set(state, $suggestion, undefined);
+    if (_view) {
+      setSuggestionForView(state, _view, undefined);
+    }
 
     if (
       !queryMark &&
@@ -280,7 +368,7 @@ export function replaceSuggestMarkWith({
     const { schema } = state;
     const markType = getMarkType(schema, markName);
 
-    const suggestion = store.get(state, $suggestion);
+    const suggestion = getSuggestionForView(state, view);
     if (!suggestion) {
       return false;
     }

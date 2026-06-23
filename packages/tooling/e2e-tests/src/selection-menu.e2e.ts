@@ -305,7 +305,8 @@ test('copies, opens, and cancels cursor-link drafts', async ({
   const workspaceName = 'cursor-link-actions';
   const noteName = 'actions';
   const initialMarkdown = 'visit example';
-  const href = 'https://actions.example/path';
+  const inputHref = 'actions.example/docs/readme.md?mode=test#results';
+  const href = `https://${inputHref}`;
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   await context.route('https://actions.example/**', (route) =>
     route.fulfill({
@@ -322,7 +323,7 @@ test('copies, opens, and cancels cursor-link drafts', async ({
   await selectEditorText(page, 'example');
   await page.getByRole('button', { name: 'Link', exact: true }).click();
   const urlInput = page.getByRole('textbox', { name: 'Link URL' });
-  await urlInput.fill(href);
+  await urlInput.fill(inputHref);
   await urlInput.press('Enter');
   const linkedMarkdown = `visit [example](${href})`;
   await expect
@@ -406,11 +407,12 @@ test('creates and modifier-opens a relative Markdown note link', async ({
     noteName: 'target',
   });
   const editor = getEditorLocator(page, {});
-  await editor.click();
-  await page.keyboard.insertText('target content');
+  const targetMarkdown = '# Target\n\n## Target Heading\n\ntarget content';
+  await writeStoredMarkdown(page, workspaceName, 'target', targetMarkdown);
+  await page.reload({ waitUntil: 'networkidle' });
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, 'target'))
-    .toBe('target content');
+    .toBe(targetMarkdown);
 
   await page.getByRole('link', { name: 'Home' }).click();
   await page.getByRole('button', { name: 'New Note' }).click();
@@ -421,17 +423,17 @@ test('creates and modifier-opens a relative Markdown note link', async ({
   await selectEditorText(page, 'target');
   await page.getByRole('button', { name: 'Link', exact: true }).click();
   const urlInput = page.getByRole('textbox', { name: 'Link URL' });
-  await urlInput.fill('target.md');
+  await urlInput.fill('target.md#target-heading');
   await urlInput.press('Enter');
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, 'source'))
-    .toBe('open [target](target.md)');
+    .toBe('open [target](target.md#target-heading)');
 
   const link = editor.getByRole('link', { name: 'target' });
   const sourceUrl = page.url();
   await link.click();
   await expect(page).toHaveURL(sourceUrl);
-  await expect(urlInput).toHaveValue('target.md');
+  await expect(urlInput).toHaveValue('target.md#target-heading');
   await urlInput.press('Escape');
 
   await page.keyboard.down(ctrlKey);
@@ -445,7 +447,17 @@ test('creates and modifier-opens a relative Markdown note link', async ({
   await expect(
     page.getByLabel('breadcrumb').getByRole('button', { name: 'target.md' }),
   ).toBeVisible();
-  await expect(editor).toHaveText('target content');
+  await expect(
+    editor.getByRole('heading', { name: 'Target Heading' }),
+  ).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const view = Reflect.get(globalThis, 'editorView');
+        return view?.state.selection.$from.parent.textContent;
+      }),
+    )
+    .toBe('Target Heading');
 });
 
 test('preserves pre-existing Markdown links rejected by the URL editor', async ({

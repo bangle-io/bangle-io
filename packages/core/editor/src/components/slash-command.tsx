@@ -1,5 +1,5 @@
 import { useCoreServices } from '@bangle.io/context';
-import { $suggestion, $suggestionUi } from '@bangle.io/prosemirror-plugins';
+import { $suggestions, $suggestionUi } from '@bangle.io/prosemirror-plugins';
 import {
   Command,
   CommandEmpty,
@@ -40,16 +40,19 @@ export function SlashCommand({
 }: {
   editorName: string;
 }): ReactElement | null {
-  const suggestion = useAtomValue($suggestion);
-  const markName = suggestion?.markName;
+  const suggestions = useAtomValue($suggestions);
   const setSuggestionUi = useSetAtom($suggestionUi);
   const commandRef = useRef<HTMLDivElement>(null);
   const prevSelectedIndexRef = useRef<number>(0);
   const { pmEditorService } = useCoreServices();
+  const editorView = pmEditorService.getEditor(editorName);
+  const suggestion = editorView ? suggestions.get(editorView) : undefined;
+  const active =
+    suggestion?.markName === 'slash_command' ? suggestion : undefined;
 
   // Add effect to watch selectedIndex changes
   useEffect(() => {
-    const selectedIndex = suggestion?.selectedIndex ?? 0;
+    const selectedIndex = active?.selectedIndex ?? 0;
     const prevIndex = prevSelectedIndexRef.current;
 
     // Well cmdk isnt the best maintained library, so we need to manually
@@ -65,59 +68,67 @@ export function SlashCommand({
     }
 
     prevSelectedIndexRef.current = selectedIndex;
-  }, [suggestion?.selectedIndex]);
+  }, [active?.selectedIndex]);
 
   useEffect(() => {
-    if (!markName) {
+    if (!editorView || !active) {
       return;
     }
 
-    setSuggestionUi((existing) => ({
-      ...existing,
-      [markName]: {
-        onSelect: () => {
-          if (commandRef.current) {
-            const event = new KeyboardEvent('keydown', {
-              key: 'Enter',
-              cancelable: true,
-              bubbles: true,
-            });
-            commandRef.current.dispatchEvent(event);
-          }
+    setSuggestionUi((existing) => {
+      const next = new Map(existing);
+      next.set(editorView, {
+        ...(next.get(editorView) ?? {}),
+        slash_command: {
+          onSelect: () => {
+            if (commandRef.current) {
+              const event = new KeyboardEvent('keydown', {
+                key: 'Enter',
+                cancelable: true,
+                bubbles: true,
+              });
+              commandRef.current.dispatchEvent(event);
+            }
+          },
         },
-      },
-    }));
+      });
+      return next;
+    });
 
     return () => {
       setSuggestionUi((existing) => {
-        const cloned = { ...existing };
-        delete cloned[markName];
-
-        return cloned;
+        const next = new Map(existing);
+        const handlers = { ...(next.get(editorView) ?? {}) };
+        delete handlers.slash_command;
+        if (Object.keys(handlers).length) {
+          next.set(editorView, handlers);
+        } else {
+          next.delete(editorView);
+        }
+        return next;
       });
     };
-  }, [markName, setSuggestionUi]);
+  }, [active, editorView, setSuggestionUi]);
 
   const slashRef = useFloatingPosition({
-    show: Boolean(suggestion?.show),
-    anchorEl: () => suggestion?.anchorEl() ?? null,
+    show: Boolean(active?.show),
+    anchorEl: () => active?.anchorEl() ?? null,
     boundarySelector: '.ProseMirror:not([contenteditable="false"])',
   });
-  const editorView = pmEditorService.getEditor(editorName);
 
   const ext = pmEditorService.extensions;
 
   const dismissCommandUi = useCallback(() => {
-    if (!editorView || !suggestion?.markName) {
+    if (!editorView || !active) {
       return;
     }
 
     ext.suggestions.command.replaceSuggestMarkWith({
       content: '',
     })(editorView.state, editorView.dispatch, editorView);
-  }, [editorView, suggestion?.markName, ext]);
+  }, [editorView, active, ext]);
 
-  if (!editorView || !suggestion?.show) {
+  if (!editorView || !active?.show) {
     return null;
   }
 
@@ -129,7 +140,7 @@ export function SlashCommand({
       >
         <CommandInput
           hidden
-          value={suggestion.text.slice(1)}
+          value={active.text.slice(1)}
           onValueChange={() => {}}
         />
         <CommandEmpty>

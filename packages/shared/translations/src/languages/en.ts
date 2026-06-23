@@ -59,6 +59,11 @@ export const t = {
         remove: 'Remove link',
         invalidUrl: 'Enter a web address or Markdown path.',
       },
+      wikiLinkMenu: {
+        label: 'Link to a note',
+        empty: 'No notes found',
+        linkTo: ({ query }: { query: string }) => `Link to “${query}”`,
+      },
     },
     sidebar: {
       newLabel: 'New',
