@@ -1,5 +1,4 @@
 import type MarkdownIt from 'markdown-it';
-import type Token from 'markdown-it/lib/token.mjs';
 import { collection } from './common';
 import type {
   Command,
@@ -24,13 +23,36 @@ export type WikiLinkAttrs = {
   label: string | null;
 };
 
+const INVALID_WIKI_LINK_TARGET_CHARS = /[[\]\n|]/;
+const INVALID_WIKI_LINK_LABEL_CHARS = /[[\]\n]/;
+
 export type WikiLinkConfig = {
   name?: string;
   onActivate?: (view: EditorView, attrs: WikiLinkAttrs) => void;
   resolveTarget?: (attrs: WikiLinkAttrs, state: EditorState) => boolean;
 };
 
-const wikiPattern = /\[\[([^[\]\n|]+)(?:\|([^[\]\n]*))?\]\]/g;
+export function parseWikiLinkContent(content: string): WikiLinkAttrs | null {
+  const separator = content.indexOf('|');
+  const target = separator < 0 ? content : content.slice(0, separator);
+  const label = separator < 0 ? null : content.slice(separator + 1);
+  if (
+    !target ||
+    INVALID_WIKI_LINK_TARGET_CHARS.test(target) ||
+    (label !== null && INVALID_WIKI_LINK_LABEL_CHARS.test(label))
+  ) {
+    return null;
+  }
+  return { target, label };
+}
+
+export function serializeWikiLinkAttrs(attrs: WikiLinkAttrs): string | null {
+  return parseWikiLinkContent(
+    `${attrs.target}${attrs.label === null ? '' : `|${attrs.label}`}`,
+  )
+    ? `[[${attrs.target}${attrs.label === null ? '' : `|${attrs.label}`}]]`
+    : null;
+}
 
 function displayText(attrs: WikiLinkAttrs): string {
   if (attrs.label !== null) {
@@ -46,50 +68,81 @@ function attrsFromDomTarget(target: EventTarget | null): WikiLinkAttrs | null {
       ? target.closest<HTMLElement>('span[data-wiki-link]')
       : null;
   const wikiTarget = element?.dataset.wikiLink;
-  return wikiTarget
-    ? { target: wikiTarget, label: element.dataset.wikiLabel ?? null }
-    : null;
+  if (!wikiTarget) {
+    return null;
+  }
+  const attrs = {
+    target: wikiTarget,
+    label: element.dataset.wikiLabel ?? null,
+  };
+  return serializeWikiLinkAttrs(attrs) ? attrs : null;
 }
 
 function wikiLinkTokenizer(md: MarkdownIt): void {
-  md.core.ruler.after('inline', 'wiki_link', (state) => {
-    for (const blockToken of state.tokens) {
-      if (blockToken.type !== 'inline' || !blockToken.children) continue;
-      const children: Token[] = [];
-      for (const token of blockToken.children) {
-        if (token.type !== 'text' || !token.content.includes('[[')) {
-          children.push(token);
-          continue;
-        }
-        let offset = 0;
-        for (const match of token.content.matchAll(wikiPattern)) {
-          const index = match.index;
-          const prefix = token.content.slice(0, index);
-          if (prefix.lastIndexOf('[[') > prefix.lastIndexOf(']]')) {
-            continue;
-          }
-          if (index > offset) {
-            const text = new state.Token('text', '', 0);
-            text.content = token.content.slice(offset, index);
-            children.push(text);
-          }
-          const wiki = new state.Token('wiki_link', '', 0);
-          wiki.meta = {
-            target: match[1] ?? '',
-            label: match[2] ?? null,
-          } satisfies WikiLinkAttrs;
-          children.push(wiki);
-          offset = index + match[0].length;
-        }
-        if (offset < token.content.length) {
-          const text = new state.Token('text', '', 0);
-          text.content = token.content.slice(offset);
-          children.push(text);
-        }
-      }
-      blockToken.children = children;
+  md.inline.ruler.before('escape', 'wiki_link', (state, silent) => {
+    const start = state.pos;
+    if (state.src.slice(start, start + 2) !== '[[') {
+      return false;
     }
+    const prefix = state.src.slice(0, start);
+    if (prefix.lastIndexOf('[[') > prefix.lastIndexOf(']]')) {
+      return false;
+    }
+    const end = state.src.indexOf(']]', start + 2);
+    if (end < 0) {
+      return false;
+    }
+    const content = state.src.slice(start + 2, end);
+    if (content.includes('[[')) {
+      return false;
+    }
+    const attrs = parseWikiLinkContent(content);
+    if (!attrs) {
+      return false;
+    }
+
+    if (!silent) {
+      const token = state.push('wiki_link', '', 0);
+      token.meta = attrs;
+    }
+    state.pos = end + 2;
+    return true;
   });
+}
+
+function getAttrsFromDom(dom: HTMLElement): WikiLinkAttrs | false {
+  const target = dom.dataset.wikiLink;
+  if (!target) {
+    return false;
+  }
+  const attrs = { target, label: dom.dataset.wikiLabel ?? null };
+  return serializeWikiLinkAttrs(attrs) ? attrs : false;
+}
+
+function createWikiLinkNode(
+  state: EditorState,
+  name: string,
+  attrs: WikiLinkAttrs,
+) {
+  if (!serializeWikiLinkAttrs(attrs)) {
+    return undefined;
+  }
+  return state.schema.nodes[name]?.create(attrs);
+}
+
+function parseMatchedWikiLink(match: RegExpMatchArray): WikiLinkAttrs | null {
+  const source = match[0];
+  return source.startsWith('[[') && source.endsWith(']]')
+    ? parseWikiLinkContent(source.slice(2, -2))
+    : null;
+}
+
+function wikiLinkText(attrs: WikiLinkAttrs): string {
+  const serialized = serializeWikiLinkAttrs(attrs);
+  if (serialized) {
+    return serialized;
+  }
+  return attrs.label ?? attrs.target;
 }
 
 export function setupWikiLink(userConfig: WikiLinkConfig = {}) {
@@ -104,13 +157,8 @@ export function setupWikiLink(userConfig: WikiLinkConfig = {}) {
       parseDOM: [
         {
           tag: 'span[data-wiki-link]',
-          getAttrs: (dom) => {
-            if (!(dom instanceof HTMLElement)) return false;
-            const target = dom.dataset.wikiLink;
-            return target
-              ? { target, label: dom.dataset.wikiLabel ?? null }
-              : false;
-          },
+          getAttrs: (dom) =>
+            dom instanceof HTMLElement ? getAttrsFromDom(dom) : false,
         },
       ],
       toDOM: (node: PMNode): DOMOutputSpec => {
@@ -130,7 +178,7 @@ export function setupWikiLink(userConfig: WikiLinkConfig = {}) {
       },
       leafText: (node: PMNode) => {
         const attrs = node.attrs as WikiLinkAttrs;
-        return `[[${attrs.target}${attrs.label === null ? '' : `|${attrs.label}`}]]`;
+        return wikiLinkText(attrs);
       },
     } satisfies NodeSpec,
   };
@@ -144,9 +192,9 @@ export function setupWikiLink(userConfig: WikiLinkConfig = {}) {
           new InputRule(
             /\[\[([^[\]\n|]+)(?:\|([^[\]\n]*))?\]\]$/,
             (state, match, start, end) => {
-              const target = match[1];
+              const attrs = parseMatchedWikiLink(match);
               if (
-                !target ||
+                !attrs ||
                 state.selection.$from.parent.type.spec.code ||
                 state.selection.$from
                   .marks()
@@ -154,10 +202,7 @@ export function setupWikiLink(userConfig: WikiLinkConfig = {}) {
               ) {
                 return null;
               }
-              const node = state.schema.nodes[name]?.create({
-                target,
-                label: match[2] ?? null,
-              } satisfies WikiLinkAttrs);
+              const node = createWikiLinkNode(state, name, attrs);
               return node ? state.tr.replaceWith(start, end, node) : null;
             },
           ),
@@ -214,7 +259,7 @@ export function setupWikiLink(userConfig: WikiLinkConfig = {}) {
       insertWikiLink:
         (attrs: WikiLinkAttrs): Command =>
         (state, dispatch) => {
-          const node = state.schema.nodes[name]?.create(attrs);
+          const node = createWikiLinkNode(state, name, attrs);
           if (!node) return false;
           if (dispatch) {
             const tr = state.tr.replaceSelectionWith(node);
@@ -235,10 +280,7 @@ export function setupWikiLink(userConfig: WikiLinkConfig = {}) {
           },
           toMarkdown(state, node) {
             const attrs = node.attrs as WikiLinkAttrs;
-            state.text(
-              `[[${attrs.target}${attrs.label === null ? '' : `|${attrs.label}`}]]`,
-              false,
-            );
+            state.text(wikiLinkText(attrs), false);
           },
         },
       },

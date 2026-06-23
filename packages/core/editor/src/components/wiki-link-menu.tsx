@@ -7,6 +7,7 @@ import {
   $suggestions,
   $suggestionUi,
   Fragment,
+  parseWikiLinkContent,
   type WikiLinkAttrs,
 } from '@bangle.io/prosemirror-plugins';
 import type { WsFilePath } from '@bangle.io/ws-path';
@@ -17,7 +18,7 @@ import {
   useFloatingPosition,
 } from './use-floating-position';
 
-type WikiOption = { attrs: WikiLinkAttrs; path?: WsFilePath };
+type WikiOption = { attrs: WikiLinkAttrs; path?: WsFilePath; query?: string };
 
 const MAX_OPTIONS = 12;
 
@@ -54,8 +55,9 @@ export function WikiLinkMenu({ editorName }: { editorName: string }) {
       path: record.wsPath,
       attrs: { target: record.target, label: null },
     }));
-    return query
-      ? [...matches, { attrs: { target: query, label: null } }]
+    const unresolvedAttrs = query ? parseWikiLinkContent(query) : null;
+    return unresolvedAttrs
+      ? [...matches, { attrs: unresolvedAttrs, query }]
       : matches;
   }, [index, query]);
 
@@ -135,7 +137,10 @@ export function WikiLinkMenu({ editorName }: { editorName: string }) {
         ) : (
           options.map((option, index) => (
             <div
-              key={option.path?.wsPath ?? `unresolved:${option.attrs.target}`}
+              key={
+                option.path?.wsPath ??
+                `unresolved:${option.query ?? option.attrs.target}`
+              }
               role="option"
               tabIndex={-1}
               aria-selected={index === selectedIndex}
@@ -154,7 +159,7 @@ export function WikiLinkMenu({ editorName }: { editorName: string }) {
               <div>
                 {option.path?.fileNameWithoutExtension ??
                   t.app.editor.wikiLinkMenu.linkTo({
-                    query: option.attrs.target,
+                    query: option.query ?? option.attrs.target,
                   })}
               </div>
               {option.path?.getParent()?.path ? (

@@ -1,5 +1,6 @@
 import {
   markdownLoader,
+  parseWikiLinkContent,
   resolve,
   Schema,
   setupBase,
@@ -51,6 +52,36 @@ describe('wiki-link Markdown', () => {
     const markdown = createMarkdown();
     const document = markdown.parser.parse(source);
     expect(markdown.serializer.serialize(document)).toBe(source);
+  });
+
+  it('does not reinterpret escaped wiki syntax as a wiki link', () => {
+    const markdown = createMarkdown();
+    const source = String.raw`\[[target]]`;
+    const document = markdown.parser.parse(source);
+    let hasWikiLink = false;
+    document.descendants((node) => {
+      if (node.type.name === 'wiki_link') hasWikiLink = true;
+    });
+
+    expect(hasWikiLink).toBe(false);
+    const serialized = markdown.serializer.serialize(document);
+    expect(serialized).toBe(String.raw`\[\[target\]\]`);
+    const reparsed = markdown.parser.parse(serialized);
+    reparsed.descendants((node) => {
+      expect(node.type.name).not.toBe('wiki_link');
+    });
+  });
+
+  it('uses the same attr parser for unresolved picker input and Markdown syntax', () => {
+    expect(parseWikiLinkContent('foo|bar|baz')).toEqual({
+      target: 'foo',
+      label: 'bar|baz',
+    });
+    expect(parseWikiLinkContent('foo|bar')).toEqual({
+      target: 'foo',
+      label: 'bar',
+    });
+    expect(parseWikiLinkContent('foo[bar')).toBeNull();
   });
 
   it('preserves explicit labels equal to their target', () => {

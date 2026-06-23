@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   getInternalLinkHeading,
   normalizeLinkTarget,
+  normalizeStoredMarkdownLinkTarget,
   resolveInternalLink,
 } from '../link-target';
 
@@ -80,6 +81,35 @@ describe('normalizeLinkTarget', () => {
       kind: 'internal',
       href: expected,
     });
+  });
+});
+
+describe('normalizeStoredMarkdownLinkTarget', () => {
+  it('treats no-scheme Markdown hrefs as internal even when a dotted directory looks host-like', () => {
+    expect(
+      normalizeStoredMarkdownLinkTarget('folder.bundle/dotted-note.md'),
+    ).toEqual({
+      kind: 'internal',
+      href: 'folder.bundle/dotted-note.md',
+    });
+    expect(
+      normalizeStoredMarkdownLinkTarget('github.com/project/readme.md'),
+    ).toEqual({
+      kind: 'internal',
+      href: 'github.com/project/readme.md',
+    });
+  });
+
+  it('keeps explicit HTTP links external and rejects unsupported stored schemes', () => {
+    expect(
+      normalizeStoredMarkdownLinkTarget('https://example.com/readme.md'),
+    ).toEqual({
+      kind: 'external',
+      href: 'https://example.com/readme.md',
+    });
+    expect(
+      normalizeStoredMarkdownLinkTarget('javascript:alert(1)'),
+    ).toBeUndefined();
   });
 });
 
@@ -165,7 +195,7 @@ describe('resolveInternalLink', () => {
     ],
     [
       'workspace:source.md',
-      './folder.bundle/dotted-note.md',
+      'folder.bundle/dotted-note.md',
       'workspace:folder.bundle/dotted-note.md',
     ],
     ['workspace:nested/source.md', '/root-note.md', 'workspace:root-note.md'],

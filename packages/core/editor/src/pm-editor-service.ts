@@ -27,7 +27,7 @@ import { setupExtensions } from './extensions';
 import { findHeadingIndexBySlug } from './heading-slug';
 import {
   getInternalLinkHeading,
-  normalizeLinkTarget,
+  normalizeStoredMarkdownLinkTarget,
   resolveInternalLink,
 } from './link-target';
 import { createEditor } from './pm-setup';
@@ -313,7 +313,7 @@ export class PmEditorService extends BaseService {
       return;
     }
 
-    const target = normalizeLinkTarget(href);
+    const target = normalizeStoredMarkdownLinkTarget(href);
     if (target?.kind === 'internal') {
       const wsPath = resolveInternalLink(editor.wsPath, target.href);
       if (wsPath) {

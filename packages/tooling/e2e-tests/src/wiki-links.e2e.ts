@@ -163,6 +163,27 @@ test('keeps escape, code, malformed, and ambiguous wiki text non-destructive', a
     .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
     .toBe('[[Missing]]');
 
+  await clearEditor(page, {});
+  await page.keyboard.insertText('[');
+  await page.keyboard.insertText('[');
+  const picker = page.getByRole('listbox', { name: 'Link to a note' });
+  await expect(picker).toBeVisible();
+  await page.keyboard.insertText('foo|bar');
+  await expect(
+    picker.getByRole('option', { name: 'Link to “foo|bar”' }),
+  ).toBeVisible();
+  await page.keyboard.press('Enter');
+  await expect(
+    editor.getByRole('link', { name: 'bar (note not found)' }),
+  ).toBeVisible();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe('[[foo|bar]]');
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(
+    editor.getByRole('link', { name: 'bar (note not found)' }),
+  ).toBeVisible();
+
   await writeStoredMarkdown(
     page,
     workspaceName,

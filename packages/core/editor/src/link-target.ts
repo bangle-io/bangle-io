@@ -87,11 +87,55 @@ export function normalizeLinkTarget(value: string): LinkTarget | undefined {
   }
 }
 
+export function normalizeStoredMarkdownLinkTarget(
+  value: string,
+): LinkTarget | undefined {
+  const input = value.trim();
+  if (!input) {
+    return undefined;
+  }
+
+  const hasHttpScheme = /^https?:\/\//i.test(input);
+  const markdownPath = input.split(/[?#]/, 1)[0] ?? input;
+  if (input.startsWith('#')) {
+    return !input.includes('?') && getInternalLinkHeading(input)
+      ? { kind: 'internal', href: input }
+      : undefined;
+  }
+  if (!hasExplicitScheme(input) && hasMarkdownExtension(markdownPath)) {
+    if (
+      input.includes('?') ||
+      (input.includes('#') && !getInternalLinkHeading(input))
+    ) {
+      return undefined;
+    }
+    return { kind: 'internal', href: input };
+  }
+
+  if (hasExplicitScheme(input) && !hasHttpScheme) {
+    return undefined;
+  }
+
+  try {
+    const url = new URL(input);
+    if (
+      !HTTP_PROTOCOLS.has(url.protocol) ||
+      !url.hostname ||
+      /[%\s]/.test(url.hostname)
+    ) {
+      return undefined;
+    }
+    return { kind: 'external', href: url.href };
+  } catch {
+    return undefined;
+  }
+}
+
 export function resolveInternalLink(
   currentWsPath: string,
   href: string,
 ): string | undefined {
-  const normalizedTarget = normalizeLinkTarget(href);
+  const normalizedTarget = normalizeStoredMarkdownLinkTarget(href);
   if (
     normalizedTarget?.kind !== 'internal' ||
     normalizedTarget.href.includes('//')
