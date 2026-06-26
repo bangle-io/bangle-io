@@ -15,7 +15,7 @@ export function Kbd({ keys }: { keys: string | string[] | readonly string[] }) {
         case 'shift':
           return '⇧';
         case 'ctrl':
-          return isMac ? '⌃' : 'Ctrl';
+          return isMac ? '⌘' : 'Ctrl';
         case 'enter':
           return '⏎';
         default:

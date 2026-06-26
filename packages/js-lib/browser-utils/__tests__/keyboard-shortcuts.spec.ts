@@ -135,6 +135,44 @@ describe('ShortcutManager', () => {
     expect(handler).toHaveBeenCalled();
   });
 
+  test('should match meta events to canonical ctrl shortcuts', () => {
+    const handler = vi.fn();
+    const keyBinding: KeyBinding = {
+      id: 'canonicalCtrlShortcut',
+      keys: 'ctrl-s',
+    };
+
+    shortcutManager.register(keyBinding, handler);
+
+    const event = new KeyboardEvent('keydown', {
+      key: 's',
+      metaKey: true,
+    });
+
+    shortcutManager.handleEvent(event);
+
+    expect(handler).toHaveBeenCalled();
+  });
+
+  test('should not normalize meta shortcuts to ctrl for non-macOS', () => {
+    const handler = vi.fn();
+    const keyBinding: KeyBinding = {
+      id: 'nonMacMetaShortcut',
+      keys: 'meta-s',
+    };
+
+    shortcutManager.register(keyBinding, handler);
+
+    const event = new KeyboardEvent('keydown', {
+      key: 's',
+      ctrlKey: true,
+    });
+
+    shortcutManager.handleEvent(event);
+
+    expect(handler).not.toHaveBeenCalled();
+  });
+
   test('should call multiple handlers but the first one wins', () => {
     const handler1 = vi.fn();
     const handler2 = vi.fn();
