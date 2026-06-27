@@ -137,6 +137,18 @@ function parseMatchedWikiLink(match: RegExpMatchArray): WikiLinkAttrs | null {
     : null;
 }
 
+function isEscapedWikiLink(state: EditorState, start: number): boolean {
+  let backslashCount = 0;
+  for (
+    let pos = start;
+    pos > 0 && state.doc.textBetween(pos - 1, pos) === '\\';
+    pos -= 1
+  ) {
+    backslashCount += 1;
+  }
+  return backslashCount % 2 === 1;
+}
+
 function wikiLinkText(attrs: WikiLinkAttrs): string {
   const serialized = serializeWikiLinkAttrs(attrs);
   if (serialized) {
@@ -195,6 +207,7 @@ export function setupWikiLink(userConfig: WikiLinkConfig = {}) {
               const attrs = parseMatchedWikiLink(match);
               if (
                 !attrs ||
+                isEscapedWikiLink(state, start) ||
                 state.selection.$from.parent.type.spec.code ||
                 state.selection.$from
                   .marks()

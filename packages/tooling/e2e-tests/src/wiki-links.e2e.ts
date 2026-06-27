@@ -199,6 +199,65 @@ test('keeps escape, code, malformed, and ambiguous wiki text non-destructive', a
   ).toBeVisible();
 });
 
+test('uses Markdown escape parity for typed wiki links across reload', async ({
+  page,
+}) => {
+  const workspaceName = 'wiki-link-typed-escapes';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+  await writeStoredMarkdown(page, workspaceName, 'Target', 'target content');
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await expect(editor).toBeVisible();
+  await editor.click();
+  await waitForEditorFocus(page, {});
+
+  await page.keyboard.insertText('\\');
+  await page.keyboard.insertText('[');
+  await page.keyboard.insertText('[');
+  await page.keyboard.insertText('Target');
+  await page.keyboard.insertText(']');
+  await page.keyboard.insertText(']');
+
+  await expect(editor.getByRole('link', { name: 'Target' })).toHaveCount(0);
+  await expect(editor).toContainText('[[Target]]');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe(String.raw`\\\[\[Target\]\]`);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(editor.getByRole('link', { name: 'Target' })).toHaveCount(0);
+  await expect(editor).toContainText('[[Target]]');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe(String.raw`\\\[\[Target\]\]`);
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await clearEditor(page, {});
+  await page.keyboard.insertText('\\');
+  await page.keyboard.insertText('\\');
+  await page.keyboard.insertText('[');
+  await page.keyboard.insertText('[');
+  await page.keyboard.insertText('Target');
+  await page.keyboard.insertText(']');
+  await page.keyboard.insertText(']');
+
+  await expect(editor.getByRole('link', { name: 'Target' })).toBeVisible();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe(String.raw`\\\\[[Target]]`);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(editor.getByRole('link', { name: 'Target' })).toBeVisible();
+  await expect(editor).toContainText('\\\\');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe(String.raw`\\\\[[Target]]`);
+});
+
 test('pins the unresolved option and remains usable in a large workspace', async ({
   page,
 }) => {

@@ -56,20 +56,24 @@ describe('wiki-link Markdown', () => {
 
   it('does not reinterpret escaped wiki syntax as a wiki link', () => {
     const markdown = createMarkdown();
-    const source = String.raw`\[[target]]`;
+    const source = String.raw`\[[target]] and \\[[actual]]`;
     const document = markdown.parser.parse(source);
-    let hasWikiLink = false;
+    const wikiLinks: string[] = [];
     document.descendants((node) => {
-      if (node.type.name === 'wiki_link') hasWikiLink = true;
+      if (node.type.name === 'wiki_link') wikiLinks.push(node.attrs.target);
     });
 
-    expect(hasWikiLink).toBe(false);
+    expect(wikiLinks).toEqual(['actual']);
     const serialized = markdown.serializer.serialize(document);
-    expect(serialized).toBe(String.raw`\[\[target\]\]`);
+    expect(serialized).toBe(String.raw`\[\[target\]\] and \\[[actual]]`);
     const reparsed = markdown.parser.parse(serialized);
+    const reparsedWikiLinks: string[] = [];
     reparsed.descendants((node) => {
-      expect(node.type.name).not.toBe('wiki_link');
+      if (node.type.name === 'wiki_link') {
+        reparsedWikiLinks.push(node.attrs.target);
+      }
     });
+    expect(reparsedWikiLinks).toEqual(['actual']);
   });
 
   it('uses the same attr parser for unresolved picker input and Markdown syntax', () => {

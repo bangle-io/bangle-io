@@ -21,24 +21,28 @@ type SaveEntry = {
   status: EditorSaveStatus;
 };
 
-type EditorSaveQueueStore = Map<string, SaveEntry>;
 type SaveStatusListener = () => void;
 
+type EditorSaveQueueStore = {
+  entries: Map<string, SaveEntry>;
+  lastHasPendingOrFailed: boolean;
+  listeners: Set<SaveStatusListener>;
+};
+
 export function createEditorSaveQueueStore(): EditorSaveQueueStore {
-  return new Map();
+  return {
+    entries: new Map(),
+    lastHasPendingOrFailed: false,
+    listeners: new Set(),
+  };
 }
 
 export class EditorSaveQueue {
-  private lastHasPendingOrFailed: boolean;
-  private listeners = new Set<SaveStatusListener>();
-
   constructor(
     private writeDoc: SaveWriter,
     private emitAppError: ErrorHandler,
-    private entries: EditorSaveQueueStore = createEditorSaveQueueStore(),
-  ) {
-    this.lastHasPendingOrFailed = this.hasPendingOrFailed();
-  }
+    private store: EditorSaveQueueStore = createEditorSaveQueueStore(),
+  ) {}
 
   enqueue(wsPath: string, doc: string): void {
     const entry = this.getEntry(wsPath);
@@ -58,7 +62,7 @@ export class EditorSaveQueue {
   }
 
   getStatus(wsPath: string): EditorSaveStatus {
-    return this.entries.get(wsPath)?.status ?? { status: 'clean' };
+    return this.store.entries.get(wsPath)?.status ?? { status: 'clean' };
   }
 
   hasPendingOrFailed(wsPath?: string): boolean {
@@ -66,7 +70,7 @@ export class EditorSaveQueue {
       return this.getStatus(wsPath).status !== 'clean';
     }
 
-    for (const entry of this.entries.values()) {
+    for (const entry of this.store.entries.values()) {
       if (entry.status.status !== 'clean') {
         return true;
       }
@@ -76,14 +80,14 @@ export class EditorSaveQueue {
   }
 
   subscribe(listener: SaveStatusListener): () => void {
-    this.listeners.add(listener);
+    this.store.listeners.add(listener);
     return () => {
-      this.listeners.delete(listener);
+      this.store.listeners.delete(listener);
     };
   }
 
   retryFailed(wsPath: string): boolean {
-    const entry = this.entries.get(wsPath);
+    const entry = this.store.entries.get(wsPath);
     if (!entry || entry.active || !entry.failedTask) {
       return false;
     }
@@ -99,7 +103,7 @@ export class EditorSaveQueue {
   }
 
   private getEntry(wsPath: string): SaveEntry {
-    const existing = this.entries.get(wsPath);
+    const existing = this.store.entries.get(wsPath);
     if (existing) {
       return existing;
     }
@@ -108,7 +112,7 @@ export class EditorSaveQueue {
       active: false,
       status: { status: 'clean' },
     };
-    this.entries.set(wsPath, entry);
+    this.store.entries.set(wsPath, entry);
     return entry;
   }
 
@@ -153,18 +157,18 @@ export class EditorSaveQueue {
 
     if (entry.status.status === 'clean') {
       entry.failedTask = undefined;
-      this.entries.delete(wsPath);
+      this.store.entries.delete(wsPath);
     }
   }
 
   private notifyListenersIfDirtyChanged(): void {
     const hasPendingOrFailed = this.hasPendingOrFailed();
-    if (hasPendingOrFailed === this.lastHasPendingOrFailed) {
+    if (hasPendingOrFailed === this.store.lastHasPendingOrFailed) {
       return;
     }
 
-    this.lastHasPendingOrFailed = hasPendingOrFailed;
-    for (const listener of this.listeners) {
+    this.store.lastHasPendingOrFailed = hasPendingOrFailed;
+    for (const listener of this.store.listeners) {
       listener();
     }
   }
