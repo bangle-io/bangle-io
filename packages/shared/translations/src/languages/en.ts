@@ -64,6 +64,10 @@ export const t = {
         empty: 'No notes found',
         linkTo: ({ query }: { query: string }) => `Link to “${query}”`,
       },
+      wikiLink: {
+        unresolvedLabel: ({ label }: { label: string }) =>
+          `${label} (note not found)`,
+      },
     },
     sidebar: {
       newLabel: 'New',

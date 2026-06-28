@@ -2,6 +2,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { expect, test } from '@playwright/test';
 import {
+  appShortcutKey,
   ctrlKey,
   getEditorLocator,
   loadBrowserWorkspaceFixture,
@@ -107,7 +108,7 @@ test('discovers a curated multi-file Markdown workspace', async ({ page }) => {
     }),
   ).toBeVisible();
 
-  await page.keyboard.press(`${ctrlKey}+k`);
+  await page.keyboard.press(`${appShortcutKey}+k`);
   await page
     .getByPlaceholder('Type a command or search...')
     .fill('10-raw-html.md');

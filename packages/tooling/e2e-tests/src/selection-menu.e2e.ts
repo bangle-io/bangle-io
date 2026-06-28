@@ -528,3 +528,39 @@ test('disables link formatting for a multi-block selection', async ({
   ).toBeDisabled();
   await expect(page.getByRole('button', { name: 'Bold' })).toBeEnabled();
 });
+
+test('disables link formatting for selections containing wiki links', async ({
+  page,
+}) => {
+  const workspaceName = 'selection-wiki-link';
+  const noteName = 'wiki-link-selection';
+  const initialMarkdown = 'before [[Target]] after';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(page, workspaceName, noteName, initialMarkdown);
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await expect(
+    editor.getByRole('link', { name: 'Target (note not found)' }),
+  ).toBeVisible();
+
+  await selectEditorText(page, 'before Target after');
+  await expect(
+    page.getByRole('toolbar', { name: 'Text formatting' }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Link', exact: true }),
+  ).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Bold' })).toBeEnabled();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(initialMarkdown);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(
+    editor.getByRole('link', { name: 'Target (note not found)' }),
+  ).toBeVisible();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(initialMarkdown);
+});

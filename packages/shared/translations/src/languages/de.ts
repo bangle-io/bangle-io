@@ -59,6 +59,10 @@ export const t = {
         empty: 'Keine Notizen gefunden',
         linkTo: ({ query }: { query: string }) => `Mit „${query}“ verknüpfen`,
       },
+      wikiLink: {
+        unresolvedLabel: ({ label }: { label: string }) =>
+          `${label} (Notiz nicht gefunden)`,
+      },
     },
     sidebar: {
       newLabel: 'Neu',

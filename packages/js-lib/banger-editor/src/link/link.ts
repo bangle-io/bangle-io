@@ -1,5 +1,12 @@
 import { type CollectionType, collection } from '../common';
-import type { EditorProps, EditorView, Mark, MarkSpec, PMNode } from '../pm';
+import type {
+  EditorProps,
+  EditorView,
+  Mark,
+  MarkSpec,
+  MarkType,
+  PMNode,
+} from '../pm';
 import {
   type Command,
   type EditorState,
@@ -545,10 +552,66 @@ function linkAllowedInRange(config: RequiredConfig) {
     const $from = state.doc.resolve(from);
     const $to = state.doc.resolve(to);
     if ($from.parent === $to.parent && $from.parent.isTextblock) {
-      return $from.parent.type.allowsMarkType(linkMark);
+      return (
+        $from.parent.type.allowsMarkType(linkMark) &&
+        rangeAllowsLinkMark(state, from, to, linkMark)
+      );
     }
     return false;
   };
+}
+
+function rangeAllowsLinkMark(
+  state: EditorState,
+  from: number,
+  to: number,
+  linkMarkType: MarkType,
+) {
+  if (from === to) {
+    return true;
+  }
+
+  let allowed = true;
+  state.doc.nodesBetween(from, to, (node, pos, parent) => {
+    if (!allowed) {
+      return false;
+    }
+    if (!node.isInline) {
+      return true;
+    }
+
+    const nodeFrom = pos;
+    const nodeTo = pos + node.nodeSize;
+    if (nodeTo <= from || nodeFrom >= to) {
+      return false;
+    }
+
+    if (!node.isText) {
+      allowed = false;
+      return false;
+    }
+
+    if (parent && !parent.type.allowsMarkType(linkMarkType)) {
+      allowed = false;
+      return false;
+    }
+
+    if (
+      node.marks.some(
+        (mark) =>
+          mark.type !== linkMarkType &&
+          (mark.type.excludes(linkMarkType) ||
+            linkMarkType.excludes(mark.type)),
+      )
+    ) {
+      allowed = false;
+      return false;
+    }
+
+    return false;
+  });
+
+  return allowed;
 }
 
 function getLinkDetails(config: RequiredConfig) {

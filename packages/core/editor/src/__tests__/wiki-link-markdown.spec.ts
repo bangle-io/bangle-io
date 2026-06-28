@@ -96,6 +96,25 @@ describe('wiki-link Markdown', () => {
     expect(markdown.serializer.serialize(document)).toBe('[[same|same]]');
   });
 
+  it('does not parse wiki syntax inside ordinary Markdown links', () => {
+    const markdown = createMarkdown();
+    const source = '[ordinary [[target]]](./target.md)';
+    const document = markdown.parser.parse(source);
+    const child = document.firstChild?.firstChild;
+
+    expect(child?.isText).toBe(true);
+    expect(child?.textContent).toBe('ordinary [[target]]');
+    expect(child?.marks.some((mark) => mark.type.name === 'link')).toBe(true);
+    const serialized = markdown.serializer.serialize(document);
+    expect(serialized).toBe(String.raw`[ordinary \[\[target\]\]](./target.md)`);
+
+    const reparsed = markdown.parser.parse(serialized);
+    expect(reparsed.firstChild?.firstChild?.isText).toBe(true);
+    expect(reparsed.firstChild?.firstChild?.textContent).toBe(
+      'ordinary [[target]]',
+    );
+  });
+
   it.each([
     '`[[inline]]`',
     '```md\n[[fenced]]\n```',

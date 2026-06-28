@@ -112,7 +112,7 @@ export class ShortcutManager {
     const shortcut = keys.join('-');
     const handlersList =
       this.handlers.get(shortcut) ??
-      (shortcut.startsWith('meta-')
+      (this.options.isDarwin && shortcut.startsWith('meta-')
         ? this.handlers.get(shortcut.replace(/^meta-/, 'ctrl-'))
         : undefined);
 

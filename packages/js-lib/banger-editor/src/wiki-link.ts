@@ -30,6 +30,10 @@ export type WikiLinkConfig = {
   name?: string;
   onActivate?: (view: EditorView, attrs: WikiLinkAttrs) => void;
   resolveTarget?: (attrs: WikiLinkAttrs, state: EditorState) => boolean;
+  unresolvedAriaLabel?: (params: {
+    attrs: WikiLinkAttrs;
+    displayText: string;
+  }) => string;
 };
 
 export function parseWikiLinkContent(content: string): WikiLinkAttrs | null {
@@ -84,7 +88,13 @@ function wikiLinkTokenizer(md: MarkdownIt): void {
     if (state.src.slice(start, start + 2) !== '[[') {
       return false;
     }
+    if ((state as { linkLevel?: number }).linkLevel) {
+      return false;
+    }
     const prefix = state.src.slice(0, start);
+    if (prefix.lastIndexOf('[') > prefix.lastIndexOf(']')) {
+      return false;
+    }
     if (prefix.lastIndexOf('[[') > prefix.lastIndexOf(']]')) {
       return false;
     }
@@ -164,6 +174,7 @@ export function setupWikiLink(userConfig: WikiLinkConfig = {}) {
       inline: true,
       group: 'inline',
       atom: true,
+      marks: '',
       selectable: true,
       attrs: { target: {}, label: { default: null } },
       parseDOM: [
@@ -180,7 +191,7 @@ export function setupWikiLink(userConfig: WikiLinkConfig = {}) {
           {
             'data-wiki-link': attrs.target,
             ...(attrs.label === null ? {} : { 'data-wiki-label': attrs.label }),
-            class: 'wiki-link rounded bg-muted px-1 text-primary',
+            class: 'wiki-link',
             contenteditable: 'false',
             role: 'link',
             tabindex: '0',
@@ -205,13 +216,16 @@ export function setupWikiLink(userConfig: WikiLinkConfig = {}) {
             /\[\[([^[\]\n|]+)(?:\|([^[\]\n]*))?\]\]$/,
             (state, match, start, end) => {
               const attrs = parseMatchedWikiLink(match);
+              const linkMarkType = state.schema.marks.link;
               if (
                 !attrs ||
                 isEscapedWikiLink(state, start) ||
                 state.selection.$from.parent.type.spec.code ||
                 state.selection.$from
                   .marks()
-                  .some((mark) => mark.type.spec.code)
+                  .some(
+                    (mark) => mark.type.spec.code || mark.type === linkMarkType,
+                  )
               ) {
                 return null;
               }
@@ -250,15 +264,20 @@ export function setupWikiLink(userConfig: WikiLinkConfig = {}) {
             if (!userConfig.resolveTarget) return null;
             const decorations: ReturnType<typeof Decoration.node>[] = [];
             state.doc.descendants((node, pos) => {
+              const attrs = node.attrs as WikiLinkAttrs;
               if (
                 node.type.name === name &&
-                !userConfig.resolveTarget?.(node.attrs as WikiLinkAttrs, state)
+                !userConfig.resolveTarget?.(attrs, state)
               ) {
+                const display = displayText(attrs);
                 decorations.push(
                   Decoration.node(pos, pos + node.nodeSize, {
-                    class:
-                      'wiki-link-unresolved text-destructive line-through decoration-dotted',
-                    'aria-label': `${displayText(node.attrs as WikiLinkAttrs)} (note not found)`,
+                    class: 'wiki-link-unresolved',
+                    'aria-label':
+                      userConfig.unresolvedAriaLabel?.({
+                        attrs,
+                        displayText: display,
+                      }) ?? display,
                   }),
                 );
               }

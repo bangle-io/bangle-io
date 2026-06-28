@@ -22,9 +22,12 @@ export function triggerInputRule({
   const startRule = new InputRule(
     regexStart,
     (editorState: EditorState, match: string[]) => {
+      const linkMarkType = editorState.schema.marks.link;
       if (
         editorState.selection.$from.parent.type.spec.code ||
-        editorState.selection.$from.marks().some((mark) => mark.type.spec.code)
+        editorState.selection.$from
+          .marks()
+          .some((mark) => mark.type.spec.code || mark.type === linkMarkType)
       ) {
         return null;
       }

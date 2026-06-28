@@ -39,19 +39,46 @@ export type SuggestionUiHandlers = Record<
   { onSelect: (selected: Suggestion) => void; optionCount?: number }
 >;
 
+type SuggestionsByMark = ReadonlyMap<
+  EditorView,
+  ReadonlyMap<string, Suggestion>
+>;
+
 // for better performance we scan a range around the selection
 const MARK_SCAN_RANGE_PADDING = 500;
 
-const $internalSuggestions = store.atom<ReadonlyMap<EditorView, Suggestion>>(
-  new Map(),
-);
+const $internalSuggestions = store.atom<SuggestionsByMark>(new Map());
 
 const $internalSuggestionUi = store.atom<
   ReadonlyMap<EditorView, SuggestionUiHandlers>
 >(new Map());
 
+function suggestionByView(
+  suggestionsByMark: SuggestionsByMark,
+): ReadonlyMap<EditorView, Suggestion> {
+  const next = new Map<EditorView, Suggestion>();
+  for (const [view, suggestions] of suggestionsByMark) {
+    const values = [...suggestions.values()];
+    const active = values.at(-1);
+    if (active) {
+      next.set(view, active);
+    }
+  }
+  return next;
+}
+
+function suggestionMapByMark(
+  suggestions: ReadonlyMap<EditorView, Suggestion>,
+): SuggestionsByMark {
+  const next = new Map<EditorView, ReadonlyMap<string, Suggestion>>();
+  for (const [view, suggestion] of suggestions) {
+    next.set(view, new Map([[suggestion.markName, suggestion]]));
+  }
+  return next;
+}
+
 export const $suggestions = store.atom(
-  (get) => get($internalSuggestions),
+  (get) => suggestionByView(get($internalSuggestions)),
   (
     get,
     set,
@@ -61,15 +88,20 @@ export const $suggestions = store.atom(
           existing: ReadonlyMap<EditorView, Suggestion>,
         ) => ReadonlyMap<EditorView, Suggestion>),
   ) => {
+    const existing = suggestionByView(get($internalSuggestions));
     set(
       $internalSuggestions,
-      typeof update === 'function' ? update(get($internalSuggestions)) : update,
+      suggestionMapByMark(
+        typeof update === 'function' ? update(existing) : update,
+      ),
     );
   },
 );
 
 export const $suggestion = store.atom((get) => {
-  for (const suggestion of get($internalSuggestions).values()) {
+  for (const suggestion of suggestionByView(
+    get($internalSuggestions),
+  ).values()) {
     return suggestion;
   }
   return undefined;
@@ -98,29 +130,65 @@ export const $suggestionUi = store.atom(
 function getSuggestionForView(
   state: EditorState,
   view: EditorView | undefined,
+  markName?: string,
 ) {
   if (!view) {
-    return store.get(state, $suggestion);
+    const suggestion = store.get(state, $suggestion);
+    return !markName || suggestion?.markName === markName
+      ? suggestion
+      : undefined;
   }
-  return store.get(state, $internalSuggestions).get(view);
+  const suggestions = store.get(state, $internalSuggestions).get(view);
+  if (!suggestions) {
+    return undefined;
+  }
+  if (markName) {
+    return suggestions.get(markName);
+  }
+  return [...suggestions.values()].at(-1);
 }
 
 function setSuggestionForView(
   state: EditorState,
   view: EditorView,
+  markName: string,
   suggestion: Suggestion | undefined,
 ) {
   const current = store.get(state, $internalSuggestions);
-  if (!suggestion && !current.has(view)) {
+  const currentForView = current.get(view);
+  if (!suggestion && !currentForView?.has(markName)) {
     return;
   }
   const next = new Map(current);
   if (suggestion) {
-    next.set(view, suggestion);
+    const nextForView = new Map(currentForView ?? new Map());
+    nextForView.delete(markName);
+    nextForView.set(markName, suggestion);
+    next.set(view, nextForView);
   } else {
-    next.delete(view);
+    const nextForView = new Map(currentForView);
+    nextForView.delete(markName);
+    if (nextForView.size) {
+      next.set(view, nextForView);
+    } else {
+      next.delete(view);
+    }
   }
   store.set(state, $internalSuggestions, next);
+}
+
+export function updateSuggestionForView(
+  state: EditorState,
+  view: EditorView,
+  markName: string,
+  update: (suggestion: Suggestion) => Suggestion,
+) {
+  const suggestion = getSuggestionForView(state, view, markName);
+  if (!suggestion) {
+    return false;
+  }
+  setSuggestionForView(state, view, markName, update(suggestion));
+  return true;
 }
 
 // TODO current if the query is /sdsd /s dasdlkasd and the user moves out the second subquery is selected
@@ -139,9 +207,9 @@ export function pluginSuggestion({
       const abortController = new AbortController();
 
       setupScrollAndResizeHandlers((refresh_counter) => {
-        const suggestion = getSuggestionForView(view.state, view);
+        const suggestion = getSuggestionForView(view.state, view, markName);
         if (suggestion) {
-          setSuggestionForView(view.state, view, {
+          setSuggestionForView(view.state, view, markName, {
             ...suggestion,
             refresh: refresh_counter,
           });
@@ -151,7 +219,7 @@ export function pluginSuggestion({
       return {
         destroy: () => {
           abortController.abort();
-          setSuggestionForView(view.state, view, undefined);
+          setSuggestionForView(view.state, view, markName, undefined);
         },
         update: (view, lastState) => {
           const { state } = view;
@@ -196,7 +264,7 @@ export function pluginSuggestion({
             return;
           }
 
-          const suggestion = getSuggestionForView(state, view);
+          const suggestion = getSuggestionForView(state, view, markName);
           if (isMarkActive) {
             const [scanRangeStart, scanRangeEnd] = clampRange(
               state.selection.from - MARK_SCAN_RANGE_PADDING,
@@ -222,7 +290,7 @@ export function pluginSuggestion({
               return;
             }
 
-            setSuggestionForView(state, view, {
+            setSuggestionForView(state, view, markName, {
               selectedIndex:
                 suggestion?.markName === markName &&
                 suggestion.text === result.text
@@ -245,7 +313,7 @@ export function pluginSuggestion({
             });
           } else {
             if (suggestion !== undefined) {
-              setSuggestionForView(state, view, undefined);
+              setSuggestionForView(state, view, markName, undefined);
             }
           }
         },
@@ -304,7 +372,7 @@ export function removeSuggestMark({
     );
 
     if (_view) {
-      setSuggestionForView(state, _view, undefined);
+      setSuggestionForView(state, _view, markName, undefined);
     }
 
     if (
@@ -368,7 +436,7 @@ export function replaceSuggestMarkWith({
     const { schema } = state;
     const markType = getMarkType(schema, markName);
 
-    const suggestion = getSuggestionForView(state, view);
+    const suggestion = getSuggestionForView(state, view, markName);
     if (!suggestion) {
       return false;
     }

@@ -5,6 +5,7 @@ import {
   $suggestions,
   $suggestionUi,
   removeSuggestMark,
+  updateSuggestionForView,
 } from './plugin-suggestion';
 
 export const suggestionKeymap = () =>
@@ -39,12 +40,15 @@ export const suggestionKeymap = () =>
               suggestion.selectedIndex + 1,
               Math.max(0, optionCount - 1),
             );
-            const next = new Map(suggestions);
-            next.set(view, {
-              ...suggestion,
-              selectedIndex,
-            });
-            store.set(state, $suggestions, next);
+            updateSuggestionForView(
+              state,
+              view,
+              suggestion.markName,
+              (current) => ({
+                ...current,
+                selectedIndex,
+              }),
+            );
             return true;
           }
           return false;
@@ -57,12 +61,15 @@ export const suggestionKeymap = () =>
           const suggestions = store.get(state, $suggestions);
           const suggestion = suggestions.get(view);
           if (suggestion) {
-            const next = new Map(suggestions);
-            next.set(view, {
-              ...suggestion,
-              selectedIndex: Math.max(0, suggestion.selectedIndex - 1),
-            });
-            store.set(state, $suggestions, next);
+            updateSuggestionForView(
+              state,
+              view,
+              suggestion.markName,
+              (current) => ({
+                ...current,
+                selectedIndex: Math.max(0, current.selectedIndex - 1),
+              }),
+            );
             return true;
           }
           return false;

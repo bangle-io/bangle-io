@@ -4,9 +4,11 @@ import { MarkdownSerializer } from 'prosemirror-markdown';
 import { describe, expect, it } from 'vitest';
 import { setupBase } from '../../base';
 import { setupBold } from '../../bold';
+import { setupCode } from '../../code';
 import { resolve } from '../../common';
 import { setupParagraph } from '../../paragraph';
 import { EditorState, EditorView, Schema, TextSelection } from '../../pm';
+import { setupWikiLink } from '../../wiki-link';
 import {
   expandLinkSelection,
   getLinkRangeAtSelection,
@@ -17,8 +19,10 @@ import {
 const base = setupBase();
 const paragraph = setupParagraph();
 const bold = setupBold();
+const code = setupCode();
 const link = setupLink();
-const collections = [base, paragraph, bold, link];
+const wikiLink = setupWikiLink();
+const collections = [base, paragraph, bold, code, link, wikiLink];
 const resolved = resolve(collections);
 const schema = new Schema({
   nodes: resolved.nodes,
@@ -191,6 +195,48 @@ describe('link commands and Markdown', () => {
     });
     expect(markdown.serialize(state.doc)).toBe(
       '[linked plain](https://two.example)',
+    );
+  });
+
+  it('rejects selections containing inline atoms or incompatible marks', () => {
+    const wikiNode = schema.nodes.wiki_link?.create({
+      target: 'Target',
+      label: null,
+    });
+    if (!wikiNode) {
+      throw new Error('wiki_link node missing from test schema');
+    }
+
+    const stateWithWikiLink = stateWith(
+      [schema.text('before '), wikiNode, schema.text(' after')],
+      1,
+      15,
+    );
+    expect(
+      link.query.linkAllowedInRange(
+        stateWithWikiLink,
+        stateWithWikiLink.selection.from,
+        stateWithWikiLink.selection.to,
+      ),
+    ).toBe(false);
+    expect(
+      link.command.createLink('https://example.com')(stateWithWikiLink),
+    ).toBe(false);
+
+    const stateWithCode = stateWith(
+      [schema.text('code', [schema.mark('code')])],
+      1,
+      5,
+    );
+    expect(
+      link.query.linkAllowedInRange(
+        stateWithCode,
+        stateWithCode.selection.from,
+        stateWithCode.selection.to,
+      ),
+    ).toBe(false);
+    expect(link.command.createLink('https://example.com')(stateWithCode)).toBe(
+      false,
     );
   });
 });

@@ -4,6 +4,7 @@ import { createStore } from 'jotai';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { setupBase } from '../../base';
 import { collection, resolve } from '../../common';
+import { setupLink } from '../../link';
 import { setupParagraph } from '../../paragraph';
 import { EditorState, EditorView, Schema, TextSelection } from '../../pm';
 import { store as editorStore } from '../../store';
@@ -26,12 +27,12 @@ const wikiSuggestions = setupSuggestions({
   trigger: '[[',
   markClassName: 'wiki',
   requireTriggerBoundary: false,
-  installKeymap: false,
 });
 const resolved = resolve([
   collection({ id: 'test-store' }),
   setupBase(),
   setupParagraph(),
+  setupLink(),
   slashSuggestions,
   wikiSuggestions,
 ]);
@@ -79,6 +80,7 @@ function createEditor({
       }),
       setupBase(),
       setupParagraph(),
+      setupLink(),
       slashSuggestions,
       wikiSuggestions,
     ]).resolvePlugins({ schema }),
@@ -106,7 +108,96 @@ function pressKey(view: EditorView, key: string) {
   return handled;
 }
 
+function handleTextInput(
+  view: EditorView,
+  from: number,
+  to: number,
+  text: string,
+) {
+  let handled = false;
+  view.someProp('handleTextInput', (handler) => {
+    if (handler(view, from, to, text, () => view.state.tr)) {
+      handled = true;
+      return true;
+    }
+    return undefined;
+  });
+  return handled;
+}
+
 describe('suggestions provider state', () => {
+  it('does not trigger wiki-link suggestions while typing inside a link', () => {
+    const store = createStore();
+    const plugins = resolve([
+      collection({
+        id: 'test-store',
+        plugin: { store: editorStore.storePlugin(store) },
+      }),
+      setupBase(),
+      setupParagraph(),
+      setupLink(),
+      wikiSuggestions,
+    ]).resolvePlugins({ schema });
+    const linkMark = schema.mark('link', {
+      href: 'https://example.com',
+      title: null,
+    });
+    const linkedDoc = schema.node('doc', null, [
+      schema.node('paragraph', null, [schema.text('linked', [linkMark])]),
+    ]);
+    const mount = document.createElement('div');
+    document.body.append(mount);
+    const linkedView = new EditorView(
+      { mount },
+      {
+        state: EditorState.create({
+          doc: linkedDoc,
+          schema,
+          selection: TextSelection.create(linkedDoc, 4),
+          plugins,
+        }),
+      },
+    );
+    editors.push(linkedView);
+
+    expect(handleTextInput(linkedView, 4, 4, '[[')).toBe(false);
+
+    const plainDoc = schema.node('doc', null, [
+      schema.node('paragraph', null, [schema.text('plain ')]),
+    ]);
+    const plainMount = document.createElement('div');
+    document.body.append(plainMount);
+    const plainView = new EditorView(
+      { mount: plainMount },
+      {
+        state: EditorState.create({
+          doc: plainDoc,
+          schema,
+          selection: TextSelection.create(plainDoc, 7),
+          plugins,
+        }),
+      },
+    );
+    editors.push(plainView);
+
+    expect(handleTextInput(plainView, 7, 7, '[[')).toBe(true);
+    expect(plainView.state.doc.textContent).toBe('plain[[');
+  });
+
+  it('keeps an active provider suggestion when another provider is inactive in the same editor view', () => {
+    const store = createStore();
+    const view = createEditor({
+      text: '/',
+      markName: 'slash_command',
+      store,
+    });
+
+    expect(editorStore.get(view.state, $suggestions).get(view)).toMatchObject({
+      markName: 'slash_command',
+      text: '/',
+    });
+  });
+
   it('keeps active suggestions and enter handlers scoped to each editor view', () => {
     const store = createStore();
     const slashView = createEditor({

@@ -1,10 +1,12 @@
 import { expect, type Page, test } from '@playwright/test';
 import {
   clearEditor,
+  collapseEditorSelection,
   createBrowserWorkspace,
   createBrowserWorkspaceAndNote,
   getEditorLocator,
   readStoredMarkdown,
+  selectEditorText,
   waitForEditorFocus,
   writeStoredMarkdown,
 } from './common';
@@ -127,6 +129,94 @@ test('authors, persists, reloads, and navigates wiki links safely', async ({
     .toBe('[[Home|Go home]] and [[Missing]]');
 });
 
+test('does not offer the note being edited as a wiki-link suggestion', async ({
+  page,
+}) => {
+  const workspaceName = 'wiki-link-self-suggestion';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+  await writeStoredMarkdown(page, workspaceName, 'Target', 'target content');
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await page.keyboard.insertText('[');
+  await page.keyboard.insertText('[');
+
+  const picker = page.getByRole('listbox', { name: 'Link to a note' });
+  await expect(picker).toBeVisible();
+  await expect(
+    picker.getByRole('option', { name: 'Target', exact: true }),
+  ).toBeVisible();
+  await expect(
+    picker.getByRole('option', { name: 'Home', exact: true }),
+  ).toHaveCount(0);
+});
+
+test('renders resolved and unresolved wiki links with distinct dark-mode affordances', async ({
+  page,
+}) => {
+  const workspaceName = 'wiki-link-dark-affordance';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+  await writeStoredMarkdown(page, workspaceName, 'Target', 'target content');
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'Home',
+    '[[Target]] and [[Missing]]',
+  );
+  await page.evaluate(() => localStorage.setItem('color-scheme', 'dark'));
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        document.documentElement.classList.contains('BU_dark-scheme'),
+      ),
+    )
+    .toBe(true);
+
+  const editor = getEditorLocator(page, {});
+  const target = editor.getByRole('link', { name: 'Target', exact: true });
+  const missing = editor.getByRole('link', {
+    name: 'Missing (note not found)',
+  });
+  await expect(target).toBeVisible();
+  await expect(missing).toBeVisible();
+
+  const targetStyle = await target.evaluate((node) => {
+    const style = getComputedStyle(node);
+    return {
+      borderWidth: style.borderWidth,
+      color: style.color,
+      textDecorationLine: style.textDecorationLine,
+      textDecorationStyle: style.textDecorationStyle,
+    };
+  });
+  const missingStyle = await missing.evaluate((node) => {
+    const style = getComputedStyle(node);
+    return {
+      borderWidth: style.borderWidth,
+      color: style.color,
+      textDecorationLine: style.textDecorationLine,
+      textDecorationStyle: style.textDecorationStyle,
+    };
+  });
+
+  expect(targetStyle.color).not.toBe(missingStyle.color);
+  expect(targetStyle.textDecorationLine).toContain('underline');
+  expect(targetStyle.textDecorationStyle).toBe('solid');
+  expect(targetStyle.borderWidth).toBe('0px');
+  expect(missingStyle.textDecorationLine).toContain('underline');
+  expect(missingStyle.textDecorationLine).not.toContain('line-through');
+  expect(missingStyle.textDecorationStyle).toBe('dotted');
+  expect(missingStyle.borderWidth).toBe('0px');
+});
+
 test('keeps escape, code, malformed, and ambiguous wiki text non-destructive', async ({
   page,
 }) => {
@@ -196,6 +286,68 @@ test('keeps escape, code, malformed, and ambiguous wiki text non-destructive', a
   await expect(editor).toContainText('[[nested [[bad]]]]');
   await expect(
     editor.getByRole('link', { name: 'Same (note not found)' }),
+  ).toBeVisible();
+});
+
+test('does not trigger wiki-link suggestions while typing inside a Markdown link', async ({
+  page,
+}) => {
+  const workspaceName = 'wiki-link-inside-markdown-link';
+  const noteName = 'Home';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('visit example');
+  await selectEditorText(page, 'example');
+  await page.getByRole('button', { name: 'Link', exact: true }).click();
+  const urlInput = page.getByRole('textbox', { name: 'Link URL' });
+  await urlInput.fill('https://example.com');
+  await urlInput.press('Enter');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('visit [example](https://example.com/)');
+
+  await collapseEditorSelection(page, 9);
+  await page.keyboard.insertText('[');
+  await page.keyboard.insertText('[');
+
+  await expect(
+    page.getByRole('listbox', { name: 'Link to a note' }),
+  ).toHaveCount(0);
+  await expect(editor.getByRole('link', { name: 'exa[[mple' })).toBeVisible();
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(editor.getByRole('link', { name: 'exa[[mple' })).toBeVisible();
+  await expect(
+    page.getByRole('listbox', { name: 'Link to a note' }),
+  ).toHaveCount(0);
+});
+
+test('keeps wiki syntax inside ordinary Markdown link text as plain link text', async ({
+  page,
+}) => {
+  const workspaceName = 'wiki-text-in-markdown-link';
+  const noteName = 'Home';
+  const initialMarkdown = 'See [ordinary [[target]]](./target.md) after';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(page, workspaceName, noteName, initialMarkdown);
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await expect(
+    editor.getByRole('link', { name: 'ordinary [[target]]' }),
+  ).toBeVisible();
+  await expect(
+    editor.getByRole('link', { name: 'target (note not found)' }),
+  ).toHaveCount(0);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(initialMarkdown);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(
+    editor.getByRole('link', { name: 'ordinary [[target]]' }),
   ).toBeVisible();
 });
 

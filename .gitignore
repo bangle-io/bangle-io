@@ -1,4 +1,5 @@
 tsconfig.tsbuildinfo
+*.tsgo.tsbuildinfo
 
 node_modules
 .npm

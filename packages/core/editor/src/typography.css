@@ -43,6 +43,50 @@ div.ProseMirror {
     font-weight: 500;
   }
 
+  & .wiki-link {
+    border-radius: 0.2rem;
+    color: hsl(var(--BV-wiki-link-foreground));
+    font-weight: 600;
+    text-decoration-line: underline;
+    text-decoration-color: hsl(var(--BV-wiki-link-underline));
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.18em;
+    cursor: pointer;
+    transition:
+      background-color 120ms ease,
+      color 120ms ease;
+  }
+
+  & .wiki-link:hover,
+  & .wiki-link:focus-visible {
+    background-color: hsl(var(--BV-wiki-link-hover-background));
+    color: hsl(var(--BV-wiki-link-hover-foreground));
+    text-decoration-color: currentColor;
+  }
+
+  & .wiki-link:focus-visible {
+    outline: 2px solid hsl(var(--BV-wiki-link-focus));
+    outline-offset: 1px;
+  }
+
+  & .wiki-link.ProseMirror-selectednode {
+    outline: none;
+    background-color: hsl(var(--BV-wiki-link-hover-background));
+    box-shadow: 0 0 0 2px hsl(var(--BV-wiki-link-focus));
+  }
+
+  & .wiki-link-unresolved {
+    color: hsl(var(--BV-wiki-link-missing-foreground));
+    font-weight: 500;
+    text-decoration-style: dotted;
+    text-decoration-color: hsl(var(--BV-wiki-link-missing-underline));
+  }
+
+  & .wiki-link-unresolved:hover,
+  & .wiki-link-unresolved:focus-visible {
+    background-color: hsl(var(--BV-wiki-link-missing-hover-background));
+  }
+
   &.bangle-link-open-modifier a {
     cursor: pointer;
   }

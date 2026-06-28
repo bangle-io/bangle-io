@@ -4,6 +4,7 @@ import path from 'node:path';
 import { expect, type Page } from '@playwright/test';
 
 export const isDarwin = os.platform() === 'darwin';
+export const appShortcutKey = 'Control';
 export const ctrlKey = os.platform() === 'darwin' ? 'Meta' : 'Control';
 export const EDITOR_SELECTOR = '.ProseMirror';
 export const EDITOR_FOCUSED_SELECTOR = `${EDITOR_SELECTOR}.ProseMirror-focused`;

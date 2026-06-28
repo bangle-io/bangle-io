@@ -18,9 +18,53 @@ import {
   useFloatingPosition,
 } from './use-floating-position';
 
-type WikiOption = { attrs: WikiLinkAttrs; path?: WsFilePath; query?: string };
+type WikiSearchRecord = {
+  searchText: string;
+  target: string;
+  wsPath: WsFilePath;
+};
+
+export type WikiOption = {
+  attrs: WikiLinkAttrs;
+  path?: WsFilePath;
+  query?: string;
+};
 
 const MAX_OPTIONS = 12;
+
+export function buildWikiLinkOptions({
+  excludeWsPath,
+  query,
+  searchRecords = [],
+}: {
+  excludeWsPath?: string;
+  query: string;
+  searchRecords?: readonly WikiSearchRecord[];
+}): WikiOption[] {
+  let filtered: readonly WikiSearchRecord[] = excludeWsPath
+    ? searchRecords.filter((record) => record.wsPath.wsPath !== excludeWsPath)
+    : searchRecords;
+  if (query && filtered.length) {
+    const bySearchValue = new Map(
+      filtered.map((record) => [record.searchText, record]),
+    );
+    filtered = rankedFuzzySearch(query, [...bySearchValue.keys()], {
+      fuzzySearchFunction: substringFuzzySearch,
+      limit: MAX_OPTIONS - 1,
+    })
+      .map((result) => bySearchValue.get(result.item))
+      .filter((record): record is WikiSearchRecord => Boolean(record));
+  }
+  const matchLimit = query ? MAX_OPTIONS - 1 : MAX_OPTIONS;
+  const matches = filtered.slice(0, matchLimit).map((record) => ({
+    path: record.wsPath,
+    attrs: { target: record.target, label: null },
+  }));
+  const unresolvedAttrs = query ? parseWikiLinkContent(query) : null;
+  return unresolvedAttrs
+    ? [...matches, { attrs: unresolvedAttrs, query }]
+    : matches;
+}
 
 export function WikiLinkMenu({ editorName }: { editorName: string }) {
   const suggestions = useAtomValue($suggestions);
@@ -33,33 +77,19 @@ export function WikiLinkMenu({ editorName }: { editorName: string }) {
   const active =
     suggestion?.markName === 'wiki_link_suggestion' ? suggestion : undefined;
   const query = active?.text.slice(2) ?? '';
+  const editorStatus = pmEditorService.getEditorLoadStatus(editorName);
+  const excludeWsPath =
+    editorStatus.status === 'ready' ? editorStatus.wsPath : undefined;
 
-  const options = useMemo<WikiOption[]>(() => {
-    if (!index) return [];
-    let filtered = index.searchRecords;
-    if (query) {
-      const bySearchValue = new Map(
-        index.searchRecords.map((record) => [record.searchText, record]),
-      );
-      filtered = rankedFuzzySearch(query, [...bySearchValue.keys()], {
-        fuzzySearchFunction: substringFuzzySearch,
-        limit: MAX_OPTIONS - 1,
-      })
-        .map((result) => bySearchValue.get(result.item))
-        .filter((record): record is (typeof index.searchRecords)[number] =>
-          Boolean(record),
-        );
-    }
-    const matchLimit = query ? MAX_OPTIONS - 1 : MAX_OPTIONS;
-    const matches = filtered.slice(0, matchLimit).map((record) => ({
-      path: record.wsPath,
-      attrs: { target: record.target, label: null },
-    }));
-    const unresolvedAttrs = query ? parseWikiLinkContent(query) : null;
-    return unresolvedAttrs
-      ? [...matches, { attrs: unresolvedAttrs, query }]
-      : matches;
-  }, [index, query]);
+  const options = useMemo<WikiOption[]>(
+    () =>
+      buildWikiLinkOptions({
+        excludeWsPath,
+        query,
+        searchRecords: index?.searchRecords,
+      }),
+    [excludeWsPath, index, query],
+  );
 
   const selectedIndex = Math.max(
     0,

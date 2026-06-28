@@ -92,6 +92,8 @@ export class PmEditorService extends BaseService {
             ),
           );
         },
+        unresolvedAriaLabel: ({ displayText }) =>
+          t.app.editor.wikiLink.unresolvedLabel({ label: displayText }),
       },
     );
     this.saveQueue = new EditorSaveQueue(
