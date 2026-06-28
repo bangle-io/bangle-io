@@ -57,6 +57,15 @@
 
     --BV-pop: hsl(326 100% 60%);
     --BV-pop-foreground: rgb(255 255 255);
+
+    --BV-wiki-link-foreground: rgb(3 105 161);
+    --BV-wiki-link-hover-foreground: rgb(2 132 199);
+    --BV-wiki-link-underline: rgb(125 211 252);
+    --BV-wiki-link-hover-background: rgb(224 242 254);
+    --BV-wiki-link-focus: rgb(125 211 252);
+    --BV-wiki-link-missing-foreground: rgb(82 82 91);
+    --BV-wiki-link-missing-underline: rgb(161 161 170);
+    --BV-wiki-link-missing-hover-background: rgb(244 244 245);
   }
 
   .BU_dark-scheme {
@@ -105,5 +114,14 @@
 
     --BV-pop: hsl(180 100% 50%);
     --BV-pop-foreground: rgb(0 0 0);
+
+    --BV-wiki-link-foreground: rgb(96 165 250);
+    --BV-wiki-link-hover-foreground: rgb(147 197 253);
+    --BV-wiki-link-underline: rgb(37 99 235);
+    --BV-wiki-link-hover-background: rgb(30 58 138);
+    --BV-wiki-link-focus: rgb(59 130 246);
+    --BV-wiki-link-missing-foreground: rgb(161 161 170);
+    --BV-wiki-link-missing-underline: rgb(113 113 122);
+    --BV-wiki-link-missing-hover-background: rgb(63 63 70);
   }
 }

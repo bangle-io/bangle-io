@@ -54,9 +54,19 @@ export const t = {
         placeholder: 'example.com',
         copy: 'Copy link',
         copied: 'Copied!',
+        copyFailed: 'Copy failed',
         open: 'Open link',
         remove: 'Remove link',
-        invalidUrl: 'Enter a valid web address.',
+        invalidUrl: 'Enter a web address or Markdown path.',
+      },
+      wikiLinkMenu: {
+        label: 'Link to a note',
+        empty: 'No notes found',
+        linkTo: ({ query }: { query: string }) => `Link to “${query}”`,
+      },
+      wikiLink: {
+        unresolvedLabel: ({ label }: { label: string }) =>
+          `${label} (note not found)`,
       },
     },
     sidebar: {

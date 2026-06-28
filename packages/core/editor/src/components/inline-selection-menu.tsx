@@ -54,6 +54,7 @@ export function InlineSelectionMenu({ editorName }: { editorName: string }) {
       anchorEl={selectionMenu.anchorEl}
       editorView={editorView}
       ext={pmEditorService.extensions}
+      onOpen={(href) => pmEditorService.openLink(editorView, href)}
     />
   );
 }
@@ -62,10 +63,12 @@ function InlineSelectionMenuContent({
   anchorEl,
   editorView,
   ext,
+  onOpen,
 }: {
   anchorEl: NonNullable<SelectionMenuState>['anchorEl'];
   editorView: EditorView;
   ext: Extensions;
+  onOpen: (href: string) => void;
 }) {
   const [linkSession, setLinkSession] = useState<LinkSession>();
   const toolbarPopupRef = useRef<HTMLDivElement | null>(null);
@@ -118,6 +121,7 @@ function InlineSelectionMenuContent({
       ext={ext}
       initialHref={linkSession.initialHref}
       inline
+      onOpen={onOpen}
       onClose={closeLinkEditor}
       placement="top"
     />

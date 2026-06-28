@@ -314,6 +314,31 @@ describe('EditorSaveQueue', () => {
     });
   });
 
+  it('notifies subscribers across queue instances that share a store', async () => {
+    const firstWrite = createDeferred<void>();
+    const store = createEditorSaveQueueStore();
+    const firstQueue = new EditorSaveQueue(
+      vi.fn(() => firstWrite.promise),
+      vi.fn(),
+      store,
+    );
+    const secondQueue = new EditorSaveQueue(vi.fn(), vi.fn(), store);
+    const secondListener = vi.fn();
+
+    firstQueue.enqueue('workspace:note.md', 'old service content');
+    expect(secondQueue.hasPendingOrFailed()).toBe(true);
+
+    const unsubscribe = secondQueue.subscribe(secondListener);
+    firstWrite.resolve();
+
+    await vi.waitFor(() => {
+      expect(secondQueue.hasPendingOrFailed()).toBe(false);
+    });
+    expect(secondListener).toHaveBeenCalledTimes(1);
+
+    unsubscribe();
+  });
+
   it('handles synchronously thrown writer errors', async () => {
     const failure = new Error('sync failure');
     const writer = vi.fn(() => {

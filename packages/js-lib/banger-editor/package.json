@@ -27,9 +27,13 @@
     "access": "public"
   },
   "scripts": {},
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2"
+  },
   "dependencies": {
     "@bangle.dev/prosemirror-all": "2.0.0-alpha.18",
     "jotai": "^2.20.1",
+    "markdown-it": "^14.1.0",
     "orderedmap": "^2.1.1",
     "prosemirror-commands": "^1.7.1",
     "prosemirror-dropcursor": "^1.8.2",

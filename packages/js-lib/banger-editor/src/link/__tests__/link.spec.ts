@@ -1,21 +1,28 @@
+// @vitest-environment happy-dom
+
 import { MarkdownSerializer } from 'prosemirror-markdown';
 import { describe, expect, it } from 'vitest';
 import { setupBase } from '../../base';
 import { setupBold } from '../../bold';
+import { setupCode } from '../../code';
 import { resolve } from '../../common';
 import { setupParagraph } from '../../paragraph';
-import { EditorState, Schema, TextSelection } from '../../pm';
+import { EditorState, EditorView, Schema, TextSelection } from '../../pm';
+import { setupWikiLink } from '../../wiki-link';
 import {
   expandLinkSelection,
   getLinkRangeAtSelection,
+  LINK_OPEN_MODIFIER_CLASS,
   setupLink,
 } from '../link';
 
 const base = setupBase();
 const paragraph = setupParagraph();
 const bold = setupBold();
+const code = setupCode();
 const link = setupLink();
-const collections = [base, paragraph, bold, link];
+const wikiLink = setupWikiLink();
+const collections = [base, paragraph, bold, code, link, wikiLink];
 const resolved = resolve(collections);
 const schema = new Schema({
   nodes: resolved.nodes,
@@ -189,5 +196,136 @@ describe('link commands and Markdown', () => {
     expect(markdown.serialize(state.doc)).toBe(
       '[linked plain](https://two.example)',
     );
+  });
+
+  it('rejects selections containing inline atoms or incompatible marks', () => {
+    const wikiNode = schema.nodes.wiki_link?.create({
+      target: 'Target',
+      label: null,
+    });
+    if (!wikiNode) {
+      throw new Error('wiki_link node missing from test schema');
+    }
+
+    const stateWithWikiLink = stateWith(
+      [schema.text('before '), wikiNode, schema.text(' after')],
+      1,
+      15,
+    );
+    expect(
+      link.query.linkAllowedInRange(
+        stateWithWikiLink,
+        stateWithWikiLink.selection.from,
+        stateWithWikiLink.selection.to,
+      ),
+    ).toBe(false);
+    expect(
+      link.command.createLink('https://example.com')(stateWithWikiLink),
+    ).toBe(false);
+
+    const stateWithCode = stateWith(
+      [schema.text('code', [schema.mark('code')])],
+      1,
+      5,
+    );
+    expect(
+      link.query.linkAllowedInRange(
+        stateWithCode,
+        stateWithCode.selection.from,
+        stateWithCode.selection.to,
+      ),
+    ).toBe(false);
+    expect(link.command.createLink('https://example.com')(stateWithCode)).toBe(
+      false,
+    );
+  });
+});
+
+describe('link activation', () => {
+  function createLinkView(onOpenLink?: (href: string) => void) {
+    const configuredLink = setupLink({ onOpenLink });
+    const configuredResolved = resolve([base, paragraph, configuredLink]);
+    const configuredSchema = new Schema({
+      nodes: configuredResolved.nodes,
+      marks: configuredResolved.marks,
+    });
+    const href = 'https://example.com/path';
+    const doc = configuredSchema.node('doc', null, [
+      configuredSchema.node('paragraph', null, [
+        configuredSchema.text('linked', [
+          configuredSchema.mark('link', { href, title: null }),
+        ]),
+      ]),
+    ]);
+    const mount = document.createElement('div');
+    document.body.appendChild(mount);
+    const view = new EditorView(
+      { mount },
+      {
+        state: EditorState.create({
+          doc,
+          schema: configuredSchema,
+          plugins: configuredResolved.resolvePlugins({
+            schema: configuredSchema,
+          }),
+        }),
+      },
+    );
+    const openPlugin = view.state.plugins.find(
+      (plugin) => plugin.props.handleClick,
+    );
+    if (!openPlugin?.props.handleClick) {
+      throw new Error('Link activation plugin was not created');
+    }
+    return { href, mount, openPlugin, view };
+  }
+
+  it('opens only modifier-clicks through the configured callback', () => {
+    const opened: string[] = [];
+    const { href, mount, openPlugin, view } = createLinkView((value) =>
+      opened.push(value),
+    );
+
+    expect(
+      openPlugin.props.handleClick?.call(
+        openPlugin,
+        view,
+        2,
+        new MouseEvent('click', { button: 0 }),
+      ),
+    ).toBe(false);
+    expect(opened).toEqual([]);
+
+    expect(
+      openPlugin.props.handleClick?.call(
+        openPlugin,
+        view,
+        2,
+        new MouseEvent('click', { button: 0, ctrlKey: true }),
+      ),
+    ).toBe(true);
+    expect(opened).toEqual([href]);
+
+    view.destroy();
+    mount.remove();
+  });
+
+  it('tracks modifier state and cleans up on blur and destroy', () => {
+    const { mount, view } = createLinkView();
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true }));
+    expect(view.dom.classList.contains(LINK_OPEN_MODIFIER_CLASS)).toBe(true);
+
+    window.dispatchEvent(new Event('blur'));
+    expect(view.dom.classList.contains(LINK_OPEN_MODIFIER_CLASS)).toBe(false);
+
+    document.dispatchEvent(new MouseEvent('mousemove', { ctrlKey: true }));
+    expect(view.dom.classList.contains(LINK_OPEN_MODIFIER_CLASS)).toBe(true);
+
+    view.destroy();
+    expect(view.dom.classList.contains(LINK_OPEN_MODIFIER_CLASS)).toBe(false);
+    document.dispatchEvent(new KeyboardEvent('keydown', { metaKey: true }));
+    expect(view.dom.classList.contains(LINK_OPEN_MODIFIER_CLASS)).toBe(false);
+    mount.remove();
   });
 });

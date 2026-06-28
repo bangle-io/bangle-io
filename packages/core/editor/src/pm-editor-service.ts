@@ -4,9 +4,19 @@ import {
   createAppError,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
-import type { FileSystemService } from '@bangle.io/service-core';
+import { TextSelection } from '@bangle.io/prosemirror-plugins';
+import type {
+  FileSystemService,
+  NavigationService,
+  WorkspaceStateService,
+} from '@bangle.io/service-core';
 import type { Store } from '@bangle.io/types';
-import { WsPath } from '@bangle.io/ws-path';
+import {
+  createWikiLinkIndex,
+  resolveWikiLinkTarget,
+  type WikiLinkIndex,
+  WsPath,
+} from '@bangle.io/ws-path';
 
 import {
   createEditorSaveQueueStore,
@@ -14,6 +24,12 @@ import {
   type EditorSaveStatus,
 } from './editor-save-queue';
 import { setupExtensions } from './extensions';
+import { findHeadingIndexBySlug } from './heading-slug';
+import {
+  getInternalLinkHeading,
+  normalizeStoredMarkdownLinkTarget,
+  resolveInternalLink,
+} from './link-target';
 import { createEditor } from './pm-setup';
 
 const editorSaveQueueStore = createEditorSaveQueueStore();
@@ -26,11 +42,12 @@ export type PmEditorServiceConfig = {
  * Manages ProseMirror editor instances and state
  */
 export class PmEditorService extends BaseService {
-  static deps = ['fileSystem'] as const;
+  static deps = ['fileSystem', 'navigation', 'workspaceState'] as const;
 
   public readonly extensions: ReturnType<typeof setupExtensions>;
 
   private saveQueue: EditorSaveQueue;
+  private pendingHeading: { fragment: string; wsPath: string } | undefined;
 
   private editors = new Map<
     HTMLElement,
@@ -47,12 +64,38 @@ export class PmEditorService extends BaseService {
     context: BaseServiceContext,
     private dependencies: {
       fileSystem: FileSystemService;
+      navigation: NavigationService;
+      workspaceState: WorkspaceStateService;
     },
     _config: PmEditorServiceConfig,
   ) {
     super(SERVICE_NAME.pmEditorService, context, dependencies);
 
-    this.extensions = setupExtensions(this.logger);
+    this.extensions = setupExtensions(
+      this.logger,
+      (href, view) => this.openLink(view, href),
+      {
+        onActivate: (view, attrs) => this.openWikiLink(view, attrs.target),
+        resolveTarget: (attrs, state) => {
+          const editor = [...this.editors.values()].find(
+            (entry) =>
+              'editorView' in entry && entry.editorView.state === state,
+          );
+          if (!editor || !('editorView' in editor)) return false;
+          const current = WsPath.safeParse(editor.wsPath).data?.asFile();
+          if (!current) return false;
+          return Boolean(
+            resolveWikiLinkTarget(
+              current,
+              attrs.target,
+              this.getWikiLinkIndex(current.wsName),
+            ),
+          );
+        },
+        unresolvedAriaLabel: ({ displayText }) =>
+          t.app.editor.wikiLink.unresolvedLabel({ label: displayText }),
+      },
+    );
     this.saveQueue = new EditorSaveQueue(
       async (wsPath, doc) => {
         const fileName = WsPath.assertFile(wsPath).fileName;
@@ -78,6 +121,20 @@ export class PmEditorService extends BaseService {
       }
       this.editors.clear();
     });
+    this.addCleanup(
+      this.store.sub(this.dependencies.workspaceState.$wsPaths, () => {
+        for (const editor of this.editors.values()) {
+          if ('editorView' in editor) {
+            editor.editorView.dispatch(
+              editor.editorView.state.tr.setMeta(
+                'wiki-link-targets-changed',
+                true,
+              ),
+            );
+          }
+        }
+      }),
+    );
   }
 
   mountEditor({
@@ -136,8 +193,16 @@ export class PmEditorService extends BaseService {
       });
 
       this.editors.set(domNode, { name, editorView, wsPath });
+      editorView.dispatch(
+        editorView.state.tr.setMeta('wiki-link-targets-changed', true),
+      );
       if (focus) {
         editorView.focus();
+      }
+      if (this.pendingHeading?.wsPath === wsPath) {
+        const { fragment } = this.pendingHeading;
+        this.pendingHeading = undefined;
+        this.navigateToHeading(editorView, fragment);
       }
     } catch (cause) {
       const editorEntry = this.editors.get(domNode);
@@ -239,6 +304,97 @@ export class PmEditorService extends BaseService {
       }
     }
     return undefined;
+  }
+
+  /** Opens a web link externally or routes a relative Markdown link in-app. */
+  openLink(editorView: ReturnType<typeof createEditor>, href: string): void {
+    const editor = [...this.editors.values()].find(
+      (entry) => 'editorView' in entry && entry.editorView === editorView,
+    );
+    if (!editor || !('editorView' in editor)) {
+      return;
+    }
+
+    const target = normalizeStoredMarkdownLinkTarget(href);
+    if (target?.kind === 'internal') {
+      const wsPath = resolveInternalLink(editor.wsPath, target.href);
+      if (wsPath) {
+        const fragment = getInternalLinkHeading(target.href);
+        if (wsPath === editor.wsPath) {
+          if (fragment) {
+            this.navigateToHeading(editorView, fragment);
+          }
+          return;
+        }
+        this.pendingHeading = fragment ? { fragment, wsPath } : undefined;
+        this.dependencies.navigation.goWsPath(wsPath);
+      }
+      return;
+    }
+
+    if (target?.kind === 'external') {
+      window.open(target.href, '_blank', 'noopener,noreferrer');
+    }
+  }
+
+  /** Navigates to a wiki target only when it resolves to exactly one existing note. */
+  openWikiLink(
+    editorView: ReturnType<typeof createEditor>,
+    target: string,
+  ): void {
+    const editor = [...this.editors.values()].find(
+      (entry) => 'editorView' in entry && entry.editorView === editorView,
+    );
+    if (!editor || !('editorView' in editor)) return;
+    const current = WsPath.safeParse(editor.wsPath).data?.asFile();
+    if (!current) return;
+    const resolved = resolveWikiLinkTarget(
+      current,
+      target,
+      this.getWikiLinkIndex(current.wsName),
+    );
+    if (resolved && resolved.wsPath !== editor.wsPath) {
+      this.dependencies.navigation.goWsPath(resolved.wsPath);
+    }
+  }
+
+  private getWikiLinkIndex(wsName: string): WikiLinkIndex {
+    const currentIndex = this.store.get(
+      this.dependencies.workspaceState.$wikiLinkIndex,
+    );
+    if (currentIndex?.wsName === wsName) {
+      return currentIndex;
+    }
+    const wsPaths = this.store.get(this.dependencies.workspaceState.$wsPaths);
+    return createWikiLinkIndex(wsPaths, wsName);
+  }
+
+  private navigateToHeading(
+    editorView: ReturnType<typeof createEditor>,
+    fragment: string,
+  ): boolean {
+    const headings: Array<{ pos: number; text: string }> = [];
+    editorView.state.doc.descendants((node, pos) => {
+      if (node.type.name === 'heading') {
+        headings.push({ pos, text: node.textContent });
+      }
+    });
+    const index = findHeadingIndexBySlug(
+      headings.map(({ text }) => text),
+      fragment,
+    );
+    const heading = index === undefined ? undefined : headings[index];
+    if (!heading) {
+      return false;
+    }
+    editorView.dispatch(
+      editorView.state.tr
+        .setSelection(
+          TextSelection.near(editorView.state.doc.resolve(heading.pos + 1)),
+        )
+        .scrollIntoView(),
+    );
+    return true;
   }
 
   focusEditor() {

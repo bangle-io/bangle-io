@@ -4,7 +4,12 @@ import './typography.css';
 import { cx } from '@bangle.io/base-utils';
 import { useCoreServices } from '@bangle.io/context';
 import React, { useCallback } from 'react';
-import { InlineSelectionMenu, LinkMenu, SlashCommand } from './components';
+import {
+  InlineSelectionMenu,
+  LinkMenu,
+  SlashCommand,
+  WikiLinkMenu,
+} from './components';
 
 export { PmEditorService } from './pm-editor-service';
 
@@ -50,6 +55,7 @@ export function Editor({
           )}
         />
         <SlashCommand editorName={name} />
+        <WikiLinkMenu editorName={name} />
         <LinkMenu editorName={name} />
         <InlineSelectionMenu editorName={name} />
       </div>

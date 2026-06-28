@@ -23,6 +23,11 @@ export interface FuzzySearchOptions {
    * Scoring function. Defaults to defaultScoringFunction.
    */
   scoringFunction?: ScoringFunction;
+
+  /**
+   * Maximum number of best-scoring results to return.
+   */
+  limit?: number;
 }
 
 /**
@@ -119,21 +124,48 @@ export function rankedFuzzySearch(
   const {
     fuzzySearchFunction = defaultFuzzySearch,
     scoringFunction = defaultScoringFunction,
+    limit,
   } = options;
 
-  return haystacks
-    .map((haystack) => {
-      const isMatch = fuzzySearchFunction(needle, haystack);
-      if (!isMatch) {
-        return null;
-      }
-      const score = scoringFunction(needle, haystack);
-      return { item: haystack, score };
-    })
-    .filter(
-      (result): result is { item: string; score: number } => result !== null,
-    )
-    .sort((a, b) => b.score - a.score);
+  const maxResults =
+    typeof limit === 'number' && Number.isFinite(limit)
+      ? Math.max(0, Math.floor(limit))
+      : undefined;
+  if (maxResults === 0) {
+    return [];
+  }
+
+  if (maxResults === undefined) {
+    return haystacks
+      .map((haystack) => {
+        const isMatch = fuzzySearchFunction(needle, haystack);
+        if (!isMatch) {
+          return null;
+        }
+        const score = scoringFunction(needle, haystack);
+        return { item: haystack, score };
+      })
+      .filter(
+        (result): result is { item: string; score: number } => result !== null,
+      )
+      .sort((a, b) => b.score - a.score);
+  }
+
+  const results: { item: string; score: number }[] = [];
+
+  for (const haystack of haystacks) {
+    if (!fuzzySearchFunction(needle, haystack)) {
+      continue;
+    }
+    const result = { item: haystack, score: scoringFunction(needle, haystack) };
+    results.push(result);
+    results.sort((a, b) => b.score - a.score);
+    if (results.length > maxResults) {
+      results.pop();
+    }
+  }
+
+  return results;
 }
 
 /**

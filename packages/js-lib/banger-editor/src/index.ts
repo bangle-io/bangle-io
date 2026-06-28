@@ -32,3 +32,4 @@ export * from './store';
 export * from './strike';
 export * from './suggestions';
 export * from './underline';
+export * from './wiki-link';

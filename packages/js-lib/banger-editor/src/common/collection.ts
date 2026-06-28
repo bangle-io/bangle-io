@@ -1,3 +1,4 @@
+import type { PluginSimple } from 'markdown-it';
 import type { MarkdownParser, MarkdownSerializer } from 'prosemirror-markdown';
 import type { Schema } from '../pm';
 import {
@@ -117,6 +118,7 @@ type PluginFactory =
 export type MarkdownConfig = {
   nodes?: Record<string, MarkdownNodeConfig>;
   marks?: Record<string, MarkdownMarkConfig>;
+  tokenizerPlugins?: PluginSimple[];
 };
 
 export type MarkdownNodeConfig = {
@@ -189,6 +191,10 @@ function mergeMarkdownConfigs(
       allowOverride,
       debug,
     ),
+    tokenizerPlugins: [
+      ...(configA?.tokenizerPlugins ?? []),
+      ...(configB?.tokenizerPlugins ?? []),
+    ],
   };
 }
 
@@ -347,7 +353,7 @@ export function resolve(
         }
         return acc;
       },
-      { nodes: {}, marks: {} },
+      { nodes: {}, marks: {}, tokenizerPlugins: [] },
     );
   };
 

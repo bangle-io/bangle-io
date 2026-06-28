@@ -183,6 +183,18 @@ describe('selection menu plugin view', () => {
     });
   });
 
+  it('hides an AllSelection containing only code-block content', () => {
+    const doc = schema.node('doc', null, [
+      schema.node('code_block', null, [schema.text('code')]),
+    ]);
+    const editor = createEditor({
+      doc,
+      selection: new AllSelection(doc),
+    });
+
+    expect(menuState(editor)).toBeUndefined();
+  });
+
   it('suppresses Escape dismissal through document changes until the selection changes', () => {
     const editor = createEditor();
     const { view, selectionMenu } = editor;
