@@ -1,6 +1,6 @@
 import type { BaseService } from '@bangle.io/base-utils';
 import type { InferType, Validator } from '@bangle.io/mini-js-utils';
-import type { CommandExposedServices, Store } from './services';
+import type { CommandExposedServiceSlotId, Store } from './services';
 
 // To keep things simple we are only allowing a select few types
 export type AllowedValidator =
@@ -22,7 +22,7 @@ export type Command = {
     /**
      * The services that are required to be available in the command handler ctx
      */
-    services?: (keyof CommandExposedServices)[];
+    services?: CommandExposedServiceSlotId[];
     /**
      * The commands that the handler is allowed to dispatch
      */

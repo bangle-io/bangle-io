@@ -32,6 +32,7 @@
     "@bangle.io/color-scheme-manager": "workspace:*",
     "@bangle.io/command-handlers": "workspace:*",
     "@bangle.io/commands": "workspace:*",
+    "@bangle.io/context": "workspace:*",
     "@bangle.io/editor": "workspace:*",
     "@bangle.io/poor-mans-di": "workspace:*",
     "@bangle.io/service-core": "workspace:*",

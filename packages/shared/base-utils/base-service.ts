@@ -26,12 +26,12 @@ export abstract class BaseService implements Service<BaseServiceCommonOptions> {
     return this._mounted;
   }
 
-  private _mountPromise!: Promise<void>;
+  private _mountPromise: Promise<void> | undefined;
 
   private _mounted = false;
 
   get mountPromise() {
-    return this._mountPromise;
+    return this._mountPromise ?? Promise.resolve();
   }
 
   protected get store(): Store {
@@ -82,10 +82,13 @@ export abstract class BaseService implements Service<BaseServiceCommonOptions> {
       Object.values(dep)
         .map((dep) => dep.mount?.())
         .filter((x) => !!x),
-    ).then(() => {
+    ).then(async () => {
       this.logger.debug('Mounting service');
+      await this.hookMount();
+      if (this.aborted) {
+        return;
+      }
       this._mounted = true;
-      return this.hookMount();
     });
 
     return this._mountPromise;

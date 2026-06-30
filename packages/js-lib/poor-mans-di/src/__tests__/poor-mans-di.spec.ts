@@ -4,6 +4,7 @@ import {
   Container,
   type Service,
   type ServiceContext,
+  ServiceStartupError,
   type ServiceToConstructor,
 } from '../index';
 import { recursiveInstantiate } from '../recurse';
@@ -251,7 +252,14 @@ describe('Container', () => {
 
     expect(() => {
       container.instantiateAll();
-    }).toThrowError("No dependency definition found for 'nonExistent'");
+    }).toThrowError(
+      'Service "broken" failed during instantiate: Missing dependency "nonExistent"',
+    );
+
+    expect(container.describe().failedSlot).toMatchObject({
+      phase: 'instantiate',
+      slotId: 'broken',
+    });
   });
 
   test('use method type safety and runtime behavior', () => {
@@ -383,6 +391,61 @@ describe('Container', () => {
     expect(services.serviceB.mount).toHaveBeenCalled();
   });
 
+  test('describe reports graph order and mounted count', async () => {
+    class MountableServiceA implements Service<TestContext> {
+      mounted = false;
+      async mount() {
+        this.mounted = true;
+      }
+      constructor(
+        public context: { ctx: TestContext; serviceContext: ServiceContext },
+        public _deps: Record<string, never>,
+      ) {}
+    }
+
+    class MountableServiceB implements Service<TestContext> {
+      static deps = ['serviceA'] as const;
+      mounted = false;
+      async mount() {
+        this.mounted = true;
+      }
+      constructor(
+        public context: { ctx: TestContext; serviceContext: ServiceContext },
+        public _deps: { serviceA: MountableServiceA },
+      ) {}
+    }
+
+    const container = new Container(
+      { context: { env: 'test' }, abortSignal: new AbortController().signal },
+      {
+        serviceA: MountableServiceA,
+        serviceB: MountableServiceB,
+      },
+    );
+
+    container.instantiateAll();
+    await container.mountAll();
+
+    expect(container.describe()).toMatchObject({
+      dependencyOrder: ['serviceA', 'serviceB'],
+      mountedCount: 2,
+      services: [
+        {
+          slotId: 'serviceA',
+          dependencies: [],
+          instantiated: true,
+          mounted: true,
+        },
+        {
+          slotId: 'serviceB',
+          dependencies: ['serviceA'],
+          instantiated: true,
+          mounted: true,
+        },
+      ],
+    });
+  });
+
   test('mountAll should throw if instantiateAll has not been called', async () => {
     const container = new Container(
       { context: { env: 'test' }, abortSignal: new AbortController().signal },
@@ -475,7 +538,60 @@ describe('Container', () => {
 
     expect(() => {
       container.instantiateAll();
-    }).toThrow(/No dependency definition found for 'nonExistent'/);
+    }).toThrow(/Service "broken" failed during instantiate/);
+  });
+
+  test('startup errors include service slot and phase', async () => {
+    class BadPostInstantiateService implements Service<TestContext> {
+      constructor(
+        public context: { ctx: TestContext; serviceContext: ServiceContext },
+        public _deps: Record<string, never>,
+      ) {}
+
+      postInstantiate() {
+        throw new Error('post failed');
+      }
+    }
+
+    const postContainer = new Container(
+      { context: { env: 'test' }, abortSignal: new AbortController().signal },
+      {
+        bad: BadPostInstantiateService,
+      },
+    );
+
+    expect(() => postContainer.instantiateAll()).toThrow(ServiceStartupError);
+    expect(postContainer.describe().failedSlot).toMatchObject({
+      phase: 'postInstantiate',
+      slotId: 'bad',
+    });
+
+    class BadMountService implements Service<TestContext> {
+      constructor(
+        public context: { ctx: TestContext; serviceContext: ServiceContext },
+        public _deps: Record<string, never>,
+      ) {}
+
+      async mount() {
+        throw new Error('mount failed');
+      }
+    }
+
+    const mountContainer = new Container(
+      { context: { env: 'test' }, abortSignal: new AbortController().signal },
+      {
+        bad: BadMountService,
+      },
+    );
+    mountContainer.instantiateAll();
+
+    await expect(mountContainer.mountAll()).rejects.toThrow(
+      ServiceStartupError,
+    );
+    expect(mountContainer.describe().failedSlot).toMatchObject({
+      phase: 'mount',
+      slotId: 'bad',
+    });
   });
 
   test('cyclic dependency detection', () => {

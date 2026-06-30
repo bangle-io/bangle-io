@@ -102,9 +102,11 @@ async function setup() {
       },
     },
     null,
-    { onChange },
+    {
+      getRootDirHandle: async () => ({ handle: rootDirHandle }),
+      onChange,
+    },
   );
-  service.getRootDirHandle = async () => ({ handle: rootDirHandle });
   await service.mount();
   return { service, onChange };
 }

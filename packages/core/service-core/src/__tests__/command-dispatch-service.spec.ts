@@ -9,7 +9,6 @@ import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import type {
   Command,
   CommandDispatchResult,
-  CommandExposedServices,
   CommandHandler,
   CommandHandlerContext,
   CommandKey,
@@ -56,6 +55,9 @@ async function setup() {
   });
 
   const dispatchedCommands: CommandDispatchResult[] = [];
+  const exposedServices = {
+    fileSystem: new TestService(context, null),
+  };
 
   const dispatchService = new CommandDispatchService(
     context,
@@ -67,12 +69,9 @@ async function setup() {
         dispatchedCommands.push(result);
       },
       focusEditor: () => {},
+      getExposedServices: () => exposedServices,
     },
   );
-
-  dispatchService.exposedServices = {
-    fileSystem: new TestService(context, null),
-  } as unknown as CommandExposedServices;
 
   await dispatchService.mount();
   return {

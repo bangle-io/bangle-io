@@ -73,17 +73,6 @@ async function shouldRespectAllowedWorkspace(
   );
 
   for (const [name, pkg] of packageMap.entries()) {
-    // shared-types is a special package that can be
-    // import anything and be imported anywhere
-    // to allow for circular dependencies, since it is just types.
-    // this makes it convenient to rely on types without explicitly
-    // depending on the corresponding JS code.
-
-    // skip checking for shared-types as it can import anything
-    if (name === KNOWN_PACKAGES.sharedTypedPkg) {
-      continue;
-    }
-
     let deps = Object.keys(pkg.workspaceDependencies);
     deps.push(...Object.keys(pkg.workspaceDevDependencies));
 
@@ -224,11 +213,6 @@ async function testUniversalPackagesToRelyOnlyOnUniversal(
 
   for (const [name, pkg] of packageMap.entries()) {
     if (pkg.env !== 'universal') {
-      continue;
-    }
-
-    // shared-types is a special package that can be imported anywhere
-    if (pkg.name === KNOWN_PACKAGES.sharedTypedPkg) {
       continue;
     }
 

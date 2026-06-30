@@ -18,6 +18,7 @@ import type {
 } from '@bangle.io/types';
 import { WsPath } from '@bangle.io/ws-path';
 import { atom } from 'jotai';
+import type { WorkspaceOpsService } from './workspace-ops-service';
 
 type ChangeEvent = {
   type: 'file-create' | 'file-content-update' | 'file-delete' | 'file-rename';
@@ -43,10 +44,7 @@ function throwIfAborted(signal: AbortSignal | undefined): void {
  * Provides file system operations (list, read, write, rename, delete files)
  */
 export class FileSystemService extends BaseService {
-  static deps = [] as const;
-
-  fileStorageServices!: Record<string, BaseFileStorageService>;
-  getWorkspaceInfo!: ({ wsName }: { wsName: string }) => Promise<WorkspaceInfo>;
+  static deps = ['workspaceOps'] as const;
 
   $fileCreateCount = atom(0);
   $fileContentUpdateCount = atom(0);
@@ -67,17 +65,20 @@ export class FileSystemService extends BaseService {
 
   constructor(
     context: BaseServiceContext,
-    dependencies: null,
+    private dependencies: { workspaceOps: WorkspaceOpsService },
     private config: {
       emitter: ScopedEmitter<'event::file:update' | 'event::file:force-update'>;
+      getFileStorageServices: () => Record<string, BaseFileStorageService>;
     },
   ) {
     super(SERVICE_NAME.fileSystemService, context, dependencies);
   }
 
   async hookMount(): Promise<void> {
-    assertIsDefined(this.fileStorageServices, 'fileStorageServices');
-    assertIsDefined(this.getWorkspaceInfo, 'getWorkspaceInfo');
+    assertIsDefined(
+      this.config.getFileStorageServices(),
+      'fileStorageServices',
+    );
 
     this.config.emitter.on(
       'event::file:force-update',
@@ -372,11 +373,21 @@ export class FileSystemService extends BaseService {
   }): Promise<BaseFileStorageService> {
     await this.mountPromise;
     const wsName = WsPath.fromString(wsPath).wsName;
-    const wsInfo = await this.getWorkspaceInfo({ wsName });
+    const wsInfo =
+      await this.dependencies.workspaceOps.getWorkspaceInfo(wsName);
+    if (!wsInfo) {
+      throwAppError(
+        'error::workspace:not-found',
+        `Workspace not found: ${wsName}`,
+        {
+          wsName,
+        },
+      );
+    }
     const wsInfoType = wsInfo.type as WorkspaceStorageType;
     return FileSystemService._getStorageServiceForType(
       wsInfoType,
-      this.fileStorageServices,
+      this.config.getFileStorageServices(),
       wsName,
     );
   }

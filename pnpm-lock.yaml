@@ -213,6 +213,9 @@ importers:
       '@bangle.io/base-utils':
         specifier: workspace:*
         version: link:../../shared/base-utils
+      '@bangle.io/service-core':
+        specifier: workspace:*
+        version: link:../service-core
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -293,6 +296,9 @@ importers:
       '@bangle.io/commands':
         specifier: workspace:*
         version: link:../../shared/commands
+      '@bangle.io/context':
+        specifier: workspace:*
+        version: link:../context
       '@bangle.io/editor':
         specifier: workspace:*
         version: link:../editor
@@ -625,18 +631,12 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../constants
-      '@bangle.io/editor':
-        specifier: workspace:*
-        version: link:../../core/editor
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
       '@bangle.io/root-emitter':
         specifier: workspace:*
         version: link:../root-emitter
-      '@bangle.io/service-core':
-        specifier: workspace:*
-        version: link:../../core/service-core
       jotai:
         specifier: ^2.20.1
         version: 2.20.1(@babel/core@7.29.7)(@babel/template@7.29.7)(@types/react@19.2.17)(react@19.2.7)

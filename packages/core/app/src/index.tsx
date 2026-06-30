@@ -1,12 +1,12 @@
+import type { Services } from '@bangle.io/context';
 import {
   CoreServiceProvider,
   LoggerProvider,
-  PlatformServiceProvider,
   useCoreServices,
 } from '@bangle.io/context';
 import type { Logger } from '@bangle.io/logger';
 import { OmniSearch } from '@bangle.io/omni-search';
-import type { RootEmitter, Services, Store } from '@bangle.io/types';
+import type { RootEmitter, Store } from '@bangle.io/types';
 import { Toaster } from '@bangle.io/ui-components';
 import { Provider, useAtomValue } from 'jotai/react';
 import React from 'react';
@@ -41,20 +41,18 @@ export function App({
   return (
     <LoggerProvider logger={logger}>
       <Provider store={store}>
-        <PlatformServiceProvider services={services.platform}>
-          <CoreServiceProvider services={services.core}>
-            <ErrorBoundary>
-              <AppDialogs />
-              <OmniSearch />
-              <Toaster position="top-center" />
-              <AppErrorHandler rootEmitter={rootEmitter} />
-              <SaveProtection />
-              <AppSidebar>
-                <AppRoutes />
-              </AppSidebar>
-            </ErrorBoundary>
-          </CoreServiceProvider>
-        </PlatformServiceProvider>
+        <CoreServiceProvider services={services.core}>
+          <ErrorBoundary>
+            <AppDialogs />
+            <OmniSearch />
+            <Toaster position="top-center" />
+            <AppErrorHandler rootEmitter={rootEmitter} />
+            <SaveProtection />
+            <AppSidebar>
+              <AppRoutes />
+            </AppSidebar>
+          </ErrorBoundary>
+        </CoreServiceProvider>
       </Provider>
     </LoggerProvider>
   );
