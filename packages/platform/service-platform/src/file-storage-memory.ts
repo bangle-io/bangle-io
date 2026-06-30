@@ -64,6 +64,12 @@ export class FileStorageMemory
   async createFile(wsPath: string, file: File): Promise<void> {
     await this.mountPromise;
     const fileEntryPath = this.getFileEntryPath(wsPath);
+    if (this.fileEntries.has(fileEntryPath)) {
+      throwAppError('error::file:already-existing', 'File already exists', {
+        wsPath,
+      });
+    }
+
     const now = Date.now();
 
     this.fileEntries.set(fileEntryPath, {

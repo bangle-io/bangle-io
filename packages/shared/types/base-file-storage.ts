@@ -41,6 +41,11 @@ export interface BaseFileStorageProvider {
 
   isSupported: () => boolean | Promise<boolean>;
 
+  /**
+   * Creates a new file. Implementations must reject with
+   * `error::file:already-existing` when the target exists and must not
+   * overwrite existing content.
+   */
   createFile: (
     wsPath: WsPath,
     file: File,

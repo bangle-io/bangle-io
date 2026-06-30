@@ -35,6 +35,7 @@
     "@bangle.io/commands": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
+    "@bangle.io/prosemirror-plugins": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",

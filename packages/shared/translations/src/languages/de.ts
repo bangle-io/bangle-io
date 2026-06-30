@@ -63,6 +63,14 @@ export const t = {
         unresolvedLabel: ({ label }: { label: string }) =>
           `${label} (Notiz nicht gefunden)`,
       },
+      linkedMentions: {
+        heading: 'Verlinkte Erwähnungen',
+        loading: 'Verlinkte Erwähnungen werden geladen...',
+        empty: 'Keine verlinkten Erwähnungen',
+        error: 'Verlinkte Erwähnungen konnten nicht geladen werden',
+        collapse: 'Verlinkte Erwähnungen einklappen',
+        expand: 'Verlinkte Erwähnungen ausklappen',
+      },
     },
     sidebar: {
       newLabel: 'Neu',

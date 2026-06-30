@@ -298,6 +298,39 @@ test('creates, expands, edits, cancels, and removes links without draft mutation
   await expect(editor.locator('a')).toHaveCount(0);
 });
 
+test('routes immediate typing to the link URL input after opening it from selected text', async ({
+  page,
+}) => {
+  const workspaceName = 'selection-link-focus';
+  const noteName = 'focus';
+  const initialMarkdown = 'visit example today';
+  const typedHref = 'focus.example';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await page.keyboard.insertText(initialMarkdown);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(initialMarkdown);
+
+  await selectEditorText(page, 'example');
+  await page.getByRole('button', { name: 'Link', exact: true }).click();
+  const urlInput = page.getByRole('textbox', { name: 'Link URL' });
+
+  await page.keyboard.insertText(typedHref);
+  await expect(urlInput).toBeFocused();
+  await expect(urlInput).toHaveValue(typedHref);
+  await expect(editor).toHaveText(initialMarkdown);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(initialMarkdown);
+
+  await urlInput.press('Enter');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('visit [example](https://focus.example/) today');
+});
+
 test('copies, opens, and cancels cursor-link drafts', async ({
   context,
   page,

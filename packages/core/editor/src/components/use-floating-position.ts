@@ -17,6 +17,7 @@ export type UseFloatingPositionProps = {
   boundarySelector?: string;
   placement?: Placement;
   inline?: boolean;
+  onPositioned?: () => void;
 };
 
 export const FLOATING_INITIAL_STYLE = {
@@ -35,6 +36,7 @@ export function useFloatingPosition({
   boundarySelector,
   placement = 'bottom-start',
   inline = false,
+  onPositioned,
 }: UseFloatingPositionProps) {
   const floatingRef = useRef<HTMLDivElement | null>(null);
 
@@ -77,12 +79,21 @@ export function useFloatingPosition({
         left: `${Math.round(x)}px`,
         top: `${Math.round(y)}px`,
       });
+      onPositioned?.();
     });
 
     return () => {
       cleanup();
     };
-  }, [show, anchorEl, boundaryElement, boundarySelector, placement, inline]);
+  }, [
+    show,
+    anchorEl,
+    boundaryElement,
+    boundarySelector,
+    placement,
+    inline,
+    onPositioned,
+  ]);
 
   return floatingRef;
 }

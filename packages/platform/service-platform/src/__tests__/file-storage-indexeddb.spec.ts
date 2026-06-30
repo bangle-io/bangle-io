@@ -41,6 +41,25 @@ describe('FileStorageIndexedDB', () => {
     expect(onChange).toHaveBeenCalledWith({ type: 'create', wsPath });
   });
 
+  it('provider contract: createFile rejects existing files without overwriting', async () => {
+    const { service, onChange } = await setup();
+    const wsPath = 'myWorkspace:myFile.txt';
+
+    await service.createFile(wsPath, new File(['Original'], 'myFile.txt'));
+    await expect(
+      service.createFile(wsPath, new File(['Replacement'], 'myFile.txt')),
+    ).rejects.toMatchObject({
+      cause: expect.objectContaining({
+        name: 'error::file:already-existing',
+        payload: { wsPath },
+      }),
+    });
+
+    const read = await service.readFile(wsPath);
+    expect(await read?.text()).toBe('Original');
+    expect(onChange).toHaveBeenCalledTimes(1);
+  });
+
   it('should rename a file', async () => {
     const { service, onChange } = await setup();
     const oldPath = 'myWorkspace:oldFile.txt';

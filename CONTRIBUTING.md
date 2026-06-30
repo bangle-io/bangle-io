@@ -170,6 +170,9 @@ Cloudflare Pages is connected to `kepta/bangle-io-2`, not `bangle-io/bangle-io`.
 
 Push to the `production` branch on `kepta/bangle-io-2` will deploy to https://app.bangle.io/
 
+See `docs/cloudflare-pages-cli.md` for Wrangler setup, dashboard config
+download, and staging/production verification notes.
+
 ```bash
 pnpm run lint:ci
 pnpm build

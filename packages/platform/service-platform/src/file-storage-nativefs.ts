@@ -1,5 +1,6 @@
 import {
   BaseFileSystemError,
+  FILE_ALREADY_EXISTS_ERROR,
   FILE_NOT_FOUND_ERROR,
   hasPermission,
   NativeBrowserFileSystem,
@@ -22,6 +23,14 @@ import { WsPath } from '@bangle.io/ws-path';
 
 type Config = {
   onChange: (event: FileStorageChangeEvent) => void;
+};
+
+type LockManagerLike = {
+  request<T>(
+    name: string,
+    options: { mode: 'exclusive' },
+    callback: () => Promise<T>,
+  ): Promise<T>;
 };
 
 export class FileStorageNativeFs
@@ -80,6 +89,27 @@ export class FileStorageNativeFs
     this.config.onChange(event);
   }
 
+  private async withCreateLock<T>(
+    wsPath: string,
+    callback: () => Promise<T>,
+  ): Promise<T> {
+    const locks = (
+      globalThis.navigator as { locks?: LockManagerLike } | undefined
+    )?.locks;
+
+    if (!locks) {
+      return callback();
+    }
+
+    return locks.request(
+      `bangle:file-create:${wsPath}`,
+      {
+        mode: 'exclusive',
+      },
+      callback,
+    );
+  }
+
   // Modified getFs method with caching
   private async getFs(
     input:
@@ -134,7 +164,19 @@ export class FileStorageNativeFs
     await this.mountPromise;
     const fsPath = this.getFsPath(wsPath);
     const fs = await this.getFs({ wsPath });
-    await fs.writeFile(fsPath, file);
+    try {
+      await this.withCreateLock(wsPath, () => fs.createFile(fsPath, file));
+    } catch (error) {
+      if (
+        error instanceof BaseFileSystemError &&
+        error.code === FILE_ALREADY_EXISTS_ERROR
+      ) {
+        throwAppError('error::file:already-existing', 'File already exists', {
+          wsPath,
+        });
+      }
+      throw error;
+    }
 
     this.emitChange({
       type: 'create',

@@ -62,6 +62,7 @@ export class WorkbenchStateService extends BaseService {
 
   private $_wideEditor: PrimitiveAtom<boolean> | undefined;
   private $_sidebarOpen: PrimitiveAtom<boolean> | undefined;
+  private $_linkedMentionsCollapsed: PrimitiveAtom<boolean> | undefined;
 
   $openWsDialog = atom(false);
   $openOmniSearch = atom(false);
@@ -199,5 +200,19 @@ export class WorkbenchStateService extends BaseService {
       });
     }
     return this.$_sidebarOpen;
+  }
+
+  get $linkedMentionsCollapsed() {
+    if (!this.$_linkedMentionsCollapsed) {
+      this.$_linkedMentionsCollapsed = atomStorage({
+        serviceName: this.name,
+        key: 'linked-mentions-collapsed',
+        initValue: false,
+        syncDb: this.dep.syncDatabase,
+        validator: T.Boolean,
+        logger: this.logger,
+      });
+    }
+    return this.$_linkedMentionsCollapsed;
   }
 }

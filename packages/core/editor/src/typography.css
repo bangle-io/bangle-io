@@ -100,6 +100,17 @@ div.ProseMirror {
     line-height: 1.5;
   }
 
+  & p,
+  & h1,
+  & h2,
+  & h3,
+  & h4,
+  & h5,
+  & h6,
+  & blockquote {
+    overflow-wrap: anywhere;
+  }
+
   & blockquote {
     padding-left: 1em;
     border-left: 0.25em solid hsla(0, 0%, 60%, 0.4);

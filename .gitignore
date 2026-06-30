@@ -1,17 +1,12 @@
-tsconfig.tsbuildinfo
-*.tsgo.tsbuildinfo
+*.tsbuildinfo
 
 node_modules
 .npm
 .pnp.*
 
-tsconfig.tsbuildinfo
-
 node_modules
 .netlify
 coverage-summary.json
-tsconfig.tsbuildinfo
-
 
 # playwright
 playwright-report

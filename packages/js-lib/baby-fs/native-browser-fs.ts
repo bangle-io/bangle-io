@@ -85,6 +85,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
     this._resolveFileHandle = resolveFileHandle({ allowedDir, allowedFile });
 
     const readFileAsText = this.readFileAsText.bind(this);
+    const createFile = this.createFile.bind(this);
     const writeFile = this.writeFile.bind(this);
     const unlink = this.unlink.bind(this);
     const rename = this.rename.bind(this);
@@ -92,6 +93,8 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
 
     this.readFileAsText = (...args) =>
       catchUpstreamError(readFileAsText(...args), 'Unable to read file');
+    this.createFile = (...args) =>
+      catchUpstreamError(createFile(...args), 'Unable to create file');
     this.writeFile = (...args) =>
       catchUpstreamError(writeFile(...args), 'Unable to write file');
     this.unlink = (...args) =>
@@ -200,6 +203,34 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
 
     const parentHandle = parentHandles[parentHandles.length - 1];
     await parentHandle?.removeEntry(fileHandle.name);
+  }
+
+  async createFile(filePath: string, data: File) {
+    this._verifyFilePath(filePath);
+    this._verifyFileType(data);
+    await verifyPermission(this._rootDirHandle);
+
+    try {
+      await this._resolveFileHandle(this._rootDirHandle, filePath);
+      throw new NativeBrowserFileSystemError({
+        message: `File "${filePath}" already exists`,
+        code: FILE_ALREADY_EXISTS_ERROR,
+      });
+    } catch (error) {
+      if (
+        error instanceof NativeBrowserFileSystemError &&
+        error.code === FILE_NOT_FOUND_ERROR
+      ) {
+        const fileHandle = await createFile(this._rootDirHandle, filePath);
+        const { parentHandles } = await this._resolveFileHandle(
+          this._rootDirHandle,
+          filePath,
+        );
+        await writeToFile(fileHandle, data, parentHandles);
+        return;
+      }
+      throw error;
+    }
   }
 
   async writeFile(filePath: string, data: File) {

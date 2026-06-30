@@ -2,6 +2,8 @@ import {
   BaseService,
   type BaseServiceContext,
   createAppError,
+  getAppErrorCause,
+  isAppError,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
 import { TextSelection } from '@bangle.io/prosemirror-plugins';
@@ -12,6 +14,7 @@ import type {
 } from '@bangle.io/service-core';
 import type { Store } from '@bangle.io/types';
 import {
+  createMissingWikiLinkTarget,
   createWikiLinkIndex,
   resolveWikiLinkTarget,
   type WikiLinkIndex,
@@ -75,7 +78,9 @@ export class PmEditorService extends BaseService {
       this.logger,
       (href, view) => this.openLink(view, href),
       {
-        onActivate: (view, attrs) => this.openWikiLink(view, attrs.target),
+        onActivate: (view, attrs) => {
+          void this.openWikiLink(view, attrs.target);
+        },
         resolveTarget: (attrs, state) => {
           const editor = [...this.editors.values()].find(
             (entry) =>
@@ -121,6 +126,21 @@ export class PmEditorService extends BaseService {
       }
       this.editors.clear();
     });
+    this.addCleanup(
+      this.store.sub(this.dependencies.navigation.$routeInfo, () => {
+        const pending = this.pendingHeading;
+        const routeInfo = this.store.get(
+          this.dependencies.navigation.$routeInfo,
+        );
+        if (
+          pending &&
+          (routeInfo.route !== 'editor' ||
+            routeInfo.payload.wsPath !== pending.wsPath)
+        ) {
+          this.pendingHeading = undefined;
+        }
+      }),
+    );
     this.addCleanup(
       this.store.sub(this.dependencies.workspaceState.$wsPaths, () => {
         for (const editor of this.editors.values()) {
@@ -199,10 +219,13 @@ export class PmEditorService extends BaseService {
       if (focus) {
         editorView.focus();
       }
-      if (this.pendingHeading?.wsPath === wsPath) {
-        const { fragment } = this.pendingHeading;
+      const pendingHeading = this.pendingHeading;
+      if (pendingHeading?.wsPath === wsPath) {
+        const { fragment } = pendingHeading;
         this.pendingHeading = undefined;
         this.navigateToHeading(editorView, fragment);
+      } else if (pendingHeading) {
+        this.pendingHeading = undefined;
       }
     } catch (cause) {
       const editorEntry = this.editors.get(domNode);
@@ -211,6 +234,9 @@ export class PmEditorService extends BaseService {
       }
 
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      if (this.pendingHeading?.wsPath === wsPath) {
+        this.pendingHeading = undefined;
+      }
       this.editors.set(domNode, { name, status: 'failed', error, wsPath });
       this.logger.error('Unable to load note', error);
       this.emitAppError(
@@ -337,11 +363,11 @@ export class PmEditorService extends BaseService {
     }
   }
 
-  /** Navigates to a wiki target only when it resolves to exactly one existing note. */
-  openWikiLink(
+  /** Opens an existing wiki target, or creates a safe missing Markdown target. */
+  async openWikiLink(
     editorView: ReturnType<typeof createEditor>,
     target: string,
-  ): void {
+  ): Promise<void> {
     const editor = [...this.editors.values()].find(
       (entry) => 'editorView' in entry && entry.editorView === editorView,
     );
@@ -355,6 +381,46 @@ export class PmEditorService extends BaseService {
     );
     if (resolved && resolved.wsPath !== editor.wsPath) {
       this.dependencies.navigation.goWsPath(resolved.wsPath);
+      return;
+    }
+
+    if (resolved) {
+      return;
+    }
+
+    const missingTarget = createMissingWikiLinkTarget(current, target);
+    if (!missingTarget) {
+      return;
+    }
+
+    try {
+      await this.dependencies.fileSystem.createFile(
+        missingTarget.wsPath,
+        new File([''], missingTarget.fileName, {
+          type: 'text/plain',
+        }),
+      );
+      this.dependencies.navigation.goWsPath(missingTarget.wsPath);
+    } catch (cause) {
+      if (isAppError(cause)) {
+        const appError = getAppErrorCause(cause);
+        if (appError?.name === 'error::file:already-existing') {
+          this.dependencies.navigation.goWsPath(missingTarget.wsPath);
+          return;
+        }
+      }
+
+      const error = cause instanceof Error ? cause : new Error(String(cause));
+      this.logger.error('Unable to create missing wiki link target', error);
+      this.emitAppError(
+        createAppError(
+          'error::file:invalid-note-path',
+          'Unable to create linked note',
+          {
+            invalidWsPath: missingTarget.wsPath,
+          },
+        ),
+      );
     }
   }
 

@@ -26,6 +26,21 @@ test('writeFile', async () => {
   });
 });
 
+test('createFile rejects existing files without overwriting', async () => {
+  const fs = new IndexedDBFileSystem();
+  await fs.createFile('hola/hi', toFile('original'));
+
+  await expect(
+    fs.createFile('hola/hi', toFile('replacement')),
+  ).rejects.toThrowErrorMatchingInlineSnapshot(
+    `[IndexedDBFileSystemError: File "hola/hi" already exists]`,
+  );
+
+  await expect(
+    (await fs.readFile('hola/hi'))?.text(),
+  ).resolves.toMatchInlineSnapshot(`"original"`);
+});
+
 test('readFile', async () => {
   const fs = new IndexedDBFileSystem();
   await fs.writeFile('hola/hi', toFile('my-data'));

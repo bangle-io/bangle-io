@@ -74,6 +74,11 @@ function withoutMarkdownExtension(path: string): string {
   return path.replace(/\.(?:md|markdown)$/i, '');
 }
 
+function hasMarkdownExtension(path: string): boolean {
+  const extension = `.${path.split('.').at(-1)?.toLocaleLowerCase() ?? ''}`;
+  return VALID_MARKDOWN_EXTENSIONS_SET.has(extension);
+}
+
 export type WikiLinkIndex = {
   wsName: string;
   notes: readonly WsFilePath[];
@@ -148,20 +153,11 @@ export function createWikiLinkIndex(
   };
 }
 
-function getIndex(
-  current: WsFilePath,
-  indexOrPaths: WikiLinkIndex | readonly WsFilePath[],
-): WikiLinkIndex {
-  return 'byWsPath' in indexOrPaths
-    ? indexOrPaths
-    : createWikiLinkIndex(indexOrPaths, current.wsName);
-}
-
 /** Resolves legacy and relative wiki targets against the known notes in one workspace. */
 export function resolveWikiLinkTarget(
   currentWsPath: string | WsFilePath,
   target: string,
-  indexOrPaths: WikiLinkIndex | readonly WsFilePath[],
+  index: WikiLinkIndex,
 ): WsFilePath | undefined {
   const current = WsPath.safeParse(currentWsPath).data?.asFile();
   if (
@@ -173,7 +169,6 @@ export function resolveWikiLinkTarget(
   ) {
     return undefined;
   }
-  const index = getIndex(current, indexOrPaths);
   if (index.wsName !== current.wsName) {
     return undefined;
   }
@@ -200,11 +195,43 @@ export function resolveWikiLinkTarget(
   return insensitive.length === 1 ? insensitive[0] : undefined;
 }
 
-/** Produces the shortest unambiguous target for a picker-created wiki link. */
-export function createWikiLinkTarget(
-  path: WsFilePath,
-  indexOrPaths: WikiLinkIndex | readonly WsFilePath[],
-): string {
-  const index = getIndex(path, indexOrPaths);
-  return createWikiLinkTargetFromIndex(path, index);
+/** Resolves where an unresolved wiki target should be created. */
+export function createMissingWikiLinkTarget(
+  currentWsPath: string | WsFilePath,
+  target: string,
+): WsFilePath | undefined {
+  const current = WsPath.safeParse(currentWsPath).data?.asFile();
+  if (
+    !current ||
+    !target ||
+    target.includes('\\') ||
+    target.includes(':') ||
+    target.includes('#') ||
+    target.includes('?') ||
+    hasUnsafeEncoding(target)
+  ) {
+    return undefined;
+  }
+
+  const targetWithExtension = hasMarkdownExtension(target)
+    ? target
+    : `${target}${WsPath.DEFAULT_NOTE_EXTENSION}`;
+  const explicitPath =
+    /^(?:\/|\.\.?\/)/.test(targetWithExtension) ||
+    targetWithExtension.includes('/');
+
+  if (explicitPath) {
+    const rootRelative =
+      targetWithExtension.startsWith('/') ||
+      !/^\.\.?\//.test(targetWithExtension);
+    const base = rootRelative
+      ? `/${targetWithExtension.replace(/^\//, '')}`
+      : targetWithExtension;
+    return resolveInternalWsPath(current, base);
+  }
+
+  return WsPath.safeFromParts(
+    current.wsName,
+    targetWithExtension,
+  ).data?.asFile();
 }

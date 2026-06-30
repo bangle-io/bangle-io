@@ -8,7 +8,7 @@ import {
   TooltipTrigger,
 } from '@bangle.io/ui-components';
 import { Check, CircleAlert, Copy, ExternalLink, Unlink } from 'lucide-react';
-import React, { useEffect, useId, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { normalizeLinkTarget } from '../link-target';
 import type { PmEditorService } from '../pm-editor-service';
 import {
@@ -40,7 +40,7 @@ type LinkEditorProps = {
   onRemove?: () => void;
   onCopy?: (value: string) => void | Promise<void>;
   onOpen?: (value: string) => void;
-  autoFocus?: boolean;
+  inputRef?: React.Ref<HTMLInputElement>;
 };
 
 type CopyFeedback = 'failure' | 'idle' | 'success';
@@ -54,7 +54,7 @@ export function LinkEditor({
   onRemove,
   onCopy,
   onOpen,
-  autoFocus = false,
+  inputRef,
 }: LinkEditorProps) {
   const errorId = useId();
   const [invalid, setInvalid] = useState(
@@ -143,7 +143,7 @@ export function LinkEditor({
     >
       <div className="flex items-center gap-0.5">
         <Input
-          autoFocus={autoFocus}
+          ref={inputRef}
           value={value}
           onChange={(event) => {
             onChange(event.target.value);
@@ -283,13 +283,24 @@ export function FloatingLinkEditor({
   onOpen,
 }: FloatingLinkEditorProps) {
   const [draft, setDraft] = useState(initialHref);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const popupRef = useRef<HTMLDivElement | null>(null);
+  const didAutoFocusRef = useRef(false);
+  const focusInputAfterPosition = useCallback(() => {
+    const input = inputRef.current;
+    if (!autoFocus || didAutoFocusRef.current || !input) {
+      return;
+    }
+    didAutoFocusRef.current = true;
+    input.focus({ preventScroll: true });
+  }, [autoFocus]);
   const floatingRef = useFloatingPosition({
     show: true,
     anchorEl,
     boundaryElement: editorView.dom,
     placement,
     inline,
+    onPositioned: focusInputAfterPosition,
   });
 
   const setRefs = (node: HTMLDivElement | null) => {
@@ -339,7 +350,7 @@ export function FloatingLinkEditor({
       style={FLOATING_INITIAL_STYLE}
     >
       <LinkEditor
-        autoFocus={autoFocus}
+        inputRef={inputRef}
         value={draft}
         onChange={setDraft}
         onSubmit={(value) => {

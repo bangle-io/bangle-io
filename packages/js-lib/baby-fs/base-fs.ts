@@ -40,6 +40,8 @@ export abstract class BaseFileSystem {
   async rmdir(): Promise<void> {}
   abstract stat(filePath: string): Promise<BaseFileMetadata>;
 
+  // Create a file and reject if the target already exists.
+  abstract createFile(filePath: string, data: File): Promise<void>;
   // and date must be a string type
   abstract unlink(filePath: string): Promise<void>;
   //!! data - has to a blob

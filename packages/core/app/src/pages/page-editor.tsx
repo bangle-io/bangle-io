@@ -3,6 +3,7 @@ import { useCoreServices } from '@bangle.io/context';
 import { Editor } from '@bangle.io/editor';
 import { useAtomValue } from 'jotai';
 import React, { useMemo } from 'react';
+import { LinkedMentions } from '../components/backlinks/linked-mentions';
 import { NoteNotFoundView } from '../components/feedback/note-not-found-view';
 import { WorkspaceNotFoundView } from '../components/feedback/workspace-not-found-view';
 import { AppHeader } from '../layout/app-header';
@@ -33,12 +34,15 @@ export function PageEditor() {
       <AppHeader />
       <PageContentContainer applyPadding={false}>
         {currentWsPath && currentWsName ? (
-          <Editor
-            key={editorKey}
-            name={editorKey}
-            wsPath={currentWsPath.wsPath}
-            className={APP_MAIN_CONTENT_PADDING}
-          />
+          <>
+            <Editor
+              key={editorKey}
+              name={editorKey}
+              wsPath={currentWsPath.wsPath}
+              className={APP_MAIN_CONTENT_PADDING}
+            />
+            <LinkedMentions currentWsPath={currentWsPath} />
+          </>
         ) : !currentWsName ? (
           <WorkspaceNotFoundView
             wsName={coreServices.navigation.resolveAtoms().wsName}

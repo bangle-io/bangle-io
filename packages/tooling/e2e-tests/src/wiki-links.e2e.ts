@@ -4,6 +4,7 @@ import {
   collapseEditorSelection,
   createBrowserWorkspace,
   createBrowserWorkspaceAndNote,
+  expectNoPageHorizontalOverflow,
   getEditorLocator,
   readStoredMarkdown,
   selectEditorText,
@@ -120,10 +121,16 @@ test('authors, persists, reloads, and navigates wiki links safely', async ({
     name: 'Missing (note not found)',
   });
   await expect(missing).toBeVisible();
-  const sourceUrl = page.url();
   await missing.click();
-  await expect(page).toHaveURL(sourceUrl);
-  await expect(editor).toContainText('Go home');
+  await expect(page).toHaveURL(
+    /ws#route=editor&wsPath=wiki-links%3AMissing\.md$/,
+  );
+  await expect(
+    page.getByLabel('breadcrumb').getByRole('button', { name: 'Missing.md' }),
+  ).toBeVisible();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Missing'))
+    .toBe('');
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, 'Target'))
     .toBe('[[Home|Go home]] and [[Missing]]');
@@ -153,6 +160,135 @@ test('does not offer the note being edited as a wiki-link suggestion', async ({
   await expect(
     picker.getByRole('option', { name: 'Home', exact: true }),
   ).toHaveCount(0);
+});
+
+test('shows exact linked mentions for the active note', async ({ page }) => {
+  const workspaceName = 'linked-mentions';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Target',
+  });
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'Target',
+    `Target content ${'x'.repeat(240)}`,
+  );
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'SourceWiki',
+    'See [[Target]]',
+  );
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'SourceMarkdown',
+    'See [Target](Target.md)',
+  );
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'PlainMention',
+    'Target appears as plain text.',
+  );
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'IgnoredSyntax',
+    '`[[Target]]`\n\n```md\n[[Target]]\n```\n\n![[Target]]\n\n![Target](Target.md)',
+  );
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'EscapedMarkdown',
+    String.raw`See \[Target](Target.md) as plain text.`,
+  );
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'MarkdownLinkLabel',
+    '[ordinary [[Target]]](https://example.com)',
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const linkedMentions = page.getByRole('region', {
+    name: 'Linked mentions',
+  });
+  await expect(linkedMentions).toBeVisible();
+
+  await page.getByRole('button', { name: 'Toggle Max Width' }).click();
+  const editorBox = await getEditorLocator(page, {}).boundingBox();
+  const editorPaddingLeft = await getEditorLocator(page, {}).evaluate(
+    (element) => Number.parseFloat(getComputedStyle(element).paddingLeft),
+  );
+  const linkedMentionsControlBox = await linkedMentions
+    .getByRole('button', { name: 'Collapse linked mentions' })
+    .boundingBox();
+  if (!editorBox || !linkedMentionsControlBox) {
+    throw new Error('Unable to measure linked mentions layout');
+  }
+  expect(
+    Math.abs(linkedMentionsControlBox.x - (editorBox.x + editorPaddingLeft)),
+  ).toBeLessThanOrEqual(1);
+  await expectNoPageHorizontalOverflow(page);
+
+  await expect(
+    linkedMentions.getByRole('link', { name: 'SourceWiki.md' }),
+  ).toBeVisible();
+  await expect(
+    linkedMentions.getByRole('link', { name: 'SourceMarkdown.md' }),
+  ).toBeVisible();
+  await expect(
+    linkedMentions.getByRole('link', { name: 'PlainMention.md' }),
+  ).toHaveCount(0);
+  await expect(
+    linkedMentions.getByRole('link', { name: 'IgnoredSyntax.md' }),
+  ).toHaveCount(0);
+  await expect(
+    linkedMentions.getByRole('link', { name: 'EscapedMarkdown.md' }),
+  ).toHaveCount(0);
+  await expect(
+    linkedMentions.getByRole('link', { name: 'MarkdownLinkLabel.md' }),
+  ).toHaveCount(0);
+
+  await linkedMentions
+    .getByRole('button', { name: 'Collapse linked mentions' })
+    .click();
+  await expect(
+    linkedMentions.getByRole('button', { name: 'Expand linked mentions' }),
+  ).toHaveAttribute('aria-expanded', 'false');
+  await expect(
+    linkedMentions.getByRole('link', { name: 'SourceWiki.md' }),
+  ).toHaveCount(0);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  const reloadedLinkedMentions = page.getByRole('region', {
+    name: 'Linked mentions',
+  });
+  await expect(
+    reloadedLinkedMentions.getByRole('button', {
+      name: 'Expand linked mentions',
+    }),
+  ).toHaveAttribute('aria-expanded', 'false');
+  await expect(
+    reloadedLinkedMentions.getByRole('link', { name: 'SourceWiki.md' }),
+  ).toHaveCount(0);
+
+  await reloadedLinkedMentions
+    .getByRole('button', { name: 'Expand linked mentions' })
+    .click();
+  await expect(
+    reloadedLinkedMentions.getByRole('link', { name: 'SourceWiki.md' }),
+  ).toBeVisible();
+
+  await reloadedLinkedMentions
+    .getByRole('link', { name: 'SourceWiki.md' })
+    .click();
+  await expect(page).toHaveURL(
+    /ws#route=editor&wsPath=linked-mentions%3ASourceWiki\.md$/,
+  );
+  await expect(getEditorLocator(page, {})).toContainText('See');
 });
 
 test('renders resolved and unresolved wiki links with distinct dark-mode affordances', async ({

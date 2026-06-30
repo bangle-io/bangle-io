@@ -41,6 +41,25 @@ describe('FileStorageMemory', () => {
     expect(onChange).toHaveBeenCalledWith({ type: 'create', wsPath });
   });
 
+  it('provider contract: createFile rejects existing files without overwriting', async () => {
+    const { service, onChange } = await setup();
+    const wsPath = 'myWorkspace:myNote.md';
+
+    await service.createFile(wsPath, new File(['Original'], 'myNote.md'));
+    await expect(
+      service.createFile(wsPath, new File(['Replacement'], 'myNote.md')),
+    ).rejects.toMatchObject({
+      cause: expect.objectContaining({
+        name: 'error::file:already-existing',
+        payload: { wsPath },
+      }),
+    });
+
+    const readFile = await service.readFile(wsPath);
+    expect(await readFile?.text()).toBe('Original');
+    expect(onChange).toHaveBeenCalledTimes(1);
+  });
+
   it('should rename and still be able to read the file', async () => {
     const { service, onChange } = await setup();
     const oldPath = 'myWorkspace:oldNote.md';

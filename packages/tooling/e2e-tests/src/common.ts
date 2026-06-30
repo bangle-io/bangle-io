@@ -4,11 +4,28 @@ import path from 'node:path';
 import { expect, type Page } from '@playwright/test';
 
 export const isDarwin = os.platform() === 'darwin';
-export const appShortcutKey = 'Control';
 export const ctrlKey = os.platform() === 'darwin' ? 'Meta' : 'Control';
 export const EDITOR_SELECTOR = '.ProseMirror';
 export const EDITOR_FOCUSED_SELECTOR = `${EDITOR_SELECTOR}.ProseMirror-focused`;
 const DEFAULT_SLEEP_TIME = 20;
+
+export async function pressAppShortcut(page: Page, key: string) {
+  const isRuntimeDarwin = await page.evaluate(() => {
+    const userAgentData = (
+      navigator as Navigator & {
+        userAgentData?: { platform?: string };
+      }
+    ).userAgentData;
+    const platform = userAgentData?.platform || navigator.platform;
+    const isMac = /^Mac/i.test(platform);
+    const isIPhone = /^iPhone/i.test(platform);
+    const isIPad =
+      /^iPad/i.test(platform) || (isMac && navigator.maxTouchPoints > 1);
+
+    return isMac || isIPhone || isIPad;
+  });
+  await page.keyboard.press(`${isRuntimeDarwin ? 'Meta' : 'Control'}+${key}`);
+}
 
 export function sleep(t = DEFAULT_SLEEP_TIME) {
   return new Promise((res) => setTimeout(res, t));
@@ -30,6 +47,22 @@ export async function getEditorText(
 ) {
   const locator = getEditorLocator(page, options);
   return locator.innerText();
+}
+
+export async function expectNoPageHorizontalOverflow(page: Page) {
+  await expect
+    .poll(
+      () =>
+        page.evaluate(
+          () =>
+            document.documentElement.scrollWidth -
+            document.documentElement.clientWidth,
+        ),
+      {
+        message: 'Expected the page to avoid document-level horizontal scroll',
+      },
+    )
+    .toBeLessThanOrEqual(1);
 }
 
 export async function clearEditor(page: Page, options: { editorId?: string }) {

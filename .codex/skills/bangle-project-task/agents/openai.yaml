@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bangle Project Task"
+  short_description: "Add tasks to the Bangle 2 project"
+  default_prompt: "Use $bangle-project-task to add a task to the Bangle 2 GitHub project."

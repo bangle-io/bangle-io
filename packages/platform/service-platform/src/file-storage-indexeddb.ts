@@ -1,5 +1,6 @@
 import {
   BaseFileSystemError,
+  FILE_ALREADY_EXISTS_ERROR,
   FILE_NOT_FOUND_ERROR,
   IndexedDBFileSystem,
 } from '@bangle.io/baby-fs';
@@ -58,7 +59,19 @@ export class FileStorageIndexedDB
   async createFile(wsPath: string, file: File): Promise<void> {
     await this.mountPromise;
     const fsPath = this.getFsPath(wsPath);
-    await this.idb.writeFile(fsPath, file);
+    try {
+      await this.idb.createFile(fsPath, file);
+    } catch (error) {
+      if (
+        error instanceof BaseFileSystemError &&
+        error.code === FILE_ALREADY_EXISTS_ERROR
+      ) {
+        throwAppError('error::file:already-existing', 'File already exists', {
+          wsPath,
+        });
+      }
+      throw error;
+    }
 
     this.emitChange({
       type: 'create',

@@ -28,7 +28,8 @@
     "jsdom": "^29.1.1",
     "plop": "^4.0.5",
     "tslib": "^2.8.1",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.8",
+    "wrangler": "^4.106.0"
   },
   "homepage": "https://bangle.io",
   "license": "AGPL-3.0-or-later",
@@ -42,6 +43,12 @@
   "private": true,
   "scripts": {
     "build": "pnpm run precursor && pnpm -r --filter \"browser-entry\" run build",
+    "cf:login": "wrangler login",
+    "cf:pages:deploy:production": "wrangler pages deploy packages/tooling/browser-entry/dist --branch production",
+    "cf:pages:deploy:staging": "wrangler pages deploy packages/tooling/browser-entry/dist --branch staging",
+    "cf:pages:download-config": "wrangler pages download config",
+    "cf:pages:list": "wrangler pages project list",
+    "cf:whoami": "wrangler whoami",
     "custom-validation": "bun packages/tooling/custom-scripts/scripts/validate-all.ts",
     "custom-format": "bun packages/tooling/custom-scripts/scripts/format-all.ts",
     "lint:ci": "pnpm run custom-validation && pnpm run typecheck && biome ci .  --diagnostic-level=error",

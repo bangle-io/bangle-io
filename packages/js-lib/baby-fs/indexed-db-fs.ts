@@ -24,6 +24,10 @@ function catchUpstream<T>(idbPromise: Promise<T>, errorMessage: string) {
   });
 }
 
+function isConstraintError(error: unknown): boolean {
+  return error instanceof DOMException && error.name === 'ConstraintError';
+}
+
 // We are stuck with this name because of legacy reasons.
 const metadataDbName = 'baby-idb-meta-3';
 const metadataTableName = 'baby-idb-meta-store3';
@@ -234,6 +238,30 @@ export class IndexedDBFileSystem extends BaseFileSystem {
       'Error deleting file',
     );
     await this._fileMetadata.del(filePath);
+  }
+
+  async createFile(filePath: string, data: File) {
+    this._verifyFilePath(filePath);
+    this._verifyFileType(data);
+
+    try {
+      await this._db().then((db) =>
+        db.add(indexedDBFileSystemTableName, data, filePath),
+      );
+    } catch (error) {
+      if (isConstraintError(error)) {
+        throw new IndexedDBFileSystemError({
+          message: `File "${filePath}" already exists`,
+          code: FILE_ALREADY_EXISTS_ERROR,
+        });
+      }
+      throw new IndexedDBFileSystemError({
+        message: 'Error creating file',
+        code: UPSTREAM_ERROR,
+      });
+    }
+
+    await this._fileMetadata.set(filePath, new BaseFileMetadata());
   }
 
   async writeFile(filePath: string, data: File) {

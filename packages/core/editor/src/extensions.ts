@@ -76,6 +76,7 @@ export function setupExtensions(
       trigger: '[[',
       markClassName: 'text-primary',
       requireTriggerBoundary: false,
+      installKeymap: false,
       logger: logger.child('wiki-link-suggestions'),
     }),
     wikiLink: setupWikiLink(wikiLinkConfig),

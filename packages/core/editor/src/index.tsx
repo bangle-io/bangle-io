@@ -25,8 +25,8 @@ export function Editor({
   const { pmEditorService } = useCoreServices();
 
   return (
-    <div className="box-border flex h-full min-h-36 w-full flex-col">
-      <div className="relative box-border w-full flex-1">
+    <div className="box-border flex h-full min-h-36 w-full min-w-0 flex-col">
+      <div className="relative box-border w-full min-w-0 flex-1">
         <div
           // in react 19 callback change retriggers this callback
           // so we use useCallback to memoize the callback
@@ -48,7 +48,7 @@ export function Editor({
           )}
           data-editor-name={name}
           className={cx(
-            'ProseMirror box-border min-h-full py-8 outline-0 outline-hidden',
+            'ProseMirror box-border min-h-full min-w-0 max-w-full py-8 outline-0 outline-hidden',
             '[&_:not(pre)_code]:rounded-md [&_:not(pre)_code]:bg-muted/40 [&_:not(pre)_code]:px-1.5 [&_:not(pre)_code]:py-0.5 [&_:not(pre)_code]:font-mono',
             "[&_pre]:bg-muted/30 [&_span[data-mention='tag']]:text-primary [&_span[data-mention='user']]:text-accent",
             className,

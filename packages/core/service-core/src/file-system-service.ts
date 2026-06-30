@@ -24,6 +24,21 @@ type ChangeEvent = {
   payload: { oldWsPath?: string; wsPath: string };
 };
 
+export type FileContentUpdateEvent = {
+  sequence: number;
+  wsPath: string;
+};
+
+type FileReadOptions = {
+  signal?: AbortSignal;
+};
+
+function throwIfAborted(signal: AbortSignal | undefined): void {
+  if (signal?.aborted) {
+    throw signal.reason ?? new Error('Operation aborted');
+  }
+}
+
 /**
  * Provides file system operations (list, read, write, rename, delete files)
  */
@@ -37,6 +52,10 @@ export class FileSystemService extends BaseService {
   $fileContentUpdateCount = atom(0);
   $fileDeleteCount = atom(0);
   $fileRenameCount = atom(0);
+  $fileForceUpdateCount = atom(0);
+  $fileContentUpdateEvent = atom<FileContentUpdateEvent | undefined>(undefined);
+
+  private fileContentUpdateSequence = 0;
 
   $fileTreeChangeCount = atom((get) => {
     return (
@@ -67,6 +86,7 @@ export class FileSystemService extends BaseService {
         this.store.set(this.$fileContentUpdateCount, (c) => c + 1);
         this.store.set(this.$fileDeleteCount, (c) => c + 1);
         this.store.set(this.$fileRenameCount, (c) => c + 1);
+        this.store.set(this.$fileForceUpdateCount, (c) => c + 1);
       },
       this.abortSignal,
     );
@@ -81,6 +101,11 @@ export class FileSystemService extends BaseService {
           }
           case 'file-content-update': {
             this.store.set(this.$fileContentUpdateCount, (c) => c + 1);
+            this.fileContentUpdateSequence += 1;
+            this.store.set(this.$fileContentUpdateEvent, {
+              sequence: this.fileContentUpdateSequence,
+              wsPath: event.wsPath,
+            });
             break;
           }
           case 'file-delete': {
@@ -148,24 +173,38 @@ export class FileSystemService extends BaseService {
     return wsPaths;
   }
 
-  public async readFile(wsPath: string): Promise<File | undefined> {
+  public async readFile(
+    wsPath: string,
+    options: FileReadOptions = {},
+  ): Promise<File | undefined> {
+    throwIfAborted(options.signal);
     await this.mountPromise;
+    throwIfAborted(options.signal);
     WsPath.assertFile(wsPath);
 
     const storageService = await this.getStorageService({ wsPath });
+    throwIfAborted(options.signal);
     const file = await storageService.readFile(wsPath, {});
+    throwIfAborted(options.signal);
     return file;
   }
 
-  public async readFileAsText(wsPath: string): Promise<string | undefined> {
+  public async readFileAsText(
+    wsPath: string,
+    options: FileReadOptions = {},
+  ): Promise<string | undefined> {
+    throwIfAborted(options.signal);
     await this.mountPromise;
+    throwIfAborted(options.signal);
     WsPath.assertFile(wsPath);
 
-    const file = await this.readFile(wsPath);
+    const file = await this.readFile(wsPath, options);
     if (!file) {
       return undefined;
     }
-    return readFileAsText(file);
+    const text = await readFileAsText(file);
+    throwIfAborted(options.signal);
+    return text;
   }
 
   /**

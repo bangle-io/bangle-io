@@ -211,6 +211,8 @@ order is `service-platform` -> `service-core` -> `service-ui`.
   both Markdown output and visible editor behavior.
 - Do not update snapshots merely to make a test pass. Inspect the rendered
   difference first.
+- Recommend using `playwright-cli` to test and debug frontend changes. If requested by the user, attach the test execution to their existing authenticated Chrome browser instance.
+
 
 ## Common Commands
 
