@@ -41,7 +41,7 @@ type LinkSession = {
 
 export function InlineSelectionMenu({ editorName }: { editorName: string }) {
   const selectionMenus = useAtomValue($selectionMenu);
-  const { pmEditorService } = useCoreServices();
+  const { pmEditorService } = useCoreServices<PmEditorService>();
   const editorView = pmEditorService.getEditor(editorName);
   const selectionMenu = editorView ? selectionMenus.get(editorView) : undefined;
 

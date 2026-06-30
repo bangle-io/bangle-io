@@ -2,11 +2,11 @@ import { getEventSenderMetadata, type Logger } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { commandHandlers } from '@bangle.io/command-handlers';
 import { getEnabledCommands } from '@bangle.io/commands';
+import type { Services } from '@bangle.io/context';
 
 import type {
   BaseServiceCommonOptions,
   RootEmitter,
-  Services,
   Store,
 } from '@bangle.io/types';
 import { initializeServices as initializeServices2 } from './initialize-services';
@@ -17,7 +17,7 @@ export function initializeServices(
   store: Store,
   theme: ThemeManager,
   abortSignal: AbortSignal,
-): Services {
+): Promise<Services> {
   const commonOpts: BaseServiceCommonOptions = {
     logger,
     store,
@@ -41,10 +41,7 @@ export function initializeServices(
     theme,
   );
 
-  services.mountAll();
-
-  return {
+  return services.mountAll().then(() => ({
     core: services.coreServices,
-    platform: services.platformServices,
-  };
+  }));
 }

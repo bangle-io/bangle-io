@@ -16,9 +16,11 @@ const isDebug =
   window.location.hostname === 'localhost' ||
   window.location.search.includes('debug=true');
 
-main();
+void main().catch((error) => {
+  console.error('Unable to start Bangle', error);
+});
 
-function main() {
+async function main() {
   const logger = new Logger('', isDebug ? 'debug' : 'info');
 
   // Initialize Sentry with privacy protections
@@ -36,7 +38,7 @@ function main() {
 
   const store = createStore();
   const themeManager = new ThemeManager(THEME_MANAGER_CONFIG);
-  const services = initializeServices(
+  const services = await initializeServices(
     logger,
     rootEmitter,
     store,
@@ -75,7 +77,9 @@ function main() {
       logger.info('-------------Reloading UI-------------');
       abortController.abort();
       queueMicrotask(() => {
-        main();
+        void main().catch((error) => {
+          logger.error('Unable to reload Bangle', error);
+        });
       });
     },
     abortController.signal,

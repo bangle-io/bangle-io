@@ -28,6 +28,7 @@ import React, {
 } from 'react';
 
 import { DATE_SUGGESTION } from '../extensions';
+import type { PmEditorService } from '../pm-editor-service';
 import {
   FLOATING_INITIAL_STYLE,
   useFloatingPosition,
@@ -46,7 +47,7 @@ export function SlashCommand({
   const suggestions = useAtomValue($suggestions);
   const commandRef = useRef<HTMLDivElement>(null);
   const prevSelectedIndexRef = useRef<number>(0);
-  const { pmEditorService } = useCoreServices();
+  const { pmEditorService } = useCoreServices<PmEditorService>();
   const editorView = pmEditorService.getEditor(editorName);
   const suggestion = editorView ? suggestions.get(editorView) : undefined;
   const active =

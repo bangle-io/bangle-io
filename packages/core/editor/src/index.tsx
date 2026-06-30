@@ -12,6 +12,7 @@ import {
   TableMenu,
   WikiLinkMenu,
 } from './components';
+import type { PmEditorService } from './pm-editor-service';
 
 export { PmEditorService } from './pm-editor-service';
 
@@ -24,7 +25,7 @@ export function Editor({
   className?: string;
   name: string;
 }) {
-  const { pmEditorService } = useCoreServices();
+  const { pmEditorService } = useCoreServices<PmEditorService>();
 
   return (
     <div className="box-border flex h-full min-h-36 w-full min-w-0 flex-col">

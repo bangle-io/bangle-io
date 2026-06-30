@@ -8,3 +8,4 @@ export * from './memory-database';
 export * from './memory-sync-database';
 export * from './node-error-handler';
 export * from './router';
+export * from './test-error-handler';
