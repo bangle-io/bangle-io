@@ -14,7 +14,7 @@ export { isValidHttpUrl, normalizeHttpUrl };
 /** Floating link editor for an existing link under a collapsed cursor. */
 export function LinkMenu({ editorName }: { editorName: string }) {
   const linkMenus = useAtomValue($linkMenu);
-  const { pmEditorService } = useCoreServices();
+  const { pmEditorService } = useCoreServices<PmEditorService>();
   const editorView = pmEditorService.getEditor(editorName);
   const linkMenu = editorView ? linkMenus.get(editorView) : undefined;
 

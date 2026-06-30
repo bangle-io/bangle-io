@@ -13,6 +13,7 @@ import {
 import type { WsFilePath } from '@bangle.io/ws-path';
 import { useAtomValue, useSetAtom } from 'jotai';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import type { PmEditorService } from '../pm-editor-service';
 import {
   FLOATING_INITIAL_STYLE,
   useFloatingPosition,
@@ -68,7 +69,8 @@ export function buildWikiLinkOptions({
 
 export function WikiLinkMenu({ editorName }: { editorName: string }) {
   const suggestions = useAtomValue($suggestions);
-  const { pmEditorService, workspaceState } = useCoreServices();
+  const { pmEditorService, workspaceState } =
+    useCoreServices<PmEditorService>();
   const index = useAtomValue(workspaceState.$wikiLinkIndex);
   const setSuggestionUi = useSetAtom($suggestionUi);
   const listRef = useRef<HTMLDivElement>(null);

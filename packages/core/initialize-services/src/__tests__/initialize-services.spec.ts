@@ -8,10 +8,10 @@ import { initializeServices } from '../index';
 test('works', () => {
   expect(true).toBe(true);
 });
-test('initializeServices returns unique service names', () => {
+test('initializeServices returns unique service names', async () => {
   const { commonOpts, rootEmitter, controller } = makeTestCommonOpts();
 
-  const services = initializeServices(
+  const services = await initializeServices(
     commonOpts.logger,
     rootEmitter,
     commonOpts.store,
@@ -19,15 +19,8 @@ test('initializeServices returns unique service names', () => {
     controller.signal,
   );
 
-  const serviceNames = [
-    ...Object.keys(services.core),
-    ...Object.keys(services.platform),
-  ];
-
-  const serviceValues = [
-    ...Object.values(services.core),
-    ...Object.values(services.platform),
-  ];
+  const serviceNames = Object.keys(services.core);
+  const serviceValues = Object.values(services.core);
 
   const uniqueServiceNames = new Set(serviceNames);
 
@@ -39,13 +32,7 @@ test('initializeServices returns unique service names', () => {
     if (service instanceof BaseService) {
       expect(service.aborted).toBe(true);
     } else {
-      for (const s of Object.values(service)) {
-        if (s instanceof BaseService) {
-          expect(s.aborted).toBe(true);
-        } else {
-          throw new Error('Unexpected service type');
-        }
-      }
+      throw new Error('Unexpected service type');
     }
   }
 });
