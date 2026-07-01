@@ -1,3 +1,4 @@
+import type { MarkdownSerializerState } from 'prosemirror-markdown';
 import { type CollectionType, collection, keybinding } from './common';
 import {
   type Command,
@@ -121,10 +122,7 @@ function markdown(): CollectionType['markdown'] {
 }
 
 function writeTableToMarkdown(
-  state: {
-    write: (content: string) => void;
-    ensureNewLine: () => void;
-  },
+  state: MarkdownSerializerState,
   tableNode: PMNode,
 ) {
   const rows: string[][] = [];
@@ -133,7 +131,7 @@ function writeTableToMarkdown(
     const rowCells: string[] = [];
 
     rowNode.forEach((cellNode) => {
-      rowCells.push(stringifyTableCell(cellNode));
+      rowCells.push(stringifyTableCell(state, cellNode));
     });
 
     rows.push(rowCells);
@@ -167,11 +165,29 @@ function writeTableToMarkdown(
   }
 }
 
-function stringifyTableCell(cellNode: PMNode): string {
-  return cellNode.textContent
+function stringifyTableCell(
+  state: MarkdownSerializerState,
+  cellNode: PMNode,
+): string {
+  return renderInlineToString(state, cellNode)
     .replace(/\n+/g, '<br>')
     .replace(/\|/g, '\\|')
     .trim();
+}
+
+function renderInlineToString(
+  state: MarkdownSerializerState,
+  node: PMNode,
+): string {
+  const stateWithOutput = state as MarkdownSerializerState & { out: string };
+  const previousOutput = stateWithOutput.out;
+  stateWithOutput.out = '';
+  try {
+    state.renderInline(node);
+    return stateWithOutput.out;
+  } finally {
+    stateWithOutput.out = previousOutput;
+  }
 }
 
 function insertTable() {
@@ -345,7 +361,9 @@ function deleteColumn(): Command {
     const tr = state.tr;
     deleteRanges
       .sort((a, b) => b.from - a.from)
-      .forEach(({ from, to }) => tr.delete(from, to));
+      .forEach(({ from, to }) => {
+        tr.delete(from, to);
+      });
 
     dispatch(tr.scrollIntoView());
     return true;
