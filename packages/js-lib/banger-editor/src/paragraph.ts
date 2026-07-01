@@ -41,7 +41,7 @@ export type ParagraphConfig = {
   keyInsertEmptyParaBelow?: KeyCode;
   keyJumpToStartOfParagraph?: KeyCode;
   keyJumpToEndOfParagraph?: KeyCode;
-  keyDeleteEmptyParagraphBeforeCodeBlock?: KeyCode;
+  keyDeleteEmptyParagraphBeforeBlock?: KeyCode;
   keyConvertToParagraph?: KeyCode;
 };
 
@@ -57,7 +57,7 @@ const DEFAULT_CONFIG: RequiredConfig = {
   keyInsertEmptyParaBelow: 'Mod-Enter',
   keyJumpToStartOfParagraph: isMac ? 'Ctrl-a' : 'Ctrl-Home',
   keyJumpToEndOfParagraph: isMac ? 'Ctrl-e' : 'Ctrl-End',
-  keyDeleteEmptyParagraphBeforeCodeBlock: 'Delete',
+  keyDeleteEmptyParagraphBeforeBlock: 'Delete',
   keyConvertToParagraph: isMac ? 'Mod-Alt-0' : 'Ctrl-Shift-0',
 };
 
@@ -122,8 +122,8 @@ function pluginKeybindings(config: RequiredConfig) {
         [config.keyMoveUp, filterCommand(isTopLevel, moveNode(type, 'UP'))],
         [config.keyMoveDown, filterCommand(isTopLevel, moveNode(type, 'DOWN'))],
         [
-          config.keyDeleteEmptyParagraphBeforeCodeBlock,
-          deleteEmptyParagraphBeforeCodeBlock(config),
+          config.keyDeleteEmptyParagraphBeforeBlock,
+          deleteEmptyParagraphBeforeBlock(config),
         ],
         [config.keyJumpToStartOfParagraph, jumpToStartOfNode(type)],
         [config.keyJumpToEndOfParagraph, jumpToEndOfNode(type)],
@@ -158,7 +158,7 @@ function convertToParagraph(config: RequiredConfig): Command {
   };
 }
 
-function deleteEmptyParagraphBeforeCodeBlock(config: RequiredConfig): Command {
+function deleteEmptyParagraphBeforeBlock(config: RequiredConfig): Command {
   return (state, dispatch) => {
     const { selection } = state;
     if (!selection.empty) {
@@ -179,7 +179,7 @@ function deleteEmptyParagraphBeforeCodeBlock(config: RequiredConfig): Command {
     }
 
     const next = parent.child(index + 1);
-    if (!next.type.spec.code) {
+    if (!next.isTextblock || next.type === type) {
       return false;
     }
 

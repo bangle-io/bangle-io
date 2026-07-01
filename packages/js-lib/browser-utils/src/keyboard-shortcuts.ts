@@ -29,6 +29,17 @@ type HandlerData = {
   metadata?: Record<string, string>;
 };
 
+function isNativeFormTarget(target: EventTarget | null): boolean {
+  return (
+    (typeof HTMLInputElement !== 'undefined' &&
+      target instanceof HTMLInputElement) ||
+    (typeof HTMLTextAreaElement !== 'undefined' &&
+      target instanceof HTMLTextAreaElement) ||
+    (typeof HTMLSelectElement !== 'undefined' &&
+      target instanceof HTMLSelectElement)
+  );
+}
+
 export class ShortcutManager {
   constructor(
     private options: {
@@ -98,6 +109,10 @@ export class ShortcutManager {
     if (!event.key) {
       return;
     }
+    if (isNativeFormTarget(event.target)) {
+      return;
+    }
+
     const keys: string[] = [];
     if (event.metaKey) keys.push('meta');
     if (event.ctrlKey) keys.push('ctrl');

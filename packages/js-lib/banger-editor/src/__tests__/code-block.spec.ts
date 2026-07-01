@@ -5,6 +5,7 @@ import { setupBase } from '../base';
 import { setupBlockquote } from '../blockquote';
 import { setupCodeBlock } from '../code-block';
 import { collection } from '../common';
+import { setupHeading } from '../heading';
 import { setupList } from '../list';
 import { setupParagraph } from '../paragraph';
 import { createBangerEditorTestSetup } from '../test-helpers';
@@ -25,6 +26,23 @@ const macShortcutEditorTest = createBangerEditorTestSetup({
 const appKeymapOrderEditorTest = createBangerEditorTestSetup({
   extensions: [setupBase(), setupList(), setupParagraph(), setupCodeBlock()],
 });
+const blockBoundaryEditorTest = createBangerEditorTestSetup({
+  extensions: [
+    setupBase(),
+    setupParagraph(),
+    setupHeading(),
+    setupCodeBlock({
+      keyMoveToPreviousBlock: 'Alt-ArrowLeft',
+      keyMoveToNextBlock: 'Alt-ArrowRight',
+    }),
+  ],
+  builderAliases: {
+    codeBlock: { nodeType: 'code_block', language: '' },
+    doc: { nodeType: 'doc' },
+    heading: { nodeType: 'heading', level: 1 },
+    p: { nodeType: 'paragraph' },
+  },
+});
 const nestedEditorTest = createBangerEditorTestSetup({
   extensions: [
     setupBase(),
@@ -35,6 +53,12 @@ const nestedEditorTest = createBangerEditorTestSetup({
     collection({
       id: 'restricted-test-container',
       nodes: {
+        codeOnly: {
+          content: 'code_block+',
+          group: 'block',
+          parseDOM: [{ tag: 'section[data-code-only]' }],
+          toDOM: () => ['section', { 'data-code-only': 'true' }, 0],
+        },
         restricted: {
           content: 'paragraph+',
           group: 'block',
@@ -47,6 +71,7 @@ const nestedEditorTest = createBangerEditorTestSetup({
   builderAliases: {
     bq: { nodeType: 'blockquote' },
     codeBlock: { nodeType: 'code_block', language: '' },
+    codeOnly: { nodeType: 'codeOnly' },
     doc: { nodeType: 'doc' },
     list: { nodeType: 'list', kind: 'bullet' },
     p: { nodeType: 'paragraph' },
@@ -58,6 +83,7 @@ afterEach(() => {
   editorTest.cleanup();
   macShortcutEditorTest.cleanup();
   appKeymapOrderEditorTest.cleanup();
+  blockBoundaryEditorTest.cleanup();
   nestedEditorTest.cleanup();
 });
 
@@ -70,6 +96,26 @@ describe('code block keymap', () => {
     expect(editor.pressKey('Enter')).toBe(true);
 
     editor.expectDoc(doc(codeBlock('const done = true;'), p()));
+    expect(editor.selectionParentType()).toBe('paragraph');
+  });
+
+  it('schema-safely exits repeated Enter when the parent cannot contain paragraphs', () => {
+    const codeOnly = nestedEditorTest.nodeBuilder('codeOnly');
+    const nestedCodeBlock = nestedEditorTest.nodeBuilder('codeBlock');
+    const nestedDoc = nestedEditorTest.nodeBuilder('doc');
+    const nestedParagraph = nestedEditorTest.nodeBuilder('p');
+    const editor = nestedEditorTest.createEditor(
+      nestedDoc(codeOnly(nestedCodeBlock('const done = true;\n\n<cursor>'))),
+    );
+
+    expect(editor.pressKey('Enter')).toBe(true);
+
+    editor.expectDoc(
+      nestedDoc(
+        codeOnly(nestedCodeBlock('const done = true;')),
+        nestedParagraph(),
+      ),
+    );
     expect(editor.selectionParentType()).toBe('paragraph');
   });
 
@@ -120,6 +166,19 @@ describe('code block keymap', () => {
     editor.setSelection(1);
     expect(editor.pressKey('ArrowUp')).toBe(true);
     editor.expectDoc(doc(p(), codeBlock('line'), p()));
+    expect(editor.selectionParentType()).toBe('paragraph');
+  });
+
+  it('uses configurable keys for moving out of code block boundaries', () => {
+    const { codeBlock, doc, p } = blockBoundaryEditorTest.builders;
+    const editor = blockBoundaryEditorTest.createEditor(
+      doc(codeBlock('line<cursor>')),
+    );
+
+    expect(editor.pressKey('ArrowDown')).toBe(false);
+    expect(editor.pressKey('ArrowRight', { altKey: true })).toBe(true);
+
+    editor.expectDoc(doc(codeBlock('line'), p()));
     expect(editor.selectionParentType()).toBe('paragraph');
   });
 
@@ -204,6 +263,16 @@ describe('code block keymap', () => {
     expect(multiWordEditor.pressKey('Backspace', { altKey: true })).toBe(true);
     multiWordEditor.expectDoc(doc(codeBlock('two ')));
     expect(multiWordEditor.selectionParentType()).toBe('code_block');
+
+    const trailingWhitespaceEditor = macShortcutEditorTest.createEditor(
+      doc(codeBlock('two words   <cursor>')),
+    );
+
+    expect(
+      trailingWhitespaceEditor.pressKey('Backspace', { altKey: true }),
+    ).toBe(true);
+    trailingWhitespaceEditor.expectDoc(doc(codeBlock('two ')));
+    expect(trailingWhitespaceEditor.selectionParentType()).toBe('code_block');
   });
 
   it('jumps to code line boundaries with Ctrl-a and Ctrl-e', () => {
@@ -275,6 +344,20 @@ describe('code block keymap', () => {
     emptyCodeEditor.expectDoc(doc(codeBlock()));
     expect(emptyCodeEditor.selectionParentType()).toBe('code_block');
     expect(emptyCodeEditor.selectionParentOffset()).toBe(0);
+  });
+
+  it('deletes an empty paragraph before non-paragraph text blocks with forward Delete', () => {
+    const heading = blockBoundaryEditorTest.nodeBuilder('heading');
+    const { doc, p } = blockBoundaryEditorTest.builders;
+    const editor = blockBoundaryEditorTest.createEditor(
+      doc(p('<cursor>'), heading('Next section')),
+    );
+
+    expect(editor.pressKey('Delete')).toBe(true);
+
+    editor.expectDoc(doc(heading('Next section')));
+    expect(editor.selectionParentType()).toBe('heading');
+    expect(editor.selectionParentOffset()).toBe(0);
   });
 
   it('does not claim the sidebar shortcut as a code block toggle', () => {

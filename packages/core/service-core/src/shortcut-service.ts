@@ -26,6 +26,7 @@ export class ShortcutService extends BaseService {
   private shortcutManager = new ShortcutManager({
     isDarwin: isDarwin,
   });
+  // App shortcuts must see keydown before editor keymaps can claim it.
   private readonly eventListenerOptions = { capture: true };
 
   eventHandler = (event: KeyboardEvent) => {

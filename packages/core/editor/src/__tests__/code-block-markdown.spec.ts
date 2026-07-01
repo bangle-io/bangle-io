@@ -129,4 +129,17 @@ describe('code block Markdown', () => {
     expect(codeBlock?.textContent).toBe('listed();');
     expect(serialized).toBe('- item\n\n  ```js\n  listed();\n  ```');
   });
+
+  it('serializes fenced code blocks inside ordered list items with marker-width indentation', () => {
+    const { document, serialized } = expectEquivalentAfterSerialize(
+      '1. item\n\n   ```js\n   ordered();\n   ```',
+    );
+    const [list] = findNodes(document, 'list');
+    const [codeBlock] = findNodes(document, 'code_block');
+
+    expect(list).toBeDefined();
+    expect(codeBlock?.attrs.language).toBe('js');
+    expect(codeBlock?.textContent).toBe('ordered();');
+    expect(serialized).toBe('1. item\n\n   ```js\n   ordered();\n   ```');
+  });
 });

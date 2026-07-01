@@ -22,6 +22,7 @@ import {
   insertEmptyParagraphBelowNode,
   moveNode,
   type PluginContext,
+  safeInsert,
 } from './pm-utils';
 
 export type CodeBlockConfig = {
@@ -36,6 +37,8 @@ export type CodeBlockConfig = {
   keyJumpToLineEnd?: string | false;
   keyMoveUp?: string | false;
   keyMoveDown?: string | false;
+  keyMoveToPreviousBlock?: string | false;
+  keyMoveToNextBlock?: string | false;
   keyIndent?: string | false;
   keyOutdent?: string | false;
   keyInsertEmptyParaAbove?: string | false;
@@ -56,6 +59,8 @@ const DEFAULT_CONFIG: RequiredConfig = {
   keyJumpToLineEnd: isMac ? 'Ctrl-e' : false,
   keyMoveUp: 'Alt-ArrowUp',
   keyMoveDown: 'Alt-ArrowDown',
+  keyMoveToPreviousBlock: 'ArrowUp',
+  keyMoveToNextBlock: 'ArrowDown',
   keyIndent: 'Tab',
   keyOutdent: 'Shift-Tab',
   keyInsertEmptyParaAbove: 'Mod-Shift-Enter',
@@ -146,8 +151,11 @@ function pluginKeybindings(config: RequiredConfig) {
     [config.keyMoveDown, moveCodeBlock(config, 'DOWN')],
     [config.keyIndent, indentCodeLines(config)],
     [config.keyOutdent, outdentCodeLines(config)],
-    ['ArrowUp', moveOrInsertBoundaryParagraph(config, 'up')],
-    ['ArrowDown', moveOrInsertBoundaryParagraph(config, 'down')],
+    [
+      config.keyMoveToPreviousBlock,
+      moveOrInsertBoundaryParagraph(config, 'up'),
+    ],
+    [config.keyMoveToNextBlock, moveOrInsertBoundaryParagraph(config, 'down')],
     [config.keyInsertEmptyParaAbove, insertEmptyParaAboveCodeBlock(config)],
     [config.keyInsertEmptyParaBelow, insertEmptyParaBelowCodeBlock(config)],
   ];
@@ -193,10 +201,9 @@ function exitCodeBlock(config: RequiredConfig): Command {
           return false;
         }
 
-        const tr = state.tr.delete(from - 2, from);
+        let tr = state.tr.delete(from - 2, from);
         const insertPos = tr.mapping.map(node.pos + node.node.nodeSize, -1);
-        tr.insert(insertPos, paragraph);
-        tr.setSelection(TextSelection.create(tr.doc, insertPos + 1));
+        tr = safeInsert(paragraph, insertPos)(tr);
         dispatch(tr.scrollIntoView());
       }
       return true;
@@ -383,7 +390,7 @@ function deletePreviousCodeWord(config: RequiredConfig): Command {
       return false;
     }
 
-    const match = /\S+$/u.exec(textBeforeCursor);
+    const match = /\S+\s*$/u.exec(textBeforeCursor);
     if (!match) {
       return false;
     }
