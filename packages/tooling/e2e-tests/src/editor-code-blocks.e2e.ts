@@ -166,11 +166,9 @@ test('moves a code block with option arrow shortcuts and persists order', async 
   await page.reload({ waitUntil: 'networkidle' });
 
   const editor = getEditorLocator(page, {});
-  await editor
-    .locator('pre')
-    .filter({ hasText: code })
-    .locator('code')
-    .click({ position: { x: 24, y: 10 } });
+  const codeBlock = editor.locator('pre').filter({ hasText: code });
+  await expect(codeBlock).toBeVisible();
+  await codeBlock.click({ position: { x: 24, y: 48 } });
 
   await page.keyboard.down('Alt');
   await page.keyboard.press('ArrowUp');
@@ -180,11 +178,7 @@ test('moves a code block with option arrow shortcuts and persists order', async 
     .poll(() => readStoredMarkdown(page, workspaceName, noteName))
     .toBe(`\`\`\`js\n${code}\n\`\`\`\n\nbefore\n\nafter`);
 
-  await editor
-    .locator('pre')
-    .filter({ hasText: code })
-    .locator('code')
-    .click({ position: { x: 24, y: 10 } });
+  await codeBlock.click({ position: { x: 24, y: 48 } });
   await page.keyboard.down('Alt');
   await page.keyboard.press('ArrowDown');
   await page.keyboard.press('ArrowDown');
@@ -215,6 +209,31 @@ test('backspace turns an empty sole code block back into a paragraph', async ({
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, noteName))
     .toBe('');
+});
+
+test('forward delete removes an empty paragraph before a code block', async ({
+  page,
+}) => {
+  const workspaceName = 'code-block-forward-delete';
+  const noteName = 'forward-delete';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await clearEditor(page, {});
+  await editor.pressSequentially('```js');
+  await page.keyboard.press('Enter');
+  await expect(editor.locator('pre')).toBeVisible();
+  await page.keyboard.press('ArrowUp');
+
+  await expect(editor.locator('p')).toHaveCount(1);
+  await page.keyboard.press('Delete');
+
+  await expect(editor.locator('pre')).toBeVisible();
+  await expect(editor.locator('p')).toHaveCount(0);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('```js\n```');
 });
 
 test('option backspace deletes the previous word inside a code block on macOS', async ({

@@ -13,6 +13,7 @@ import {
   type EditorState,
   type Schema,
   setBlockType,
+  TextSelection,
 } from './pm';
 import {
   copyEmptyCommand,
@@ -40,6 +41,7 @@ export type ParagraphConfig = {
   keyInsertEmptyParaBelow?: KeyCode;
   keyJumpToStartOfParagraph?: KeyCode;
   keyJumpToEndOfParagraph?: KeyCode;
+  keyDeleteEmptyParagraphBeforeCodeBlock?: KeyCode;
   keyConvertToParagraph?: KeyCode;
 };
 
@@ -55,6 +57,7 @@ const DEFAULT_CONFIG: RequiredConfig = {
   keyInsertEmptyParaBelow: 'Mod-Enter',
   keyJumpToStartOfParagraph: isMac ? 'Ctrl-a' : 'Ctrl-Home',
   keyJumpToEndOfParagraph: isMac ? 'Ctrl-e' : 'Ctrl-End',
+  keyDeleteEmptyParagraphBeforeCodeBlock: 'Delete',
   keyConvertToParagraph: isMac ? 'Mod-Alt-0' : 'Ctrl-Shift-0',
 };
 
@@ -118,6 +121,10 @@ function pluginKeybindings(config: RequiredConfig) {
         [config.keyConvertToParagraph, convertToParagraph(config)],
         [config.keyMoveUp, filterCommand(isTopLevel, moveNode(type, 'UP'))],
         [config.keyMoveDown, filterCommand(isTopLevel, moveNode(type, 'DOWN'))],
+        [
+          config.keyDeleteEmptyParagraphBeforeCodeBlock,
+          deleteEmptyParagraphBeforeCodeBlock(config),
+        ],
         [config.keyJumpToStartOfParagraph, jumpToStartOfNode(type)],
         [config.keyJumpToEndOfParagraph, jumpToEndOfNode(type)],
         [
@@ -135,6 +142,7 @@ function pluginKeybindings(config: RequiredConfig) {
         ],
       ],
       'paragraph',
+      PRIORITY.medium,
     );
   };
 }
@@ -147,6 +155,43 @@ function convertToParagraph(config: RequiredConfig): Command {
       return false;
     }
     return setBlockType(getNodeType(state.schema, name))(state, dispatch);
+  };
+}
+
+function deleteEmptyParagraphBeforeCodeBlock(config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    const { selection } = state;
+    if (!selection.empty) {
+      return false;
+    }
+
+    const type = getNodeType(state.schema, config.name);
+    const node = findParentNodeOfType(type)(selection);
+    if (!node || node.node.content.size > 0 || selection.from !== node.start) {
+      return false;
+    }
+
+    const parentDepth = node.depth - 1;
+    const parent = selection.$from.node(parentDepth);
+    const index = selection.$from.index(parentDepth);
+    if (index >= parent.childCount - 1) {
+      return false;
+    }
+
+    const next = parent.child(index + 1);
+    if (!next.type.spec.code) {
+      return false;
+    }
+
+    if (dispatch) {
+      const tr = state.tr.delete(node.pos, node.pos + node.node.nodeSize);
+      dispatch(
+        tr
+          .setSelection(TextSelection.create(tr.doc, node.pos + 1))
+          .scrollIntoView(),
+      );
+    }
+    return true;
   };
 }
 

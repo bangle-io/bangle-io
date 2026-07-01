@@ -15,8 +15,15 @@ const macShortcutEditorTest = createBangerEditorTestSetup({
   extensions: [
     setupBase(),
     setupParagraph(),
-    setupCodeBlock({ keyDeleteWordBackward: 'Alt-Backspace' }),
+    setupCodeBlock({
+      keyDeleteWordBackward: 'Alt-Backspace',
+      keyJumpToLineStart: 'Ctrl-a',
+      keyJumpToLineEnd: 'Ctrl-e',
+    }),
   ],
+});
+const appKeymapOrderEditorTest = createBangerEditorTestSetup({
+  extensions: [setupBase(), setupList(), setupParagraph(), setupCodeBlock()],
 });
 const nestedEditorTest = createBangerEditorTestSetup({
   extensions: [
@@ -50,6 +57,7 @@ const nestedEditorTest = createBangerEditorTestSetup({
 afterEach(() => {
   editorTest.cleanup();
   macShortcutEditorTest.cleanup();
+  appKeymapOrderEditorTest.cleanup();
   nestedEditorTest.cleanup();
 });
 
@@ -196,6 +204,45 @@ describe('code block keymap', () => {
     expect(multiWordEditor.pressKey('Backspace', { altKey: true })).toBe(true);
     multiWordEditor.expectDoc(doc(codeBlock('two ')));
     expect(multiWordEditor.selectionParentType()).toBe('code_block');
+  });
+
+  it('jumps to code line boundaries with Ctrl-a and Ctrl-e', () => {
+    const { codeBlock, doc } = macShortcutEditorTest.builders;
+    const lineEditor = macShortcutEditorTest.createEditor(
+      doc(codeBlock('one\ntw<cursor>o\nthree')),
+    );
+
+    expect(lineEditor.pressKey('a', { ctrlKey: true })).toBe(true);
+    expect(lineEditor.selectionParentType()).toBe('code_block');
+    expect(lineEditor.selectionParentOffset()).toBe('one\n'.length);
+
+    lineEditor.setSelection('one\ntw'.length + 1);
+    expect(lineEditor.pressKey('e', { ctrlKey: true })).toBe(true);
+    expect(lineEditor.selectionParentType()).toBe('code_block');
+    expect(lineEditor.selectionParentOffset()).toBe('one\ntwo'.length);
+  });
+
+  it('deletes an empty paragraph before a code block with forward Delete', () => {
+    const { codeBlock, doc, p } = appKeymapOrderEditorTest.builders;
+    const editor = appKeymapOrderEditorTest.createEditor(
+      doc(p('<cursor>'), codeBlock('const value = true;')),
+    );
+
+    expect(editor.pressKey('Delete')).toBe(true);
+
+    editor.expectDoc(doc(codeBlock('const value = true;')));
+    expect(editor.selectionParentType()).toBe('code_block');
+    expect(editor.selectionParentOffset()).toBe(0);
+
+    const emptyCodeEditor = appKeymapOrderEditorTest.createEditor(
+      doc(p('<cursor>'), codeBlock()),
+    );
+
+    expect(emptyCodeEditor.pressKey('Delete')).toBe(true);
+
+    emptyCodeEditor.expectDoc(doc(codeBlock()));
+    expect(emptyCodeEditor.selectionParentType()).toBe('code_block');
+    expect(emptyCodeEditor.selectionParentOffset()).toBe(0);
   });
 
   it('does not claim the sidebar shortcut as a code block toggle', () => {

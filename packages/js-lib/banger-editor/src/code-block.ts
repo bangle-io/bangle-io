@@ -25,6 +25,8 @@ export type CodeBlockConfig = {
   keyExit?: string | false;
   keyBackspace?: string | false;
   keyDeleteWordBackward?: string | false;
+  keyJumpToLineStart?: string | false;
+  keyJumpToLineEnd?: string | false;
   keyMoveUp?: string | false;
   keyMoveDown?: string | false;
   keyInsertEmptyParaAbove?: string | false;
@@ -40,6 +42,8 @@ const DEFAULT_CONFIG: RequiredConfig = {
   keyExit: 'Enter',
   keyBackspace: 'Backspace',
   keyDeleteWordBackward: isMac ? 'Alt-Backspace' : false,
+  keyJumpToLineStart: isMac ? 'Ctrl-a' : false,
+  keyJumpToLineEnd: isMac ? 'Ctrl-e' : false,
   keyMoveUp: 'Alt-ArrowUp',
   keyMoveDown: 'Alt-ArrowDown',
   keyInsertEmptyParaAbove: 'Mod-Shift-Enter',
@@ -123,6 +127,8 @@ function pluginKeybindings(config: RequiredConfig) {
     ],
     [config.keyBackspace, backspaceEmptyCodeBlock(config)],
     [config.keyDeleteWordBackward, deletePreviousCodeWord(config)],
+    [config.keyJumpToLineStart, jumpToCodeLineBoundary(config, 'start')],
+    [config.keyJumpToLineEnd, jumpToCodeLineBoundary(config, 'end')],
     [config.keyMoveUp, moveCodeBlock(config, 'UP')],
     [config.keyMoveDown, moveCodeBlock(config, 'DOWN')],
     ['ArrowUp', moveOrInsertBoundaryParagraph(config, 'up')],
@@ -384,6 +390,51 @@ function deletePreviousCodeWord(config: RequiredConfig): Command {
     }
     return true;
   };
+}
+
+function jumpToCodeLineBoundary(
+  config: RequiredConfig,
+  boundary: 'start' | 'end',
+): Command {
+  return (state, dispatch) => {
+    const { selection } = state;
+    if (!selection.empty) {
+      return false;
+    }
+
+    const codeBlockType = getNodeType(state.schema, config.name);
+    const node = findParentNodeOfType(codeBlockType)(selection);
+    if (!node) {
+      return false;
+    }
+
+    const { $from } = selection;
+    const textBeforeCursor = $from.parent.textBetween(0, $from.parentOffset);
+    const textAfterCursor = $from.parent.textBetween(
+      $from.parentOffset,
+      $from.parent.content.size,
+    );
+    const lineOffset =
+      boundary === 'start'
+        ? textBeforeCursor.lastIndexOf('\n') + 1
+        : $from.parentOffset + lineEndOffset(textAfterCursor);
+
+    if (dispatch) {
+      dispatch(
+        state.tr
+          .setSelection(
+            TextSelection.create(state.doc, node.start + lineOffset),
+          )
+          .scrollIntoView(),
+      );
+    }
+    return true;
+  };
+}
+
+function lineEndOffset(textAfterCursor: string): number {
+  const nextLineBreak = textAfterCursor.indexOf('\n');
+  return nextLineBreak === -1 ? textAfterCursor.length : nextLineBreak;
 }
 
 function convertFenceToCodeBlock(config: RequiredConfig): Command {
