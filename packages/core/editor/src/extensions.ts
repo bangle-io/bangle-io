@@ -87,9 +87,7 @@ export function setupExtensions(
       placeholder: funPlaceholder(),
     }),
     code: setupCode(),
-    codeBlock: setupCodeBlock({
-      keyExit: false,
-    }),
+    codeBlock: setupCodeBlock(),
     codeHighlight: setupCodeHighlight(),
     italic: setupItalic(),
     link,
