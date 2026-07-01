@@ -36,6 +36,16 @@ test('slash date command inserts a selected calendar date', async ({
   page,
 }) => {
   const workspaceName = 'slash-command-date-picker';
+  const selectedDate = new Date();
+  selectedDate.setDate(1);
+  selectedDate.setMonth(selectedDate.getMonth() + 1);
+  selectedDate.setDate(15);
+  selectedDate.setHours(0, 0, 0, 0);
+  const selectedDateLabel = new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(selectedDate);
   await createBrowserWorkspaceAndNote(page, {
     workspaceName,
     noteName: 'Home',
@@ -51,14 +61,14 @@ test('slash date command inserts a selected calendar date', async ({
   await expect(dateCommand).toBeVisible();
   await dateCommand.click();
 
-  const dateInput = page.getByLabel('Select date');
-  await expect(dateInput).toBeVisible();
-  await expect(dateInput).toHaveAttribute('type', 'date');
+  await expect(page.getByRole('region', { name: 'Calendar' })).toBeVisible();
+  await page.getByRole('button', { name: 'Next month' }).click();
+  await page
+    .getByRole('button', { name: `Select ${selectedDateLabel}` })
+    .click();
 
-  await dateInput.fill('2025-12-24');
-
-  await expect(editor).toContainText('Dec 24, 2025');
+  await expect(editor).toContainText(selectedDateLabel);
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
-    .toBe('Dec 24, 2025');
+    .toBe(selectedDateLabel);
 });
