@@ -280,7 +280,19 @@ function createLanguageBadgeWidget(
   const wrapper = document.createElement('span');
   wrapper.className = 'prosemirror-code-language-widget';
   wrapper.contentEditable = 'false';
+  wrapper.append(
+    createLanguageButton(wrapper, language, codeBlockPos, editorView),
+  );
 
+  return wrapper;
+}
+
+function createLanguageButton(
+  container: HTMLElement,
+  language: string,
+  codeBlockPos: number,
+  editorView: EditorView,
+): HTMLButtonElement {
   const button = document.createElement('button');
   button.type = 'button';
   button.className = 'prosemirror-code-language-button';
@@ -303,11 +315,10 @@ function createLanguageBadgeWidget(
   button.addEventListener('click', (event) => {
     event.preventDefault();
     event.stopPropagation();
-    showLanguageEditor(wrapper, editorView, codeBlockPos, language);
+    showLanguageEditor(container, editorView, codeBlockPos, language);
   });
 
-  wrapper.append(button);
-  return wrapper;
+  return button;
 }
 
 function showLanguageEditor(
@@ -316,25 +327,61 @@ function showLanguageEditor(
   codeBlockPos: number,
   initialLanguage: string,
 ) {
+  let finished = false;
   const input = document.createElement('input');
   input.type = 'text';
   input.className = 'prosemirror-code-language-input';
   input.value = initialLanguage || '';
   input.placeholder = DEFAULT_LANG;
   input.setAttribute('aria-label', EDIT_LANGUAGE_LABEL);
+
+  const restoreButton = () => {
+    container.replaceChildren(
+      createLanguageButton(
+        container,
+        initialLanguage,
+        codeBlockPos,
+        editorView,
+      ),
+    );
+  };
+  const commit = () => {
+    if (finished) {
+      return;
+    }
+    finished = true;
+    const changed = applyLanguageChange(
+      editorView,
+      codeBlockPos,
+      input.value,
+      initialLanguage,
+    );
+    if (!changed) {
+      restoreButton();
+    }
+  };
+  const cancel = () => {
+    if (finished) {
+      return;
+    }
+    finished = true;
+    restoreButton();
+    editorView.focus();
+  };
+
   input.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      applyLanguageChange(editorView, codeBlockPos, input.value);
+      commit();
       return;
     }
     if (event.key === 'Escape') {
       event.preventDefault();
-      editorView.focus();
+      cancel();
     }
   });
   input.addEventListener('blur', () => {
-    applyLanguageChange(editorView, codeBlockPos, input.value);
+    commit();
   });
 
   container.replaceChildren(input);
@@ -346,14 +393,21 @@ function applyLanguageChange(
   editorView: EditorView,
   codeBlockPos: number,
   value: string,
-) {
+  previousValue: string,
+): boolean {
   if (!editorView || editorView.isDestroyed) {
-    return;
+    return false;
   }
 
   const nextLanguage = value.trim().toLowerCase();
-  setCodeBlockLanguage(editorView, codeBlockPos, nextLanguage || DEFAULT_LANG);
+  if (nextLanguage === previousValue) {
+    editorView.focus();
+    return false;
+  }
+
+  const changed = setCodeBlockLanguage(editorView, codeBlockPos, nextLanguage);
   editorView.focus();
+  return changed;
 }
 
 function setCodeBlockLanguage(
@@ -363,6 +417,9 @@ function setCodeBlockLanguage(
 ): boolean {
   const node = editorView.state.doc.nodeAt(codeBlockPos);
   if (node?.type.name !== 'code_block') {
+    return false;
+  }
+  if (node.attrs.language === language) {
     return false;
   }
 

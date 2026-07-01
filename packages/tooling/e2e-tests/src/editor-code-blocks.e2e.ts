@@ -150,6 +150,46 @@ test('edits a fenced code-block language badge and persists Markdown', async ({
   );
 });
 
+test('does not invent language info when an empty language badge editor is cancelled or blurred', async ({
+  page,
+}) => {
+  const workspaceName = 'code-block-empty-language';
+  const noteName = 'code';
+  const markdown = '```\nconsole.log("plain");\n```';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(page, workspaceName, noteName, markdown);
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  const codeBlock = editor.locator('pre').filter({ hasText: 'console.log' });
+  await expect(codeBlock.locator('code')).toContainText(
+    'console.log("plain");',
+  );
+  await codeBlock.hover();
+
+  const languageButton = page.getByRole('button', { name: 'Edit language' });
+  await expect(languageButton).toHaveText('TEXT', { timeout: 15_000 });
+  await languageButton.click();
+  await expect(
+    page.getByRole('textbox', { name: 'Edit language' }),
+  ).toHaveValue('');
+  await page.keyboard.press('Escape');
+  await expect(languageButton).toHaveText('TEXT');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(markdown);
+
+  await languageButton.click();
+  await expect(
+    page.getByRole('textbox', { name: 'Edit language' }),
+  ).toHaveValue('');
+  await editor.click();
+  await expect(languageButton).toHaveText('TEXT');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(markdown);
+});
+
 test('moves a code block with option arrow shortcuts and persists order', async ({
   page,
 }) => {
