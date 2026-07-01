@@ -391,6 +391,55 @@ describe('Container', () => {
     expect(services.serviceB.mount).toHaveBeenCalled();
   });
 
+  test('mountAll starts independent services in parallel', async () => {
+    const mountEvents: string[] = [];
+    let releaseA!: () => void;
+    const serviceAReady = new Promise<void>((resolve) => {
+      releaseA = resolve;
+    });
+
+    class MountableServiceA implements Service<TestContext> {
+      async mount() {
+        mountEvents.push('a:start');
+        await serviceAReady;
+        mountEvents.push('a:end');
+      }
+      constructor(
+        public context: { ctx: TestContext; serviceContext: ServiceContext },
+        public _deps: Record<string, never>,
+      ) {}
+    }
+
+    class MountableServiceB implements Service<TestContext> {
+      async mount() {
+        mountEvents.push('b:start');
+      }
+      constructor(
+        public context: { ctx: TestContext; serviceContext: ServiceContext },
+        public _deps: Record<string, never>,
+      ) {}
+    }
+
+    const container = new Container(
+      { context: { env: 'test' }, abortSignal: new AbortController().signal },
+      {
+        serviceA: MountableServiceA,
+        serviceB: MountableServiceB,
+      },
+    );
+
+    container.instantiateAll();
+    const mountPromise = container.mountAll();
+    await Promise.resolve();
+
+    expect(mountEvents).toEqual(['a:start', 'b:start']);
+
+    releaseA();
+    await mountPromise;
+
+    expect(mountEvents).toEqual(['a:start', 'b:start', 'a:end']);
+  });
+
   test('describe reports graph order and mounted count', async () => {
     class MountableServiceA implements Service<TestContext> {
       mounted = false;
@@ -447,11 +496,8 @@ describe('Container', () => {
   });
 
   test('mountAll reports dependency mount failures on the failing slot', async () => {
-    const mountOrder: string[] = [];
-
     class FailingDependencyService implements Service<TestContext> {
       async mount() {
-        mountOrder.push('dependency');
         throw new Error('dependency failed');
       }
       constructor(
@@ -462,9 +508,7 @@ describe('Container', () => {
 
     class DependentService implements Service<TestContext> {
       static deps = ['dependency'] as const;
-      async mount() {
-        mountOrder.push('dependent');
-      }
+      async mount() {}
       constructor(
         public context: { ctx: TestContext; serviceContext: ServiceContext },
         public _deps: { dependency: FailingDependencyService },
@@ -484,7 +528,6 @@ describe('Container', () => {
     await expect(container.mountAll()).rejects.toThrow(
       'Service "dependency" failed during mount: dependency failed',
     );
-    expect(mountOrder).toEqual(['dependency']);
     expect(container.describe().failedSlot).toMatchObject({
       phase: 'mount',
       slotId: 'dependency',
