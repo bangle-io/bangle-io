@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 import {
   clearEditor,
   createBrowserWorkspace,
@@ -6,6 +6,39 @@ import {
   getEditorText,
   readStoredMarkdown,
 } from './common';
+
+async function expectContextMenuIsNotClipped(page: Page) {
+  const menu = page.locator('[data-file-tree-context-menu-root="true"]');
+
+  await expect(menu).toBeVisible();
+  await expect
+    .poll(
+      () =>
+        menu.evaluate((element) => {
+          const rect = element.getBoundingClientRect();
+          const viewportWidth = document.documentElement.clientWidth;
+          const viewportHeight = document.documentElement.clientHeight;
+          const samplePoints: Array<readonly [number, number]> = [
+            [rect.left + rect.width / 2, rect.top + rect.height / 2],
+            [rect.right - 4, rect.top + rect.height / 2],
+            [rect.left + rect.width / 2, rect.bottom - 4],
+          ];
+
+          return (
+            rect.left >= 0 &&
+            rect.top >= 0 &&
+            rect.right <= viewportWidth &&
+            rect.bottom <= viewportHeight &&
+            samplePoints.every(([x, y]) => {
+              const hit = document.elementFromPoint(x, y);
+              return hit ? element.contains(hit) : false;
+            })
+          );
+        }),
+      { message: 'Expected the file-tree context menu to be fully hittable' },
+    )
+    .toBe(true);
+}
 
 test('file explorer creates folders, opens notes, and survives reload', async ({
   page,
@@ -15,6 +48,11 @@ test('file explorer creates folders, opens notes, and survives reload', async ({
 
   const explorer = page.getByTestId('bangle-file-explorer');
   await expect(explorer).toBeVisible();
+
+  await test.step('use the app-level search instead of a duplicate explorer search', async () => {
+    await expect(explorer.getByLabel('Search Files')).toHaveCount(0);
+    await expect(explorer.getByPlaceholder('Search…')).toHaveCount(0);
+  });
 
   await test.step('create a folder from the explorer root action', async () => {
     await explorer.getByLabel('New Folder').click();
@@ -56,6 +94,30 @@ test('file explorer creates folders, opens notes, and survives reload', async ({
     ).toBeVisible();
   });
 
+  await test.step('find and open a note through app-level search', async () => {
+    await page.getByRole('button', { name: /Search/ }).click();
+    const commandDialog = page.getByRole('dialog', {
+      name: 'omni command bar',
+    });
+    await expect(commandDialog).toBeVisible();
+
+    await commandDialog
+      .getByPlaceholder('Type a command or search...')
+      .fill('alpha');
+    await expect(
+      commandDialog.getByRole('option', { name: 'docs/alpha.md' }),
+    ).toBeVisible();
+    await page.keyboard.press('Enter');
+
+    await expect(commandDialog).toBeHidden();
+    await expect(
+      page.getByLabel('breadcrumb').getByRole('button', { name: 'alpha.md' }),
+    ).toBeVisible();
+    await expect
+      .poll(() => getEditorText(page, {}))
+      .toBe('Alpha explorer content');
+  });
+
   await test.step('create a second root folder for drag-and-drop moves', async () => {
     await explorer.getByLabel('New Folder').click();
     await page.getByPlaceholder('Input directory name').fill('archive');
@@ -64,6 +126,15 @@ test('file explorer creates folders, opens notes, and survives reload', async ({
     await expect(
       explorer.getByRole('treeitem', { name: /^archive$/ }),
     ).toBeVisible();
+  });
+
+  await test.step('three-dot file menu is fully visible and hittable', async () => {
+    const alphaRow = explorer.getByRole('treeitem', { name: /alpha\.md/ });
+
+    await alphaRow.hover();
+    await explorer.getByRole('button', { name: 'Options' }).click();
+    await expectContextMenuIsNotClipped(page);
+    await page.keyboard.press('Escape');
   });
 
   await test.step('open the named note from the explorer', async () => {
