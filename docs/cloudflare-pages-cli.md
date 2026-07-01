@@ -123,6 +123,31 @@ Observed deployment behavior on 2026-06-30:
   `release/*`, and `codex/*` branches deploy as Preview. Recent `main`
   production deployments were failing in Cloudflare.
 
+## PR preview deployments
+
+Pull requests in `bangle-io/bangle-io` deploy through
+`.github/workflows/cloudflare-pr-preview.yml`. The workflow builds the app,
+uploads `packages/tooling/browser-entry/dist` to the existing `bangle-io-2`
+Pages project with Wrangler, and updates one sticky PR comment with the latest
+preview URL.
+
+This direct-upload workflow is needed because the Cloudflare Pages Git
+integration is connected to `kepta/bangle-io-2`, while regular development PRs
+are opened against `bangle-io/bangle-io`.
+
+Required GitHub repository secrets on `bangle-io/bangle-io`:
+
+- `CLOUDFLARE_ACCOUNT_ID`
+- `CLOUDFLARE_OAUTH_TOKEN`
+- `CLOUDFLARE_OAUTH_REFRESH_TOKEN`
+- `CLOUDFLARE_OAUTH_EXPIRATION_TIME`
+
+The OAuth secrets mirror Wrangler's local auth config for the Cloudflare account
+that owns `bangle-io-2`. The workflow recreates that Wrangler config before
+deploying. If Wrangler refreshes the OAuth credentials during a run, the
+workflow uses the existing `GH_TOKEN` repository secret to persist the refreshed
+Cloudflare values back to repository secrets.
+
 ## Manual deploy commands
 
 These scripts assume `pnpm build` has already produced
