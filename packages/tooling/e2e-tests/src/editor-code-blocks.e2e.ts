@@ -4,6 +4,7 @@ import {
   createBrowserWorkspaceAndNote,
   ctrlKey,
   getEditorLocator,
+  isDarwin,
   pressAppShortcut,
   readStoredMarkdown,
   writeStoredMarkdown,
@@ -147,6 +148,110 @@ test('edits a fenced code-block language badge and persists Markdown', async ({
   await expect(page.getByRole('button', { name: 'Edit language' })).toHaveText(
     'TYPESCRIPT',
   );
+});
+
+test('moves a code block with option arrow shortcuts and persists order', async ({
+  page,
+}) => {
+  const workspaceName = 'code-block-move-shortcuts';
+  const noteName = 'move';
+  const code = 'const moved = true;';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    noteName,
+    `before\n\n\`\`\`js\n${code}\n\`\`\`\n\nafter`,
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await editor
+    .locator('pre')
+    .filter({ hasText: code })
+    .locator('code')
+    .click({ position: { x: 24, y: 10 } });
+
+  await page.keyboard.down('Alt');
+  await page.keyboard.press('ArrowUp');
+  await page.keyboard.up('Alt');
+
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(`\`\`\`js\n${code}\n\`\`\`\n\nbefore\n\nafter`);
+
+  await editor
+    .locator('pre')
+    .filter({ hasText: code })
+    .locator('code')
+    .click({ position: { x: 24, y: 10 } });
+  await page.keyboard.down('Alt');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.up('Alt');
+
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(`before\n\nafter\n\n\`\`\`js\n${code}\n\`\`\``);
+});
+
+test('backspace turns an empty sole code block back into a paragraph', async ({
+  page,
+}) => {
+  const workspaceName = 'code-block-empty-backspace';
+  const noteName = 'empty-backspace';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await clearEditor(page, {});
+  await editor.pressSequentially('```js');
+  await page.keyboard.press('Enter');
+  await expect(editor.locator('pre')).toBeVisible();
+
+  await page.keyboard.press('Backspace');
+
+  await expect(editor.locator('pre')).toHaveCount(0);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('');
+});
+
+test('option backspace deletes the previous word inside a code block on macOS', async ({
+  page,
+}) => {
+  test.skip(!isDarwin, 'Option+Backspace is a macOS word-delete shortcut');
+
+  const workspaceName = 'code-block-option-backspace';
+  const noteName = 'option-backspace';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await clearEditor(page, {});
+  await editor.pressSequentially('```js');
+  await page.keyboard.press('Enter');
+  await editor.pressSequentially('singlelongword');
+  await page.keyboard.down('Alt');
+  await page.keyboard.press('Backspace');
+  await page.keyboard.up('Alt');
+
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('```js\n```');
+
+  await editor.click();
+  await clearEditor(page, {});
+  await editor.pressSequentially('```js');
+  await page.keyboard.press('Enter');
+  await editor.pressSequentially('two words');
+  await page.keyboard.down('Alt');
+  await page.keyboard.press('Backspace');
+  await page.keyboard.up('Alt');
+
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('```js\ntwo \n```');
 });
 
 test('moves down from a sole code block into a new paragraph', async ({

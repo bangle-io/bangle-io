@@ -1,6 +1,7 @@
 import {
   type CollectionType,
   collection,
+  isMac,
   keybinding,
   PRIORITY,
 } from './common';
@@ -12,6 +13,7 @@ import {
   getNodeType,
   insertEmptyParagraphAboveNode,
   insertEmptyParagraphBelowNode,
+  moveNode,
   type PluginContext,
 } from './pm-utils';
 
@@ -21,6 +23,10 @@ export type CodeBlockConfig = {
   // keys
   keyToCodeBlock?: string | false;
   keyExit?: string | false;
+  keyBackspace?: string | false;
+  keyDeleteWordBackward?: string | false;
+  keyMoveUp?: string | false;
+  keyMoveDown?: string | false;
   keyInsertEmptyParaAbove?: string | false;
   keyInsertEmptyParaBelow?: string | false;
 };
@@ -32,6 +38,10 @@ const DEFAULT_CONFIG: RequiredConfig = {
   getParagraphNodeType: defaultGetParagraphNodeType,
   keyToCodeBlock: false,
   keyExit: 'Enter',
+  keyBackspace: 'Backspace',
+  keyDeleteWordBackward: isMac ? 'Alt-Backspace' : false,
+  keyMoveUp: 'Alt-ArrowUp',
+  keyMoveDown: 'Alt-ArrowDown',
   keyInsertEmptyParaAbove: 'Mod-Shift-Enter',
   keyInsertEmptyParaBelow: 'Mod-Enter',
 };
@@ -111,6 +121,10 @@ function pluginKeybindings(config: RequiredConfig) {
         ? chainCommands(convertCommand, exitCommand)
         : convertCommand,
     ],
+    [config.keyBackspace, backspaceEmptyCodeBlock(config)],
+    [config.keyDeleteWordBackward, deletePreviousCodeWord(config)],
+    [config.keyMoveUp, moveCodeBlock(config, 'UP')],
+    [config.keyMoveDown, moveCodeBlock(config, 'DOWN')],
     ['ArrowUp', moveOrInsertBoundaryParagraph(config, 'up')],
     ['ArrowDown', moveOrInsertBoundaryParagraph(config, 'down')],
     [config.keyInsertEmptyParaAbove, insertEmptyParaAboveCodeBlock(config)],
@@ -125,6 +139,16 @@ function pluginKeybindings(config: RequiredConfig) {
 }
 
 // COMMANDS
+function moveCodeBlock(
+  config: RequiredConfig,
+  direction: 'UP' | 'DOWN',
+): Command {
+  return (state, dispatch) => {
+    const codeBlockType = getNodeType(state.schema, config.name);
+    return moveNode(codeBlockType, direction)(state, dispatch);
+  };
+}
+
 function exitCodeBlock(config: RequiredConfig): Command {
   return (state, dispatch) => {
     const { selection } = state;
@@ -288,6 +312,77 @@ function toggleCodeBlock(config: RequiredConfig): Command {
       return setBlockType(paraType)(state, dispatch);
     }
     return setBlockType(codeBlockType)(state, dispatch);
+  };
+}
+
+function backspaceEmptyCodeBlock(config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    const { selection } = state;
+    if (!selection.empty) {
+      return false;
+    }
+
+    const codeBlockType = getNodeType(state.schema, config.name);
+    const node = findParentNodeOfType(codeBlockType)(selection);
+    if (!node || selection.from !== node.start || node.node.content.size > 0) {
+      return false;
+    }
+
+    const parentDepth = node.depth - 1;
+    const index = selection.$from.index(parentDepth);
+    if (index > 0) {
+      return false;
+    }
+
+    return setBlockType(config.getParagraphNodeType(state.schema))(
+      state,
+      dispatch,
+    );
+  };
+}
+
+function deletePreviousCodeWord(config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    const { selection } = state;
+    if (!selection.empty) {
+      return false;
+    }
+
+    const codeBlockType = getNodeType(state.schema, config.name);
+    const node = findParentNodeOfType(codeBlockType)(selection);
+    if (!node) {
+      return false;
+    }
+
+    const textBeforeCursor = selection.$from.parent.textBetween(
+      0,
+      selection.$from.parentOffset,
+    );
+    if (!textBeforeCursor) {
+      return false;
+    }
+
+    const match = /\S+$/u.exec(textBeforeCursor);
+    if (!match) {
+      return false;
+    }
+
+    const deleteStartOffset = match.index;
+    const deleteStart =
+      selection.from - (textBeforeCursor.length - deleteStartOffset);
+    if (deleteStart >= selection.from) {
+      return false;
+    }
+
+    if (dispatch) {
+      const tr = state.tr.delete(deleteStart, selection.from);
+      dispatch(
+        tr
+          .setSelection(TextSelection.create(tr.doc, deleteStart))
+          .scrollIntoView(),
+      );
+    }
+    return true;
   };
 }
 

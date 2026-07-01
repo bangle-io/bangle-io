@@ -200,6 +200,19 @@ export function SlashCommand({
             >
               Heading 3
             </CommandItem>
+            <CommandItem
+              value="code-block code fenced-code snippet"
+              onSelect={() => {
+                dismissCommandUi();
+                ext.codeBlock.command.toggleCodeBlock(
+                  editorView.state,
+                  editorView.dispatch,
+                  editorView,
+                );
+              }}
+            >
+              Code block
+            </CommandItem>
           </CommandGroup>
 
           <CommandSeparator />

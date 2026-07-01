@@ -11,6 +11,13 @@ import { createBangerEditorTestSetup } from '../test-helpers';
 
 const editorTest = createBangerEditorTestSetup();
 const { codeBlock, doc, p } = editorTest.builders;
+const macShortcutEditorTest = createBangerEditorTestSetup({
+  extensions: [
+    setupBase(),
+    setupParagraph(),
+    setupCodeBlock({ keyDeleteWordBackward: 'Alt-Backspace' }),
+  ],
+});
 const nestedEditorTest = createBangerEditorTestSetup({
   extensions: [
     setupBase(),
@@ -42,6 +49,7 @@ const nestedEditorTest = createBangerEditorTestSetup({
 
 afterEach(() => {
   editorTest.cleanup();
+  macShortcutEditorTest.cleanup();
   nestedEditorTest.cleanup();
 });
 
@@ -142,6 +150,52 @@ describe('code block keymap', () => {
     expect(upEditor.pressKey('ArrowUp')).toBe(true);
     upEditor.expectDoc(doc(p(), codeBlock('line')));
     expect(upEditor.selectionParentType()).toBe('paragraph');
+  });
+
+  it('moves code blocks with Alt ArrowUp and ArrowDown', () => {
+    const upEditor = editorTest.createEditor(
+      doc(p('before'), codeBlock('line<cursor>'), p('after')),
+    );
+
+    expect(upEditor.pressKey('ArrowUp', { altKey: true })).toBe(true);
+    upEditor.expectDoc(doc(codeBlock('line'), p('before'), p('after')));
+    expect(upEditor.selectionParentType()).toBe('code_block');
+
+    const downEditor = editorTest.createEditor(
+      doc(p('before'), codeBlock('line<cursor>'), p('after')),
+    );
+
+    expect(downEditor.pressKey('ArrowDown', { altKey: true })).toBe(true);
+    downEditor.expectDoc(doc(p('before'), p('after'), codeBlock('line')));
+    expect(downEditor.selectionParentType()).toBe('code_block');
+  });
+
+  it('turns an empty leading code block into a paragraph on Backspace', () => {
+    const editor = editorTest.createEditor(doc(codeBlock('<cursor>')));
+
+    expect(editor.pressKey('Backspace')).toBe(true);
+
+    editor.expectDoc(doc(p()));
+    expect(editor.selectionParentType()).toBe('paragraph');
+  });
+
+  it('deletes the previous code word with Alt Backspace', () => {
+    const { codeBlock, doc } = macShortcutEditorTest.builders;
+    const longWordEditor = macShortcutEditorTest.createEditor(
+      doc(codeBlock('singlelongword<cursor>')),
+    );
+
+    expect(longWordEditor.pressKey('Backspace', { altKey: true })).toBe(true);
+    longWordEditor.expectDoc(doc(codeBlock()));
+    expect(longWordEditor.selectionParentType()).toBe('code_block');
+
+    const multiWordEditor = macShortcutEditorTest.createEditor(
+      doc(codeBlock('two words<cursor>')),
+    );
+
+    expect(multiWordEditor.pressKey('Backspace', { altKey: true })).toBe(true);
+    multiWordEditor.expectDoc(doc(codeBlock('two ')));
+    expect(multiWordEditor.selectionParentType()).toBe('code_block');
   });
 
   it('does not claim the sidebar shortcut as a code block toggle', () => {
