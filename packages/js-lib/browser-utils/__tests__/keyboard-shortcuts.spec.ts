@@ -29,6 +29,56 @@ describe('ShortcutManager', () => {
     expect(handler).toHaveBeenCalled();
   });
 
+  test('should not handle app shortcuts from native form controls', () => {
+    const handler = vi.fn();
+    const keyBinding: KeyBinding = {
+      id: 'formShortcut',
+      keys: 'ctrl-s',
+    };
+    const input = document.createElement('input');
+
+    shortcutManager.register(keyBinding, handler);
+    input.addEventListener('keydown', (event) => {
+      shortcutManager.handleEvent(event);
+    });
+
+    const event = new KeyboardEvent('keydown', {
+      key: 's',
+      ctrlKey: true,
+      bubbles: true,
+      cancelable: true,
+    });
+    input.dispatchEvent(event);
+
+    expect(handler).not.toHaveBeenCalled();
+    expect(event.defaultPrevented).toBe(false);
+  });
+
+  test('should handle opt-in shortcuts from native form controls', () => {
+    const handler = vi.fn();
+    const keyBinding: KeyBinding = {
+      id: 'formAllowedShortcut',
+      keys: 'ctrl-k',
+    };
+    const input = document.createElement('input');
+
+    shortcutManager.register(keyBinding, handler, { allowInInput: true });
+    input.addEventListener('keydown', (event) => {
+      shortcutManager.handleEvent(event);
+    });
+
+    const event = new KeyboardEvent('keydown', {
+      key: 'k',
+      ctrlKey: true,
+      bubbles: true,
+      cancelable: true,
+    });
+    input.dispatchEvent(event);
+
+    expect(handler).toHaveBeenCalled();
+    expect(event.defaultPrevented).toBe(true);
+  });
+
   test('should call all cleanup functions and clear handlers on deregisterAll', () => {
     const handler = vi.fn();
 
@@ -147,6 +197,26 @@ describe('ShortcutManager', () => {
 
     const event = new KeyboardEvent('keydown', {
       key: 's',
+      metaKey: true,
+    });
+
+    shortcutManager.handleEvent(event);
+
+    expect(handler).toHaveBeenCalled();
+  });
+
+  test('should match meta backslash events to canonical ctrl backslash shortcuts', () => {
+    const handler = vi.fn();
+    const shortcutManager = new ShortcutManager({ isDarwin: true });
+    const keyBinding: KeyBinding = {
+      id: 'canonicalCtrlBackslashShortcut',
+      keys: 'ctrl-\\',
+    };
+
+    shortcutManager.register(keyBinding, handler);
+
+    const event = new KeyboardEvent('keydown', {
+      key: '\\',
       metaKey: true,
     });
 

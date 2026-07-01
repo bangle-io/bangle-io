@@ -32,7 +32,7 @@ export const uiCommands = narrow([
       services: ['workbenchState'],
     },
     omniSearch: true,
-    keybindings: ['meta', '\\'],
+    keybindings: ['ctrl', '\\'],
     args: null,
   },
   {
@@ -49,6 +49,7 @@ export const uiCommands = narrow([
     id: 'command::ui:toggle-omni-search',
     dependencies: { services: ['workbenchState'] },
     keybindings: [...KEYBOARD_SHORTCUTS.toggleOmniSearch.keys],
+    allowShortcutInInputs: true,
     args: {
       prefill: T.Optional(T.String),
     },

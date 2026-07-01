@@ -1,12 +1,27 @@
-import { type CollectionType, collection, keybinding } from './common';
-import type { Command, EditorState, NodeSpec, NodeType, Schema } from './pm';
-import { inputRules, setBlockType, textblockTypeInputRule } from './pm';
+import {
+  type CollectionType,
+  collection,
+  isMac,
+  keybinding,
+  PRIORITY,
+} from './common';
+import type {
+  Command,
+  EditorState,
+  NodeSpec,
+  NodeType,
+  Schema,
+  Transaction,
+} from './pm';
+import { chainCommands, setBlockType, TextSelection } from './pm';
 import {
   defaultGetParagraphNodeType,
   findParentNodeOfType,
   getNodeType,
+  insertEmptyParagraphAboveNode,
   insertEmptyParagraphBelowNode,
-  type PluginContext,
+  moveNode,
+  safeInsert,
 } from './pm-utils';
 
 export type CodeBlockConfig = {
@@ -15,6 +30,19 @@ export type CodeBlockConfig = {
   // keys
   keyToCodeBlock?: string | false;
   keyExit?: string | false;
+  keyBackspace?: string | false;
+  keyDeleteWordBackward?: string | false;
+  keyJumpToLineStart?: string | false;
+  keyJumpToLineEnd?: string | false;
+  keyMoveUp?: string | false;
+  keyMoveDown?: string | false;
+  keyMoveToPreviousBlock?: string | false;
+  keyMoveToNextBlock?: string | false;
+  keyIndent?: string | false;
+  keyOutdent?: string | false;
+  keyInsertEmptyParaAbove?: string | false;
+  keyInsertEmptyParaBelow?: string | false;
+  indentText?: string;
 };
 
 type RequiredConfig = Required<CodeBlockConfig>;
@@ -22,8 +50,21 @@ type RequiredConfig = Required<CodeBlockConfig>;
 const DEFAULT_CONFIG: RequiredConfig = {
   name: 'code_block',
   getParagraphNodeType: defaultGetParagraphNodeType,
-  keyToCodeBlock: 'Mod-\\\\',
+  keyToCodeBlock: false,
   keyExit: 'Enter',
+  keyBackspace: 'Backspace',
+  keyDeleteWordBackward: isMac ? 'Alt-Backspace' : false,
+  keyJumpToLineStart: isMac ? 'Ctrl-a' : false,
+  keyJumpToLineEnd: isMac ? 'Ctrl-e' : false,
+  keyMoveUp: 'Alt-ArrowUp',
+  keyMoveDown: 'Alt-ArrowDown',
+  keyMoveToPreviousBlock: 'ArrowUp',
+  keyMoveToNextBlock: 'ArrowDown',
+  keyIndent: 'Tab',
+  keyOutdent: 'Shift-Tab',
+  keyInsertEmptyParaAbove: 'Mod-Shift-Enter',
+  keyInsertEmptyParaBelow: 'Mod-Enter',
+  indentText: '  ',
 };
 
 export function setupCodeBlock(userConfig?: CodeBlockConfig) {
@@ -63,7 +104,6 @@ export function setupCodeBlock(userConfig?: CodeBlockConfig) {
   };
 
   const plugin = {
-    inputRules: pluginInputRules(config),
     keybindings: pluginKeybindings(config),
   };
 
@@ -81,22 +121,52 @@ export function setupCodeBlock(userConfig?: CodeBlockConfig) {
   });
 }
 
-// PLUGINS
-function pluginInputRules(config: RequiredConfig) {
-  return ({ schema }: PluginContext) => {
-    const { name } = config;
-    const type = getNodeType(schema, name);
-    return inputRules({
-      rules: [textblockTypeInputRule(/^```$/, type)],
-    });
-  };
-}
-
 function pluginKeybindings(config: RequiredConfig) {
-  return keybinding([[config.keyExit, exitCodeBlock(config)]], 'code-block');
+  const convertCommand = convertFenceToCodeBlock(config);
+  const exitCommand = exitCodeBlock(config);
+  const keys: Array<[string | false, Command]> = [
+    [config.keyToCodeBlock, toggleCodeBlock(config)],
+    [
+      'Enter',
+      config.keyExit === 'Enter'
+        ? chainCommands(convertCommand, exitCommand)
+        : convertCommand,
+    ],
+    [config.keyBackspace, backspaceEmptyCodeBlock(config)],
+    [config.keyDeleteWordBackward, deletePreviousCodeWord(config)],
+    [config.keyJumpToLineStart, jumpToCodeLineBoundary(config, 'start')],
+    [config.keyJumpToLineEnd, jumpToCodeLineBoundary(config, 'end')],
+    [config.keyMoveUp, moveCodeBlock(config, 'UP')],
+    [config.keyMoveDown, moveCodeBlock(config, 'DOWN')],
+    [config.keyIndent, indentCodeLines(config)],
+    [config.keyOutdent, outdentCodeLines(config)],
+    [
+      config.keyMoveToPreviousBlock,
+      moveOrInsertBoundaryParagraph(config, 'up'),
+    ],
+    [config.keyMoveToNextBlock, moveOrInsertBoundaryParagraph(config, 'down')],
+    [config.keyInsertEmptyParaAbove, insertEmptyParaAboveCodeBlock(config)],
+    [config.keyInsertEmptyParaBelow, insertEmptyParaBelowCodeBlock(config)],
+  ];
+
+  if (config.keyExit && config.keyExit !== 'Enter') {
+    keys.push([config.keyExit, exitCommand]);
+  }
+
+  return keybinding(keys, 'code-block', PRIORITY.high);
 }
 
 // COMMANDS
+function moveCodeBlock(
+  config: RequiredConfig,
+  direction: 'UP' | 'DOWN',
+): Command {
+  return (state, dispatch) => {
+    const codeBlockType = getNodeType(state.schema, config.name);
+    return moveNode(codeBlockType, direction)(state, dispatch);
+  };
+}
+
 function exitCodeBlock(config: RequiredConfig): Command {
   return (state, dispatch) => {
     const { selection } = state;
@@ -110,40 +180,143 @@ function exitCodeBlock(config: RequiredConfig): Command {
       return false;
     }
 
-    if (dispatch) {
-      const isAtEnd = from === $from.end(node.depth);
-      const isAtStart = from === node.start;
-      const lastNode =
-        isAtEnd && !isAtStart
-          ? $from.doc.nodeAt(
-              // gives the last position inside node
-              $from.end(node.depth) - 1,
-            )
-          : null;
+    const isAtEnd = from === $from.end(node.depth);
+    const isAtStart = from === node.start;
 
-      const breakNode =
-        lastNode?.isText &&
-        lastNode.textContent[lastNode.textContent.length - 1] === '\n';
+    if (isAtEnd && node.node.textContent.endsWith('\n\n')) {
+      if (dispatch) {
+        const paragraph = getParagraphNodeType(state.schema).createAndFill();
+        if (!paragraph) {
+          return false;
+        }
 
-      if (isAtEnd && !isAtStart && breakNode) {
-        // Case 1: User presses enter and the previous inline node is a hard break, and the line is empty
-        insertEmptyParagraphBelowNode(codeBlockType, getParagraphNodeType)(
-          state,
-          dispatch,
-        );
-        return true;
+        const tr = safeInsert(
+          paragraph,
+          node.pos + node.node.nodeSize,
+        )(state.tr);
+        dispatch(tr.scrollIntoView());
       }
-      if (isAtStart && isAtEnd) {
-        // Case 2: User presses enter and the entire text in the code block is empty
-        insertEmptyParagraphBelowNode(codeBlockType, getParagraphNodeType)(
-          state,
-          dispatch,
-        );
-        return true;
-      }
+      return true;
+    }
+
+    if (isAtStart && isAtEnd) {
+      // Empty code blocks should not trap the cursor.
+      return insertEmptyParagraphBelowNode(codeBlockType, getParagraphNodeType)(
+        state,
+        dispatch,
+      );
     }
 
     return false;
+  };
+}
+
+function moveOrInsertBoundaryParagraph(
+  config: RequiredConfig,
+  direction: 'up' | 'down',
+): Command {
+  return (state, dispatch, view) => {
+    const { selection } = state;
+    if (!selection.empty) {
+      return false;
+    }
+
+    const codeBlockType = getNodeType(state.schema, config.name);
+    const node = findParentNodeOfType(codeBlockType)(selection);
+    if (!node) {
+      return false;
+    }
+
+    const { $from, from } = selection;
+    const isAtStart = from === node.start;
+    const isAtEnd = from === $from.end(node.depth);
+    const textBeforeCursor = $from.parent.textBetween(0, $from.parentOffset);
+    const textAfterCursor = $from.parent.textBetween(
+      $from.parentOffset,
+      $from.parent.content.size,
+    );
+    const isOnFirstLine = !textBeforeCursor.includes('\n');
+    const isOnLastLine = !textAfterCursor.includes('\n');
+    const isAtBoundary =
+      direction === 'up'
+        ? isAtStart || isOnFirstLine || Boolean(view?.endOfTextblock('up'))
+        : isAtEnd || isOnLastLine || Boolean(view?.endOfTextblock('down'));
+    const parentDepth = node.depth - 1;
+    const parent = $from.node(parentDepth);
+    const index = $from.index(parentDepth);
+    const isFirstChild = index === 0;
+    const isLastChild = index === parent.childCount - 1;
+
+    if (direction === 'up' && isAtBoundary) {
+      if (!isFirstChild) {
+        const previous = parent.child(index - 1);
+        if (previous.isTextblock) {
+          if (dispatch) {
+            const previousPos = node.pos - previous.nodeSize;
+            dispatch(
+              state.tr
+                .setSelection(
+                  TextSelection.create(
+                    state.doc,
+                    previousPos + 1 + previous.content.size,
+                  ),
+                )
+                .scrollIntoView(),
+            );
+          }
+          return true;
+        }
+      }
+
+      return insertEmptyParagraphAboveNode(
+        codeBlockType,
+        config.getParagraphNodeType,
+      )(state, dispatch);
+    }
+
+    if (direction === 'down' && isAtBoundary) {
+      if (!isLastChild) {
+        const next = parent.child(index + 1);
+        if (next.isTextblock) {
+          if (dispatch) {
+            const nextPos = node.pos + node.node.nodeSize;
+            dispatch(
+              state.tr
+                .setSelection(TextSelection.create(state.doc, nextPos + 1))
+                .scrollIntoView(),
+            );
+          }
+          return true;
+        }
+      }
+
+      return insertEmptyParagraphBelowNode(
+        codeBlockType,
+        config.getParagraphNodeType,
+      )(state, dispatch);
+    }
+
+    return false;
+  };
+}
+
+function insertEmptyParaAboveCodeBlock(config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    const codeBlockType = getNodeType(state.schema, config.name);
+    return insertEmptyParagraphAboveNode(
+      codeBlockType,
+      config.getParagraphNodeType,
+    )(state, dispatch);
+  };
+}
+
+function insertEmptyParaBelowCodeBlock(config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    const codeBlockType = getNodeType(state.schema, config.name);
+    return insertEmptyParagraphBelowNode(
+      codeBlockType,
+      config.getParagraphNodeType,
+    )(state, dispatch);
   };
 }
 
@@ -157,6 +330,299 @@ function toggleCodeBlock(config: RequiredConfig): Command {
       return setBlockType(paraType)(state, dispatch);
     }
     return setBlockType(codeBlockType)(state, dispatch);
+  };
+}
+
+function backspaceEmptyCodeBlock(config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    const { selection } = state;
+    if (!selection.empty) {
+      return false;
+    }
+
+    const codeBlockType = getNodeType(state.schema, config.name);
+    const node = findParentNodeOfType(codeBlockType)(selection);
+    if (!node || selection.from !== node.start || node.node.content.size > 0) {
+      return false;
+    }
+
+    const parentDepth = node.depth - 1;
+    const index = selection.$from.index(parentDepth);
+    if (index > 0) {
+      return false;
+    }
+
+    return setBlockType(config.getParagraphNodeType(state.schema))(
+      state,
+      dispatch,
+    );
+  };
+}
+
+function deletePreviousCodeWord(config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    const { selection } = state;
+    if (!selection.empty) {
+      return false;
+    }
+
+    const codeBlockType = getNodeType(state.schema, config.name);
+    const node = findParentNodeOfType(codeBlockType)(selection);
+    if (!node) {
+      return false;
+    }
+
+    const textBeforeCursor = selection.$from.parent.textBetween(
+      0,
+      selection.$from.parentOffset,
+    );
+    if (!textBeforeCursor) {
+      return false;
+    }
+
+    const match = /\S+\s*$/u.exec(textBeforeCursor);
+    if (!match) {
+      return false;
+    }
+
+    const deleteStartOffset = match.index;
+    const deleteStart =
+      selection.from - (textBeforeCursor.length - deleteStartOffset);
+    if (deleteStart >= selection.from) {
+      return false;
+    }
+
+    if (dispatch) {
+      const tr = state.tr.delete(deleteStart, selection.from);
+      dispatch(
+        tr
+          .setSelection(TextSelection.create(tr.doc, deleteStart))
+          .scrollIntoView(),
+      );
+    }
+    return true;
+  };
+}
+
+function jumpToCodeLineBoundary(
+  config: RequiredConfig,
+  boundary: 'start' | 'end',
+): Command {
+  return (state, dispatch) => {
+    const { selection } = state;
+    if (!selection.empty) {
+      return false;
+    }
+
+    const codeBlockType = getNodeType(state.schema, config.name);
+    const node = findParentNodeOfType(codeBlockType)(selection);
+    if (!node) {
+      return false;
+    }
+
+    const { $from } = selection;
+    const textBeforeCursor = $from.parent.textBetween(0, $from.parentOffset);
+    const textAfterCursor = $from.parent.textBetween(
+      $from.parentOffset,
+      $from.parent.content.size,
+    );
+    const lineOffset =
+      boundary === 'start'
+        ? textBeforeCursor.lastIndexOf('\n') + 1
+        : $from.parentOffset + lineEndOffset(textAfterCursor);
+
+    if (dispatch) {
+      dispatch(
+        state.tr
+          .setSelection(
+            TextSelection.create(state.doc, node.start + lineOffset),
+          )
+          .scrollIntoView(),
+      );
+    }
+    return true;
+  };
+}
+
+function lineEndOffset(textAfterCursor: string): number {
+  const nextLineBreak = textAfterCursor.indexOf('\n');
+  return nextLineBreak === -1 ? textAfterCursor.length : nextLineBreak;
+}
+
+function indentCodeLines(config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    const codeBlockType = getNodeType(state.schema, config.name);
+    const node = findParentNodeOfType(codeBlockType)(state.selection);
+    if (!node) {
+      return false;
+    }
+
+    const { from, to, empty } = state.selection;
+    const fromOffset = from - node.start;
+    const toOffset = to - node.start;
+    if (empty) {
+      if (dispatch) {
+        dispatch(state.tr.insertText(config.indentText).scrollIntoView());
+      }
+      return true;
+    }
+
+    const text = node.node.textContent;
+    const range = selectedCodeLineRange(text, fromOffset, toOffset);
+    const original = text.slice(range.from, range.to);
+    const replacement = original
+      .split('\n')
+      .map((line) => `${config.indentText}${line}`)
+      .join('\n');
+
+    if (dispatch) {
+      const tr = replaceCodeText(
+        state.tr,
+        node.start + range.from,
+        node.start + range.to,
+        replacement,
+      );
+      tr.setSelection(
+        TextSelection.create(
+          tr.doc,
+          node.start + range.from,
+          node.start + range.from + replacement.length,
+        ),
+      );
+      dispatch(tr.scrollIntoView());
+    }
+    return true;
+  };
+}
+
+function outdentCodeLines(config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    const codeBlockType = getNodeType(state.schema, config.name);
+    const node = findParentNodeOfType(codeBlockType)(state.selection);
+    if (!node) {
+      return false;
+    }
+
+    const { from, to } = state.selection;
+    const text = node.node.textContent;
+    const range = selectedCodeLineRange(
+      text,
+      from - node.start,
+      to - node.start,
+    );
+    const original = text.slice(range.from, range.to);
+    const empty = state.selection.empty;
+    const replacement = original
+      .split('\n')
+      .map((line) => removeCodeIndent(line, config.indentText.length))
+      .join('\n');
+
+    if (replacement === original) {
+      return false;
+    }
+
+    if (dispatch) {
+      const tr = replaceCodeText(
+        state.tr,
+        node.start + range.from,
+        node.start + range.to,
+        replacement,
+      );
+      if (empty) {
+        const cursorOffset = from - node.start;
+        const removedBeforeCursor = original.length - replacement.length;
+        tr.setSelection(
+          TextSelection.create(
+            tr.doc,
+            node.start +
+              Math.max(range.from, cursorOffset - removedBeforeCursor),
+          ),
+        );
+      } else {
+        tr.setSelection(
+          TextSelection.create(
+            tr.doc,
+            node.start + range.from,
+            node.start + range.from + replacement.length,
+          ),
+        );
+      }
+      dispatch(tr.scrollIntoView());
+    }
+    return true;
+  };
+}
+
+function selectedCodeLineRange(text: string, from: number, to: number) {
+  const start = from === 0 ? 0 : text.lastIndexOf('\n', from - 1) + 1;
+  const adjustedTo = to > from && text[to - 1] === '\n' ? to - 1 : to;
+  const nextLineBreak = text.indexOf('\n', adjustedTo);
+  const end = nextLineBreak === -1 ? text.length : nextLineBreak;
+  return { from: start, to: end };
+}
+
+function removeCodeIndent(line: string, maxSpaces: number): string {
+  if (line.startsWith('\t')) {
+    return line.slice(1);
+  }
+
+  const match = line.match(/^ +/);
+  if (!match) {
+    return line;
+  }
+
+  return line.slice(Math.min(match[0].length, maxSpaces));
+}
+
+function replaceCodeText(
+  tr: Transaction,
+  from: number,
+  to: number,
+  text: string,
+) {
+  if (text) {
+    return tr.replaceWith(from, to, tr.doc.type.schema.text(text));
+  }
+  return tr.delete(from, to);
+}
+
+function convertFenceToCodeBlock(config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    const { selection } = state;
+    if (!selection.empty) {
+      return false;
+    }
+
+    const { $from } = selection;
+    const paragraphType = config.getParagraphNodeType(state.schema);
+
+    if ($from.parent.type !== paragraphType || selection.from !== $from.end()) {
+      return false;
+    }
+
+    const text = $from.parent.textContent;
+    const match = text.match(/^```(?:([A-Za-z0-9_+-]+))?$/);
+    if (!match) {
+      return false;
+    }
+
+    const codeBlockType = getNodeType(state.schema, config.name);
+    const language = match[1] || '';
+    if (!setBlockType(codeBlockType, { language })(state)) {
+      return false;
+    }
+
+    if (dispatch) {
+      const from = $from.start();
+      const to = $from.end();
+      const tr = state.tr
+        .setBlockType(from, to, codeBlockType, { language })
+        .delete(from, to);
+
+      dispatch(tr.scrollIntoView());
+    }
+
+    return true;
   };
 }
 
@@ -176,10 +642,14 @@ function markdown(config: RequiredConfig): CollectionType['markdown'] {
     nodes: {
       [name]: {
         toMarkdown(state, node) {
-          state.write(`\`\`\`${node.attrs.language || ''}\n`);
-          state.text(node.textContent, false);
-          state.ensureNewLine();
-          state.write('```');
+          const info = getCodeBlockInfo(node.attrs.language);
+          const fence = createCodeFence(node.textContent, info);
+          state.write(`${fence}${info}\n`);
+          state.write(node.textContent);
+          if (node.textContent) {
+            state.write('\n');
+          }
+          state.write(fence);
           state.closeBlock(node);
         },
         parseMarkdown: {
@@ -193,4 +663,30 @@ function markdown(config: RequiredConfig): CollectionType['markdown'] {
       },
     },
   };
+}
+
+function getCodeBlockInfo(language: unknown): string {
+  return typeof language === 'string' ? language : '';
+}
+
+function createCodeFence(text: string, info: string): string {
+  const marker = info.includes('`') ? '~' : '`';
+  const longestRun = longestFenceMarkerRun(text, marker);
+  return marker.repeat(Math.max(3, longestRun + 1));
+}
+
+function longestFenceMarkerRun(text: string, marker: '`' | '~'): number {
+  let longest = 0;
+  let current = 0;
+
+  for (const char of text) {
+    if (char === marker) {
+      current += 1;
+      longest = Math.max(longest, current);
+    } else {
+      current = 0;
+    }
+  }
+
+  return longest;
 }

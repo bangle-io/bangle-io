@@ -18,6 +18,7 @@ export type Command = {
   disabled?: boolean;
   keywords?: string[];
   keybindings?: string[];
+  allowShortcutInInputs?: boolean;
   dependencies?: {
     /**
      * The services that are required to be available in the command handler ctx

@@ -54,6 +54,11 @@ export const t = {
         remove: 'Link entfernen',
         invalidUrl: 'Webadresse oder Markdown-Pfad eingeben.',
       },
+      codeBlock: {
+        copy: 'Kopieren',
+        copied: 'Kopiert',
+        editLanguage: 'Sprache bearbeiten',
+      },
       wikiLinkMenu: {
         label: 'Mit einer Notiz verknüpfen',
         empty: 'Keine Notizen gefunden',

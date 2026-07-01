@@ -390,13 +390,15 @@ function flatListToMarkdown(
   // 3) Indentation grows with nesting level.
   //    level=0 => ""; level=1 => "  "; etc.
   const baseIndent = '  '.repeat(level);
+  const firstDelim = `${baseIndent + marker} `;
+  const continuationDelim = ' '.repeat(firstDelim.length);
 
   // 4) Wrap each list(...) node as one item.
   //    "wrapBlock" will prefix the first line with (firstDelim) and subsequent lines with (delim).
   //    That ensures correct indentation for multiline content inside this item.
   state.wrapBlock(
-    baseIndent, // delim => subsequent lines
-    `${baseIndent + marker} `, // firstDelim => first line
+    continuationDelim, // delim => subsequent lines
+    firstDelim, // firstDelim => first line
     node,
     () => {
       // Render normal (non-list) children inside this item

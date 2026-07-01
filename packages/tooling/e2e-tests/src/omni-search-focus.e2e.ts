@@ -63,6 +63,25 @@ test('command bar restores editor focus after Escape and Enter', async ({
   await expect(page.locator(EDITOR_FOCUSED_SELECTOR)).toBeVisible();
 });
 
+test('command bar closes with the app shortcut while its input is focused', async ({
+  page,
+}) => {
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName: 'omni-shortcut-close-workspace',
+    noteName: 'omni-shortcut-close-note',
+  });
+
+  await pressAppShortcut(page, 'k');
+  const commandInput = page.getByPlaceholder('Type a command or search...');
+  await expect(commandInput).toBeFocused();
+
+  await pressAppShortcut(page, 'k');
+
+  await expect(
+    page.getByRole('dialog', { name: 'omni command bar' }),
+  ).toBeHidden();
+});
+
 test('command bar and all-commands route stay centered when translate utilities are unavailable', async ({
   page,
 }) => {

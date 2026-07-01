@@ -16,6 +16,10 @@ export interface RegisterOptions {
    * Metadata to be associated with the shortcut.
    */
   metadata?: Record<string, string>;
+  /**
+   * If true, handle this shortcut while focus is inside a native form control.
+   */
+  allowInInput?: boolean;
 }
 
 export interface KeyBinding {
@@ -27,7 +31,19 @@ type HandlerData = {
   keyBinding: KeyBinding;
   handler: ShortcutHandler;
   metadata?: Record<string, string>;
+  allowInInput: boolean;
 };
+
+function isNativeFormTarget(target: EventTarget | null): boolean {
+  return (
+    (typeof HTMLInputElement !== 'undefined' &&
+      target instanceof HTMLInputElement) ||
+    (typeof HTMLTextAreaElement !== 'undefined' &&
+      target instanceof HTMLTextAreaElement) ||
+    (typeof HTMLSelectElement !== 'undefined' &&
+      target instanceof HTMLSelectElement)
+  );
+}
 
 export class ShortcutManager {
   constructor(
@@ -67,6 +83,7 @@ export class ShortcutManager {
       keyBinding,
       handler,
       metadata: options.metadata,
+      allowInInput: options.allowInInput ?? false,
     };
 
     handlersList.push(handlerData);
@@ -117,7 +134,16 @@ export class ShortcutManager {
         : undefined);
 
     if (handlersList) {
-      for (const { handler, keyBinding, metadata } of handlersList) {
+      const formTarget = isNativeFormTarget(event.target);
+      for (const {
+        allowInInput,
+        handler,
+        keyBinding,
+        metadata,
+      } of handlersList) {
+        if (formTarget && !allowInInput) {
+          continue;
+        }
         const result = handler({
           keyBinding,
           metadata,
