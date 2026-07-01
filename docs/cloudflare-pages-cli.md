@@ -145,8 +145,9 @@ Required GitHub repository secrets on `bangle-io/bangle-io`:
 The OAuth secrets mirror Wrangler's local auth config for the Cloudflare account
 that owns `bangle-io-2`. The workflow recreates that Wrangler config before
 deploying. If Wrangler refreshes the OAuth credentials during a run, the
-workflow uses the existing `GH_TOKEN` repository secret to persist the refreshed
-Cloudflare values back to repository secrets.
+workflow attempts to use the existing `GH_TOKEN` repository secret to persist
+the refreshed Cloudflare values back to repository secrets. That refresh is
+best-effort and does not block posting the preview URL.
 
 ## Manual deploy commands
 
