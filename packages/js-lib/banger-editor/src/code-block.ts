@@ -1,4 +1,9 @@
-import { type CollectionType, collection, keybinding } from './common';
+import {
+  type CollectionType,
+  collection,
+  keybinding,
+  PRIORITY,
+} from './common';
 import type { Command, EditorState, NodeSpec, NodeType, Schema } from './pm';
 import { chainCommands, inputRules, setBlockType, TextSelection } from './pm';
 import {
@@ -116,7 +121,7 @@ function pluginKeybindings(config: RequiredConfig) {
     keys.push([config.keyExit, exitCommand]);
   }
 
-  return keybinding(keys, 'code-block');
+  return keybinding(keys, 'code-block', PRIORITY.high);
 }
 
 // COMMANDS
@@ -309,6 +314,10 @@ function convertFenceToCodeBlock(config: RequiredConfig): Command {
     if (dispatch) {
       const codeBlockType = getNodeType(state.schema, config.name);
       const language = match[1] || '';
+      if (!setBlockType(codeBlockType, { language })(state)) {
+        return false;
+      }
+
       const from = $from.start();
       const to = $from.end();
       const tr = state.tr
@@ -338,10 +347,12 @@ function markdown(config: RequiredConfig): CollectionType['markdown'] {
     nodes: {
       [name]: {
         toMarkdown(state, node) {
-          state.write(`\`\`\`${node.attrs.language || ''}\n`);
+          const info = getCodeBlockInfo(node.attrs.language);
+          const fence = createCodeFence(node.textContent, info);
+          state.write(`${fence}${info}\n`);
           state.text(node.textContent, false);
           state.ensureNewLine();
-          state.write('```');
+          state.write(fence);
           state.closeBlock(node);
         },
         parseMarkdown: {
@@ -355,4 +366,30 @@ function markdown(config: RequiredConfig): CollectionType['markdown'] {
       },
     },
   };
+}
+
+function getCodeBlockInfo(language: unknown): string {
+  return typeof language === 'string' ? language : '';
+}
+
+function createCodeFence(text: string, info: string): string {
+  const marker = info.includes('`') ? '~' : '`';
+  const longestRun = longestFenceMarkerRun(text, marker);
+  return marker.repeat(Math.max(3, longestRun + 1));
+}
+
+function longestFenceMarkerRun(text: string, marker: '`' | '~'): number {
+  let longest = 0;
+  let current = 0;
+
+  for (const char of text) {
+    if (char === marker) {
+      current += 1;
+      longest = Math.max(longest, current);
+    } else {
+      current = 0;
+    }
+  }
+
+  return longest;
 }

@@ -1,12 +1,49 @@
 // @vitest-environment jsdom
 
 import { afterEach, describe, expect, it } from 'vitest';
+import { setupBase } from '../base';
+import { setupBlockquote } from '../blockquote';
+import { setupCodeBlock } from '../code-block';
+import { collection } from '../common';
+import { setupList } from '../list';
+import { setupParagraph } from '../paragraph';
 import { createBangerEditorTestSetup } from '../test-helpers';
 
 const editorTest = createBangerEditorTestSetup();
 const { codeBlock, doc, p } = editorTest.builders;
+const nestedEditorTest = createBangerEditorTestSetup({
+  extensions: [
+    setupBase(),
+    setupParagraph(),
+    setupBlockquote(),
+    setupList(),
+    setupCodeBlock(),
+    collection({
+      id: 'restricted-test-container',
+      nodes: {
+        restricted: {
+          content: 'paragraph+',
+          group: 'block',
+          parseDOM: [{ tag: 'section[data-restricted]' }],
+          toDOM: () => ['section', { 'data-restricted': 'true' }, 0],
+        },
+      },
+    }),
+  ],
+  builderAliases: {
+    bq: { nodeType: 'blockquote' },
+    codeBlock: { nodeType: 'code_block', language: '' },
+    doc: { nodeType: 'doc' },
+    list: { nodeType: 'list', kind: 'bullet' },
+    p: { nodeType: 'paragraph' },
+    restricted: { nodeType: 'restricted' },
+  },
+});
 
-afterEach(editorTest.cleanup);
+afterEach(() => {
+  editorTest.cleanup();
+  nestedEditorTest.cleanup();
+});
 
 describe('code block keymap', () => {
   it('exits a code block after repeated Enter at the end', () => {
@@ -112,5 +149,45 @@ describe('code block keymap', () => {
 
     expect(editor.runKeyDownHandlers('\\', { ctrlKey: true })).toBe(false);
     editor.expectDoc(doc(p('plain text')));
+  });
+
+  it('converts typed fences inside schema-valid block containers', () => {
+    const blockquote = nestedEditorTest.nodeBuilder('bq');
+    const list = nestedEditorTest.nodeBuilder('list');
+    const nestedDoc = nestedEditorTest.nodeBuilder('doc');
+    const nestedCodeBlock = nestedEditorTest.nodeBuilder('codeBlock');
+    const nestedParagraph = nestedEditorTest.nodeBuilder('p');
+    const blockquoteEditor = nestedEditorTest.createEditor(
+      nestedDoc(blockquote(nestedParagraph('```js<cursor>'))),
+    );
+
+    expect(blockquoteEditor.pressKey('Enter')).toBe(true);
+    blockquoteEditor.expectDoc(
+      nestedDoc(blockquote(nestedCodeBlock({ language: 'js' }))),
+    );
+    expect(blockquoteEditor.selectionParentType()).toBe('code_block');
+
+    const listEditor = nestedEditorTest.createEditor(
+      nestedDoc(list(nestedParagraph('```ts<cursor>'))),
+    );
+
+    expect(listEditor.pressKey('Enter')).toBe(true);
+    listEditor.expectDoc(nestedDoc(list(nestedCodeBlock({ language: 'ts' }))));
+    expect(listEditor.selectionParentType()).toBe('code_block');
+  });
+
+  it('does not convert typed fences when the parent schema forbids code blocks', () => {
+    const restricted = nestedEditorTest.nodeBuilder('restricted');
+    const nestedDoc = nestedEditorTest.nodeBuilder('doc');
+    const nestedParagraph = nestedEditorTest.nodeBuilder('p');
+    const editor = nestedEditorTest.createEditor(
+      nestedDoc(restricted(nestedParagraph('```<cursor>'))),
+    );
+
+    expect(editor.pressKey('Enter')).toBe(true);
+    editor.expectDoc(
+      nestedDoc(restricted(nestedParagraph('```'), nestedParagraph())),
+    );
+    expect(editor.selectionParentType()).toBe('paragraph');
   });
 });

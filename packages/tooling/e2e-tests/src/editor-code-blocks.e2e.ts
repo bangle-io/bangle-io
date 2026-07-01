@@ -31,6 +31,52 @@ test('converts a typed fenced-code marker into a persisted code block', async ({
     .toBe('```js\nconsole.log("typed");\n```');
 });
 
+test('converts a typed fenced-code marker inside a list item', async ({
+  page,
+}) => {
+  const workspaceName = 'code-block-list-fence';
+  const noteName = 'typed-list-code';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await clearEditor(page, {});
+  await editor.pressSequentially('- ');
+  await editor.pressSequentially('```js');
+  await page.keyboard.press('Enter');
+  await editor.pressSequentially('console.log("listed");');
+
+  await expect(editor.locator('pre code')).toContainText(
+    'console.log("listed");',
+  );
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('- ```js\n  console.log("listed");\n  ```');
+});
+
+test('converts a typed fenced-code marker inside a blockquote', async ({
+  page,
+}) => {
+  const workspaceName = 'code-block-blockquote-fence';
+  const noteName = 'typed-blockquote-code';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await clearEditor(page, {});
+  await editor.pressSequentially('> ');
+  await editor.pressSequentially('```ts');
+  await page.keyboard.press('Enter');
+  await editor.pressSequentially('const quoted = true;');
+
+  await expect(editor.locator('blockquote pre code')).toContainText(
+    'const quoted = true;',
+  );
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('> ```ts\n> const quoted = true;\n> ```');
+});
+
 test('copies code-block text from the visible code action', async ({
   context,
   page,
