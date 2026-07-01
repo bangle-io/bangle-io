@@ -66,6 +66,7 @@ function clickAtEnd(
 ) {
   if (
     event.button !== 0 ||
+    hasMouseModifier(event) ||
     event.defaultPrevented ||
     !view.editable ||
     !isClickBelowLastTopLevelNode(view, event)
@@ -90,6 +91,10 @@ function clickAtEnd(
   view.dispatch(tr.scrollIntoView());
   event.preventDefault();
   return true;
+}
+
+function hasMouseModifier(event: MouseEvent): boolean {
+  return event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
 }
 
 function isClickBelowLastTopLevelNode(view: EditorView, event: MouseEvent) {

@@ -125,6 +125,33 @@ describe('trailing node', () => {
     expect(insideEvent.defaultPrevented).toBe(false);
     codeBlockEditor.expectDoc(doc(codeBlock('done')));
   });
+
+  it('does not add a paragraph for modified clicks below the final node', () => {
+    const editor = editorTest.createEditor(doc(codeBlock('done')));
+
+    mockEditorBounds(editor.view.dom, {
+      bottom: 500,
+      left: 0,
+      right: 500,
+      top: 0,
+    });
+    mockEditorBounds(editor.view.dom.lastElementChild, {
+      bottom: 100,
+      left: 0,
+      right: 500,
+      top: 20,
+    });
+
+    for (const modifier of ['shiftKey', 'metaKey'] as const) {
+      const event = dispatchMouseDown(editor.view.dom, {
+        clientY: 160,
+        [modifier]: true,
+      });
+
+      expect(event.defaultPrevented).toBe(false);
+      editor.expectDoc(doc(codeBlock('done')));
+    }
+  });
 });
 
 function dispatchMouseDown(target: HTMLElement, init: MouseEventInit) {

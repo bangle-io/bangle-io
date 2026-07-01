@@ -56,6 +56,27 @@ describe('code block Markdown', () => {
     expect(codeBlock?.textContent).toBe('console.log("ok");');
   });
 
+  it('preserves trailing blank lines inside fenced code blocks', () => {
+    const source = '```js\nconsole.log("ok");\n\n\n```';
+    const markdown = createMarkdown();
+    const document = markdown.parser.parse(source);
+    const serialized = markdown.serializer.serialize(document);
+    const reparsed = markdown.parser.parse(serialized);
+    const [codeBlock] = findNodes(document, 'code_block');
+
+    expect(codeBlock?.textContent).toBe('console.log("ok");\n\n');
+    expect(serialized).toBe(source);
+    expect(reparsed.toJSON()).toEqual(document.toJSON());
+  });
+
+  it('keeps empty fenced code blocks compact', () => {
+    const source = '```js\n```';
+    const markdown = createMarkdown();
+    const document = markdown.parser.parse(source);
+
+    expect(markdown.serializer.serialize(document)).toBe(source);
+  });
+
   it('parses indented code blocks as code without inventing language info', () => {
     const { document } = expectEquivalentAfterSerialize(
       '    indented code\n    - not a list item',

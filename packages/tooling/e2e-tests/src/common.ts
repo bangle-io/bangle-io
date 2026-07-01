@@ -190,9 +190,31 @@ export async function expectReadableContrast(
             return getComputedStyle(document.body).backgroundColor;
           };
 
-          const isTransparentColor = (value: string) =>
-            value === 'transparent' ||
-            /^rgba?\([\d.\s,/%]+(?:0|0%)\)$/.test(value);
+          const isTransparentColor = (value: string) => {
+            if (value === 'transparent') {
+              return true;
+            }
+
+            const rgbMatch = /^rgba?\(([^)]+)\)$/.exec(value);
+            if (!rgbMatch?.[1]) {
+              return false;
+            }
+
+            const color = rgbMatch[1].trim();
+            const alphaFromSlash = /\/\s*([\d.]+%?)\s*$/.exec(color)?.[1];
+            const alphaFromComma =
+              alphaFromSlash === undefined && color.includes(',')
+                ? color.split(',').at(3)?.trim()
+                : undefined;
+            const alpha = alphaFromSlash ?? alphaFromComma;
+            if (alpha === undefined) {
+              return false;
+            }
+
+            return alpha.endsWith('%')
+              ? Number(alpha.slice(0, -1)) === 0
+              : Number(alpha) === 0;
+          };
 
           const foreground = relativeLuminance(parseColor(style.color));
           const background = relativeLuminance(

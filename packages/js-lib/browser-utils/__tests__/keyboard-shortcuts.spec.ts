@@ -54,6 +54,31 @@ describe('ShortcutManager', () => {
     expect(event.defaultPrevented).toBe(false);
   });
 
+  test('should handle opt-in shortcuts from native form controls', () => {
+    const handler = vi.fn();
+    const keyBinding: KeyBinding = {
+      id: 'formAllowedShortcut',
+      keys: 'ctrl-k',
+    };
+    const input = document.createElement('input');
+
+    shortcutManager.register(keyBinding, handler, { allowInInput: true });
+    input.addEventListener('keydown', (event) => {
+      shortcutManager.handleEvent(event);
+    });
+
+    const event = new KeyboardEvent('keydown', {
+      key: 'k',
+      ctrlKey: true,
+      bubbles: true,
+      cancelable: true,
+    });
+    input.dispatchEvent(event);
+
+    expect(handler).toHaveBeenCalled();
+    expect(event.defaultPrevented).toBe(true);
+  });
+
   test('should call all cleanup functions and clear handlers on deregisterAll', () => {
     const handler = vi.fn();
 

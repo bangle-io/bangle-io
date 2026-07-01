@@ -43,6 +43,13 @@ const blockBoundaryEditorTest = createBangerEditorTestSetup({
     p: { nodeType: 'paragraph' },
   },
 });
+const noTabTrapEditorTest = createBangerEditorTestSetup({
+  extensions: [
+    setupBase({ trapTabKey: false }),
+    setupParagraph(),
+    setupCodeBlock(),
+  ],
+});
 const nestedEditorTest = createBangerEditorTestSetup({
   extensions: [
     setupBase(),
@@ -84,6 +91,7 @@ afterEach(() => {
   macShortcutEditorTest.cleanup();
   appKeymapOrderEditorTest.cleanup();
   blockBoundaryEditorTest.cleanup();
+  noTabTrapEditorTest.cleanup();
   nestedEditorTest.cleanup();
 });
 
@@ -95,7 +103,7 @@ describe('code block keymap', () => {
 
     expect(editor.pressKey('Enter')).toBe(true);
 
-    editor.expectDoc(doc(codeBlock('const done = true;'), p()));
+    editor.expectDoc(doc(codeBlock('const done = true;\n\n'), p()));
     expect(editor.selectionParentType()).toBe('paragraph');
   });
 
@@ -112,7 +120,7 @@ describe('code block keymap', () => {
 
     editor.expectDoc(
       nestedDoc(
-        codeOnly(nestedCodeBlock('const done = true;')),
+        codeOnly(nestedCodeBlock('const done = true;\n\n')),
         nestedParagraph(),
       ),
     );
@@ -309,6 +317,15 @@ describe('code block keymap', () => {
     expect(currentLineEditor.selectionParentOffset()).toBe(
       '  first\nsec'.length,
     );
+
+    const noTrapCodeBlock = noTabTrapEditorTest.builders.codeBlock;
+    const noTrapDoc = noTabTrapEditorTest.builders.doc;
+    const plainLineEditor = noTabTrapEditorTest.createEditor(
+      noTrapDoc(noTrapCodeBlock('plain<cursor>')),
+    );
+
+    expect(plainLineEditor.pressKey('Tab', { shiftKey: true })).toBe(false);
+    plainLineEditor.expectDoc(noTrapDoc(noTrapCodeBlock('plain')));
   });
 
   it('indents and outdents selected code lines with Tab and Shift-Tab', () => {
@@ -321,6 +338,16 @@ describe('code block keymap', () => {
 
     expect(editor.pressKey('Tab', { shiftKey: true })).toBe(true);
     editor.expectDoc(doc(codeBlock('first\nsecond\nthird')));
+  });
+
+  it('includes a leading empty code line when indenting a selection from the start', () => {
+    const editor = editorTest.createEditor(
+      doc(codeBlock('<start>\nsecond<end>')),
+    );
+
+    expect(editor.pressKey('Tab')).toBe(true);
+
+    editor.expectDoc(doc(codeBlock('  \n  second')));
   });
 
   it('deletes an empty paragraph before a code block with forward Delete', () => {

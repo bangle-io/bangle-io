@@ -6,37 +6,18 @@ import {
   PluginKey,
   type PMNode,
 } from '@bangle.io/prosemirror-plugins';
+import { createHighlightPlugin, type Parser } from 'prosemirror-highlight';
 import type { EditorView } from 'prosemirror-view';
-import { createHighlighter } from 'shiki';
+import {
+  DEFAULT_CODE_BLOCK_LANGUAGE,
+  getRawCodeBlockLanguage,
+  normalizeCodeBlockLanguage,
+} from './code-highlight-languages';
 
-const CODE_HIGHLIGHT_PLUGIN_KEY = new PluginKey('code-highlight');
-const CODE_THEME = 'github-dark';
-const COPY_LABEL = 'Copy';
-const COPIED_LABEL = 'Copied';
-const EDIT_LANGUAGE_LABEL = 'Edit language';
+const CODE_ACTIONS_PLUGIN_KEY = new PluginKey('code-actions');
 const COPY_FEEDBACK_TIMEOUT_MS = 1200;
-const SUPPORTED_LANGS = [
-  'text',
-  'plaintext',
-  'bash',
-  'shell',
-  'sh',
-  'zsh',
-  'powershell',
-  'javascript',
-  'typescript',
-  'json',
-  'yaml',
-  'python',
-] as const;
-type SupportedLang = (typeof SUPPORTED_LANGS)[number];
-const DEFAULT_LANG: SupportedLang = 'text';
+const copiedFeedbackUntilByPos = new Map<number, number>();
 
-let highlighterPromise: ReturnType<typeof createHighlighter> | undefined;
-let highlighterInstance:
-  | Awaited<ReturnType<typeof createHighlighter>>
-  | undefined;
-type LoadedHighlighter = Awaited<ReturnType<typeof createHighlighter>>;
 type ClipboardApi = {
   writeText: (text: string) => Promise<void>;
 };
@@ -62,69 +43,128 @@ type CopyDocument = {
   execCommand?: (command: string) => boolean;
 };
 type MinimalEditorView = Pick<EditorView, 'state' | 'dispatch' | 'focus'>;
+type CodeBlockPosResolver = () => number | undefined;
+type CodeActionsState = {
+  decorations: DecorationSet;
+  signature: string;
+};
 
-function getHighlighter() {
-  if (!highlighterPromise) {
-    highlighterPromise = createHighlighter({
-      themes: [CODE_THEME],
-      langs: [...SUPPORTED_LANGS],
-    });
-    void highlighterPromise.then((highlighter: LoadedHighlighter) => {
-      highlighterInstance = highlighter;
-    });
-  }
-
-  return highlighterPromise;
-}
+let loadedHighlightParser: Parser | undefined;
+let highlightParserPromise: Promise<void> | undefined;
 
 export function setupCodeHighlight() {
   return collection({
     id: 'code-highlight',
     plugin: {
-      codeHighlight: new Plugin({
-        key: CODE_HIGHLIGHT_PLUGIN_KEY,
+      codeHighlight: createHighlightPlugin({
+        parser: lazyCodeHighlightParser,
+        nodeTypes: ['code_block'],
+        languageExtractor: (node) =>
+          normalizeCodeBlockLanguage(node.attrs.language),
+      }),
+      codeBlockActions: new Plugin({
+        key: CODE_ACTIONS_PLUGIN_KEY,
         state: {
-          init: (_, state) => createDecorations(state.doc),
-          apply(tr, old) {
-            if (!tr.docChanged && !tr.getMeta(CODE_HIGHLIGHT_PLUGIN_KEY)) {
-              return old.map(tr.mapping, tr.doc);
+          init: (_, state) => createActionState(state.doc),
+          apply(tr, old: CodeActionsState) {
+            const mappedDecorations = old.decorations.map(tr.mapping, tr.doc);
+            if (!tr.docChanged && !tr.getMeta(CODE_ACTIONS_PLUGIN_KEY)) {
+              return {
+                ...old,
+                decorations: mappedDecorations,
+              };
             }
-            return createDecorations(tr.doc);
+
+            const signature = createActionSignature(tr.doc);
+            const expectedDecorationCount = countCodeActionDecorations(tr.doc);
+            if (
+              !tr.getMeta(CODE_ACTIONS_PLUGIN_KEY) &&
+              signature === old.signature &&
+              mappedDecorations.find().length === expectedDecorationCount
+            ) {
+              return {
+                decorations: mappedDecorations,
+                signature,
+              };
+            }
+            return createActionState(tr.doc, signature);
           },
         },
         props: {
           decorations(state) {
-            return CODE_HIGHLIGHT_PLUGIN_KEY.getState(state);
+            return CODE_ACTIONS_PLUGIN_KEY.getState(state)?.decorations;
           },
-        },
-        view(view) {
-          let destroyed = false;
-          void getHighlighter()
-            .then(() => {
-              if (destroyed || view.isDestroyed) {
-                return;
-              }
-              view.dispatch(
-                view.state.tr.setMeta(CODE_HIGHLIGHT_PLUGIN_KEY, true),
-              );
-            })
-            .catch(() => {
-              // Fallback: plain code styling.
-            });
-
-          return {
-            destroy() {
-              destroyed = true;
-            },
-          };
         },
       }),
     },
   });
 }
 
-function createDecorations(doc: PMNode): DecorationSet {
-  const highlighter = highlighterInstance;
+const lazyCodeHighlightParser: Parser = (options) => {
+  const language = normalizeCodeBlockLanguage(options.language);
+  if (!options.content || language === 'text' || language === 'plaintext') {
+    return [];
+  }
+
+  if (!loadedHighlightParser) {
+    highlightParserPromise ??= import('./code-highlight-shiki')
+      .then(({ createCodeHighlightParser }) => {
+        const parser = createCodeHighlightParser();
+        loadedHighlightParser = parser;
+        const result = parser({
+          ...options,
+          language,
+        });
+        return Array.isArray(result) ? undefined : result;
+      })
+      .catch((error: unknown) => {
+        highlightParserPromise = undefined;
+        throw error;
+      });
+    return highlightParserPromise;
+  }
+
+  return loadedHighlightParser({
+    ...options,
+    language,
+  });
+};
+
+function createActionState(
+  doc: PMNode,
+  signature = createActionSignature(doc),
+): CodeActionsState {
+  return {
+    decorations: createActionDecorations(doc),
+    signature,
+  };
+}
+
+function createActionSignature(doc: PMNode): string {
+  const languages: string[] = [];
+  doc.descendants((node) => {
+    if (node.type.name === 'code_block') {
+      languages.push(getRawCodeBlockLanguage(node.attrs.language));
+      return false;
+    }
+    return true;
+  });
+  return languages.join('\0');
+}
+
+function countCodeActionDecorations(doc: PMNode): number {
+  let codeBlockCount = 0;
+  doc.descendants((node) => {
+    if (node.type.name === 'code_block') {
+      codeBlockCount += 1;
+      return false;
+    }
+    return true;
+  });
+  return codeBlockCount * 2;
+}
+
+function createActionDecorations(doc: PMNode): DecorationSet {
   const decorations: Decoration[] = [];
 
   doc.descendants((node, pos) => {
@@ -132,98 +172,37 @@ function createDecorations(doc: PMNode): DecorationSet {
       return true;
     }
 
-    const rawLanguage = getRawLanguage(node.attrs.language);
-    const language = normalizeLanguage(rawLanguage);
-    const text = node.textContent || '';
+    const rawLanguage = getRawCodeBlockLanguage(node.attrs.language);
     decorations.push(
       Decoration.widget(
         pos + 1,
-        (view) => createLanguageBadgeWidget(rawLanguage, pos, view),
+        (view, getPos) =>
+          createLanguageBadgeWidget(
+            rawLanguage,
+            codeBlockPosFromWidget(getPos),
+            view,
+          ),
         {
+          key: `code-language:${pos}:${rawLanguage}`,
           side: -1,
           ignoreSelection: true,
-          stopEvent: (event) =>
-            event.type === 'mousedown' ||
-            event.type === 'pointerdown' ||
-            event.type === 'touchstart' ||
-            event.type === 'click',
+          stopEvent: isCodeActionEvent,
         },
       ),
     );
     decorations.push(
-      Decoration.widget(pos + 1, () => createCopyButtonWidget(text), {
-        side: -1,
-        ignoreSelection: true,
-        stopEvent: (event) =>
-          event.type === 'mousedown' ||
-          event.type === 'pointerdown' ||
-          event.type === 'touchstart' ||
-          event.type === 'click',
-      }),
+      Decoration.widget(
+        pos + 1,
+        (view, getPos) =>
+          createCopyButtonWidget(codeBlockPosFromWidget(getPos), view),
+        {
+          key: `code-copy:${pos}`,
+          side: -1,
+          ignoreSelection: true,
+          stopEvent: isCodeActionEvent,
+        },
+      ),
     );
-
-    if (!highlighter || !text) {
-      return true;
-    }
-
-    const lines = text.split('\n');
-    let charPos = pos + 1;
-    let shikiLineIndex = 0;
-
-    try {
-      const rawTokens = highlighter.codeToTokens(text, {
-        lang: language,
-        theme: CODE_THEME,
-      });
-      const tokensByLine = Array.isArray(rawTokens)
-        ? rawTokens
-        : rawTokens.tokens;
-
-      for (const line of lines) {
-        const lineTokens = tokensByLine[shikiLineIndex] || [];
-        let tokenPos = charPos;
-
-        for (const token of lineTokens) {
-          const tokenLength = token.content.length;
-          if (!tokenLength) {
-            continue;
-          }
-
-          const from = tokenPos;
-          const to = tokenPos + tokenLength;
-          const styleParts: string[] = [];
-
-          if (token.color) {
-            styleParts.push(`color:${token.color}`);
-          }
-          if (token.fontStyle & 1) {
-            styleParts.push('font-style:italic');
-          }
-          if (token.fontStyle & 2) {
-            styleParts.push('font-weight:600');
-          }
-          if (token.fontStyle & 4) {
-            styleParts.push('text-decoration:underline');
-          }
-
-          if (from < to) {
-            decorations.push(
-              Decoration.inline(from, to, {
-                class: 'prosemirror-code-token',
-                style: styleParts.join(';'),
-              }),
-            );
-          }
-
-          tokenPos = to;
-        }
-
-        charPos += line.length + 1;
-        shikiLineIndex += 1;
-      }
-    } catch {
-      // Unsupported language or tokenization error.
-    }
 
     return true;
   });
@@ -231,7 +210,27 @@ function createDecorations(doc: PMNode): DecorationSet {
   return DecorationSet.create(doc, decorations);
 }
 
-function createCopyButtonWidget(text: string): HTMLElement {
+function codeBlockPosFromWidget(getWidgetPos: CodeBlockPosResolver) {
+  return () => {
+    const widgetPos = getWidgetPos();
+    return widgetPos === undefined ? undefined : widgetPos - 1;
+  };
+}
+
+function isCodeActionEvent(event: Event): boolean {
+  return (
+    event.type === 'mousedown' ||
+    event.type === 'pointerdown' ||
+    event.type === 'touchstart' ||
+    event.type === 'click'
+  );
+}
+
+function createCopyButtonWidget(
+  getCodeBlockPos: CodeBlockPosResolver,
+  editorView: EditorView,
+): HTMLElement {
+  const copyLabel = t.app.editor.codeBlock.copy;
   const wrapper = document.createElement('span');
   wrapper.className = 'prosemirror-code-copy-widget';
   wrapper.contentEditable = 'false';
@@ -239,10 +238,10 @@ function createCopyButtonWidget(text: string): HTMLElement {
   const button = document.createElement('button');
   button.type = 'button';
   button.className = 'prosemirror-code-copy-button';
-  button.textContent = COPY_LABEL;
-  button.setAttribute('aria-label', COPY_LABEL);
-  button.setAttribute('title', COPY_LABEL);
+  button.setAttribute('aria-label', copyLabel);
+  button.setAttribute('title', copyLabel);
   button.tabIndex = -1;
+  updateCopyButtonText(button, getCodeBlockPos());
   button.addEventListener('mousedown', (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -258,30 +257,94 @@ function createCopyButtonWidget(text: string): HTMLElement {
   button.addEventListener('click', async (event) => {
     event.preventDefault();
     event.stopPropagation();
-    const copied = await copyTextToClipboard(text);
+    const codeBlockPos = getCodeBlockPos();
+    if (codeBlockPos === undefined) {
+      return;
+    }
+
+    const copied = await copyTextToClipboard(
+      getCodeBlockText(editorView, codeBlockPos),
+    );
     if (!copied) {
       return;
     }
-    button.textContent = COPIED_LABEL;
-    globalThis.setTimeout(() => {
-      button.textContent = COPY_LABEL;
-    }, COPY_FEEDBACK_TIMEOUT_MS);
+    showCopyFeedback(button, codeBlockPos);
+    editorView.focus();
   });
 
   wrapper.append(button);
   return wrapper;
 }
 
+function showCopyFeedback(button: HTMLButtonElement, codeBlockPos: number) {
+  const until = Date.now() + COPY_FEEDBACK_TIMEOUT_MS;
+  copiedFeedbackUntilByPos.set(codeBlockPos, until);
+  button.textContent = t.app.editor.codeBlock.copied;
+  scheduleCopyFeedbackReset(button, codeBlockPos, until);
+}
+
+function updateCopyButtonText(
+  button: HTMLButtonElement,
+  codeBlockPos: number | undefined,
+) {
+  if (codeBlockPos === undefined) {
+    button.textContent = t.app.editor.codeBlock.copy;
+    return;
+  }
+
+  const until = copiedFeedbackUntilByPos.get(codeBlockPos);
+  if (!until || until <= Date.now()) {
+    copiedFeedbackUntilByPos.delete(codeBlockPos);
+    button.textContent = t.app.editor.codeBlock.copy;
+    return;
+  }
+
+  button.textContent = t.app.editor.codeBlock.copied;
+  scheduleCopyFeedbackReset(button, codeBlockPos, until);
+}
+
+function scheduleCopyFeedbackReset(
+  button: HTMLButtonElement,
+  codeBlockPos: number,
+  until: number,
+) {
+  globalThis.setTimeout(
+    () => {
+      const activeUntil = copiedFeedbackUntilByPos.get(codeBlockPos);
+      if (activeUntil !== undefined && activeUntil > until) {
+        return;
+      }
+      copiedFeedbackUntilByPos.delete(codeBlockPos);
+      button.textContent = t.app.editor.codeBlock.copy;
+    },
+    Math.max(0, until - Date.now()),
+  );
+}
+
+function getCodeBlockText(
+  editorView: EditorView,
+  codeBlockPos: number | undefined,
+): string {
+  if (editorView.isDestroyed || codeBlockPos === undefined) {
+    return '';
+  }
+  const node = editorView.state.doc.nodeAt(codeBlockPos);
+  if (node?.type.name !== 'code_block') {
+    return '';
+  }
+  return node.textContent || '';
+}
+
 function createLanguageBadgeWidget(
   language: string,
-  codeBlockPos: number,
+  getCodeBlockPos: CodeBlockPosResolver,
   editorView: EditorView,
 ): HTMLElement {
   const wrapper = document.createElement('span');
   wrapper.className = 'prosemirror-code-language-widget';
   wrapper.contentEditable = 'false';
   wrapper.append(
-    createLanguageButton(wrapper, language, codeBlockPos, editorView),
+    createLanguageButton(wrapper, language, getCodeBlockPos, editorView),
   );
 
   return wrapper;
@@ -290,15 +353,16 @@ function createLanguageBadgeWidget(
 function createLanguageButton(
   container: HTMLElement,
   language: string,
-  codeBlockPos: number,
+  getCodeBlockPos: CodeBlockPosResolver,
   editorView: EditorView,
 ): HTMLButtonElement {
+  const editLanguageLabel = t.app.editor.codeBlock.editLanguage;
   const button = document.createElement('button');
   button.type = 'button';
   button.className = 'prosemirror-code-language-button';
-  button.textContent = (language || DEFAULT_LANG).toUpperCase();
-  button.setAttribute('aria-label', EDIT_LANGUAGE_LABEL);
-  button.setAttribute('title', EDIT_LANGUAGE_LABEL);
+  button.textContent = (language || DEFAULT_CODE_BLOCK_LANGUAGE).toUpperCase();
+  button.setAttribute('aria-label', editLanguageLabel);
+  button.setAttribute('title', editLanguageLabel);
   button.tabIndex = -1;
   button.addEventListener('mousedown', (event) => {
     event.preventDefault();
@@ -315,7 +379,7 @@ function createLanguageButton(
   button.addEventListener('click', (event) => {
     event.preventDefault();
     event.stopPropagation();
-    showLanguageEditor(container, editorView, codeBlockPos, language);
+    showLanguageEditor(container, editorView, getCodeBlockPos, language);
   });
 
   return button;
@@ -324,35 +388,43 @@ function createLanguageButton(
 function showLanguageEditor(
   container: HTMLElement,
   editorView: EditorView,
-  codeBlockPos: number,
+  getCodeBlockPos: CodeBlockPosResolver,
   initialLanguage: string,
 ) {
   let finished = false;
   const input = document.createElement('input');
+  const ownerDocument = input.ownerDocument;
   input.type = 'text';
   input.className = 'prosemirror-code-language-input';
   input.value = initialLanguage || '';
-  input.placeholder = DEFAULT_LANG;
-  input.setAttribute('aria-label', EDIT_LANGUAGE_LABEL);
+  input.placeholder = DEFAULT_CODE_BLOCK_LANGUAGE;
+  input.setAttribute('aria-label', t.app.editor.codeBlock.editLanguage);
 
   const restoreButton = () => {
     container.replaceChildren(
       createLanguageButton(
         container,
         initialLanguage,
-        codeBlockPos,
+        getCodeBlockPos,
         editorView,
       ),
     );
   };
-  const commit = () => {
+  const finish = () => {
     if (finished) {
-      return;
+      return false;
     }
     finished = true;
+    ownerDocument.removeEventListener('pointerdown', handlePointerDown, true);
+    return true;
+  };
+  const commit = () => {
+    if (!finish()) {
+      return;
+    }
     const changed = applyLanguageChange(
       editorView,
-      codeBlockPos,
+      getCodeBlockPos(),
       input.value,
       initialLanguage,
     );
@@ -361,12 +433,17 @@ function showLanguageEditor(
     }
   };
   const cancel = () => {
-    if (finished) {
+    if (!finish()) {
       return;
     }
-    finished = true;
     restoreButton();
     editorView.focus();
+  };
+  const handlePointerDown = (event: PointerEvent) => {
+    if (event.target instanceof Node && container.contains(event.target)) {
+      return;
+    }
+    commit();
   };
 
   input.addEventListener('keydown', (event) => {
@@ -383,6 +460,7 @@ function showLanguageEditor(
   input.addEventListener('blur', () => {
     commit();
   });
+  ownerDocument.addEventListener('pointerdown', handlePointerDown, true);
 
   container.replaceChildren(input);
   input.focus();
@@ -391,11 +469,11 @@ function showLanguageEditor(
 
 function applyLanguageChange(
   editorView: EditorView,
-  codeBlockPos: number,
+  codeBlockPos: number | undefined,
   value: string,
   previousValue: string,
 ): boolean {
-  if (!editorView || editorView.isDestroyed) {
+  if (!editorView || editorView.isDestroyed || codeBlockPos === undefined) {
     return false;
   }
 
@@ -430,7 +508,7 @@ function setCodeBlockLanguage(
   editorView.dispatch(
     editorView.state.tr
       .setNodeMarkup(codeBlockPos, undefined, nextAttrs)
-      .setMeta(CODE_HIGHLIGHT_PLUGIN_KEY, true),
+      .setMeta(CODE_ACTIONS_PLUGIN_KEY, true),
   );
   return true;
 }
@@ -483,13 +561,6 @@ export async function copyTextToClipboard(
   }
 }
 
-function getRawLanguage(language: unknown): string {
-  if (typeof language !== 'string') {
-    return '';
-  }
-  return language.trim().toLowerCase();
-}
-
 function getCopyDocument(value: unknown): CopyDocument | undefined {
   if (!isCopyDocument(value)) {
     return undefined;
@@ -505,33 +576,4 @@ function isCopyDocument(value: unknown): value is CopyDocument {
     'createElement' in value &&
     'body' in value
   );
-}
-
-function normalizeLanguage(language: unknown): SupportedLang {
-  if (typeof language !== 'string' || !language.trim()) {
-    return DEFAULT_LANG;
-  }
-
-  const normalized = language.trim().toLowerCase();
-  if (normalized === 'ps1' || normalized === 'pwsh') {
-    return 'powershell';
-  }
-  if (normalized === 'js') {
-    return 'javascript';
-  }
-  if (normalized === 'ts') {
-    return 'typescript';
-  }
-  if (normalized === 'yml') {
-    return 'yaml';
-  }
-  if (normalized === 'console') {
-    return 'bash';
-  }
-
-  if ((SUPPORTED_LANGS as readonly string[]).includes(normalized)) {
-    return normalized as SupportedLang;
-  }
-
-  return DEFAULT_LANG;
 }

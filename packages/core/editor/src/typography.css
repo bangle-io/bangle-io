@@ -191,11 +191,21 @@ div.ProseMirror {
     word-wrap: normal;
     tab-size: 4;
     hyphens: none;
+  }
+
+  & pre {
+    background-color: var(--prosemirror-highlight-bg, hsl(var(--BV-accent)));
+    color: var(--prosemirror-highlight, hsl(var(--BV-accent-foreground)));
+  }
+
+  & code {
     background-color: hsl(var(--BV-accent));
     color: hsl(var(--BV-accent-foreground));
   }
 
   & pre code {
+    background-color: transparent;
+    color: inherit;
     font-weight: inherit;
     display: block;
     line-height: 1.35;

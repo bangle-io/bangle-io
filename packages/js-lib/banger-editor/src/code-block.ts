@@ -13,7 +13,7 @@ import type {
   Schema,
   Transaction,
 } from './pm';
-import { chainCommands, inputRules, setBlockType, TextSelection } from './pm';
+import { chainCommands, setBlockType, TextSelection } from './pm';
 import {
   defaultGetParagraphNodeType,
   findParentNodeOfType,
@@ -21,7 +21,6 @@ import {
   insertEmptyParagraphAboveNode,
   insertEmptyParagraphBelowNode,
   moveNode,
-  type PluginContext,
   safeInsert,
 } from './pm-utils';
 
@@ -105,7 +104,6 @@ export function setupCodeBlock(userConfig?: CodeBlockConfig) {
   };
 
   const plugin = {
-    inputRules: pluginInputRules(config),
     keybindings: pluginKeybindings(config),
   };
 
@@ -121,15 +119,6 @@ export function setupCodeBlock(userConfig?: CodeBlockConfig) {
     },
     markdown: markdown(config),
   });
-}
-
-// PLUGINS
-function pluginInputRules(_config: RequiredConfig) {
-  return (_: PluginContext) => {
-    return inputRules({
-      rules: [],
-    });
-  };
 }
 
 function pluginKeybindings(config: RequiredConfig) {
@@ -201,9 +190,10 @@ function exitCodeBlock(config: RequiredConfig): Command {
           return false;
         }
 
-        let tr = state.tr.delete(from - 2, from);
-        const insertPos = tr.mapping.map(node.pos + node.node.nodeSize, -1);
-        tr = safeInsert(paragraph, insertPos)(tr);
+        const tr = safeInsert(
+          paragraph,
+          node.pos + node.node.nodeSize,
+        )(state.tr);
         dispatch(tr.scrollIntoView());
       }
       return true;
@@ -528,7 +518,7 @@ function outdentCodeLines(config: RequiredConfig): Command {
       .join('\n');
 
     if (replacement === original) {
-      return true;
+      return false;
     }
 
     if (dispatch) {
@@ -564,7 +554,7 @@ function outdentCodeLines(config: RequiredConfig): Command {
 }
 
 function selectedCodeLineRange(text: string, from: number, to: number) {
-  const start = text.lastIndexOf('\n', Math.max(0, from - 1)) + 1;
+  const start = from === 0 ? 0 : text.lastIndexOf('\n', from - 1) + 1;
   const adjustedTo = to > from && text[to - 1] === '\n' ? to - 1 : to;
   const nextLineBreak = text.indexOf('\n', adjustedTo);
   const end = nextLineBreak === -1 ? text.length : nextLineBreak;
@@ -616,13 +606,13 @@ function convertFenceToCodeBlock(config: RequiredConfig): Command {
       return false;
     }
 
-    if (dispatch) {
-      const codeBlockType = getNodeType(state.schema, config.name);
-      const language = match[1] || '';
-      if (!setBlockType(codeBlockType, { language })(state)) {
-        return false;
-      }
+    const codeBlockType = getNodeType(state.schema, config.name);
+    const language = match[1] || '';
+    if (!setBlockType(codeBlockType, { language })(state)) {
+      return false;
+    }
 
+    if (dispatch) {
       const from = $from.start();
       const to = $from.end();
       const tr = state.tr
@@ -655,8 +645,10 @@ function markdown(config: RequiredConfig): CollectionType['markdown'] {
           const info = getCodeBlockInfo(node.attrs.language);
           const fence = createCodeFence(node.textContent, info);
           state.write(`${fence}${info}\n`);
-          state.text(node.textContent, false);
-          state.ensureNewLine();
+          state.write(node.textContent);
+          if (node.textContent) {
+            state.write('\n');
+          }
           state.write(fence);
           state.closeBlock(node);
         },

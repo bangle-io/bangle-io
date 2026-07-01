@@ -41,3 +41,17 @@ test('NativeFS picker error keeps readable destructive colors in dark mode', asy
   expect(styles.backgroundColor).toBe(styles.destructive);
   expect(styles.color).toBe(styles.destructiveForeground);
 });
+
+test('contrast helper treats opaque rgb backgrounds as opaque', async ({
+  page,
+}) => {
+  await page.setContent(`
+    <div id="unreadable" style="color: rgb(0, 0, 0); background: rgb(0, 0, 0);">
+      Unreadable text
+    </div>
+  `);
+
+  await expect(
+    expectReadableContrast(page.locator('#unreadable')),
+  ).rejects.toThrow(/Expected readable contrast/);
+});

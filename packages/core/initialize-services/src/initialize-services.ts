@@ -139,6 +139,7 @@ export function initializeServices(
             );
           },
           options: {
+            ...(command.allowShortcutInInputs ? { allowInInput: true } : {}),
             unique: true,
           },
         };

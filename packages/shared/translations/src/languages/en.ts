@@ -59,6 +59,11 @@ export const t = {
         remove: 'Remove link',
         invalidUrl: 'Enter a web address or Markdown path.',
       },
+      codeBlock: {
+        copy: 'Copy',
+        copied: 'Copied',
+        editLanguage: 'Edit language',
+      },
       wikiLinkMenu: {
         label: 'Link to a note',
         empty: 'No notes found',
