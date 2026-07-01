@@ -290,6 +290,13 @@ export const t = {
       reloadButton: 'App neu laden',
       reportButton: 'Problem melden',
     },
+    pageStartupError: {
+      title: 'Bangle konnte nicht gestartet werden',
+      description:
+        'Ein erforderlicher Dienst ist beim Start fehlgeschlagen. Ihre Notizen wurden nicht geändert.',
+      detailsLabel: 'Details zum Startfehler',
+      reloadButton: 'App neu laden',
+    },
     pageNativeFsAuthFailed: {
       title: 'Authentifizierung fehlgeschlagen. Bitte versuchen Sie es erneut',
       tryAgainButton: 'Erneut versuchen',

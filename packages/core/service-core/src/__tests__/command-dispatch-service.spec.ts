@@ -9,7 +9,6 @@ import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import type {
   Command,
   CommandDispatchResult,
-  CommandExposedServices,
   CommandHandler,
   CommandHandlerContext,
   CommandKey,
@@ -56,6 +55,9 @@ async function setup() {
   });
 
   const dispatchedCommands: CommandDispatchResult[] = [];
+  const exposedServices = {
+    fileSystem: new TestService(context, null),
+  };
 
   const dispatchService = new CommandDispatchService(
     context,
@@ -67,12 +69,9 @@ async function setup() {
         dispatchedCommands.push(result);
       },
       focusEditor: () => {},
+      getExposedServices: () => exposedServices,
     },
   );
-
-  dispatchService.exposedServices = {
-    fileSystem: new TestService(context, null),
-  } as unknown as CommandExposedServices;
 
   await dispatchService.mount();
   return {
@@ -88,6 +87,38 @@ async function setup() {
 describe('CommandDispatchService', () => {
   afterEach(() => {
     vi.clearAllMocks();
+  });
+
+  test('should fail mount when exposed services are not wired', async () => {
+    const { commonOpts } = makeTestCommonOpts();
+    const context = {
+      ctx: commonOpts,
+      serviceContext: {
+        abortSignal: commonOpts.rootAbortSignal,
+      },
+    };
+    const commandRegistry = new CommandRegistryService(context, null, {
+      commands: [],
+      commandHandlers: [],
+    });
+
+    const dispatchService = new CommandDispatchService(
+      context,
+      {
+        commandRegistry,
+      },
+      {
+        emitResult: () => {},
+        focusEditor: () => {},
+        // @ts-expect-error verifies the startup guard for invalid DI wiring.
+        getExposedServices: () => undefined,
+      },
+    );
+
+    await expect(dispatchService.mount()).rejects.toThrow(
+      /Assertion Failed: argument is undefined or null. exposedServices/,
+    );
+    expect(dispatchService.mounted).toBe(false);
   });
 
   test('should dispatch a command successfully', async () => {

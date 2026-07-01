@@ -1,16 +1,12 @@
 import { commandHandlers as defaultCommandHandlers } from '@bangle.io/command-handlers';
 import { type BangleAppCommand, getEnabledCommands } from '@bangle.io/commands';
+import type { CommandExposedServices } from '@bangle.io/context';
 import {
   type CommandDispatchService,
   type CommandHandlerConfig,
   CommandRegistryService,
 } from '@bangle.io/service-core';
-import type {
-  Command,
-  CommandArgs,
-  CommandExposedServices,
-  RootEvents,
-} from '@bangle.io/types';
+import type { Command, CommandArgs, RootEvents } from '@bangle.io/types';
 import { createTestEnvironment } from './test-service-setup';
 
 type TestCommandHandlerArgs = {

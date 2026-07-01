@@ -13,5 +13,4 @@ export type * from './base-router';
 export type * from './commands';
 export type * from './emitter';
 export type * from './services';
-export type * from './services-setup';
 export type * from './workspace';

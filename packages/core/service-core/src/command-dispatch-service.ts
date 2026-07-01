@@ -14,14 +14,19 @@ import type {
   Command,
   CommandArgs,
   CommandDispatchResult,
-  CommandExposedServices,
+  CommandExposedServiceSlotId,
   CommandHandlerContext,
   CommandKey,
 } from '@bangle.io/types';
 import type { CommandRegistryService } from './command-registry-service';
 
+type CommandExposedServices = Partial<
+  Record<CommandExposedServiceSlotId, BaseService>
+>;
+
 type CommandDispatchServiceConfig = {
   emitResult: (event: CommandDispatchResult) => void;
+  getExposedServices: () => CommandExposedServices;
   /**
    * Focus the editor.
    * This is used to focus the editor when a command is dispatched.
@@ -35,7 +40,6 @@ export class CommandDispatchService extends BaseService {
   static deps = ['commandRegistry'] as const;
 
   private fromChain: string[] = [];
-  exposedServices!: CommandExposedServices;
 
   constructor(
     context: BaseServiceContext,
@@ -49,7 +53,7 @@ export class CommandDispatchService extends BaseService {
   }
 
   hookMount() {
-    assertIsDefined(this.exposedServices, 'exposedServices');
+    assertIsDefined(this.config.getExposedServices(), 'exposedServices');
   }
 
   public dispatch<TId extends BangleAppCommand['id']>(
@@ -85,7 +89,7 @@ export class CommandDispatchService extends BaseService {
     }
 
     const result: Record<string, any> = {};
-    const services = this.exposedServices;
+    const services = this.config.getExposedServices();
 
     this.logger.debug(
       'dispatching',

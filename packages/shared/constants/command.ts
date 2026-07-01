@@ -1,5 +1,5 @@
 import type {
-  AllServiceName,
+  CommandExcludedServiceSlotId,
   CommandHandlerContext,
   CommandKey,
 } from '@bangle.io/types';
@@ -7,7 +7,7 @@ import type {
 export const commandExcludedServices = [
   'commandRegistry',
   'commandDispatcher',
-] as const satisfies AllServiceName[];
+] as const satisfies CommandExcludedServiceSlotId[];
 
 export const commandKeyToContext: WeakMap<
   CommandKey<string>,

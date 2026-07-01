@@ -1,9 +1,5 @@
-import {
-  CoreServiceProvider,
-  LoggerProvider,
-  PlatformServiceProvider,
-} from '@bangle.io/context';
-import type { CoreServices, PlatformServices } from '@bangle.io/types';
+import type { CoreServices } from '@bangle.io/context';
+import { CoreServiceProvider, LoggerProvider } from '@bangle.io/context';
 import { Sidebar } from '@bangle.io/ui-components';
 import { type RenderResult, render } from '@testing-library/react';
 import { Provider } from 'jotai/react';
@@ -51,28 +47,15 @@ export function renderWithServices({
         pmEditorService: services.pmEditorService,
       };
 
-      const platformServices: PlatformServices = {
-        database: services.database,
-        errorService: services.errorService,
-        fileStorage: {
-          [services.fileStorageMemory.workspaceType]:
-            services.fileStorageMemory,
-        },
-        router: services.router,
-        syncDatabase: services.syncDatabase,
-      };
-
       const Wrapper = ({ children }: { children: React.ReactNode }) => {
         return (
           <LoggerProvider logger={testEnv.logger}>
             <Provider store={testEnv.commonOpts.store}>
-              <PlatformServiceProvider services={platformServices}>
-                <CoreServiceProvider services={coreServices}>
-                  <Sidebar.SidebarProvider open={false} setOpen={() => {}}>
-                    {children}
-                  </Sidebar.SidebarProvider>
-                </CoreServiceProvider>
-              </PlatformServiceProvider>
+              <CoreServiceProvider services={coreServices}>
+                <Sidebar.SidebarProvider open={false} setOpen={() => {}}>
+                  {children}
+                </Sidebar.SidebarProvider>
+              </CoreServiceProvider>
             </Provider>
           </LoggerProvider>
         );

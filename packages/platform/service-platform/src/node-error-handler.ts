@@ -35,9 +35,9 @@ export class NodeErrorHandlerService extends BaseErrorService {
     while (this.pendingEvents.length > 0) {
       const event = this.pendingEvents.shift();
       if (event instanceof Error) {
-        this.handleUncaughtException(event);
+        this.processUncaughtException(event);
       } else if (event) {
-        this.handleUnhandledRejection(event.reason, event.promise);
+        this.processUnhandledRejection(event.reason);
       }
     }
 
@@ -46,9 +46,9 @@ export class NodeErrorHandlerService extends BaseErrorService {
       while (this.pendingEvents.length > 0) {
         const event = this.pendingEvents.shift();
         if (event instanceof Error) {
-          this.handleUncaughtException(event);
+          this.processUncaughtException(event);
         } else if (event) {
-          this.handleUnhandledRejection(event.reason, event.promise);
+          this.processUnhandledRejection(event.reason);
         }
       }
       process.removeListener('uncaughtException', this.handleUncaughtException);
@@ -69,6 +69,10 @@ export class NodeErrorHandlerService extends BaseErrorService {
       return;
     }
 
+    this.processUncaughtException(error);
+  };
+
+  private processUncaughtException(error: Error) {
     if (isAbortError(error)) {
       return;
     }
@@ -83,15 +87,19 @@ export class NodeErrorHandlerService extends BaseErrorService {
       isFakeThrow: false,
       rejection: false,
     });
-  };
+  }
 
   private handleUnhandledRejection = (reason: any, promise: Promise<any>) => {
-    const error = reason instanceof Error ? reason : new Error(String(reason));
-
     if (!this.mounted) {
       this.pendingEvents.push({ reason, promise });
       return;
     }
+
+    this.processUnhandledRejection(reason);
+  };
+
+  private processUnhandledRejection(reason: any) {
+    const error = reason instanceof Error ? reason : new Error(String(reason));
 
     if (isAbortError(error)) {
       return;
@@ -107,5 +115,5 @@ export class NodeErrorHandlerService extends BaseErrorService {
       isFakeThrow: false,
       rejection: true,
     });
-  };
+  }
 }

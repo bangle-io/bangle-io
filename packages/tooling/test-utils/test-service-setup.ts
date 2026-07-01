@@ -1,4 +1,3 @@
-import { throwAppError } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
 import {
@@ -15,11 +14,13 @@ import {
   WorkspaceService,
   WorkspaceStateService,
 } from '@bangle.io/service-core';
-// Use direct paths to avoid loading page-lifecycle
-import { FileStorageMemory } from '@bangle.io/service-platform/src/file-storage-memory';
-import { MemoryDatabaseService } from '@bangle.io/service-platform/src/memory-database';
-import { MemorySyncDatabaseService } from '@bangle.io/service-platform/src/memory-sync-database';
-import { MemoryRouterService } from '@bangle.io/service-platform/src/router/memory-router';
+import {
+  FileStorageMemory,
+  MemoryDatabaseService,
+  MemoryRouterService,
+  MemorySyncDatabaseService,
+  TestErrorHandlerService,
+} from '@bangle.io/service-platform/testing';
 
 import { vi } from 'vitest';
 
@@ -35,8 +36,7 @@ export * from './test-service-setup';
 
 import { commandHandlers } from '@bangle.io/command-handlers';
 import { PmEditorService } from '@bangle.io/editor';
-import { Container } from '@bangle.io/poor-mans-di';
-import { TestErrorHandlerService } from '@bangle.io/service-platform/src/test-error-handler';
+import { type ConstructorToInstance, Container } from '@bangle.io/poor-mans-di';
 import { makeTestCommonOpts } from './common-opts';
 
 const themeManager = {
@@ -92,14 +92,12 @@ export function createTestEnvironment({
   };
 
   type ServiceMapType = typeof serviceMap;
-  type ServiceKeys = keyof ServiceMapType;
-
-  function hasOwn<T extends ServiceKeys>(
-    obj: Record<string, unknown>,
-    prop: T,
-  ): obj is Record<T, InstanceType<ServiceMapType[T]>> {
-    return Object.hasOwn(obj, prop);
-  }
+  type TestServiceInstances = ConstructorToInstance<ServiceMapType>;
+  let currentServices: TestServiceInstances;
+  let fileStorageServices: Record<
+    string,
+    TestServiceInstances['fileStorageMemory']
+  >;
 
   const container = new Container(
     {
@@ -147,6 +145,7 @@ export function createTestEnvironment({
           rootEmitter.emit('event::command:result', result);
         },
         focusEditor: () => {},
+        getExposedServices: () => currentServices,
       }));
 
       container.setConfig(FileSystemService, () => ({
@@ -154,6 +153,7 @@ export function createTestEnvironment({
           ['event::file:update', 'event::file:force-update'],
           controller.signal,
         ),
+        getFileStorageServices: () => fileStorageServices,
       }));
 
       container.setConfig(UserActivityService, () => ({
@@ -208,34 +208,14 @@ export function createTestEnvironment({
           [...Object.keys(platformServicesMap), focusService]
         : undefined;
 
-      const services = container.instantiateAll(focuses as any[]);
+      currentServices = container.instantiateAll(focuses as any[]);
 
-      if (hasOwn(services, 'commandDispatcher')) {
-        services.commandDispatcher.exposedServices = {
-          ...services,
-        };
-      }
-
-      const fileStorageServices = {
-        [services.fileStorageMemory.workspaceType]: services.fileStorageMemory,
+      fileStorageServices = {
+        [currentServices.fileStorageMemory.workspaceType]:
+          currentServices.fileStorageMemory,
       };
 
-      services.fileSystem.fileStorageServices = fileStorageServices;
-      services.fileSystem.getWorkspaceInfo = async ({ wsName }) => {
-        const wsInfo = await services.workspaceOps.getWorkspaceInfo(wsName);
-        if (!wsInfo) {
-          throwAppError(
-            'error::workspace:not-found',
-            `Workspace not found: ${wsName}`,
-            {
-              wsName,
-            },
-          );
-        }
-        return wsInfo;
-      };
-
-      return services;
+      return currentServices;
     },
   };
 

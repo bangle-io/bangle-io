@@ -4,8 +4,9 @@ import {
   throwAppError,
 } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
+import type { CoreServices } from '@bangle.io/context';
 import { PmEditorService } from '@bangle.io/editor';
-import { Container } from '@bangle.io/poor-mans-di';
+import { type ConstructorToInstance, Container } from '@bangle.io/poor-mans-di';
 import {
   CommandDispatchService,
   CommandRegistryService,
@@ -31,13 +32,39 @@ import {
   IdbDatabaseService,
 } from '@bangle.io/service-platform';
 import type {
+  BaseFileStorageService,
   BaseServiceCommonOptions,
   Command,
   CommandHandler,
-  CoreServices,
-  PlatformServices,
   RootEmitter,
 } from '@bangle.io/types';
+
+const browserServiceMap = {
+  // Platform services
+  errorService: BrowserErrorHandlerService,
+  database: IdbDatabaseService,
+  syncDatabase: BrowserLocalStorageSyncDatabaseService,
+  fileStorageIdb: FileStorageIndexedDB,
+  fileStorageNativeFs: FileStorageNativeFs,
+  router: BrowserRouterService,
+
+  // Core services
+  commandDispatcher: CommandDispatchService,
+  commandRegistry: CommandRegistryService,
+  fileSystem: FileSystemService,
+  navigation: NavigationService,
+  shortcut: ShortcutService,
+  editorService: EditorService,
+  workbench: WorkbenchService,
+  workbenchState: WorkbenchStateService,
+  workspace: WorkspaceService,
+  workspaceOps: WorkspaceOpsService,
+  workspaceState: WorkspaceStateService,
+  userActivityService: UserActivityService,
+  pmEditorService: PmEditorService,
+};
+
+type BrowserServiceInstances = ConstructorToInstance<typeof browserServiceMap>;
 
 export function initializeServices(
   commonOpts: BaseServiceCommonOptions,
@@ -46,35 +73,14 @@ export function initializeServices(
   commandHandlers: Array<{ id: string; handler: CommandHandler }>,
   theme: ThemeManager,
 ) {
+  let services: BrowserServiceInstances;
+  let fileStorageServices: Record<string, BaseFileStorageService>;
   const container = new Container(
     {
       context: commonOpts,
       abortSignal: commonOpts.rootAbortSignal,
     },
-    {
-      // Platform services
-      errorService: BrowserErrorHandlerService,
-      database: IdbDatabaseService,
-      syncDatabase: BrowserLocalStorageSyncDatabaseService,
-      fileStorageIdb: FileStorageIndexedDB,
-      fileStorageNativeFs: FileStorageNativeFs,
-      router: BrowserRouterService,
-
-      // Core services
-      commandDispatcher: CommandDispatchService,
-      commandRegistry: CommandRegistryService,
-      fileSystem: FileSystemService,
-      navigation: NavigationService,
-      shortcut: ShortcutService,
-      editorService: EditorService,
-      workbench: WorkbenchService,
-      workbenchState: WorkbenchStateService,
-      workspace: WorkspaceService,
-      workspaceOps: WorkspaceOpsService,
-      workspaceState: WorkspaceStateService,
-      userActivityService: UserActivityService,
-      pmEditorService: PmEditorService,
-    },
+    browserServiceMap,
   );
 
   container.setConfig(BrowserRouterService, () => ({
@@ -110,6 +116,7 @@ export function initializeServices(
     focusEditor: () => {
       services.pmEditorService.focusEditor();
     },
+    getExposedServices: () => services,
   }));
 
   container.setConfig(FileSystemService, () => ({
@@ -117,6 +124,7 @@ export function initializeServices(
       ['event::file:update', 'event::file:force-update'],
       commonOpts.rootAbortSignal,
     ),
+    getFileStorageServices: () => fileStorageServices,
   }));
 
   container.setConfig(ShortcutService, () => ({
@@ -171,70 +179,42 @@ export function initializeServices(
     onChange: (change) => {
       commonOpts.logger.info('File storage change:', change);
     },
+    getRootDirHandle: async (wsName: string) => {
+      const { rootDirHandle } =
+        await services.workspaceOps.getWorkspaceMetadata(wsName);
+
+      if (!rootDirHandle) {
+        throwAppError(
+          'error::workspace:invalid-metadata',
+          `Invalid workspace metadata for ${wsName}`,
+          { wsName },
+        );
+      }
+
+      if (!(await FileStorageNativeFs.hasPermission(rootDirHandle))) {
+        throwAppError(
+          'error::workspace:native-fs-auth-needed',
+          `Need permission for ${rootDirHandle.name}`,
+          { wsName },
+        );
+      }
+
+      return { handle: rootDirHandle };
+    },
   }));
 
   container.setConfig(PmEditorService, () => ({
     nothing: true,
   }));
 
-  const services = container.instantiateAll();
+  services = container.instantiateAll();
 
-  services.commandDispatcher.exposedServices = {
-    ...services,
-  };
-
-  const fileStorageServices = {
+  fileStorageServices = {
     [services.fileStorageIdb.workspaceType]: services.fileStorageIdb,
     [services.fileStorageNativeFs.workspaceType]: services.fileStorageNativeFs,
   };
-  services.fileSystem.fileStorageServices = fileStorageServices;
-  services.fileSystem.getWorkspaceInfo = async ({ wsName }) => {
-    const wsInfo = await services.workspaceOps.getWorkspaceInfo(wsName);
-    if (!wsInfo) {
-      throwAppError(
-        'error::workspace:not-found',
-        `Workspace not found: ${wsName}`,
-        {
-          wsName,
-        },
-      );
-    }
-    return wsInfo;
-  };
-
-  services.fileStorageNativeFs.getRootDirHandle = async (wsName: string) => {
-    const { rootDirHandle } =
-      await services.workspaceOps.getWorkspaceMetadata(wsName);
-
-    if (!rootDirHandle) {
-      throwAppError(
-        'error::workspace:invalid-metadata',
-        `Invalid workspace metadata for ${wsName}`,
-        { wsName },
-      );
-    }
-
-    if (!(await FileStorageNativeFs.hasPermission(rootDirHandle))) {
-      throwAppError(
-        'error::workspace:native-fs-auth-needed',
-        `Need permission for ${rootDirHandle.name}`,
-        { wsName },
-      );
-    }
-
-    return { handle: rootDirHandle };
-  };
-
-  const platformServices = {
-    errorService: services.errorService,
-    database: services.database,
-    syncDatabase: services.syncDatabase,
-    fileStorage: fileStorageServices,
-    router: services.router,
-  } satisfies PlatformServices;
 
   return {
-    platformServices,
     coreServices: {
       commandDispatcher: services.commandDispatcher,
       commandRegistry: services.commandRegistry,
@@ -251,7 +231,9 @@ export function initializeServices(
       pmEditorService: services.pmEditorService,
     } satisfies CoreServices,
     mountAll: () => {
-      container.mountAll();
+      commonOpts.logger.debug('Service graph', container.describe());
+      return container.mountAll();
     },
+    describe: () => container.describe(),
   };
 }
