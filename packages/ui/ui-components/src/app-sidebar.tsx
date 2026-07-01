@@ -10,16 +10,19 @@ import {
   Label,
 } from '@bangle.io/shadcn';
 import { ChevronsUpDown, GalleryVerticalEnd, Plus, Search } from 'lucide-react';
-import React, { useId, useMemo } from 'react';
+import React, { useId } from 'react';
 import bangleIcon from './bangle-transparent_x512.png';
-import { buildTree, type TreeItem } from './build-tree';
+import {
+  type FileTreeEntry,
+  type FileTreeEntryAction,
+  PierreFileTree,
+} from './file-tree';
 import { KbdShortcut } from './kbd';
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupAction,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
@@ -32,10 +35,8 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from './sidebar';
-import { type ItemAction, Tree, type TreeProps } from './Tree';
-import type { Action } from './types';
 
-export type { Action, ItemAction };
+export type { FileTreeEntry, FileTreeEntryAction };
 
 export type NavItem = {
   title: string;
@@ -54,21 +55,25 @@ type Workspace = {
 export type AppSidebarProps = {
   onNewWorkspaceClick: () => void;
   workspaces: Workspace[];
-  wsPaths: string[];
+  filePaths: string[];
   navItems: NavItem[];
   onSearchClick?: () => void;
-  onTreeItemClick: (item: TreeItem) => void;
-  activeWsPaths?: string[];
-  getActionsForItem: (item: TreeItem) => ItemAction[];
+  activeFilePaths?: string[];
+  getActionsForEntry: (entry: FileTreeEntry) => readonly FileTreeEntryAction[];
   isTruncated?: boolean;
   onTruncatedClick?: () => void;
-  onFileDrop?: TreeProps['onFileDrop'];
+  onCreateDirectory: (pathPrefix: string | undefined) => void;
+  onCreateNote: (pathPrefix: string | undefined) => void;
+  onMoveFile: (
+    sourceRelativePath: string,
+    destinationDirectory: string | undefined,
+  ) => void;
+  onOpenFile: (relativePath: string) => void;
   footerChildren?: React.ReactNode;
   footerTitle?: string;
   footerSubtitle?: string;
   wsPathToHref?: (wsPath: string) => string;
   wsNameToHref: (wsName: string) => string;
-  fileGroupActions?: Action[];
 };
 
 interface DropdownButtonProps {
@@ -139,27 +144,23 @@ function DropdownButton({
 export function AppSidebar({
   onNewWorkspaceClick,
   workspaces,
-  wsPaths,
+  filePaths,
   navItems,
   onSearchClick = () => {},
-  activeWsPaths = [],
-  onTreeItemClick,
-  getActionsForItem,
+  activeFilePaths = [],
+  getActionsForEntry,
   isTruncated = false,
   onTruncatedClick = () => {},
-  onFileDrop = () => {},
+  onCreateDirectory,
+  onCreateNote,
+  onMoveFile,
+  onOpenFile,
   footerChildren,
   footerTitle,
   footerSubtitle,
   wsPathToHref,
   wsNameToHref,
-  fileGroupActions,
 }: AppSidebarProps) {
-  const tree = useMemo(
-    () => buildTree(wsPaths, activeWsPaths, undefined),
-    [wsPaths, activeWsPaths],
-  );
-
   return (
     <Sidebar variant="floating">
       <SidebarHeader>
@@ -170,7 +171,7 @@ export function AppSidebar({
         />
         <CommandButton onClick={() => onSearchClick?.()} />
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="gap-1">
         {navItems.length > 0 && (
           <SidebarGroup>
             <SidebarGroupLabel>
@@ -211,43 +212,22 @@ export function AppSidebar({
             </SidebarMenu>
           </SidebarGroup>
         )}
-        <SidebarGroup>
-          <SidebarGroupLabel
-            onClick={() => {
-              onTruncatedClick();
-            }}
-            className="cursor-pointer select-none"
-          >
+        <SidebarGroup className="min-h-0 overflow-visible pt-0">
+          <SidebarGroupLabel className="sr-only">
             {t.app.components.appSidebar.filesLabel}
           </SidebarGroupLabel>
-          {fileGroupActions?.map(({ id, label, onClick, Icon }) => (
-            <SidebarGroupAction
-              key={id}
-              title={label}
-              onClick={() => onClick()}
-            >
-              {Icon && <Icon />}
-              <span className="sr-only">{label}</span>
-            </SidebarGroupAction>
-          ))}
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <Tree
-                rootItem={tree}
-                activeWsPaths={activeWsPaths}
-                onTreeItemClick={onTreeItemClick}
-                getActionsForItem={getActionsForItem}
-                onFileDrop={onFileDrop}
-                wsPathToHref={wsPathToHref}
-              />
-              {isTruncated && (
-                <SidebarMenuItem>
-                  <SidebarMenuButton onClick={onTruncatedClick}>
-                    {t.app.components.appSidebar.showMoreButton}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )}
-            </SidebarMenu>
+          <SidebarGroupContent className="flex min-h-0 flex-col overflow-visible">
+            <PierreFileTree
+              activePaths={activeFilePaths}
+              filePaths={filePaths}
+              getActionsForEntry={getActionsForEntry}
+              isTruncated={isTruncated}
+              onCreateDirectory={onCreateDirectory}
+              onCreateNote={onCreateNote}
+              onMoveFile={onMoveFile}
+              onOpenFile={onOpenFile}
+              onShowMore={onTruncatedClick}
+            />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

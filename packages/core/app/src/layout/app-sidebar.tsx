@@ -1,10 +1,9 @@
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
-import type { TreeItem } from '@bangle.io/ui-components';
 import {
-  type Action,
   DropdownMenu,
-  type ItemAction,
+  type FileTreeEntry,
+  type FileTreeEntryAction,
   KbdShortcut,
   Sidebar,
   AppSidebar as UIAppSidebar,
@@ -17,6 +16,7 @@ import {
   Command,
   ExternalLink,
   Folder,
+  FolderPlus,
   MessageCircle,
   Move,
   Paintbrush2,
@@ -48,37 +48,95 @@ export const AppSidebar = ({ children }: SidebarProps) => {
     return !isTruncated ? wsPaths : wsPaths.slice(0, MAX_WS_PATHS);
   }, [wsPaths, isTruncated]);
 
-  const fileGroupActions: Action<void>[] = [
-    {
-      id: 'new-file',
-      label: t.app.components.appSidebar.newFileActionTitle,
-      Icon: PlusIcon,
-      onClick: () => {
-        commandDispatcher.dispatch(
-          'command::ws:quick-new-note',
-          {
-            pathPrefix: undefined,
-          },
-          'ui',
-        );
-      },
-    },
-  ];
-
-  const getActionsForItem = useMemo(
+  const getActionsForEntry = useMemo(
     () =>
-      (item: TreeItem): ItemAction[] => {
-        const actions: ItemAction[] = [];
+      (entry: FileTreeEntry): FileTreeEntryAction[] => {
+        const actions: FileTreeEntryAction[] = [];
+        const getWsPath = (relativePath: string) =>
+          activeWsName
+            ? WsPath.fromParts(activeWsName, relativePath).wsPath
+            : undefined;
 
-        if (!item.isDir) {
+        if (entry.kind === 'directory') {
+          const dirWsPath = getWsPath(entry.path);
+
+          actions.push({
+            id: 'new-note-here',
+            label: t.app.components.appSidebar.newNoteHereActionTitle,
+            Icon: PlusIcon,
+            onClick: (entry) => {
+              commandDispatcher.dispatch(
+                'command::ws:quick-new-note',
+                {
+                  pathPrefix: entry.path,
+                },
+                'ui',
+              );
+            },
+          });
+
+          actions.push({
+            id: 'new-folder-here',
+            label: t.app.components.appSidebar.newFolderHereActionTitle,
+            Icon: FolderPlus,
+            onClick: (entry) => {
+              commandDispatcher.dispatch(
+                'command::ui:create-directory-dialog',
+                {
+                  pathPrefix: entry.path,
+                },
+                'ui',
+              );
+            },
+          });
+
+          if (dirWsPath) {
+            actions.push({
+              id: 'rename-folder',
+              label: t.app.components.appSidebar.renameActionTitle,
+              Icon: Pencil,
+              onClick: () => {
+                commandDispatcher.dispatch(
+                  'command::ui:rename-directory-dialog',
+                  { dirWsPath },
+                  'ui',
+                );
+              },
+            });
+
+            actions.push({
+              id: 'delete-folder',
+              label: t.app.components.appSidebar.deleteActionTitle,
+              Icon: Trash2,
+              variant: 'destructive' as const,
+              onClick: () => {
+                commandDispatcher.dispatch(
+                  'command::ui:delete-directory-dialog',
+                  { dirWsPath },
+                  'ui',
+                );
+              },
+            });
+          }
+
+          return actions;
+        }
+
+        const wsPath = getWsPath(entry.path);
+
+        if (wsPath) {
           actions.push({
             id: 'rename',
-            label: 'Rename',
+            label: t.app.components.appSidebar.renameActionTitle,
             Icon: Pencil,
-            onClick: (item) => {
+            onClick: (entry) => {
+              const wsPath = getWsPath(entry.path);
+              if (!wsPath) {
+                return;
+              }
               commandDispatcher.dispatch(
                 'command::ui:rename-note-dialog',
-                { wsPath: item.wsPath },
+                { wsPath },
                 'ui',
               );
             },
@@ -86,12 +144,16 @@ export const AppSidebar = ({ children }: SidebarProps) => {
 
           actions.push({
             id: 'move',
-            label: 'Move',
+            label: t.app.components.appSidebar.moveActionTitle,
             Icon: Move,
-            onClick: (item) => {
+            onClick: (entry) => {
+              const wsPath = getWsPath(entry.path);
+              if (!wsPath) {
+                return;
+              }
               commandDispatcher.dispatch(
                 'command::ui:move-note-dialog',
-                { wsPath: item.wsPath },
+                { wsPath },
                 'ui',
               );
             },
@@ -99,13 +161,17 @@ export const AppSidebar = ({ children }: SidebarProps) => {
 
           actions.push({
             id: 'delete',
-            label: 'Delete',
+            label: t.app.components.appSidebar.deleteActionTitle,
             Icon: Trash2,
             variant: 'destructive' as const,
-            onClick: (item) => {
+            onClick: (entry) => {
+              const wsPath = getWsPath(entry.path);
+              if (!wsPath) {
+                return;
+              }
               commandDispatcher.dispatch(
                 'command::ui:delete-note-dialog',
-                { wsPath: item.wsPath },
+                { wsPath },
                 'ui',
               );
             },
@@ -114,7 +180,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
 
         return actions;
       },
-    [commandDispatcher],
+    [activeWsName, commandDispatcher],
   );
 
   return (
@@ -123,29 +189,12 @@ export const AppSidebar = ({ children }: SidebarProps) => {
       setOpen={(open) => setSidebarOpen(open)}
     >
       <UIAppSidebar
-        onFileDrop={(source, destination) => {
-          const wsName = WsPath.assert(source.wsPath).wsName;
-          const destWsPath =
-            'isRoot' in destination
-              ? WsPath.fromParts(wsName, '').wsPath
-              : destination.wsPath;
-
-          commandDispatcher.dispatch(
-            'command::ws:move-ws-path',
-            {
-              wsPath: source.wsPath,
-              destDirWsPath: destWsPath,
-            },
-            'ui',
-          );
-        }}
-        onTreeItemClick={() => {}}
         workspaces={workspaces.map((ws, _i) => ({
           name: ws.name,
           misc: ws.type,
           isActive: activeWsName === ws.name,
         }))}
-        wsPaths={displayedWsPaths.map((wsPath) => wsPath.wsPath)}
+        filePaths={displayedWsPaths.map((wsPath) => wsPath.path)}
         isTruncated={isTruncated}
         onTruncatedClick={() => {
           commandDispatcher.dispatch(
@@ -172,6 +221,54 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             payload: { wsName },
           })
         }
+        onCreateDirectory={(pathPrefix) => {
+          commandDispatcher.dispatch(
+            'command::ui:create-directory-dialog',
+            {
+              pathPrefix,
+            },
+            'ui',
+          );
+        }}
+        onCreateNote={(pathPrefix) => {
+          commandDispatcher.dispatch(
+            'command::ws:quick-new-note',
+            {
+              pathPrefix,
+            },
+            'ui',
+          );
+        }}
+        onMoveFile={(sourceRelativePath, destinationDirectory) => {
+          if (!activeWsName) {
+            return;
+          }
+
+          commandDispatcher.dispatch(
+            'command::ws:move-ws-path',
+            {
+              destDirWsPath: WsPath.fromParts(
+                activeWsName,
+                destinationDirectory ?? '',
+              ).wsPath,
+              wsPath: WsPath.fromParts(activeWsName, sourceRelativePath).wsPath,
+            },
+            'ui',
+          );
+        }}
+        onOpenFile={(relativePath) => {
+          if (!activeWsName) {
+            return;
+          }
+
+          commandDispatcher.dispatch(
+            'command::ws:go-ws-path',
+            {
+              wsPath: WsPath.fromParts(activeWsName, relativePath).wsPath,
+            },
+            'ui',
+          );
+        }}
         onNewWorkspaceClick={() => {
           commandDispatcher.dispatch(
             'command::ui:create-workspace-dialog',
@@ -179,12 +276,11 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             'ui',
           );
         }}
-        activeWsPaths={activeWsPaths.map((wsPath) => wsPath.wsPath)}
+        activeFilePaths={activeWsPaths.map((wsPath) => wsPath.path)}
         onSearchClick={() => {
           setOpenOmniSearch(true);
         }}
-        fileGroupActions={fileGroupActions}
-        getActionsForItem={getActionsForItem}
+        getActionsForEntry={getActionsForEntry}
         footerTitle={t.app.sidebar.footerTitle}
         footerChildren={
           <>

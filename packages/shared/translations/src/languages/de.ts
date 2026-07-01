@@ -145,6 +145,18 @@ export const t = {
         badgeText: 'Verzeichnis erstellen',
         optionTitle: 'Erstellen',
       },
+      renameDirectory: {
+        placeholder: 'Geben Sie einen neuen Ordnernamen an',
+        badgeText: ({ directoryName }: { directoryName: string }) =>
+          `"${directoryName}" umbenennen`,
+        optionTitle: 'Ordnerumbenennung bestätigen',
+      },
+      confirmDeleteDirectory: {
+        title: 'Löschen bestätigen',
+        description: ({ directoryName }: { directoryName: string }) =>
+          `"${directoryName}" und alle enthaltenen Notizen löschen?`,
+        continueText: 'Ordner löschen',
+      },
       switchWorkspace: {
         placeholder: 'Wählen Sie einen Arbeitsbereich zum Wechseln',
         badgeText: 'Arbeitsbereich wechseln',
@@ -339,8 +351,18 @@ export const t = {
       appSidebar: {
         openedLabel: 'Geöffnet',
         filesLabel: 'Dateien',
+        fileTreeLabel: 'Arbeitsbereichsdateien',
+        noteCount: ({ count }: { count: number }) =>
+          count === 1 ? '1 Notiz' : `${count} Notizen`,
         newFileActionTitle: 'Neue Datei',
         newFileActionSr: 'Datei erstellen',
+        newFolderActionTitle: 'Neuer Ordner',
+        newNoteHereActionTitle: 'Neue Notiz hier',
+        newFolderHereActionTitle: 'Neuer Ordner hier',
+        searchFilesActionLabel: 'Dateien suchen',
+        renameActionTitle: 'Umbenennen',
+        moveActionTitle: 'Verschieben',
+        deleteActionTitle: 'Löschen',
         showMoreButton: 'Mehr anzeigen',
         workspacesLabel: 'Arbeitsbereiche',
         noWorkspaceSelectedTitle: 'Kein Arbeitsbereich ausgewählt',
