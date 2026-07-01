@@ -74,6 +74,8 @@ Contains build and development utilities (vite configs, custom scripts, testing 
 - **Event System**: `root-emitter` provides a scoped event emitter used across tabs and services.
 - **Workspace Paths**: The `ws-path` library validates and manipulates workspace paths, ensuring operations on files and directories behave consistently.
 
+For service authoring and wiring rules, see `docs/services.md`.
+
 ## Getting Started
 
 **1. Install dependencies**
