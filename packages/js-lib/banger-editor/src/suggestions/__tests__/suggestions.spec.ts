@@ -95,6 +95,39 @@ function createEditor({
   return view;
 }
 
+function createPlainEditor({
+  text,
+  store,
+}: {
+  text: string;
+  store: ReturnType<typeof createStore>;
+}) {
+  const doc = schema.node('doc', null, [
+    schema.node('paragraph', null, text ? [schema.text(text)] : undefined),
+  ]);
+  const mount = document.createElement('div');
+  document.body.append(mount);
+  const state = EditorState.create({
+    doc,
+    schema,
+    selection: TextSelection.create(doc, text.length + 1),
+    plugins: resolve([
+      collection({
+        id: 'test-store',
+        plugin: { store: editorStore.storePlugin(store) },
+      }),
+      setupBase(),
+      setupParagraph(),
+      setupLink(),
+      slashSuggestions,
+      wikiSuggestions,
+    ]).resolvePlugins({ schema }),
+  });
+  const view = new EditorView({ mount }, { state });
+  editors.push(view);
+  return view;
+}
+
 function pressKey(view: EditorView, key: string) {
   const event = new KeyboardEvent('keydown', { key, bubbles: true });
   let handled = false;
@@ -195,6 +228,20 @@ describe('suggestions provider state', () => {
     expect(editorStore.get(view.state, $suggestions).get(view)).toMatchObject({
       markName: 'slash_command',
       text: '/',
+    });
+  });
+
+  it('keeps typed slash query text in the active provider suggestion', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: '', store });
+
+    expect(handleTextInput(view, 1, 1, '/')).toBe(true);
+    view.dispatch(view.state.tr.insertText('date'));
+
+    expect(view.state.doc.textContent).toBe('/date');
+    expect(editorStore.get(view.state, $suggestions).get(view)).toMatchObject({
+      markName: 'slash_command',
+      text: '/date',
     });
   });
 

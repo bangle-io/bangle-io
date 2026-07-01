@@ -1,6 +1,7 @@
 import { useCoreServices } from '@bangle.io/context';
 import { $suggestions, $suggestionUi } from '@bangle.io/prosemirror-plugins';
 import {
+  Button,
   Command,
   CommandEmpty,
   CommandGroup,
@@ -9,27 +10,47 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
+  cn,
+  Input,
 } from '@bangle.io/ui-components';
 import {
   addMonths,
   addWeeks,
+  eachDayOfInterval,
+  endOfMonth,
+  endOfWeek,
   format,
+  isSameDay,
+  isSameMonth,
   startOfMonth,
   startOfWeek,
   subDays,
 } from 'date-fns';
 import { useAtomValue, useSetAtom } from 'jotai';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React, {
   type ReactElement,
   useCallback,
   useEffect,
   useRef,
+  useState,
 } from 'react';
 
 import {
   FLOATING_INITIAL_STYLE,
   useFloatingPosition,
 } from './use-floating-position';
+
+type SlashCommandView = 'menu' | 'date-picker';
+
+const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+function getCalendarDays(month: Date): Date[] {
+  return eachDayOfInterval({
+    start: startOfWeek(startOfMonth(month)),
+    end: endOfWeek(endOfMonth(month)),
+  });
+}
 
 /**
  * SlashCommand displays a floating "slash" menu when the user is inside
@@ -44,8 +65,14 @@ export function SlashCommand({
   const setSuggestionUi = useSetAtom($suggestionUi);
   const commandRef = useRef<HTMLDivElement>(null);
   const prevSelectedIndexRef = useRef<number>(0);
+  const [commandView, setCommandView] = useState<SlashCommandView>('menu');
+  const [selectedDate, setSelectedDate] = useState(() => new Date());
+  const [calendarMonth, setCalendarMonth] = useState(() =>
+    startOfMonth(new Date()),
+  );
   const { pmEditorService } = useCoreServices();
   const editorView = pmEditorService.getEditor(editorName);
+  const ext = pmEditorService.extensions;
   const suggestion = editorView ? suggestions.get(editorView) : undefined;
   const active =
     suggestion?.markName === 'slash_command' ? suggestion : undefined;
@@ -70,6 +97,35 @@ export function SlashCommand({
     prevSelectedIndexRef.current = selectedIndex;
   }, [active?.selectedIndex]);
 
+  const replaceSlashCommandWithText = useCallback(
+    (text: string) => {
+      if (!editorView || !active) {
+        return;
+      }
+
+      ext.suggestions.command.replaceSuggestMarkWith({
+        content: text,
+      })(editorView.state, editorView.dispatch, editorView);
+    },
+    [editorView, active, ext],
+  );
+
+  const insertSelectedDate = useCallback(
+    (date: Date) => {
+      replaceSlashCommandWithText(format(date, 'PP'));
+    },
+    [replaceSlashCommandWithText],
+  );
+
+  useEffect(() => {
+    if (!active?.show) {
+      setCommandView('menu');
+      const today = new Date();
+      setSelectedDate(today);
+      setCalendarMonth(startOfMonth(today));
+    }
+  }, [active?.show]);
+
   useEffect(() => {
     if (!editorView || !active) {
       return;
@@ -81,6 +137,11 @@ export function SlashCommand({
         ...(next.get(editorView) ?? {}),
         slash_command: {
           onSelect: () => {
+            if (commandView === 'date-picker') {
+              insertSelectedDate(selectedDate);
+              return;
+            }
+
             if (commandRef.current) {
               const event = new KeyboardEvent('keydown', {
                 key: 'Enter',
@@ -108,15 +169,20 @@ export function SlashCommand({
         return next;
       });
     };
-  }, [active, editorView, setSuggestionUi]);
+  }, [
+    active,
+    commandView,
+    editorView,
+    insertSelectedDate,
+    selectedDate,
+    setSuggestionUi,
+  ]);
 
   const slashRef = useFloatingPosition({
     show: Boolean(active?.show),
     anchorEl: () => active?.anchorEl() ?? null,
     boundarySelector: '.ProseMirror:not([contenteditable="false"])',
   });
-
-  const ext = pmEditorService.extensions;
 
   const dismissCommandUi = useCallback(() => {
     if (!editorView || !active) {
@@ -128,8 +194,51 @@ export function SlashCommand({
     })(editorView.state, editorView.dispatch, editorView);
   }, [editorView, active, ext]);
 
+  const handleCommandKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (event.key !== 'Escape') {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      dismissCommandUi();
+    },
+    [dismissCommandUi],
+  );
+
   if (!editorView || !active?.show) {
     return null;
+  }
+
+  if (commandView === 'date-picker') {
+    return (
+      <div ref={slashRef} style={FLOATING_INITIAL_STYLE}>
+        <Command
+          ref={commandRef}
+          className="min-w-72 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md"
+          onKeyDown={handleCommandKeyDown}
+        >
+          <CommandInput
+            hidden
+            value={active.text.slice(1)}
+            onValueChange={() => {}}
+          />
+          <DateCommandCalendar
+            month={calendarMonth}
+            selectedDate={selectedDate}
+            onMonthChange={setCalendarMonth}
+            onSelectDate={(date) => {
+              setSelectedDate(date);
+              insertSelectedDate(date);
+            }}
+          />
+          <CommandHints
+            hints={['Click a day to insert', 'Escape to dismiss']}
+          />
+        </Command>
+      </div>
+    );
   }
 
   return (
@@ -137,6 +246,7 @@ export function SlashCommand({
       <Command
         ref={commandRef}
         className="overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md"
+        onKeyDown={handleCommandKeyDown}
       >
         <CommandInput
           hidden
@@ -250,6 +360,14 @@ export function SlashCommand({
 
           <CommandGroup heading="Time">
             <CommandItem
+              value="date calendar"
+              onSelect={() => {
+                setCommandView('date-picker');
+              }}
+            >
+              Date
+            </CommandItem>
+            <CommandItem
               value="today"
               onSelect={() => {
                 dismissCommandUi();
@@ -316,6 +434,159 @@ export function SlashCommand({
         </CommandList>
         <CommandHints hints={['Enter to select', 'Escape to dismiss']} />
       </Command>
+    </div>
+  );
+}
+
+function DateCommandCalendar({
+  month,
+  selectedDate,
+  onMonthChange,
+  onSelectDate,
+}: {
+  month: Date;
+  selectedDate: Date;
+  onMonthChange: (month: Date) => void;
+  onSelectDate: (date: Date) => void;
+}): ReactElement {
+  const days = getCalendarDays(month);
+  const today = new Date();
+  const [jumpMonth, setJumpMonth] = useState(() =>
+    String(month.getMonth() + 1),
+  );
+  const [jumpYear, setJumpYear] = useState(() => String(month.getFullYear()));
+
+  useEffect(() => {
+    setJumpMonth(String(month.getMonth() + 1));
+    setJumpYear(String(month.getFullYear()));
+  }, [month]);
+
+  const jumpToMonth = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const monthNumber = Number(jumpMonth);
+    const yearNumber = Number(jumpYear);
+
+    if (
+      !Number.isInteger(monthNumber) ||
+      !Number.isInteger(yearNumber) ||
+      monthNumber < 1 ||
+      monthNumber > 12 ||
+      yearNumber < 1 ||
+      yearNumber > 9999
+    ) {
+      return;
+    }
+
+    const nextMonth = new Date(month);
+    nextMonth.setFullYear(yearNumber, monthNumber - 1, 1);
+    nextMonth.setHours(0, 0, 0, 0);
+    onMonthChange(startOfMonth(nextMonth));
+  };
+
+  return (
+    <div className="p-3">
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="size-8"
+          aria-label="Previous month"
+          onClick={() => {
+            onMonthChange(startOfMonth(addMonths(month, -1)));
+          }}
+        >
+          <ChevronLeft aria-hidden="true" />
+        </Button>
+        <div
+          className="min-w-32 text-center font-medium text-sm"
+          aria-live="polite"
+        >
+          {format(month, 'MMMM yyyy')}
+        </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="size-8"
+          aria-label="Next month"
+          onClick={() => {
+            onMonthChange(startOfMonth(addMonths(month, 1)));
+          }}
+        >
+          <ChevronRight aria-hidden="true" />
+        </Button>
+      </div>
+      <form
+        aria-label="Go to month and year"
+        className="mb-3 grid grid-cols-[4.5rem_1fr_auto] gap-2"
+        onKeyDown={(event) => {
+          if (event.key !== 'Escape') {
+            event.stopPropagation();
+          }
+        }}
+        onSubmit={jumpToMonth}
+      >
+        <Input
+          type="number"
+          inputMode="numeric"
+          min={1}
+          max={12}
+          value={jumpMonth}
+          aria-label="Month"
+          className="h-8 px-2 text-sm"
+          onChange={(event) => setJumpMonth(event.target.value)}
+        />
+        <Input
+          type="number"
+          inputMode="numeric"
+          min={1}
+          max={9999}
+          value={jumpYear}
+          aria-label="Year"
+          className="h-8 px-2 text-sm"
+          onChange={(event) => setJumpYear(event.target.value)}
+        />
+        <Button type="submit" variant="secondary" size="sm" className="h-8">
+          Go
+        </Button>
+      </form>
+      <section className="grid grid-cols-7 gap-1" aria-label="Calendar">
+        {WEEKDAY_LABELS.map((label) => (
+          <div
+            key={label}
+            className="flex size-8 items-center justify-center text-muted-foreground text-xs"
+          >
+            {label.slice(0, 2)}
+          </div>
+        ))}
+        {days.map((day) => {
+          const inCurrentMonth = isSameMonth(day, month);
+          const selected = isSameDay(day, selectedDate);
+
+          return (
+            <Button
+              key={day.toISOString()}
+              type="button"
+              variant={selected ? 'secondary' : 'ghost'}
+              size="icon"
+              className={cn(
+                'size-8 rounded-md font-normal text-sm',
+                !inCurrentMonth && 'text-muted-foreground opacity-50',
+                isSameDay(day, today) &&
+                  !selected &&
+                  'border border-primary text-primary',
+              )}
+              aria-current={isSameDay(day, today) ? 'date' : undefined}
+              aria-label={`Select ${format(day, 'PP')}`}
+              onClick={() => onSelectDate(day)}
+            >
+              {format(day, 'd')}
+            </Button>
+          );
+        })}
+      </section>
     </div>
   );
 }
