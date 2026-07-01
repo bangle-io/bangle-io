@@ -446,6 +446,51 @@ describe('Container', () => {
     });
   });
 
+  test('mountAll reports dependency mount failures on the failing slot', async () => {
+    const mountOrder: string[] = [];
+
+    class FailingDependencyService implements Service<TestContext> {
+      async mount() {
+        mountOrder.push('dependency');
+        throw new Error('dependency failed');
+      }
+      constructor(
+        public context: { ctx: TestContext; serviceContext: ServiceContext },
+        public _deps: Record<string, never>,
+      ) {}
+    }
+
+    class DependentService implements Service<TestContext> {
+      static deps = ['dependency'] as const;
+      async mount() {
+        mountOrder.push('dependent');
+      }
+      constructor(
+        public context: { ctx: TestContext; serviceContext: ServiceContext },
+        public _deps: { dependency: FailingDependencyService },
+      ) {}
+    }
+
+    const container = new Container(
+      { context: { env: 'test' }, abortSignal: new AbortController().signal },
+      {
+        dependency: FailingDependencyService,
+        dependent: DependentService,
+      },
+    );
+
+    container.instantiateAll();
+
+    await expect(container.mountAll()).rejects.toThrow(
+      'Service "dependency" failed during mount: dependency failed',
+    );
+    expect(mountOrder).toEqual(['dependency']);
+    expect(container.describe().failedSlot).toMatchObject({
+      phase: 'mount',
+      slotId: 'dependency',
+    });
+  });
+
   test('mountAll should throw if instantiateAll has not been called', async () => {
     const container = new Container(
       { context: { env: 'test' }, abortSignal: new AbortController().signal },
