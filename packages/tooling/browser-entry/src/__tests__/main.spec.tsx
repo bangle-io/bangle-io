@@ -39,7 +39,19 @@ describe('browser entry startup', () => {
 
   test('renders a user-visible startup error when service initialization fails', async () => {
     const error = new Error('database mount failed');
-    mocks.initializeServices.mockRejectedValueOnce(error);
+    let startupSignal: AbortSignal | undefined;
+    mocks.initializeServices.mockImplementationOnce(
+      (
+        _logger: unknown,
+        _rootEmitter: unknown,
+        _store: unknown,
+        _theme: unknown,
+        abortSignal: AbortSignal,
+      ) => {
+        startupSignal = abortSignal;
+        return Promise.reject(error);
+      },
+    );
 
     await import('../main');
 
@@ -55,5 +67,6 @@ describe('browser entry startup', () => {
     expect(document.getElementById('root')?.textContent ?? '').toContain(
       error.message,
     );
+    expect(startupSignal?.aborted).toBe(true);
   });
 });
