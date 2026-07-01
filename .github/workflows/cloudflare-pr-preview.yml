@@ -1,0 +1,187 @@
+name: Cloudflare PR Preview
+
+on:
+  pull_request:
+    branches: [main, dev, staging, production]
+    types: [opened, reopened, synchronize, ready_for_review]
+
+concurrency:
+  group: cloudflare-pr-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+env:
+  SENTRY_NO_PROGRESS_BAR: 1
+  CLOUDFLARE_PAGES_PROJECT: bangle-io-2
+  CLOUDFLARE_PREVIEW_BRANCH: pr-${{ github.event.pull_request.number }}
+
+jobs:
+  deploy-preview:
+    name: Deploy preview
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install pnpm
+        run: |
+          corepack enable
+          corepack prepare --activate
+
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build app
+        run: pnpm build
+
+      - name: Deploy Cloudflare Pages preview
+        id: deploy
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_OAUTH_EXPIRATION_TIME: ${{ secrets.CLOUDFLARE_OAUTH_EXPIRATION_TIME }}
+          CLOUDFLARE_OAUTH_REFRESH_TOKEN: ${{ secrets.CLOUDFLARE_OAUTH_REFRESH_TOKEN }}
+          CLOUDFLARE_OAUTH_TOKEN: ${{ secrets.CLOUDFLARE_OAUTH_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          for secret_name in \
+            CLOUDFLARE_ACCOUNT_ID \
+            CLOUDFLARE_OAUTH_EXPIRATION_TIME \
+            CLOUDFLARE_OAUTH_REFRESH_TOKEN \
+            CLOUDFLARE_OAUTH_TOKEN
+          do
+            if [ -z "${!secret_name:-}" ]; then
+              echo "Missing ${secret_name} repository secret." >&2
+              exit 1
+            fi
+          done
+
+          mkdir -p "$HOME/.wrangler/config"
+          cat > "$HOME/.wrangler/config/default.toml" <<EOF
+          oauth_token = "$CLOUDFLARE_OAUTH_TOKEN"
+          expiration_time = "$CLOUDFLARE_OAUTH_EXPIRATION_TIME"
+          refresh_token = "$CLOUDFLARE_OAUTH_REFRESH_TOKEN"
+          scopes = [
+            "account:read",
+            "user:read",
+            "pages:write",
+            "offline_access",
+          ]
+          EOF
+          chmod 600 "$HOME/.wrangler/config/default.toml"
+
+          output="$(pnpm exec wrangler pages deploy packages/tooling/browser-entry/dist \
+            --project-name "$CLOUDFLARE_PAGES_PROJECT" \
+            --branch "$CLOUDFLARE_PREVIEW_BRANCH" \
+            --commit-dirty=true 2>&1)"
+
+          printf '%s\n' "$output"
+
+          preview_url="$(printf '%s\n' "$output" | sed -nE 's#.*(https://[^[:space:]]+\.pages\.dev).*#\1#p' | tail -n 1)"
+
+          if [ -z "$preview_url" ]; then
+            echo "Could not parse Cloudflare preview URL from Wrangler output." >&2
+            exit 1
+          fi
+
+          {
+            echo "preview_url=$preview_url"
+            echo "preview_branch=$CLOUDFLARE_PREVIEW_BRANCH"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Persist refreshed Cloudflare OAuth credentials
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "GH_TOKEN is not available; skipping Cloudflare OAuth secret refresh."
+            exit 0
+          fi
+
+          config_file="$HOME/.wrangler/config/default.toml"
+
+          read_toml_value() {
+            awk -F '"' -v key="$1" '$1 ~ "^" key " = " { print $2; exit }' "$config_file"
+          }
+
+          oauth_token="$(read_toml_value oauth_token)"
+          expiration_time="$(read_toml_value expiration_time)"
+          refresh_token="$(read_toml_value refresh_token)"
+
+          if [ -z "$oauth_token" ] || [ -z "$expiration_time" ] || [ -z "$refresh_token" ]; then
+            echo "Wrangler auth config did not contain refreshed OAuth credentials." >&2
+            exit 1
+          fi
+
+          persist_secret() {
+            local name="$1"
+            local value="$2"
+
+            if ! printf '%s' "$value" | gh secret set "$name" --repo "$GITHUB_REPOSITORY"; then
+              echo "Could not persist refreshed Cloudflare OAuth credentials; continuing with the preview URL comment."
+              exit 0
+            fi
+          }
+
+          persist_secret CLOUDFLARE_OAUTH_TOKEN "$oauth_token"
+          persist_secret CLOUDFLARE_OAUTH_EXPIRATION_TIME "$expiration_time"
+          persist_secret CLOUDFLARE_OAUTH_REFRESH_TOKEN "$refresh_token"
+
+      - name: Update PR preview comment
+        uses: actions/github-script@v8
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.preview_url }}
+          PREVIEW_BRANCH: ${{ steps.deploy.outputs.preview_branch }}
+        with:
+          script: |
+            const marker = '<!-- bangle-cloudflare-pr-preview -->';
+            const pr = context.payload.pull_request;
+            const body = [
+              marker,
+              '## Cloudflare Pages Preview',
+              '',
+              `Preview: ${process.env.PREVIEW_URL}`,
+              '',
+              `Branch: \`${process.env.PREVIEW_BRANCH}\``,
+              `Commit: \`${context.sha.slice(0, 7)}\``,
+              '',
+              'This comment is updated automatically when new commits are pushed to this PR.',
+            ].join('\n');
+
+            const { owner, repo } = context.repo;
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number: pr.number,
+              per_page: 100,
+            });
+
+            const existing = comments.find((comment) => comment.body?.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existing.id,
+                body,
+              });
+              return;
+            }
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: pr.number,
+              body,
+            });

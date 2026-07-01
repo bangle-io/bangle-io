@@ -3,6 +3,7 @@ import {
   collapseEditorSelection,
   createBrowserWorkspaceAndNote,
   ctrlKey,
+  expectReadableContrast,
   getEditorLocator,
   readStoredMarkdown,
   selectEditorText,
@@ -158,9 +159,11 @@ test('creates, expands, edits, cancels, and removes links without draft mutation
   await page.getByRole('button', { name: 'Link', exact: true }).click();
   await urlInput.fill('google com');
   await urlInput.press('Enter');
-  await expect(
-    page.getByRole('alert').getByText('Enter a web address or Markdown path.'),
-  ).toBeVisible();
+  const linkError = page
+    .getByRole('alert')
+    .getByText('Enter a web address or Markdown path.');
+  await expect(linkError).toBeVisible();
+  await expectReadableContrast(linkError);
   await expect
     .poll(() =>
       page.getByTestId('link-editor').evaluate((element) => {

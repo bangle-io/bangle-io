@@ -1,7 +1,7 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { expect, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 export const isDarwin = os.platform() === 'darwin';
 export const ctrlKey = os.platform() === 'darwin' ? 'Meta' : 'Control';
@@ -63,6 +63,150 @@ export async function expectNoPageHorizontalOverflow(page: Page) {
       },
     )
     .toBeLessThanOrEqual(1);
+}
+
+export async function expectReadableContrast(
+  locator: Locator,
+  options: { minimumRatio?: number } = {},
+) {
+  const minimumRatio = options.minimumRatio ?? 4.5;
+
+  await expect
+    .poll(
+      () =>
+        locator.evaluate((element) => {
+          const parseColor = (value: string) => {
+            const rgbMatch = /^rgba?\(([^)]+)\)$/.exec(value);
+            if (rgbMatch?.[1]) {
+              const [r, g, b] = rgbMatch[1]
+                .split(/[\s,/]+/)
+                .filter(Boolean)
+                .slice(0, 3)
+                .map((channel) => {
+                  if (channel.endsWith('%')) {
+                    return Number(channel.slice(0, -1)) / 100;
+                  }
+                  return Number(channel) / 255;
+                });
+
+              if (r === undefined || g === undefined || b === undefined) {
+                throw new Error(`Unable to parse RGB color "${value}"`);
+              }
+
+              return srgbToLinearRgb({ r, g, b });
+            }
+
+            const oklchMatch = /^oklch\(([\d.]+%?)\s+([\d.]+)\s+([\d.]+)/.exec(
+              value,
+            );
+            const [, rawLightness, rawChroma, rawHue] = oklchMatch ?? [];
+            if (rawLightness && rawChroma && rawHue) {
+              const lightness = rawLightness.endsWith('%')
+                ? Number(rawLightness.slice(0, -1)) / 100
+                : Number(rawLightness);
+              return oklchToLinearSrgb({
+                lightness,
+                chroma: Number(rawChroma),
+                hue: Number(rawHue),
+              });
+            }
+
+            throw new Error(`Unable to parse color "${value}"`);
+          };
+
+          const srgbChannelToLinear = (channel: number) =>
+            channel <= 0.04045
+              ? channel / 12.92
+              : ((channel + 0.055) / 1.055) ** 2.4;
+
+          const srgbToLinearRgb = ({
+            r,
+            g,
+            b,
+          }: {
+            r: number;
+            g: number;
+            b: number;
+          }) => ({
+            r: srgbChannelToLinear(r),
+            g: srgbChannelToLinear(g),
+            b: srgbChannelToLinear(b),
+          });
+
+          const oklchToLinearSrgb = ({
+            lightness,
+            chroma,
+            hue,
+          }: {
+            lightness: number;
+            chroma: number;
+            hue: number;
+          }) => {
+            const hueRadians = (hue * Math.PI) / 180;
+            const a = chroma * Math.cos(hueRadians);
+            const b = chroma * Math.sin(hueRadians);
+
+            const lPrime = lightness + 0.3963377774 * a + 0.2158037573 * b;
+            const mPrime = lightness - 0.1055613458 * a - 0.0638541728 * b;
+            const sPrime = lightness - 0.0894841775 * a - 1.291485548 * b;
+
+            const l = lPrime ** 3;
+            const m = mPrime ** 3;
+            const s = sPrime ** 3;
+
+            return {
+              r: 4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+              g: -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+              b: -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s,
+            };
+          };
+
+          const relativeLuminance = ({
+            r,
+            g,
+            b,
+          }: {
+            r: number;
+            g: number;
+            b: number;
+          }) => {
+            const clamp = (channel: number) =>
+              Math.min(1, Math.max(0, channel));
+            return 0.2126 * clamp(r) + 0.7152 * clamp(g) + 0.0722 * clamp(b);
+          };
+
+          const style = getComputedStyle(element);
+          const findEffectiveBackgroundColor = () => {
+            let current: Element | null = element;
+
+            while (current) {
+              const backgroundColor = getComputedStyle(current).backgroundColor;
+              if (!isTransparentColor(backgroundColor)) {
+                return backgroundColor;
+              }
+              current = current.parentElement;
+            }
+
+            return getComputedStyle(document.body).backgroundColor;
+          };
+
+          const isTransparentColor = (value: string) =>
+            value === 'transparent' ||
+            /^rgba?\([\d.\s,/%]+(?:0|0%)\)$/.test(value);
+
+          const foreground = relativeLuminance(parseColor(style.color));
+          const background = relativeLuminance(
+            parseColor(findEffectiveBackgroundColor()),
+          );
+
+          return (
+            (Math.max(foreground, background) + 0.05) /
+            (Math.min(foreground, background) + 0.05)
+          );
+        }),
+      { message: `Expected readable contrast >= ${minimumRatio}` },
+    )
+    .toBeGreaterThanOrEqual(minimumRatio);
 }
 
 export async function clearEditor(page: Page, options: { editorId?: string }) {
