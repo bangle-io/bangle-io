@@ -9,6 +9,7 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
+  Input,
 } from '@bangle.io/ui-components';
 import {
   addMonths,
@@ -24,12 +25,29 @@ import React, {
   useCallback,
   useEffect,
   useRef,
+  useState,
 } from 'react';
 
 import {
   FLOATING_INITIAL_STYLE,
   useFloatingPosition,
 } from './use-floating-position';
+
+type SlashCommandView = 'menu' | 'date-picker';
+
+function formatDateInputValue(date: Date): string {
+  return format(date, 'yyyy-MM-dd');
+}
+
+function parseDateInputValue(value: string): Date | undefined {
+  const [year, month, day] = value.split('-').map(Number);
+
+  if (!year || !month || !day) {
+    return undefined;
+  }
+
+  return new Date(year, month - 1, day);
+}
 
 /**
  * SlashCommand displays a floating "slash" menu when the user is inside
@@ -43,9 +61,15 @@ export function SlashCommand({
   const suggestions = useAtomValue($suggestions);
   const setSuggestionUi = useSetAtom($suggestionUi);
   const commandRef = useRef<HTMLDivElement>(null);
+  const dateInputRef = useRef<HTMLInputElement>(null);
   const prevSelectedIndexRef = useRef<number>(0);
+  const [commandView, setCommandView] = useState<SlashCommandView>('menu');
+  const [selectedDate, setSelectedDate] = useState(() =>
+    formatDateInputValue(new Date()),
+  );
   const { pmEditorService } = useCoreServices();
   const editorView = pmEditorService.getEditor(editorName);
+  const ext = pmEditorService.extensions;
   const suggestion = editorView ? suggestions.get(editorView) : undefined;
   const active =
     suggestion?.markName === 'slash_command' ? suggestion : undefined;
@@ -70,6 +94,44 @@ export function SlashCommand({
     prevSelectedIndexRef.current = selectedIndex;
   }, [active?.selectedIndex]);
 
+  const replaceSlashCommandWithText = useCallback(
+    (text: string) => {
+      if (!editorView || !active) {
+        return;
+      }
+
+      ext.suggestions.command.replaceSuggestMarkWith({
+        content: text,
+      })(editorView.state, editorView.dispatch, editorView);
+    },
+    [editorView, active, ext],
+  );
+
+  const insertSelectedDate = useCallback(
+    (dateValue: string) => {
+      const date = parseDateInputValue(dateValue);
+      if (!date) {
+        return;
+      }
+
+      replaceSlashCommandWithText(format(date, 'PP'));
+    },
+    [replaceSlashCommandWithText],
+  );
+
+  useEffect(() => {
+    if (!active?.show) {
+      setCommandView('menu');
+      setSelectedDate(formatDateInputValue(new Date()));
+    }
+  }, [active?.show]);
+
+  useEffect(() => {
+    if (commandView === 'date-picker') {
+      dateInputRef.current?.focus();
+    }
+  }, [commandView]);
+
   useEffect(() => {
     if (!editorView || !active) {
       return;
@@ -81,6 +143,11 @@ export function SlashCommand({
         ...(next.get(editorView) ?? {}),
         slash_command: {
           onSelect: () => {
+            if (commandView === 'date-picker') {
+              insertSelectedDate(selectedDate);
+              return;
+            }
+
             if (commandRef.current) {
               const event = new KeyboardEvent('keydown', {
                 key: 'Enter',
@@ -108,15 +175,20 @@ export function SlashCommand({
         return next;
       });
     };
-  }, [active, editorView, setSuggestionUi]);
+  }, [
+    active,
+    commandView,
+    editorView,
+    insertSelectedDate,
+    selectedDate,
+    setSuggestionUi,
+  ]);
 
   const slashRef = useFloatingPosition({
     show: Boolean(active?.show),
     anchorEl: () => active?.anchorEl() ?? null,
     boundarySelector: '.ProseMirror:not([contenteditable="false"])',
   });
-
-  const ext = pmEditorService.extensions;
 
   const dismissCommandUi = useCallback(() => {
     if (!editorView || !active) {
@@ -130,6 +202,46 @@ export function SlashCommand({
 
   if (!editorView || !active?.show) {
     return null;
+  }
+
+  if (commandView === 'date-picker') {
+    return (
+      <div ref={slashRef} style={FLOATING_INITIAL_STYLE}>
+        <Command
+          ref={commandRef}
+          className="min-w-64 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md"
+        >
+          <CommandInput
+            hidden
+            value={active.text.slice(1)}
+            onValueChange={() => {}}
+          />
+          <div className="flex flex-col gap-3 p-3">
+            <label
+              htmlFor="slash-command-date-picker"
+              className="font-medium text-foreground text-sm"
+            >
+              Select date
+            </label>
+            <Input
+              ref={dateInputRef}
+              id="slash-command-date-picker"
+              aria-label="Select date"
+              type="date"
+              value={selectedDate}
+              onChange={(event) => {
+                const { value } = event.currentTarget;
+                setSelectedDate(value);
+                insertSelectedDate(value);
+              }}
+            />
+          </div>
+          <CommandHints
+            hints={['Pick a date to insert', 'Escape to dismiss']}
+          />
+        </Command>
+      </div>
+    );
   }
 
   return (
@@ -249,6 +361,14 @@ export function SlashCommand({
           <CommandSeparator />
 
           <CommandGroup heading="Time">
+            <CommandItem
+              value="date calendar"
+              onSelect={() => {
+                setCommandView('date-picker');
+              }}
+            >
+              Date
+            </CommandItem>
             <CommandItem
               value="today"
               onSelect={() => {

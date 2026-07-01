@@ -47,10 +47,9 @@ export function triggerInputRule({
         tr.setSelection(textSelection);
       }
       const marks = selection.$from.marks();
-      return tr.replaceSelectionWith(
-        schema.text(trigger, [mark, ...marks]),
-        false,
-      );
+      return tr
+        .replaceSelectionWith(schema.text(trigger, [mark, ...marks]), false)
+        .addStoredMark(mark);
     },
   );
 
