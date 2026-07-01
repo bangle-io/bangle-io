@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 
 import { MarkdownSerializer } from 'prosemirror-markdown';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { setupBase } from '../../base';
 import { setupBold } from '../../bold';
 import { setupCode } from '../../code';
@@ -242,8 +242,12 @@ describe('link commands and Markdown', () => {
 });
 
 describe('link activation', () => {
-  function createLinkView(onOpenLink?: (href: string) => void) {
-    const configuredLink = setupLink({ onOpenLink });
+  type OnOpenLink = NonNullable<
+    NonNullable<Parameters<typeof setupLink>[0]>['onOpenLink']
+  >;
+
+  function createLinkView(onOpenLink?: OnOpenLink) {
+    const configuredLink = setupLink(onOpenLink ? { onOpenLink } : undefined);
     const configuredResolved = resolve([base, paragraph, configuredLink]);
     const configuredSchema = new Schema({
       nodes: configuredResolved.nodes,
@@ -280,11 +284,12 @@ describe('link activation', () => {
     return { href, mount, openPlugin, view };
   }
 
-  it('opens only modifier-clicks through the configured callback', () => {
+  it('leaves unmodified clicks for the editor link menu', () => {
     const opened: string[] = [];
-    const { href, mount, openPlugin, view } = createLinkView((value) =>
-      opened.push(value),
-    );
+    const { mount, openPlugin, view } = createLinkView((value) => {
+      opened.push(value);
+      return true;
+    });
 
     expect(
       openPlugin.props.handleClick?.call(
@@ -296,6 +301,18 @@ describe('link activation', () => {
     ).toBe(false);
     expect(opened).toEqual([]);
 
+    view.destroy();
+    mount.remove();
+  });
+
+  it('falls back to browser opening for modifier-clicks that are not handled', () => {
+    const opened: string[] = [];
+    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
+    const { href, mount, openPlugin, view } = createLinkView((value) => {
+      opened.push(value);
+      return false;
+    });
+
     expect(
       openPlugin.props.handleClick?.call(
         openPlugin,
@@ -305,7 +322,9 @@ describe('link activation', () => {
       ),
     ).toBe(true);
     expect(opened).toEqual([href]);
+    expect(openSpy).toHaveBeenCalledWith(href, '_blank', 'noopener,noreferrer');
 
+    openSpy.mockRestore();
     view.destroy();
     mount.remove();
   });

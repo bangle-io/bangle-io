@@ -248,6 +248,80 @@ export function SlashCommand({
 
           <CommandSeparator />
 
+          <CommandGroup heading="Table">
+            <CommandItem
+              value="table-insert"
+              onSelect={() => {
+                dismissCommandUi();
+                ext.table.command.insertTable(1, 1)(
+                  editorView.state,
+                  editorView.dispatch,
+                  editorView,
+                );
+              }}
+            >
+              Insert table
+            </CommandItem>
+            {ext.table.query.isTableActive(editorView.state) && (
+              <>
+                <CommandItem
+                  value="table-add-row"
+                  onSelect={() => {
+                    dismissCommandUi();
+                    ext.table.command.addRowAfter(
+                      editorView.state,
+                      editorView.dispatch,
+                      editorView,
+                    );
+                  }}
+                >
+                  + Row below
+                </CommandItem>
+                <CommandItem
+                  value="table-add-column"
+                  onSelect={() => {
+                    dismissCommandUi();
+                    ext.table.command.addColumnAfter(
+                      editorView.state,
+                      editorView.dispatch,
+                      editorView,
+                    );
+                  }}
+                >
+                  + Column right
+                </CommandItem>
+                <CommandItem
+                  value="table-delete-row"
+                  onSelect={() => {
+                    dismissCommandUi();
+                    ext.table.command.deleteRow(
+                      editorView.state,
+                      editorView.dispatch,
+                      editorView,
+                    );
+                  }}
+                >
+                  - Row
+                </CommandItem>
+                <CommandItem
+                  value="table-delete-column"
+                  onSelect={() => {
+                    dismissCommandUi();
+                    ext.table.command.deleteColumn(
+                      editorView.state,
+                      editorView.dispatch,
+                      editorView,
+                    );
+                  }}
+                >
+                  - Column
+                </CommandItem>
+              </>
+            )}
+          </CommandGroup>
+
+          <CommandSeparator />
+
           <CommandGroup heading="Time">
             <CommandItem
               value="today"

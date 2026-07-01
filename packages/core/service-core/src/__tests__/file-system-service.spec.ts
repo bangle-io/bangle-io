@@ -1,4 +1,7 @@
-import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
+import {
+  WORKSPACE_STORAGE_TYPE,
+  type WorkspaceStorageType,
+} from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import type { BaseFileStorageService } from '@bangle.io/types';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -11,10 +14,14 @@ describe('FileSystemService.getStorageServiceForType', () => {
   const mockNativeFSStorage = {
     type: 'nativefs',
   } as unknown as BaseFileStorageService;
+  const mockServerFSStorage = {
+    type: 'serverfs',
+  } as unknown as BaseFileStorageService;
 
   const mockFileStorageServices = {
     [WORKSPACE_STORAGE_TYPE.Browser]: mockBrowserStorage,
     [WORKSPACE_STORAGE_TYPE.NativeFS]: mockNativeFSStorage,
+    [WORKSPACE_STORAGE_TYPE.ServerFS]: mockServerFSStorage,
   };
 
   it('should return browser storage service', () => {
@@ -39,7 +46,6 @@ describe('FileSystemService.getStorageServiceForType', () => {
 
   it.each([
     WORKSPACE_STORAGE_TYPE.Help,
-    WORKSPACE_STORAGE_TYPE.PrivateFS,
     WORKSPACE_STORAGE_TYPE.Github,
   ])('should throw error for unsupported type: %s', (type) => {
     expect(() =>
@@ -54,11 +60,21 @@ describe('FileSystemService.getStorageServiceForType', () => {
   it('should throw error for unknown type', () => {
     expect(() =>
       FileSystemService._getStorageServiceForType(
-        'invalid-type' as any,
+        'invalid-type' as unknown as WorkspaceStorageType,
         mockFileStorageServices,
         'test-ws',
       ),
     ).toThrow('workspace is not supported for file operations');
+  });
+
+  it('should return serverfs storage service', () => {
+    const result = FileSystemService._getStorageServiceForType(
+      WORKSPACE_STORAGE_TYPE.ServerFS,
+      mockFileStorageServices,
+      'test-ws',
+    );
+
+    expect(result).toBe(mockServerFSStorage);
   });
 });
 

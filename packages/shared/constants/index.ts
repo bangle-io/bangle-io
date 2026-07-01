@@ -16,13 +16,24 @@ export const WORKSPACE_STORAGE_TYPE = {
   Help: 'helpfs',
   NativeFS: 'nativefs',
   Browser: 'browser',
-  PrivateFS: 'privatefs',
+  ServerFS: 'serverfs',
   Github: 'github-storage',
   Memory: 'memory',
 } as const;
 
 export type WorkspaceStorageType =
   (typeof WORKSPACE_STORAGE_TYPE)[keyof typeof WORKSPACE_STORAGE_TYPE];
+
+export const WORKSPACE_ATTACHMENT_MODE = {
+  relative: 'relative',
+  root: 'root',
+} as const;
+
+export const DEFAULT_WORKSPACE_ATTACHMENT_CONFIG = {
+  mode: WORKSPACE_ATTACHMENT_MODE.relative,
+  directory: '_anexos',
+  fileNamePrefix: 'Pasted image',
+} as const;
 
 // Add all service names here
 export const SERVICE_NAME = {
@@ -35,6 +46,7 @@ export const SERVICE_NAME = {
   fileStorageIndexedDBService: 'file-storage-indexeddb',
   fileStorageMemoryService: 'file-storage-memory',
   fileStorageNativeFsService: 'file-storage-nativefs',
+  fileStorageServerFsService: 'file-storage-serverfs',
   fileSystemService: 'file-system-service',
   idbDatabaseService: 'idb-database',
   memoryDatabaseService: 'memory-database',

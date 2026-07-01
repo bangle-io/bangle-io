@@ -1,6 +1,5 @@
 import type { Logger } from '@bangle.io/logger';
 import {
-  type LinkConfig,
   setupActiveNode,
   setupBase,
   setupBlockquote,
@@ -23,20 +22,27 @@ import {
   setupSelectionMenu,
   setupStrike,
   setupSuggestions,
+  setupTable,
   setupUnderline,
   setupWikiLink,
   type WikiLinkConfig,
 } from '@bangle.io/prosemirror-plugins';
+import { setupCodeHighlight } from './code-highlight';
 import { funPlaceholder } from './utils';
+
+type SetupExtensionsOptions = {
+  image?: Parameters<typeof setupImage>[0];
+  link?: Parameters<typeof setupLink>[0];
+  wikiLinkConfig?: WikiLinkConfig;
+};
 
 export function setupExtensions(
   logger: Logger,
-  onOpenLink?: LinkConfig['onOpenLink'],
-  wikiLinkConfig?: WikiLinkConfig,
+  options: SetupExtensionsOptions = {},
 ) {
-  const link = setupLink({ onOpenLink });
+  const link = setupLink(options.link);
   return {
-    image: setupImage(),
+    image: setupImage(options?.image),
     activeNode: setupActiveNode({
       excludedNodes: ['horizontal_rule', 'code_block', 'blockquote'],
     }),
@@ -62,6 +68,7 @@ export function setupExtensions(
     heading: setupHeading(),
     history: setupHistory(),
     paragraph: setupParagraph(),
+    table: setupTable(),
     strike: setupStrike(),
     suggestions: setupSuggestions({
       providerId: 'slash-command',
@@ -79,14 +86,17 @@ export function setupExtensions(
       installKeymap: false,
       logger: logger.child('wiki-link-suggestions'),
     }),
-    wikiLink: setupWikiLink(wikiLinkConfig),
+    wikiLink: setupWikiLink(options.wikiLinkConfig),
     underline: setupUnderline(),
     horizontalRule: setupHorizontalRule(),
     placeholder: setupPlaceholder({
       placeholder: funPlaceholder(),
     }),
     code: setupCode(),
-    codeBlock: setupCodeBlock(),
+    codeBlock: setupCodeBlock({
+      keyExit: false,
+    }),
+    codeHighlight: setupCodeHighlight(),
     italic: setupItalic(),
     link,
     linkMenu: setupLinkMenu({ link }),

@@ -164,9 +164,11 @@ div.ProseMirror {
 
   & pre {
     margin: 0.5rem 0;
-    padding: 1.2rem 1.2rem;
+    padding: 0.95rem 1rem;
     overflow-x: auto;
     border-radius: 0.375rem;
+    border: 1px solid hsl(var(--BV-border) / 0.7);
+    position: relative;
   }
 
   & pre,
@@ -183,6 +185,99 @@ div.ProseMirror {
 
   & pre code {
     font-weight: inherit;
+    display: block;
+    line-height: 1.35;
+    font-size: 0.95rem;
+    padding-top: 1.7rem;
+    padding-right: 3.6rem;
+  }
+
+  & .prosemirror-code-copy-widget {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.75rem;
+    z-index: 1;
+  }
+
+  & .prosemirror-code-language-widget {
+    position: absolute;
+    top: 0.55rem;
+    left: 0.75rem;
+    z-index: 1;
+  }
+
+  & .prosemirror-code-language-button {
+    border: 1px solid hsl(var(--BV-border) / 0.8);
+    border-radius: 9999px;
+    padding: 0.1rem 0.5rem;
+    color: hsl(var(--BV-muted-foreground));
+    font-size: 0.68rem;
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background-color: hsl(var(--BV-background) / 0.92);
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  & .prosemirror-code-language-button:hover {
+    color: hsl(var(--BV-foreground));
+    background-color: hsl(var(--BV-background));
+  }
+
+  & .prosemirror-code-language-input {
+    width: 7.5rem;
+    border: 1px solid hsl(var(--BV-border) / 0.8);
+    border-radius: 9999px;
+    padding: 0.12rem 0.55rem;
+    font-size: 0.68rem;
+    line-height: 1.1;
+    color: hsl(var(--BV-foreground));
+    background-color: hsl(var(--BV-background));
+    text-transform: lowercase;
+  }
+
+  & .prosemirror-code-copy-button {
+    border: 1px solid hsl(var(--BV-border) / 0.75);
+    border-radius: 9999px;
+    padding: 0.12rem 0.5rem;
+    font-size: 0.68rem;
+    line-height: 1.1;
+    color: hsl(var(--BV-muted-foreground));
+    background-color: hsl(var(--BV-background) / 0.92);
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  & .prosemirror-code-copy-button:hover {
+    color: hsl(var(--BV-foreground));
+    background-color: hsl(var(--BV-background));
+  }
+
+  & table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+  }
+
+  & th,
+  & td {
+    border: 1px solid hsl(var(--BV-border) / 0.7);
+    padding: 0.45rem 0.6rem;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  & th {
+    background-color: hsl(var(--BV-accent) / 0.55);
+    font-weight: 600;
+  }
+
+  & tr:nth-child(even) td {
+    background-color: hsl(var(--BV-accent) / 0.25);
   }
 
   & hr {
@@ -192,10 +287,6 @@ div.ProseMirror {
   & .prosemirror-horizontal-rule {
     padding: 1em 0;
     margin: 1em 0;
-
-    & hr {
-      margin: 0;
-    }
   }
 
   & .prosemirror-flat-list {

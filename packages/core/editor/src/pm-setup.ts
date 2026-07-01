@@ -73,6 +73,11 @@ export function createEditor({
   });
 
   const markdown = markdownLoader([...Object.values(extensions)], schema);
+  (
+    markdown.parser as unknown as {
+      tokenizer?: { enable: (name: string) => unknown };
+    }
+  ).tokenizer?.enable?.('table');
 
   const view = new EditorView(
     { mount: domNode },

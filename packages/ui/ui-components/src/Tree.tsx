@@ -61,7 +61,7 @@ const TreeNode = function TreeNode({
   } = useDraggable({
     id: item.id,
     data: { item },
-    disabled: item.isDir,
+    disabled: false,
   });
 
   const isDroppableDisabled =
@@ -193,6 +193,7 @@ const TreeNode = function TreeNode({
     <SidebarMenuItem
       ref={dropRef}
       className={cn(
+        isDragging && 'opacity-50',
         isOver &&
           'rounded bg-sidebar-accent/50 outline-accent outline-solid drop-shadow-xl',
       )}
@@ -202,7 +203,13 @@ const TreeNode = function TreeNode({
         defaultOpen={item.isOpen ?? false}
       >
         <CollapsibleTrigger asChild>
-          <SidebarMenuButton size="sm" onClick={handleClick}>
+          <SidebarMenuButton
+            size="sm"
+            onClick={handleClick}
+            ref={dragRef}
+            {...attributes}
+            {...listeners}
+          >
             <ChevronRight className="transition-transform" />
             <Folder />
             <span className="select-none">{item.name}</span>
@@ -343,6 +350,19 @@ export function Tree({
       if (destinationItem.isDir) {
         // Prevent dropping an item onto itself or its current parent directory (no-op)
         if (sourceItem.id === destinationItem.id) {
+          return;
+        }
+        const sourceDirPath = WsPath.fromString(sourceItem.wsPath).asDir()
+          ?.path;
+        const destinationDirPath = WsPath.fromString(
+          destinationItem.wsPath,
+        ).asDir()?.path;
+        if (
+          sourceItem.isDir &&
+          sourceDirPath &&
+          destinationDirPath &&
+          destinationDirPath.startsWith(sourceDirPath)
+        ) {
           return;
         }
         const sourceParentPath = WsPath.fromString(sourceItem.wsPath)

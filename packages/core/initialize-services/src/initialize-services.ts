@@ -27,6 +27,7 @@ import {
   BrowserRouterService,
   FileStorageIndexedDB,
   FileStorageNativeFs,
+  FileStorageServerFs,
   HashStrategy,
   IdbDatabaseService,
 } from '@bangle.io/service-platform';
@@ -58,6 +59,7 @@ export function initializeServices(
       syncDatabase: BrowserLocalStorageSyncDatabaseService,
       fileStorageIdb: FileStorageIndexedDB,
       fileStorageNativeFs: FileStorageNativeFs,
+      fileStorageServerFs: FileStorageServerFs,
       router: BrowserRouterService,
 
       // Core services
@@ -133,7 +135,9 @@ export function initializeServices(
           },
           handler: (event) => {
             services.commandDispatcher.dispatch(
-              command.id as any,
+              command.id as Parameters<
+                typeof services.commandDispatcher.dispatch
+              >[0],
               event,
               `keyboard(${keys})`,
             );
@@ -173,6 +177,13 @@ export function initializeServices(
     },
   }));
 
+  container.setConfig(FileStorageServerFs, () => ({
+    baseUrl: '/api/server-fs',
+    onChange: (change) => {
+      commonOpts.logger.info('File storage change:', change);
+    },
+  }));
+
   container.setConfig(PmEditorService, () => ({
     nothing: true,
   }));
@@ -186,6 +197,7 @@ export function initializeServices(
   const fileStorageServices = {
     [services.fileStorageIdb.workspaceType]: services.fileStorageIdb,
     [services.fileStorageNativeFs.workspaceType]: services.fileStorageNativeFs,
+    [services.fileStorageServerFs.workspaceType]: services.fileStorageServerFs,
   };
   services.fileSystem.fileStorageServices = fileStorageServices;
   services.fileSystem.getWorkspaceInfo = async ({ wsName }) => {

@@ -6,13 +6,14 @@ import {
   isAppError,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
+import type { NodeType, PMNode } from '@bangle.io/prosemirror-plugins';
 import { TextSelection } from '@bangle.io/prosemirror-plugins';
 import type {
   FileSystemService,
   NavigationService,
   WorkspaceStateService,
 } from '@bangle.io/service-core';
-import type { Store } from '@bangle.io/types';
+import type { Store, WorkspaceAttachmentConfig } from '@bangle.io/types';
 import {
   createMissingWikiLinkTarget,
   createWikiLinkIndex,
@@ -21,6 +22,11 @@ import {
   WsPath,
 } from '@bangle.io/ws-path';
 
+import {
+  getAttachmentDestinationPaths,
+  resolveImageWsPath,
+  resolveWorkspaceAttachmentConfig,
+} from './attachments';
 import {
   createEditorSaveQueueStore,
   EditorSaveQueue,
@@ -74,10 +80,31 @@ export class PmEditorService extends BaseService {
   ) {
     super(SERVICE_NAME.pmEditorService, context, dependencies);
 
-    this.extensions = setupExtensions(
-      this.logger,
-      (href, view) => this.openLink(view, href),
-      {
+    this.extensions = this.createExtensions();
+    this.saveQueue = new EditorSaveQueue(
+      async (wsPath, doc) => {
+        const fileName = WsPath.assertFile(wsPath).fileName;
+        await this.dependencies.fileSystem.writeFile(
+          wsPath,
+          new File([doc], fileName, {
+            type: 'text/plain',
+          }),
+        );
+      },
+      this.emitAppError,
+      editorSaveQueueStore,
+    );
+  }
+
+  private createExtensions(
+    image?: NonNullable<Parameters<typeof setupExtensions>[1]>['image'],
+  ): ReturnType<typeof setupExtensions> {
+    return setupExtensions(this.logger, {
+      image,
+      link: {
+        onOpenLink: (href, { view }) => this.openLink(view, href),
+      },
+      wikiLinkConfig: {
         onActivate: (view, attrs) => {
           void this.openWikiLink(view, attrs.target);
         },
@@ -100,20 +127,7 @@ export class PmEditorService extends BaseService {
         unresolvedAriaLabel: ({ displayText }) =>
           t.app.editor.wikiLink.unresolvedLabel({ label: displayText }),
       },
-    );
-    this.saveQueue = new EditorSaveQueue(
-      async (wsPath, doc) => {
-        const fileName = WsPath.assertFile(wsPath).fileName;
-        await this.dependencies.fileSystem.writeFile(
-          wsPath,
-          new File([doc], fileName, {
-            type: 'text/plain',
-          }),
-        );
-      },
-      this.emitAppError,
-      editorSaveQueueStore,
-    );
+    });
   }
 
   hookMount() {
@@ -202,6 +216,24 @@ export class PmEditorService extends BaseService {
         return;
       }
 
+      const filePath = WsPath.assertFile(wsPath);
+      let attachmentConfigPromise:
+        | Promise<WorkspaceAttachmentConfig>
+        | undefined;
+      const getAttachmentConfig = async () => {
+        if (!attachmentConfigPromise) {
+          attachmentConfigPromise = this.dependencies.fileSystem
+            .getWorkspaceInfo({
+              wsName: filePath.wsName,
+            })
+            .then((wsInfo) =>
+              resolveWorkspaceAttachmentConfig(wsInfo?.metadata),
+            );
+        }
+
+        return attachmentConfigPromise;
+      };
+
       const editorView = createEditor({
         defaultContent: content || '',
         store: this.store as Store,
@@ -209,7 +241,17 @@ export class PmEditorService extends BaseService {
         onDocChange: (doc) => {
           this.saveQueue.enqueue(wsPath, doc);
         },
-        extensions: this.extensions,
+        extensions: this.createExtensions({
+          createImageNodes: async (files: File[], imageType: NodeType) =>
+            this.createImageNodesForWorkspace(
+              files,
+              imageType,
+              wsPath,
+              getAttachmentConfig,
+            ),
+          resolveImageNodeSrc: async (src: string) =>
+            this.resolveImageNodeSrc(wsPath, src, getAttachmentConfig),
+        }),
       });
 
       this.editors.set(domNode, { name, editorView, wsPath });
@@ -333,12 +375,12 @@ export class PmEditorService extends BaseService {
   }
 
   /** Opens a web link externally or routes a relative Markdown link in-app. */
-  openLink(editorView: ReturnType<typeof createEditor>, href: string): void {
+  openLink(editorView: ReturnType<typeof createEditor>, href: string): boolean {
     const editor = [...this.editors.values()].find(
       (entry) => 'editorView' in entry && entry.editorView === editorView,
     );
     if (!editor || !('editorView' in editor)) {
-      return;
+      return false;
     }
 
     const target = normalizeStoredMarkdownLinkTarget(href);
@@ -350,17 +392,16 @@ export class PmEditorService extends BaseService {
           if (fragment) {
             this.navigateToHeading(editorView, fragment);
           }
-          return;
+          return true;
         }
         this.pendingHeading = fragment ? { fragment, wsPath } : undefined;
         this.dependencies.navigation.goWsPath(wsPath);
+        return true;
       }
-      return;
+      return false;
     }
 
-    if (target?.kind === 'external') {
-      window.open(target.href, '_blank', 'noopener,noreferrer');
-    }
+    return false;
   }
 
   /** Opens an existing wiki target, or creates a safe missing Markdown target. */
@@ -474,5 +515,129 @@ export class PmEditorService extends BaseService {
         return;
       }
     }
+  }
+
+  private async createImageNodesForWorkspace(
+    files: File[],
+    imageType: NodeType,
+    noteWsPath: string,
+    getAttachmentConfig: () => Promise<WorkspaceAttachmentConfig>,
+  ): Promise<PMNode[]> {
+    const attachmentConfig = await getAttachmentConfig();
+    const createdNodes: PMNode[] = [];
+
+    for (const [index, file] of files.entries()) {
+      const extension = this.getFileExtension(file);
+      const fileName = `${attachmentConfig.fileNamePrefix} ${this.getUniqueFileNameToken(index)}.${extension}`;
+      const destination = getAttachmentDestinationPaths(
+        noteWsPath,
+        fileName,
+        attachmentConfig,
+      );
+
+      try {
+        await this.dependencies.fileSystem.createFile(
+          destination.wsPath,
+          new File([await file.arrayBuffer()], fileName, {
+            type: file.type || 'application/octet-stream',
+          }),
+        );
+
+        createdNodes.push(
+          imageType.create({
+            src: this.encodeMarkdownImagePath(destination.markdownPath),
+          }),
+        );
+      } catch (error) {
+        this.logger.error('Failed to save pasted image in workspace', {
+          error,
+          noteWsPath,
+          destinationWsPath: destination.wsPath,
+        });
+        this.emitAppError(
+          createAppError(
+            'error::editor:save-failed',
+            'Unable to save pasted image',
+            {
+              error: error instanceof Error ? error : new Error(String(error)),
+              wsPath: noteWsPath,
+            },
+          ),
+        );
+      }
+    }
+
+    return createdNodes;
+  }
+
+  private async resolveImageNodeSrc(
+    noteWsPath: string,
+    src: string,
+    getAttachmentConfig: () => Promise<WorkspaceAttachmentConfig>,
+  ): Promise<string | undefined> {
+    const attachmentConfig = await getAttachmentConfig();
+    const imageWsPath = resolveImageWsPath(noteWsPath, src, attachmentConfig);
+    if (!imageWsPath) {
+      return undefined;
+    }
+
+    try {
+      const imageFile =
+        await this.dependencies.fileSystem.readFile(imageWsPath);
+      if (!imageFile) {
+        return undefined;
+      }
+
+      return URL.createObjectURL(imageFile);
+    } catch (error) {
+      this.logger.warn('Failed to resolve image source from workspace', {
+        error,
+        noteWsPath,
+        src,
+        imageWsPath,
+      });
+      return undefined;
+    }
+  }
+
+  private encodeMarkdownImagePath(path: string): string {
+    return encodeURI(path).replace(/#/g, '%23');
+  }
+
+  private getUniqueFileNameToken(index: number): string {
+    const date = new Date();
+    const parts = [
+      date.getFullYear().toString(),
+      (date.getMonth() + 1).toString().padStart(2, '0'),
+      date.getDate().toString().padStart(2, '0'),
+      date.getHours().toString().padStart(2, '0'),
+      date.getMinutes().toString().padStart(2, '0'),
+      date.getSeconds().toString().padStart(2, '0'),
+      date.getMilliseconds().toString().padStart(3, '0'),
+    ];
+
+    const randomSuffix =
+      globalThis.crypto?.randomUUID?.() ??
+      Math.random().toString(36).slice(2, 10);
+
+    return `${parts.join('')}-${index + 1}-${randomSuffix.slice(0, 8)}`;
+  }
+
+  private getFileExtension(file: File): string {
+    const fileName = file.name || '';
+    const extIndex = fileName.lastIndexOf('.');
+    if (extIndex !== -1 && extIndex < fileName.length - 1) {
+      const ext = fileName.slice(extIndex + 1).toLowerCase();
+      if (ext) {
+        return ext;
+      }
+    }
+
+    const mimeExtension = file.type.split('/')[1]?.toLowerCase();
+    if (mimeExtension) {
+      return mimeExtension;
+    }
+
+    return 'png';
   }
 }

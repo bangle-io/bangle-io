@@ -1,6 +1,6 @@
 import { type CollectionType, collection, keybinding } from './common';
 import type { Command, EditorState, NodeSpec, NodeType, Schema } from './pm';
-import { inputRules, setBlockType, textblockTypeInputRule } from './pm';
+import { inputRules, setBlockType } from './pm';
 import {
   defaultGetParagraphNodeType,
   findParentNodeOfType,
@@ -82,18 +82,23 @@ export function setupCodeBlock(userConfig?: CodeBlockConfig) {
 }
 
 // PLUGINS
-function pluginInputRules(config: RequiredConfig) {
-  return ({ schema }: PluginContext) => {
-    const { name } = config;
-    const type = getNodeType(schema, name);
+function pluginInputRules(_config: RequiredConfig) {
+  return (_: PluginContext) => {
     return inputRules({
-      rules: [textblockTypeInputRule(/^```$/, type)],
+      rules: [],
     });
   };
 }
 
 function pluginKeybindings(config: RequiredConfig) {
-  return keybinding([[config.keyExit, exitCodeBlock(config)]], 'code-block');
+  const convertCommand = convertFenceToCodeBlock(config);
+  const keys: Array<[string | false, Command]> = [['Enter', convertCommand]];
+
+  if (config.keyExit) {
+    keys.push([config.keyExit, exitCodeBlock(config)]);
+  }
+
+  return keybinding(keys, 'code-block');
 }
 
 // COMMANDS
@@ -157,6 +162,42 @@ function toggleCodeBlock(config: RequiredConfig): Command {
       return setBlockType(paraType)(state, dispatch);
     }
     return setBlockType(codeBlockType)(state, dispatch);
+  };
+}
+
+function convertFenceToCodeBlock(config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    const { selection } = state;
+    if (!selection.empty) {
+      return false;
+    }
+
+    const { $from } = selection;
+    const paragraphType = config.getParagraphNodeType(state.schema);
+
+    if ($from.parent.type !== paragraphType || selection.from !== $from.end()) {
+      return false;
+    }
+
+    const text = $from.parent.textContent;
+    const match = text.match(/^```(?:([A-Za-z0-9_+-]+))?$/);
+    if (!match) {
+      return false;
+    }
+
+    if (dispatch) {
+      const codeBlockType = getNodeType(state.schema, config.name);
+      const language = match[1] || '';
+      const from = $from.start();
+      const to = $from.end();
+      const tr = state.tr
+        .setBlockType(from, to, codeBlockType, { language })
+        .delete(from, to);
+
+      dispatch(tr.scrollIntoView());
+    }
+
+    return true;
   };
 }
 

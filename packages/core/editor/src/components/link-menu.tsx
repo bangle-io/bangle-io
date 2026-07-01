@@ -27,7 +27,11 @@ export function LinkMenu({ editorName }: { editorName: string }) {
       editorView={editorView}
       ext={pmEditorService.extensions}
       href={linkMenu.href}
-      onOpen={(href) => pmEditorService.openLink(editorView, href)}
+      onOpen={(href) => {
+        if (!pmEditorService.openLink(editorView, href)) {
+          window.open(href, '_blank', 'noopener,noreferrer');
+        }
+      }}
       anchorEl={linkMenu.anchorEl}
       key={`${linkMenu.position}:${linkMenu.href}`}
     />

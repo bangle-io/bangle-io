@@ -140,6 +140,42 @@ describe('UI command handlers', () => {
         ).toContain('command::ws:delete-ws-path');
       });
     });
+
+    it('should show alert directly for directory and dispatch ws:delete-ws-path on confirmation', async () => {
+      const { dispatch, testEnv, services, getCommandResults } =
+        await setupTest({
+          targetId: 'command::ui:delete-note-dialog',
+          workspaces: [
+            {
+              name: 'test-ws',
+              notes: ['test-ws:dir/a.md', 'test-ws:other.md'],
+            },
+          ],
+          autoNavigate: 'workspace',
+        });
+
+      dispatch('command::ui:delete-note-dialog', {
+        wsPath: 'test-ws:dir',
+      });
+      const alertDialog = testEnv.store.get(
+        services.workbenchState.$alertDialog,
+      );
+      expect(alertDialog).toBeDefined();
+      expect(alertDialog?.dialogId).toBe('dialog::alert');
+      expect(
+        testEnv.store.get(services.workbenchState.$singleSelectDialog),
+      ).toBeUndefined();
+
+      alertDialog?.onContinue?.();
+
+      await vi.waitFor(() => {
+        expect(
+          getCommandResults()
+            .filter((result) => result.type === 'success')
+            .map((result) => result.command.id),
+        ).toContain('command::ws:delete-ws-path');
+      });
+    });
   });
 
   describe('command::ui:rename-note-dialog', () => {
@@ -166,6 +202,34 @@ describe('UI command handlers', () => {
       );
 
       dialog?.onSelect('New Name');
+
+      await vi.waitFor(() => {
+        expect(
+          getCommandResults()
+            .filter((result) => result.type === 'success')
+            .map((result) => result.command.id),
+        ).toContain('command::ws:rename-ws-path');
+      });
+    });
+
+    it('should rename a directory and dispatch command::ws:rename-ws-path', async () => {
+      const { dispatch, testEnv, services, getCommandResults } =
+        await setupTest({
+          targetId: 'command::ui:rename-note-dialog',
+          workspaces: [{ name: 'test-ws', notes: ['test-ws:dir/test.md'] }],
+          autoNavigate: 'workspace',
+        });
+
+      dispatch('command::ui:rename-note-dialog', {
+        wsPath: 'test-ws:dir',
+      });
+      const dialog = testEnv.store.get(
+        services.workbenchState.$singleInputDialog,
+      );
+      expect(dialog).toBeDefined();
+      expect(dialog?.dialogId).toBe('dialog::rename-note-dialog');
+
+      dialog?.onSelect('renamed-dir');
 
       await vi.waitFor(() => {
         expect(
@@ -204,6 +268,39 @@ describe('UI command handlers', () => {
       );
 
       dialog?.onSelect({ id: 'dir', title: 'dir' });
+
+      await vi.waitFor(() => {
+        expect(
+          getCommandResults()
+            .filter((result) => result.type === 'success')
+            .map((result) => result.command.id),
+        ).toContain('command::ws:move-ws-path');
+      });
+    });
+
+    it('should move a directory and dispatch command::ws:move-ws-path on selection', async () => {
+      const { dispatch, testEnv, services, getCommandResults } =
+        await setupTest({
+          targetId: 'command::ui:move-note-dialog',
+          workspaces: [
+            {
+              name: 'test-ws',
+              notes: ['test-ws:source/a.md', 'test-ws:target/b.md'],
+            },
+          ],
+          autoNavigate: 'workspace',
+        });
+
+      dispatch('command::ui:move-note-dialog', {
+        wsPath: 'test-ws:source',
+      });
+      const dialog = testEnv.store.get(
+        services.workbenchState.$singleSelectDialog,
+      );
+      expect(dialog).toBeDefined();
+      expect(dialog?.dialogId).toBe('dialog::move-note-dialog');
+
+      dialog?.onSelect({ id: 'target', title: 'target' });
 
       await vi.waitFor(() => {
         expect(
@@ -333,12 +430,15 @@ describe('UI command handlers', () => {
         autoNavigate: false,
       });
 
+      const metadata = {
+        rootDirHandle: {
+          requestPermission: vi.fn().mockResolvedValue('granted'),
+        },
+      };
       vi.spyOn(services.workspaceOps, 'getWorkspaceMetadata').mockResolvedValue(
-        {
-          rootDirHandle: {
-            requestPermission: vi.fn().mockResolvedValue('granted'),
-          },
-        } as any,
+        metadata as Awaited<
+          ReturnType<typeof services.workspaceOps.getWorkspaceMetadata>
+        >,
       );
 
       dispatch('command::ui:native-fs-auth', { wsName: 'test-ws' });

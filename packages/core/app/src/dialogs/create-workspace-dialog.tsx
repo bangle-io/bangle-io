@@ -1,6 +1,9 @@
 import { pickADirectory, supportsNativeBrowserFs } from '@bangle.io/baby-fs';
 import { throwAppError } from '@bangle.io/base-utils';
-import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
+import {
+  DEFAULT_WORKSPACE_ATTACHMENT_CONFIG,
+  WORKSPACE_STORAGE_TYPE,
+} from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import { CreateWorkspaceDialog as UICreateWorkspaceDialog } from '@bangle.io/ui-components';
 import { WsPath } from '@bangle.io/ws-path';
@@ -14,6 +17,47 @@ export function CreateWorkspaceDialog() {
   const [openWsDialog, setOpenWsDialog] = useAtom(
     coreServices.workbenchState.$openWsDialog,
   );
+  const [serverFsSupported, setServerFsSupported] = React.useState(false);
+
+  React.useEffect(() => {
+    let ignore = false;
+
+    if (!openWsDialog) {
+      setServerFsSupported(false);
+      return () => {
+        ignore = true;
+      };
+    }
+
+    const serverFsService =
+      coreServices.fileSystem.fileStorageServices[
+        WORKSPACE_STORAGE_TYPE.ServerFS
+      ];
+
+    if (!serverFsService) {
+      setServerFsSupported(false);
+      return () => {
+        ignore = true;
+      };
+    }
+
+    void Promise.resolve(serverFsService.isSupported())
+      .then((isSupported) => {
+        if (!ignore) {
+          setServerFsSupported(Boolean(isSupported));
+        }
+      })
+      .catch(() => {
+        if (!ignore) {
+          setServerFsSupported(false);
+        }
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, [coreServices.fileSystem, openWsDialog]);
+
   return (
     <UICreateWorkspaceDialog
       open={openWsDialog}
@@ -31,8 +75,15 @@ export function CreateWorkspaceDialog() {
             t.app.dialogs.createWorkspace.invalidName,
         };
       }}
-      onDone={({ name: wsName, type, dirHandle }) => {
-        setOpenWsDialog(false);
+      onDone={async ({
+        name: wsName,
+        type,
+        dirHandle,
+        attachments,
+        serverPath,
+      }) => {
+        const attachmentConfig =
+          attachments || DEFAULT_WORKSPACE_ATTACHMENT_CONFIG;
         if (type === WORKSPACE_STORAGE_TYPE.NativeFS) {
           if (!dirHandle) {
             throwAppError(
@@ -44,30 +95,73 @@ export function CreateWorkspaceDialog() {
             );
           }
 
-          coreServices.workspaceOps
-            .createWorkspaceInfo({
-              name: wsName,
-              type,
-              metadata: {
-                rootDirHandle: dirHandle,
-              },
-            })
-            .then(() => {
-              coreServices.navigation.goWorkspace(wsName);
-            });
+          await coreServices.workspaceOps.createWorkspaceInfo({
+            name: wsName,
+            type,
+            metadata: {
+              rootDirHandle: dirHandle,
+              attachments: attachmentConfig,
+            },
+          });
+          setOpenWsDialog(false);
+          coreServices.navigation.goWorkspace(wsName);
           return;
         }
 
         if (type === WORKSPACE_STORAGE_TYPE.Browser) {
-          coreServices.workspaceOps
-            .createWorkspaceInfo({
-              metadata: {},
-              name: wsName,
-              type: WORKSPACE_STORAGE_TYPE.Browser,
-            })
-            .then(() => {
-              coreServices.navigation.goWorkspace(wsName);
-            });
+          await coreServices.workspaceOps.createWorkspaceInfo({
+            metadata: {
+              attachments: attachmentConfig,
+            },
+            name: wsName,
+            type: WORKSPACE_STORAGE_TYPE.Browser,
+          });
+          setOpenWsDialog(false);
+          coreServices.navigation.goWorkspace(wsName);
+          return;
+        }
+
+        if (type === WORKSPACE_STORAGE_TYPE.ServerFS) {
+          const normalizedServerPath = serverPath?.trim();
+          if (!normalizedServerPath) {
+            throwAppError(
+              'error::workspace:invalid-metadata',
+              'Server filesystem path is required',
+              { wsName },
+            );
+          }
+          const existingWorkspace =
+            await coreServices.workspaceOps.getWorkspaceInfo(wsName);
+          if (existingWorkspace) {
+            throwAppError(
+              'error::workspace:already-exists',
+              'Cannot create workspace as it already exists',
+              { wsName },
+            );
+          }
+          const response = await fetch('/api/server-fs/workspaces', {
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify({
+              wsName,
+              serverPath: normalizedServerPath,
+            }),
+          });
+          if (!response.ok) {
+            throw new Error(await response.text());
+          }
+          await coreServices.workspaceOps.createWorkspaceInfo({
+            metadata: {
+              attachments: attachmentConfig,
+              serverPath: normalizedServerPath,
+            },
+            name: wsName,
+            type: WORKSPACE_STORAGE_TYPE.ServerFS,
+          });
+          setOpenWsDialog(false);
+          coreServices.navigation.goWorkspace(wsName);
           return;
         }
 
@@ -92,6 +186,15 @@ export function CreateWorkspaceDialog() {
           description: t.app.dialogs.createWorkspace.nativeFsDescription,
           disabled: !supportsNativeBrowserFs(),
         },
+        ...(serverFsSupported
+          ? [
+              {
+                type: WORKSPACE_STORAGE_TYPE.ServerFS,
+                title: t.app.dialogs.createWorkspace.serverFsTitle,
+                description: t.app.dialogs.createWorkspace.serverFsDescription,
+              },
+            ]
+          : []),
       ]}
       onDirectoryPick={async () => {
         try {

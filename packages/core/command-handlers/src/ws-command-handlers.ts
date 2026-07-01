@@ -5,6 +5,16 @@ import { c, getCtx } from './helper';
 
 import { validateInputPath } from './utils';
 
+type RenameCapableFileSystem = {
+  exists: (wsPath: string) => Promise<boolean>;
+  renameFile: (args: { oldWsPath: string; newWsPath: string }) => Promise<void>;
+};
+
+type DeleteCapableFileSystem = {
+  deleteFile: (wsPath: string) => Promise<void>;
+  exists: (wsPath: string) => Promise<boolean>;
+};
+
 export const wsCommandHandlers = [
   c('command::ws:new-note-from-input', ({ navigation }, { inputPath }, key) => {
     const { dispatch } = getCtx(key);
@@ -83,16 +93,65 @@ export const wsCommandHandlers = [
     },
   ),
 
-  c('command::ws:delete-ws-path', ({ fileSystem, navigation }, { wsPath }) => {
-    if (navigation.resolveAtoms().wsPath?.wsPath === wsPath) {
-      navigation.goWorkspace();
-    }
-    fileSystem.deleteFile(wsPath);
-  }),
+  c(
+    'command::ws:delete-ws-path',
+    async ({ fileSystem, navigation, workspaceState }, { wsPath }, key) => {
+      const { store } = getCtx(key);
+      const parsedPath = WsPath.fromString(wsPath);
+      const currentWsPath = navigation.resolveAtoms().wsPath?.wsPath;
+
+      if (!parsedPath.isDir) {
+        if (currentWsPath === wsPath) {
+          navigation.goWorkspace();
+        }
+        await fileSystem.deleteFile(wsPath);
+        return;
+      }
+
+      const dirPath = parsedPath.asDir();
+      if (!dirPath) {
+        return;
+      }
+
+      const wsPaths = store
+        .get(workspaceState.$wsPaths)
+        .map((path) => path.wsPath);
+      const targets = getDirectoryTargets(wsPaths, dirPath);
+      const currentFile = currentWsPath
+        ? WsPath.fromString(currentWsPath).asFile()
+        : undefined;
+
+      for (const target of targets) {
+        if (!(await fileSystem.exists(target))) {
+          throwAppError(
+            'error::file:invalid-note-path',
+            t.app.errors.file.invalidNotePath,
+            {
+              invalidWsPath: target,
+            },
+          );
+        }
+      }
+
+      await deleteDirectoryTargetsWithPartialFailureError({
+        fileSystem,
+        targets,
+      });
+
+      if (currentFile?.path.startsWith(dirPath.path)) {
+        navigation.goWorkspace();
+      }
+    },
+  ),
 
   c(
     'command::ws:rename-ws-path',
-    ({ fileSystem, navigation }, { wsPath, newWsPath }) => {
+    async (
+      { fileSystem, navigation, workspaceState },
+      { wsPath, newWsPath },
+      key,
+    ) => {
+      const { store } = getCtx(key);
       const oldPath = WsPath.fromString(wsPath);
       const newPath = WsPath.fromString(newWsPath);
 
@@ -118,34 +177,90 @@ export const wsCommandHandlers = [
         );
       }
 
-      const needsRedirect = navigation.resolveAtoms().wsPath?.wsPath === wsPath;
-      if (needsRedirect) {
-        navigation.goWorkspace();
+      if (oldPath.isDir !== newPath.isDir) {
+        throwAppError(
+          'error::file:invalid-operation',
+          t.app.errors.file.invalidNotePath,
+          {
+            operation: 'rename',
+            oldWsPath: wsPath,
+            newWsPath,
+          },
+        );
       }
 
-      void fileSystem
-        .renameFile({
+      if (!oldPath.isDir) {
+        const needsRedirect =
+          navigation.resolveAtoms().wsPath?.wsPath === wsPath;
+        if (wsPath === newWsPath) {
+          return;
+        }
+        if (await fileSystem.exists(newWsPath)) {
+          throwAppError(
+            'error::file:already-existing',
+            t.app.errors.file.alreadyExistsInDest,
+            {
+              wsPath: newWsPath,
+            },
+          );
+        }
+
+        await fileSystem.renameFile({
           oldWsPath: wsPath,
           newWsPath,
-        })
-        .then(() => {
-          if (needsRedirect) {
-            navigation.goWsPath(newWsPath);
-          }
         });
+        if (needsRedirect) {
+          navigation.goWsPath(newWsPath);
+        }
+        return;
+      }
+
+      const oldDir = oldPath.asDir();
+      const newDir = newPath.asDir();
+      if (!oldDir || !newDir) {
+        return;
+      }
+      if (!assertValidDirectoryRenameTarget(oldDir, newDir)) {
+        return;
+      }
+      const wsPaths = store
+        .get(workspaceState.$wsPaths)
+        .map((path) => path.wsPath);
+      const renameTargets = buildDirectoryRenameTargets(
+        wsPaths,
+        oldDir,
+        newDir,
+      );
+      const currentWsPath = navigation.resolveAtoms().wsPath?.wsPath;
+      const currentRenamedWsPath = currentWsPath
+        ? renameTargets.get(currentWsPath)
+        : undefined;
+
+      const needsRedirect = navigation.resolveAtoms().wsPath?.wsPath === wsPath;
+
+      await renameDirectoryTargetsWithRollback({
+        fileSystem,
+        renameTargets,
+      });
+
+      if (currentRenamedWsPath) {
+        navigation.goWsPath(currentRenamedWsPath);
+      } else if (needsRedirect) {
+        navigation.goWorkspace();
+      }
     },
   ),
 
   c(
     'command::ws:move-ws-path',
-    (
+    async (
       { fileSystem, navigation, workspaceState },
       { wsPath, destDirWsPath },
       key,
     ) => {
       const { store } = getCtx(key);
 
-      const filePath = WsPath.assertFile(wsPath);
+      const sourcePath = WsPath.fromString(wsPath);
       const destDir = WsPath.fromString(destDirWsPath).asDir();
       if (!destDir) {
         throwAppError(
@@ -157,40 +272,86 @@ export const wsCommandHandlers = [
         );
       }
 
-      const newWsPath = destDir.createFilePath(filePath.fileName).wsPath;
+      if (!sourcePath.isDir) {
+        const filePath = WsPath.assertFile(wsPath);
+        const newWsPath = destDir.createFilePath(filePath.fileName).wsPath;
 
-      if (wsPath === newWsPath) {
+        if (wsPath === newWsPath) {
+          return;
+        }
+
+        const existingWsPaths = store
+          .get(workspaceState.$wsPaths)
+          .map((path) => path.wsPath);
+        if (existingWsPaths.includes(newWsPath)) {
+          throwAppError(
+            'error::file:already-existing',
+            t.app.errors.file.alreadyExistsInDest,
+            {
+              wsPath: newWsPath,
+            },
+          );
+        }
+
+        const needsRedirect =
+          navigation.resolveAtoms().wsPath?.wsPath === wsPath;
+
+        await fileSystem.renameFile({
+          oldWsPath: wsPath,
+          newWsPath,
+        });
+        if (needsRedirect) {
+          navigation.goWsPath(newWsPath);
+        }
+        return;
+      }
+
+      const sourceDir = sourcePath.asDir();
+      if (!sourceDir) {
+        return;
+      }
+
+      if (destDir.path.startsWith(sourceDir.path)) {
+        throwAppError(
+          'error::file:invalid-operation',
+          t.app.errors.file.invalidNotePath,
+          {
+            operation: 'move',
+            oldWsPath: sourceDir.wsPath,
+            newWsPath: destDir.wsPath,
+          },
+        );
+      }
+
+      const targetDir = WsPath.fromParts(
+        sourceDir.wsName,
+        WsPath.pathJoin(destDir.path, sourceDir.name),
+      ).asDir();
+      if (!targetDir || sourceDir.wsPath === targetDir.wsPath) {
         return;
       }
 
       const existingWsPaths = store
         .get(workspaceState.$wsPaths)
         .map((path) => path.wsPath);
-      if (existingWsPaths.includes(newWsPath)) {
-        throwAppError(
-          'error::file:already-existing',
-          t.app.errors.file.alreadyExistsInDest,
-          {
-            wsPath: newWsPath,
-          },
-        );
-      }
+      const renameTargets = buildDirectoryRenameTargets(
+        existingWsPaths,
+        sourceDir,
+        targetDir,
+      );
+      const currentWsPath = navigation.resolveAtoms().wsPath?.wsPath;
+      const currentRenamedWsPath = currentWsPath
+        ? renameTargets.get(currentWsPath)
+        : undefined;
 
-      const needsRedirect = navigation.resolveAtoms().wsPath?.wsPath === wsPath;
-      if (needsRedirect) {
-        navigation.goWorkspace();
-      }
+      await renameDirectoryTargetsWithRollback({
+        fileSystem,
+        renameTargets,
+      });
 
-      void fileSystem
-        .renameFile({
-          oldWsPath: wsPath,
-          newWsPath,
-        })
-        .then(() => {
-          if (needsRedirect) {
-            navigation.goWsPath(newWsPath);
-          }
-        });
+      if (currentRenamedWsPath) {
+        navigation.goWsPath(currentRenamedWsPath);
+      }
     },
   ),
 
@@ -392,3 +553,153 @@ export const wsCommandHandlers = [
     },
   ),
 ];
+
+function getDirectoryTargets(wsPaths: string[], dir: WsPath): string[] {
+  const dirPath = dir.asDir();
+  if (!dirPath) {
+    return [];
+  }
+
+  return wsPaths.filter((wsPath) => {
+    const filePath = WsPath.fromString(wsPath).asFile();
+    return !!filePath && filePath.path.startsWith(dirPath.path);
+  });
+}
+
+function buildDirectoryRenameTargets(
+  wsPaths: string[],
+  oldDir: WsPath,
+  newDir: WsPath,
+): Map<string, string> {
+  const oldDirPath = oldDir.asDir();
+  const newDirPath = newDir.asDir();
+  if (!oldDirPath || !newDirPath) {
+    return new Map();
+  }
+
+  const targets = getDirectoryTargets(wsPaths, oldDirPath);
+  const targetSet = new Set(targets);
+  const result = new Map<string, string>();
+
+  for (const target of targets) {
+    const filePath = WsPath.assertFile(target);
+    const relativePath = filePath.path.slice(oldDirPath.path.length);
+    const newFilePath = WsPath.pathJoin(newDirPath.path, relativePath);
+    const newWsPath: string = WsPath.fromParts(
+      oldDirPath.wsName,
+      newFilePath,
+    ).wsPath;
+    if (result.has(target)) {
+      continue;
+    }
+    if (!targetSet.has(newWsPath) && wsPaths.includes(newWsPath)) {
+      throwAppError(
+        'error::file:already-existing',
+        t.app.errors.file.alreadyExistsInDest,
+        {
+          wsPath: newWsPath,
+        },
+      );
+    }
+    result.set(target, newWsPath);
+  }
+
+  return result;
+}
+
+export function assertValidDirectoryRenameTarget(
+  oldDir: WsDirPath,
+  newDir: WsDirPath,
+) {
+  if (oldDir.wsPath === newDir.wsPath) {
+    return false;
+  }
+  if (newDir.path.startsWith(oldDir.path)) {
+    throwAppError(
+      'error::file:invalid-operation',
+      t.app.errors.file.invalidNotePath,
+      {
+        operation: 'rename',
+        oldWsPath: oldDir.wsPath,
+        newWsPath: newDir.wsPath,
+      },
+    );
+  }
+  return true;
+}
+
+export async function deleteDirectoryTargetsWithPartialFailureError({
+  fileSystem,
+  targets,
+}: {
+  fileSystem: DeleteCapableFileSystem;
+  targets: string[];
+}) {
+  const deleted: string[] = [];
+  try {
+    for (const target of targets) {
+      await fileSystem.deleteFile(target);
+      deleted.push(target);
+    }
+  } catch (error) {
+    throwAppError(
+      'error::file:invalid-operation',
+      error instanceof Error
+        ? error.message
+        : 'Directory delete failed after partially deleting files',
+      {
+        operation: 'partial-directory-delete',
+        oldWsPath: deleted.join(','),
+        newWsPath: targets.slice(deleted.length).join(','),
+      },
+    );
+  }
+}
+
+async function renameDirectoryTargetsWithRollback({
+  fileSystem,
+  renameTargets,
+}: {
+  fileSystem: RenameCapableFileSystem;
+  renameTargets: Map<string, string>;
+}) {
+  const sourceTargets = new Set(renameTargets.keys());
+  for (const newTarget of renameTargets.values()) {
+    if (!sourceTargets.has(newTarget) && (await fileSystem.exists(newTarget))) {
+      throwAppError(
+        'error::file:already-existing',
+        t.app.errors.file.alreadyExistsInDest,
+        {
+          wsPath: newTarget,
+        },
+      );
+    }
+  }
+
+  const completed: Array<{ oldWsPath: string; newWsPath: string }> = [];
+  try {
+    for (const [oldWsPath, newWsPath] of renameTargets.entries()) {
+      await fileSystem.renameFile({ oldWsPath, newWsPath });
+      completed.push({ oldWsPath, newWsPath });
+    }
+  } catch (error) {
+    for (const { oldWsPath, newWsPath } of completed.reverse()) {
+      await fileSystem
+        .renameFile({ oldWsPath: newWsPath, newWsPath: oldWsPath })
+        .catch((rollbackError: unknown) => {
+          throwAppError(
+            'error::file:invalid-operation',
+            rollbackError instanceof Error
+              ? rollbackError.message
+              : 'Failed to roll back directory operation',
+            {
+              operation: 'rollback-directory-rename',
+              oldWsPath: newWsPath,
+              newWsPath: oldWsPath,
+            },
+          );
+        });
+    }
+    throw error;
+  }
+}
