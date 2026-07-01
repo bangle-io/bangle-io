@@ -79,12 +79,19 @@ jobs:
           EOF
           chmod 600 "$HOME/.wrangler/config/default.toml"
 
+          set +e
           output="$(pnpm exec wrangler pages deploy packages/tooling/browser-entry/dist \
             --project-name "$CLOUDFLARE_PAGES_PROJECT" \
             --branch "$CLOUDFLARE_PREVIEW_BRANCH" \
             --commit-dirty=true 2>&1)"
+          wrangler_status=$?
+          set -e
 
           printf '%s\n' "$output"
+
+          if [ "$wrangler_status" -ne 0 ]; then
+            exit "$wrangler_status"
+          fi
 
           preview_url="$(printf '%s\n' "$output" | sed -nE 's#.*(https://[^[:space:]]+\.pages\.dev).*#\1#p' | tail -n 1)"
 
