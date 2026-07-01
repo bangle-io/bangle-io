@@ -7,7 +7,7 @@ import {
   readStoredMarkdown,
 } from './common';
 
-test('file explorer creates folders, searches files, opens notes, and survives reload', async ({
+test('file explorer creates folders, opens notes, and survives reload', async ({
   page,
 }) => {
   const workspaceName = `explorer-${Date.now()}`;
@@ -66,10 +66,8 @@ test('file explorer creates folders, searches files, opens notes, and survives r
     ).toBeVisible();
   });
 
-  await test.step('search and open the named note from the explorer', async () => {
-    await explorer.getByLabel('Search Files').click();
-    await explorer.getByPlaceholder('Search…').fill('alpha');
-    await page.keyboard.press('Enter');
+  await test.step('open the named note from the explorer', async () => {
+    await explorer.getByRole('treeitem', { name: /alpha\.md/ }).click();
 
     await expect(
       page.getByLabel('breadcrumb').getByRole('button', { name: 'alpha.md' }),
@@ -77,8 +75,6 @@ test('file explorer creates folders, searches files, opens notes, and survives r
     await expect
       .poll(() => getEditorText(page, {}))
       .toBe('Alpha explorer content');
-
-    await explorer.getByPlaceholder('Search…').fill('');
   });
 
   await test.step('drag a note into another folder', async () => {
@@ -165,9 +161,7 @@ test('file explorer creates folders, searches files, opens notes, and survives r
     await expect(
       explorer.getByRole('treeitem', { name: /^docs$/ }),
     ).toBeVisible();
-    await explorer.getByLabel('Search Files').click();
-    await explorer.getByPlaceholder('Search…').fill('untitled-2');
-    await page.keyboard.press('Enter');
+    await explorer.getByRole('treeitem', { name: /untitled-2\.md/ }).click();
 
     await expect(
       page

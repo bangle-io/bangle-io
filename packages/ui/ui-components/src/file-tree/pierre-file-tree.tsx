@@ -1,14 +1,14 @@
 import { cn } from '@bangle.io/shadcn';
 import type {
   ContextMenuItem,
+  ContextMenuOpenContext,
   FileTreeDropContext,
   FileTreeDropResult,
   FileTree as PierreFileTreeModel,
 } from '@pierre/trees';
 import { FileTree, useFileTree } from '@pierre/trees/react';
-import { FilePlus2, FolderPlus, Search } from 'lucide-react';
+import { FilePlus2, FolderPlus } from 'lucide-react';
 import React, { useEffect, useMemo, useRef } from 'react';
-import { BANGLE_PIERRE_FILE_TREE_ICONS } from './pierre-file-tree-icons';
 import {
   type FileTreeEntry,
   type FileTreeEntryAction,
@@ -40,7 +40,74 @@ const TREE_UNSAFE_CSS = `
     font-weight: 600;
     box-shadow: inset 2px 0 0 var(--sidebar-primary);
   }
+
+  button[data-type='item'][data-item-type='file'] > [data-item-section='icon'] {
+    display: none;
+  }
+
+  [data-type='context-menu-anchor'] {
+    z-index: 40;
+  }
 `;
+
+const MAX_VISIBLE_TREE_ROWS = 14;
+const MIN_TREE_ROWS = 1;
+const CONTEXT_MENU_WIDTH = 176;
+const CONTEXT_MENU_VIEWPORT_MARGIN = 8;
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), max);
+}
+
+function getTreeRowCount(paths: readonly string[]): number {
+  const directoryPaths = new Set<string>();
+
+  for (const path of paths) {
+    const segments = normalizeInputPath(path).split('/').filter(Boolean);
+    let directoryPath = '';
+
+    for (const segment of segments.slice(0, -1)) {
+      directoryPath = directoryPath ? `${directoryPath}/${segment}` : segment;
+      directoryPaths.add(directoryPath);
+    }
+  }
+
+  return paths.length + directoryPaths.size;
+}
+
+function getContextMenuStyle(
+  context: ContextMenuOpenContext,
+  actionCount: number,
+): React.CSSProperties {
+  if (typeof window === 'undefined') {
+    return {};
+  }
+
+  const { anchorRect } = context;
+  const estimatedMenuHeight = 42 + actionCount * 30;
+  const maxLeft = Math.max(
+    CONTEXT_MENU_VIEWPORT_MARGIN,
+    window.innerWidth - CONTEXT_MENU_WIDTH - CONTEXT_MENU_VIEWPORT_MARGIN,
+  );
+  const maxTop = Math.max(
+    CONTEXT_MENU_VIEWPORT_MARGIN,
+    window.innerHeight - estimatedMenuHeight - CONTEXT_MENU_VIEWPORT_MARGIN,
+  );
+  const shouldOpenLeft =
+    anchorRect.width > 0 ||
+    anchorRect.right + CONTEXT_MENU_WIDTH + CONTEXT_MENU_VIEWPORT_MARGIN >
+      window.innerWidth;
+  const preferredLeft = shouldOpenLeft
+    ? anchorRect.left - CONTEXT_MENU_WIDTH
+    : anchorRect.right;
+
+  return {
+    left: clamp(preferredLeft, CONTEXT_MENU_VIEWPORT_MARGIN, maxLeft),
+    position: 'fixed',
+    top: clamp(anchorRect.top, CONTEXT_MENU_VIEWPORT_MARGIN, maxTop),
+    width: CONTEXT_MENU_WIDTH,
+  };
+}
 
 function basename(path: string): string {
   const normalized = normalizePierreDirectoryPath(path);
@@ -123,6 +190,10 @@ export function PierreFileTree({
     [activePaths],
   );
   const fileCount = filePathSet.size;
+  const visibleRowCount = Math.min(
+    Math.max(getTreeRowCount(treePaths), MIN_TREE_ROWS),
+    MAX_VISIBLE_TREE_ROWS,
+  );
   const filePathSetRef = useRef<ReadonlySet<string>>(filePathSet);
   const modelRef = useRef<PierreFileTreeModel | null>(null);
   const onOpenFileRef = useRef(onOpenFile);
@@ -198,9 +269,8 @@ export function PierreFileTree({
         modelRef.current?.resetPaths(treePathsRef.current);
       },
     },
-    fileTreeSearchMode: 'hide-non-matches',
     flattenEmptyDirectories: true,
-    icons: BANGLE_PIERRE_FILE_TREE_ICONS,
+    initialVisibleRowCount: visibleRowCount,
     initialExpansion: 1,
     onSelectionChange: (selectedPaths) => {
       const selectedPath = selectedPaths.at(-1);
@@ -213,8 +283,7 @@ export function PierreFileTree({
       }
     },
     paths: treePaths,
-    search: true,
-    searchBlurBehavior: 'retain',
+    search: false,
     unsafeCSS: TREE_UNSAFE_CSS,
   });
   modelRef.current = model;
@@ -244,10 +313,10 @@ export function PierreFileTree({
 
   return (
     <div
-      className={cn('flex min-h-0 flex-1 flex-col', className)}
+      className={cn('flex min-h-0 flex-col', className)}
       data-testid="bangle-file-explorer"
     >
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+      <div className="relative flex min-h-0 flex-col overflow-visible">
         <div className="flex h-8 shrink-0 items-center gap-1 border-sidebar-border/70 border-b px-1.5">
           <div className="min-w-0 flex-1">
             <div className="truncate font-semibold text-[11px] text-sidebar-foreground uppercase">
@@ -257,15 +326,6 @@ export function PierreFileTree({
               {t.app.components.appSidebar.noteCount({ count: fileCount })}
             </div>
           </div>
-          <button
-            type="button"
-            className="inline-flex size-6 items-center justify-center rounded-sm text-sidebar-foreground/65 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-            aria-label={t.app.components.appSidebar.searchFilesActionLabel}
-            title={t.app.components.appSidebar.searchFilesActionLabel}
-            onClick={() => model.openSearch()}
-          >
-            <Search className="size-3.5" />
-          </button>
           <button
             type="button"
             className="inline-flex size-6 items-center justify-center rounded-sm text-sidebar-foreground/65 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
@@ -287,8 +347,11 @@ export function PierreFileTree({
         </div>
         <FileTree
           aria-label={t.app.components.appSidebar.fileTreeLabel}
-          className="min-h-0 flex-1 overflow-hidden py-1 pr-1 pl-0.5"
+          className="min-h-0 overflow-hidden pr-1 pl-0.5"
           model={model}
+          style={{
+            height: `${visibleRowCount * model.getItemHeight()}px`,
+          }}
           renderContextMenu={(item, context) => {
             const entry = toEntry(item);
             const actions = getActionsForEntry(entry);
@@ -299,8 +362,9 @@ export function PierreFileTree({
 
             return (
               <div
-                className="min-w-44 overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-lg"
+                className="z-50 overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-lg"
                 data-file-tree-context-menu-root="true"
+                style={getContextMenuStyle(context, actions.length)}
               >
                 <div className="border-border/60 border-b px-2 py-1.5 font-medium text-muted-foreground text-xs">
                   <span className="block truncate">{basename(entry.path)}</span>

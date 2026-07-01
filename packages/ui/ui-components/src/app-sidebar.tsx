@@ -212,11 +212,11 @@ export function AppSidebar({
             </SidebarMenu>
           </SidebarGroup>
         )}
-        <SidebarGroup className="min-h-0 flex-1 pt-0">
+        <SidebarGroup className="min-h-0 overflow-visible pt-0">
           <SidebarGroupLabel className="sr-only">
             {t.app.components.appSidebar.filesLabel}
           </SidebarGroupLabel>
-          <SidebarGroupContent className="flex min-h-0 flex-1 flex-col">
+          <SidebarGroupContent className="flex min-h-0 flex-col overflow-visible">
             <PierreFileTree
               activePaths={activeFilePaths}
               filePaths={filePaths}
