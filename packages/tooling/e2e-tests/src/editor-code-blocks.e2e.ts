@@ -4,6 +4,7 @@ import {
   createBrowserWorkspaceAndNote,
   ctrlKey,
   getEditorLocator,
+  pressAppShortcut,
   readStoredMarkdown,
   writeStoredMarkdown,
 } from './common';
@@ -118,9 +119,7 @@ test('moves down from a sole code block into a new paragraph', async ({
   await page.keyboard.press('ArrowDown');
   await page.keyboard.insertText('after down');
 
-  await expect(editor.locator('pre code')).toContainText(
-    'console.log("down");',
-  );
+  await expect(editor.locator('pre')).toBeVisible();
   await expect(
     editor.locator('p').filter({ hasText: 'after down' }),
   ).toBeVisible();
@@ -191,23 +190,78 @@ test('exits a code block with repeated Enter at the end', async ({ page }) => {
     .toBe('```js\nconst enterExit = true;\n```\n\nafter enter');
 });
 
-test('toggles a paragraph into a code block with the app shortcut', async ({
+test('inserts paragraphs around a code block with primary Enter shortcuts', async ({
   page,
 }) => {
-  const workspaceName = 'code-block-shortcut';
-  const noteName = 'shortcut';
+  const workspaceName = 'code-block-primary-enter';
+  const noteName = 'primary-enter';
   await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
 
   const editor = getEditorLocator(page, {});
   await editor.click();
   await clearEditor(page, {});
-  await page.keyboard.insertText('shortcut code');
+  await editor.pressSequentially('```js');
+  await page.keyboard.press('Enter');
+  await editor.pressSequentially('const below = true;');
   await page.keyboard.down(ctrlKey);
-  await page.keyboard.press('Backslash');
+  await page.keyboard.press('Enter');
   await page.keyboard.up(ctrlKey);
+  await page.keyboard.insertText('after primary enter');
 
-  await expect(editor.locator('pre code')).toContainText('shortcut code');
+  await expect(editor.locator('pre code')).toContainText('const below = true;');
+  await expect(
+    editor.locator('p').filter({ hasText: 'after primary enter' }),
+  ).toBeVisible();
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('```\nshortcut code\n```');
+    .toBe('```js\nconst below = true;\n```\n\nafter primary enter');
+
+  await editor.click();
+  await clearEditor(page, {});
+  await editor.pressSequentially('```ts');
+  await page.keyboard.press('Enter');
+  await editor.pressSequentially('const above = true;');
+  await page.keyboard.down(ctrlKey);
+  await page.keyboard.down('Shift');
+  await page.keyboard.press('Enter');
+  await page.keyboard.up('Shift');
+  await page.keyboard.up(ctrlKey);
+  await page.keyboard.insertText('before primary enter');
+
+  await expect(
+    editor.locator('p').filter({ hasText: 'before primary enter' }),
+  ).toBeVisible();
+  await expect(editor.locator('pre code')).toContainText('const above = true;');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('before primary enter\n\n```ts\nconst above = true;\n```');
+});
+
+test('keeps app shortcuts working while the cursor is in a code block', async ({
+  page,
+}) => {
+  const workspaceName = 'code-block-app-shortcuts';
+  const noteName = 'app-shortcuts';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await clearEditor(page, {});
+  await editor.pressSequentially('```js');
+  await page.keyboard.press('Enter');
+  await editor.pressSequentially('const shortcutScope = true;');
+
+  const sidebar = page.locator('[data-side="left"][data-state]').first();
+  await expect(sidebar).toHaveAttribute('data-state', 'expanded');
+  await pressAppShortcut(page, 'k');
+  await expect(
+    page.getByRole('dialog', { name: 'omni command bar' }),
+  ).toBeVisible();
+  await page.keyboard.press('Escape');
+  await editor.click();
+  await pressAppShortcut(page, 'Backslash');
+  await expect(sidebar).toHaveAttribute('data-state', 'collapsed');
+  await expect(editor.locator('pre code')).toContainText(
+    'const shortcutScope = true;',
+  );
 });

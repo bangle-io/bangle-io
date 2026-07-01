@@ -16,6 +16,8 @@ export type CodeBlockConfig = {
   // keys
   keyToCodeBlock?: string | false;
   keyExit?: string | false;
+  keyInsertEmptyParaAbove?: string | false;
+  keyInsertEmptyParaBelow?: string | false;
 };
 
 type RequiredConfig = Required<CodeBlockConfig>;
@@ -23,8 +25,10 @@ type RequiredConfig = Required<CodeBlockConfig>;
 const DEFAULT_CONFIG: RequiredConfig = {
   name: 'code_block',
   getParagraphNodeType: defaultGetParagraphNodeType,
-  keyToCodeBlock: 'Mod-\\',
+  keyToCodeBlock: false,
   keyExit: 'Enter',
+  keyInsertEmptyParaAbove: 'Mod-Shift-Enter',
+  keyInsertEmptyParaBelow: 'Mod-Enter',
 };
 
 export function setupCodeBlock(userConfig?: CodeBlockConfig) {
@@ -104,6 +108,8 @@ function pluginKeybindings(config: RequiredConfig) {
     ],
     ['ArrowUp', moveOrInsertBoundaryParagraph(config, 'up')],
     ['ArrowDown', moveOrInsertBoundaryParagraph(config, 'down')],
+    [config.keyInsertEmptyParaAbove, insertEmptyParaAboveCodeBlock(config)],
+    [config.keyInsertEmptyParaBelow, insertEmptyParaBelowCodeBlock(config)],
   ];
 
   if (config.keyExit && config.keyExit !== 'Enter') {
@@ -244,6 +250,26 @@ function moveOrInsertBoundaryParagraph(
     }
 
     return false;
+  };
+}
+
+function insertEmptyParaAboveCodeBlock(config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    const codeBlockType = getNodeType(state.schema, config.name);
+    return insertEmptyParagraphAboveNode(
+      codeBlockType,
+      config.getParagraphNodeType,
+    )(state, dispatch);
+  };
+}
+
+function insertEmptyParaBelowCodeBlock(config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    const codeBlockType = getNodeType(state.schema, config.name);
+    return insertEmptyParagraphBelowNode(
+      codeBlockType,
+      config.getParagraphNodeType,
+    )(state, dispatch);
   };
 }
 

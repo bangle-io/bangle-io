@@ -150,7 +150,7 @@ export const wsCommands = narrow([
       services: ['workspaceState', 'userActivityService'],
     },
     omniSearch: true,
-    keybindings: ['meta', 'shift', 's'],
+    keybindings: ['ctrl', 'shift', 's'],
     args: {
       wsPath: T.Optional(T.String),
     },

@@ -155,6 +155,26 @@ describe('ShortcutManager', () => {
     expect(handler).toHaveBeenCalled();
   });
 
+  test('should match meta backslash events to canonical ctrl backslash shortcuts', () => {
+    const handler = vi.fn();
+    const shortcutManager = new ShortcutManager({ isDarwin: true });
+    const keyBinding: KeyBinding = {
+      id: 'canonicalCtrlBackslashShortcut',
+      keys: 'ctrl-\\',
+    };
+
+    shortcutManager.register(keyBinding, handler);
+
+    const event = new KeyboardEvent('keydown', {
+      key: '\\',
+      metaKey: true,
+    });
+
+    shortcutManager.handleEvent(event);
+
+    expect(handler).toHaveBeenCalled();
+  });
+
   test('should not match meta events to ctrl shortcuts for non-macOS', () => {
     const handler = vi.fn();
     const keyBinding: KeyBinding = {

@@ -26,6 +26,7 @@ export class ShortcutService extends BaseService {
   private shortcutManager = new ShortcutManager({
     isDarwin: isDarwin,
   });
+  private readonly eventListenerOptions = { capture: true };
 
   eventHandler = (event: KeyboardEvent) => {
     if (!this.mounted) {
@@ -53,9 +54,17 @@ export class ShortcutService extends BaseService {
   }
 
   hookMount() {
-    this.config.target.addEventListener('keydown', this.eventHandler);
+    this.config.target.addEventListener(
+      'keydown',
+      this.eventHandler,
+      this.eventListenerOptions,
+    );
     this.addCleanup(() => {
-      this.config.target.removeEventListener('keydown', this.eventHandler);
+      this.config.target.removeEventListener(
+        'keydown',
+        this.eventHandler,
+        this.eventListenerOptions,
+      );
       this.shortcutManager.deregisterAll();
     });
   }

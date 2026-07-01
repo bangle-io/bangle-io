@@ -32,7 +32,7 @@ export const uiCommands = narrow([
       services: ['workbenchState'],
     },
     omniSearch: true,
-    keybindings: ['meta', '\\'],
+    keybindings: ['ctrl', '\\'],
     args: null,
   },
   {
