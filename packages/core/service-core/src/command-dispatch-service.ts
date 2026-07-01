@@ -1,4 +1,5 @@
 import {
+  assertIsDefined,
   BaseError,
   BaseService,
   type BaseServiceContext,
@@ -52,7 +53,7 @@ export class CommandDispatchService extends BaseService {
   }
 
   hookMount() {
-    this.config.getExposedServices();
+    assertIsDefined(this.config.getExposedServices(), 'exposedServices');
   }
 
   public dispatch<TId extends BangleAppCommand['id']>(
