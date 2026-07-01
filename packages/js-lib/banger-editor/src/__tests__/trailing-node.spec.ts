@@ -3,6 +3,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { setupBase } from '../base';
 import { setupCodeBlock } from '../code-block';
+import { setupHeading } from '../heading';
 import { setupParagraph } from '../paragraph';
 import { createBangerEditorTestSetup } from '../test-helpers';
 import { setupTrailingNode } from '../trailing-node';
@@ -12,11 +13,19 @@ const editorTest = createBangerEditorTestSetup({
     setupBase(),
     setupParagraph(),
     setupCodeBlock(),
+    setupHeading(),
     setupTrailingNode(),
   ],
+  builderAliases: {
+    codeBlock: { nodeType: 'code_block', language: '' },
+    doc: { nodeType: 'doc' },
+    heading: { nodeType: 'heading', level: 1 },
+    p: { nodeType: 'paragraph' },
+  },
 });
 
 const { codeBlock, doc, p } = editorTest.builders;
+const heading = editorTest.nodeBuilder('heading');
 
 afterEach(() => {
   editorTest.cleanup();
@@ -45,6 +54,29 @@ describe('trailing node', () => {
 
     expect(event.defaultPrevented).toBe(true);
     editor.expectDoc(doc(codeBlock('const done = true;'), p()));
+    expect(editor.selectionParentType()).toBe('paragraph');
+  });
+
+  it('adds a paragraph when the user clicks below a final heading', () => {
+    const editor = editorTest.createEditor(doc(heading('Done')));
+
+    mockEditorBounds(editor.view.dom, {
+      bottom: 500,
+      left: 0,
+      right: 500,
+      top: 0,
+    });
+    mockEditorBounds(editor.view.dom.lastElementChild, {
+      bottom: 100,
+      left: 0,
+      right: 500,
+      top: 20,
+    });
+
+    const event = dispatchMouseDown(editor.view.dom, { clientY: 160 });
+
+    expect(event.defaultPrevented).toBe(true);
+    editor.expectDoc(doc(heading('Done'), p()));
     expect(editor.selectionParentType()).toBe('paragraph');
   });
 
