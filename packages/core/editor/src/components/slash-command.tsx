@@ -11,6 +11,7 @@ import {
   CommandList,
   CommandSeparator,
   cn,
+  Input,
 } from '@bangle.io/ui-components';
 import {
   addMonths,
@@ -193,6 +194,19 @@ export function SlashCommand({
     })(editorView.state, editorView.dispatch, editorView);
   }, [editorView, active, ext]);
 
+  const handleCommandKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (event.key !== 'Escape') {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      dismissCommandUi();
+    },
+    [dismissCommandUi],
+  );
+
   if (!editorView || !active?.show) {
     return null;
   }
@@ -203,6 +217,7 @@ export function SlashCommand({
         <Command
           ref={commandRef}
           className="min-w-72 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md"
+          onKeyDown={handleCommandKeyDown}
         >
           <CommandInput
             hidden
@@ -231,6 +246,7 @@ export function SlashCommand({
       <Command
         ref={commandRef}
         className="overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md"
+        onKeyDown={handleCommandKeyDown}
       >
         <CommandInput
           hidden
@@ -435,6 +451,38 @@ function DateCommandCalendar({
 }): ReactElement {
   const days = getCalendarDays(month);
   const today = new Date();
+  const [jumpMonth, setJumpMonth] = useState(() =>
+    String(month.getMonth() + 1),
+  );
+  const [jumpYear, setJumpYear] = useState(() => String(month.getFullYear()));
+
+  useEffect(() => {
+    setJumpMonth(String(month.getMonth() + 1));
+    setJumpYear(String(month.getFullYear()));
+  }, [month]);
+
+  const jumpToMonth = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const monthNumber = Number(jumpMonth);
+    const yearNumber = Number(jumpYear);
+
+    if (
+      !Number.isInteger(monthNumber) ||
+      !Number.isInteger(yearNumber) ||
+      monthNumber < 1 ||
+      monthNumber > 12 ||
+      yearNumber < 1 ||
+      yearNumber > 9999
+    ) {
+      return;
+    }
+
+    const nextMonth = new Date(month);
+    nextMonth.setFullYear(yearNumber, monthNumber - 1, 1);
+    nextMonth.setHours(0, 0, 0, 0);
+    onMonthChange(startOfMonth(nextMonth));
+  };
 
   return (
     <div className="p-3">
@@ -470,6 +518,40 @@ function DateCommandCalendar({
           <ChevronRight aria-hidden="true" />
         </Button>
       </div>
+      <form
+        aria-label="Go to month and year"
+        className="mb-3 grid grid-cols-[4.5rem_1fr_auto] gap-2"
+        onKeyDown={(event) => {
+          if (event.key !== 'Escape') {
+            event.stopPropagation();
+          }
+        }}
+        onSubmit={jumpToMonth}
+      >
+        <Input
+          type="number"
+          inputMode="numeric"
+          min={1}
+          max={12}
+          value={jumpMonth}
+          aria-label="Month"
+          className="h-8 px-2 text-sm"
+          onChange={(event) => setJumpMonth(event.target.value)}
+        />
+        <Input
+          type="number"
+          inputMode="numeric"
+          min={1}
+          max={9999}
+          value={jumpYear}
+          aria-label="Year"
+          className="h-8 px-2 text-sm"
+          onChange={(event) => setJumpYear(event.target.value)}
+        />
+        <Button type="submit" variant="secondary" size="sm" className="h-8">
+          Go
+        </Button>
+      </form>
       <section className="grid grid-cols-7 gap-1" aria-label="Calendar">
         {WEEKDAY_LABELS.map((label) => (
           <div
