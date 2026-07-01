@@ -218,19 +218,19 @@ export class Container<
       throw new Error('instantiateAll() must be called before mountAll().');
     }
 
-    for (const key of this.dependencyOrder) {
-      const service = this.instantiatedServices[key];
-      if (!service) {
-        continue;
-      }
-      if (typeof service.instance.mount === 'function') {
-        try {
-          await service.instance.mount();
-        } catch (error) {
-          throw this.startupError(service.key, 'mount', error);
+    const mountPromises = Object.values(this.instantiatedServices).map(
+      async (service) => {
+        if (typeof service.instance.mount === 'function') {
+          try {
+            await service.instance.mount();
+          } catch (error) {
+            throw this.startupError(service.key, 'mount', error);
+          }
         }
-      }
-    }
+      },
+    );
+
+    await Promise.all(mountPromises);
   }
 
   describe(): ContainerDescription {
