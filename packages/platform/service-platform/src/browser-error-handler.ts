@@ -35,7 +35,7 @@ export class BrowserErrorHandlerService extends BaseErrorService {
     while (this.pendingEvents.length > 0) {
       const event = this.pendingEvents.shift();
       if (event) {
-        this.handleErrorEvent(event);
+        this.processErrorEvent(event);
       }
     }
 
@@ -56,6 +56,10 @@ export class BrowserErrorHandlerService extends BaseErrorService {
       return;
     }
 
+    this.processErrorEvent(event);
+  };
+
+  private processErrorEvent(event: PromiseRejectionEvent | ErrorEvent) {
     let error: Error | undefined;
     const isRejection = 'reason' in event;
 
@@ -94,5 +98,5 @@ export class BrowserErrorHandlerService extends BaseErrorService {
       isFakeThrow: false,
       isRejection,
     });
-  };
+  }
 }
