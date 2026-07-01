@@ -56,7 +56,7 @@ export interface WorkspaceConfig {
 export interface CreateWorkspaceDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onDone: (config: WorkspaceConfig) => void;
+  onDone: (config: WorkspaceConfig) => Promise<void> | void;
   storageTypes: StorageTypeConfig[];
   onDirectoryPick?: () => Promise<DirectoryPickResult>;
   validateWorkspace: (config: WorkspaceConfig) => WorkspaceValidation;
@@ -375,6 +375,7 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
   const ref = useRef<HTMLInputElement>(null);
   const workspaceNameId = useId();
   const serverPathId = useId();
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   useEffect(() => {
     ref.current?.focus();
@@ -386,11 +387,14 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      handleSubmit();
+      void handleSubmit();
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (isSubmitting) {
+      return;
+    }
     const attachmentValidation = validateAttachmentConfig(attachments);
     if (!attachmentValidation.isValid) {
       dispatch({
@@ -401,7 +405,7 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
     }
 
     const normalizedServerPath = state.serverPath.trim();
-    if (state.storageType === 'privatefs' && !normalizedServerPath) {
+    if (state.storageType === 'serverfs' && !normalizedServerPath) {
       dispatch({
         type: 'UPDATE_ERROR',
         error: {
@@ -429,12 +433,22 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
       });
       return;
     }
-    onDone({
-      type: state.storageType,
-      name,
-      serverPath: normalizedServerPath || undefined,
-      attachments: normalizeAttachmentConfig(attachments),
-    });
+    setIsSubmitting(true);
+    try {
+      await onDone({
+        type: state.storageType,
+        name,
+        serverPath: normalizedServerPath || undefined,
+        attachments: normalizeAttachmentConfig(attachments),
+      });
+    } catch (error) {
+      dispatch({
+        type: 'UPDATE_ERROR',
+        error: { message: getErrorMessage(error) },
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleBack = () => {
@@ -465,7 +479,7 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
             className="col-span-3"
           />
         </div>
-        {state.storageType === 'privatefs' && (
+        {state.storageType === 'serverfs' && (
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor={serverPathId} className="text-right">
               {t.app.dialogs.createWorkspace.serverFsPathLabel}
@@ -498,8 +512,8 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
         </Button>
         <Button
           type="submit"
-          onClick={handleSubmit}
-          disabled={Boolean(error) || !name}
+          onClick={() => void handleSubmit()}
+          disabled={Boolean(error) || !name || isSubmitting}
         >
           {t.app.common.createButton}
         </Button>
@@ -524,6 +538,7 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
   onDone,
 }) => {
   const { dirHandle, error, attachments } = state;
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const handlePickDirectory = async () => {
     if (!onDirectoryPick) {
@@ -554,7 +569,10 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
     dispatch({ type: 'NAVIGATE_TO_TYPE_SELECT' });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (isSubmitting) {
+      return;
+    }
     const attachmentValidation = validateAttachmentConfig(attachments);
     if (!attachmentValidation.isValid) {
       dispatch({
@@ -583,12 +601,22 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
       });
       return;
     }
-    onDone({
-      type: 'nativefs',
-      name: dirName,
-      dirHandle,
-      attachments: normalizeAttachmentConfig(attachments),
-    });
+    setIsSubmitting(true);
+    try {
+      await onDone({
+        type: 'nativefs',
+        name: dirName,
+        dirHandle,
+        attachments: normalizeAttachmentConfig(attachments),
+      });
+    } catch (error) {
+      dispatch({
+        type: 'UPDATE_ERROR',
+        error: { message: getErrorMessage(error) },
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -633,7 +661,10 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
         <Button variant="outline" onClick={handleBack}>
           {t.app.common.backButton}
         </Button>
-        <Button onClick={handleSubmit} disabled={!dirHandle}>
+        <Button
+          onClick={() => void handleSubmit()}
+          disabled={!dirHandle || isSubmitting}
+        >
           {t.app.common.createButton}
         </Button>
       </DialogFooter>
@@ -676,7 +707,7 @@ const ListItem: React.FC<ListItemProps> = ({
           disabled && 'cursor-not-allowed opacity-50',
         )}
         disabled={disabled}
-        // biome-ignore lint: Using a button for custom styling and behavior while maintaining radio button semantics.
+        // biome-ignore lint/a11y/useSemanticElements: custom styled button preserves radio semantics with roving selection behavior.
         role="radio"
       >
         <div className="flex items-center justify-between space-x-1">
@@ -745,6 +776,13 @@ function validateAttachmentConfig(attachments: WorkspaceAttachmentConfig): {
   }
 
   return { isValid: true, message: '' };
+}
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+  return t.app.dialogs.createWorkspace.invalidNameDefault;
 }
 
 const AttachmentSettingsFields: React.FC<{

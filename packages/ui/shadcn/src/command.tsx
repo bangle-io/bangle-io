@@ -41,12 +41,12 @@ const CommandDialog = ({
 }) => {
   return (
     <Dialog {...props}>
-      <DialogTitle className="sr-only">{screenReaderTitle}</DialogTitle>
       <DialogContent
         className="overflow-hidden p-0 shadow-lg"
         onOpenAutoFocus={onOpenAutoFocus}
         onCloseAutoFocus={onCloseAutoFocus}
       >
+        <DialogTitle className="sr-only">{screenReaderTitle}</DialogTitle>
         <Command
           loop={loop}
           shouldFilter={shouldFilter}

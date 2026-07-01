@@ -525,11 +525,10 @@ export class PmEditorService extends BaseService {
   ): Promise<PMNode[]> {
     const attachmentConfig = await getAttachmentConfig();
     const createdNodes: PMNode[] = [];
-    const timestamp = this.getTimestampForFileName();
 
     for (const [index, file] of files.entries()) {
       const extension = this.getFileExtension(file);
-      const fileName = `${attachmentConfig.fileNamePrefix} ${timestamp}-${index + 1}.${extension}`;
+      const fileName = `${attachmentConfig.fileNamePrefix} ${this.getUniqueFileNameToken(index)}.${extension}`;
       const destination = getAttachmentDestinationPaths(
         noteWsPath,
         fileName,
@@ -555,6 +554,16 @@ export class PmEditorService extends BaseService {
           noteWsPath,
           destinationWsPath: destination.wsPath,
         });
+        this.emitAppError(
+          createAppError(
+            'error::editor:save-failed',
+            'Unable to save pasted image',
+            {
+              error: error instanceof Error ? error : new Error(String(error)),
+              wsPath: noteWsPath,
+            },
+          ),
+        );
       }
     }
 
@@ -595,7 +604,7 @@ export class PmEditorService extends BaseService {
     return encodeURI(path).replace(/#/g, '%23');
   }
 
-  private getTimestampForFileName(): string {
+  private getUniqueFileNameToken(index: number): string {
     const date = new Date();
     const parts = [
       date.getFullYear().toString(),
@@ -604,9 +613,14 @@ export class PmEditorService extends BaseService {
       date.getHours().toString().padStart(2, '0'),
       date.getMinutes().toString().padStart(2, '0'),
       date.getSeconds().toString().padStart(2, '0'),
+      date.getMilliseconds().toString().padStart(3, '0'),
     ];
 
-    return parts.join('');
+    const randomSuffix =
+      globalThis.crypto?.randomUUID?.() ??
+      Math.random().toString(36).slice(2, 10);
+
+    return `${parts.join('')}-${index + 1}-${randomSuffix.slice(0, 8)}`;
   }
 
   private getFileExtension(file: File): string {

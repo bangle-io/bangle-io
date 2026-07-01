@@ -1,5 +1,6 @@
 import { createServer } from 'node:http';
 import {
+  constants as fsConstants,
   createReadStream,
   existsSync,
   promises as fsPromises,
@@ -139,25 +140,61 @@ function resolveWorkspaceRoot(inputPath) {
   return absoluteRoot;
 }
 
-async function loadWorkspaceMap() {
-  try {
-    const raw = await fsPromises.readFile(WORKSPACE_MAP_FILE, 'utf8');
-    const parsed = JSON.parse(raw);
-    if (parsed && typeof parsed === 'object') {
-      workspacePathMap = parsed;
-    }
-  } catch {
-    workspacePathMap = {};
-  }
+function normalizeWorkspaceMapPath(inputPath) {
+  const trimmed = String(inputPath || '').trim();
+  const absoluteRoot = resolveWorkspaceRoot(trimmed);
+  return path.isAbsolute(trimmed) ? absoluteRoot : path.posix.normalize(trimmed);
 }
 
-async function saveWorkspaceMap() {
+async function loadWorkspaceMap() {
+  let raw;
+  try {
+    raw = await fsPromises.readFile(WORKSPACE_MAP_FILE, 'utf8');
+  } catch (error) {
+    if (isNodeErrorCode(error, 'ENOENT')) {
+      workspacePathMap = {};
+      return;
+    }
+    throw error;
+  }
+
+  const parsed = JSON.parse(raw);
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    throw new Error(`Invalid workspace map file: ${WORKSPACE_MAP_FILE}`);
+  }
+
+  const loadedMap = {};
+  for (const [wsName, serverPath] of Object.entries(parsed)) {
+    if (typeof serverPath !== 'string') {
+      throw new Error(`Invalid workspace map entry for ${wsName}`);
+    }
+    loadedMap[wsName] = normalizeWorkspaceMapPath(serverPath);
+  }
+  workspacePathMap = loadedMap;
+}
+
+async function saveWorkspaceMap(nextWorkspacePathMap) {
   await fsPromises.mkdir(SERVER_FS_ROOT, { recursive: true });
-  await fsPromises.writeFile(
-    WORKSPACE_MAP_FILE,
-    JSON.stringify(workspacePathMap, null, 2),
-    'utf8',
+  const tempPath = path.join(
+    SERVER_FS_ROOT,
+    `.bangle-workspaces.${process.pid}.${Date.now()}.${Math.random()
+      .toString(36)
+      .slice(2)}.json.tmp`,
   );
+  try {
+    await fsPromises.writeFile(
+      tempPath,
+      JSON.stringify(nextWorkspacePathMap, null, 2),
+      {
+        encoding: 'utf8',
+        flag: 'wx',
+      },
+    );
+    await fsPromises.rename(tempPath, WORKSPACE_MAP_FILE);
+  } catch (error) {
+    await fsPromises.unlink(tempPath).catch(() => {});
+    throw error;
+  }
 }
 
 async function readBody(req) {
@@ -181,6 +218,110 @@ async function walkFiles(dirPath, acc = []) {
   return acc;
 }
 
+function isNodeErrorCode(error, code) {
+  return Boolean(
+    error && typeof error === 'object' && 'code' in error && error.code === code,
+  );
+}
+
+function isPathInsideRoot(rootPath, targetPath) {
+  const relativePath = path.relative(rootPath, targetPath);
+  return (
+    relativePath === '' ||
+    (!relativePath.startsWith(`..${path.sep}`) &&
+      relativePath !== '..' &&
+      !path.isAbsolute(relativePath))
+  );
+}
+
+async function assertRealPathInsideRoot(workspaceRoot, absolutePath) {
+  const [realWorkspaceRoot, realTargetPath] = await Promise.all([
+    fsPromises.realpath(workspaceRoot),
+    fsPromises.realpath(absolutePath),
+  ]);
+  if (!isPathInsideRoot(realWorkspaceRoot, realTargetPath)) {
+    throw new Error('Resolved path escapes workspace root');
+  }
+  return realTargetPath;
+}
+
+async function assertRealParentInsideRoot(workspaceRoot, absolutePath) {
+  const parentPath = path.dirname(absolutePath);
+  const realWorkspaceRoot = await fsPromises.realpath(workspaceRoot);
+  let existingAncestorPath = parentPath;
+  while (true) {
+    try {
+      const realAncestorPath = await fsPromises.realpath(existingAncestorPath);
+      if (!isPathInsideRoot(realWorkspaceRoot, realAncestorPath)) {
+        throw new Error('Resolved path escapes workspace root');
+      }
+      break;
+    } catch (error) {
+      if (!isNodeErrorCode(error, 'ENOENT')) {
+        throw error;
+      }
+      const nextAncestorPath = path.dirname(existingAncestorPath);
+      if (nextAncestorPath === existingAncestorPath) {
+        throw error;
+      }
+      existingAncestorPath = nextAncestorPath;
+    }
+  }
+
+  await fsPromises.mkdir(parentPath, { recursive: true });
+  const realParentPath = await fsPromises.realpath(parentPath);
+  if (!isPathInsideRoot(realWorkspaceRoot, realParentPath)) {
+    throw new Error('Resolved path escapes workspace root');
+  }
+}
+
+async function writeNewFileExclusive(absolutePath, body) {
+  await fsPromises.mkdir(path.dirname(absolutePath), { recursive: true });
+  const handle = await fsPromises.open(absolutePath, 'wx');
+  try {
+    await handle.writeFile(body);
+  } catch (error) {
+    await fsPromises.unlink(absolutePath).catch(() => {});
+    throw error;
+  } finally {
+    await handle.close();
+  }
+}
+
+async function replaceExistingFileAtomically(absolutePath, body) {
+  await fsPromises.stat(absolutePath);
+  await fsPromises.mkdir(path.dirname(absolutePath), { recursive: true });
+  const tempPath = path.join(
+    path.dirname(absolutePath),
+    `.${path.basename(absolutePath)}.${process.pid}.${Date.now()}.${Math.random()
+      .toString(36)
+      .slice(2)}.tmp`,
+  );
+
+  try {
+    await fsPromises.writeFile(tempPath, body, { flag: 'wx' });
+    await fsPromises.rename(tempPath, absolutePath);
+  } catch (error) {
+    await fsPromises.unlink(tempPath).catch(() => {});
+    throw error;
+  }
+}
+
+async function moveFileWithoutOverwriting(oldAbsolutePath, newAbsolutePath) {
+  await fsPromises.mkdir(path.dirname(newAbsolutePath), { recursive: true });
+  await fsPromises.copyFile(
+    oldAbsolutePath,
+    newAbsolutePath,
+    fsConstants.COPYFILE_EXCL,
+  );
+  try {
+    await fsPromises.unlink(oldAbsolutePath);
+  } catch (error) {
+    await fsPromises.unlink(newAbsolutePath).catch(() => {});
+    throw error;
+  }
+}
+
 async function handleApi(req, res, url) {
   if (url.pathname === `${API_BASE}/health`) {
     sendJson(res, 200, true);
@@ -198,17 +339,28 @@ async function handleApi(req, res, url) {
         return;
       }
 
-      const normalizedServerPath = path.posix.normalize(serverPath);
-      if (!normalizedServerPath) {
-        sendText(res, 400, 'Invalid serverPath');
+      const normalizedServerPath = normalizeWorkspaceMapPath(serverPath);
+      const rootPath = resolveWorkspaceRoot(serverPath);
+      const existingServerPath = workspacePathMap[wsName];
+      if (existingServerPath) {
+        const existingRootPath = resolveWorkspaceRoot(existingServerPath);
+        if (existingRootPath !== rootPath) {
+          sendText(res, 409, 'Workspace already registered');
+          return;
+        }
+
+        await fsPromises.mkdir(rootPath, { recursive: true });
+        sendJson(res, 200, true);
         return;
       }
 
-      const rootPath = resolveWorkspaceRoot(serverPath);
-
-      workspacePathMap[wsName] = normalizedServerPath;
-      await saveWorkspaceMap();
       await fsPromises.mkdir(rootPath, { recursive: true });
+      const nextWorkspacePathMap = {
+        ...workspacePathMap,
+        [wsName]: normalizedServerPath,
+      };
+      await saveWorkspaceMap(nextWorkspacePathMap);
+      workspacePathMap = nextWorkspacePathMap;
       sendJson(res, 200, true);
     } catch (error) {
       sendText(res, 400, error instanceof Error ? error.message : 'Bad request');
@@ -254,9 +406,14 @@ async function handleApi(req, res, url) {
       return;
     }
     try {
-      const { absolutePath } = parseWsPath(wsPath);
-      sendJson(res, 200, existsSync(absolutePath));
+      const { absolutePath, workspaceRoot } = parseWsPath(wsPath);
+      await assertRealPathInsideRoot(workspaceRoot, absolutePath);
+      sendJson(res, 200, true);
     } catch (error) {
+      if (isNodeErrorCode(error, 'ENOENT')) {
+        sendJson(res, 200, false);
+        return;
+      }
       sendText(res, 400, error instanceof Error ? error.message : 'Bad request');
     }
     return;
@@ -269,8 +426,9 @@ async function handleApi(req, res, url) {
       return;
     }
     try {
-      const { absolutePath } = parseWsPath(wsPath);
-      const stat = await fsPromises.stat(absolutePath);
+      const { absolutePath, workspaceRoot } = parseWsPath(wsPath);
+      const safePath = await assertRealPathInsideRoot(workspaceRoot, absolutePath);
+      const stat = await fsPromises.stat(safePath);
       sendJson(res, 200, {
         ctime: stat.ctimeMs,
         mtime: stat.mtimeMs,
@@ -297,15 +455,16 @@ async function handleApi(req, res, url) {
       return;
     }
     try {
-      const { absolutePath } = parseWsPath(wsPath);
-      const stat = await fsPromises.stat(absolutePath);
-      const fileName = path.basename(absolutePath);
+      const { absolutePath, workspaceRoot } = parseWsPath(wsPath);
+      const safePath = await assertRealPathInsideRoot(workspaceRoot, absolutePath);
+      const stat = await fsPromises.stat(safePath);
+      const fileName = path.basename(safePath);
       res.writeHead(200, {
         'content-type': 'application/octet-stream',
         'x-file-name': fileName,
         'x-last-modified': String(Math.floor(stat.mtimeMs)),
       });
-      await pipeline(createReadStream(absolutePath), res);
+      await pipeline(createReadStream(safePath), res);
     } catch (error) {
       if (
         error &&
@@ -333,22 +492,25 @@ async function handleApi(req, res, url) {
       return;
     }
     try {
-      const { absolutePath } = parseWsPath(wsPath);
-      const exists = existsSync(absolutePath);
-      if (mode === 'create' && exists) {
+      const { absolutePath, workspaceRoot } = parseWsPath(wsPath);
+      const body = await readBody(req);
+      if (mode === 'create') {
+        await assertRealParentInsideRoot(workspaceRoot, absolutePath);
+        await writeNewFileExclusive(absolutePath, body);
+      } else {
+        await assertRealPathInsideRoot(workspaceRoot, absolutePath);
+        await replaceExistingFileAtomically(absolutePath, body);
+      }
+      sendJson(res, 200, true);
+    } catch (error) {
+      if (isNodeErrorCode(error, 'EEXIST')) {
         sendText(res, 409, 'File already exists');
         return;
       }
-      if (mode === 'update' && !exists) {
+      if (isNodeErrorCode(error, 'ENOENT')) {
         sendText(res, 404, 'File not found');
         return;
       }
-
-      const body = await readBody(req);
-      await fsPromises.mkdir(path.dirname(absolutePath), { recursive: true });
-      await fsPromises.writeFile(absolutePath, body);
-      sendJson(res, 200, true);
-    } catch (error) {
       sendText(res, 400, error instanceof Error ? error.message : 'Bad request');
     }
     return;
@@ -391,12 +553,18 @@ async function handleApi(req, res, url) {
 
       const oldPath = parseWsPath(wsPath);
       const newPath = parseWsPath(newWsPath);
-      await fsPromises.mkdir(path.dirname(newPath.absolutePath), {
-        recursive: true,
-      });
-      await fsPromises.rename(oldPath.absolutePath, newPath.absolutePath);
+      await assertRealPathInsideRoot(oldPath.workspaceRoot, oldPath.absolutePath);
+      await assertRealParentInsideRoot(newPath.workspaceRoot, newPath.absolutePath);
+      await moveFileWithoutOverwriting(
+        oldPath.absolutePath,
+        newPath.absolutePath,
+      );
       sendJson(res, 200, true);
     } catch (error) {
+      if (isNodeErrorCode(error, 'EEXIST')) {
+        sendText(res, 409, 'File already exists');
+        return;
+      }
       if (
         error &&
         typeof error === 'object' &&

@@ -16,7 +16,7 @@ export const WORKSPACE_STORAGE_TYPE = {
   Help: 'helpfs',
   NativeFS: 'nativefs',
   Browser: 'browser',
-  PrivateFS: 'privatefs',
+  ServerFS: 'serverfs',
   Github: 'github-storage',
   Memory: 'memory',
 } as const;

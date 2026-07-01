@@ -1,5 +1,5 @@
+import { describe, expect, test, vi } from 'vitest';
 import { copyTextToClipboard } from '../code-highlight';
-import { vi } from 'vitest';
 
 function createFakeTextArea() {
   return {

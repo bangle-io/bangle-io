@@ -1,4 +1,5 @@
 import type { WorkspaceMetadata } from '@bangle.io/types';
+import { describe, expect, test } from 'vitest';
 import {
   getAttachmentDestinationPaths,
   resolveImageWsPath,

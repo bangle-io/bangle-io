@@ -32,7 +32,7 @@ export class FileStorageServerFs
   extends BaseService
   implements BaseFileStorageProvider
 {
-  public readonly workspaceType = WORKSPACE_STORAGE_TYPE.PrivateFS;
+  public readonly workspaceType = WORKSPACE_STORAGE_TYPE.ServerFS;
   public readonly displayName = 'Server Filesystem';
   public readonly description =
     'Saves workspace data on server-backed filesystem storage';
@@ -104,7 +104,13 @@ export class FileStorageServerFs
       },
     });
     if (!response.ok) {
-      throw toHttpError(await response.text(), response.status);
+      const errorMessage = await response.text();
+      if (response.status === 409) {
+        throwAppError('error::file:already-existing', 'File already exists', {
+          wsPath,
+        });
+      }
+      throw toHttpError(errorMessage, response.status);
     }
 
     this.emitChange({
@@ -204,16 +210,25 @@ export class FileStorageServerFs
   ): Promise<void> {
     await this.mountPromise;
 
-    await this.requestJson<null>(`${this.baseUrl}/rename`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        wsPath: this.toWsPath(wsPath),
-        newWsPath: this.toWsPath(newWsPath),
-      }),
-    });
+    try {
+      await this.requestJson<null>(`${this.baseUrl}/rename`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          wsPath: this.toWsPath(wsPath),
+          newWsPath: this.toWsPath(newWsPath),
+        }),
+      });
+    } catch (error) {
+      if ((error as HttpError).status === 409) {
+        throwAppError('error::file:already-existing', 'File already exists', {
+          wsPath: newWsPath,
+        });
+      }
+      throw error;
+    }
 
     this.emitChange({
       type: 'rename',

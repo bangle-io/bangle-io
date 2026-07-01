@@ -15,13 +15,13 @@ describe('FileSystemService.getStorageServiceForType', () => {
     type: 'nativefs',
   } as unknown as BaseFileStorageService;
   const mockServerFSStorage = {
-    type: 'privatefs',
+    type: 'serverfs',
   } as unknown as BaseFileStorageService;
 
   const mockFileStorageServices = {
     [WORKSPACE_STORAGE_TYPE.Browser]: mockBrowserStorage,
     [WORKSPACE_STORAGE_TYPE.NativeFS]: mockNativeFSStorage,
-    [WORKSPACE_STORAGE_TYPE.PrivateFS]: mockServerFSStorage,
+    [WORKSPACE_STORAGE_TYPE.ServerFS]: mockServerFSStorage,
   };
 
   it('should return browser storage service', () => {
@@ -44,18 +44,18 @@ describe('FileSystemService.getStorageServiceForType', () => {
     expect(result).toBe(mockNativeFSStorage);
   });
 
-  it.each([WORKSPACE_STORAGE_TYPE.Help, WORKSPACE_STORAGE_TYPE.Github])(
-    'should throw error for unsupported type: %s',
-    (type) => {
-      expect(() =>
-        FileSystemService._getStorageServiceForType(
-          type,
-          mockFileStorageServices,
-          'test-ws',
-        ),
-      ).toThrow('workspace is not supported for file operations');
-    },
-  );
+  it.each([
+    WORKSPACE_STORAGE_TYPE.Help,
+    WORKSPACE_STORAGE_TYPE.Github,
+  ])('should throw error for unsupported type: %s', (type) => {
+    expect(() =>
+      FileSystemService._getStorageServiceForType(
+        type,
+        mockFileStorageServices,
+        'test-ws',
+      ),
+    ).toThrow('workspace is not supported for file operations');
+  });
 
   it('should throw error for unknown type', () => {
     expect(() =>
@@ -67,9 +67,9 @@ describe('FileSystemService.getStorageServiceForType', () => {
     ).toThrow('workspace is not supported for file operations');
   });
 
-  it('should return privatefs storage service', () => {
+  it('should return serverfs storage service', () => {
     const result = FileSystemService._getStorageServiceForType(
-      WORKSPACE_STORAGE_TYPE.PrivateFS,
+      WORKSPACE_STORAGE_TYPE.ServerFS,
       mockFileStorageServices,
       'test-ws',
     );

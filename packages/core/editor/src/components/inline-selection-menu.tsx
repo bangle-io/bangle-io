@@ -54,7 +54,11 @@ export function InlineSelectionMenu({ editorName }: { editorName: string }) {
       anchorEl={selectionMenu.anchorEl}
       editorView={editorView}
       ext={pmEditorService.extensions}
-      onOpen={(href) => pmEditorService.openLink(editorView, href)}
+      onOpen={(href) => {
+        if (!pmEditorService.openLink(editorView, href)) {
+          window.open(href, '_blank', 'noopener,noreferrer');
+        }
+      }}
     />
   );
 }

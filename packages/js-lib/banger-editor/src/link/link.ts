@@ -114,8 +114,9 @@ export type LinkConfig = {
   ) => boolean | Promise<boolean>;
 };
 
-type RequiredConfig = Required<Omit<LinkConfig, 'onOpenLink'>> &
-  Pick<LinkConfig, 'onOpenLink'>;
+type RequiredConfig = Required<Omit<LinkConfig, 'onOpenLink'>> & {
+  onOpenLink: NonNullable<LinkConfig['onOpenLink']>;
+};
 
 export const LINK_OPEN_MODIFIER_CLASS = 'bangle-link-open-modifier';
 
@@ -508,23 +509,6 @@ function pluginOpenOnClick(config: RequiredConfig) {
                 (event.metaKey || event.ctrlKey));
 
             if (!canOpenExternal) {
-              const handled = config.onOpenLink(href, { event, view });
-              if (handled instanceof Promise) {
-                handled
-                  .then((isHandled) => {
-                    if (isHandled) {
-                      event.preventDefault();
-                    }
-                  })
-                  .catch(() => {
-                    // ignore and let editor keep default click behavior
-                  });
-                return false;
-              }
-              if (handled) {
-                event.preventDefault();
-                return true;
-              }
               return false;
             }
 

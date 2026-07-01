@@ -2,6 +2,7 @@
  * @vitest-environment happy-dom
  */
 
+import { type BaseError, getAppErrorCause } from '@bangle.io/base-utils';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { FileStorageServerFs } from '../file-storage-serverfs';
@@ -64,6 +65,21 @@ describe('FileStorageServerFs', () => {
     ).resolves.toBeUndefined();
   });
 
+  it('maps create conflicts to the already-existing app error', async () => {
+    const { service } = await setup();
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      new Response('File already exists', { status: 409 }),
+    );
+
+    await expect(
+      service.createFile('test-ws:existing.md', new File(['x'], 'existing.md')),
+    ).rejects.toSatisfy(
+      (error: unknown) =>
+        getAppErrorCause(error as BaseError)?.name ===
+        'error::file:already-existing',
+    );
+  });
+
   it('renames files via HTTP endpoint', async () => {
     const { service, onChange } = await setup();
     const oldWsPath = 'test-ws:old.md';
@@ -83,5 +99,21 @@ describe('FileStorageServerFs', () => {
       oldWsPath,
       newWsPath,
     });
+  });
+
+  it('maps rename conflicts to the already-existing app error', async () => {
+    const { service } = await setup();
+
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      new Response('File already exists', { status: 409 }),
+    );
+
+    await expect(
+      service.renameFile('test-ws:old.md', { newWsPath: 'test-ws:new.md' }),
+    ).rejects.toSatisfy(
+      (error: unknown) =>
+        getAppErrorCause(error as BaseError)?.name ===
+        'error::file:already-existing',
+    );
   });
 });

@@ -1,12 +1,110 @@
 // @vitest-environment jsdom
 /// <reference types="@vitest/browser/matchers" />
 import '@testing-library/jest-dom/vitest';
-import { assertIsDefined } from '@bangle.io/base-utils';
+import {
+  assertIsDefined,
+  type BaseError,
+  getAppErrorCause,
+} from '@bangle.io/base-utils';
+import { WsPath } from '@bangle.io/ws-path';
 import { describe, expect, test, vi } from 'vitest';
+import {
+  assertValidDirectoryRenameTarget,
+  deleteDirectoryTargetsWithPartialFailureError,
+} from '../ws-command-handlers';
 import { setupTest } from './test-utils';
 
 describe('WS command handlers', () => {
   describe('directory ws path operations', () => {
+    test('waits for file rename durability before navigating', async () => {
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ws:rename-ws-path',
+        workspaces: [{ name: 'test-ws', notes: ['test-ws:old.md'] }],
+        autoNavigate: 'ws-path',
+      });
+      let finishRename: (() => void) | undefined;
+      const renameFile = vi
+        .spyOn(services.fileSystem, 'renameFile')
+        .mockReturnValue(
+          new Promise<void>((resolve) => {
+            finishRename = resolve;
+          }),
+        );
+
+      dispatch('command::ws:rename-ws-path', {
+        wsPath: 'test-ws:old.md',
+        newWsPath: 'test-ws:new.md',
+      });
+
+      await vi.waitFor(() => {
+        expect(renameFile).toHaveBeenCalledWith({
+          oldWsPath: 'test-ws:old.md',
+          newWsPath: 'test-ws:new.md',
+        });
+      });
+      expect(services.navigation.resolveAtoms().wsPath?.wsPath).toBe(
+        'test-ws:old.md',
+      );
+
+      finishRename?.();
+
+      await vi.waitFor(() => {
+        expect(services.navigation.resolveAtoms().wsPath?.wsPath).toBe(
+          'test-ws:new.md',
+        );
+      });
+    });
+
+    test('waits for file move durability before navigating', async () => {
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ws:move-ws-path',
+        workspaces: [
+          {
+            name: 'test-ws',
+            notes: ['test-ws:old.md', 'test-ws:dest/keep.md'],
+          },
+        ],
+        autoNavigate: 'ws-path',
+      });
+      services.navigation.goWsPath('test-ws:old.md');
+      await vi.waitFor(() => {
+        expect(services.navigation.resolveAtoms().wsPath?.wsPath).toBe(
+          'test-ws:old.md',
+        );
+      });
+      let finishMove: (() => void) | undefined;
+      const renameFile = vi
+        .spyOn(services.fileSystem, 'renameFile')
+        .mockReturnValue(
+          new Promise<void>((resolve) => {
+            finishMove = resolve;
+          }),
+        );
+
+      dispatch('command::ws:move-ws-path', {
+        wsPath: 'test-ws:old.md',
+        destDirWsPath: 'test-ws:dest',
+      });
+
+      await vi.waitFor(() => {
+        expect(renameFile).toHaveBeenCalledWith({
+          oldWsPath: 'test-ws:old.md',
+          newWsPath: 'test-ws:dest/old.md',
+        });
+      });
+      expect(services.navigation.resolveAtoms().wsPath?.wsPath).toBe(
+        'test-ws:old.md',
+      );
+
+      finishMove?.();
+
+      await vi.waitFor(() => {
+        expect(services.navigation.resolveAtoms().wsPath?.wsPath).toBe(
+          'test-ws:dest/old.md',
+        );
+      });
+    });
+
     test('renames all files under a directory prefix', async () => {
       const { dispatch, services } = await setupTest({
         targetId: 'command::ws:rename-ws-path',
@@ -47,6 +145,27 @@ describe('WS command handlers', () => {
           'test-ws:renamed/sub/b.md',
         );
       });
+    });
+
+    test('rejects renaming a directory into its own descendant', () => {
+      const oldDir = WsPath.fromString('test-ws:dir').asDir();
+      const sameDir = WsPath.fromString('test-ws:dir').asDir();
+      const descendantDir = WsPath.fromString('test-ws:dir/sub').asDir();
+      assertIsDefined(oldDir);
+      assertIsDefined(sameDir);
+      assertIsDefined(descendantDir);
+
+      expect(assertValidDirectoryRenameTarget(oldDir, sameDir)).toBe(false);
+      expect(() =>
+        assertValidDirectoryRenameTarget(oldDir, descendantDir),
+      ).toThrowError();
+      try {
+        assertValidDirectoryRenameTarget(oldDir, descendantDir);
+      } catch (error) {
+        expect(getAppErrorCause(error as BaseError)?.name).toBe(
+          'error::file:invalid-operation',
+        );
+      }
     });
 
     test('moves a directory into another directory', async () => {
@@ -115,6 +234,29 @@ describe('WS command handlers', () => {
         expect(wsPaths).not.toContain('test-ws:dir/sub/b.md');
         expect(wsPaths).toContain('test-ws:c.md');
       });
+    });
+
+    test('reports partial directory delete failures explicitly', async () => {
+      const deleted: string[] = [];
+      await expect(
+        deleteDirectoryTargetsWithPartialFailureError({
+          fileSystem: {
+            exists: vi.fn(),
+            deleteFile: async (wsPath) => {
+              if (wsPath === 'test-ws:dir/sub/b.md') {
+                throw new Error('delete failed');
+              }
+              deleted.push(wsPath);
+            },
+          },
+          targets: ['test-ws:dir/a.md', 'test-ws:dir/sub/b.md'],
+        }),
+      ).rejects.toSatisfy(
+        (error: unknown) =>
+          getAppErrorCause(error as BaseError)?.name ===
+          'error::file:invalid-operation',
+      );
+      expect(deleted).toEqual(['test-ws:dir/a.md']);
     });
   });
 
