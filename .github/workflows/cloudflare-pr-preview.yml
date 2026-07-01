@@ -148,7 +148,7 @@ jobs:
           fi
 
       - name: Update PR preview comment
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         env:
           PREVIEW_URL: ${{ steps.deploy.outputs.preview_url }}
           PREVIEW_BRANCH: ${{ steps.deploy.outputs.preview_branch }}
