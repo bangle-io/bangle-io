@@ -3,6 +3,7 @@ import type { PMNode } from '../pm';
 import { EditorState, EditorView, NodeSelection, TextSelection } from '../pm';
 import { buildTestSchema } from './schema';
 
+export * from './prosemirror-editor';
 export * from './schema';
 
 const { builders } = PMTestBuilder;
