@@ -134,7 +134,35 @@ export const uiCommands = narrow([
     },
     omniSearch: true,
     autoFocusEditor: false,
-    args: null,
+    args: {
+      pathPrefix: T.Optional(T.String),
+    },
+  },
+  {
+    id: 'command::ui:rename-directory-dialog',
+    title: 'Rename Directory',
+    keywords: ['rename', 'directory', 'folder'],
+    dependencies: {
+      services: ['workbenchState'],
+      commands: ['command::ws:rename-directory', 'command::ui:focus-editor'],
+    },
+    autoFocusEditor: false,
+    args: {
+      dirWsPath: T.String,
+    },
+  },
+  {
+    id: 'command::ui:delete-directory-dialog',
+    title: 'Delete Directory',
+    keywords: ['delete', 'directory', 'folder', 'remove'],
+    dependencies: {
+      services: ['workbenchState'],
+      commands: ['command::ws:delete-directory', 'command::ui:focus-editor'],
+    },
+    autoFocusEditor: false,
+    args: {
+      dirWsPath: T.String,
+    },
   },
 
   // GROUP: WORKSPACE MANAGEMENT
