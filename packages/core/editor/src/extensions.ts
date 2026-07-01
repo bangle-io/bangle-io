@@ -23,6 +23,7 @@ import {
   setupSelectionMenu,
   setupStrike,
   setupSuggestions,
+  setupTrailingNode,
   setupUnderline,
   setupWikiLink,
   type WikiLinkConfig,
@@ -71,6 +72,7 @@ export function setupExtensions(
       markClassName: 'text-pop',
       logger: logger.child('suggestions'),
     }),
+    trailingNode: setupTrailingNode(),
     wikiSuggestions: setupSuggestions({
       providerId: 'wiki-link',
       markName: 'wiki_link_suggestion',

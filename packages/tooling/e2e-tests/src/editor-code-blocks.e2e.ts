@@ -237,6 +237,54 @@ test('forward delete removes an empty paragraph before a code block', async ({
     .toBe('```js\n```');
 });
 
+test('clicking below a final code block creates a paragraph for typing', async ({
+  page,
+}) => {
+  const workspaceName = 'code-block-click-below';
+  const noteName = 'click-below';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    noteName,
+    '```js\nconst finalBlock = true;\n```',
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  const codeBlock = editor.locator('pre').filter({
+    hasText: 'const finalBlock = true;',
+  });
+  await expect(codeBlock).toBeVisible();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('```js\nconst finalBlock = true;\n```');
+
+  const editorBox = await editor.boundingBox();
+  const codeBlockBox = await codeBlock.boundingBox();
+  expect(editorBox).not.toBeNull();
+  expect(codeBlockBox).not.toBeNull();
+  if (!editorBox || !codeBlockBox) {
+    return;
+  }
+
+  await page.mouse.click(
+    editorBox.x + editorBox.width / 2,
+    Math.min(
+      codeBlockBox.y + codeBlockBox.height + 64,
+      editorBox.y + editorBox.height - 16,
+    ),
+  );
+  await page.keyboard.insertText('after code');
+
+  await expect(
+    editor.locator('p').filter({ hasText: 'after code' }),
+  ).toBeVisible();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('```js\nconst finalBlock = true;\n```\n\nafter code');
+});
+
 test('option backspace deletes the previous word inside a code block on macOS', async ({
   page,
 }) => {
