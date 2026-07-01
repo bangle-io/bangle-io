@@ -56,11 +56,11 @@
     --BV-input: 0 0% 84%;
     --BV-ring: 0 0% 13%;
 
-    --BV-pop: 326 100% 60%;
+    --BV-pop: 326 100% 40%;
     --BV-pop-foreground: 0 0% 100%;
 
     --BV-wiki-link-foreground: 201 96% 32%;
-    --BV-wiki-link-hover-foreground: 200 98% 39%;
+    --BV-wiki-link-hover-foreground: 201 96% 32%;
     --BV-wiki-link-underline: 199 95% 74%;
     --BV-wiki-link-hover-background: 204 94% 94%;
     --BV-wiki-link-focus: 199 95% 74%;
@@ -123,6 +123,6 @@
     --BV-wiki-link-focus: 217 91% 60%;
     --BV-wiki-link-missing-foreground: 240 5% 65%;
     --BV-wiki-link-missing-underline: 240 4% 46%;
-    --BV-wiki-link-missing-hover-background: 240 5% 26%;
+    --BV-wiki-link-missing-hover-background: 240 4% 16%;
   }
 }

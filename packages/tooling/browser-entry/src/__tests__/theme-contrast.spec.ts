@@ -9,13 +9,24 @@ type OklchColor = {
   H: number;
 };
 
+type LinearRgbColor = {
+  r: number;
+  g: number;
+  b: number;
+};
+
 const cssPath = join(dirname(fileURLToPath(import.meta.url)), '../index.css');
 const css = readFileSync(cssPath, 'utf8');
+const legacyThemeCssPath = join(
+  dirname(fileURLToPath(import.meta.url)),
+  '../default-theme.processed.css',
+);
+const legacyThemeCss = readFileSync(legacyThemeCssPath, 'utf8');
 
-function getBlock(selector: string): string {
+function getBlock(cssContent: string, selector: string): string {
   const match = new RegExp(
     `${selector.replace('.', '\\.')}\\s*\\{([\\s\\S]*?)\\n\\}`,
-  ).exec(css);
+  ).exec(cssContent);
   if (!match?.[1]) {
     throw new Error(`Unable to find theme block for ${selector}`);
   }
@@ -42,7 +53,62 @@ function parseOklch(value: string): OklchColor {
   };
 }
 
-function oklchToLinearSrgb({ L, C, H }: OklchColor) {
+function parseRawHsl(value: string): LinearRgbColor {
+  const match = /^([\d.]+)\s+([\d.]+)%\s+([\d.]+)%$/.exec(value);
+  if (!match) {
+    throw new Error(`Expected raw HSL color, received "${value}"`);
+  }
+
+  const h = Number(match[1]) / 360;
+  const s = Number(match[2]) / 100;
+  const l = Number(match[3]) / 100;
+
+  if (s === 0) {
+    return srgbToLinearRgb({ r: l, g: l, b: l });
+  }
+
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+  const hueToRgb = (input: number): number => {
+    let t = input;
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1 / 6) return p + (q - p) * 6 * t;
+    if (t < 1 / 2) return q;
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
+  };
+
+  return srgbToLinearRgb({
+    r: hueToRgb(h + 1 / 3),
+    g: hueToRgb(h),
+    b: hueToRgb(h - 1 / 3),
+  });
+}
+
+function srgbChannelToLinear(channel: number): number {
+  return channel <= 0.04045
+    ? channel / 12.92
+    : ((channel + 0.055) / 1.055) ** 2.4;
+}
+
+function srgbToLinearRgb({
+  r,
+  g,
+  b,
+}: {
+  r: number;
+  g: number;
+  b: number;
+}): LinearRgbColor {
+  return {
+    r: srgbChannelToLinear(r),
+    g: srgbChannelToLinear(g),
+    b: srgbChannelToLinear(b),
+  };
+}
+
+function oklchToLinearSrgb({ L, C, H }: OklchColor): LinearRgbColor {
   const hueRadians = (H * Math.PI) / 180;
   const a = C * Math.cos(hueRadians);
   const b = C * Math.sin(hueRadians);
@@ -66,8 +132,7 @@ function clampRgbChannel(channel: number): number {
   return Math.min(1, Math.max(0, channel));
 }
 
-function relativeLuminance(color: OklchColor): number {
-  const { r, g, b } = oklchToLinearSrgb(color);
+function relativeLuminance({ r, g, b }: LinearRgbColor): number {
   return (
     0.2126 * clampRgbChannel(r) +
     0.7152 * clampRgbChannel(g) +
@@ -75,7 +140,7 @@ function relativeLuminance(color: OklchColor): number {
   );
 }
 
-function contrastRatio(colorA: OklchColor, colorB: OklchColor): number {
+function contrastRatio(colorA: LinearRgbColor, colorB: LinearRgbColor): number {
   const luminanceA = relativeLuminance(colorA);
   const luminanceB = relativeLuminance(colorB);
 
@@ -86,20 +151,69 @@ function contrastRatio(colorA: OklchColor, colorB: OklchColor): number {
 }
 
 describe('browser theme contrast', () => {
+  const activePairs = [
+    ['--background', '--foreground'],
+    ['--card', '--card-foreground'],
+    ['--popover', '--popover-foreground'],
+    ['--primary', '--primary-foreground'],
+    ['--secondary', '--secondary-foreground'],
+    ['--muted', '--muted-foreground'],
+    ['--accent', '--accent-foreground'],
+    ['--destructive', '--destructive-foreground'],
+    ['--popover', '--destructive-text'],
+    ['--sidebar', '--sidebar-foreground'],
+    ['--sidebar-primary', '--sidebar-primary-foreground'],
+    ['--sidebar-accent', '--sidebar-accent-foreground'],
+  ] as const;
+
   test.each([
     { name: 'light', selector: ':root' },
     { name: 'dark', selector: '.BU_dark-scheme' },
-  ])('$name destructive foreground is readable on destructive background', ({
-    selector,
-  }) => {
-    const block = getBlock(selector);
-    const destructive = parseOklch(getVariable(block, '--destructive'));
-    const destructiveForeground = parseOklch(
-      getVariable(block, '--destructive-foreground'),
-    );
+  ])('$name active theme surface pairs are readable', ({ name, selector }) => {
+    const block = getBlock(css, selector);
 
-    expect(
-      contrastRatio(destructive, destructiveForeground),
-    ).toBeGreaterThanOrEqual(4.5);
+    for (const [backgroundVariable, foregroundVariable] of activePairs) {
+      const background = oklchToLinearSrgb(
+        parseOklch(getVariable(block, backgroundVariable)),
+      );
+      const foreground = oklchToLinearSrgb(
+        parseOklch(getVariable(block, foregroundVariable)),
+      );
+
+      expect(
+        contrastRatio(background, foreground),
+        `${name} ${backgroundVariable}/${foregroundVariable}`,
+      ).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+
+  const legacyPairs = [
+    ['--BV-background', '--BV-wiki-link-foreground'],
+    ['--BV-wiki-link-hover-background', '--BV-wiki-link-hover-foreground'],
+    ['--BV-background', '--BV-wiki-link-missing-foreground'],
+    [
+      '--BV-wiki-link-missing-hover-background',
+      '--BV-wiki-link-missing-foreground',
+    ],
+    ['--BV-accent', '--BV-accent-foreground'],
+    ['--BV-accent', '--BV-secondary-foreground'],
+    ['--BV-pop', '--BV-pop-foreground'],
+  ] as const;
+
+  test.each([
+    { name: 'light', selector: ':root' },
+    { name: 'dark', selector: '.BU_dark-scheme' },
+  ])('$name legacy editor theme pairs are readable', ({ name, selector }) => {
+    const block = getBlock(legacyThemeCss, selector);
+
+    for (const [backgroundVariable, foregroundVariable] of legacyPairs) {
+      const background = parseRawHsl(getVariable(block, backgroundVariable));
+      const foreground = parseRawHsl(getVariable(block, foregroundVariable));
+
+      expect(
+        contrastRatio(background, foreground),
+        `${name} ${backgroundVariable}/${foregroundVariable}`,
+      ).toBeGreaterThanOrEqual(4.5);
+    }
   });
 });

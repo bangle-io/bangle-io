@@ -155,7 +155,7 @@ export function LinkEditor({
           className={cx(
             'h-8 w-[clamp(9rem,42vw,13rem)] min-w-0 flex-none border border-transparent bg-transparent px-2 focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0',
             invalid &&
-              'border-destructive-foreground/80 text-foreground focus-visible:ring-destructive-foreground/50',
+              'border-destructive-text/80 text-foreground focus-visible:ring-destructive-text/50',
           )}
           placeholder={t.app.editor.linkEditor.placeholder}
         />
@@ -179,7 +179,7 @@ export function LinkEditor({
                 {copyFeedback === 'success' ? (
                   <Check className="text-green-600" />
                 ) : copyFeedback === 'failure' ? (
-                  <CircleAlert className="text-destructive-foreground" />
+                  <CircleAlert className="text-destructive-text" />
                 ) : (
                   <Copy />
                 )}
@@ -214,7 +214,7 @@ export function LinkEditor({
 
       {invalid ? (
         <p
-          className="max-w-72 px-2 pt-0.5 pb-1 font-medium text-destructive-foreground text-xs leading-tight"
+          className="max-w-72 px-2 pt-0.5 pb-1 font-medium text-destructive-text text-xs leading-tight"
           id={errorId}
           role="alert"
         >

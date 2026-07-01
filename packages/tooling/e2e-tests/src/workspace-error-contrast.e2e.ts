@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { expectReadableContrast } from './common';
 
 test('NativeFS picker error keeps readable destructive colors in dark mode', async ({
   page,
@@ -23,6 +24,7 @@ test('NativeFS picker error keeps readable destructive colors in dark mode', asy
     /Please allow access to your folder to continue/i,
   );
   await expect(errorMessage).toBeVisible();
+  await expectReadableContrast(errorMessage);
 
   const styles = await errorMessage.evaluate((element) => {
     const style = getComputedStyle(element);
@@ -36,6 +38,6 @@ test('NativeFS picker error keeps readable destructive colors in dark mode', asy
     };
   });
 
-  expect(styles.destructiveForeground).not.toBe(styles.destructive);
-  expect(styles.color).not.toBe(styles.backgroundColor);
+  expect(styles.backgroundColor).toBe(styles.destructive);
+  expect(styles.color).toBe(styles.destructiveForeground);
 });

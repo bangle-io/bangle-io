@@ -55,11 +55,11 @@
     --BV-input: rgb(213 213 213);
     --BV-ring: rgb(34 34 34);
 
-    --BV-pop: hsl(326 100% 60%);
+    --BV-pop: hsl(326 100% 40%);
     --BV-pop-foreground: rgb(255 255 255);
 
     --BV-wiki-link-foreground: rgb(3 105 161);
-    --BV-wiki-link-hover-foreground: rgb(2 132 199);
+    --BV-wiki-link-hover-foreground: rgb(3 105 161);
     --BV-wiki-link-underline: rgb(125 211 252);
     --BV-wiki-link-hover-background: rgb(224 242 254);
     --BV-wiki-link-focus: rgb(125 211 252);
@@ -122,6 +122,6 @@
     --BV-wiki-link-focus: rgb(59 130 246);
     --BV-wiki-link-missing-foreground: rgb(161 161 170);
     --BV-wiki-link-missing-underline: rgb(113 113 122);
-    --BV-wiki-link-missing-hover-background: rgb(63 63 70);
+    --BV-wiki-link-missing-hover-background: rgb(39 39 42);
   }
 }
