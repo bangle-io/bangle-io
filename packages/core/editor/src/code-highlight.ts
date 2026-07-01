@@ -63,8 +63,6 @@ type CopyDocument = {
 };
 type MinimalEditorView = Pick<EditorView, 'state' | 'dispatch' | 'focus'>;
 
-let activeEditorView: EditorView | undefined;
-
 function getHighlighter() {
   if (!highlighterPromise) {
     highlighterPromise = createHighlighter({
@@ -100,9 +98,12 @@ export function setupCodeHighlight() {
           },
         },
         view(view) {
-          activeEditorView = view;
+          let destroyed = false;
           void getHighlighter()
             .then(() => {
+              if (destroyed || view.isDestroyed) {
+                return;
+              }
               view.dispatch(
                 view.state.tr.setMeta(CODE_HIGHLIGHT_PLUGIN_KEY, true),
               );
@@ -113,9 +114,7 @@ export function setupCodeHighlight() {
 
           return {
             destroy() {
-              if (activeEditorView === view) {
-                activeEditorView = undefined;
-              }
+              destroyed = true;
             },
           };
         },
@@ -139,7 +138,7 @@ function createDecorations(doc: PMNode): DecorationSet {
     decorations.push(
       Decoration.widget(
         pos + 1,
-        () => createLanguageBadgeWidget(rawLanguage, pos),
+        (view) => createLanguageBadgeWidget(rawLanguage, pos, view),
         {
           side: -1,
           ignoreSelection: true,
@@ -276,6 +275,7 @@ function createCopyButtonWidget(text: string): HTMLElement {
 function createLanguageBadgeWidget(
   language: string,
   codeBlockPos: number,
+  editorView: EditorView,
 ): HTMLElement {
   const wrapper = document.createElement('span');
   wrapper.className = 'prosemirror-code-language-widget';
@@ -303,7 +303,7 @@ function createLanguageBadgeWidget(
   button.addEventListener('click', (event) => {
     event.preventDefault();
     event.stopPropagation();
-    showLanguageEditor(wrapper, codeBlockPos, language);
+    showLanguageEditor(wrapper, editorView, codeBlockPos, language);
   });
 
   wrapper.append(button);
@@ -312,6 +312,7 @@ function createLanguageBadgeWidget(
 
 function showLanguageEditor(
   container: HTMLElement,
+  editorView: EditorView,
   codeBlockPos: number,
   initialLanguage: string,
 ) {
@@ -324,16 +325,16 @@ function showLanguageEditor(
   input.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      applyLanguageChange(codeBlockPos, input.value);
+      applyLanguageChange(editorView, codeBlockPos, input.value);
       return;
     }
     if (event.key === 'Escape') {
       event.preventDefault();
-      activeEditorView?.focus();
+      editorView.focus();
     }
   });
   input.addEventListener('blur', () => {
-    applyLanguageChange(codeBlockPos, input.value);
+    applyLanguageChange(editorView, codeBlockPos, input.value);
   });
 
   container.replaceChildren(input);
@@ -341,8 +342,11 @@ function showLanguageEditor(
   input.select();
 }
 
-function applyLanguageChange(codeBlockPos: number, value: string) {
-  const editorView = activeEditorView;
+function applyLanguageChange(
+  editorView: EditorView,
+  codeBlockPos: number,
+  value: string,
+) {
   if (!editorView || editorView.isDestroyed) {
     return;
   }
@@ -358,7 +362,7 @@ function setCodeBlockLanguage(
   language: string,
 ): boolean {
   const node = editorView.state.doc.nodeAt(codeBlockPos);
-  if (!node || node.type.name !== 'code_block') {
+  if (node?.type.name !== 'code_block') {
     return false;
   }
 
@@ -394,7 +398,7 @@ export async function copyTextToClipboard(
   }
 
   const doc = options?.document ?? getCopyDocument(globalThis.document);
-  if (!doc || !doc.body) {
+  if (!doc?.body) {
     return false;
   }
 
