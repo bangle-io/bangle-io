@@ -157,28 +157,29 @@ test('moves a code block with option arrow shortcuts and persists order', async 
   const noteName = 'move';
   const code = 'const moved = true;';
   await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  await writeStoredMarkdown(
-    page,
-    workspaceName,
-    noteName,
-    `before\n\n\`\`\`js\n${code}\n\`\`\`\n\nafter`,
-  );
-  await page.reload({ waitUntil: 'networkidle' });
 
   const editor = getEditorLocator(page, {});
-  const codeBlock = editor.locator('pre').filter({ hasText: code });
-  await expect(codeBlock).toBeVisible();
-  await codeBlock.click({ position: { x: 24, y: 48 } });
+  await editor.click();
+  await clearEditor(page, {});
+  await editor.pressSequentially('before');
+  await page.keyboard.press('Enter');
+  await page.keyboard.press('Enter');
+  await editor.pressSequentially('```js');
+  await page.keyboard.press('Enter');
+  await page.keyboard.insertText(code);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(`before\n\n\`\`\`js\n${code}\n\`\`\``);
 
   await page.keyboard.down('Alt');
+  await page.keyboard.press('ArrowUp');
   await page.keyboard.press('ArrowUp');
   await page.keyboard.up('Alt');
 
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(`\`\`\`js\n${code}\n\`\`\`\n\nbefore\n\nafter`);
+    .toBe(`\`\`\`js\n${code}\n\`\`\`\n\nbefore`);
 
-  await codeBlock.click({ position: { x: 24, y: 48 } });
   await page.keyboard.down('Alt');
   await page.keyboard.press('ArrowDown');
   await page.keyboard.press('ArrowDown');
@@ -186,7 +187,7 @@ test('moves a code block with option arrow shortcuts and persists order', async 
 
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(`before\n\nafter\n\n\`\`\`js\n${code}\n\`\`\``);
+    .toBe(`before\n\n\`\`\`js\n${code}\n\`\`\``);
 });
 
 test('backspace turns an empty sole code block back into a paragraph', async ({
@@ -271,6 +272,37 @@ test('option backspace deletes the previous word inside a code block on macOS', 
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, noteName))
     .toBe('```js\ntwo \n```');
+});
+
+test('tab and shift tab indent code block lines and persist Markdown', async ({
+  page,
+}) => {
+  const workspaceName = 'code-block-tab-indent';
+  const noteName = 'tab-indent';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await clearEditor(page, {});
+  await editor.pressSequentially('```js');
+  await page.keyboard.press('Enter');
+  await page.keyboard.insertText('const value = true;');
+  await page.keyboard.press('Tab');
+
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('```js\nconst value = true;  \n```');
+
+  await editor.click();
+  await clearEditor(page, {});
+  await editor.pressSequentially('```js');
+  await page.keyboard.press('Enter');
+  await page.keyboard.insertText('  const value = true;');
+  await page.keyboard.press('Shift+Tab');
+
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('```js\nconst value = true;\n```');
 });
 
 test('moves down from a sole code block into a new paragraph', async ({

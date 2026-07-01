@@ -222,6 +222,38 @@ describe('code block keymap', () => {
     expect(lineEditor.selectionParentOffset()).toBe('one\ntwo'.length);
   });
 
+  it('indents and outdents code lines with Tab and Shift-Tab', () => {
+    const emptySelectionEditor = editorTest.createEditor(
+      doc(codeBlock('const<cursor> value = true;')),
+    );
+
+    expect(emptySelectionEditor.pressKey('Tab')).toBe(true);
+    emptySelectionEditor.expectDoc(doc(codeBlock('const   value = true;')));
+    expect(emptySelectionEditor.selectionParentOffset()).toBe('const  '.length);
+
+    const currentLineEditor = editorTest.createEditor(
+      doc(codeBlock('  first\n  sec<cursor>ond')),
+    );
+
+    expect(currentLineEditor.pressKey('Tab', { shiftKey: true })).toBe(true);
+    currentLineEditor.expectDoc(doc(codeBlock('  first\nsecond')));
+    expect(currentLineEditor.selectionParentOffset()).toBe(
+      '  first\nsec'.length,
+    );
+  });
+
+  it('indents and outdents selected code lines with Tab and Shift-Tab', () => {
+    const editor = editorTest.createEditor(
+      doc(codeBlock('<start>first\nsecond<end>\nthird')),
+    );
+
+    expect(editor.pressKey('Tab')).toBe(true);
+    editor.expectDoc(doc(codeBlock('  first\n  second\nthird')));
+
+    expect(editor.pressKey('Tab', { shiftKey: true })).toBe(true);
+    editor.expectDoc(doc(codeBlock('first\nsecond\nthird')));
+  });
+
   it('deletes an empty paragraph before a code block with forward Delete', () => {
     const { codeBlock, doc, p } = appKeymapOrderEditorTest.builders;
     const editor = appKeymapOrderEditorTest.createEditor(

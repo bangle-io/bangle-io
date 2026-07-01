@@ -5,7 +5,14 @@ import {
   keybinding,
   PRIORITY,
 } from './common';
-import type { Command, EditorState, NodeSpec, NodeType, Schema } from './pm';
+import type {
+  Command,
+  EditorState,
+  NodeSpec,
+  NodeType,
+  Schema,
+  Transaction,
+} from './pm';
 import { chainCommands, inputRules, setBlockType, TextSelection } from './pm';
 import {
   defaultGetParagraphNodeType,
@@ -29,8 +36,11 @@ export type CodeBlockConfig = {
   keyJumpToLineEnd?: string | false;
   keyMoveUp?: string | false;
   keyMoveDown?: string | false;
+  keyIndent?: string | false;
+  keyOutdent?: string | false;
   keyInsertEmptyParaAbove?: string | false;
   keyInsertEmptyParaBelow?: string | false;
+  indentText?: string;
 };
 
 type RequiredConfig = Required<CodeBlockConfig>;
@@ -46,8 +56,11 @@ const DEFAULT_CONFIG: RequiredConfig = {
   keyJumpToLineEnd: isMac ? 'Ctrl-e' : false,
   keyMoveUp: 'Alt-ArrowUp',
   keyMoveDown: 'Alt-ArrowDown',
+  keyIndent: 'Tab',
+  keyOutdent: 'Shift-Tab',
   keyInsertEmptyParaAbove: 'Mod-Shift-Enter',
   keyInsertEmptyParaBelow: 'Mod-Enter',
+  indentText: '  ',
 };
 
 export function setupCodeBlock(userConfig?: CodeBlockConfig) {
@@ -131,6 +144,8 @@ function pluginKeybindings(config: RequiredConfig) {
     [config.keyJumpToLineEnd, jumpToCodeLineBoundary(config, 'end')],
     [config.keyMoveUp, moveCodeBlock(config, 'UP')],
     [config.keyMoveDown, moveCodeBlock(config, 'DOWN')],
+    [config.keyIndent, indentCodeLines(config)],
+    [config.keyOutdent, outdentCodeLines(config)],
     ['ArrowUp', moveOrInsertBoundaryParagraph(config, 'up')],
     ['ArrowDown', moveOrInsertBoundaryParagraph(config, 'down')],
     [config.keyInsertEmptyParaAbove, insertEmptyParaAboveCodeBlock(config)],
@@ -435,6 +450,143 @@ function jumpToCodeLineBoundary(
 function lineEndOffset(textAfterCursor: string): number {
   const nextLineBreak = textAfterCursor.indexOf('\n');
   return nextLineBreak === -1 ? textAfterCursor.length : nextLineBreak;
+}
+
+function indentCodeLines(config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    const codeBlockType = getNodeType(state.schema, config.name);
+    const node = findParentNodeOfType(codeBlockType)(state.selection);
+    if (!node) {
+      return false;
+    }
+
+    const { from, to, empty } = state.selection;
+    const fromOffset = from - node.start;
+    const toOffset = to - node.start;
+    if (empty) {
+      if (dispatch) {
+        dispatch(state.tr.insertText(config.indentText).scrollIntoView());
+      }
+      return true;
+    }
+
+    const text = node.node.textContent;
+    const range = selectedCodeLineRange(text, fromOffset, toOffset);
+    const original = text.slice(range.from, range.to);
+    const replacement = original
+      .split('\n')
+      .map((line) => `${config.indentText}${line}`)
+      .join('\n');
+
+    if (dispatch) {
+      const tr = replaceCodeText(
+        state.tr,
+        node.start + range.from,
+        node.start + range.to,
+        replacement,
+      );
+      tr.setSelection(
+        TextSelection.create(
+          tr.doc,
+          node.start + range.from,
+          node.start + range.from + replacement.length,
+        ),
+      );
+      dispatch(tr.scrollIntoView());
+    }
+    return true;
+  };
+}
+
+function outdentCodeLines(config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    const codeBlockType = getNodeType(state.schema, config.name);
+    const node = findParentNodeOfType(codeBlockType)(state.selection);
+    if (!node) {
+      return false;
+    }
+
+    const { from, to } = state.selection;
+    const text = node.node.textContent;
+    const range = selectedCodeLineRange(
+      text,
+      from - node.start,
+      to - node.start,
+    );
+    const original = text.slice(range.from, range.to);
+    const empty = state.selection.empty;
+    const replacement = original
+      .split('\n')
+      .map((line) => removeCodeIndent(line, config.indentText.length))
+      .join('\n');
+
+    if (replacement === original) {
+      return true;
+    }
+
+    if (dispatch) {
+      const tr = replaceCodeText(
+        state.tr,
+        node.start + range.from,
+        node.start + range.to,
+        replacement,
+      );
+      if (empty) {
+        const cursorOffset = from - node.start;
+        const removedBeforeCursor = original.length - replacement.length;
+        tr.setSelection(
+          TextSelection.create(
+            tr.doc,
+            node.start +
+              Math.max(range.from, cursorOffset - removedBeforeCursor),
+          ),
+        );
+      } else {
+        tr.setSelection(
+          TextSelection.create(
+            tr.doc,
+            node.start + range.from,
+            node.start + range.from + replacement.length,
+          ),
+        );
+      }
+      dispatch(tr.scrollIntoView());
+    }
+    return true;
+  };
+}
+
+function selectedCodeLineRange(text: string, from: number, to: number) {
+  const start = text.lastIndexOf('\n', Math.max(0, from - 1)) + 1;
+  const adjustedTo = to > from && text[to - 1] === '\n' ? to - 1 : to;
+  const nextLineBreak = text.indexOf('\n', adjustedTo);
+  const end = nextLineBreak === -1 ? text.length : nextLineBreak;
+  return { from: start, to: end };
+}
+
+function removeCodeIndent(line: string, maxSpaces: number): string {
+  if (line.startsWith('\t')) {
+    return line.slice(1);
+  }
+
+  const match = line.match(/^ +/);
+  if (!match) {
+    return line;
+  }
+
+  return line.slice(Math.min(match[0].length, maxSpaces));
+}
+
+function replaceCodeText(
+  tr: Transaction,
+  from: number,
+  to: number,
+  text: string,
+) {
+  if (text) {
+    return tr.replaceWith(from, to, tr.doc.type.schema.text(text));
+  }
+  return tr.delete(from, to);
 }
 
 function convertFenceToCodeBlock(config: RequiredConfig): Command {
