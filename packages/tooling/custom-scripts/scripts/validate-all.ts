@@ -1,4 +1,11 @@
-import { KNOWN_PACKAGES, serviceKindOrders, VITEST_PKG_NAME } from '../config';
+import path from 'node:path';
+
+import {
+  KNOWN_PACKAGES,
+  rootPath,
+  serviceKindOrders,
+  VITEST_PKG_NAME,
+} from '../config';
 import type { Package, Workspace } from '../lib';
 import {
   collectAllDependencies,
@@ -8,6 +15,8 @@ import {
   type SetupResult,
   setup,
 } from '../lib';
+import { findAllExportedPaths } from '../lib/find-all-exported-paths';
+import { findAllImportedPackages } from '../lib/find-all-imported-paths';
 
 // bun packages/tooling/custom-scripts/scripts/validate-all.ts
 if (isMainModule(import.meta.url)) {
@@ -29,11 +38,63 @@ export async function validate(item: SetupResult) {
     testSharedConstantsShouldNotHaveDeps(item.packagesMap),
     testUniversalPackagesToRelyOnlyOnUniversal(item.packagesMap),
     testServicePackagesDependencies(item.packagesMap),
+    testServiceArchitectureBoundaries(item.packagesMap),
     validateSameDependencyVersions(item.packagesMap),
   ];
 
   await Promise.all(promises);
   logger('Validation successful');
+}
+
+async function testServiceArchitectureBoundaries(
+  packageMap: Map<string, Package>,
+) {
+  const throwValidationError = makeThrowValidationError(
+    'testServiceArchitectureBoundaries',
+  );
+  const errors: string[] = [];
+  const privateServiceImportPattern =
+    /^@bangle\.io\/(?:service-core|service-platform|initialize-services)\/src(?:\/|$)/;
+  const poorMansDiAllowedPackages = new Set([
+    '@bangle.io/base-utils',
+    '@bangle.io/initialize-services',
+    '@bangle.io/poor-mans-di',
+    KNOWN_PACKAGES.testUtils,
+  ]);
+
+  for (const [name, pkg] of packageMap.entries()) {
+    await pkg.forEachFile(
+      async ({ content, filePath }) => {
+        const relativeFilePath = path.relative(rootPath, filePath);
+        const importPaths = [
+          ...findAllImportedPackages(content),
+          ...findAllExportedPaths(content),
+        ];
+
+        for (const importPath of importPaths) {
+          if (privateServiceImportPattern.test(importPath)) {
+            errors.push(
+              `${relativeFilePath} imports private service implementation path "${importPath}". Import through the package root or an explicit public subpath instead.`,
+            );
+          }
+
+          if (
+            importPath === '@bangle.io/poor-mans-di' &&
+            !poorMansDiAllowedPackages.has(name)
+          ) {
+            errors.push(
+              `${relativeFilePath} imports @bangle.io/poor-mans-di. Container access belongs in service composition roots or test setup helpers.`,
+            );
+          }
+        }
+      },
+      (file) => file.isTSFile,
+    );
+  }
+
+  if (errors.length > 0) {
+    throwValidationError(errors.join('\n'));
+  }
 }
 
 async function testKnownPackagesExistInWorkspace(
