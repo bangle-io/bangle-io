@@ -26,6 +26,11 @@ async function main(logger: Logger) {
   // Initialize Sentry with privacy protections
   initializeSentry(logger, isDebug);
 
+  const rootElement = document.getElementById('root');
+  if (!rootElement) {
+    throw new Error('Root element not found');
+  }
+
   const abortController = new AbortController();
   const tabId = `tab_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -38,18 +43,20 @@ async function main(logger: Logger) {
 
   const store = createStore();
   const themeManager = new ThemeManager(THEME_MANAGER_CONFIG);
-  const services = await initializeServices(
-    logger,
-    rootEmitter,
-    store,
-    themeManager,
-    abortController.signal,
-  );
-
-  const rootElement = document.getElementById('root');
-  if (!rootElement) {
-    throw new Error('Root element not found');
+  let services: Awaited<ReturnType<typeof initializeServices>>;
+  try {
+    services = await initializeServices(
+      logger,
+      rootEmitter,
+      store,
+      themeManager,
+      abortController.signal,
+    );
+  } catch (error) {
+    abortController.abort();
+    throw error;
   }
+
   const root = createRoot(rootElement);
 
   root.render(
