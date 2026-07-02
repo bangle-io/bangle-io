@@ -365,16 +365,18 @@ export const wsCommandHandlers = [
       }
 
       const currentWsPath = navigation.resolveAtoms().wsPath?.wsPath;
-      if (
-        currentWsPath &&
-        descendants.some((path) => path.wsPath === currentWsPath)
-      ) {
-        await fileSystem.deleteFiles(descendants.map((path) => path.wsPath));
-        navigation.goWorkspace();
-        return;
-      }
+      const deletingOpenNote =
+        currentWsPath !== undefined &&
+        descendants.some((path) => path.wsPath === currentWsPath);
 
+      // Delete first, then leave the (now-gone) note — keeping the note visible
+      // until the delete is durable means a failed delete leaves the user on it
+      // rather than stranded on ws-home.
       await fileSystem.deleteFiles(descendants.map((path) => path.wsPath));
+
+      if (deletingOpenNote) {
+        navigation.goWorkspace();
+      }
     },
   ),
   c('command::ws:go-ws-home', ({ navigation }) => {

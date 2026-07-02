@@ -454,14 +454,6 @@ export const t = {
       breadcrumb: {
         moreSr: 'Mehr',
       },
-      tree: {
-        renameAction: 'Umbenennen',
-        deleteAction: 'Löschen',
-        moveAction: 'Verschieben',
-        createNoteAction: 'Notiz erstellen',
-        moreActionsSr: ({ itemName }: { itemName: string }) =>
-          `Weitere Aktionen für ${itemName}`,
-      },
       dialog: {
         closeSr: 'Schließen',
         commandDescriptionSr:

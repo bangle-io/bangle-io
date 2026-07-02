@@ -85,6 +85,10 @@ function getContextMenuStyle(
     CONTEXT_MENU_VIEWPORT_MARGIN,
     window.innerHeight - estimatedMenuHeight - CONTEXT_MENU_VIEWPORT_MARGIN,
   );
+  // The menu is triggered two ways. The three-dot "Options" button anchors a
+  // real rect (width > 0) at the row's right edge, so open left to keep the menu
+  // on-screen. A right-click anchors a zero-width point at the cursor, so open
+  // right from there unless that would overflow the viewport.
   const shouldOpenLeft =
     anchorRect.width > 0 ||
     anchorRect.right + CONTEXT_MENU_WIDTH + CONTEXT_MENU_VIEWPORT_MARGIN >
@@ -245,43 +249,46 @@ export function PierreFileTree({
   onMoveFileRef.current = onMoveFile;
   treePathsRef.current = treePaths;
 
-  const canDropFile = (event: FileTreeDropContext): boolean => {
+  // Single source of truth for "is this drop a real move?": exactly one dragged
+  // file we know about, landing in a directory other than its current parent.
+  // Returns the resolved move, or null when the drop should be ignored.
+  const resolveDropMove = (
+    event: FileTreeDropContext | FileTreeDropResult,
+  ): {
+    sourcePath: string;
+    destinationDirectory: string | undefined;
+  } | null => {
     if (event.draggedPaths.length !== 1) {
-      return false;
+      return null;
     }
 
     const sourcePath = normalizePierreFilePath(event.draggedPaths[0] || '');
     if (!filePathSetRef.current.has(sourcePath)) {
-      return false;
+      return null;
     }
 
     const destinationDirectory = getDropDestinationDirectory(event);
-    return (
-      (destinationDirectory ?? '') !== (getParentDirectory(sourcePath) ?? '')
-    );
+    if (
+      (destinationDirectory ?? '') === (getParentDirectory(sourcePath) ?? '')
+    ) {
+      return null;
+    }
+
+    return { destinationDirectory, sourcePath };
   };
+
+  const canDropFile = (event: FileTreeDropContext): boolean =>
+    resolveDropMove(event) !== null;
 
   const commitDurableDrop = (
     event: FileTreeDropContext | FileTreeDropResult,
   ): boolean => {
-    const sourcePath = normalizePierreFilePath(event.draggedPaths[0] || '');
-
-    if (
-      event.draggedPaths.length !== 1 ||
-      !filePathSetRef.current.has(sourcePath)
-    ) {
+    const move = resolveDropMove(event);
+    if (!move) {
       return false;
     }
 
-    const destinationDirectory = getDropDestinationDirectory(event);
-
-    if (
-      (destinationDirectory ?? '') === (getParentDirectory(sourcePath) ?? '')
-    ) {
-      return false;
-    }
-
-    onMoveFileRef.current(sourcePath, destinationDirectory);
+    onMoveFileRef.current(move.sourcePath, move.destinationDirectory);
     return true;
   };
 
