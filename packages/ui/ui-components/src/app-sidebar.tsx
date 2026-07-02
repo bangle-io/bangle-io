@@ -168,7 +168,7 @@ export function AppSidebar({
   commandButtonClassName,
 }: AppSidebarProps) {
   return (
-    <Sidebar variant="floating">
+    <Sidebar variant="sidebar" collapsible="offcanvas">
       <SidebarHeader className={sidebarHeaderClassName}>
         <div className={workspaceSwitcherWrapperClassName}>
           <WorkspaceSwitcher
