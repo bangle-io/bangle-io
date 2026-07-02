@@ -3,6 +3,7 @@ title: TypeScript 7 tsgo Investigation
 status: completed
 type: plan
 archived: true
+archived_on: 2026-06-14
 created: 2026-06-14
 updated: 2026-06-14
 owner: mixed
