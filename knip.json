@@ -1,0 +1,32 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "workspaces": {
+    ".": {
+      "project": ["*.{js,ts}", ".github/scripts/**/*.cjs"]
+    },
+    "packages/tooling/browser-entry": {
+      "vite": false,
+      "entry": ["index.html", "src/main.tsx", "vite.config.ts"]
+    },
+    "packages/tooling/custom-scripts": {
+      "entry": ["scripts/*.ts"]
+    }
+  },
+  "rules": {
+    "files": "warn",
+    "dependencies": "warn",
+    "devDependencies": "warn",
+    "optionalPeerDependencies": "warn",
+    "unlisted": "warn",
+    "binaries": "warn",
+    "unresolved": "warn",
+    "exports": "warn",
+    "nsExports": "warn",
+    "types": "warn",
+    "nsTypes": "warn",
+    "enumMembers": "warn",
+    "namespaceMembers": "warn",
+    "duplicates": "warn",
+    "catalog": "warn"
+  }
+}
