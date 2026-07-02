@@ -42,15 +42,15 @@
     "typecheck": "tsgo --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "expo": "^56.0.0",
-    "expo-constants": "~56.0.16",
-    "expo-linking": "~56.0.12",
+    "expo": "^57.0.1",
+    "expo-constants": "~57.0.2",
+    "expo-linking": "~57.0.1",
     "react": "19.2.7",
-    "react-native": "0.85.3",
-    "react-native-webview": "^13.16.1"
+    "react-native": "0.86.0",
+    "react-native-webview": "^14.0.1"
   },
   "devDependencies": {
-    "@types/node": "^25.9.3",
+    "@types/node": "^26.1.0",
     "@types/react": "^19.2.17"
   }
 }

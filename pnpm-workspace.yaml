@@ -9,7 +9,7 @@ packages:
 overrides:
   '@eslint/plugin-kit': 0.3.4
   '@playwright/experimental-ct-react>@vitejs/plugin-react': 6.0.2
-  '@playwright/experimental-ct-core>vite': 8.0.16
+  '@playwright/experimental-ct-core>vite': 8.1.3
   axios: 1.17.0
   'brace-expansion@>=2.0.0 <2.0.3': 2.0.3
   diff: 4.0.4
@@ -21,7 +21,7 @@ overrides:
   js-yaml: 3.14.2
   joi: 17.13.4
   lodash: 4.18.1
-  markdown-it: 14.2.0
+  markdown-it: 14.3.0
   'minimatch@<3.1.4': 3.1.4
   'minimatch@>=5.0.0 <5.1.8': 5.1.8
   'minimatch@>=9.0.0 <9.0.7': 9.0.7
