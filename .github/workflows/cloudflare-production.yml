@@ -54,6 +54,19 @@ jobs:
             echo "commit_short=${GITHUB_SHA::7}"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Install Sentry CLI
+        run: curl -sL https://sentry.io/get-cli/ | bash
+
+      - name: Create Sentry release
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          RELEASE: ${{ steps.release.outputs.release }}
+        run: |
+          set -euo pipefail
+
+          sentry-cli releases info "$RELEASE" >/dev/null 2>&1 ||
+            sentry-cli releases new "$RELEASE"
+
       - name: Build app
         env:
           CF_PAGES: '1'
@@ -62,15 +75,15 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: pnpm build
 
-      - name: Create Sentry release
-        uses: getsentry/action-release@v3
+      - name: Finalize Sentry release
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ${{ env.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ env.SENTRY_PROJECT }}
-        with:
-          environment: production
-          release: ${{ steps.release.outputs.release }}
+          RELEASE: ${{ steps.release.outputs.release }}
+        run: |
+          set -euo pipefail
+
+          sentry-cli releases set-commits "$RELEASE" --auto
+          sentry-cli releases finalize "$RELEASE"
 
       - name: Validate Cloudflare secrets
         env:
@@ -97,6 +110,12 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy packages/tooling/browser-entry/dist --project-name=${{ env.CLOUDFLARE_PAGES_PROJECT }} --branch=production --commit-dirty=true
           packageManager: pnpm
+
+      - name: Mark Sentry deploy
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          RELEASE: ${{ steps.release.outputs.release }}
+        run: sentry-cli releases deploys "$RELEASE" new -e production
 
       - name: Print deployment summary
         env:
