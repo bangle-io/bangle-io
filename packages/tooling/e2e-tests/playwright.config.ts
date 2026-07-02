@@ -1,7 +1,14 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const PORT = 5173;
 const isCI = Boolean(process.env.CI);
+// A fixed port lets a concurrent checkout (another worktree or agent) reuse
+// this run's dev server — or worse, this run reuse theirs, testing the wrong
+// code. Derive a per-process port locally; pin with E2E_PORT when debugging.
+const PORT = process.env.E2E_PORT
+  ? Number(process.env.E2E_PORT)
+  : isCI
+    ? 5173
+    : 6173 + (process.pid % 1000);
 
 /**
  * See https://playwright.dev/docs/test-configuration.
