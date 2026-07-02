@@ -207,6 +207,56 @@ test('existing Markdown pipe tables load, edit, and round trip faithfully', asyn
     );
 });
 
+test('table menu alignment persists as Markdown column alignment', async ({
+  page,
+}) => {
+  const workspaceName = 'table-menu-alignment';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+
+  const source = [
+    '| Item | Count | Note |',
+    '| --- | --- | --- |',
+    '| Bolt | 2 | stocked |',
+  ].join('\n');
+  await writeStoredMarkdown(page, workspaceName, 'Home', source);
+  await page.reload();
+
+  const editor = getEditorLocator(page, {});
+  await expect(editor.locator('table')).toBeVisible();
+
+  await editor.locator('table td', { hasText: '2' }).click();
+  await waitForEditorFocus(page, {});
+
+  const trigger = page.getByRole('button', { name: 'Table options' });
+  await expect(trigger).toBeVisible();
+  await trigger.click();
+  await page.getByRole('menuitemradio', { name: 'Center' }).click();
+
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe(
+      [
+        '| Item | Count | Note |',
+        '| --- | :---: | --- |',
+        '| Bolt | 2 | stocked |',
+      ].join('\n'),
+    );
+
+  await page.reload();
+  await expect(editor.locator('table')).toBeVisible();
+  await expect(editor.locator('table th').nth(1)).toHaveCSS(
+    'text-align',
+    'center',
+  );
+  await expect(editor.locator('table td').nth(1)).toHaveCSS(
+    'text-align',
+    'center',
+  );
+});
+
 test('arrow keys navigate cell edges and exit the table at its boundaries', async ({
   page,
 }) => {
