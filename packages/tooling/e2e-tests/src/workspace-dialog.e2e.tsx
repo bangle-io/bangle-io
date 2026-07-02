@@ -9,6 +9,9 @@ test('Submit workspace name', async ({ page }) => {
     .getByText('New Workspace')
     .click();
   await expect(
+    page.getByRole('dialog', { name: 'Select a workspace type' }),
+  ).not.toHaveClass(/slide-in-from-left/);
+  await expect(
     page.getByText('Choose where this workspace stores its notes.'),
   ).toBeVisible();
   await page.getByRole('button', { name: 'Cancel' }).click();

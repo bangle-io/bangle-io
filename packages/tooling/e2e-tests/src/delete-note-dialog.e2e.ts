@@ -17,6 +17,7 @@ test('delete note command opens confirmation without an intermediate picker', as
 
   const confirmation = page.getByRole('alertdialog');
   await expect(confirmation).toBeVisible();
+  await expect(confirmation).not.toHaveClass(/slide-in-from-left/);
   await expect(confirmation).toContainText(
     'Are you sure you want to delete "delete-target"?',
   );
