@@ -24,7 +24,7 @@ async function setupWorkspaceStateService({
 }: {
   controller?: AbortController;
 } = {}) {
-  const testEnv = createTestEnvironment({ controller }).setDefaultConfig();
+  const testEnv = createTestEnvironment({ controller });
   const services = testEnv.instantiateAll();
   await testEnv.mountAll();
 
@@ -67,7 +67,7 @@ describe('WorkspaceStateService $workspaces list', () => {
   });
 
   it('drops a workspace from $workspaces after it is deleted', async () => {
-    const testEnv = createTestEnvironment({ controller }).setDefaultConfig();
+    const testEnv = createTestEnvironment({ controller });
     const services = testEnv.instantiateAll();
     await testEnv.mountAll();
     const store = testEnv.store;

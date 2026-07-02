@@ -1,4 +1,3 @@
-import type { CoreServices } from '@bangle.io/context';
 import { CoreServiceProvider, LoggerProvider } from '@bangle.io/context';
 import { Sidebar } from '@bangle.io/ui-components';
 import { type RenderResult, render } from '@testing-library/react';
@@ -15,7 +14,6 @@ export function renderWithServices({
 
   return {
     autoMountServices: async () => {
-      testEnv.setDefaultConfig();
       const instance = testEnv.instantiateAll();
       await testEnv.mountAll();
       return instance;
@@ -23,29 +21,13 @@ export function renderWithServices({
 
     mountComponent: ({
       ui,
-      services,
     }: {
       ui: React.ReactNode;
-      services: ReturnType<typeof testEnv.instantiateAll>;
     }): {
       result: RenderResult;
       rerender: (ui: React.ReactNode) => void;
     } => {
-      const coreServices: CoreServices = {
-        commandDispatcher: services.commandDispatcher,
-        commandRegistry: services.commandRegistry,
-        fileSystem: services.fileSystem,
-        navigation: services.navigation,
-        shortcut: services.shortcut,
-        editorService: services.editorService,
-        workbench: services.workbench,
-        workbenchState: services.workbenchState,
-        workspace: services.workspace,
-        workspaceOps: services.workspaceOps,
-        workspaceState: services.workspaceState,
-        userActivityService: services.userActivityService,
-        pmEditorService: services.pmEditorService,
-      };
+      const coreServices = testEnv.coreServices();
 
       const Wrapper = ({ children }: { children: React.ReactNode }) => {
         return (

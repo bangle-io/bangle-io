@@ -1,4 +1,3 @@
-import { useCoreServices } from '@bangle.io/context';
 import {
   $selectionMenu,
   type Command,
@@ -22,6 +21,7 @@ import {
 } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import type { PmEditorService } from '../pm-editor-service';
+import { useEditorCoreServices } from '../use-editor-core-services';
 import {
   FloatingLinkEditor,
   type FloatingLinkEditorCloseReason,
@@ -41,7 +41,7 @@ type LinkSession = {
 
 export function InlineSelectionMenu({ editorName }: { editorName: string }) {
   const selectionMenus = useAtomValue($selectionMenu);
-  const { pmEditorService } = useCoreServices<PmEditorService>();
+  const { pmEditorService } = useEditorCoreServices();
   const editorView = pmEditorService.getEditor(editorName);
   const selectionMenu = editorView ? selectionMenus.get(editorView) : undefined;
 

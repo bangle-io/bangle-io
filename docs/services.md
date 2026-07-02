@@ -6,9 +6,10 @@ workspace layers.
 
 ## Where Things Go
 
-- Slot IDs live in the browser or test service map, not inside the service
-  implementation. The production service map is in
-  `packages/core/initialize-services/src/initialize-services.ts`.
+- Slot IDs live in the service maps, not inside the service implementation.
+  The core service map is in
+  `packages/core/initialize-services/src/service-setup.ts`; each composition
+  root contributes its platform service map.
 - Contracts live at the lowest layer that owns the concept. Shared contracts
   belong in `packages/shared/types`; core service APIs belong in
   `packages/core/service-core`; platform implementations belong in
@@ -55,19 +56,37 @@ uses them.
 
 ## Wiring
 
-Production setup and test setup should stay structurally parallel:
+Production setup and test setup share one composition builder:
+`createServiceSetup` in `@bangle.io/initialize-services/setup` (a
+platform-free subpath, safe to import from test code). The builder owns the
+canonical core service slot map and every environment-independent service
+config. A composition root supplies only what genuinely differs per
+environment:
+
+- the platform service slots (browser adapters vs memory/test adapters),
+- which of those slots provide file storage,
+- platform-specific service configs (router strategy, error sink, Native FS
+  root-handle resolution),
+- the keyboard shortcut target and the theme manager.
+
+The browser root is `@bangle.io/initialize-services`; the test root is
+`createTestEnvironment` in `@bangle.io/test-utils`. Both call the builder, so
+adding a core service means updating the builder's `coreServiceMap` (and the
+`CoreServiceSlotId` union in `@bangle.io/types` plus the `CoreServices`
+aggregate, which the compiler enforces) — test wiring follows automatically.
+
+General rules:
 
 - Use the same slot IDs for equivalent services.
-- Configure services before `instantiateAll()`.
+- Configure services before `instantiate()` via `container.setConfig`.
 - Keep browser-specific choices in the production composition root.
 - Keep memory, fake, or test-only replacements in `@bangle.io/test-utils`.
 - Mount services through the returned setup helper rather than from individual
   service constructors.
 
-When adding a service, update both the production service map and the test
-service map unless the service is deliberately browser-only or test-only. A
-test that creates the real container is usually better than mocking a service
-that participates in lifecycle, persistence, routing, commands, or editor state.
+A test that creates the real container is usually better than mocking a
+service that participates in lifecycle, persistence, routing, commands, or
+editor state.
 
 ## Guardrails
 

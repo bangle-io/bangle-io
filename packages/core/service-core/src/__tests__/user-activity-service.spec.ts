@@ -24,7 +24,7 @@ async function setupUserActivityService({
   controller?: AbortController;
 }) {
   const store = createStore();
-  const testEnv = createTestEnvironment({ controller }).setDefaultConfig();
+  const testEnv = createTestEnvironment({ controller });
 
   testEnv.getContainer().setConfig(UserActivityService, () => ({
     activityCooldownMs: cooldownMs,
