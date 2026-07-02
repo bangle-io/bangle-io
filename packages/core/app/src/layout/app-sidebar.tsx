@@ -180,9 +180,12 @@ export const AppSidebar = ({ children }: SidebarProps) => {
           );
         }}
         activeWsPaths={activeWsPaths.map((wsPath) => wsPath.wsPath)}
+        commandButtonClassName="desktop-titlebar-no-drag"
         onSearchClick={() => {
           setOpenOmniSearch(true);
         }}
+        sidebarHeaderClassName="desktop-sidebar-titlebar-header desktop-titlebar-drag"
+        workspaceSwitcherWrapperClassName="desktop-titlebar-no-drag"
         fileGroupActions={fileGroupActions}
         getActionsForItem={getActionsForItem}
         footerTitle={t.app.sidebar.footerTitle}

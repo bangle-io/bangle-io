@@ -1,0 +1,58 @@
+{
+  "name": "@bangle.io/desktop-entry",
+  "description": "Electron desktop entry point for Bangle.io.",
+  "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/tooling/desktop-entry"
+  },
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "author": {
+    "name": "Kushan Joshi",
+    "email": "0o3ko0@gmail.com",
+    "url": "http://github.com/kepta"
+  },
+  "homepage": "https://bangle.io",
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "banglePackageConfig": {
+    "allowedRuntimeImports": [
+      "electron"
+    ],
+    "env": "nodejs",
+    "kind": "app"
+  },
+  "private": true,
+  "type": "module",
+  "main": "dist/main.cjs",
+  "scripts": {
+    "build": "vite build --configLoader runner",
+    "ci": "pnpm run test && pnpm -w run desktop:build && node scripts/smoke-test.mjs --skip-if-not-darwin",
+    "dist": "tsx scripts/dist.ts",
+    "release:stable": "tsx scripts/release-stable.ts",
+    "resolve-release-metadata": "tsx scripts/resolve-release-metadata.ts",
+    "smoke": "node scripts/smoke-test.mjs",
+    "test": "vitest run src --configLoader runner"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.3",
+    "vite": "^8.0.16"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.3",
+    "electron": "41.5.0",
+    "electron-builder": "26.8.1",
+    "playwright": "^1.60.0",
+    "tsx": "^4.22.4"
+  },
+  "productName": "Bangle.io"
+}

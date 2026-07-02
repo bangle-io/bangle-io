@@ -124,6 +124,7 @@ async function shouldOnlyUseDependenciesDefinedInPackageJSON(
       (dep) =>
         !dep.startsWith('node:') &&
         !dep.startsWith('virtual:') &&
+        !pkg.banglePackageConfig.allowedRuntimeImports?.includes(dep) &&
         dep !== VITEST_PKG_NAME,
     );
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bangle Desktop Release"
+  short_description: "Build, test, package, and release the Electron desktop app"
+  default_prompt: "Use $bangle-desktop-release for Bangle.io Electron desktop release and smoke-test work."

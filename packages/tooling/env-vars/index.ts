@@ -13,6 +13,7 @@ const packageJson = JSON.parse(
   ),
 );
 const releaseVersion: string = packageJson.version;
+const RELEASE_VERSION = process.env.BANGLE_RELEASE_VERSION || releaseVersion;
 
 const IS_CLOUDFLARE_PAGES = process.env.CF_PAGES === '1';
 const IS_GITHUB_ACTIONS = process.env.GITHUB_ACTIONS === 'true';
@@ -53,10 +54,10 @@ function getAppEnv(isProd: boolean): string {
 
 function getReleaseId(isProduction: boolean): string {
   if (!isProduction) {
-    return `${releaseVersion}#local`;
+    return `${RELEASE_VERSION}#local`;
   }
   // In CI (isProduction=true), CI_BUILD_ID should be set.
-  return `${releaseVersion}#${CI_BUILD_ID || 'unknown_ci_build'}`;
+  return `${RELEASE_VERSION}#${CI_BUILD_ID || 'unknown_ci_build'}`;
 }
 
 function getFavicon(appEnv: string): string {
@@ -132,7 +133,7 @@ export default ({
           : 'local',
       nodeEnv: isProduction ? 'production' : 'development',
       releaseId,
-      releaseVersion: releaseVersion,
+      releaseVersion: RELEASE_VERSION,
       storybook: isStorybook,
     },
     app: {

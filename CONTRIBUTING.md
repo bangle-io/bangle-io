@@ -16,6 +16,29 @@ corepack prepare --activate
 pnpm install
 ```
 
+## Command Cheatsheet
+
+Run commands from the repository root.
+
+```bash
+pnpm install          # install dependencies
+pnpm start            # run the browser app at localhost:5173
+pnpm desktop:open     # build and open the Electron app locally
+pnpm desktop:ci       # desktop unit tests + Electron persistence smoke
+pnpm lint:ci          # workspace validation, typecheck, and Biome
+pnpm test:ci          # Vitest unit tests
+pnpm build            # production browser build
+pnpm e2e:ci           # Playwright E2E and component tests
+pnpm local-ci-check   # full local CI gate before PRs/releases
+```
+
+Desktop packaging and release commands:
+
+```bash
+pnpm desktop:dist -- --channel nightly --version 1.0.1-nightly.20260701.12
+pnpm desktop:release:stable -- --version 1.0.1
+```
+
 ## Repository Overview
 
 The repository is a PNPM monorepo with multiple workspaces defined in `pnpm-workspace.yaml`:
@@ -88,7 +111,7 @@ pnpm install
 pnpm start
 ```
 
-The development instance will be available on `localhost:4000`.
+The development instance will be available on `localhost:5173`.
 
 **3. Explore the Codebase**
 

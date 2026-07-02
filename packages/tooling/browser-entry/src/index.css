@@ -104,6 +104,37 @@
   }
 }
 
+.desktop-titlebar-main-spacer {
+  width: 0;
+}
+
+html[data-bangle-desktop-platform] .desktop-titlebar-drag {
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+html[data-bangle-desktop-platform] .desktop-titlebar-no-drag {
+  -webkit-app-region: no-drag;
+  user-select: auto;
+}
+
+html[data-bangle-desktop-platform] .desktop-titlebar-surface {
+  border-bottom: 1px solid hsl(var(--BV-border) / 0.65);
+  background: hsl(var(--BV-background) / 0.94);
+  backdrop-filter: blur(18px);
+}
+
+html[data-bangle-desktop-platform="darwin"]
+  .peer[data-state="collapsed"][data-side="left"]
+  ~ *
+  .desktop-titlebar-main-spacer {
+  width: 4.75rem;
+}
+
+html[data-bangle-desktop-platform="darwin"] .desktop-sidebar-titlebar-header {
+  padding-top: 2.375rem;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
