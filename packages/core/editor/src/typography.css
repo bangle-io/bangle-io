@@ -306,6 +306,13 @@ div.ProseMirror {
     font-weight: 600;
   }
 
+  /* the cell the cursor is in */
+  & .prosemirror-active-table-cell {
+    outline: 2px solid hsl(var(--BV-pop) / 0.4);
+    outline-offset: -2px;
+    border-radius: 2px;
+  }
+
   /* prosemirror-tables marks cells covered by a CellSelection */
   & .selectedCell::after {
     content: "";

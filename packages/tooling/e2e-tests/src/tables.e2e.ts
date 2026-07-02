@@ -302,3 +302,99 @@ test('table hugs its content width and empty neighbors delete into the table', a
     .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
     .toBe(['| in tablea | b |', '| --- | --- |', '| c | d |'].join('\n'));
 });
+
+test('Enter inserts a line break inside a cell that persists as <br>', async ({
+  page,
+}) => {
+  const workspaceName = 'table-cell-linebreak';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('/');
+  await page.getByText('Table', { exact: true }).click();
+  await expect(editor.locator('table')).toBeVisible();
+
+  await page.keyboard.insertText('first');
+  await page.keyboard.press('Enter');
+  await page.keyboard.insertText('second');
+
+  // The cell renders two lines and must not have been split into a new cell.
+  await expect(editor.locator('table th').first().locator('br')).toHaveCount(1);
+  await expect(editor.locator('table th')).toHaveCount(3);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toContain('| first<br>second |');
+
+  // The line break must survive a reload through the Markdown path.
+  await page.reload();
+  await expect(editor.locator('table th').first().locator('br')).toHaveCount(1);
+  await expect(editor.locator('table th').first()).toHaveText('firstsecond');
+});
+
+test('the active cell is highlighted while editing', async ({ page }) => {
+  const workspaceName = 'table-active-cell';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('/');
+  await page.getByText('Table', { exact: true }).click();
+  await expect(editor.locator('table')).toBeVisible();
+
+  const activeCell = editor.locator('.prosemirror-active-table-cell');
+  await expect(activeCell).toHaveCount(1);
+  await page.keyboard.insertText('here');
+  await expect(activeCell).toHaveText('here');
+
+  // The highlight follows the cursor to the next cell.
+  await page.keyboard.press('Tab');
+  await expect(activeCell).toHaveCount(1);
+  await expect(activeCell).toHaveText('');
+
+  // And disappears when the cursor leaves the table.
+  await page.keyboard.press('ArrowUp');
+  await expect(activeCell).toHaveCount(0);
+});
+
+test('deleting a fully selected table removes the whole table', async ({
+  page,
+}) => {
+  const workspaceName = 'table-full-delete';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+
+  const source = ['above', '', '| a | b |', '| --- | --- |', '| c | d |'].join(
+    '\n',
+  );
+  await writeStoredMarkdown(page, workspaceName, 'Home', source);
+  await page.reload();
+
+  const editor = getEditorLocator(page, {});
+  await expect(editor.locator('table')).toBeVisible();
+
+  // Select every cell the way a mouse drag does: anchor in the first cell,
+  // extend to the last cell.
+  await editor.locator('table th').first().click();
+  await waitForEditorFocus(page, {});
+  await editor
+    .locator('table td')
+    .last()
+    .click({ modifiers: ['Shift'] });
+  await page.keyboard.press('Backspace');
+
+  await expect(editor.locator('table')).toHaveCount(0);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe('above');
+});

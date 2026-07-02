@@ -94,6 +94,14 @@ describe('table markdown round trips', () => {
       'table between paragraphs',
       ['before', '', '| a |', '| --- |', '| b |', '', 'after'].join('\n'),
     ],
+    [
+      'line breaks inside cells persist as <br>',
+      ['| multi |', '| --- |', '| first<br>second |'].join('\n'),
+    ],
+    [
+      'consecutive and marked-up line breaks in cells',
+      ['| a<br><br>b | **bold**<br>_em_ |', '| --- | --- |'].join('\n'),
+    ],
   ])('%s', (_name, source) => {
     const serialized = roundTrip(source);
     expect(serialized).toBe(source);
@@ -153,7 +161,26 @@ describe('table markdown round trips', () => {
     expect(markdown.serializer.serialize(doc)).toBe('| not | a table |');
   });
 
-  it('flattens hard breaks inside cells to spaces', () => {
+  it('parses <br> inside cells into hard breaks', () => {
+    const { markdown } = createTestSetup();
+    const doc = markdown.parser.parse(
+      ['| multi |', '| --- |', '| first<br/>second |'].join('\n'),
+    );
+    const cell = doc.firstChild?.child(1)?.child(0);
+    expect(cell?.childCount).toBe(3);
+    expect(cell?.child(1).type.name).toBe('hard_break');
+  });
+
+  it('keeps <br> text outside tables as plain text', () => {
+    const { markdown } = createTestSetup();
+    const source = 'a<br>b';
+    const doc = markdown.parser.parse(source);
+    expect(doc.firstChild?.type.name).toBe('paragraph');
+    expect(doc.firstChild?.childCount).toBe(1);
+    expect(markdown.serializer.serialize(doc)).toBe('a<br>b');
+  });
+
+  it('serializes hard breaks inside cells as <br>', () => {
     const { markdown, schema, nodeType } = createTestSetup();
     const doc = schema.topNodeType.create(null, [
       nodeType('table').create(null, [
@@ -171,7 +198,7 @@ describe('table markdown round trips', () => {
     ]);
 
     const serialized = markdown.serializer.serialize(doc);
-    expect(serialized).toBe(['| h |', '| --- |', '| a b |'].join('\n'));
+    expect(serialized).toBe(['| h |', '| --- |', '| a<br>b |'].join('\n'));
   });
 
   it('pads ragged rows so the table stays rectangular', () => {

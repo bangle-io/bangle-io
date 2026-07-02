@@ -9,9 +9,12 @@ import {
   addColumnAfter,
   addColumnBefore,
   addRow,
+  CellSelection,
   type Command,
   cellAround,
   chainCommands,
+  Decoration,
+  DecorationSet,
   deleteColumn,
   deleteRow,
   deleteTable,
@@ -50,6 +53,7 @@ export type TableConfig = {
   defaultRows?: number;
   defaultColumns?: number;
   getParagraphNodeType?: (schema: Schema) => NodeType;
+  hardBreakNodeName?: string;
   // keys
   keyGoToNextCell?: string | false;
   keyGoToPrevCell?: string | false;
@@ -62,6 +66,7 @@ const DEFAULT_CONFIG: RequiredConfig = {
   defaultRows: 3,
   defaultColumns: 3,
   getParagraphNodeType: defaultGetParagraphNodeType,
+  hardBreakNodeName: 'hard_break',
   keyGoToNextCell: 'Tab',
   keyGoToPrevCell: 'Shift-Tab',
 };
@@ -100,6 +105,7 @@ export function setupTable(userConfig?: TableConfig) {
     keybindings: pluginKeybindings(config),
     tableEditing: tableEditing(),
     fixTables: pluginFixTables(),
+    activeCell: pluginActiveCell(),
   };
 
   const command = {
@@ -137,11 +143,11 @@ function pluginKeybindings(config: RequiredConfig) {
       [
         [config.keyGoToNextCell, goToNextCellOrExtend()],
         [config.keyGoToPrevCell, goToPrevCell()],
-        ['Enter', goToRowBelow()],
-        // Hard breaks inside cells would split a Markdown pipe row, so they
-        // are deliberately blocked in v1.
-        ['Shift-Enter', blockInsideCell()],
-        ['Mod-Enter', blockInsideCell()],
+        // Line breaks inside cells persist as <br>, the GFM convention for
+        // multi-line pipe-table cells.
+        ['Enter', insertLineBreakInCell(config)],
+        ['Shift-Enter', insertLineBreakInCell(config)],
+        ['Mod-Enter', exitTableBelow(config)],
         [
           'ArrowUp',
           chainCommands(
@@ -158,13 +164,51 @@ function pluginKeybindings(config: RequiredConfig) {
         ],
         ['ArrowLeft', moveCellHorizontal(-1, config)],
         ['ArrowRight', moveCellHorizontal(1, config)],
-        ['Delete', deleteEmptyBlockNextToTable('before')],
-        ['Backspace', deleteEmptyBlockNextToTable('after')],
+        [
+          'Delete',
+          chainCommands(
+            deleteTableOnFullCellSelection(),
+            deleteEmptyBlockNextToTable('before'),
+          ),
+        ],
+        [
+          'Backspace',
+          chainCommands(
+            deleteTableOnFullCellSelection(),
+            deleteEmptyBlockNextToTable('after'),
+          ),
+        ],
       ],
       'table',
       PRIORITY.high,
     );
   };
+}
+
+function pluginActiveCell() {
+  const key = new PluginKey('table-active-cell');
+  // Highlights the cell the cursor is in, like other Notion-style editors,
+  // so the typing target is obvious.
+  return new Plugin({
+    key,
+    props: {
+      decorations(state) {
+        if (!state.selection.empty || !isInTable(state)) {
+          return null;
+        }
+        const $cell = cellAround(state.selection.$from);
+        const cell = $cell?.nodeAfter;
+        if (!$cell || !cell) {
+          return null;
+        }
+        return DecorationSet.create(state.doc, [
+          Decoration.node($cell.pos, $cell.pos + cell.nodeSize, {
+            class: 'prosemirror-active-table-cell',
+          }),
+        ]);
+      },
+    },
+  });
 }
 
 function pluginFixTables() {
@@ -349,8 +393,55 @@ function goToRowBelow(): Command {
   };
 }
 
-function blockInsideCell(): Command {
-  return (state) => isInTable(state);
+/** Enter/Shift-Enter inside a cell insert a line break (persisted as <br>). */
+function insertLineBreakInCell(config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    if (!isInTable(state)) {
+      return false;
+    }
+    const breakType = state.schema.nodes[config.hardBreakNodeName];
+    if (!breakType) {
+      // Without a hard-break node the cell cannot hold a line break; swallow
+      // the key so Enter cannot split the cell into a new sibling cell.
+      return true;
+    }
+    dispatch?.(
+      state.tr.replaceSelectionWith(breakType.create()).scrollIntoView(),
+    );
+    return true;
+  };
+}
+
+/** Mod-Enter leaves the table downward, like exiting a code block. */
+function exitTableBelow(config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    if (!isInTable(state)) {
+      return false;
+    }
+    return exitTable('down', config)(state, dispatch);
+  };
+}
+
+/**
+ * Backspace/Delete on a cell selection that covers the whole table deletes
+ * the table itself instead of just emptying every cell.
+ */
+function deleteTableOnFullCellSelection(): Command {
+  return (state, dispatch) => {
+    if (!(state.selection instanceof CellSelection)) {
+      return false;
+    }
+    const rect = selectedRect(state);
+    const coversTable =
+      rect.top === 0 &&
+      rect.left === 0 &&
+      rect.bottom === rect.map.height &&
+      rect.right === rect.map.width;
+    if (!coversTable) {
+      return false;
+    }
+    return deleteTable(state, dispatch);
+  };
 }
 
 /**
@@ -761,9 +852,61 @@ function markdown(): CollectionType['markdown'] {
     tokenizerPlugins: [
       (md) => {
         md.enable('table');
+        // GFM cells hold line breaks as literal <br>. The tokenizer runs
+        // with html disabled, so <br> arrives as plain text; convert it to
+        // hardbreak tokens, but only inside table cells so <br> text in
+        // normal paragraphs keeps round-tripping as text.
+        md.core.ruler.push('table-cell-br', (state) => {
+          let cellDepth = 0;
+          for (const token of state.tokens) {
+            if (token.type === 'th_open' || token.type === 'td_open') {
+              cellDepth++;
+            } else if (token.type === 'th_close' || token.type === 'td_close') {
+              cellDepth--;
+            } else if (
+              cellDepth > 0 &&
+              token.type === 'inline' &&
+              token.children
+            ) {
+              token.children = splitBrIntoHardbreaks(
+                token.children,
+                state.Token,
+              );
+            }
+          }
+        });
       },
     ],
   };
+}
+
+const CELL_BR_RE = /<br\s*\/?>/i;
+
+function splitBrIntoHardbreaks<
+  T extends { type: string; content: string; level: number },
+>(children: T[], TokenCtor: new (type: string, tag: string, nesting: 0) => T) {
+  const result: T[] = [];
+  for (const child of children) {
+    if (child.type !== 'text' || !CELL_BR_RE.test(child.content)) {
+      result.push(child);
+      continue;
+    }
+    const parts = child.content.split(new RegExp(CELL_BR_RE.source, 'gi'));
+    parts.forEach((part, index) => {
+      if (part) {
+        const text = new TokenCtor('text', '', 0);
+        text.content = part;
+        text.level = child.level;
+        result.push(text);
+      }
+      if (index < parts.length - 1) {
+        const br = new TokenCtor('hardbreak', 'br', 0);
+        br.level = child.level;
+        result.push(br);
+      }
+    });
+  }
+  return result;
 }
 
 function parseAlign(value: unknown): TableCellAlign | null {
@@ -880,9 +1023,10 @@ function serializeCellInline(
 
   return (
     raw
-      // Hard breaks and raw newlines would terminate the pipe row, so they
-      // deliberately flatten to spaces.
-      .replace(/\\\n/g, ' ')
+      // Hard breaks persist as <br>, the GFM convention for line breaks in
+      // pipe-table cells; any other raw newline would terminate the row, so
+      // it flattens to a space.
+      .replace(/\\\n/g, '<br>')
       .replace(/\n+/g, ' ')
       // GFM expects pipes escaped everywhere in a cell, including inside
       // inline code spans.

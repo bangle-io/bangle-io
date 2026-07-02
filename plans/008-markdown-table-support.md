@@ -56,10 +56,16 @@ V1 is implemented on branch `worktree-markdown-table-support` (2026-07-01):
   keyboard coverage in
   `packages/js-lib/banger-editor/src/__tests__/table.spec.ts`; released-flow
   E2E coverage in `packages/tooling/e2e-tests/src/tables.e2e.ts`.
-- Deliberate v1 constraints: hard breaks are blocked inside cells (the
-  serializer flattens any that appear to spaces), "add row above" is disabled
-  on the header row, and a table whose header row was deleted serializes with
-  its first body row promoted to the header on the next parse.
+- In-cell line breaks: Enter/Shift-Enter insert a hard break, persisted as
+  `<br>` (the GFM convention). The tokenizer converts `<br>` back to hard
+  breaks only inside table cells; `<br>` text outside tables keeps
+  round-tripping as literal text. Mod-Enter exits below the table.
+- The cell containing the cursor gets a `prosemirror-active-table-cell`
+  outline decoration; a cell selection covering the whole table deletes the
+  table on Backspace/Delete.
+- Deliberate v1 constraints: "add row above" is disabled on the header row,
+  and a table whose header row was deleted serializes with its first body
+  row promoted to the header on the next parse.
 
 Original pre-implementation notes:
 
