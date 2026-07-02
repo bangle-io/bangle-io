@@ -6,8 +6,8 @@ on:
     types: [opened, reopened, synchronize, ready_for_review]
 
 concurrency:
-  group: cloudflare-pr-preview
-  cancel-in-progress: false
+  group: cloudflare-pr-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -17,6 +17,8 @@ env:
   SENTRY_NO_PROGRESS_BAR: 1
   CLOUDFLARE_PAGES_PROJECT: bangle-io-2
   CLOUDFLARE_PREVIEW_BRANCH: pr-${{ github.event.pull_request.number }}
+  CLOUDFLARE_PREVIEW_URL: https://pr-${{ github.event.pull_request.number }}.bangle-io-2.pages.dev
+  PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
 
 jobs:
   deploy-preview:
@@ -25,6 +27,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ env.PR_HEAD_SHA }}
+
+      - name: Mark PR preview comment as building
+        uses: actions/github-script@v8
+        env:
+          PREVIEW_URL: ${{ env.CLOUDFLARE_PREVIEW_URL }}
+          PREVIEW_BRANCH: ${{ env.CLOUDFLARE_PREVIEW_BRANCH }}
+          PREVIEW_SHA: ${{ env.PR_HEAD_SHA }}
+          PREVIEW_STATE: building
+        with:
+          script: |
+            const updateComment = require('./.github/scripts/update-cloudflare-preview-comment.cjs');
+            await updateComment({ github, context });
 
       - name: Install pnpm
         run: |
@@ -41,6 +57,9 @@ jobs:
         run: pnpm install
 
       - name: Build app
+        env:
+          CF_PAGES_BRANCH: ${{ env.CLOUDFLARE_PREVIEW_BRANCH }}
+          CF_PAGES_COMMIT_SHA: ${{ env.PR_HEAD_SHA }}
         run: pnpm build
 
       - name: Validate Cloudflare secrets
@@ -94,45 +113,9 @@ jobs:
         env:
           PREVIEW_URL: ${{ steps.preview.outputs.preview_url }}
           PREVIEW_BRANCH: ${{ steps.preview.outputs.preview_branch }}
+          PREVIEW_SHA: ${{ env.PR_HEAD_SHA }}
+          PREVIEW_STATE: deployed
         with:
           script: |
-            const marker = '<!-- bangle-cloudflare-pr-preview -->';
-            const pr = context.payload.pull_request;
-            const body = [
-              marker,
-              '## Cloudflare Pages Preview',
-              '',
-              `Preview: ${process.env.PREVIEW_URL}`,
-              '',
-              `Branch: \`${process.env.PREVIEW_BRANCH}\``,
-              `Commit: \`${context.sha.slice(0, 7)}\``,
-              '',
-              'This comment is updated automatically when new commits are pushed to this PR.',
-            ].join('\n');
-
-            const { owner, repo } = context.repo;
-            const comments = await github.paginate(github.rest.issues.listComments, {
-              owner,
-              repo,
-              issue_number: pr.number,
-              per_page: 100,
-            });
-
-            const existing = comments.find((comment) => comment.body?.includes(marker));
-
-            if (existing) {
-              await github.rest.issues.updateComment({
-                owner,
-                repo,
-                comment_id: existing.id,
-                body,
-              });
-              return;
-            }
-
-            await github.rest.issues.createComment({
-              owner,
-              repo,
-              issue_number: pr.number,
-              body,
-            });
+            const updateComment = require('./.github/scripts/update-cloudflare-preview-comment.cjs');
+            await updateComment({ github, context });
