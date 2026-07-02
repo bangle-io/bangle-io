@@ -31,7 +31,7 @@
     "@types/markdown-it": "^14.1.2"
   },
   "dependencies": {
-    "@bangle.dev/prosemirror-all": "2.0.0-alpha.18",
+    "@bangle.dev/prosemirror-all": "2.0.0-alpha.19",
     "jotai": "^2.20.1",
     "markdown-it": "14.3.0",
     "orderedmap": "^2.1.1",
