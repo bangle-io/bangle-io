@@ -237,7 +237,25 @@ export class FileStorageNativeFs
   ): Promise<string[]> {
     await this.mountPromise;
     const fs = await this.getFs({ wsName });
-    const rawPaths = await fs.opendirRecursive(wsName);
+    let rawPaths: string[];
+    try {
+      rawPaths = await fs.opendirRecursive(wsName);
+    } catch (error) {
+      if (
+        error instanceof BaseFileSystemError &&
+        error.code === FILE_NOT_FOUND_ERROR
+      ) {
+        throwAppError(
+          'error::file-storage:file-does-not-exist',
+          'Native workspace path was not found',
+          {
+            wsPath: `${wsName}:`,
+            storage: this.name,
+          },
+        );
+      }
+      throw error;
+    }
     abortSignal.throwIfAborted();
     return rawPaths
       .map((r) => WsPath.fromFSPath(r))

@@ -3,6 +3,7 @@ import {
   BaseError,
   BaseService,
   type BaseServiceContext,
+  isAppError,
 } from '@bangle.io/base-utils';
 import type { BangleAppCommand } from '@bangle.io/commands';
 import {
@@ -139,7 +140,7 @@ export class CommandDispatchService extends BaseService {
               command,
               from,
             });
-            throw error;
+            this.handleAsyncCommandError(error);
           },
         );
       } else {
@@ -172,6 +173,15 @@ export class CommandDispatchService extends BaseService {
 
   private onCommandResult(result: CommandDispatchResult): void {
     this.config.emitResult(result);
+  }
+
+  private handleAsyncCommandError(error: unknown): void {
+    if (isAppError(error)) {
+      this.emitAppError(error);
+      return;
+    }
+
+    throw error;
   }
 
   private setCommandContext(command: Command, key: CommandKey<string>): void {

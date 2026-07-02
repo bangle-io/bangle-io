@@ -1,5 +1,6 @@
 import { expect, type Page, test } from '@playwright/test';
 import {
+  createBrowserWorkspace,
   createBrowserWorkspaceAndNote,
   EDITOR_FOCUSED_SELECTOR,
   getEditorLocator,
@@ -106,4 +107,28 @@ test('command bar and all-commands route stay centered when translate utilities 
   await page.getByPlaceholder('Type a command or search...').fill('>');
   await expect(page.getByText('> Commands')).toBeVisible();
   await expectDialogCentered(page);
+});
+
+test('workspace-only command without an open note shows an app error and keeps the app usable', async ({
+  page,
+}) => {
+  await createBrowserWorkspace(page, {
+    workspaceName: 'omni-no-open-note',
+  });
+
+  await expect(
+    page.getByText('No notes found in this workspace.'),
+  ).toBeVisible();
+
+  await pressAppShortcut(page, 'k');
+  await page
+    .getByPlaceholder('Type a command or search...')
+    .fill('Toggle Star for Current Note');
+  await page.keyboard.press('Enter');
+
+  await expect(page.getByText('No note is currently open.')).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'omni-no-open-note' }),
+  ).toBeVisible();
+  await expect(page.getByRole('button', { name: 'New Note' })).toBeVisible();
 });

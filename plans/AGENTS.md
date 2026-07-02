@@ -35,6 +35,7 @@ title: Human-readable title
 status: planned | active | blocked | completed | superseded
 type: plan
 archived: false
+archived_on:
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 owner: agent | human | mixed
@@ -62,8 +63,8 @@ status and final verification instead of deleting it.
 ## Archiving
 
 When a plan is fully complete, move it to `plans/archived/`, set
-`archived: true`, set `status: completed`, and prepend a DONE blockquote
-immediately after the YAML frontmatter:
+`archived: true`, set `archived_on: YYYY-MM-DD`, set `status: completed`, and
+prepend a DONE blockquote immediately after the YAML frontmatter:
 
 ```md
 ---
@@ -71,6 +72,7 @@ title: Example Plan
 status: completed
 type: plan
 archived: true
+archived_on: 2026-06-13
 created: 2026-01-01
 updated: 2026-06-13
 owner: mixed

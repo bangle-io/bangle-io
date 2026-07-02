@@ -34,10 +34,15 @@ class FakeFileHandle {
 class FakeDirectoryHandle {
   readonly kind = 'directory';
   private entries = new Map<string, FakeDirectoryHandle | FakeFileHandle>();
+  shouldThrowNotFoundOnRead = false;
 
   constructor(readonly name: string) {}
 
   async *values(): AsyncIterableIterator<FileSystemHandle> {
+    if (this.shouldThrowNotFoundOnRead) {
+      throw new DOMException('Directory not found', 'NotFoundError');
+    }
+
     for (const entry of this.entries.values()) {
       yield entry as unknown as FileSystemHandle;
     }
@@ -127,5 +132,25 @@ describe('FileStorageNativeFs', () => {
     const readFile = await service.readFile(wsPath);
     expect(await readFile?.text()).toBe('Original');
     expect(onChange).toHaveBeenCalledTimes(1);
+  });
+
+  it('maps missing native workspace roots during listing to a typed app error', async () => {
+    const { service } = await setup();
+    const rootDirHandle = await service.getRootDirHandle('myWorkspace');
+    (
+      rootDirHandle.handle as unknown as FakeDirectoryHandle
+    ).shouldThrowNotFoundOnRead = true;
+
+    await expect(
+      service.listAllFiles('myWorkspace', new AbortController().signal),
+    ).rejects.toMatchObject({
+      cause: expect.objectContaining({
+        name: 'error::file-storage:file-does-not-exist',
+        payload: {
+          storage: 'file-storage-nativefs',
+          wsPath: 'myWorkspace:',
+        },
+      }),
+    });
   });
 });

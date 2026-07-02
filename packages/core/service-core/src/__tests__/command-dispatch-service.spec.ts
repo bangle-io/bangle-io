@@ -2,6 +2,7 @@ import {
   BaseError,
   BaseService,
   type BaseServiceContext,
+  createAppError,
 } from '@bangle.io/base-utils';
 import { commandKeyToContext } from '@bangle.io/constants';
 import { T } from '@bangle.io/mini-js-utils';
@@ -76,6 +77,7 @@ async function setup() {
 
   await dispatchService.mount();
   return {
+    commonOpts,
     logger,
     commandRegistry,
     dispatchService,
@@ -228,6 +230,40 @@ describe('CommandDispatchService', () => {
         'testSource',
       );
     };
+  });
+
+  test('should convert async app error rejections into command failures and emitted app errors', async () => {
+    const { commonOpts, commandRegistry, dispatchService, dispatchedCommands } =
+      await setup();
+    const command = {
+      id: 'command::ui:toggle-sidebar',
+      dependencies: { services: [] },
+      args: null,
+    } as const satisfies Command;
+    const error = createAppError(
+      'error::workspace:no-note-opened',
+      'No note is currently open.',
+      {},
+    );
+
+    commandRegistry.register(command);
+    commandRegistry.registerHandler({
+      id: command.id,
+      handler: async () => {
+        throw error;
+      },
+    });
+
+    dispatchService.dispatch(command.id, null, 'testSource');
+
+    await vi.waitFor(() => {
+      expect(dispatchedCommands).toContainEqual({
+        type: 'failure',
+        command,
+        from: 'testSource',
+      });
+      expect(commonOpts.emitAppError).toHaveBeenCalledWith(error);
+    });
   });
 
   test('should throw error when dispatching a non-existent command', async () => {

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bangle Follow-up Operator"
+  short_description: "Handle recurring Bangle thread follow-ups"
+  default_prompt: "Use $bangle-followup-operator to continue this Bangle agent thread with the right review, test, PR, or release workflow."

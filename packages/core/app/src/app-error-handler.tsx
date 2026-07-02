@@ -1,8 +1,27 @@
 import { getGithubUrl, handleAppError } from '@bangle.io/base-utils';
 import { useCoreServices, useLogger } from '@bangle.io/context';
-import type { RootEmitter } from '@bangle.io/types';
+import type { AppError, RootEmitter } from '@bangle.io/types';
 import { toast } from '@bangle.io/ui-components';
 import React, { useEffect } from 'react';
+
+export function shouldReportAppError(appError: AppError): boolean {
+  switch (appError.name) {
+    case 'error::file:already-existing':
+    case 'error::file-storage:file-does-not-exist':
+    case 'error::workspace:native-fs-auth-needed':
+    case 'error::workspace:no-note-opened':
+    case 'error::workspace:no-notes-found':
+    case 'error::workspace:not-opened':
+    case 'error::ws-path:create-new-note':
+    case 'error::ws-path:invalid-markdown-path':
+    case 'error::ws-path:invalid-note-path':
+    case 'error::ws-path:invalid-ws-name':
+    case 'error::ws-path:invalid-ws-path':
+      return false;
+    default:
+      return true;
+  }
+}
 
 export function AppErrorHandler({ rootEmitter }: { rootEmitter: RootEmitter }) {
   const coreServices = useCoreServices();
@@ -43,8 +62,13 @@ export function AppErrorHandler({ rootEmitter }: { rootEmitter: RootEmitter }) {
     };
 
     const handleAppLikeError = (error: Error) => {
-      logger.error(error);
       return handleAppError(error, (appError, error) => {
+        if (shouldReportAppError(appError)) {
+          logger.error(error);
+        } else {
+          logger.warn('Handled app error:', error.message);
+        }
+
         switch (appError.name) {
           case 'error::editor:save-failed': {
             const toastId = `editor-save-failed:${appError.payload.wsPath}`;

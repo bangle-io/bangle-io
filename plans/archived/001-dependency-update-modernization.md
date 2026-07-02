@@ -3,6 +3,7 @@ title: Dependency Update Modernization Plan
 status: completed
 type: plan
 archived: true
+archived_on: 2026-06-14
 created: 2026-05-25
 updated: 2026-06-14
 owner: mixed
