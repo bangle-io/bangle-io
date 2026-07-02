@@ -76,7 +76,8 @@ export const t = {
       linkedMentions: {
         heading: 'Linked mentions',
         loading: 'Loading linked mentions...',
-        empty: 'No linked mentions',
+        empty:
+          'No backlinks yet. Type [[ in another note to create a backlink to this note.',
         error: 'Unable to load linked mentions',
         collapse: 'Collapse linked mentions',
         expand: 'Expand linked mentions',

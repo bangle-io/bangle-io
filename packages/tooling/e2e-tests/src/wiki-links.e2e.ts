@@ -162,6 +162,23 @@ test('does not offer the note being edited as a wiki-link suggestion', async ({
   ).toHaveCount(0);
 });
 
+test('explains how to create backlinks when linked mentions are empty', async ({
+  page,
+}) => {
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName: 'empty-linked-mentions',
+    noteName: 'Home',
+  });
+
+  const linkedMentions = page.getByRole('region', {
+    name: 'Linked mentions',
+  });
+
+  await expect(linkedMentions).toContainText(
+    'No backlinks yet. Type [[ in another note to create a backlink to this note.',
+  );
+});
+
 test('shows exact linked mentions for the active note', async ({ page }) => {
   const workspaceName = 'linked-mentions';
   await createBrowserWorkspaceAndNote(page, {
