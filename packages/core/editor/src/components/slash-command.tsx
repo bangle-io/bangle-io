@@ -213,6 +213,22 @@ export function SlashCommand({
             >
               Code block
             </CommandItem>
+            <CommandItem
+              value="table grid"
+              onSelect={() => {
+                dismissCommandUi();
+                ext.table.command.insertTable()(
+                  editorView.state,
+                  editorView.dispatch,
+                  editorView,
+                );
+                // Replacing the focused paragraph with the table drops DOM
+                // focus; restore it so typing goes into the first cell.
+                editorView.focus();
+              }}
+            >
+              {t.app.editor.slashCommand.table}
+            </CommandItem>
           </CommandGroup>
 
           <CommandSeparator />

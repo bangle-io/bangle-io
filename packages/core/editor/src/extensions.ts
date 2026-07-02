@@ -23,6 +23,8 @@ import {
   setupSelectionMenu,
   setupStrike,
   setupSuggestions,
+  setupTable,
+  setupTableMenu,
   setupTrailingNode,
   setupUnderline,
   setupWikiLink,
@@ -95,5 +97,7 @@ export function setupExtensions(
     link,
     linkMenu: setupLinkMenu({ link }),
     selectionMenu: setupSelectionMenu(),
+    table: setupTable(),
+    tableMenu: setupTableMenu(),
   };
 }

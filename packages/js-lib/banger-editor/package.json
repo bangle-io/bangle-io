@@ -46,6 +46,7 @@
     "prosemirror-model": "^1.25.8",
     "prosemirror-schema-basic": "^1.2.4",
     "prosemirror-state": "^1.4.4",
+    "prosemirror-tables": "^1.8.5",
     "prosemirror-test-builder": "^1.1.1",
     "prosemirror-transform": "^1.12.0",
     "prosemirror-view": "^1.41.9"

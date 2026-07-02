@@ -123,6 +123,30 @@ export {
   TextSelection,
   Transaction,
 } from 'prosemirror-state';
+export type { TableRect } from 'prosemirror-tables';
+export {
+  addColumn,
+  addColumnAfter,
+  addColumnBefore,
+  addRow,
+  addRowAfter,
+  addRowBefore,
+  CellSelection,
+  cellAround,
+  deleteColumn,
+  deleteRow,
+  deleteTable,
+  fixTables,
+  goToNextCell,
+  isInTable,
+  nextCell,
+  rowIsHeader,
+  selectedRect,
+  selectionCell,
+  TableMap,
+  tableEditing,
+  tableNodes,
+} from 'prosemirror-tables';
 export { builders } from 'prosemirror-test-builder';
 export type {
   Mapping,

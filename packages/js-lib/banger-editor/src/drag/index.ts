@@ -33,7 +33,7 @@ function defaultIsListItem(_state: EditorState, node: PMNode) {
   return node.type.name === 'list';
 }
 function defaultIsTableRow(_state: EditorState, node: PMNode) {
-  return node.type.name === 'tableRow';
+  return node.type.name === 'table_row';
 }
 
 export function setupDragNode(config: DragConfig) {
