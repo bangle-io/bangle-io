@@ -1,5 +1,5 @@
 import getEnvVars from '@bangle.io/env-vars';
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 
 const NODE_ABORT_ERROR_MESSAGE = 'This operation was aborted';
 
@@ -27,6 +27,7 @@ export default defineConfig((env) => {
       globals: true,
       setupFiles: 'vitest-global-setup.js',
       include: ['**/*.{vitest,spec}.?(c|m)[jt]s?(x)'],
+      exclude: [...configDefaults.exclude, '.claude/**'],
       clearMocks: true,
       restoreMocks: true,
       onUnhandledError: (error: unknown) => {

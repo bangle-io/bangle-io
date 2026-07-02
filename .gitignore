@@ -34,5 +34,8 @@ packages/tooling/e2e-tests/playwright/playwright-report
 
 .aider*
 
+# Claude Code worktrees
+.claude/worktrees/
+
 # Sentry Config File
 .env.sentry-build-plugin
