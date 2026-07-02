@@ -23,6 +23,8 @@ import {
   setupSelectionMenu,
   setupStrike,
   setupSuggestions,
+  setupTable,
+  setupTableMenu,
   setupTrailingNode,
   setupUnderline,
   setupWikiLink,
@@ -40,7 +42,9 @@ export function setupExtensions(
   return {
     image: setupImage(),
     activeNode: setupActiveNode({
-      excludedNodes: ['horizontal_rule', 'code_block', 'blockquote'],
+      // 'table': the flash animation re-triggers on every cell move and makes
+      // rows appear to blink while navigating with arrow keys.
+      excludedNodes: ['horizontal_rule', 'code_block', 'blockquote', 'table'],
     }),
     base: setupBase(),
     blockquote: setupBlockquote(),
@@ -95,5 +99,7 @@ export function setupExtensions(
     link,
     linkMenu: setupLinkMenu({ link }),
     selectionMenu: setupSelectionMenu(),
+    table: setupTable(),
+    tableMenu: setupTableMenu(),
   };
 }

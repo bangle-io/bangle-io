@@ -8,6 +8,7 @@ import {
   InlineSelectionMenu,
   LinkMenu,
   SlashCommand,
+  TableMenu,
   WikiLinkMenu,
 } from './components';
 
@@ -55,6 +56,7 @@ export function Editor({
           )}
         />
         <SlashCommand editorName={name} />
+        <TableMenu editorName={name} />
         <WikiLinkMenu editorName={name} />
         <LinkMenu editorName={name} />
         <InlineSelectionMenu editorName={name} />

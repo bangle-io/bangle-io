@@ -277,6 +277,52 @@ div.ProseMirror {
     background-color: hsl(var(--BV-background) / 0.5);
   }
 
+  & table {
+    border-collapse: collapse;
+    margin: 0.5rem 0;
+    /* The editor is a column flexbox, which stretches tables to the full
+       row width and dumps the slack into the widest column. Size to content
+       instead. */
+    width: fit-content;
+    align-self: flex-start;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  & th,
+  & td {
+    position: relative;
+    border: 1px solid hsl(var(--BV-border));
+    padding: 0.3rem 0.6rem;
+    min-width: 3rem;
+    text-align: left;
+    vertical-align: top;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  & th {
+    background-color: hsl(var(--BV-muted) / 0.35);
+    font-weight: 600;
+  }
+
+  /* the cell the cursor is in */
+  & .prosemirror-active-table-cell {
+    outline: 2px solid hsl(var(--BV-pop) / 0.4);
+    outline-offset: -2px;
+    border-radius: 2px;
+  }
+
+  /* prosemirror-tables marks cells covered by a CellSelection */
+  & .selectedCell::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: hsl(var(--BV-pop) / 0.12);
+    pointer-events: none;
+    z-index: 2;
+  }
+
   & hr {
     margin: 2em 0;
   }

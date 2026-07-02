@@ -31,6 +31,8 @@ export * from './selection-menu';
 export * from './store';
 export * from './strike';
 export * from './suggestions';
+export * from './table';
+export * from './table-menu';
 export * from './trailing-node';
 export * from './underline';
 export * from './wiki-link';
