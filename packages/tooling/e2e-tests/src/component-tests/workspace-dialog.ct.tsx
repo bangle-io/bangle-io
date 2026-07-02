@@ -13,6 +13,10 @@ test('Default dialog shows storage options and navigates', async ({
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
   await expect(dialog).toContainText('Select a workspace type');
+  await expect(dialog).toContainText(
+    'Choose where this workspace stores its notes.',
+  );
+  await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeVisible();
 
   // Test browser storage back button
   await page.getByRole('radio', { name: /Browser Storage/i }).click();

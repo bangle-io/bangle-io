@@ -1,6 +1,6 @@
 import { throwAppError } from '@bangle.io/base-utils';
 import { WsPath } from '@bangle.io/ws-path';
-import { FilePlus, Trash2 } from 'lucide-react';
+import { FilePlus } from 'lucide-react';
 import { c, getCtx } from '../helper';
 import { validateInputPath } from '../utils';
 
@@ -12,19 +12,17 @@ export const noteManagementHandlers = [
       store.set(workbenchState.$singleInputDialog, () => {
         return {
           dialogId: 'dialog::new-note-dialog',
+          title: t.app.dialogs.createNote.title,
+          description: t.app.dialogs.createNote.description,
+          inputLabel: t.app.dialogs.createNote.inputLabel,
           placeholder: t.app.dialogs.createNote.placeholder,
-          badgeText: t.app.dialogs.createNote.badgeText,
-          option: {
-            id: 'new-note-dialog',
-            title: t.app.dialogs.createNote.optionTitle,
-          },
+          submitText: t.app.dialogs.createNote.submitText,
           onSelect: (input) => {
             dispatch('command::ws:new-note-from-input', {
               inputPath: input.trim(),
             });
             dispatch('command::ui:focus-editor', null);
           },
-          Icon: FilePlus,
           initialSearch: prefillName,
         };
       });
@@ -35,53 +33,44 @@ export const noteManagementHandlers = [
     'command::ui:delete-note-dialog',
     ({ workbenchState, workspaceState }, { wsPath }, key) => {
       const { store, dispatch } = getCtx(key);
-      const wsPaths = store.get(workspaceState.$wsPaths);
-      const wsName = store.get(workspaceState.$currentWsName);
+      const targetWsPath = wsPath || store.get(workspaceState.$currentWsPath);
 
-      if (!wsName || !wsPaths || wsPaths.length === 0) {
+      if (!targetWsPath) {
         throwAppError(
-          'error::workspace:no-notes-found',
-          t.app.errors.workspace.noNotesToDelete,
-          { wsName },
+          'error::workspace:not-opened',
+          t.app.errors.workspace.notOpened,
+          { wsPath },
         );
       }
 
-      store.set(workbenchState.$singleSelectDialog, () => {
-        return {
-          dialogId: 'dialog::delete-ws-path-dialog',
-          placeholder: t.app.dialogs.deleteNote.placeholder,
-          badgeText: t.app.dialogs.deleteNote.badgeText,
-          badgeTone: 'destructive',
-          groupHeading: t.app.dialogs.deleteNote.groupHeading,
-          emptyMessage: t.app.dialogs.deleteNote.emptyMessage,
-          options: wsPaths.map((path) => ({
-            title: path.filePath,
-            id: path.wsPath,
-          })),
-          Icon: Trash2,
-          hints: [t.app.dialogs.deleteNote.hintDelete],
-          initialSearch: wsPath ? WsPath.fromString(wsPath).path : undefined,
-          onSelect: (option) => {
-            const wsPath = WsPath.fromString(option.id);
-            const fileName = wsPath.asFile()?.fileNameWithoutExtension;
+      const filePath = WsPath.safeParse(targetWsPath).data?.asFile();
 
-            store.set(workbenchState.$alertDialog, () => {
-              return {
-                dialogId: 'dialog::alert',
-                title: t.app.dialogs.confirmDelete.title,
-                tone: 'destructive',
-                description: t.app.dialogs.confirmDelete.description({
-                  fileName: fileName || t.app.common.unknown,
-                }),
-                continueText: t.app.dialogs.confirmDelete.continueText,
-                onContinue: () => {
-                  dispatch('command::ws:delete-ws-path', { wsPath: option.id });
-                  dispatch('command::ui:focus-editor', null);
-                },
-                onCancel: () => {},
-              };
-            });
+      if (!filePath) {
+        throwAppError(
+          'error::file:invalid-note-path',
+          t.app.errors.file.invalidNotePath,
+          {
+            invalidWsPath: targetWsPath.toString(),
           },
+        );
+      }
+
+      store.set(workbenchState.$alertDialog, () => {
+        return {
+          dialogId: 'dialog::alert',
+          title: t.app.dialogs.confirmDelete.title,
+          tone: 'destructive',
+          description: t.app.dialogs.confirmDelete.description({
+            fileName: filePath.fileNameWithoutExtension,
+          }),
+          continueText: t.app.dialogs.confirmDelete.continueText,
+          onContinue: () => {
+            dispatch('command::ws:delete-ws-path', {
+              wsPath: filePath.wsPath,
+            });
+            dispatch('command::ui:focus-editor', null);
+          },
+          onCancel: () => {},
         };
       });
     },
@@ -119,16 +108,14 @@ export const noteManagementHandlers = [
       store.set(workbenchState.$singleInputDialog, () => {
         return {
           dialogId: 'dialog::rename-note-dialog',
-          placeholder: t.app.dialogs.renameNote.placeholder,
-          badgeText: t.app.dialogs.renameNote.badgeText({
+          title: t.app.dialogs.renameNote.title,
+          description: t.app.dialogs.renameNote.description({
             fileNameWithoutExtension: fileOldWsPath.fileNameWithoutExtension,
           }),
+          inputLabel: t.app.dialogs.renameNote.inputLabel,
+          placeholder: t.app.dialogs.renameNote.placeholder,
           initialSearch: fileOldWsPath.fileNameWithoutExtension,
-          Icon: FilePlus,
-          option: {
-            id: 'rename-note-dialog',
-            title: t.app.dialogs.renameNote.optionTitle,
-          },
+          submitText: t.app.dialogs.renameNote.submitText,
           onSelect: (input) => {
             const trimmedInput = input.trim();
             if (!trimmedInput) {
@@ -243,24 +230,32 @@ export const noteManagementHandlers = [
       store.set(workbenchState.$singleSelectDialog, () => {
         return {
           dialogId: 'dialog::move-note-dialog',
-          placeholder: t.app.dialogs.moveNote.placeholder,
-          badgeText: t.app.dialogs.moveNote.badgeText({
+          title: t.app.dialogs.moveNote.title({
             fileNameWithoutExtension: filePath.fileNameWithoutExtension,
           }),
+          description: t.app.dialogs.moveNote.searchPlaceholder,
+          searchPlaceholder: t.app.dialogs.moveNote.searchPlaceholder,
           emptyMessage: t.app.dialogs.moveNote.emptyMessage,
+          emptyActionText: t.app.dialogs.moveNote.emptyActionText,
           options,
           Icon: FilePlus,
-          groupHeading: t.app.dialogs.moveNote.groupHeading,
-          hints: [
-            t.app.dialogs.moveNote.hintClick,
-            t.app.dialogs.moveNote.hintDrag,
-          ],
+          groupLabel: t.app.dialogs.moveNote.groupLabel,
+          hints:
+            options.length > 0
+              ? [
+                  t.app.dialogs.moveNote.hintClick,
+                  t.app.dialogs.moveNote.hintDrag,
+                ]
+              : [t.app.dialogs.moveNote.hintCreateDirectory],
+          onEmptyAction: () => {
+            dispatch('command::ui:create-directory-dialog', null);
+          },
           onSelect: (selectedDir) => {
             let newDirPath = selectedDir.id;
             if (newDirPath === ROOT_ID) {
               newDirPath = '';
             } else {
-              validateInputPath(newDirPath);
+              newDirPath = WsPath.pathJoin(newDirPath);
             }
 
             dispatch('command::ws:move-ws-path', {
@@ -292,12 +287,11 @@ export const noteManagementHandlers = [
       store.set(workbenchState.$singleInputDialog, () => {
         return {
           dialogId: 'dialog::new-directory-dialog',
+          title: t.app.dialogs.createDirectory.title,
+          description: t.app.dialogs.createDirectory.description,
+          inputLabel: t.app.dialogs.createDirectory.inputLabel,
           placeholder: t.app.dialogs.createDirectory.placeholder,
-          badgeText: t.app.dialogs.createDirectory.badgeText,
-          option: {
-            id: 'new-directory-dialog',
-            title: t.app.dialogs.createDirectory.optionTitle,
-          },
+          submitText: t.app.dialogs.createDirectory.submitText,
           onSelect: (_input) => {
             const input = _input.trim();
             validateInputPath(input);
@@ -305,7 +299,6 @@ export const noteManagementHandlers = [
               dirWsPath: WsPath.fromParts(wsName, input).wsPath,
             });
           },
-          Icon: FilePlus,
         };
       });
     },

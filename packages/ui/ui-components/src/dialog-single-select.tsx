@@ -1,5 +1,5 @@
-import { cx } from '@bangle.io/base-utils';
 import {
+  Button,
   CommandBadge,
   CommandDialog,
   CommandEmpty,
@@ -8,6 +8,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  cn,
 } from '@bangle.io/shadcn';
 import { Check } from 'lucide-react';
 import React from 'react';
@@ -22,11 +23,14 @@ export type DialogSingleSelectProps = {
     icon?: React.ElementType;
   }[];
   onSelect: (option: { id: string; title?: string }) => void;
-  placeholder?: string;
-  groupHeading?: string;
-  badgeTone?: 'destructive' | 'default';
-  badgeText?: string;
+  title?: string;
+  description?: string;
+  searchPlaceholder?: string;
+  groupLabel?: string;
+  tone?: 'destructive' | 'default';
   emptyMessage?: React.ReactNode;
+  emptyActionText?: string;
+  onEmptyAction?: () => void;
   Icon?: React.ElementType;
   initialSearch?: string;
   hints?: string[];
@@ -42,24 +46,22 @@ function SingleSelectItem({
   onSelect: (option: { id: string; title?: string }) => void;
 }) {
   const OptionIcon = option.icon;
+
   return (
-    <CommandItem
-      key={option.id}
-      onSelect={() => {
-        onSelect(option);
-      }}
-    >
+    <CommandItem onSelect={() => onSelect(option)}>
       {hasAnyIcon && (
-        <div className="mr-1 flex h-4 w-4 items-center">
+        <div className="flex h-4 w-4 shrink-0 items-center justify-center">
           {OptionIcon ? (
-            <OptionIcon className="h-4 w-4" />
-          ) : hasAnyIcon ? (
-            <div className="h-4 w-4" />
+            <OptionIcon className="h-4 w-4" aria-hidden="true" />
           ) : null}
         </div>
       )}
-      <span>{option.title || option.id}</span>
-      {option.active && <Check className="h-4 w-4 shrink-0 opacity-50" />}
+      <span className="min-w-0 flex-1 truncate">
+        {option.title || option.id}
+      </span>
+      {option.active && (
+        <Check className="h-4 w-4 shrink-0 opacity-60" aria-hidden="true" />
+      )}
     </CommandItem>
   );
 }
@@ -69,73 +71,98 @@ export function DialogSingleSelect({
   setOpen,
   options,
   onSelect,
-  placeholder = t.app.dialogs.singleSelect.placeholderDefault,
-  groupHeading = '',
-  badgeText,
-  badgeTone = 'default',
+  title,
+  description,
+  searchPlaceholder = t.app.dialogs.singleSelect.placeholderDefault,
+  groupLabel = '',
+  tone = 'default',
   emptyMessage = t.app.dialogs.singleSelect.emptyMessageDefault,
+  emptyActionText,
+  onEmptyAction,
   initialSearch = '',
   Icon,
   hints,
 }: DialogSingleSelectProps) {
   const [search, setSearch] = React.useState(initialSearch);
-
-  const filteredOptions = React.useMemo(() => {
-    if (!search) return options;
-    return options.filter((option) =>
-      (option.title || option.id).toLowerCase().includes(search.toLowerCase()),
-    );
-  }, [search, options]);
-
   const hasAnyIcon = options.some((option) => option.icon);
+  const dialogTitle = title || groupLabel || searchPlaceholder;
+  const dialogDescription = description || searchPlaceholder;
+
+  React.useEffect(() => {
+    setSearch(initialSearch);
+  }, [initialSearch]);
+
+  const selectOption = React.useCallback(
+    (option: { id: string; title?: string }) => {
+      onSelect(option);
+      setOpen(false);
+    },
+    [onSelect, setOpen],
+  );
+
+  const runEmptyAction = React.useCallback(() => {
+    onEmptyAction?.();
+    setOpen(false);
+  }, [onEmptyAction, setOpen]);
 
   return (
     <CommandDialog
       open={open}
       onOpenChange={setOpen}
-      screenReaderTitle="dialog select"
+      screenReaderTitle={dialogTitle}
     >
-      {badgeText && (
-        <CommandBadge
-          className={cx(badgeTone === 'destructive' && 'bg-destructive')}
+      <CommandBadge className={cn(tone === 'destructive' && 'bg-destructive')}>
+        <span
+          className={cn(
+            tone === 'destructive' && 'text-destructive-foreground',
+          )}
         >
-          <span
-            className={cx(
-              badgeTone === 'destructive' && 'text-destructive-foreground',
-            )}
-          >
-            {badgeText}
-          </span>
-        </CommandBadge>
-      )}
+          {dialogTitle}
+        </span>
+      </CommandBadge>
+      <div className="mx-4 mt-1 text-muted-foreground text-sm">
+        {dialogDescription}
+      </div>
       <CommandInput
-        placeholder={placeholder}
+        aria-label={searchPlaceholder}
+        placeholder={searchPlaceholder}
         value={search}
-        onValueChange={(val) => {
-          setSearch(val);
-        }}
+        onValueChange={setSearch}
         Icon={Icon}
       />
       <CommandList>
-        <CommandGroup heading={groupHeading}>
-          {filteredOptions.length > 0 ? (
-            filteredOptions.map((option) => (
-              <SingleSelectItem
-                key={option.id}
-                option={option}
-                hasAnyIcon={hasAnyIcon}
-                onSelect={(opt) => {
-                  onSelect(opt);
-                  setOpen(false);
-                }}
-              />
-            ))
-          ) : (
-            <CommandEmpty>{emptyMessage}</CommandEmpty>
-          )}
+        <CommandGroup heading={groupLabel}>
+          {options.map((option) => (
+            <SingleSelectItem
+              key={option.id}
+              option={option}
+              hasAnyIcon={hasAnyIcon}
+              onSelect={selectOption}
+            />
+          ))}
         </CommandGroup>
+        <CommandEmpty>
+          <div className="grid gap-3 px-3 py-6 text-center">
+            <div className="text-muted-foreground text-sm">{emptyMessage}</div>
+            {emptyActionText && onEmptyAction && (
+              <Button
+                type="button"
+                variant="outline"
+                className="justify-self-center"
+                onClick={runEmptyAction}
+              >
+                {emptyActionText}
+              </Button>
+            )}
+          </div>
+        </CommandEmpty>
       </CommandList>
       <CommandHints hints={hints} />
+      <div className="flex justify-end border-border border-t p-3">
+        <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+          {t.app.common.cancelButton}
+        </Button>
+      </div>
     </CommandDialog>
   );
 }

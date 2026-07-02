@@ -156,6 +156,9 @@ export function CreateWorkspaceDialog({
             <DialogTitle>
               {t.app.dialogs.createWorkspace.errorTitle}
             </DialogTitle>
+            <DialogDescription>
+              {t.app.dialogs.createWorkspace.noStorageTypes}
+            </DialogDescription>
           </DialogHeader>
           <div className="text-destructive">
             {t.app.dialogs.createWorkspace.noStorageTypes}
@@ -179,6 +182,7 @@ export function CreateWorkspaceDialog({
             dispatch={dispatch}
             storageTypes={storageTypes}
             defaultStorage={defaultStorage}
+            onCancel={() => onOpenChange(false)}
           />
         )}
         {state.stage === 'selected-browser' && (
@@ -187,6 +191,7 @@ export function CreateWorkspaceDialog({
             dispatch={dispatch}
             validateWorkspace={validateWorkspace}
             onDone={onDone}
+            onCancel={() => onOpenChange(false)}
           />
         )}
         {state.stage === 'selected-nativefs' && (
@@ -196,6 +201,7 @@ export function CreateWorkspaceDialog({
             onDirectoryPick={onDirectoryPick}
             validateWorkspace={validateWorkspace}
             onDone={onDone}
+            onCancel={() => onOpenChange(false)}
           />
         )}
       </DialogContent>
@@ -208,6 +214,24 @@ interface StageSelectStorageProps {
   dispatch: React.Dispatch<Action>;
   storageTypes: StorageTypeConfig[];
   defaultStorage: WorkspaceStorageType;
+  onCancel: () => void;
+}
+
+function WorkspaceDialogFooter({
+  leadingAction,
+  children,
+}: {
+  leadingAction: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <DialogFooter className="gap-2 sm:items-center sm:justify-between sm:space-x-0">
+      {leadingAction}
+      <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        {children}
+      </div>
+    </DialogFooter>
+  );
 }
 
 const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
@@ -215,10 +239,9 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
   dispatch,
   storageTypes,
   defaultStorage,
+  onCancel,
 }) => {
   const { selected = defaultStorage, error } = state;
-  const titleId = useId();
-
   const handleSelectStorage = (storage: WorkspaceStorageType) => {
     dispatch({ type: 'UPDATE_SELECTED_STORAGE', storage });
   };
@@ -233,12 +256,18 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
   return (
     <>
       <DialogHeader className="mb-2">
-        <DialogTitle id={titleId} className="font-semibold text-lg">
+        <DialogTitle className="font-semibold text-lg">
           {t.app.dialogs.createWorkspace.selectTypeTitle}
         </DialogTitle>
+        <DialogDescription>
+          {t.app.dialogs.createWorkspace.selectTypeDescription}
+        </DialogDescription>
       </DialogHeader>
-      {/* biome-ignore lint: Using ul as a container for radiogroup is a standard ARIA practice. */}
-      <ul className="space-y-4" role="radiogroup" aria-labelledby={titleId}>
+      <div
+        className="space-y-4"
+        role="radiogroup"
+        aria-label={t.app.dialogs.createWorkspace.selectTypeTitle}
+      >
         {storageTypes.map((config) => (
           <ListItem
             key={config.type}
@@ -249,22 +278,32 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
             disabled={config.disabled || false}
           />
         ))}
-      </ul>
+      </div>
       <ErrorMessage error={error} />
-      <DialogFooter className="flex-col sm:justify-between">
-        <Button
-          variant="ghost"
-          className="ml-3 text-primary text-sm hover:underline"
-          asChild
-        >
-          <a href="https://bangle.io/privacy" target="_blank" rel="noreferrer">
-            {t.app.dialogs.createWorkspace.dataPrivacyLink}
-          </a>
+      <WorkspaceDialogFooter
+        leadingAction={
+          <Button
+            variant="ghost"
+            className="justify-start px-0 text-primary text-sm hover:underline"
+            asChild
+          >
+            <a
+              href="https://bangle.io/privacy"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {t.app.dialogs.createWorkspace.dataPrivacyLink}
+            </a>
+          </Button>
+        }
+      >
+        <Button variant="outline" onClick={onCancel}>
+          {t.app.common.cancelButton}
         </Button>
         <Button onClick={handleNext} disabled={!selected}>
           {t.app.common.nextButton}
         </Button>
-      </DialogFooter>
+      </WorkspaceDialogFooter>
     </>
   );
 };
@@ -274,6 +313,7 @@ interface StageEnterWorkspaceNameProps {
   dispatch: React.Dispatch<Action>;
   validateWorkspace: CreateWorkspaceDialogProps['validateWorkspace'];
   onDone: CreateWorkspaceDialogProps['onDone'];
+  onCancel: () => void;
 }
 
 const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
@@ -281,6 +321,7 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
   dispatch,
   validateWorkspace,
   onDone,
+  onCancel,
 }) => {
   const { name, error } = state;
 
@@ -351,9 +392,15 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
         </div>
         <ErrorMessage error={error} />
       </div>
-      <DialogFooter className="flex justify-between">
-        <Button variant="outline" onClick={handleBack}>
-          {t.app.common.backButton}
+      <WorkspaceDialogFooter
+        leadingAction={
+          <Button variant="outline" onClick={handleBack}>
+            {t.app.common.backButton}
+          </Button>
+        }
+      >
+        <Button variant="outline" onClick={onCancel}>
+          {t.app.common.cancelButton}
         </Button>
         <Button
           type="submit"
@@ -362,7 +409,7 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
         >
           {t.app.common.createButton}
         </Button>
-      </DialogFooter>
+      </WorkspaceDialogFooter>
     </>
   );
 };
@@ -373,6 +420,7 @@ interface StagePickDirectoryProps {
   onDirectoryPick?: CreateWorkspaceDialogProps['onDirectoryPick'];
   validateWorkspace: CreateWorkspaceDialogProps['validateWorkspace'];
   onDone: CreateWorkspaceDialogProps['onDone'];
+  onCancel: () => void;
 }
 
 const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
@@ -381,6 +429,7 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
   onDirectoryPick,
   validateWorkspace,
   onDone,
+  onCancel,
 }) => {
   const { dirHandle, error } = state;
 
@@ -469,14 +518,20 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
         <ErrorMessage error={error} />
       </div>
 
-      <DialogFooter className="flex justify-between">
-        <Button variant="outline" onClick={handleBack}>
-          {t.app.common.backButton}
+      <WorkspaceDialogFooter
+        leadingAction={
+          <Button variant="outline" onClick={handleBack}>
+            {t.app.common.backButton}
+          </Button>
+        }
+      >
+        <Button variant="outline" onClick={onCancel}>
+          {t.app.common.cancelButton}
         </Button>
         <Button onClick={handleSubmit} disabled={!dirHandle}>
           {t.app.common.createButton}
         </Button>
-      </DialogFooter>
+      </WorkspaceDialogFooter>
     </>
   );
 };
@@ -496,46 +551,44 @@ const ListItem: React.FC<ListItemProps> = ({
   onClick,
   disabled,
 }) => {
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if ((event.key === 'Enter' || event.key === ' ') && !disabled) {
-      event.preventDefault();
-      onClick();
-    }
-  };
-
   return (
-    <li>
-      <button
-        type="button"
-        onClick={disabled ? undefined : onClick}
-        aria-checked={isSelected}
-        onKeyDown={handleKeyDown}
-        className={cn(
-          'relative block w-full cursor-pointer select-none space-y-1 rounded-md p-3 text-left leading-none transition-colors duration-200 ease-in-out hover:bg-muted focus:bg-muted',
-          isSelected && 'bg-muted',
-          disabled && 'cursor-not-allowed opacity-50',
-        )}
+    <label
+      className={cn(
+        'relative block w-full cursor-pointer select-none space-y-1 rounded-md p-3 text-left leading-none transition-colors duration-200 ease-in-out focus-within:bg-muted focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:bg-muted',
+        isSelected && 'bg-muted',
+        disabled && 'cursor-not-allowed opacity-50',
+      )}
+    >
+      <input
+        type="radio"
+        name="workspace-storage-type"
+        checked={isSelected}
+        onChange={() => {
+          if (!disabled) {
+            onClick();
+          }
+        }}
         disabled={disabled}
-        // biome-ignore lint: Using a button for custom styling and behavior while maintaining radio button semantics.
-        role="radio"
-      >
-        <div className="flex items-center justify-between space-x-1">
-          <div>
-            <h3 className="mb-1 font-semibold text-sm leading-none tracking-tight">
-              {title}
-            </h3>
-            <p className="text-foreground/80 text-sm">{description}</p>
-          </div>
-          <div className="h-4 w-4 shrink-0">
-            <Check
-              className={`h-4 w-4 transition-opacity duration-300 ${
-                isSelected ? 'opacity-100' : 'opacity-0'
-              }`}
-            />
-          </div>
+        className="absolute inset-0 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
+      />
+      <div className="flex items-center justify-between space-x-1">
+        <div>
+          <span className="mb-1 block font-semibold text-sm leading-none tracking-tight">
+            {title}
+          </span>
+          <span className="block text-foreground/80 text-sm">
+            {description}
+          </span>
         </div>
-      </button>
-    </li>
+        <div className="h-4 w-4 shrink-0">
+          <Check
+            className={`h-4 w-4 transition-opacity duration-300 ${
+              isSelected ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
+        </div>
+      </div>
+    </label>
   );
 };
 

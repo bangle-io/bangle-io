@@ -1,91 +1,107 @@
-import { cx } from '@bangle.io/base-utils';
 import {
-  CommandBadge,
-  CommandDialog,
-  CommandGroup,
-  CommandHints,
-  CommandInput,
-  CommandItem,
-  CommandList,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Input,
+  Label,
 } from '@bangle.io/shadcn';
 import React from 'react';
 
 export type DialogSingleInputProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
-  option: {
-    id: string;
-    title?: string;
-  };
   onSelect: (input: string) => void;
+  title?: string;
+  description?: string;
+  inputLabel?: string;
+  submitText?: string;
   placeholder?: string;
-  groupHeading?: string;
   Icon?: React.ElementType;
-  badgeTone?: 'destructive' | 'default';
-  badgeText?: string;
   initialSearch?: string;
-  hints?: string[];
 };
 
-/**
- * A simple dialog with a single option.
- */
 export function DialogSingleInput({
   open,
   setOpen,
-  option,
   onSelect,
-  groupHeading = '',
   placeholder = t.app.dialogs.singleInput.placeholderDefault,
-  badgeText,
-  badgeTone = 'default',
+  title,
+  description,
+  inputLabel = placeholder,
+  submitText = t.app.common.continueButton,
   Icon,
   initialSearch = '',
-  hints,
 }: DialogSingleInputProps) {
   const [search, setSearch] = React.useState(initialSearch);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const inputId = React.useId();
+  const dialogTitle = title || inputLabel;
+  const dialogDescription = description || placeholder;
+
+  React.useEffect(() => {
+    setSearch(initialSearch);
+  }, [initialSearch]);
+
+  React.useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    window.requestAnimationFrame(() => inputRef.current?.select());
+  }, [open]);
+
   return (
-    <CommandDialog
-      open={open}
-      onOpenChange={setOpen}
-      shouldFilter={false}
-      screenReaderTitle="dialog input"
-    >
-      {badgeText && (
-        <CommandBadge
-          className={cx(badgeTone === 'destructive' && 'bg-destructive')}
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            {Icon && <Icon className="h-5 w-5" aria-hidden="true" />}
+            <span>{dialogTitle}</span>
+          </DialogTitle>
+          <DialogDescription>{dialogDescription}</DialogDescription>
+        </DialogHeader>
+
+        <form
+          className="grid gap-4"
+          onSubmit={(event) => {
+            event.preventDefault();
+            if (!search.trim()) {
+              return;
+            }
+
+            onSelect(search);
+            setOpen(false);
+          }}
         >
-          <span
-            className={cx(
-              badgeTone === 'destructive' && 'text-destructive-foreground',
-            )}
-          >
-            {badgeText}
-          </span>
-        </CommandBadge>
-      )}
-      <CommandInput
-        placeholder={placeholder}
-        value={search}
-        onValueChange={setSearch}
-        Icon={Icon}
-      />
-      <CommandList>
-        <CommandGroup heading={groupHeading}>
-          <CommandItem
-            key={option.id}
-            onSelect={() => {
-              if (search) {
-                onSelect(search);
-              }
-              setOpen(false);
-            }}
-          >
-            {option.title || option.id}
-          </CommandItem>
-        </CommandGroup>
-      </CommandList>
-      <CommandHints hints={hints} />
-    </CommandDialog>
+          <div className="grid gap-2">
+            <Label htmlFor={inputId}>{inputLabel}</Label>
+            <Input
+              id={inputId}
+              ref={inputRef}
+              placeholder={placeholder}
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+            />
+          </div>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen(false)}
+            >
+              {t.app.common.cancelButton}
+            </Button>
+            <Button type="submit" disabled={!search.trim()}>
+              {submitText}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

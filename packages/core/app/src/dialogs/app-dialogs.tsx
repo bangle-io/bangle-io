@@ -51,14 +51,13 @@ export function AppDialogs() {
           );
         }}
         onSelect={singleInputDialog?.onSelect || (() => {})}
+        title={singleInputDialog?.title}
+        description={singleInputDialog?.description}
+        inputLabel={singleInputDialog?.inputLabel}
+        submitText={singleInputDialog?.submitText}
         placeholder={singleInputDialog?.placeholder}
-        badgeText={singleInputDialog?.badgeText}
-        badgeTone={singleInputDialog?.badgeTone}
-        groupHeading={singleInputDialog?.groupHeading}
         Icon={singleInputDialog?.Icon}
-        option={singleInputDialog?.option || { id: '' }}
         initialSearch={singleInputDialog?.initialSearch}
-        hints={singleInputDialog?.hints}
       />
 
       <DialogSingleSelect
@@ -71,11 +70,14 @@ export function AppDialogs() {
         }}
         options={singleSelectDialog?.options || []}
         onSelect={singleSelectDialog?.onSelect || (() => {})}
-        placeholder={singleSelectDialog?.placeholder}
-        badgeText={singleSelectDialog?.badgeText}
-        badgeTone={singleSelectDialog?.badgeTone}
-        groupHeading={singleSelectDialog?.groupHeading}
+        title={singleSelectDialog?.title}
+        description={singleSelectDialog?.description}
+        searchPlaceholder={singleSelectDialog?.searchPlaceholder}
+        tone={singleSelectDialog?.tone}
+        groupLabel={singleSelectDialog?.groupLabel}
         emptyMessage={singleSelectDialog?.emptyMessage}
+        emptyActionText={singleSelectDialog?.emptyActionText}
+        onEmptyAction={singleSelectDialog?.onEmptyAction}
         Icon={singleSelectDialog?.Icon}
         initialSearch={singleSelectDialog?.initialSearch}
         hints={singleSelectDialog?.hints}

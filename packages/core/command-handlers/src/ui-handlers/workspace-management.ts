@@ -22,9 +22,10 @@ export const workspaceManagementHandlers = [
       store.set(workbenchState.$singleSelectDialog, () => {
         return {
           dialogId: 'dialog::switch-workspace-dialog',
-          placeholder: t.app.dialogs.switchWorkspace.placeholder,
-          badgeText: t.app.dialogs.switchWorkspace.badgeText,
-          groupHeading: t.app.dialogs.switchWorkspace.groupHeading,
+          title: t.app.dialogs.switchWorkspace.title,
+          description: t.app.dialogs.switchWorkspace.searchPlaceholder,
+          searchPlaceholder: t.app.dialogs.switchWorkspace.searchPlaceholder,
+          groupLabel: t.app.dialogs.switchWorkspace.groupLabel,
           emptyMessage: t.app.dialogs.switchWorkspace.emptyMessage,
           options: (workspaces || [])
             .sort((a, b) => {
@@ -63,10 +64,11 @@ export const workspaceManagementHandlers = [
       store.set(workbenchState.$singleSelectDialog, () => {
         return {
           dialogId: 'dialog::delete-workspace-dialog',
-          placeholder: t.app.dialogs.deleteWorkspace.placeholder,
-          badgeText: t.app.dialogs.deleteWorkspace.badgeText,
-          badgeTone: 'destructive',
-          groupHeading: t.app.dialogs.deleteWorkspace.groupHeading,
+          title: t.app.dialogs.deleteWorkspace.title,
+          description: t.app.dialogs.deleteWorkspace.searchPlaceholder,
+          searchPlaceholder: t.app.dialogs.deleteWorkspace.searchPlaceholder,
+          tone: 'destructive',
+          groupLabel: t.app.dialogs.deleteWorkspace.groupLabel,
           emptyMessage: t.app.dialogs.deleteWorkspace.emptyMessage,
           options: (workspaces || []).map((ws) => ({
             title: ws.name,

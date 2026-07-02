@@ -116,7 +116,11 @@ export const uiCommands = narrow([
     keywords: ['move', 'note', 'relocate'],
     dependencies: {
       services: ['workbenchState', 'workspaceState'],
-      commands: ['command::ws:move-ws-path', 'command::ui:focus-editor'],
+      commands: [
+        'command::ws:move-ws-path',
+        'command::ui:focus-editor',
+        'command::ui:create-directory-dialog',
+      ],
     },
     omniSearch: true,
     autoFocusEditor: false,
@@ -127,7 +131,7 @@ export const uiCommands = narrow([
 
   {
     id: 'command::ui:create-directory-dialog',
-    title: 'New Directory',
+    title: 'New Folder',
     keywords: ['new', 'create', 'directory', 'folder'],
     dependencies: {
       services: ['workbenchState', 'workspaceState'],

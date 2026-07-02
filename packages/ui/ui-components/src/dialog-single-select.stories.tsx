@@ -20,7 +20,7 @@ const Template: Story = {
       { id: 'Option 3', title: 'option3' },
     ],
     onSelect: () => {},
-    placeholder: 'Select an option',
+    searchPlaceholder: 'Select an option',
   },
 };
 
@@ -28,20 +28,20 @@ export const Default: Story = {
   ...Template,
 };
 
-export const DefaultBadge: Story = {
+export const WithTitle: Story = {
   ...Template,
   args: {
     ...Template.args,
-    badgeText: 'Issues',
+    title: 'Issues',
   },
 };
 
-export const DestructiveBadge: Story = {
+export const DestructiveTitle: Story = {
   ...Template,
   args: {
     ...Template.args,
-    badgeText: 'Issues',
-    badgeTone: 'destructive',
+    title: 'Issues',
+    tone: 'destructive',
     open: true,
   },
 };

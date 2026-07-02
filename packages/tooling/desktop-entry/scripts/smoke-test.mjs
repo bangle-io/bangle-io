@@ -99,8 +99,8 @@ async function createBrowserWorkspaceAndNote(page) {
   await page.getByRole('heading', { name: workspaceName }).waitFor();
 
   await page.getByRole('button', { name: 'New Note' }).click();
-  await page.getByPlaceholder('Input a note name').fill(noteName);
-  await page.getByRole('option', { name: 'Create' }).click();
+  await page.getByLabel('Note name').fill(noteName);
+  await page.getByRole('button', { name: 'Create' }).click();
   await page
     .getByLabel('breadcrumb')
     .getByRole('button', { name: `${noteName}.md` })
@@ -119,6 +119,58 @@ async function openNoteRoute(page) {
   }, noteUrl());
 }
 
+async function readStoredMarkdown(page) {
+  return page.evaluate(
+    async ({ workspace, note }) => {
+      const request = indexedDB.open('baby-idb-db-3');
+      const database = await new Promise((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+      const transaction = database.transaction(
+        'baby-idb-db-store-3',
+        'readonly',
+      );
+      const getRequest = transaction
+        .objectStore('baby-idb-db-store-3')
+        .get(`${workspace}/${note}.md`);
+      const file = await new Promise((resolve, reject) => {
+        getRequest.onsuccess = () => resolve(getRequest.result);
+        getRequest.onerror = () => reject(getRequest.error);
+      });
+      database.close();
+      return file ? file.text() : undefined;
+    },
+    { workspace: workspaceName, note: noteName },
+  );
+}
+
+async function waitForStoredMarkdown(page, expected) {
+  const deadline = Date.now() + 10_000;
+  const requiredStableMs = 1_000;
+  let stableSince;
+  let lastValue;
+
+  while (Date.now() < deadline) {
+    lastValue = await readStoredMarkdown(page);
+    if (lastValue === expected) {
+      stableSince ??= Date.now();
+      if (Date.now() - stableSince >= requiredStableMs) {
+        return;
+      }
+    } else {
+      stableSince = undefined;
+    }
+    await page.waitForTimeout(100);
+  }
+
+  throw new Error(
+    `[desktop-smoke] Expected stored note content to stabilize at ${JSON.stringify(
+      expected,
+    )}, got ${JSON.stringify(lastValue)}.`,
+  );
+}
+
 let app = await launchApp();
 let page = await firstWindow(app);
 
@@ -132,6 +184,7 @@ try {
   await page.locator(editorSelector).pressSequentially(noteContent, {
     delay: 10,
   });
+  await waitForStoredMarkdown(page, noteContent);
   console.log('[desktop-smoke] Checking persistence after reload.');
   await page.reload({ waitUntil: 'domcontentloaded' });
   await openNoteRoute(page);
@@ -145,6 +198,7 @@ try {
       )}, got ${JSON.stringify(textAfterReload.trim())}.`,
     );
   }
+  await waitForStoredMarkdown(page, noteContent);
 
   console.log('[desktop-smoke] Checking persistence after restart.');
   await app.close();

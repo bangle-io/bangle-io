@@ -64,7 +64,9 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::change-theme-pref-dialog');
-      expect(dialog?.placeholder).toBe(t.app.dialogs.changeTheme.placeholder);
+      expect(dialog?.searchPlaceholder).toBe(
+        t.app.dialogs.changeTheme.searchPlaceholder,
+      );
       //  since we mock the theme preference, not needed to check for theme change
     });
   });
@@ -84,8 +86,10 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::new-note-dialog');
+      expect(dialog?.title).toBe(t.app.dialogs.createNote.title);
+      expect(dialog?.inputLabel).toBe(t.app.dialogs.createNote.inputLabel);
       expect(dialog?.placeholder).toBe(t.app.dialogs.createNote.placeholder);
-      expect(dialog?.badgeText).toBe(t.app.dialogs.createNote.badgeText);
+      expect(dialog?.submitText).toBe(t.app.dialogs.createNote.submitText);
 
       dialog?.onSelect('My Note');
 
@@ -100,7 +104,7 @@ describe('UI command handlers', () => {
   });
 
   describe('command::ui:delete-note-dialog', () => {
-    it('should open the delete note dialog, show alert on note selection, and dispatch ws:delete-ws-path on confirmation', async () => {
+    it('should open delete confirmation and dispatch ws:delete-ws-path on confirmation', async () => {
       const { dispatch, testEnv, services, getCommandResults } =
         await setupTest({
           targetId: 'command::ui:delete-note-dialog',
@@ -111,15 +115,9 @@ describe('UI command handlers', () => {
       dispatch('command::ui:delete-note-dialog', {
         wsPath: 'test-ws:test.md',
       });
-      const dialog = testEnv.store.get(
-        services.workbenchState.$singleSelectDialog,
-      );
-      expect(dialog).toBeDefined();
-      expect(dialog?.dialogId).toBe('dialog::delete-ws-path-dialog');
-      expect(dialog?.placeholder).toBe(t.app.dialogs.deleteNote.placeholder);
-      expect(dialog?.badgeText).toBe(t.app.dialogs.deleteNote.badgeText);
-
-      dialog?.onSelect({ id: 'test-ws:test.md', title: 'test.md' });
+      expect(
+        testEnv.store.get(services.workbenchState.$singleSelectDialog),
+      ).toBeUndefined();
       const alertDialog = testEnv.store.get(
         services.workbenchState.$alertDialog,
       );
@@ -140,6 +138,31 @@ describe('UI command handlers', () => {
         ).toContain('command::ws:delete-ws-path');
       });
     });
+
+    it('should confirm deletion for the current note when no wsPath is provided', async () => {
+      const { dispatch, testEnv, services } = await setupTest({
+        targetId: 'command::ui:delete-note-dialog',
+        workspaces: [{ name: 'test-ws', notes: ['test-ws:current.md'] }],
+        autoNavigate: 'ws-path',
+      });
+
+      dispatch('command::ui:delete-note-dialog', {
+        wsPath: undefined,
+      });
+
+      expect(
+        testEnv.store.get(services.workbenchState.$singleSelectDialog),
+      ).toBeUndefined();
+      const alertDialog = testEnv.store.get(
+        services.workbenchState.$alertDialog,
+      );
+      expect(alertDialog).toBeDefined();
+      expect(alertDialog?.dialogId).toBe('dialog::alert');
+      expect(alertDialog?.title).toBe(t.app.dialogs.confirmDelete.title);
+      expect(alertDialog?.description).toBe(
+        t.app.dialogs.confirmDelete.description({ fileName: 'current' }),
+      );
+    });
   });
 
   describe('command::ui:rename-note-dialog', () => {
@@ -158,12 +181,15 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::rename-note-dialog');
+      expect(dialog?.title).toBe(t.app.dialogs.renameNote.title);
+      expect(dialog?.inputLabel).toBe(t.app.dialogs.renameNote.inputLabel);
       expect(dialog?.placeholder).toBe(t.app.dialogs.renameNote.placeholder);
-      expect(dialog?.badgeText).toBe(
-        t.app.dialogs.renameNote.badgeText({
+      expect(dialog?.description).toBe(
+        t.app.dialogs.renameNote.description({
           fileNameWithoutExtension: 'test',
         }),
       );
+      expect(dialog?.submitText).toBe(t.app.dialogs.renameNote.submitText);
 
       dialog?.onSelect('New Name');
 
@@ -198,12 +224,14 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::move-note-dialog');
-      expect(dialog?.placeholder).toBe(t.app.dialogs.moveNote.placeholder);
-      expect(dialog?.badgeText).toBe(
-        t.app.dialogs.moveNote.badgeText({ fileNameWithoutExtension: 'test' }),
+      expect(dialog?.searchPlaceholder).toBe(
+        t.app.dialogs.moveNote.searchPlaceholder,
+      );
+      expect(dialog?.title).toBe(
+        t.app.dialogs.moveNote.title({ fileNameWithoutExtension: 'test' }),
       );
 
-      dialog?.onSelect({ id: 'dir', title: 'dir' });
+      dialog?.onSelect({ id: 'dir/', title: 'dir/' });
 
       await vi.waitFor(() => {
         expect(
@@ -211,6 +239,11 @@ describe('UI command handlers', () => {
             .filter((result) => result.type === 'success')
             .map((result) => result.command.id),
         ).toContain('command::ws:move-ws-path');
+        expect(
+          services.workspaceState
+            .resolveAtoms()
+            .wsPaths.map((path) => path.wsPath),
+        ).toContain('test-ws:dir/test.md');
       });
     });
   });
@@ -229,10 +262,12 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::new-directory-dialog');
+      expect(dialog?.title).toBe(t.app.dialogs.createDirectory.title);
+      expect(dialog?.inputLabel).toBe(t.app.dialogs.createDirectory.inputLabel);
       expect(dialog?.placeholder).toBe(
         t.app.dialogs.createDirectory.placeholder,
       );
-      expect(dialog?.badgeText).toBe(t.app.dialogs.createDirectory.badgeText);
+      expect(dialog?.submitText).toBe(t.app.dialogs.createDirectory.submitText);
 
       dialog?.onSelect('My Directory');
 
@@ -273,8 +308,8 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::switch-workspace-dialog');
-      expect(dialog?.placeholder).toBe(
-        t.app.dialogs.switchWorkspace.placeholder,
+      expect(dialog?.searchPlaceholder).toBe(
+        t.app.dialogs.switchWorkspace.searchPlaceholder,
       );
       dialog?.onSelect({ id: 'test-ws', title: 'test-ws' });
       expect(services.navigation.resolveAtoms().wsName).toBe('test-ws');
@@ -295,8 +330,8 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::delete-workspace-dialog');
-      expect(dialog?.placeholder).toBe(
-        t.app.dialogs.deleteWorkspace.placeholder,
+      expect(dialog?.searchPlaceholder).toBe(
+        t.app.dialogs.deleteWorkspace.searchPlaceholder,
       );
 
       dialog?.onSelect({ id: 'ws2', title: 'ws2' });

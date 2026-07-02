@@ -76,7 +76,8 @@ export const t = {
       linkedMentions: {
         heading: 'Linked mentions',
         loading: 'Loading linked mentions...',
-        empty: 'No linked mentions',
+        empty:
+          'No backlinks yet. Type [[ in another note to create a backlink to this note.',
         error: 'Unable to load linked mentions',
         collapse: 'Collapse linked mentions',
         expand: 'Expand linked mentions',
@@ -118,9 +119,9 @@ export const t = {
     },
     dialogs: {
       changeTheme: {
-        placeholder: 'Select a theme preference',
-        badgeText: 'Change Theme',
-        groupHeading: 'Themes',
+        searchPlaceholder: 'Select a theme preference',
+        title: 'Change Theme',
+        groupLabel: 'Themes',
         emptyMessage: 'No themes available',
         options: {
           system: 'System',
@@ -129,16 +130,18 @@ export const t = {
         },
       },
       createNote: {
-        placeholder: 'Input a note name',
-        badgeText: 'Create Note',
-        optionTitle: 'Create',
+        title: 'Create Note',
+        description: 'Name the note before adding it to this workspace.',
+        inputLabel: 'Note name',
+        placeholder: 'Untitled note',
+        submitText: 'Create',
       },
       deleteNote: {
         placeholder: 'Select or type a note to delete',
         badgeText: 'Delete Note',
         groupHeading: 'Notes',
         emptyMessage: 'No notes found',
-        hintDelete: 'Press Enter or Click to delete',
+        hintDelete: 'Select a note to confirm deletion',
       },
       confirmDelete: {
         title: 'Confirm Delete',
@@ -147,41 +150,47 @@ export const t = {
         continueText: 'Delete',
       },
       renameNote: {
-        placeholder: 'Provide a new name',
-        badgeText: ({
+        title: 'Rename Note',
+        description: ({
           fileNameWithoutExtension,
         }: {
           fileNameWithoutExtension: string;
-        }) => `Renaming "${fileNameWithoutExtension}"`,
-        optionTitle: 'Confirm name change',
+        }) => `Choose a new name for "${fileNameWithoutExtension}".`,
+        inputLabel: 'New name',
+        placeholder: 'New note name',
+        submitText: 'Rename',
       },
       moveNote: {
-        placeholder: 'Select a path to move the note',
-        badgeText: ({
+        searchPlaceholder: 'Select a path to move the note',
+        title: ({
           fileNameWithoutExtension,
         }: {
           fileNameWithoutExtension: string;
         }) => `Move "${fileNameWithoutExtension}"`,
-        emptyMessage: 'No directories found',
-        groupHeading: 'Directories',
+        emptyMessage: 'No folders to move this note into.',
+        emptyActionText: 'Create Folder',
+        groupLabel: 'Directories',
         hintClick: 'Press Enter or Click',
         hintDrag: 'Tip: Try dragging a note in the sidebar',
+        hintCreateDirectory: 'Create a folder first, then move this note.',
       },
       createDirectory: {
-        placeholder: 'Input directory name',
-        badgeText: 'Create Directory',
-        optionTitle: 'Create',
+        title: 'Create Folder',
+        description: 'Add a folder to organize notes in this workspace.',
+        inputLabel: 'Folder name',
+        placeholder: 'Folder name',
+        submitText: 'Create',
       },
       switchWorkspace: {
-        placeholder: 'Select a workspace to switch',
-        badgeText: 'Switch Workspace',
-        groupHeading: 'Workspaces',
+        searchPlaceholder: 'Select a workspace to switch',
+        title: 'Switch Workspace',
+        groupLabel: 'Workspaces',
         emptyMessage: 'No workspaces found',
       },
       deleteWorkspace: {
-        placeholder: 'Select a workspace to delete',
-        badgeText: 'Delete Workspace',
-        groupHeading: 'Workspaces',
+        searchPlaceholder: 'Select a workspace to delete',
+        title: 'Delete Workspace',
+        groupLabel: 'Workspaces',
         emptyMessage: 'No workspaces found',
       },
       confirmDeleteWorkspace: {
@@ -208,6 +217,7 @@ export const t = {
         errorTitle: 'Error',
         noStorageTypes: 'No storage types are available.',
         selectTypeTitle: 'Select a workspace type',
+        selectTypeDescription: 'Choose where this workspace stores its notes.',
         dataPrivacyLink: 'Your data stays with you',
         enterNameTitle: 'Enter Workspace Name',
         enterNameDescription: 'Please enter a name for your workspace.',
@@ -360,6 +370,8 @@ export const t = {
         workspacesLabel: 'Workspaces',
         noWorkspaceSelectedTitle: 'No workspace selected',
         noWorkspaceSelectedSubtitle: 'Click to select a workspace',
+        mobileTitle: 'Sidebar',
+        mobileDescription: 'Navigate workspaces, notes, and app actions.',
       },
       breadcrumb: {
         moreSr: 'More',
@@ -369,9 +381,12 @@ export const t = {
         deleteAction: 'Delete',
         moveAction: 'Move',
         createNoteAction: 'Create Note',
+        moreActionsSr: ({ itemName }: { itemName: string }) =>
+          `More actions for ${itemName}`,
       },
       dialog: {
         closeSr: 'Close',
+        commandDescriptionSr: 'Type to search and select an item.',
       },
       sheet: {
         closeSr: 'Close',

@@ -35,8 +35,21 @@ export function AppAlertDialog({
   onContinue,
   tone = 'default',
 }: AppAlertDialogProps) {
+  const handledActionRef = React.useRef(false);
+
+  const handleOpenChange = React.useCallback(
+    (nextOpen: boolean) => {
+      if (!nextOpen && !handledActionRef.current) {
+        onCancel();
+      }
+      handledActionRef.current = false;
+      setOpen(nextOpen);
+    },
+    [onCancel, setOpen],
+  );
+
   return (
-    <AlertDialog key={dialogId} open={open} onOpenChange={setOpen}>
+    <AlertDialog key={dialogId} open={open} onOpenChange={handleOpenChange}>
       <AlertDialogContent autoFocus>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
@@ -45,13 +58,19 @@ export function AppAlertDialog({
         <AlertDialogFooter>
           <AlertDialogCancel
             autoFocus={tone === 'destructive'}
-            onClick={onCancel}
+            onClick={() => {
+              handledActionRef.current = true;
+              onCancel();
+            }}
           >
             {cancelText}
           </AlertDialogCancel>
           <AlertDialogAction
             autoFocus={tone !== 'destructive'}
-            onClick={onContinue}
+            onClick={() => {
+              handledActionRef.current = true;
+              onContinue();
+            }}
             variant={tone}
           >
             {continueText}

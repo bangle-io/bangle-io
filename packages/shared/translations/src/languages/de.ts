@@ -113,9 +113,9 @@ export const t = {
     },
     dialogs: {
       changeTheme: {
-        placeholder: 'Wählen Sie eine Theme-Einstellung',
-        badgeText: 'Theme ändern',
-        groupHeading: 'Themes',
+        searchPlaceholder: 'Wählen Sie eine Theme-Einstellung',
+        title: 'Theme ändern',
+        groupLabel: 'Themes',
         emptyMessage: 'Keine Themes verfügbar',
         options: {
           system: 'System',
@@ -124,16 +124,19 @@ export const t = {
         },
       },
       createNote: {
-        placeholder: 'Geben Sie einen Notiznamen ein',
-        badgeText: 'Notiz erstellen',
-        optionTitle: 'Erstellen',
+        title: 'Notiz erstellen',
+        description:
+          'Benennen Sie die Notiz, bevor sie diesem Arbeitsbereich hinzugefügt wird.',
+        inputLabel: 'Notizname',
+        placeholder: 'Unbenannte Notiz',
+        submitText: 'Erstellen',
       },
       deleteNote: {
         placeholder: 'Wählen oder tippen Sie eine Notiz zum Löschen',
         badgeText: 'Notiz löschen',
         groupHeading: 'Notizen',
         emptyMessage: 'Keine Notizen gefunden',
-        hintDelete: 'Enter drücken oder klicken zum Löschen',
+        hintDelete: 'Wählen Sie eine Notiz aus, um das Löschen zu bestätigen',
       },
       confirmDelete: {
         title: 'Löschen bestätigen',
@@ -142,42 +145,51 @@ export const t = {
         continueText: 'Löschen',
       },
       renameNote: {
-        placeholder: 'Geben Sie einen neuen Namen an',
-        badgeText: ({
+        title: 'Notiz umbenennen',
+        description: ({
           fileNameWithoutExtension,
         }: {
           fileNameWithoutExtension: string;
-        }) => `Umbenennen von "${fileNameWithoutExtension}"`,
-        optionTitle: 'Namensänderung bestätigen',
+        }) => `Wählen Sie einen neuen Namen für „${fileNameWithoutExtension}“.`,
+        inputLabel: 'Neuer Name',
+        placeholder: 'Neuer Notizname',
+        submitText: 'Umbenennen',
       },
       moveNote: {
-        placeholder: 'Wählen Sie einen Pfad zum Verschieben der Notiz',
-        badgeText: ({
+        searchPlaceholder: 'Wählen Sie einen Pfad zum Verschieben der Notiz',
+        title: ({
           fileNameWithoutExtension,
         }: {
           fileNameWithoutExtension: string;
         }) => `Verschieben von "${fileNameWithoutExtension}"`,
-        emptyMessage: 'Keine Verzeichnisse gefunden',
-        groupHeading: 'Verzeichnisse',
+        emptyMessage:
+          'Keine Ordner vorhanden, in die diese Notiz verschoben werden kann.',
+        emptyActionText: 'Ordner erstellen',
+        groupLabel: 'Verzeichnisse',
         hintClick: 'Enter drücken oder klicken',
         hintDrag:
           'Tipp: Versuchen Sie, eine Notiz in der Seitenleiste zu ziehen',
+        hintCreateDirectory:
+          'Erstellen Sie zuerst einen Ordner und verschieben Sie dann diese Notiz.',
       },
       createDirectory: {
-        placeholder: 'Verzeichnisnamen eingeben',
-        badgeText: 'Verzeichnis erstellen',
-        optionTitle: 'Erstellen',
+        title: 'Ordner erstellen',
+        description:
+          'Fügen Sie einen Ordner hinzu, um Notizen in diesem Arbeitsbereich zu organisieren.',
+        inputLabel: 'Ordnername',
+        placeholder: 'Ordnername',
+        submitText: 'Erstellen',
       },
       switchWorkspace: {
-        placeholder: 'Wählen Sie einen Arbeitsbereich zum Wechseln',
-        badgeText: 'Arbeitsbereich wechseln',
-        groupHeading: 'Arbeitsbereiche',
+        searchPlaceholder: 'Wählen Sie einen Arbeitsbereich zum Wechseln',
+        title: 'Arbeitsbereich wechseln',
+        groupLabel: 'Arbeitsbereiche',
         emptyMessage: 'Keine Arbeitsbereiche gefunden',
       },
       deleteWorkspace: {
-        placeholder: 'Wählen Sie einen Arbeitsbereich zum Löschen',
-        badgeText: 'Arbeitsbereich löschen',
-        groupHeading: 'Arbeitsbereiche',
+        searchPlaceholder: 'Wählen Sie einen Arbeitsbereich zum Löschen',
+        title: 'Arbeitsbereich löschen',
+        groupLabel: 'Arbeitsbereiche',
         emptyMessage: 'Keine Arbeitsbereiche gefunden',
       },
       confirmDeleteWorkspace: {
@@ -205,6 +217,8 @@ export const t = {
         errorTitle: 'Fehler',
         noStorageTypes: 'Keine Speicherarten verfügbar.',
         selectTypeTitle: 'Wählen Sie einen Arbeitsbereichstyp',
+        selectTypeDescription:
+          'Wählen Sie, wo dieser Arbeitsbereich seine Notizen speichert.',
         dataPrivacyLink: 'Ihre Daten bleiben bei Ihnen',
         enterNameTitle: 'Arbeitsbereichsnamen eingeben',
         enterNameDescription:
@@ -369,6 +383,9 @@ export const t = {
         noWorkspaceSelectedTitle: 'Kein Arbeitsbereich ausgewählt',
         noWorkspaceSelectedSubtitle:
           'Klicken Sie, um einen Arbeitsbereich auszuwählen',
+        mobileTitle: 'Seitenleiste',
+        mobileDescription:
+          'Arbeitsbereiche, Notizen und App-Aktionen navigieren.',
       },
       breadcrumb: {
         moreSr: 'Mehr',
@@ -378,9 +395,13 @@ export const t = {
         deleteAction: 'Löschen',
         moveAction: 'Verschieben',
         createNoteAction: 'Notiz erstellen',
+        moreActionsSr: ({ itemName }: { itemName: string }) =>
+          `Weitere Aktionen für ${itemName}`,
       },
       dialog: {
         closeSr: 'Schließen',
+        commandDescriptionSr:
+          'Tippen Sie, um zu suchen und ein Element auszuwählen.',
       },
       sheet: {
         closeSr: 'Schließen',

@@ -270,8 +270,8 @@ export async function createBrowserWorkspaceAndNote(
 ) {
   await createBrowserWorkspace(page, { workspaceName });
   await page.getByRole('button', { name: 'New Note' }).click();
-  await page.getByPlaceholder('Input a note name').fill(noteName);
-  await page.getByRole('option', { name: 'Create' }).click();
+  await page.getByLabel('Note name').fill(noteName);
+  await page.getByRole('button', { name: 'Create' }).click();
   await expect(getEditorLocator(page, {})).toBeVisible();
 }
 
