@@ -41,6 +41,43 @@ async function expectContextMenuIsNotClipped(page: Page) {
     .toBe(true);
 }
 
+// Pierre's file tree uses a pointer-based drag that only engages once it sees
+// pointer moves separated across animation frames; a synchronous
+// `locator.dragTo` (or a single stepped move) collapses into a click that just
+// selects the row. Drive the gesture with real mouse events and let a frame
+// elapse between phases so the durable move actually fires.
+async function dragTreeItemOnto(
+  page: Page,
+  source: ReturnType<Page['getByRole']>,
+  target: ReturnType<Page['getByRole']>,
+) {
+  const sourceBox = await source.boundingBox();
+  const targetBox = await target.boundingBox();
+
+  if (!sourceBox || !targetBox) {
+    throw new Error('Expected drag source and target to be visible');
+  }
+
+  const sourceX = sourceBox.x + sourceBox.width / 2;
+  const sourceY = sourceBox.y + sourceBox.height / 2;
+  const targetX = targetBox.x + targetBox.width / 2;
+  const targetY = targetBox.y + targetBox.height / 2;
+  const settleFrame = () => page.waitForTimeout(60);
+
+  await page.mouse.move(sourceX, sourceY);
+  await page.mouse.down();
+  await settleFrame();
+  await page.mouse.move(sourceX, sourceY - 8);
+  await settleFrame();
+  await page.mouse.move((sourceX + targetX) / 2, (sourceY + targetY) / 2);
+  await settleFrame();
+  await page.mouse.move(targetX, targetY);
+  await settleFrame();
+  await page.mouse.move(targetX, targetY);
+  await settleFrame();
+  await page.mouse.up();
+}
+
 async function getFileExplorerLayout(page: Page) {
   return page.getByTestId('bangle-file-explorer').evaluate((explorer) => {
     const host = explorer.querySelector('file-tree-container') as HTMLElement;
@@ -388,4 +425,63 @@ test('file explorer fills the sidebar and keeps tree state when opening notes', 
   expect(
     Math.abs(afterClick.scrollTop - beforeClick.scrollTop),
   ).toBeLessThanOrEqual(2);
+});
+
+test('file explorer keeps folders expanded when a note is moved', async ({
+  page,
+}) => {
+  const workspaceName = `explorer-expansion-${Date.now()}`;
+  await createBrowserWorkspace(page, { workspaceName });
+
+  // `keep` holds a direct note plus a `nested` subfolder so neither is flattened
+  // away, giving us a *deep* expansion (a level-2 folder) whose state a naive
+  // `resetPaths` cannot restore from `initialExpansion` alone. `dest` is the drop
+  // target and `mover` is the root note the user drags.
+  await writeStoredMarkdown(page, workspaceName, 'keep/direct', 'Direct');
+  await writeStoredMarkdown(page, workspaceName, 'keep/nested/deep', 'Deep');
+  await writeStoredMarkdown(page, workspaceName, 'dest/existing', 'Existing');
+  await writeStoredMarkdown(page, workspaceName, 'mover', 'Move me');
+
+  await page.goto(
+    `/ws#route=ws-home&wsName=${encodeURIComponent(workspaceName)}`,
+  );
+  await page.reload();
+
+  const explorer = page.getByTestId('bangle-file-explorer');
+  await expect(explorer).toBeVisible();
+
+  const keepFolder = explorer.getByRole('treeitem', { name: /^keep$/ });
+  const nestedFolder = explorer.getByRole('treeitem', { name: /^nested$/ });
+
+  await keepFolder.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(nestedFolder).toBeVisible();
+  await nestedFolder.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(nestedFolder).toHaveAttribute('aria-expanded', 'true');
+  await expect(
+    explorer.getByRole('treeitem', { name: /deep\.md/ }),
+  ).toBeVisible();
+
+  await test.step('moving a note keeps deeply expanded folders open', async () => {
+    const mover = explorer.getByRole('treeitem', { name: /^mover\.md$/ });
+    const dest = explorer.getByRole('treeitem', { name: /^dest$/ });
+    // Pierre only begins a drag from an already-selected row, so select first.
+    await mover.click();
+    await dragTreeItemOnto(page, mover, dest);
+
+    // The move is durable...
+    await expect
+      .poll(() => readStoredMarkdown(page, workspaceName, 'dest/mover'))
+      .toBe('Move me');
+    await expect
+      .poll(() => readStoredMarkdown(page, workspaceName, 'mover'))
+      .toBeUndefined();
+
+    // ...and it does not collapse the nested tree the user had opened.
+    await expect(nestedFolder).toHaveAttribute('aria-expanded', 'true');
+    await expect(
+      explorer.getByRole('treeitem', { name: /deep\.md/ }),
+    ).toBeVisible();
+  });
 });

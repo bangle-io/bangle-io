@@ -120,6 +120,46 @@ function getParentDirectory(path: string): string | undefined {
   return normalizePierreDirectoryPath(path.slice(0, slashIndex));
 }
 
+// Every ancestor directory id implied by a set of file paths. Directories are
+// implicit in Bangle (they exist only through contained notes), so the tree's
+// directory ids are the prefix paths of its files, e.g. `a/b/c.md` implies the
+// directories `a` and `a/b`.
+function collectAncestorDirectoryPaths(paths: readonly string[]): string[] {
+  const directories = new Set<string>();
+
+  for (const path of paths) {
+    const segments = normalizeInputPath(path).split('/');
+    segments.pop();
+
+    let accumulated = '';
+    for (const segment of segments) {
+      accumulated = accumulated ? `${accumulated}/${segment}` : segment;
+      directories.add(accumulated);
+    }
+  }
+
+  return [...directories];
+}
+
+// `resetPaths` re-seeds expansion from the tree's `initialExpansion` unless it
+// is told otherwise, so a bare reset collapses every folder the user opened.
+// Because Bangle drives the tree imperatively from Jotai state, any note
+// create/move/rename/delete triggers a reset — capture the currently expanded
+// directories first and hand them back so expansion survives the update.
+function resetModelPathsPreservingExpansion(
+  model: PierreFileTreeModel,
+  nextPaths: readonly string[],
+): void {
+  const initialExpandedPaths = collectAncestorDirectoryPaths(nextPaths).filter(
+    (directoryPath) => {
+      const item = model.getItem(directoryPath);
+      return item !== null && 'isExpanded' in item && item.isExpanded();
+    },
+  );
+
+  model.resetPaths(nextPaths, { initialExpandedPaths });
+}
+
 function getDropDestinationDirectory(
   event: FileTreeDropContext | FileTreeDropResult,
 ): string | undefined {
@@ -247,7 +287,12 @@ export function PierreFileTree({
 
   const handleDropComplete = (event: FileTreeDropResult): void => {
     commitDurableDrop(event);
-    modelRef.current?.resetPaths(treePathsRef.current);
+    if (modelRef.current) {
+      resetModelPathsPreservingExpansion(
+        modelRef.current,
+        treePathsRef.current,
+      );
+    }
   };
 
   const { model } = useFileTree({
@@ -267,7 +312,12 @@ export function PierreFileTree({
       canDrop: canDropFile,
       onDropComplete: handleDropComplete,
       onDropError: () => {
-        modelRef.current?.resetPaths(treePathsRef.current);
+        if (modelRef.current) {
+          resetModelPathsPreservingExpansion(
+            modelRef.current,
+            treePathsRef.current,
+          );
+        }
       },
     },
     flattenEmptyDirectories: true,
@@ -290,7 +340,7 @@ export function PierreFileTree({
   modelRef.current = model;
 
   useEffect(() => {
-    model.resetPaths(treePaths);
+    resetModelPathsPreservingExpansion(model, treePaths);
   }, [model, treePaths]);
 
   useEffect(() => {
