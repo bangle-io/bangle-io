@@ -94,6 +94,16 @@ test('table menu adds and removes rows and columns', async ({ page }) => {
   await page.keyboard.insertText('/');
   await page.getByText('Table', { exact: true }).click();
   await expect(editor.locator('table')).toBeVisible();
+
+  // Escape hides the menu for this table until the document changes again.
+  await expect(
+    page.getByRole('button', { name: 'Table options' }),
+  ).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('button', { name: 'Table options' })).toHaveCount(
+    0,
+  );
+
   // Put marker text in the last header cell; the operations below add and
   // remove the first column and a body row, so this cell must survive.
   await page.keyboard.press('Tab');

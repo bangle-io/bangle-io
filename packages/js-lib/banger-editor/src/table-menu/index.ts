@@ -79,6 +79,18 @@ function tableMenuPlugin() {
         return dismissed;
       },
     },
+    props: {
+      handleKeyDown(view, event) {
+        if (event.key !== 'Escape') {
+          return false;
+        }
+        if (!store.get(view.state, $internalTableMenu).has(view)) {
+          return false;
+        }
+        view.dispatch(view.state.tr.setMeta(tableMenuKey, dismissMeta));
+        return true;
+      },
+    },
     view(view) {
       const clearOwnedState = () =>
         setTableMenuForView(view.state, view, undefined);

@@ -829,4 +829,3 @@ The first released version should satisfy all of these:
 6. Add slash command insertion.
 7. Add handle UI using ProseKit as the UX reference.
 8. Finish with E2E persistence coverage and the required repo checks.
-

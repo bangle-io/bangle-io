@@ -102,6 +102,14 @@ describe('table markdown round trips', () => {
       'consecutive and marked-up line breaks in cells',
       ['| a<br><br>b | **bold**<br>_em_ |', '| --- | --- |'].join('\n'),
     ],
+    [
+      'escaped \\<br> stays literal text in cells',
+      ['| a\\<br>b |', '| --- |'].join('\n'),
+    ],
+    [
+      '<br> inside a code span stays code text',
+      ['| `a<br>b` |', '| --- |'].join('\n'),
+    ],
   ])('%s', (_name, source) => {
     const serialized = roundTrip(source);
     expect(serialized).toBe(source);
@@ -169,6 +177,23 @@ describe('table markdown round trips', () => {
     const cell = doc.firstChild?.child(1)?.child(0);
     expect(cell?.childCount).toBe(3);
     expect(cell?.child(1).type.name).toBe('hard_break');
+  });
+
+  it('keeps entity-encoded &lt;br&gt; in cells as literal text', () => {
+    const { markdown } = createTestSetup();
+    const source = ['| a&lt;br&gt;b |', '| --- |'].join('\n');
+    const doc = markdown.parser.parse(source);
+    const cell = doc.firstChild?.child(0)?.child(0);
+    // The entity decodes to text, not to a line break.
+    expect(cell?.childCount).toBe(1);
+    expect(cell?.textContent).toBe('a<br>b');
+
+    // It re-serializes in escaped form so it cannot be reinterpreted as a
+    // break, and stays stable from then on.
+    const serialized = markdown.serializer.serialize(doc);
+    expect(serialized).toBe(['| a\\<br>b |', '| --- |'].join('\n'));
+    expect(roundTrip(serialized)).toBe(serialized);
+    expect(markdown.parser.parse(serialized).eq(doc)).toBe(true);
   });
 
   it('keeps <br> text outside tables as plain text', () => {
