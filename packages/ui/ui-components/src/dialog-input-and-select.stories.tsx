@@ -46,9 +46,10 @@ export const LongSingleSelect: Story = {
       <DialogSingleSelect
         open={open}
         setOpen={setOpen}
-        badgeText="Move Note"
-        placeholder="Find a folder"
-        groupHeading="Folders"
+        title="Move Note"
+        description="Choose a destination folder."
+        searchPlaceholder="Find a folder"
+        groupLabel="Folders"
         options={options}
         onSelect={() => {}}
       />

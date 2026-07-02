@@ -217,6 +217,23 @@ interface StageSelectStorageProps {
   onCancel: () => void;
 }
 
+function WorkspaceDialogFooter({
+  leadingAction,
+  children,
+}: {
+  leadingAction: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <DialogFooter className="gap-2 sm:items-center sm:justify-between sm:space-x-0">
+      {leadingAction}
+      <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        {children}
+      </div>
+    </DialogFooter>
+  );
+}
+
 const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
   state,
   dispatch,
@@ -263,25 +280,30 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
         ))}
       </div>
       <ErrorMessage error={error} />
-      <DialogFooter className="gap-2 sm:items-center sm:justify-between sm:space-x-0">
-        <Button
-          variant="ghost"
-          className="justify-start px-0 text-primary text-sm hover:underline"
-          asChild
-        >
-          <a href="https://bangle.io/privacy" target="_blank" rel="noreferrer">
-            {t.app.dialogs.createWorkspace.dataPrivacyLink}
-          </a>
+      <WorkspaceDialogFooter
+        leadingAction={
+          <Button
+            variant="ghost"
+            className="justify-start px-0 text-primary text-sm hover:underline"
+            asChild
+          >
+            <a
+              href="https://bangle.io/privacy"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {t.app.dialogs.createWorkspace.dataPrivacyLink}
+            </a>
+          </Button>
+        }
+      >
+        <Button variant="outline" onClick={onCancel}>
+          {t.app.common.cancelButton}
         </Button>
-        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-          <Button variant="outline" onClick={onCancel}>
-            {t.app.common.cancelButton}
-          </Button>
-          <Button onClick={handleNext} disabled={!selected}>
-            {t.app.common.nextButton}
-          </Button>
-        </div>
-      </DialogFooter>
+        <Button onClick={handleNext} disabled={!selected}>
+          {t.app.common.nextButton}
+        </Button>
+      </WorkspaceDialogFooter>
     </>
   );
 };
@@ -370,23 +392,24 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
         </div>
         <ErrorMessage error={error} />
       </div>
-      <DialogFooter className="gap-2 sm:justify-between sm:space-x-0">
-        <Button variant="outline" onClick={handleBack}>
-          {t.app.common.backButton}
+      <WorkspaceDialogFooter
+        leadingAction={
+          <Button variant="outline" onClick={handleBack}>
+            {t.app.common.backButton}
+          </Button>
+        }
+      >
+        <Button variant="outline" onClick={onCancel}>
+          {t.app.common.cancelButton}
         </Button>
-        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-          <Button variant="outline" onClick={onCancel}>
-            {t.app.common.cancelButton}
-          </Button>
-          <Button
-            type="submit"
-            onClick={handleSubmit}
-            disabled={Boolean(error) || !name}
-          >
-            {t.app.common.createButton}
-          </Button>
-        </div>
-      </DialogFooter>
+        <Button
+          type="submit"
+          onClick={handleSubmit}
+          disabled={Boolean(error) || !name}
+        >
+          {t.app.common.createButton}
+        </Button>
+      </WorkspaceDialogFooter>
     </>
   );
 };
@@ -495,19 +518,20 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
         <ErrorMessage error={error} />
       </div>
 
-      <DialogFooter className="gap-2 sm:justify-between sm:space-x-0">
-        <Button variant="outline" onClick={handleBack}>
-          {t.app.common.backButton}
+      <WorkspaceDialogFooter
+        leadingAction={
+          <Button variant="outline" onClick={handleBack}>
+            {t.app.common.backButton}
+          </Button>
+        }
+      >
+        <Button variant="outline" onClick={onCancel}>
+          {t.app.common.cancelButton}
         </Button>
-        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-          <Button variant="outline" onClick={onCancel}>
-            {t.app.common.cancelButton}
-          </Button>
-          <Button onClick={handleSubmit} disabled={!dirHandle}>
-            {t.app.common.createButton}
-          </Button>
-        </div>
-      </DialogFooter>
+        <Button onClick={handleSubmit} disabled={!dirHandle}>
+          {t.app.common.createButton}
+        </Button>
+      </WorkspaceDialogFooter>
     </>
   );
 };

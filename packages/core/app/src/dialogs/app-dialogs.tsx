@@ -70,10 +70,11 @@ export function AppDialogs() {
         }}
         options={singleSelectDialog?.options || []}
         onSelect={singleSelectDialog?.onSelect || (() => {})}
-        placeholder={singleSelectDialog?.placeholder}
-        badgeText={singleSelectDialog?.badgeText}
-        badgeTone={singleSelectDialog?.badgeTone}
-        groupHeading={singleSelectDialog?.groupHeading}
+        title={singleSelectDialog?.title}
+        description={singleSelectDialog?.description}
+        searchPlaceholder={singleSelectDialog?.searchPlaceholder}
+        tone={singleSelectDialog?.tone}
+        groupLabel={singleSelectDialog?.groupLabel}
         emptyMessage={singleSelectDialog?.emptyMessage}
         emptyActionText={singleSelectDialog?.emptyActionText}
         onEmptyAction={singleSelectDialog?.onEmptyAction}

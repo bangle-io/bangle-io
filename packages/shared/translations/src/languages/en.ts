@@ -100,9 +100,9 @@ export const t = {
     },
     dialogs: {
       changeTheme: {
-        placeholder: 'Select a theme preference',
-        badgeText: 'Change Theme',
-        groupHeading: 'Themes',
+        searchPlaceholder: 'Select a theme preference',
+        title: 'Change Theme',
+        groupLabel: 'Themes',
         emptyMessage: 'No themes available',
         options: {
           system: 'System',
@@ -142,15 +142,15 @@ export const t = {
         submitText: 'Rename',
       },
       moveNote: {
-        placeholder: 'Select a path to move the note',
-        badgeText: ({
+        searchPlaceholder: 'Select a path to move the note',
+        title: ({
           fileNameWithoutExtension,
         }: {
           fileNameWithoutExtension: string;
         }) => `Move "${fileNameWithoutExtension}"`,
         emptyMessage: 'No folders to move this note into.',
         emptyActionText: 'Create Folder',
-        groupHeading: 'Directories',
+        groupLabel: 'Directories',
         hintClick: 'Press Enter or Click',
         hintDrag: 'Tip: Try dragging a note in the sidebar',
         hintCreateDirectory: 'Create a folder first, then move this note.',
@@ -163,15 +163,15 @@ export const t = {
         submitText: 'Create',
       },
       switchWorkspace: {
-        placeholder: 'Select a workspace to switch',
-        badgeText: 'Switch Workspace',
-        groupHeading: 'Workspaces',
+        searchPlaceholder: 'Select a workspace to switch',
+        title: 'Switch Workspace',
+        groupLabel: 'Workspaces',
         emptyMessage: 'No workspaces found',
       },
       deleteWorkspace: {
-        placeholder: 'Select a workspace to delete',
-        badgeText: 'Delete Workspace',
-        groupHeading: 'Workspaces',
+        searchPlaceholder: 'Select a workspace to delete',
+        title: 'Delete Workspace',
+        groupLabel: 'Workspaces',
         emptyMessage: 'No workspaces found',
       },
       confirmDeleteWorkspace: {

@@ -95,9 +95,9 @@ export const t = {
     },
     dialogs: {
       changeTheme: {
-        placeholder: 'Wählen Sie eine Theme-Einstellung',
-        badgeText: 'Theme ändern',
-        groupHeading: 'Themes',
+        searchPlaceholder: 'Wählen Sie eine Theme-Einstellung',
+        title: 'Theme ändern',
+        groupLabel: 'Themes',
         emptyMessage: 'Keine Themes verfügbar',
         options: {
           system: 'System',
@@ -138,8 +138,8 @@ export const t = {
         submitText: 'Umbenennen',
       },
       moveNote: {
-        placeholder: 'Wählen Sie einen Pfad zum Verschieben der Notiz',
-        badgeText: ({
+        searchPlaceholder: 'Wählen Sie einen Pfad zum Verschieben der Notiz',
+        title: ({
           fileNameWithoutExtension,
         }: {
           fileNameWithoutExtension: string;
@@ -147,7 +147,7 @@ export const t = {
         emptyMessage:
           'Keine Ordner vorhanden, in die diese Notiz verschoben werden kann.',
         emptyActionText: 'Ordner erstellen',
-        groupHeading: 'Verzeichnisse',
+        groupLabel: 'Verzeichnisse',
         hintClick: 'Enter drücken oder klicken',
         hintDrag:
           'Tipp: Versuchen Sie, eine Notiz in der Seitenleiste zu ziehen',
@@ -163,15 +163,15 @@ export const t = {
         submitText: 'Erstellen',
       },
       switchWorkspace: {
-        placeholder: 'Wählen Sie einen Arbeitsbereich zum Wechseln',
-        badgeText: 'Arbeitsbereich wechseln',
-        groupHeading: 'Arbeitsbereiche',
+        searchPlaceholder: 'Wählen Sie einen Arbeitsbereich zum Wechseln',
+        title: 'Arbeitsbereich wechseln',
+        groupLabel: 'Arbeitsbereiche',
         emptyMessage: 'Keine Arbeitsbereiche gefunden',
       },
       deleteWorkspace: {
-        placeholder: 'Wählen Sie einen Arbeitsbereich zum Löschen',
-        badgeText: 'Arbeitsbereich löschen',
-        groupHeading: 'Arbeitsbereiche',
+        searchPlaceholder: 'Wählen Sie einen Arbeitsbereich zum Löschen',
+        title: 'Arbeitsbereich löschen',
+        groupLabel: 'Arbeitsbereiche',
         emptyMessage: 'Keine Arbeitsbereiche gefunden',
       },
       confirmDeleteWorkspace: {

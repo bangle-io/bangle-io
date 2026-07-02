@@ -230,15 +230,16 @@ export const noteManagementHandlers = [
       store.set(workbenchState.$singleSelectDialog, () => {
         return {
           dialogId: 'dialog::move-note-dialog',
-          placeholder: t.app.dialogs.moveNote.placeholder,
-          badgeText: t.app.dialogs.moveNote.badgeText({
+          title: t.app.dialogs.moveNote.title({
             fileNameWithoutExtension: filePath.fileNameWithoutExtension,
           }),
+          description: t.app.dialogs.moveNote.searchPlaceholder,
+          searchPlaceholder: t.app.dialogs.moveNote.searchPlaceholder,
           emptyMessage: t.app.dialogs.moveNote.emptyMessage,
           emptyActionText: t.app.dialogs.moveNote.emptyActionText,
           options,
           Icon: FilePlus,
-          groupHeading: t.app.dialogs.moveNote.groupHeading,
+          groupLabel: t.app.dialogs.moveNote.groupLabel,
           hints:
             options.length > 0
               ? [

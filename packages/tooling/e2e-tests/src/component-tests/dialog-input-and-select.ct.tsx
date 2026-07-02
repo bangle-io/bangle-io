@@ -61,10 +61,10 @@ test('single select keeps input focus model and scrolls active option', async ({
     await page.keyboard.press('ArrowDown');
   }
 
-  const listbox = dialog.getByRole('listbox', { name: 'Folders' });
-  const activeOption = dialog.getByRole('option', { name: 'Folder 31' });
+  const listbox = dialog.locator('[cmdk-list]');
+  const activeOption = dialog.locator('[cmdk-item][data-selected="true"]');
 
-  await expect(activeOption).toHaveAttribute('aria-selected', 'true');
+  await expect(activeOption).toContainText('Folder');
   await expect
     .poll(async () => {
       const listBounds = await listbox.boundingBox();

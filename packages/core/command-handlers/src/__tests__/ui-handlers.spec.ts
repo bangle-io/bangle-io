@@ -64,7 +64,9 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::change-theme-pref-dialog');
-      expect(dialog?.placeholder).toBe(t.app.dialogs.changeTheme.placeholder);
+      expect(dialog?.searchPlaceholder).toBe(
+        t.app.dialogs.changeTheme.searchPlaceholder,
+      );
       //  since we mock the theme preference, not needed to check for theme change
     });
   });
@@ -222,9 +224,11 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::move-note-dialog');
-      expect(dialog?.placeholder).toBe(t.app.dialogs.moveNote.placeholder);
-      expect(dialog?.badgeText).toBe(
-        t.app.dialogs.moveNote.badgeText({ fileNameWithoutExtension: 'test' }),
+      expect(dialog?.searchPlaceholder).toBe(
+        t.app.dialogs.moveNote.searchPlaceholder,
+      );
+      expect(dialog?.title).toBe(
+        t.app.dialogs.moveNote.title({ fileNameWithoutExtension: 'test' }),
       );
 
       dialog?.onSelect({ id: 'dir/', title: 'dir/' });
@@ -304,8 +308,8 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::switch-workspace-dialog');
-      expect(dialog?.placeholder).toBe(
-        t.app.dialogs.switchWorkspace.placeholder,
+      expect(dialog?.searchPlaceholder).toBe(
+        t.app.dialogs.switchWorkspace.searchPlaceholder,
       );
       dialog?.onSelect({ id: 'test-ws', title: 'test-ws' });
       expect(services.navigation.resolveAtoms().wsName).toBe('test-ws');
@@ -326,8 +330,8 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::delete-workspace-dialog');
-      expect(dialog?.placeholder).toBe(
-        t.app.dialogs.deleteWorkspace.placeholder,
+      expect(dialog?.searchPlaceholder).toBe(
+        t.app.dialogs.deleteWorkspace.searchPlaceholder,
       );
 
       dialog?.onSelect({ id: 'ws2', title: 'ws2' });

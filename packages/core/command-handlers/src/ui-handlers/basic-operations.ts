@@ -29,9 +29,10 @@ export const basicOperationsHandlers = [
     store.set(workbenchState.$singleSelectDialog, () => {
       return {
         dialogId: 'dialog::change-theme-pref-dialog',
-        placeholder: t.app.dialogs.changeTheme.placeholder,
-        badgeText: t.app.dialogs.changeTheme.badgeText,
-        groupHeading: t.app.dialogs.changeTheme.groupHeading,
+        title: t.app.dialogs.changeTheme.title,
+        description: t.app.dialogs.changeTheme.searchPlaceholder,
+        searchPlaceholder: t.app.dialogs.changeTheme.searchPlaceholder,
+        groupLabel: t.app.dialogs.changeTheme.groupLabel,
         emptyMessage: t.app.dialogs.changeTheme.emptyMessage,
         options: [
           {

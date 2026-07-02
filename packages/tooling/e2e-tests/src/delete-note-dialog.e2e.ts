@@ -4,8 +4,9 @@ import { createBrowserWorkspaceAndNote, pressAppShortcut } from './common';
 test('delete note command opens confirmation without an intermediate picker', async ({
   page,
 }) => {
+  const workspaceName = 'delete-note-dialog-workspace';
   await createBrowserWorkspaceAndNote(page, {
-    workspaceName: 'delete-note-dialog-workspace',
+    workspaceName,
     noteName: 'delete-target',
   });
 
@@ -25,6 +26,19 @@ test('delete note command opens confirmation without an intermediate picker', as
   await expect(
     confirmation.getByRole('button', { name: 'Delete' }),
   ).toBeVisible();
+
+  await confirmation.getByRole('button', { name: 'Delete' }).click();
+
+  const deletedNoteTreeItem = page
+    .locator('[data-sidebar="menu-button"]')
+    .filter({ hasText: 'delete-target.md' });
+  await expect(deletedNoteTreeItem).toHaveCount(0);
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(
+    page.getByRole('heading', { name: workspaceName }),
+  ).toBeVisible();
+  await expect(deletedNoteTreeItem).toHaveCount(0);
 });
 
 test('move note dialog accepts directory destinations from the file tree', async ({
