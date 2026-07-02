@@ -37,7 +37,11 @@ export function AppHeader({ children }: AppHeaderProps) {
   const showEditorToolbar = Boolean(currentWsPath);
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-2 px-4">
+    <header className="desktop-titlebar-drag desktop-titlebar-surface flex h-16 shrink-0 items-center gap-2 px-4">
+      <div
+        aria-hidden="true"
+        className="desktop-titlebar-main-spacer shrink-0"
+      />
       <div className="flex h-full flex-1 items-center justify-between">
         <ToolbarLeftSection
           showEditorToolbar={showEditorToolbar}
@@ -54,7 +58,9 @@ export function AppHeader({ children }: AppHeaderProps) {
           />
         )}
       </div>
-      {children}
+      {children ? (
+        <div className="desktop-titlebar-no-drag">{children}</div>
+      ) : null}
     </header>
   );
 }
@@ -75,7 +81,7 @@ function ToolbarLeftSection({
   const coreServices = useCoreServices();
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="desktop-titlebar-no-drag flex min-w-0 items-center gap-2">
       <Sidebar.SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="h-4" />
       {showEditorToolbar && currentWsPath ? (
@@ -157,7 +163,7 @@ function ToolbarRightSection({
   };
 
   return (
-    <div className="flex items-center">
+    <div className="desktop-titlebar-no-drag flex items-center">
       <StarButton
         isStarred={isCurrentWsPathStarred}
         onClick={handleStarClick}

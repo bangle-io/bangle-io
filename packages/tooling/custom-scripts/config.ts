@@ -55,6 +55,7 @@ export const banglePackageConfigSchema = z.object({
     'service-ui',
   ]),
   skipValidation: z.boolean().optional(),
+  allowedRuntimeImports: z.array(z.string()).optional(),
 });
 
 // defines the order in which the services should be depended on

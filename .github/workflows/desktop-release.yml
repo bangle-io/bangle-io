@@ -1,0 +1,167 @@
+name: Desktop Release
+
+on:
+  push:
+    branches:
+      - nightly
+    tags:
+      - 'v*.*.*'
+      - '!v*-nightly.*'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: desktop-release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  SENTRY_NO_PROGRESS_BAR: 1
+
+jobs:
+  preflight:
+    name: Preflight
+    runs-on: ubuntu-latest
+    outputs:
+      channel: ${{ steps.metadata.outputs.channel }}
+      make_latest: ${{ steps.metadata.outputs.make_latest }}
+      prerelease: ${{ steps.metadata.outputs.prerelease }}
+      product_name: ${{ steps.metadata.outputs.product_name }}
+      release_name: ${{ steps.metadata.outputs.release_name }}
+      tag: ${{ steps.metadata.outputs.tag }}
+      version: ${{ steps.metadata.outputs.version }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        run: |
+          corepack enable
+          corepack prepare --activate
+
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - id: metadata
+        name: Resolve desktop release metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "${GITHUB_REF_NAME}" = "nightly" ]; then
+            nightly_date="$(date -u -d "${{ github.run_started_at }}" +%Y%m%d)"
+            pnpm --filter "@bangle.io/desktop-entry" run resolve-release-metadata -- \
+              --channel nightly \
+              --date "$nightly_date" \
+              --run-number "${{ github.run_number }}" \
+              --github-output
+          else
+            pnpm --filter "@bangle.io/desktop-entry" run resolve-release-metadata -- \
+              --channel latest \
+              --tag "$GITHUB_REF_NAME" \
+              --github-output
+          fi
+
+      - name: Install Playwright browsers
+        run: pnpm -w run e2e-install
+
+      - name: Run local CI preflight
+        env:
+          BANGLE_RELEASE_VERSION: ${{ steps.metadata.outputs.version }}
+        run: pnpm local-ci-check
+
+  build-macos:
+    name: Build macOS artifacts
+    needs: preflight
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        run: |
+          corepack enable
+          corepack prepare --activate
+
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build desktop release candidate
+        env:
+          BANGLE_RELEASE_VERSION: ${{ needs.preflight.outputs.version }}
+        run: pnpm desktop:build
+
+      - name: Smoke desktop release candidate
+        env:
+          BANGLE_RELEASE_VERSION: ${{ needs.preflight.outputs.version }}
+        run: pnpm --filter "@bangle.io/desktop-entry" run smoke
+
+      - name: Package macOS desktop artifacts
+        env:
+          BANGLE_RELEASE_VERSION: ${{ needs.preflight.outputs.version }}
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          CSC_NAME: ${{ secrets.CSC_NAME }}
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_KEYCHAIN: ${{ secrets.APPLE_KEYCHAIN }}
+          APPLE_KEYCHAIN_PROFILE: ${{ secrets.APPLE_KEYCHAIN_PROFILE }}
+        run: |
+          pnpm desktop:dist -- \
+            --channel "${{ needs.preflight.outputs.channel }}" \
+            --version "${{ needs.preflight.outputs.version }}"
+
+      - name: Upload desktop artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: bangle-desktop-${{ needs.preflight.outputs.channel }}-${{ needs.preflight.outputs.version }}
+          path: |
+            packages/tooling/desktop-entry/release/${{ needs.preflight.outputs.channel }}/*.dmg
+            packages/tooling/desktop-entry/release/${{ needs.preflight.outputs.channel }}/*.zip
+            packages/tooling/desktop-entry/release/${{ needs.preflight.outputs.channel }}/*.blockmap
+            packages/tooling/desktop-entry/release/${{ needs.preflight.outputs.channel }}/latest-mac.yml
+            packages/tooling/desktop-entry/release/${{ needs.preflight.outputs.channel }}/nightly-mac.yml
+          if-no-files-found: error
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.preflight.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: ${{ needs.preflight.outputs.release_name }}
+          prerelease: ${{ needs.preflight.outputs.prerelease }}
+          make_latest: ${{ needs.preflight.outputs.make_latest }}
+          files: |
+            packages/tooling/desktop-entry/release/${{ needs.preflight.outputs.channel }}/*.dmg
+            packages/tooling/desktop-entry/release/${{ needs.preflight.outputs.channel }}/*.zip
+            packages/tooling/desktop-entry/release/${{ needs.preflight.outputs.channel }}/*.blockmap
+            packages/tooling/desktop-entry/release/${{ needs.preflight.outputs.channel }}/latest-mac.yml
+            packages/tooling/desktop-entry/release/${{ needs.preflight.outputs.channel }}/nightly-mac.yml

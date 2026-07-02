@@ -21,6 +21,8 @@ node_modules/
 
 /dist/
 packages/tooling/browser-entry/dist
+packages/tooling/desktop-entry/dist
+packages/tooling/desktop-entry/release
 *storybook.log
 /blob-report/
 

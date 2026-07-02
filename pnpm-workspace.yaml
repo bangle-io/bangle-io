@@ -54,6 +54,8 @@ minimumReleaseAge: 0
 allowBuilds:
   '@sentry/cli': true
   '@swc/core': true
+  electron: true
+  electron-winstaller: true
   esbuild: true
   msw: true
   sharp: true

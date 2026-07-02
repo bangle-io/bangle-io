@@ -69,6 +69,9 @@ export type AppSidebarProps = {
   wsPathToHref?: (wsPath: string) => string;
   wsNameToHref: (wsName: string) => string;
   fileGroupActions?: Action[];
+  sidebarHeaderClassName?: string;
+  workspaceSwitcherWrapperClassName?: string;
+  commandButtonClassName?: string;
 };
 
 interface DropdownButtonProps {
@@ -154,6 +157,9 @@ export function AppSidebar({
   wsPathToHref,
   wsNameToHref,
   fileGroupActions,
+  sidebarHeaderClassName,
+  workspaceSwitcherWrapperClassName,
+  commandButtonClassName,
 }: AppSidebarProps) {
   const tree = useMemo(
     () => buildTree(wsPaths, activeWsPaths, undefined),
@@ -162,13 +168,18 @@ export function AppSidebar({
 
   return (
     <Sidebar variant="floating">
-      <SidebarHeader>
-        <WorkspaceSwitcher
-          workspaces={workspaces}
-          onNewWorkspaceClick={onNewWorkspaceClick}
-          wsNameToHref={wsNameToHref}
+      <SidebarHeader className={sidebarHeaderClassName}>
+        <div className={workspaceSwitcherWrapperClassName}>
+          <WorkspaceSwitcher
+            workspaces={workspaces}
+            onNewWorkspaceClick={onNewWorkspaceClick}
+            wsNameToHref={wsNameToHref}
+          />
+        </div>
+        <CommandButton
+          className={commandButtonClassName}
+          onClick={() => onSearchClick?.()}
         />
-        <CommandButton onClick={() => onSearchClick?.()} />
       </SidebarHeader>
       <SidebarContent>
         {navItems.length > 0 && (
@@ -300,7 +311,13 @@ function AppSidebarFooter({
   );
 }
 
-function CommandButton({ onClick }: { onClick: () => void }) {
+function CommandButton({
+  className,
+  onClick,
+}: {
+  className?: string;
+  onClick: () => void;
+}) {
   const commandButtonId = useId();
   return (
     <div
@@ -309,7 +326,7 @@ function CommandButton({ onClick }: { onClick: () => void }) {
       tabIndex={0}
       onClick={onClick}
       onKeyUp={(e) => e.key === 'Enter' && onClick()}
-      className="w-full cursor-pointer"
+      className={cn('w-full cursor-pointer', className)}
     >
       <SidebarGroup className="py-0">
         <SidebarGroupContent className="relative">
