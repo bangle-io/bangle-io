@@ -7,6 +7,7 @@ import {
   Container,
   defineServiceMap,
   type ServiceConstructor,
+  type ValidateServiceMap,
 } from '@bangle.io/poor-mans-di';
 import {
   CommandDispatchService,
@@ -84,8 +85,13 @@ export type ServiceSetupOptions<TServiceMap extends AppServiceMap> = {
     addEventListener: Document['addEventListener'];
     removeEventListener: Document['removeEventListener'];
   };
-  /** Complete, environment-specific service graph. */
-  serviceMap: TServiceMap;
+  /**
+   * Complete, environment-specific service graph. The same compile-time
+   * validation as `defineAppServiceMap` applies here, so an unchecked map
+   * cannot reach the container even if a caller skips that helper.
+   */
+  serviceMap: TServiceMap &
+    ValidateServiceMap<BaseServiceCommonOptions, TServiceMap>;
   /**
    * Which platform slots provide file storage. After instantiation they are
    * keyed by their `workspaceType` and served to `FileSystemService`.
@@ -119,10 +125,10 @@ export function createServiceSetup<const TServiceMap extends AppServiceMap>(
     commandHandlers,
     themeManager,
     shortcutTarget,
-    serviceMap,
     fileStorageSlots,
   } = options;
-  type ServiceInstances = ConstructorToInstance<typeof serviceMap>;
+  const serviceMap: TServiceMap = options.serviceMap;
+  type ServiceInstances = ConstructorToInstance<TServiceMap>;
 
   let services: ServiceInstances | undefined;
   let fileStorageServices: Record<string, BaseFileStorageService> | undefined;

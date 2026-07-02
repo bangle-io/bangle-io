@@ -70,6 +70,36 @@ describe('createServiceSetup', () => {
     controller.abort();
   });
 
+  test('rejects invalid service maps even without defineAppServiceMap', () => {
+    const controller = new AbortController();
+    const { commonOpts, rootEmitter } = makeTestCommonOpts({ controller });
+
+    createServiceSetup({
+      commonOpts,
+      rootEmitter,
+      commands: [],
+      commandHandlers: [],
+      themeManager,
+      shortcutTarget: {
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      },
+      // @ts-expect-error NavigationService declares a 'router' dep with no
+      // slot; the builder validates the map itself, so skipping the helper
+      // cannot smuggle an unchecked graph into the container.
+      serviceMap: {
+        errorService: TestErrorHandlerService,
+        database: MemoryDatabaseService,
+        syncDatabase: MemorySyncDatabaseService,
+        fileStorageMemory: FileStorageMemory,
+        ...coreServiceMap,
+      },
+      fileStorageSlots: [],
+    });
+
+    controller.abort();
+  });
+
   test('instantiates, mounts, and reports a healthy service graph', async () => {
     const { setup, controller } = makeSetup();
 

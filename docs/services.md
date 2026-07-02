@@ -42,12 +42,17 @@ export class NavigationService extends BaseService {
 }
 ```
 
-`static deps` is the constructor contract for services. The container uses it to
-build the dependency graph, instantiate services in dependency order, and report
-startup diagnostics. `defineAppServiceMap` also type-checks that every declared
-dependency exists in the map, that constructor dependency keys match
-`static deps`, and that the registered dependency instance is assignable to the
-constructor's dependency type. If a service reads another service, that
+`static deps` is the constructor contract for services. Always declare it
+`as const`; a widened `string[]` is rejected by the map validation below. The
+container uses it to build the dependency graph, instantiate services in
+dependency order, and report startup diagnostics. `defineAppServiceMap` (and
+`createServiceSetup` itself, so the check cannot be bypassed) type-checks that
+every declared dependency exists in the map, that constructor dependency keys
+match `static deps`, and that the registered dependency instance is assignable
+to the constructor's dependency type. A validation failure surfaces as the
+offending map entry not being assignable to `never`; check that slot's
+`static deps`, constructor dependency keys, and `as const` first. If a service
+reads another service, that
 relationship should be visible in `static deps`; do not hide it in mutable
 module state, late lookups, or callbacks passed only to work around the graph.
 

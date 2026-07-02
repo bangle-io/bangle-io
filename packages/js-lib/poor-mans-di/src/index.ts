@@ -137,17 +137,19 @@ type ValidateServiceConstructor<
       : never
     : never;
 
-type ValidateServiceMap<
+/**
+ * Compile-time service graph validation. For every slot it rejects: static
+ * deps naming an unregistered slot, drift between static deps and the
+ * constructor's dependency keys, and a registered instance that does not
+ * satisfy the consumer's declared dependency type. `static deps` must be
+ * declared `as const` — a widened `string[]` fails validation.
+ */
+export type ValidateServiceMap<
   TContext,
   TMap extends Record<string, AnyServiceConstructor<TContext>>,
 > = {
   [K in keyof TMap]: ValidateServiceConstructor<TContext, TMap, K>;
 };
-
-export type ValidServiceMap<
-  TContext,
-  TMap extends Record<string, AnyServiceConstructor<TContext>>,
-> = TMap extends ValidateServiceMap<TContext, TMap> ? unknown : never;
 
 export function defineServiceMap<TContext>() {
   return <const TMap extends Record<string, AnyServiceConstructor<TContext>>>(
