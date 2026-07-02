@@ -1,19 +1,8 @@
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
+import { commandHandlers } from '@bangle.io/command-handlers';
+import { getEnabledCommands } from '@bangle.io/commands';
 import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
-import {
-  CommandDispatchService,
-  CommandRegistryService,
-  EditorService,
-  FileSystemService,
-  NavigationService,
-  ShortcutService,
-  UserActivityService,
-  WorkbenchService,
-  WorkbenchStateService,
-  WorkspaceOpsService,
-  WorkspaceService,
-  WorkspaceStateService,
-} from '@bangle.io/service-core';
+import { createServiceSetup } from '@bangle.io/initialize-services/setup';
 import {
   FileStorageMemory,
   MemoryDatabaseService,
@@ -21,23 +10,15 @@ import {
   MemorySyncDatabaseService,
   TestErrorHandlerService,
 } from '@bangle.io/service-platform/testing';
-
+import type { Store } from '@bangle.io/types';
 import { vi } from 'vitest';
+import { makeTestCommonOpts } from './common-opts';
 
 export type { Store } from '@bangle.io/types';
 
-import type { Store } from '@bangle.io/types';
-
 export { default as waitForExpect } from 'wait-for-expect';
 
-import { getEnabledCommands } from '@bangle.io/commands';
-
 export * from './test-service-setup';
-
-import { commandHandlers } from '@bangle.io/command-handlers';
-import { PmEditorService } from '@bangle.io/editor';
-import { type ConstructorToInstance, Container } from '@bangle.io/poor-mans-di';
-import { makeTestCommonOpts } from './common-opts';
 
 const themeManager = {
   currentPreference: THEME_MANAGER_CONFIG.defaultPreference,
@@ -47,9 +28,9 @@ const themeManager = {
 } as unknown as ThemeManager;
 
 /**
- * Creates a fully configured test environment with mock services and configuration.
- * This can be used in tests to simulate the application environment, including
- * in-memory databases, file systems, and router services.
+ * Creates a fully configured test environment with in-memory platform
+ * services. Core wiring comes from the same `createServiceSetup` builder the
+ * browser composition root uses, so test setup mirrors production setup.
  */
 export function createTestEnvironment({
   controller = new AbortController(),
@@ -69,45 +50,27 @@ export function createTestEnvironment({
     router: MemoryRouterService,
   };
 
-  // Core services that rely on the platform services above.
-  const coreServicesMap = {
-    commandDispatcher: CommandDispatchService,
-    commandRegistry: CommandRegistryService,
-    fileSystem: FileSystemService,
-    navigation: NavigationService,
-    editorService: EditorService,
-    shortcut: ShortcutService,
-    workbench: WorkbenchService,
-    workbenchState: WorkbenchStateService,
-    workspace: WorkspaceService,
-    workspaceOps: WorkspaceOpsService,
-    workspaceState: WorkspaceStateService,
-    userActivityService: UserActivityService,
-    pmEditorService: PmEditorService,
-  };
-
-  const serviceMap = {
-    ...platformServicesMap,
-    ...coreServicesMap,
-  };
-
-  type ServiceMapType = typeof serviceMap;
-  type TestServiceInstances = ConstructorToInstance<ServiceMapType>;
-  let currentServices: TestServiceInstances;
-  let fileStorageServices: Record<
-    string,
-    TestServiceInstances['fileStorageMemory']
-  >;
-
-  const container = new Container(
-    {
-      context: commonOpts,
-      abortSignal: controller.signal,
+  const setup = createServiceSetup({
+    commonOpts,
+    rootEmitter,
+    commands: getEnabledCommands(),
+    commandHandlers,
+    themeManager,
+    shortcutTarget: {
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
     },
-    serviceMap,
-  );
+    platformServices: platformServicesMap,
+    fileStorageSlots: ['fileStorageMemory'],
+  });
 
-  const result = {
+  setup.container.setConfig(FileStorageMemory, () => ({
+    onChange: (change) => {
+      commonOpts.logger.info('File storage change:', change);
+    },
+  }));
+
+  return {
     logger: commonOpts.logger,
     mockLog,
     controller,
@@ -116,108 +79,43 @@ export function createTestEnvironment({
     store: commonOpts.store as Store,
 
     /**
-     * Sets default configurations for various services, including event emitters
-     * and command registries. This allows tests to simulate common scenarios.
+     * Returns the DI container holding all services. Tests can override
+     * individual service configs before calling `instantiateAll()`.
      */
-    setDefaultConfig: () => {
-      container.setConfig(ShortcutService, () => ({
-        target: {
-          addEventListener: vi.fn(),
-          removeEventListener: vi.fn(),
-        },
-        shortcuts: [],
-      }));
-
-      container.setConfig(FileStorageMemory, () => ({
-        onChange: (change) => {
-          commonOpts.logger.info('File storage change:', change);
-        },
-      }));
-
-      // Core service configs
-      container.setConfig(CommandRegistryService, () => ({
-        commands: getEnabledCommands(),
-        commandHandlers,
-      }));
-
-      container.setConfig(CommandDispatchService, () => ({
-        emitResult: (result) => {
-          rootEmitter.emit('event::command:result', result);
-        },
-        focusEditor: () => {},
-        getExposedServices: () => currentServices,
-      }));
-
-      container.setConfig(FileSystemService, () => ({
-        emitter: rootEmitter.scoped(
-          ['event::file:update', 'event::file:force-update'],
-          controller.signal,
-        ),
-        getFileStorageServices: () => fileStorageServices,
-      }));
-
-      container.setConfig(UserActivityService, () => ({
-        emitter: rootEmitter.scoped(
-          ['event::command:result'],
-          controller.signal,
-        ),
-      }));
-
-      container.setConfig(WorkbenchStateService, () => ({
-        themeManager,
-        emitter: rootEmitter.scoped(
-          ['event::app:reload-ui'],
-          controller.signal,
-        ),
-      }));
-
-      container.setConfig(EditorService, () => ({
-        emitter: rootEmitter.scoped(
-          ['event::editor:reload-editor', 'event::file:force-update'],
-          controller.signal,
-        ),
-      }));
-
-      container.setConfig(PmEditorService, () => ({
-        nothing: true,
-      }));
-
-      return result;
-    },
+    getContainer: () => setup.container,
 
     /**
-     * Returns the DI container holding all services.
+     * The typed core-facing service aggregate, as consumed by React.
+     * Throws if called before `instantiateAll()`.
      */
-    getContainer: () => container,
+    coreServices: setup.coreServices,
 
     /**
      * Mounts all services. Useful for ensuring all asynchronous initialization
      * completes before running tests.
      */
-    mountAll: async () => {
-      await container.mountAll();
-    },
+    mountAll: setup.mountAll,
 
     /**
      * Instantiates all services, optionally focusing on a particular service.
      * This is helpful if you want to bring up only a subset of services in tests.
      */
-    instantiateAll: (focusService?: keyof typeof serviceMap) => {
+    instantiateAll: (
+      focusService?: NonNullable<
+        Parameters<typeof setup.instantiate>[0]
+      >[number],
+    ) => {
       const focuses = focusService
         ? // always instantiate platform services plus the focused one
-          [...Object.keys(platformServicesMap), focusService]
+          [
+            ...(Object.keys(platformServicesMap) as Array<
+              keyof typeof platformServicesMap
+            >),
+            focusService,
+          ]
         : undefined;
 
-      currentServices = container.instantiateAll(focuses as any[]);
-
-      fileStorageServices = {
-        [currentServices.fileStorageMemory.workspaceType]:
-          currentServices.fileStorageMemory,
-      };
-
-      return currentServices;
+      return setup.instantiate(focuses);
     },
   };
-
-  return result;
 }

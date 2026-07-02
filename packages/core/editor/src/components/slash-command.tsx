@@ -1,4 +1,3 @@
-import { useCoreServices } from '@bangle.io/context';
 import { $suggestions, Fragment } from '@bangle.io/prosemirror-plugins';
 import {
   Command,
@@ -28,7 +27,7 @@ import React, {
 } from 'react';
 
 import { DATE_SUGGESTION } from '../extensions';
-import type { PmEditorService } from '../pm-editor-service';
+import { useEditorCoreServices } from '../use-editor-core-services';
 import {
   FLOATING_INITIAL_STYLE,
   useFloatingPosition,
@@ -47,7 +46,7 @@ export function SlashCommand({
   const suggestions = useAtomValue($suggestions);
   const commandRef = useRef<HTMLDivElement>(null);
   const prevSelectedIndexRef = useRef<number>(0);
-  const { pmEditorService } = useCoreServices<PmEditorService>();
+  const { pmEditorService } = useEditorCoreServices();
   const editorView = pmEditorService.getEditor(editorName);
   const suggestion = editorView ? suggestions.get(editorView) : undefined;
   const active =

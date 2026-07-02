@@ -73,7 +73,6 @@ describe('FileSystemService', () => {
     controller = new AbortController(),
   } = {}) {
     const testEnv = createTestEnvironment({ controller });
-    testEnv.setDefaultConfig();
 
     const services = testEnv.instantiateAll();
     await testEnv.mountAll();
@@ -86,13 +85,7 @@ describe('FileSystemService', () => {
 
     await services.fileSystem.createTextFile(EXISTING_FILE, 'Test content');
 
-    const storage =
-      services.fileSystem.fileStorageServices[WORKSPACE_STORAGE_TYPE.Memory];
-    if (!storage) {
-      throw new Error(
-        'Expected the in-memory storage service to be configured',
-      );
-    }
+    const storage: BaseFileStorageService = services.fileStorageMemory;
 
     return {
       fileSystem: services.fileSystem,

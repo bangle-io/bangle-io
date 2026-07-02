@@ -53,7 +53,6 @@ export function testCommandHandler({
       commandDispatcher.dispatch(id, args, 'test');
     },
     autoMountServices: async () => {
-      testEnv.setDefaultConfig();
       const allCommandHandlers = commandHandlers.filter(
         (handler) => handler.id !== target.id,
       );

@@ -1,4 +1,3 @@
-import { useCoreServices } from '@bangle.io/context';
 import {
   rankedFuzzySearch,
   substringFuzzySearch,
@@ -12,7 +11,7 @@ import {
 import type { WsFilePath } from '@bangle.io/ws-path';
 import { useAtomValue } from 'jotai';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import type { PmEditorService } from '../pm-editor-service';
+import { useEditorCoreServices } from '../use-editor-core-services';
 import {
   FLOATING_INITIAL_STYLE,
   useFloatingPosition,
@@ -69,8 +68,7 @@ export function buildWikiLinkOptions({
 
 export function WikiLinkMenu({ editorName }: { editorName: string }) {
   const suggestions = useAtomValue($suggestions);
-  const { pmEditorService, workspaceState } =
-    useCoreServices<PmEditorService>();
+  const { pmEditorService, workspaceState } = useEditorCoreServices();
   const index = useAtomValue(workspaceState.$wikiLinkIndex);
   const listRef = useRef<HTMLDivElement>(null);
   const editorView = pmEditorService.getEditor(editorName);

@@ -2,7 +2,6 @@ import 'prosemirror-view/style/prosemirror.css';
 import './typography.css';
 
 import { cx } from '@bangle.io/base-utils';
-import { useCoreServices } from '@bangle.io/context';
 import React, { useCallback } from 'react';
 import {
   DatePickerMenu,
@@ -12,9 +11,10 @@ import {
   TableMenu,
   WikiLinkMenu,
 } from './components';
-import type { PmEditorService } from './pm-editor-service';
+import { useEditorCoreServices } from './use-editor-core-services';
 
 export { PmEditorService } from './pm-editor-service';
+export { useEditorCoreServices } from './use-editor-core-services';
 
 export function Editor({
   wsPath,
@@ -25,7 +25,7 @@ export function Editor({
   className?: string;
   name: string;
 }) {
-  const { pmEditorService } = useCoreServices<PmEditorService>();
+  const { pmEditorService } = useEditorCoreServices();
 
   return (
     <div className="box-border flex h-full min-h-36 w-full min-w-0 flex-col">

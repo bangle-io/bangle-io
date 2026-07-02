@@ -20,7 +20,7 @@ describe('PageWsHome', () => {
       });
     });
 
-    testRender.mountComponent({ ui: <PageWsHome />, services });
+    testRender.mountComponent({ ui: <PageWsHome /> });
 
     act(() => {
       services.navigation.goWorkspace('myWorkspace');
@@ -76,7 +76,7 @@ describe('PageWsHome', () => {
       ).toBeDefined();
     });
 
-    testRender.mountComponent({ ui: <PageWsHome />, services });
+    testRender.mountComponent({ ui: <PageWsHome /> });
 
     expect(screen.getByText('note1.md')).toBeInTheDocument();
     expect(screen.getByText('note2.md')).toBeInTheDocument();

@@ -11,9 +11,9 @@ import { PageWelcome } from '../page-welcome';
 describe('PageWelcome', () => {
   it('renders welcome message and empty state', async () => {
     const testRender = renderWithServices();
-    const services = await testRender.autoMountServices();
+    await testRender.autoMountServices();
 
-    testRender.mountComponent({ ui: <PageWelcome />, services });
+    testRender.mountComponent({ ui: <PageWelcome /> });
 
     expect(
       screen.getByText(/Create a workspace to get started./i),
@@ -53,7 +53,6 @@ describe('PageWelcome', () => {
 
     const { result } = testRender.mountComponent({
       ui: <PageWelcome />,
-      services,
     });
 
     // Verify both workspaces are shown with correct links

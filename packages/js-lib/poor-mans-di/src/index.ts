@@ -13,6 +13,8 @@ export type ServiceContext = {
 export interface Service<_TContext> {
   mountPromise?: Promise<void>;
   mount?: () => Promise<void>;
+  /** True once the service has fully mounted. Used for diagnostics. */
+  mounted?: boolean;
   postInstantiate?(): void;
 }
 
@@ -245,9 +247,7 @@ export class Container<
           .slice()
           .sort(),
         instantiated: instance !== undefined,
-        mounted:
-          instance !== undefined &&
-          (instance as { mounted?: unknown }).mounted === true,
+        mounted: instance?.mounted === true,
       };
     });
 
