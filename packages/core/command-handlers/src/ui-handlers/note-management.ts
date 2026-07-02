@@ -1,6 +1,6 @@
 import { throwAppError } from '@bangle.io/base-utils';
 import { WsPath } from '@bangle.io/ws-path';
-import { FilePlus, Trash2 } from 'lucide-react';
+import { FilePlus } from 'lucide-react';
 import { c, getCtx } from '../helper';
 import { validateInputPath } from '../utils';
 
@@ -35,52 +35,44 @@ export const noteManagementHandlers = [
     'command::ui:delete-note-dialog',
     ({ workbenchState, workspaceState }, { wsPath }, key) => {
       const { store, dispatch } = getCtx(key);
-      const wsPaths = store.get(workspaceState.$wsPaths);
-      const wsName = store.get(workspaceState.$currentWsName);
+      const targetWsPath = wsPath || store.get(workspaceState.$currentWsPath);
 
-      if (!wsName || !wsPaths || wsPaths.length === 0) {
+      if (!targetWsPath) {
         throwAppError(
-          'error::workspace:no-notes-found',
-          t.app.errors.workspace.noNotesToDelete,
-          { wsName },
+          'error::workspace:not-opened',
+          t.app.errors.workspace.notOpened,
+          { wsPath },
         );
       }
 
-      store.set(workbenchState.$singleSelectDialog, () => {
-        return {
-          dialogId: 'dialog::delete-ws-path-dialog',
-          placeholder: t.app.dialogs.deleteNote.placeholder,
-          badgeText: t.app.dialogs.deleteNote.badgeText,
-          groupHeading: t.app.dialogs.deleteNote.groupHeading,
-          emptyMessage: t.app.dialogs.deleteNote.emptyMessage,
-          options: wsPaths.map((path) => ({
-            title: path.filePath,
-            id: path.wsPath,
-          })),
-          Icon: Trash2,
-          hints: [t.app.dialogs.deleteNote.hintDelete],
-          initialSearch: wsPath ? WsPath.fromString(wsPath).path : undefined,
-          onSelect: (option) => {
-            const wsPath = WsPath.fromString(option.id);
-            const fileName = wsPath.asFile()?.fileNameWithoutExtension;
+      const filePath = WsPath.safeParse(targetWsPath).data?.asFile();
 
-            store.set(workbenchState.$alertDialog, () => {
-              return {
-                dialogId: 'dialog::alert',
-                title: t.app.dialogs.confirmDelete.title,
-                tone: 'destructive',
-                description: t.app.dialogs.confirmDelete.description({
-                  fileName: fileName || t.app.common.unknown,
-                }),
-                continueText: t.app.dialogs.confirmDelete.continueText,
-                onContinue: () => {
-                  dispatch('command::ws:delete-ws-path', { wsPath: option.id });
-                  dispatch('command::ui:focus-editor', null);
-                },
-                onCancel: () => {},
-              };
-            });
+      if (!filePath) {
+        throwAppError(
+          'error::file:invalid-note-path',
+          t.app.errors.file.invalidNotePath,
+          {
+            invalidWsPath: targetWsPath.toString(),
           },
+        );
+      }
+
+      store.set(workbenchState.$alertDialog, () => {
+        return {
+          dialogId: 'dialog::alert',
+          title: t.app.dialogs.confirmDelete.title,
+          tone: 'destructive',
+          description: t.app.dialogs.confirmDelete.description({
+            fileName: filePath.fileNameWithoutExtension,
+          }),
+          continueText: t.app.dialogs.confirmDelete.continueText,
+          onContinue: () => {
+            dispatch('command::ws:delete-ws-path', {
+              wsPath: filePath.wsPath,
+            });
+            dispatch('command::ui:focus-editor', null);
+          },
+          onCancel: () => {},
         };
       });
     },

@@ -100,7 +100,7 @@ describe('UI command handlers', () => {
   });
 
   describe('command::ui:delete-note-dialog', () => {
-    it('should open the delete note dialog, show alert on note selection, and dispatch ws:delete-ws-path on confirmation', async () => {
+    it('should open delete confirmation and dispatch ws:delete-ws-path on confirmation', async () => {
       const { dispatch, testEnv, services, getCommandResults } =
         await setupTest({
           targetId: 'command::ui:delete-note-dialog',
@@ -111,17 +111,9 @@ describe('UI command handlers', () => {
       dispatch('command::ui:delete-note-dialog', {
         wsPath: 'test-ws:test.md',
       });
-      const dialog = testEnv.store.get(
-        services.workbenchState.$singleSelectDialog,
-      );
-      expect(dialog).toBeDefined();
-      expect(dialog?.dialogId).toBe('dialog::delete-ws-path-dialog');
-      expect(dialog?.placeholder).toBe(t.app.dialogs.deleteNote.placeholder);
-      expect(dialog?.badgeText).toBe(t.app.dialogs.deleteNote.badgeText);
-      expect(dialog?.badgeTone).toBeUndefined();
-      expect(dialog?.hints).toEqual([t.app.dialogs.deleteNote.hintDelete]);
-
-      dialog?.onSelect({ id: 'test-ws:test.md', title: 'test.md' });
+      expect(
+        testEnv.store.get(services.workbenchState.$singleSelectDialog),
+      ).toBeUndefined();
       const alertDialog = testEnv.store.get(
         services.workbenchState.$alertDialog,
       );
@@ -141,6 +133,31 @@ describe('UI command handlers', () => {
             .map((result) => result.command.id),
         ).toContain('command::ws:delete-ws-path');
       });
+    });
+
+    it('should confirm deletion for the current note when no wsPath is provided', async () => {
+      const { dispatch, testEnv, services } = await setupTest({
+        targetId: 'command::ui:delete-note-dialog',
+        workspaces: [{ name: 'test-ws', notes: ['test-ws:current.md'] }],
+        autoNavigate: 'ws-path',
+      });
+
+      dispatch('command::ui:delete-note-dialog', {
+        wsPath: undefined,
+      });
+
+      expect(
+        testEnv.store.get(services.workbenchState.$singleSelectDialog),
+      ).toBeUndefined();
+      const alertDialog = testEnv.store.get(
+        services.workbenchState.$alertDialog,
+      );
+      expect(alertDialog).toBeDefined();
+      expect(alertDialog?.dialogId).toBe('dialog::alert');
+      expect(alertDialog?.title).toBe(t.app.dialogs.confirmDelete.title);
+      expect(alertDialog?.description).toBe(
+        t.app.dialogs.confirmDelete.description({ fileName: 'current' }),
+      );
     });
   });
 

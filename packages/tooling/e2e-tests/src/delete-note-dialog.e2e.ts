@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { createBrowserWorkspaceAndNote, pressAppShortcut } from './common';
 
-test('delete note picker opens a confirmation step before deleting', async ({
+test('delete note command opens confirmation without an intermediate picker', async ({
   page,
 }) => {
   await createBrowserWorkspaceAndNote(page, {
@@ -15,22 +15,12 @@ test('delete note picker opens a confirmation step before deleting', async ({
     .fill('Delete Note');
   await page.getByRole('option', { name: '> Delete Note' }).click();
 
-  const picker = page.getByRole('dialog', { name: 'Delete Note' });
-  const deleteBadge = picker.getByText('Delete Note', { exact: true });
-  await expect(deleteBadge).toBeVisible();
-  await expect(deleteBadge).not.toHaveClass(/text-destructive/);
-  await expect(
-    picker.getByText('Select a note to confirm deletion'),
-  ).toBeVisible();
-  await expect(page.getByRole('alertdialog')).toBeHidden();
-
-  await page.getByRole('option', { name: 'delete-target.md' }).click();
-
   const confirmation = page.getByRole('alertdialog');
   await expect(confirmation).toBeVisible();
   await expect(confirmation).toContainText(
     'Are you sure you want to delete "delete-target"?',
   );
+  await expect(page.getByRole('dialog', { name: 'Delete Note' })).toBeHidden();
   await expect(
     confirmation.getByRole('button', { name: 'Delete' }),
   ).toBeVisible();
