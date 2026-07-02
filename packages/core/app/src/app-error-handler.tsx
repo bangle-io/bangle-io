@@ -6,14 +6,20 @@ import React, { useEffect } from 'react';
 
 export function shouldReportAppError(appError: AppError): boolean {
   switch (appError.name) {
-    case 'error::database:unknown-error':
-    case 'error::editor:load-failed':
-    case 'error::editor:save-failed':
-    case 'error::main:network':
-    case 'error::main:unknown':
-      return true;
-    default:
+    case 'error::file:already-existing':
+    case 'error::file-storage:file-does-not-exist':
+    case 'error::workspace:native-fs-auth-needed':
+    case 'error::workspace:no-note-opened':
+    case 'error::workspace:no-notes-found':
+    case 'error::workspace:not-opened':
+    case 'error::ws-path:create-new-note':
+    case 'error::ws-path:invalid-markdown-path':
+    case 'error::ws-path:invalid-note-path':
+    case 'error::ws-path:invalid-ws-name':
+    case 'error::ws-path:invalid-ws-path':
       return false;
+    default:
+      return true;
   }
 }
 

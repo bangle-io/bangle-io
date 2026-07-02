@@ -20,6 +20,13 @@ describe('shouldReportAppError', () => {
     },
     {
       appError: {
+        name: 'error::workspace:invalid-metadata',
+        payload: { wsName: 'notes' },
+      } satisfies AppError,
+      expected: true,
+    },
+    {
+      appError: {
         name: 'error::workspace:no-note-opened',
         payload: {},
       } satisfies AppError,

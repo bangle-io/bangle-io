@@ -140,7 +140,7 @@ export class CommandDispatchService extends BaseService {
               command,
               from,
             });
-            this.handleCommandError(error);
+            this.handleAsyncCommandError(error);
           },
         );
       } else {
@@ -175,18 +175,13 @@ export class CommandDispatchService extends BaseService {
     this.config.emitResult(result);
   }
 
-  private handleCommandError(error: unknown): void {
+  private handleAsyncCommandError(error: unknown): void {
     if (isAppError(error)) {
       this.emitAppError(error);
       return;
     }
 
-    if (error instanceof Error) {
-      this.logger.error(error);
-      return;
-    }
-
-    this.logger.error('Command failed with non-Error value:', error);
+    throw error;
   }
 
   private setCommandContext(command: Command, key: CommandKey<string>): void {
