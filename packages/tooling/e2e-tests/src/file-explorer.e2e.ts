@@ -203,11 +203,11 @@ test('file explorer creates folders, opens notes, and survives reload', async ({
 
   await test.step('create a second root folder for drag-and-drop moves', async () => {
     await explorer.getByLabel('New Folder').click();
-    await page.getByLabel('Folder name').fill('archive');
+    await page.getByLabel('Folder name').fill('archive.v1');
     await page.getByRole('button', { name: 'Create' }).click();
 
     await expect(
-      explorer.getByRole('treeitem', { name: /^archive$/ }),
+      explorer.getByRole('treeitem', { name: /^archive\.v1$/ }),
     ).toBeVisible();
   });
 
@@ -233,30 +233,30 @@ test('file explorer creates folders, opens notes, and survives reload', async ({
 
   await test.step('drag a note into another folder', async () => {
     const source = explorer.getByRole('treeitem', { name: 'alpha.md' });
-    const target = explorer.getByRole('treeitem', { name: /^archive$/ });
+    const target = explorer.getByRole('treeitem', { name: /^archive\.v1$/ });
 
     await expect(source).toBeVisible();
     await expect(target).toBeVisible();
     await source.dragTo(target);
 
     await expect
-      .poll(() => readStoredMarkdown(page, workspaceName, 'archive/alpha'))
+      .poll(() => readStoredMarkdown(page, workspaceName, 'archive.v1/alpha'))
       .toBe('Alpha explorer content');
   });
 
   await test.step('right-click folder rename moves every child note', async () => {
     await explorer
-      .getByRole('treeitem', { name: /^archive$/ })
+      .getByRole('treeitem', { name: /^archive\.v1$/ })
       .click({ button: 'right' });
     await page.getByRole('button', { name: 'Rename' }).click();
-    await page.getByPlaceholder('Provide a new folder name').fill('vault');
+    await page.getByPlaceholder('Provide a new folder name').fill('vault.v2');
     await page.getByRole('button', { name: 'Confirm folder rename' }).click();
 
     await expect
-      .poll(() => readStoredMarkdown(page, workspaceName, 'vault/alpha'))
+      .poll(() => readStoredMarkdown(page, workspaceName, 'vault.v2/alpha'))
       .toBe('Alpha explorer content');
     await expect
-      .poll(() => readStoredMarkdown(page, workspaceName, 'archive/alpha'))
+      .poll(() => readStoredMarkdown(page, workspaceName, 'archive.v1/alpha'))
       .toBeUndefined();
   });
 
@@ -272,7 +272,7 @@ test('file explorer creates folders, opens notes, and survives reload', async ({
       .click();
 
     await expect
-      .poll(() => readStoredMarkdown(page, workspaceName, 'vault/beta'))
+      .poll(() => readStoredMarkdown(page, workspaceName, 'vault.v2/beta'))
       .toBe('Alpha explorer content');
 
     await explorer
@@ -286,13 +286,13 @@ test('file explorer creates folders, opens notes, and survives reload', async ({
     await confirmDeleteDialog.getByRole('button', { name: 'Delete' }).click();
 
     await expect
-      .poll(() => readStoredMarkdown(page, workspaceName, 'vault/beta'))
+      .poll(() => readStoredMarkdown(page, workspaceName, 'vault.v2/beta'))
       .toBeUndefined();
   });
 
   await test.step('right-click folder delete removes contained notes', async () => {
     await explorer
-      .getByRole('treeitem', { name: /^vault$/ })
+      .getByRole('treeitem', { name: /^vault\.v2$/ })
       .click({ button: 'right' });
     await page.getByRole('button', { name: 'Delete' }).click();
     const confirmDeleteDialog = page.getByRole('alertdialog', {
@@ -304,10 +304,12 @@ test('file explorer creates folders, opens notes, and survives reload', async ({
       .click();
 
     await expect
-      .poll(() => readStoredMarkdown(page, workspaceName, 'vault/untitled-3'))
+      .poll(() =>
+        readStoredMarkdown(page, workspaceName, 'vault.v2/untitled-3'),
+      )
       .toBeUndefined();
     await expect(
-      explorer.getByRole('treeitem', { name: /^vault$/ }),
+      explorer.getByRole('treeitem', { name: /^vault\.v2$/ }),
     ).toBeHidden();
   });
 

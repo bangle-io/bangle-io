@@ -384,6 +384,30 @@ describe('UI command handlers', () => {
         );
       });
     });
+
+    it('should preserve dotted names as directory paths', async () => {
+      const { dispatch, testEnv, services } = await setupTest({
+        targetId: 'command::ui:create-directory-dialog',
+        workspaces: [{ name: 'test-ws' }],
+      });
+      const createFileSpy = vi.spyOn(services.fileSystem, 'createFile');
+
+      dispatch('command::ui:create-directory-dialog', {
+        pathPrefix: undefined,
+      });
+      const dialog = testEnv.store.get(
+        services.workbenchState.$singleInputDialog,
+      );
+
+      dialog?.onSelect('v1.0');
+
+      await vi.waitFor(() => {
+        expect(createFileSpy).toHaveBeenCalledWith(
+          'test-ws:v1.0/untitled-1.md',
+          expect.any(File),
+        );
+      });
+    });
   });
 
   describe('command::ui:create-workspace-dialog', () => {

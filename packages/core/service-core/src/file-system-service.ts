@@ -38,6 +38,11 @@ type FileReadOptions = {
   signal?: AbortSignal;
 };
 
+type RenameFilePair = {
+  oldWsPath: string;
+  newWsPath: string;
+};
+
 function throwIfAborted(signal: AbortSignal | undefined): void {
   if (signal?.aborted) {
     throw signal.reason ?? new Error('Operation aborted');
@@ -290,13 +295,48 @@ export class FileSystemService extends BaseService {
     });
   }
 
+  public async deleteFiles(wsPaths: readonly string[]): Promise<void> {
+    await this.mountPromise;
+    const files = await Promise.all(
+      wsPaths.map(async (wsPath) => {
+        WsPath.assertFile(wsPath);
+        const file = await this.readFile(wsPath);
+
+        if (!file) {
+          throwAppError(
+            'error::file:invalid-note-path',
+            'Cannot delete missing file',
+            {
+              invalidWsPath: wsPath,
+            },
+          );
+        }
+
+        return { file, wsPath };
+      }),
+    );
+
+    const deleted: Array<{ file: File; wsPath: string }> = [];
+
+    try {
+      for (const entry of files) {
+        await this.deleteFile(entry.wsPath);
+        deleted.push(entry);
+      }
+    } catch (error) {
+      for (const entry of deleted.reverse()) {
+        if (!(await this.exists(entry.wsPath))) {
+          await this.createFile(entry.wsPath, entry.file);
+        }
+      }
+      throw error;
+    }
+  }
+
   public async renameFile({
     oldWsPath,
     newWsPath,
-  }: {
-    oldWsPath: string;
-    newWsPath: string;
-  }): Promise<void> {
+  }: RenameFilePair): Promise<void> {
     await this.mountPromise;
 
     const oldPath = WsPath.fromString(oldWsPath).asFile();
@@ -336,6 +376,53 @@ export class FileSystemService extends BaseService {
       type: 'file-rename',
       payload: { oldWsPath, wsPath: newWsPath },
     });
+  }
+
+  public async renameFiles(pairs: readonly RenameFilePair[]): Promise<void> {
+    await this.mountPromise;
+    const oldPathSet = new Set(pairs.map((pair) => pair.oldWsPath));
+
+    await Promise.all(
+      pairs.map(async ({ oldWsPath, newWsPath }) => {
+        WsPath.assertFile(oldWsPath);
+        WsPath.assertFile(newWsPath);
+
+        if (!(await this.exists(oldWsPath))) {
+          throwAppError(
+            'error::file:invalid-note-path',
+            'Cannot rename missing file',
+            {
+              invalidWsPath: oldWsPath,
+            },
+          );
+        }
+
+        if ((await this.exists(newWsPath)) && !oldPathSet.has(newWsPath)) {
+          throwAppError('error::file:already-existing', 'File already exists', {
+            wsPath: newWsPath,
+          });
+        }
+      }),
+    );
+
+    const renamed: RenameFilePair[] = [];
+
+    try {
+      for (const pair of pairs) {
+        await this.renameFile(pair);
+        renamed.push(pair);
+      }
+    } catch (error) {
+      for (const pair of renamed.reverse()) {
+        if (await this.exists(pair.newWsPath)) {
+          await this.renameFile({
+            oldWsPath: pair.newWsPath,
+            newWsPath: pair.oldWsPath,
+          });
+        }
+      }
+      throw error;
+    }
   }
 
   static _getStorageServiceForType(

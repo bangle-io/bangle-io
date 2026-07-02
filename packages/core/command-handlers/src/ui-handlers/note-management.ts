@@ -1,5 +1,5 @@
 import { throwAppError } from '@bangle.io/base-utils';
-import { WsPath } from '@bangle.io/ws-path';
+import { WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { FilePlus } from 'lucide-react';
 import { c, getCtx } from '../helper';
 import { validateInputPath } from '../utils';
@@ -262,7 +262,7 @@ export const noteManagementHandlers = [
 
             dispatch('command::ws:move-ws-path', {
               wsPath: oldWsPath.wsPath,
-              destDirWsPath: WsPath.fromParts(oldWsPath.wsName, newDirPath)
+              destDirWsPath: WsDirPath.fromParts(oldWsPath.wsName, newDirPath)
                 .wsPath,
             });
             dispatch('command::ui:focus-editor', null);
@@ -302,7 +302,7 @@ export const noteManagementHandlers = [
 
             validateInputPath(dirPath);
             dispatch('command::ws:create-directory', {
-              dirWsPath: WsPath.fromParts(wsName, dirPath).wsPath,
+              dirWsPath: WsDirPath.fromParts(wsName, dirPath).wsPath,
             });
           },
         };
@@ -366,14 +366,12 @@ export const noteManagementHandlers = [
             validateInputPath(newDirectoryName);
 
             const parentPath = dirPath.getParent()?.path ?? '';
-            const newDirPath = `${WsPath.pathJoin(
-              parentPath,
-              newDirectoryName,
-            )}/`;
+            const newDirPath = WsPath.pathJoin(parentPath, newDirectoryName);
 
             dispatch('command::ws:rename-directory', {
               oldDirWsPath: dirPath.wsPath,
-              newDirWsPath: WsPath.fromParts(dirPath.wsName, newDirPath).wsPath,
+              newDirWsPath: WsDirPath.fromParts(dirPath.wsName, newDirPath)
+                .wsPath,
             });
             dispatch('command::ui:focus-editor', null);
           },

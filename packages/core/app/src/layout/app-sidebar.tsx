@@ -9,7 +9,7 @@ import {
   AppSidebar as UIAppSidebar,
 } from '@bangle.io/ui-components';
 import bangleIcon from '@bangle.io/ui-components/src/bangle-transparent_x512.png';
-import { WsPath } from '@bangle.io/ws-path';
+import { WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
   BugPlay,
@@ -52,13 +52,17 @@ export const AppSidebar = ({ children }: SidebarProps) => {
     () =>
       (entry: FileTreeEntry): FileTreeEntryAction[] => {
         const actions: FileTreeEntryAction[] = [];
-        const getWsPath = (relativePath: string) =>
+        const getFileWsPath = (relativePath: string) =>
           activeWsName
             ? WsPath.fromParts(activeWsName, relativePath).wsPath
             : undefined;
+        const getDirWsPath = (relativePath: string) =>
+          activeWsName
+            ? WsDirPath.fromParts(activeWsName, relativePath).wsPath
+            : undefined;
 
         if (entry.kind === 'directory') {
-          const dirWsPath = getWsPath(entry.path);
+          const dirWsPath = getDirWsPath(entry.path);
 
           actions.push({
             id: 'new-note-here',
@@ -122,7 +126,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
           return actions;
         }
 
-        const wsPath = getWsPath(entry.path);
+        const wsPath = getFileWsPath(entry.path);
 
         if (wsPath) {
           actions.push({
@@ -130,7 +134,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             label: t.app.components.appSidebar.renameActionTitle,
             Icon: Pencil,
             onClick: (entry) => {
-              const wsPath = getWsPath(entry.path);
+              const wsPath = getFileWsPath(entry.path);
               if (!wsPath) {
                 return;
               }
@@ -147,7 +151,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             label: t.app.components.appSidebar.moveActionTitle,
             Icon: Move,
             onClick: (entry) => {
-              const wsPath = getWsPath(entry.path);
+              const wsPath = getFileWsPath(entry.path);
               if (!wsPath) {
                 return;
               }
@@ -165,7 +169,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             Icon: Trash2,
             variant: 'destructive' as const,
             onClick: (entry) => {
-              const wsPath = getWsPath(entry.path);
+              const wsPath = getFileWsPath(entry.path);
               if (!wsPath) {
                 return;
               }
@@ -247,7 +251,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
           commandDispatcher.dispatch(
             'command::ws:move-ws-path',
             {
-              destDirWsPath: WsPath.fromParts(
+              destDirWsPath: WsDirPath.fromParts(
                 activeWsName,
                 destinationDirectory ?? '',
               ).wsPath,

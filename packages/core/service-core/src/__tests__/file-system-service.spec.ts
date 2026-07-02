@@ -1,7 +1,7 @@
 import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import type { BaseFileStorageService } from '@bangle.io/types';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { FileSystemService } from '../file-system-service';
 
 describe('FileSystemService.getStorageServiceForType', () => {
@@ -150,5 +150,59 @@ describe('FileSystemService', () => {
     const afterDeleteRevision = readRevision();
     store.set(fileSystem.$fileForceUpdateCount, (count) => count + 1);
     expect(readRevision()).toBeGreaterThan(afterDeleteRevision);
+  });
+
+  it('rolls back completed batch renames when a later rename fails', async () => {
+    const { fileSystem } = await setupFileSystemTest({ controller });
+    const first = `${TEST_WS_NAME}:old/one.md`;
+    const second = `${TEST_WS_NAME}:old/two.md`;
+    await fileSystem.createTextFile(first, 'one');
+    await fileSystem.createTextFile(second, 'two');
+    const renameFile = fileSystem.renameFile.bind(fileSystem);
+
+    vi.spyOn(fileSystem, 'renameFile').mockImplementation(async (args) => {
+      if (args.oldWsPath === second) {
+        throw new Error('rename failed');
+      }
+
+      return renameFile(args);
+    });
+
+    await expect(
+      fileSystem.renameFiles([
+        { oldWsPath: first, newWsPath: `${TEST_WS_NAME}:new/one.md` },
+        { oldWsPath: second, newWsPath: `${TEST_WS_NAME}:new/two.md` },
+      ]),
+    ).rejects.toThrow('rename failed');
+
+    await expect(fileSystem.readFileAsText(first)).resolves.toBe('one');
+    await expect(fileSystem.readFileAsText(second)).resolves.toBe('two');
+    await expect(
+      fileSystem.readFileAsText(`${TEST_WS_NAME}:new/one.md`),
+    ).resolves.toBeUndefined();
+  });
+
+  it('restores completed batch deletes when a later delete fails', async () => {
+    const { fileSystem } = await setupFileSystemTest({ controller });
+    const first = `${TEST_WS_NAME}:old/one.md`;
+    const second = `${TEST_WS_NAME}:old/two.md`;
+    await fileSystem.createTextFile(first, 'one');
+    await fileSystem.createTextFile(second, 'two');
+    const deleteFile = fileSystem.deleteFile.bind(fileSystem);
+
+    vi.spyOn(fileSystem, 'deleteFile').mockImplementation(async (wsPath) => {
+      if (wsPath === second) {
+        throw new Error('delete failed');
+      }
+
+      return deleteFile(wsPath);
+    });
+
+    await expect(fileSystem.deleteFiles([first, second])).rejects.toThrow(
+      'delete failed',
+    );
+
+    await expect(fileSystem.readFileAsText(first)).resolves.toBe('one');
+    await expect(fileSystem.readFileAsText(second)).resolves.toBe('two');
   });
 });

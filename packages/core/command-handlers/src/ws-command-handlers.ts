@@ -337,13 +337,8 @@ export const wsCommandHandlers = [
       const redirectTarget = pairs.find(
         (pair) => pair.oldWsPath === currentWsPath,
       )?.newWsPath;
-      if (redirectTarget) {
-        navigation.goWorkspace();
-      }
 
-      for (const pair of pairs) {
-        await fileSystem.renameFile(pair);
-      }
+      await fileSystem.renameFiles(pairs);
 
       if (redirectTarget) {
         navigation.goWsPath(redirectTarget);
@@ -371,12 +366,12 @@ export const wsCommandHandlers = [
         currentWsPath &&
         descendants.some((path) => path.wsPath === currentWsPath)
       ) {
+        await fileSystem.deleteFiles(descendants.map((path) => path.wsPath));
         navigation.goWorkspace();
+        return;
       }
 
-      for (const path of descendants) {
-        await fileSystem.deleteFile(path.wsPath);
-      }
+      await fileSystem.deleteFiles(descendants.map((path) => path.wsPath));
     },
   ),
   c('command::ws:go-ws-home', ({ navigation }) => {
