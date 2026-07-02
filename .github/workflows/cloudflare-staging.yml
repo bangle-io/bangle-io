@@ -1,0 +1,135 @@
+name: Cloudflare Staging Deploy
+
+on:
+  push:
+    branches: [staging]
+  workflow_dispatch:
+
+concurrency:
+  group: cloudflare-staging
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  CLOUDFLARE_PAGES_PROJECT: bangle-io-2
+  SENTRY_NO_PROGRESS_BAR: 1
+  SENTRY_ORG: self-zf
+  SENTRY_PROJECT: bangle-v2
+
+jobs:
+  deploy-staging:
+    name: Deploy staging
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        run: |
+          corepack enable
+          corepack prepare --activate
+
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Compute release
+        id: release
+        run: |
+          set -euo pipefail
+
+          version="$(node -p "require('./package.json').version")"
+          release="${version}+${GITHUB_SHA}"
+
+          {
+            echo "release=$release"
+            echo "commit_short=${GITHUB_SHA::7}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Install Sentry CLI
+        run: curl -sL https://sentry.io/get-cli/ | bash
+
+      - name: Create Sentry release
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          RELEASE: ${{ steps.release.outputs.release }}
+        run: |
+          set -euo pipefail
+
+          sentry-cli releases info --project "$SENTRY_PROJECT" "$RELEASE" >/dev/null 2>&1 ||
+            sentry-cli releases new --project "$SENTRY_PROJECT" "$RELEASE"
+
+      - name: Build app
+        env:
+          CF_PAGES: '1'
+          CF_PAGES_BRANCH: staging
+          CF_PAGES_COMMIT_SHA: ${{ github.sha }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: pnpm build
+
+      - name: Finalize Sentry release
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          RELEASE: ${{ steps.release.outputs.release }}
+        run: |
+          set -euo pipefail
+
+          sentry-cli releases set-commits --project "$SENTRY_PROJECT" "$RELEASE" --auto
+          sentry-cli releases finalize --project "$SENTRY_PROJECT" "$RELEASE"
+
+      - name: Validate Cloudflare secrets
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]; then
+            echo "Missing CLOUDFLARE_ACCOUNT_ID repository secret." >&2
+            exit 1
+          fi
+
+          if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
+            echo "Missing CLOUDFLARE_API_TOKEN repository secret." >&2
+            exit 1
+          fi
+
+      - name: Deploy Cloudflare Pages staging
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy packages/tooling/browser-entry/dist --project-name=${{ env.CLOUDFLARE_PAGES_PROJECT }} --branch=staging --commit-dirty=true
+          packageManager: pnpm
+
+      - name: Mark Sentry deploy
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          RELEASE: ${{ steps.release.outputs.release }}
+        run: sentry-cli releases deploys --project "$SENTRY_PROJECT" "$RELEASE" new -e staging
+
+      - name: Print deployment summary
+        env:
+          DEPLOYMENT_ALIAS_URL: ${{ steps.deploy.outputs.pages-deployment-alias-url }}
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment-url }}
+          RELEASE: ${{ steps.release.outputs.release }}
+          COMMIT_SHORT: ${{ steps.release.outputs.commit_short }}
+        run: |
+          set -euo pipefail
+
+          {
+            echo "### Staging deploy"
+            echo
+            echo "- Release: \`$RELEASE\`"
+            echo "- Commit: \`$COMMIT_SHORT\`"
+            echo "- URL: ${DEPLOYMENT_ALIAS_URL:-${DEPLOYMENT_URL:-https://staging.bangle-io-2.pages.dev/}}"
+          } >> "$GITHUB_STEP_SUMMARY"
