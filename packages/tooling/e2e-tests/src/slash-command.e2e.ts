@@ -6,6 +6,11 @@ import {
   waitForEditorFocus,
 } from './common';
 
+// Pin the browser locale so `data-day` (written with the browser's default
+// `toLocaleDateString()`) is deterministic and matches the `'en-US'` selectors
+// below regardless of the host/CI locale.
+test.use({ locale: 'en-US' });
+
 test('slash command stays active with multiple suggestion providers registered', async ({
   page,
 }) => {
@@ -111,6 +116,14 @@ test('slash date command inserts a day picked from the current month', async ({
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
     .toBe(targetLabel);
+
+  // Selecting a day must return focus to the editor and continue typing right
+  // after the inserted date (guards the post-insert focus handoff).
+  await expect(editor).toBeFocused();
+  await page.keyboard.insertText(' meeting');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe(`${targetLabel} meeting`);
 });
 
 test('slash date command inserts a day after navigating months', async ({

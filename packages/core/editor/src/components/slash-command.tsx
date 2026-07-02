@@ -121,12 +121,11 @@ export function SlashCommand({
       next.set(editorView, {
         ...(next.get(editorView) ?? {}),
         slash_command: {
+          // Enter is only wired for the menu view: forward it to cmdk so the
+          // highlighted item is chosen. In the date-picker view the calendar
+          // owns pointer selection and Escape dismisses; committing "today" on
+          // Enter is already covered by the dedicated "Today" menu item.
           onSelect: () => {
-            if (commandView === 'date-picker') {
-              insertSelectedDate(selectedDate);
-              return;
-            }
-
             if (commandRef.current) {
               const event = new KeyboardEvent('keydown', {
                 key: 'Enter',
@@ -154,14 +153,7 @@ export function SlashCommand({
         return next;
       });
     };
-  }, [
-    active,
-    commandView,
-    editorView,
-    insertSelectedDate,
-    selectedDate,
-    setSuggestionUi,
-  ]);
+  }, [active, editorView, setSuggestionUi]);
 
   const slashRef = useFloatingPosition({
     show: Boolean(active?.show),
@@ -210,6 +202,9 @@ export function SlashCommand({
         <Calendar
           mode="single"
           captionLayout="dropdown"
+          // Hide adjacent-month days so only the visible month is selectable
+          // (avoids ambiguous day cells near month boundaries).
+          showOutsideDays={false}
           startMonth={new Date(currentYear - CALENDAR_YEAR_SPAN, 0)}
           endMonth={new Date(currentYear + CALENDAR_YEAR_SPAN, 11)}
           defaultMonth={selectedDate}
