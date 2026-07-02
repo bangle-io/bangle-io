@@ -47,7 +47,7 @@ jobs:
           set -euo pipefail
 
           version="$(node -p "require('./package.json').version")"
-          release="${version}#${GITHUB_SHA}"
+          release="${version}+${GITHUB_SHA}"
 
           {
             echo "release=$release"

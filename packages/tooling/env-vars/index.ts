@@ -54,10 +54,10 @@ function getAppEnv(isProd: boolean): string {
 
 function getReleaseId(isProduction: boolean): string {
   if (!isProduction) {
-    return `${RELEASE_VERSION}#local`;
+    return `${RELEASE_VERSION}+local`;
   }
   // In CI (isProduction=true), CI_BUILD_ID should be set.
-  return `${RELEASE_VERSION}#${CI_BUILD_ID || 'unknown_ci_build'}`;
+  return `${RELEASE_VERSION}+${CI_BUILD_ID || 'unknown_ci_build'}`;
 }
 
 function getFavicon(appEnv: string): string {
