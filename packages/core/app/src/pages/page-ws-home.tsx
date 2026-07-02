@@ -73,7 +73,7 @@ export function PageWsHome() {
   return (
     <>
       <AppHeader />
-      <PageContentContainer>
+      <PageContentContainer testId="page-ws-home">
         {currentWsName ? (
           <ContentSection hasPadding>
             <PageHeader title={`${currentWsName}`} />

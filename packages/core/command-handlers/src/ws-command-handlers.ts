@@ -139,10 +139,10 @@ export const wsCommandHandlers = [
       }
 
       const needsRedirect = navigation.resolveAtoms().wsPath?.wsPath === wsPath;
-      if (needsRedirect) {
-        navigation.goWorkspace();
-      }
 
+      // Keep the open note visible during the rename instead of navigating to
+      // ws-home first (which paints an intermediate screen for the duration of
+      // the async write). Redirect straight to the renamed path once it lands.
       void fileSystem
         .renameFile({
           oldWsPath: wsPath,
@@ -197,10 +197,13 @@ export const wsCommandHandlers = [
       }
 
       const needsRedirect = navigation.resolveAtoms().wsPath?.wsPath === wsPath;
-      if (needsRedirect) {
-        navigation.goWorkspace();
-      }
 
+      // Do not bounce the open note through the workspace-home screen while the
+      // rename is in flight: that navigation happens before the storage write
+      // and paints ws-home for the whole (async) rename. Instead keep showing
+      // the current note until the durable rename lands, then redirect straight
+      // to the new path. The wsPaths update and this redirect settle in the same
+      // microtask, so the moved note never flashes an intermediate screen.
       void fileSystem
         .renameFile({
           oldWsPath: wsPath,

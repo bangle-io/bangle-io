@@ -485,3 +485,73 @@ test('file explorer keeps folders expanded when a note is moved', async ({
     ).toBeVisible();
   });
 });
+
+test('moving the open note does not flash the workspace-home screen', async ({
+  page,
+}) => {
+  const workspaceName = `explorer-move-flash-${Date.now()}`;
+  await createBrowserWorkspace(page, { workspaceName });
+
+  await writeStoredMarkdown(page, workspaceName, 'dest/existing', 'Existing');
+  await writeStoredMarkdown(page, workspaceName, 'mover', 'Move me');
+
+  // Open the note that will be moved so the move needs to redirect the editor.
+  await page.goto(
+    `/ws#route=editor&wsPath=${encodeURIComponent(`${workspaceName}:mover.md`)}`,
+  );
+  await page.reload();
+  await expect.poll(() => getEditorText(page, {})).toBe('Move me');
+
+  // Record whether the ws-home page ever mounts while the move is in flight.
+  // The old flow navigated to ws-home before the async rename, painting an
+  // intermediate screen; the fix keeps the note visible until the new path is
+  // durable. A MutationObserver captures the mount even if it is sub-frame.
+  await page.evaluate(() => {
+    const win = window as unknown as {
+      __wsHomeMounts: number;
+      __wsHomeObserver?: MutationObserver;
+    };
+    const marker = '[data-testid="page-ws-home"]';
+    win.__wsHomeMounts = document.querySelector(marker) ? 1 : 0;
+    const observer = new MutationObserver((records) => {
+      for (const record of records) {
+        for (const node of record.addedNodes) {
+          if (!(node instanceof HTMLElement)) {
+            continue;
+          }
+          if (node.matches(marker) || node.querySelector(marker)) {
+            win.__wsHomeMounts += 1;
+          }
+        }
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    win.__wsHomeObserver = observer;
+  });
+
+  const explorer = page.getByTestId('bangle-file-explorer');
+  const moverRow = explorer.getByRole('treeitem', { name: /^mover\.md$/ });
+  await moverRow.click({ button: 'right' });
+  await page
+    .locator('[data-file-tree-context-menu-root="true"]')
+    .getByRole('button', { name: 'Move' })
+    .click();
+
+  const moveDialog = page.getByRole('dialog', { name: 'Move "mover"' });
+  await expect(moveDialog).toBeVisible();
+  await moveDialog.getByRole('option', { name: /dest\/?/ }).click();
+
+  // The editor follows the note to its new path...
+  await expect(page).toHaveURL(
+    `/ws#route=editor&wsPath=${encodeURIComponent(
+      `${workspaceName}:dest/mover.md`,
+    )}`,
+  );
+  await expect.poll(() => getEditorText(page, {})).toBe('Move me');
+
+  // ...without ever routing through the workspace-home screen.
+  const wsHomeMounts = await page.evaluate(
+    () => (window as unknown as { __wsHomeMounts: number }).__wsHomeMounts,
+  );
+  expect(wsHomeMounts).toBe(0);
+});

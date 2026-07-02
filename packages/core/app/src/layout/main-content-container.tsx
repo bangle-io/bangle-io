@@ -18,6 +18,11 @@ export interface PageContentContainerProps {
    * @default true
    */
   respectEditorWidthPreference?: boolean;
+  /**
+   * Optional test id applied to the container, so tests can assert which page
+   * is mounted (e.g. that a note move never bounces through ws-home).
+   */
+  testId?: string;
 }
 
 /**
@@ -27,12 +32,14 @@ export function PageContentContainer({
   children,
   applyPadding = true,
   respectEditorWidthPreference = true,
+  testId,
 }: PageContentContainerProps) {
   const coreServices = useCoreServices();
   const wideEditor = useAtomValue(coreServices.workbenchState.$wideEditor);
 
   return (
     <main
+      data-testid={testId}
       className={cx(
         'B-app-page-content flex min-w-0 flex-1 flex-col gap-4',
         respectEditorWidthPreference &&
