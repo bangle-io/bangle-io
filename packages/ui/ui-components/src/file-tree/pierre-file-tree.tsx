@@ -9,6 +9,7 @@ import type {
 import { FileTree, useFileTree } from '@pierre/trees/react';
 import { FilePlus2, FolderPlus } from 'lucide-react';
 import React, { useEffect, useMemo, useRef } from 'react';
+import { BANGLE_PIERRE_FILE_TREE_ICONS } from './pierre-file-tree-icons';
 import {
   type FileTreeEntry,
   type FileTreeEntryAction,
@@ -16,21 +17,24 @@ import {
   normalizePierreFilePath,
 } from './types';
 
+// Tune the Pierre tree to read like the rest of the sidebar (the previous file
+// tree): comfortable full-width rows with an icon + name, rounded hover/selected
+// pills, and breathing room on the left instead of a cramped, edge-hugging list.
 const TREE_UNSAFE_CSS = `
   :host {
     --trees-bg-override: transparent;
     --trees-fg-override: var(--sidebar-foreground);
+    --trees-fg-muted-override: color-mix(in srgb, var(--sidebar-foreground) 55%, transparent);
     --trees-selected-bg-override: var(--sidebar-accent);
-    --trees-hover-bg-override: color-mix(in srgb, var(--sidebar-accent) 72%, transparent);
+    --trees-selected-fg-override: var(--sidebar-accent-foreground);
     --trees-border-color-override: var(--sidebar-border);
     --trees-font-family-override: var(--font-sans);
-    --trees-font-size-override: 12px;
-    line-height: 1.25;
+    --trees-font-size-override: 13px;
+    --trees-border-radius-override: 6px;
+    line-height: 1.3;
   }
 
   button[data-type='item'] {
-    border-radius: 4px;
-    min-height: 23px;
     transition:
       background-color 120ms ease,
       color 120ms ease;
@@ -38,11 +42,6 @@ const TREE_UNSAFE_CSS = `
 
   button[data-type='item'][data-item-selected] {
     font-weight: 600;
-    box-shadow: inset 2px 0 0 var(--sidebar-primary);
-  }
-
-  button[data-type='item'][data-item-type='file'] > [data-item-section='icon'] {
-    display: none;
   }
 
   [data-type='context-menu-anchor'] {
@@ -189,7 +188,6 @@ export function PierreFileTree({
     () => activePaths.map((path) => normalizeInputPath(path)),
     [activePaths],
   );
-  const fileCount = filePathSet.size;
   const visibleRowCount = Math.min(
     Math.max(getTreeRowCount(treePaths), MIN_TREE_ROWS),
     MAX_VISIBLE_TREE_ROWS,
@@ -258,7 +256,8 @@ export function PierreFileTree({
         triggerMode: 'both',
       },
     },
-    density: 'compact',
+    density: 'default',
+    icons: BANGLE_PIERRE_FILE_TREE_ICONS,
     dragAndDrop: {
       canDrag: (paths) =>
         paths.length === 1 &&
@@ -317,18 +316,13 @@ export function PierreFileTree({
       data-testid="bangle-file-explorer"
     >
       <div className="relative flex min-h-0 flex-col overflow-visible">
-        <div className="flex h-8 shrink-0 items-center gap-1 border-sidebar-border/70 border-b px-1.5">
-          <div className="min-w-0 flex-1">
-            <div className="truncate font-semibold text-[11px] text-sidebar-foreground uppercase">
-              {t.app.components.appSidebar.filesLabel}
-            </div>
-            <div className="truncate text-[10px] text-sidebar-foreground/55">
-              {t.app.components.appSidebar.noteCount({ count: fileCount })}
-            </div>
-          </div>
+        <div className="group/files-header flex h-8 shrink-0 items-center gap-1 px-2">
+          <span className="min-w-0 flex-1 truncate font-medium text-[11px] text-sidebar-foreground/55 uppercase tracking-wide">
+            {t.app.components.appSidebar.filesLabel}
+          </span>
           <button
             type="button"
-            className="inline-flex size-6 items-center justify-center rounded-sm text-sidebar-foreground/65 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            className="inline-flex size-6 items-center justify-center rounded-sm text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             aria-label={t.app.components.appSidebar.newFileActionTitle}
             title={t.app.components.appSidebar.newFileActionTitle}
             onClick={() => onCreateNote(undefined)}
@@ -337,7 +331,7 @@ export function PierreFileTree({
           </button>
           <button
             type="button"
-            className="inline-flex size-6 items-center justify-center rounded-sm text-sidebar-foreground/65 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            className="inline-flex size-6 items-center justify-center rounded-sm text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             aria-label={t.app.components.appSidebar.newFolderActionTitle}
             title={t.app.components.appSidebar.newFolderActionTitle}
             onClick={() => onCreateDirectory(undefined)}
@@ -347,7 +341,7 @@ export function PierreFileTree({
         </div>
         <FileTree
           aria-label={t.app.components.appSidebar.fileTreeLabel}
-          className="min-h-0 overflow-hidden pr-1 pl-0.5"
+          className="min-h-0 overflow-hidden px-1"
           model={model}
           style={{
             height: `${visibleRowCount * model.getItemHeight()}px`,

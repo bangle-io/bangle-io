@@ -13,7 +13,9 @@ const BANGLE_FILE_ICON_SPRITE = `
 </svg>`;
 
 export const BANGLE_PIERRE_FILE_TREE_ICONS = {
-  set: 'complete',
+  // Notes are Markdown, so ship only the custom Bangle icons instead of loading
+  // Pierre's full built-in language icon set.
+  set: 'none',
   colored: true,
   spriteSheet: BANGLE_FILE_ICON_SPRITE,
   byFileExtension: {
