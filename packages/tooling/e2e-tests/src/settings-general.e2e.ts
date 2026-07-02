@@ -15,8 +15,8 @@ test('general settings update and persist user preferences', async ({
   await expect(page.getByRole('link', { name: 'Back to app' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'General' })).toBeVisible();
 
-  await page.getByRole('button', { name: 'Theme preference' }).click();
-  await page.getByRole('menuitemradio', { name: 'Dark' }).click();
+  await page.getByRole('combobox', { name: 'Theme preference' }).click();
+  await page.getByRole('option', { name: 'Dark' }).click();
   await expect(page.locator('html')).toHaveAttribute(
     'data-theme',
     'BU_dark-scheme',
@@ -36,6 +36,9 @@ test('general settings update and persist user preferences', async ({
     'data-theme',
     'BU_dark-scheme',
   );
+  await expect(
+    page.getByRole('combobox', { name: 'Theme preference' }),
+  ).toContainText('Dark');
   await expect(page.getByRole('radio', { name: 'Default' })).toBeChecked();
 });
 

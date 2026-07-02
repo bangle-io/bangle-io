@@ -1,15 +1,18 @@
 import { useCoreServices } from '@bangle.io/context';
 import type { AppRouteInfo, ThemePreference } from '@bangle.io/types';
 import {
-  Button,
   cn,
-  DropdownMenu,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   SettingsPage,
   ToggleGroup,
   ToggleGroupItem,
 } from '@bangle.io/ui-components';
 import { useAtom, useAtomValue } from 'jotai';
-import { ArrowLeft, ChevronDown, Settings2 } from 'lucide-react';
+import { ArrowLeft, Settings2 } from 'lucide-react';
 import React from 'react';
 import { AppHeader } from '../layout/app-header';
 import { PageContentContainer } from '../layout/main-content-container';
@@ -172,42 +175,29 @@ function ThemePreferenceSelect({
   value: ThemePreference;
   onValueChange: (value: ThemePreference) => void;
 }) {
-  const selectedLabel =
-    THEME_OPTIONS.find((option) => option.value === value)?.label ??
-    t.app.dialogs.changeTheme.options.system;
-
   return (
-    <DropdownMenu.DropdownMenu>
-      <DropdownMenu.DropdownMenuTrigger asChild>
-        <Button
-          aria-label={t.app.settings.general.themeLabel}
-          className="h-9 w-full justify-between rounded-lg bg-muted/60 px-3 text-sm shadow-none sm:w-48"
-          variant="outline"
-        >
-          <span>{selectedLabel}</span>
-          <ChevronDown className="h-4 w-4 text-muted-foreground" />
-        </Button>
-      </DropdownMenu.DropdownMenuTrigger>
-      <DropdownMenu.DropdownMenuContent align="end" className="min-w-40">
-        <DropdownMenu.DropdownMenuRadioGroup
-          onValueChange={(nextValue) => {
-            if (isThemePreference(nextValue)) {
-              onValueChange(nextValue);
-            }
-          }}
-          value={value}
-        >
-          {THEME_OPTIONS.map((option) => (
-            <DropdownMenu.DropdownMenuRadioItem
-              key={option.value}
-              value={option.value}
-            >
-              {option.label}
-            </DropdownMenu.DropdownMenuRadioItem>
-          ))}
-        </DropdownMenu.DropdownMenuRadioGroup>
-      </DropdownMenu.DropdownMenuContent>
-    </DropdownMenu.DropdownMenu>
+    <Select
+      onValueChange={(nextValue) => {
+        if (isThemePreference(nextValue)) {
+          onValueChange(nextValue);
+        }
+      }}
+      value={value}
+    >
+      <SelectTrigger
+        aria-label={t.app.settings.general.themeLabel}
+        className="w-full sm:w-48"
+      >
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent align="end" className="min-w-40">
+        {THEME_OPTIONS.map((option) => (
+          <SelectItem key={option.value} value={option.value}>
+            {option.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
 
