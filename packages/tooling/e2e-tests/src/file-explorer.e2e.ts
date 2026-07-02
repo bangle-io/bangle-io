@@ -56,8 +56,8 @@ test('file explorer creates folders, opens notes, and survives reload', async ({
 
   await test.step('create a folder from the explorer root action', async () => {
     await explorer.getByLabel('New Folder').click();
-    await page.getByPlaceholder('Input directory name').fill('docs');
-    await page.getByRole('option', { name: 'Create' }).click();
+    await page.getByLabel('Folder name').fill('docs');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     await expect(
       page
@@ -69,8 +69,8 @@ test('file explorer creates folders, opens notes, and survives reload', async ({
   await test.step('create a named nested note through the existing dialog', async () => {
     await page.getByRole('button', { name: 'Bangle.io' }).click();
     await page.getByRole('menuitem', { name: 'New Note' }).click();
-    await page.getByPlaceholder('Input a note name').fill('docs/alpha');
-    await page.getByRole('option', { name: 'Create' }).click();
+    await page.getByLabel('Note name').fill('docs/alpha');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     const editor = getEditorLocator(page, {});
     await expect(editor).toBeVisible();
@@ -120,8 +120,8 @@ test('file explorer creates folders, opens notes, and survives reload', async ({
 
   await test.step('create a second root folder for drag-and-drop moves', async () => {
     await explorer.getByLabel('New Folder').click();
-    await page.getByPlaceholder('Input directory name').fill('archive');
-    await page.getByRole('option', { name: 'Create' }).click();
+    await page.getByLabel('Folder name').fill('archive');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     await expect(
       explorer.getByRole('treeitem', { name: /^archive$/ }),
@@ -167,7 +167,7 @@ test('file explorer creates folders, opens notes, and survives reload', async ({
       .click({ button: 'right' });
     await page.getByRole('button', { name: 'Rename' }).click();
     await page.getByPlaceholder('Provide a new folder name').fill('vault');
-    await page.getByRole('option', { name: 'Confirm folder rename' }).click();
+    await page.getByRole('button', { name: 'Confirm folder rename' }).click();
 
     await expect
       .poll(() => readStoredMarkdown(page, workspaceName, 'vault/alpha'))
@@ -182,8 +182,11 @@ test('file explorer creates folders, opens notes, and survives reload', async ({
       .getByRole('treeitem', { name: /alpha\.md/ })
       .click({ button: 'right' });
     await page.getByRole('button', { name: 'Rename' }).click();
-    await page.getByPlaceholder('Provide a new name').fill('beta');
-    await page.getByRole('option', { name: 'Confirm name change' }).click();
+    await page.getByLabel('New name').fill('beta');
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: 'Rename' })
+      .click();
 
     await expect
       .poll(() => readStoredMarkdown(page, workspaceName, 'vault/beta'))
@@ -193,7 +196,6 @@ test('file explorer creates folders, opens notes, and survives reload', async ({
       .getByRole('treeitem', { name: /beta\.md/ })
       .click({ button: 'right' });
     await page.getByRole('button', { name: 'Delete' }).click();
-    await page.getByRole('option', { name: /vault\/beta\.md/ }).click();
     const confirmDeleteDialog = page.getByRole('alertdialog', {
       name: 'Confirm Delete',
     });

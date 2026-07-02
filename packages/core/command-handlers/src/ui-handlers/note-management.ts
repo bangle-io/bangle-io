@@ -329,16 +329,14 @@ export const noteManagementHandlers = [
       store.set(workbenchState.$singleInputDialog, () => {
         return {
           dialogId: 'dialog::rename-directory-dialog',
-          placeholder: t.app.dialogs.renameDirectory.placeholder,
-          badgeText: t.app.dialogs.renameDirectory.badgeText({
+          title: t.app.dialogs.renameDirectory.badgeText({
             directoryName: dirPath.name,
           }),
+          inputLabel: t.app.dialogs.renameDirectory.placeholder,
+          placeholder: t.app.dialogs.renameDirectory.placeholder,
+          submitText: t.app.dialogs.renameDirectory.optionTitle,
           initialSearch: dirPath.name,
           Icon: FilePlus,
-          option: {
-            id: 'rename-directory-dialog',
-            title: t.app.dialogs.renameDirectory.optionTitle,
-          },
           onSelect: (input) => {
             const newDirectoryName = input.trim();
             if (!newDirectoryName) {
