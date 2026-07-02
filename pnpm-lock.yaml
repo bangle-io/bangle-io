@@ -410,8 +410,8 @@ importers:
   packages/js-lib/banger-editor:
     dependencies:
       '@bangle.dev/prosemirror-all':
-        specifier: 2.0.0-alpha.18
-        version: 2.0.0-alpha.18
+        specifier: 2.0.0-alpha.19
+        version: 2.0.0-alpha.19
       jotai:
         specifier: ^2.20.1
         version: 2.20.1(@babel/core@7.29.7)(@babel/template@7.29.7)(@types/react@19.2.17)(react@19.2.7)
@@ -1692,8 +1692,8 @@ packages:
     peerDependencies:
       prosemirror-markdown: '*'
 
-  '@bangle.dev/prosemirror-all@2.0.0-alpha.18':
-    resolution: {integrity: sha512-taxj5NNwHpuJL7nc2ZzLz/VA0jxxVHet5AKORV5/Y3GwetNlfbvfpPFg0D1rDWKoLsgu8+amLfQkJOwGqaK0uQ==}
+  '@bangle.dev/prosemirror-all@2.0.0-alpha.19':
+    resolution: {integrity: sha512-eV1R7UiWDBxxWOXM55C9asnbDARx6jKuZNoYTGq4cgUlxNm0P9fZd+NmzLBN2xxeJZP2/PcnFOuIb6lxp4O7uA==}
 
   '@bangle.io/config-template@0.0.7':
     resolution: {integrity: sha512-nPFkcM3aU/w+NJxwiQrpfu7Md3wpQrVY870ieeaZNyqPGvYj7qOng06Z7GalEvR2a6dLsvsQC3X1MgQImEOCGw==}
@@ -8083,9 +8083,6 @@ packages:
   prosemirror-dropcursor@1.8.2:
     resolution: {integrity: sha512-CCk6Gyx9+Tt2sbYk5NK0nB1ukHi2ryaRgadV/LvyNuO3ena1payM2z6Cg0vO1ebK8cxbzo41ku2DE5Axj1Zuiw==}
 
-  prosemirror-flat-list@0.5.8:
-    resolution: {integrity: sha512-QHeogWkwVktecyFcCnWpJUs8d3gJ/D5H+67X1dqAIKPUCBJjsc5DNQMZ68QJ5gPHn0v6HYCIaCcQlZZu+YTvcA==}
-
   prosemirror-flat-list@0.6.0:
     resolution: {integrity: sha512-/C11nhH5gdNxj9qVKRlaox/ndK4+X1o/hGTkNCJWdzGVqBVgRkKI/dc6GdZ4/RNvudEtgnTk4QOMOB0zcFTeHQ==}
 
@@ -10146,13 +10143,13 @@ snapshots:
       markdown-it: 14.3.0
       prosemirror-markdown: 1.13.4
 
-  '@bangle.dev/prosemirror-all@2.0.0-alpha.18':
+  '@bangle.dev/prosemirror-all@2.0.0-alpha.19':
     dependencies:
       '@types/orderedmap': 2.0.0
       orderedmap: 2.1.1
       prosemirror-commands: 1.7.1
       prosemirror-dropcursor: 1.8.2
-      prosemirror-flat-list: 0.5.8
+      prosemirror-flat-list: 0.6.0
       prosemirror-gapcursor: 1.4.1
       prosemirror-history: 1.5.0
       prosemirror-inputrules: 1.5.1
@@ -17108,16 +17105,6 @@ snapshots:
 
   prosemirror-dropcursor@1.8.2:
     dependencies:
-      prosemirror-state: 1.4.4
-      prosemirror-transform: 1.12.0
-      prosemirror-view: 1.42.0
-
-  prosemirror-flat-list@0.5.8:
-    dependencies:
-      prosemirror-commands: 1.7.1
-      prosemirror-inputrules: 1.5.1
-      prosemirror-model: 1.25.9
-      prosemirror-safari-ime-span: 1.0.2
       prosemirror-state: 1.4.4
       prosemirror-transform: 1.12.0
       prosemirror-view: 1.42.0
