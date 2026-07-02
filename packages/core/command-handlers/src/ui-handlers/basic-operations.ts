@@ -74,6 +74,14 @@ export const basicOperationsHandlers = [
     navigation.goSettingsGeneral();
   }),
 
+  c('command::ui:open-settings-general', ({ navigation }) => {
+    navigation.goSettingsPage('settings-general');
+  }),
+
+  c('command::ui:open-settings-workspaces', ({ navigation }) => {
+    navigation.goSettingsPage('settings-workspaces');
+  }),
+
   c(
     'command::ui:toggle-all-files',
     ({ workbenchState }, { prefillInput }, key) => {

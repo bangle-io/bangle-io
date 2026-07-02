@@ -194,6 +194,19 @@ describe('PathBasedStrategy', () => {
         hash: '',
       });
     });
+
+    it('should encode settings workspaces route', () => {
+      const routeInfo: AppRouteInfo = {
+        route: 'settings-workspaces',
+        payload: {},
+      };
+
+      expect(strategy.encodeRouteInfo(routeInfo, basePath)).toEqual({
+        pathname: '/app/settings-workspaces',
+        search: '',
+        hash: '',
+      });
+    });
   });
 
   describe('decodeRouteInfo', () => {
@@ -311,6 +324,18 @@ describe('PathBasedStrategy', () => {
         payload: {
           returnTo: '/ws#route=editor&wsPath=notes%3Aindex.md',
         },
+      });
+    });
+
+    it('should decode settings workspaces route', () => {
+      const encoded: EncodedRoute = {
+        pathname: '/settings-workspaces',
+        search: '',
+      };
+
+      expect(strategy.decodeRouteInfo(encoded, basePath)).toEqual({
+        route: 'settings-workspaces',
+        payload: {},
       });
     });
   });

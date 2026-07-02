@@ -1,3 +1,8 @@
+import {
+  isSettingsRouteInfo,
+  SETTINGS_PAGE_DEFINITIONS,
+  type SettingsPageId,
+} from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import type { AppRouteInfo, ThemePreference } from '@bangle.io/types';
 import {
@@ -12,10 +17,16 @@ import {
   ToggleGroupItem,
 } from '@bangle.io/ui-components';
 import { useAtom, useAtomValue } from 'jotai';
-import { ArrowLeft, Settings2 } from 'lucide-react';
+import {
+  ArrowLeft,
+  BriefcaseBusiness,
+  type LucideIcon,
+  Settings2,
+} from 'lucide-react';
 import React from 'react';
 import { AppHeader } from '../layout/app-header';
 import { PageContentContainer } from '../layout/main-content-container';
+import { WorkspacesSettingsPage } from './page-settings-workspaces';
 
 const THEME_VALUES = [
   'system',
@@ -29,23 +40,31 @@ const THEME_OPTIONS: Array<{ value: ThemePreference; label: string }> = [
   { value: 'dark', label: t.app.dialogs.changeTheme.options.dark },
 ];
 
-const SETTINGS_PAGES = [
-  {
-    id: 'general',
+// Presentation for each settings page. Keyed by SettingsPageId so adding a page
+// to SETTINGS_PAGE_DEFINITIONS (in @bangle.io/constants) forces a matching entry
+// here at compile time.
+const SETTINGS_PAGE_META: Record<
+  SettingsPageId,
+  { label: string; icon: LucideIcon; title: string }
+> = {
+  general: {
     label: t.app.settings.nav.general,
-    route: 'settings-general' as const,
     icon: Settings2,
+    title: t.app.settings.general.title,
   },
-] as const;
-
-type SettingsPageId = (typeof SETTINGS_PAGES)[number]['id'];
+  workspaces: {
+    label: t.app.settings.nav.workspaces,
+    icon: BriefcaseBusiness,
+    title: t.app.settings.workspaces.title,
+  },
+};
 
 function isThemePreference(value: string): value is ThemePreference {
   return THEME_VALUES.some((theme) => theme === value);
 }
 
 function getSettingsReturnTo(routeInfo: AppRouteInfo) {
-  if (routeInfo.route !== 'settings-general') {
+  if (!isSettingsRouteInfo(routeInfo)) {
     return undefined;
   }
 
@@ -53,7 +72,7 @@ function getSettingsReturnTo(routeInfo: AppRouteInfo) {
 }
 
 function safeAppHref(href: string | undefined) {
-  if (!href || !href.startsWith('/') || href.startsWith('//')) {
+  if (!href?.startsWith('/') || href.startsWith('//')) {
     return undefined;
   }
 
@@ -61,7 +80,13 @@ function safeAppHref(href: string | undefined) {
 }
 
 export function PageSettings() {
-  return <SettingsLayout activePage="general" />;
+  const { navigation } = useCoreServices();
+  const routeInfo = useAtomValue(navigation.$routeInfo);
+  const activePage =
+    SETTINGS_PAGE_DEFINITIONS.find((page) => page.route === routeInfo.route)
+      ?.id ?? 'general';
+
+  return <SettingsLayout activePage={activePage} />;
 }
 
 function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
@@ -77,14 +102,14 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
       route: 'welcome',
       payload: {},
     });
-  const navItems = SETTINGS_PAGES.map((page) => ({
+  const navItems = SETTINGS_PAGE_DEFINITIONS.map((page) => ({
     id: page.id,
-    label: page.label,
+    label: SETTINGS_PAGE_META[page.id].label,
     href: navigation.toUri({
       route: page.route,
       payload: { returnTo },
     }),
-    icon: page.icon,
+    icon: SETTINGS_PAGE_META[page.id].icon,
   }));
 
   return (
@@ -104,63 +129,69 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
                 items={navItems}
               />
             }
-            title={t.app.settings.general.title}
+            title={SETTINGS_PAGE_META[activePage].title}
           />
 
           <SettingsPage.SettingsPageContent>
-            <SettingsPage.SettingsSection
-              title={t.app.settings.general.appearanceSection}
-            >
-              <SettingsPage.SettingsRow
-                control={
-                  <ThemePreferenceSelect
-                    onValueChange={(preference) => {
-                      workbenchState.changeThemePreference(preference);
-                    }}
-                    value={themePref}
+            {activePage === 'general' ? (
+              <>
+                <SettingsPage.SettingsSection
+                  title={t.app.settings.general.appearanceSection}
+                >
+                  <SettingsPage.SettingsRow
+                    control={
+                      <ThemePreferenceSelect
+                        onValueChange={(preference) => {
+                          workbenchState.changeThemePreference(preference);
+                        }}
+                        value={themePref}
+                      />
+                    }
+                    description={t.app.settings.general.themeDescription}
+                    title={t.app.settings.general.themeTitle}
                   />
-                }
-                description={t.app.settings.general.themeDescription}
-                title={t.app.settings.general.themeTitle}
-              />
-            </SettingsPage.SettingsSection>
+                </SettingsPage.SettingsSection>
 
-            <SettingsPage.SettingsSection
-              title={t.app.settings.general.editorSection}
-            >
-              <SettingsPage.SettingsRow
-                control={
-                  <SegmentedControl
-                    aria-label={t.app.settings.general.wideEditorToggle}
-                    onValueChange={(value) => {
-                      if (value === 'default') {
-                        setWideEditor(false);
-                      }
-                      if (value === 'wide') {
-                        setWideEditor(true);
-                      }
-                    }}
-                    type="single"
-                    value={wideEditor ? 'wide' : 'default'}
-                  >
-                    <ToggleGroupItem
-                      className={SEGMENTED_ITEM_CLASS}
-                      value="default"
-                    >
-                      {t.app.settings.general.defaultWidth}
-                    </ToggleGroupItem>
-                    <ToggleGroupItem
-                      className={SEGMENTED_ITEM_CLASS}
-                      value="wide"
-                    >
-                      {t.app.settings.general.wideWidth}
-                    </ToggleGroupItem>
-                  </SegmentedControl>
-                }
-                description={t.app.settings.general.wideEditorDescription}
-                title={t.app.settings.general.wideEditorTitle}
-              />
-            </SettingsPage.SettingsSection>
+                <SettingsPage.SettingsSection
+                  title={t.app.settings.general.editorSection}
+                >
+                  <SettingsPage.SettingsRow
+                    control={
+                      <SegmentedControl
+                        aria-label={t.app.settings.general.wideEditorToggle}
+                        onValueChange={(value) => {
+                          if (value === 'default') {
+                            setWideEditor(false);
+                          }
+                          if (value === 'wide') {
+                            setWideEditor(true);
+                          }
+                        }}
+                        type="single"
+                        value={wideEditor ? 'wide' : 'default'}
+                      >
+                        <ToggleGroupItem
+                          className={SEGMENTED_ITEM_CLASS}
+                          value="default"
+                        >
+                          {t.app.settings.general.defaultWidth}
+                        </ToggleGroupItem>
+                        <ToggleGroupItem
+                          className={SEGMENTED_ITEM_CLASS}
+                          value="wide"
+                        >
+                          {t.app.settings.general.wideWidth}
+                        </ToggleGroupItem>
+                      </SegmentedControl>
+                    }
+                    description={t.app.settings.general.wideEditorDescription}
+                    title={t.app.settings.general.wideEditorTitle}
+                  />
+                </SettingsPage.SettingsSection>
+              </>
+            ) : (
+              <WorkspacesSettingsPage />
+            )}
           </SettingsPage.SettingsPageContent>
         </SettingsPage.SettingsPageLayout>
       </PageContentContainer>

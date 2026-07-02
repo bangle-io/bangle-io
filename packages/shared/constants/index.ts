@@ -12,6 +12,44 @@ export const KEYBOARD_SHORTCUTS = {
   toggleOmniSearch: { id: 'toggleOmniSearch', keys: ['ctrl', 'k'] },
 } as const;
 
+export const SETTINGS_DEFAULT_COMMAND = {
+  id: 'command::ui:open-settings',
+  route: 'settings-general',
+  title: 'Settings',
+  keywords: ['settings', 'preferences'],
+} as const;
+
+export const SETTINGS_PAGE_DEFINITIONS = [
+  {
+    id: 'general',
+    route: 'settings-general',
+    commandId: 'command::ui:open-settings-general',
+    commandTitle: 'Settings - General',
+    commandKeywords: ['settings', 'preferences', 'general'],
+  },
+  {
+    id: 'workspaces',
+    route: 'settings-workspaces',
+    commandId: 'command::ui:open-settings-workspaces',
+    commandTitle: 'Settings - Workspaces',
+    commandKeywords: ['settings', 'preferences', 'workspaces', 'workspace'],
+  },
+] as const;
+
+export type SettingsPageDefinition = (typeof SETTINGS_PAGE_DEFINITIONS)[number];
+export type SettingsPageId = SettingsPageDefinition['id'];
+export type SettingsRoute = SettingsPageDefinition['route'];
+
+export function isSettingsRoute(route: string): route is SettingsRoute {
+  return SETTINGS_PAGE_DEFINITIONS.some((page) => page.route === route);
+}
+
+export function isSettingsRouteInfo<RouteInfo extends { route: string }>(
+  routeInfo: RouteInfo,
+): routeInfo is Extract<RouteInfo, { route: SettingsRoute }> {
+  return isSettingsRoute(routeInfo.route);
+}
+
 export const WORKSPACE_STORAGE_TYPE = {
   Help: 'helpfs',
   NativeFS: 'nativefs',

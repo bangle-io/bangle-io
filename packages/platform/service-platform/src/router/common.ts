@@ -151,6 +151,13 @@ export function handleRouteInfo(
       };
     }
 
+    case 'settings-workspaces': {
+      return {
+        route: 'settings-workspaces',
+        payload: params.returnTo ? { returnTo: params.returnTo } : {},
+      };
+    }
+
     default:
       return { route: 'not-found', payload: { path: route } };
   }

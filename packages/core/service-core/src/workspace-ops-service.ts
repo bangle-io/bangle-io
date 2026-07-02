@@ -35,12 +35,13 @@ export class WorkspaceOpsService extends BaseService {
   async hookMount(): Promise<void> {
     this.database.subscribe(
       { tableName: DATABASE_TABLE_NAME.workspaceInfo },
-      (change) => {
+      (_change) => {
         this.invalidateCache();
         this.store.set(this.$workspaceInfoAnyChange, (v) => v + 1);
-        if (change.type === 'create' || change.type === 'delete') {
-          this.store.set(this.$workspaceInfoListChange, (v) => v + 1);
-        }
+        // Workspaces are soft-deleted (and restored) via `updateEntry`, which
+        // emits an 'update' change rather than 'delete'. Any change can therefore
+        // alter the visible (non-deleted) workspace set, so refresh the list.
+        this.store.set(this.$workspaceInfoListChange, (v) => v + 1);
       },
       this.abortSignal,
     );

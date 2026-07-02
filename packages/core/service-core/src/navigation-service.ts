@@ -3,7 +3,11 @@ import {
   type BaseServiceContext,
   createAppError,
 } from '@bangle.io/base-utils';
-import { SERVICE_NAME } from '@bangle.io/constants';
+import {
+  isSettingsRouteInfo,
+  SERVICE_NAME,
+  type SettingsRoute,
+} from '@bangle.io/constants';
 import type {
   AppRouteInfo,
   BaseRouter,
@@ -179,14 +183,17 @@ export class NavigationService extends BaseService {
   }
 
   public goSettingsGeneral() {
+    this.goSettingsPage('settings-general');
+  }
+
+  public goSettingsPage(route: SettingsRoute) {
     const currentRoute = this.store.get(this.$routeInfo);
-    const returnTo =
-      currentRoute.route === 'settings-general'
-        ? currentRoute.payload.returnTo
-        : this.toUri(currentRoute);
+    const returnTo = isSettingsRouteInfo(currentRoute)
+      ? currentRoute.payload.returnTo
+      : this.toUri(currentRoute);
 
     this.go({
-      route: 'settings-general',
+      route,
       payload: returnTo ? { returnTo } : {},
     });
   }

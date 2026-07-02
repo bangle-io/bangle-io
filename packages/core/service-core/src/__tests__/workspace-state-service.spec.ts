@@ -55,6 +55,54 @@ async function setupWorkspaceStateService({
   return { rootEmitter: testEnv.rootEmitter, services, store: testEnv.store };
 }
 
+describe('WorkspaceStateService $workspaces list', () => {
+  let controller = new AbortController();
+
+  beforeEach(() => {
+    controller = new AbortController();
+  });
+
+  afterEach(() => {
+    controller.abort();
+  });
+
+  it('drops a workspace from $workspaces after it is deleted', async () => {
+    const testEnv = createTestEnvironment({ controller }).setDefaultConfig();
+    const services = testEnv.instantiateAll();
+    await testEnv.mountAll();
+    const store = testEnv.store;
+
+    await services.workspaceOps.createWorkspaceInfo({
+      name: 'keep-ws',
+      type: WORKSPACE_STORAGE_TYPE.Memory,
+      metadata: {},
+    });
+    await services.workspaceOps.createWorkspaceInfo({
+      name: 'delete-ws',
+      type: WORKSPACE_STORAGE_TYPE.Memory,
+      metadata: {},
+    });
+
+    await vi.waitFor(() => {
+      expect(
+        store.get(services.workspaceState.$workspaces).map((ws) => ws.name),
+      ).toEqual(expect.arrayContaining(['keep-ws', 'delete-ws']));
+    });
+
+    // Soft-delete emits an 'update' change; $workspaces must still refresh so the
+    // deleted workspace disappears from any live list without a reload.
+    await services.workspaceOps.deleteWorkspaceInfo('delete-ws');
+
+    await vi.waitFor(() => {
+      const names = store
+        .get(services.workspaceState.$workspaces)
+        .map((ws) => ws.name);
+      expect(names).toContain('keep-ws');
+      expect(names).not.toContain('delete-ws');
+    });
+  });
+});
+
 describe('WorkspaceStateService backlink index', () => {
   let controller = new AbortController();
 

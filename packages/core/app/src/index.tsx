@@ -85,6 +85,7 @@ function AppRoutes() {
     case 'not-found':
       return <PageNotFound />;
     case 'settings-general':
+    case 'settings-workspaces':
       return <PageSettings />;
 
     default: {

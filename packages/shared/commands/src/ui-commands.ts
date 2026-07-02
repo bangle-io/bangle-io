@@ -1,6 +1,17 @@
-import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
+import {
+  KEYBOARD_SHORTCUTS,
+  SETTINGS_DEFAULT_COMMAND,
+  SETTINGS_PAGE_DEFINITIONS,
+} from '@bangle.io/constants';
 import { T } from '@bangle.io/mini-js-utils';
 import { narrow } from './common';
+
+// Each settings page exposes an omni-search command. The list is small and
+// stable, so the commands are written inline (rather than generated) to keep
+// per-command literal types flowing into `BangleAppCommand` without a cast.
+// The `command.spec` test asserts these stay in sync with SETTINGS_PAGE_DEFINITIONS.
+const [GENERAL_SETTINGS_PAGE, WORKSPACES_SETTINGS_PAGE] =
+  SETTINGS_PAGE_DEFINITIONS;
 
 // pattern command::ui:{action}-{target}
 export const uiCommands = narrow([
@@ -67,10 +78,32 @@ export const uiCommands = narrow([
     args: {},
   },
   {
-    id: 'command::ui:open-settings',
-    title: 'Open Settings',
+    id: SETTINGS_DEFAULT_COMMAND.id,
+    title: SETTINGS_DEFAULT_COMMAND.title,
+    keywords: [...SETTINGS_DEFAULT_COMMAND.keywords],
     omniSearch: true,
-    keywords: ['settings', 'preferences', 'general'],
+    dependencies: {
+      services: ['navigation'],
+    },
+    autoFocusEditor: false,
+    args: null,
+  },
+  {
+    id: GENERAL_SETTINGS_PAGE.commandId,
+    title: GENERAL_SETTINGS_PAGE.commandTitle,
+    keywords: [...GENERAL_SETTINGS_PAGE.commandKeywords],
+    omniSearch: true,
+    dependencies: {
+      services: ['navigation'],
+    },
+    autoFocusEditor: false,
+    args: null,
+  },
+  {
+    id: WORKSPACES_SETTINGS_PAGE.commandId,
+    title: WORKSPACES_SETTINGS_PAGE.commandTitle,
+    keywords: [...WORKSPACES_SETTINGS_PAGE.commandKeywords],
+    omniSearch: true,
     dependencies: {
       services: ['navigation'],
     },

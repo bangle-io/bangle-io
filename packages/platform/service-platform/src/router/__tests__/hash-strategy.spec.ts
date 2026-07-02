@@ -108,6 +108,20 @@ describe('HashStrategy', () => {
         hash: '#route=settings-general&returnTo=%2Fws%23route%3Deditor%26wsPath%3Dnotes%253Aindex.md',
       });
     });
+
+    it('should encode settings workspaces route', () => {
+      const routeInfo: AppRouteInfo = {
+        route: 'settings-workspaces',
+        payload: {},
+      };
+
+      const result = strategy.encodeRouteInfo(routeInfo, basePath);
+      expect(result).toEqual({
+        pathname: '/app',
+        search: '',
+        hash: '#route=settings-workspaces',
+      });
+    });
   });
 
   describe('decodeRouteInfo', () => {
@@ -187,6 +201,19 @@ describe('HashStrategy', () => {
         payload: {
           returnTo: '/ws#route=editor&wsPath=notes%3Aindex.md',
         },
+      });
+    });
+
+    it('should decode settings workspaces route', () => {
+      const encoded: EncodedRoute = {
+        pathname: '/app',
+        search: '',
+        hash: '#route=settings-workspaces',
+      };
+
+      expect(strategy.decodeRouteInfo(encoded, basePath)).toEqual({
+        route: 'settings-workspaces',
+        payload: {},
       });
     });
   });

@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 /// <reference types="@vitest/browser/matchers" />
 import '@testing-library/jest-dom/vitest';
+import { SETTINGS_PAGE_DEFINITIONS } from '@bangle.io/constants';
 import { describe, expect, it, vi } from 'vitest';
 import { setupTest } from './test-utils';
 
@@ -32,7 +33,7 @@ describe('UI command handlers', () => {
   });
 
   describe('command::ui:open-settings', () => {
-    it('should navigate to general settings', async () => {
+    it('should navigate to settings', async () => {
       const { dispatch, services } = await setupTest({
         targetId: 'command::ui:open-settings',
       });
@@ -42,6 +43,62 @@ describe('UI command handlers', () => {
       await vi.waitFor(() => {
         expect(services.navigation.resolveAtoms().routeInfo).toEqual({
           route: 'settings-general',
+          payload: {
+            returnTo: services.navigation.toUri({
+              route: 'welcome',
+              payload: {},
+            }),
+          },
+        });
+      });
+    });
+
+    it.each(
+      SETTINGS_PAGE_DEFINITIONS,
+    )('should navigate to $id settings', async (settingsPage) => {
+      const { dispatch, services } = await setupTest({
+        targetId: settingsPage.commandId,
+      });
+
+      dispatch(settingsPage.commandId, null);
+
+      await vi.waitFor(() => {
+        expect(services.navigation.resolveAtoms().routeInfo).toEqual({
+          route: settingsPage.route,
+          payload: {
+            returnTo: services.navigation.toUri({
+              route: 'welcome',
+              payload: {},
+            }),
+          },
+        });
+      });
+    });
+
+    it('should preserve returnTo while navigating between settings pages', async () => {
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ui:open-settings-general',
+      });
+
+      dispatch('command::ui:open-settings-general', null);
+
+      await vi.waitFor(() => {
+        expect(services.navigation.resolveAtoms().routeInfo).toEqual({
+          route: 'settings-general',
+          payload: {
+            returnTo: services.navigation.toUri({
+              route: 'welcome',
+              payload: {},
+            }),
+          },
+        });
+      });
+
+      dispatch('command::ui:open-settings-workspaces', null);
+
+      await vi.waitFor(() => {
+        expect(services.navigation.resolveAtoms().routeInfo).toEqual({
+          route: 'settings-workspaces',
           payload: {
             returnTo: services.navigation.toUri({
               route: 'welcome',
