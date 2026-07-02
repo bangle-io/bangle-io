@@ -61,5 +61,8 @@
     "node_modules",
     "packages/js-lib/color-scheme-manager/src/**/*",
     "packages/js-lib/poor-mans-di/src/__tests__/poor-mans-di.spec.ts",
+    // React Native's ambient globals (timers, fetch) conflict with DOM lib
+    // types; mobile-entry typechecks as its own project (see its tsconfig).
+    "packages/tooling/mobile-entry/**/*",
   ]
 }

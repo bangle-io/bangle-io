@@ -41,3 +41,5 @@ packages/tooling/e2e-tests/playwright/playwright-report
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+.DS_Store
