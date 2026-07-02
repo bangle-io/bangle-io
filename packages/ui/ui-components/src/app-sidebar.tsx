@@ -138,7 +138,7 @@ function DropdownButton({
           </span>
           <span className={subtitleClass}>{subtitle}</span>
         </div>
-        <ChevronsUpDown className="ml-auto" />
+        <ChevronsUpDown className="!size-3.5 ml-auto text-sidebar-foreground/55" />
       </SidebarMenuButton>
     </DropdownMenuTrigger>
   );
@@ -182,7 +182,7 @@ export function AppSidebar({
           onClick={() => onSearchClick?.()}
         />
       </SidebarHeader>
-      <SidebarContent className="gap-1">
+      <SidebarContent className="gap-1 overflow-hidden">
         {navItems.length > 0 && (
           <SidebarGroup>
             <SidebarGroupLabel>
@@ -223,11 +223,11 @@ export function AppSidebar({
             </SidebarMenu>
           </SidebarGroup>
         )}
-        <SidebarGroup className="min-h-0 overflow-visible pt-0">
+        <SidebarGroup className="min-h-0 flex-1 overflow-hidden p-0 pt-0">
           <SidebarGroupLabel className="sr-only">
             {t.app.components.appSidebar.filesLabel}
           </SidebarGroupLabel>
-          <SidebarGroupContent className="flex min-h-0 flex-col overflow-visible">
+          <SidebarGroupContent className="flex min-h-0 flex-1 flex-col overflow-hidden">
             <PierreFileTree
               activePaths={activeFilePaths}
               filePaths={filePaths}

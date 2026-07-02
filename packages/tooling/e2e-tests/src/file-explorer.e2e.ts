@@ -5,6 +5,7 @@ import {
   getEditorLocator,
   getEditorText,
   readStoredMarkdown,
+  writeStoredMarkdown,
 } from './common';
 
 async function expectContextMenuIsNotClipped(page: Page) {
@@ -38,6 +39,88 @@ async function expectContextMenuIsNotClipped(page: Page) {
       { message: 'Expected the file-tree context menu to be fully hittable' },
     )
     .toBe(true);
+}
+
+async function getFileExplorerLayout(page: Page) {
+  return page.getByTestId('bangle-file-explorer').evaluate((explorer) => {
+    const host = explorer.querySelector('file-tree-container') as HTMLElement;
+    const scroll = host.shadowRoot?.querySelector(
+      '[data-file-tree-virtualized-scroll="true"]',
+    ) as HTMLElement | null;
+    const footer = explorer
+      .closest('[data-sidebar="sidebar"]')
+      ?.querySelector('[data-sidebar="footer"]') as HTMLElement | null;
+    const explorerRect = explorer.getBoundingClientRect();
+    const hostRect = host.getBoundingClientRect();
+    const scrollRect = scroll?.getBoundingClientRect();
+    const footerRect = footer?.getBoundingClientRect();
+
+    return {
+      explorerBottom: explorerRect.bottom,
+      explorerHeight: explorerRect.height,
+      footerTop: footerRect?.top ?? window.innerHeight,
+      hostRight: hostRect.right,
+      scrollClientHeight: scroll?.clientHeight ?? 0,
+      scrollHeight: scroll?.scrollHeight ?? 0,
+      scrollRight: scrollRect?.right ?? 0,
+      scrollTop: scroll?.scrollTop ?? 0,
+    };
+  });
+}
+
+async function setFileExplorerScrollTop(page: Page, scrollTop: number) {
+  await page
+    .getByTestId('bangle-file-explorer')
+    .evaluate((explorer, nextScrollTop) => {
+      const host = explorer.querySelector('file-tree-container') as HTMLElement;
+      const scroll = host.shadowRoot?.querySelector(
+        '[data-file-tree-virtualized-scroll="true"]',
+      ) as HTMLElement | null;
+
+      if (!scroll) {
+        throw new Error('Expected Pierre file tree scroll container');
+      }
+
+      scroll.scrollTop = nextScrollTop;
+    }, scrollTop);
+}
+
+async function clickVisibleFileTreeRow(page: Page) {
+  return page.getByTestId('bangle-file-explorer').evaluate((explorer) => {
+    const host = explorer.querySelector('file-tree-container') as HTMLElement;
+    const root = host.shadowRoot;
+    const scroll = root?.querySelector(
+      '[data-file-tree-virtualized-scroll="true"]',
+    ) as HTMLElement | null;
+
+    if (!root || !scroll) {
+      throw new Error('Expected Pierre file tree shadow root');
+    }
+
+    const scrollRect = scroll.getBoundingClientRect();
+    const row = Array.from(
+      root.querySelectorAll('button[data-type="item"][data-item-type="file"]'),
+    ).find((element) => {
+      const rect = element.getBoundingClientRect();
+
+      return (
+        rect.top > scrollRect.top + 16 && rect.bottom < scrollRect.bottom - 16
+      );
+    }) as HTMLElement | undefined;
+
+    if (!row) {
+      throw new Error('Expected a visible file row to click');
+    }
+
+    const label = row.getAttribute('aria-label') ?? '';
+    const noteIndex = /^note-(\d+)\.md$/.exec(label)?.[1];
+    row.click();
+
+    return {
+      expectedText: noteIndex === undefined ? '' : `Note ${Number(noteIndex)}`,
+      label: row.getAttribute('aria-label') ?? '',
+    };
+  });
 }
 
 test('file explorer creates folders, opens notes, and survives reload', async ({
@@ -242,4 +325,65 @@ test('file explorer creates folders, opens notes, and survives reload', async ({
         .getByRole('button', { name: 'untitled-2.md' }),
     ).toBeVisible();
   });
+});
+
+test('file explorer fills the sidebar and keeps tree state when opening notes', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+
+  const workspaceName = `explorer-layout-${Date.now()}`;
+  await createBrowserWorkspace(page, { workspaceName });
+
+  await writeStoredMarkdown(page, workspaceName, 'docs/keep-open', 'Nested');
+  for (let index = 0; index < 48; index++) {
+    await writeStoredMarkdown(
+      page,
+      workspaceName,
+      `note-${String(index).padStart(2, '0')}`,
+      `Note ${index}`,
+    );
+  }
+
+  await page.goto(
+    `/ws#route=ws-home&wsName=${encodeURIComponent(workspaceName)}`,
+  );
+  await page.reload();
+
+  const explorer = page.getByTestId('bangle-file-explorer');
+  await expect(explorer).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /^docs$/ }),
+  ).toBeVisible();
+
+  const layout = await getFileExplorerLayout(page);
+  expect(layout.footerTop - layout.explorerBottom).toBeLessThanOrEqual(8);
+  expect(layout.explorerHeight).toBeGreaterThan(450);
+  expect(layout.scrollHeight).toBeGreaterThan(layout.scrollClientHeight);
+  expect(layout.hostRight - layout.scrollRight).toBeLessThanOrEqual(1);
+
+  await explorer.getByRole('treeitem', { name: /^docs$/ }).focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(
+    explorer.getByRole('treeitem', { name: /keep-open\.md/ }),
+  ).toBeVisible();
+  await explorer.getByRole('treeitem', { name: /keep-open\.md/ }).click();
+  await expect(
+    page.getByLabel('breadcrumb').getByRole('button', { name: 'keep-open.md' }),
+  ).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /^docs$/ }),
+  ).toHaveAttribute('aria-expanded', 'true');
+
+  await setFileExplorerScrollTop(page, 260);
+  const beforeClick = await getFileExplorerLayout(page);
+  const clickPoint = await clickVisibleFileTreeRow(page);
+  await expect
+    .poll(() => getEditorText(page, {}))
+    .toBe(clickPoint.expectedText);
+  const afterClick = await getFileExplorerLayout(page);
+
+  expect(
+    Math.abs(afterClick.scrollTop - beforeClick.scrollTop),
+  ).toBeLessThanOrEqual(2);
 });

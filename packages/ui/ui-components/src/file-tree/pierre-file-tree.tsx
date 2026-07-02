@@ -30,6 +30,7 @@ const TREE_UNSAFE_CSS = `
     --trees-border-color-override: var(--sidebar-border);
     --trees-font-family-override: var(--font-sans);
     --trees-font-size-override: 13px;
+    --trees-icon-width-override: 14px;
     --trees-border-radius-override: 6px;
     line-height: 1.3;
   }
@@ -44,34 +45,26 @@ const TREE_UNSAFE_CSS = `
     font-weight: 600;
   }
 
+  button[data-type='item'][data-item-type='file'] > [data-item-section='icon'] {
+    display: none;
+  }
+
+  [data-icon-name='file-tree-icon-chevron'] {
+    width: 12px;
+    height: 12px;
+    opacity: 0.7;
+  }
+
   [data-type='context-menu-anchor'] {
     z-index: 40;
   }
 `;
 
-const MAX_VISIBLE_TREE_ROWS = 14;
-const MIN_TREE_ROWS = 1;
 const CONTEXT_MENU_WIDTH = 176;
 const CONTEXT_MENU_VIEWPORT_MARGIN = 8;
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
-}
-
-function getTreeRowCount(paths: readonly string[]): number {
-  const directoryPaths = new Set<string>();
-
-  for (const path of paths) {
-    const segments = normalizeInputPath(path).split('/').filter(Boolean);
-    let directoryPath = '';
-
-    for (const segment of segments.slice(0, -1)) {
-      directoryPath = directoryPath ? `${directoryPath}/${segment}` : segment;
-      directoryPaths.add(directoryPath);
-    }
-  }
-
-  return paths.length + directoryPaths.size;
 }
 
 function getContextMenuStyle(
@@ -173,29 +166,38 @@ export function PierreFileTree({
   onShowMore,
   getActionsForEntry,
 }: PierreFileTreeProps) {
-  const filePathSet = useMemo(
-    () => new Set(filePaths.map((path) => normalizeInputPath(path))),
+  const rawTreePaths = useMemo(
+    () =>
+      [...new Set(filePaths.map((path) => normalizeInputPath(path)))].sort(
+        (left, right) =>
+          left.localeCompare(right, undefined, { sensitivity: 'base' }),
+      ),
     [filePaths],
   );
-  const treePaths = useMemo(
-    () =>
-      [...filePathSet].sort((left, right) =>
-        left.localeCompare(right, undefined, { sensitivity: 'base' }),
-      ),
-    [filePathSet],
-  );
+  const treePathSignature = rawTreePaths.join('\0');
+  const stableTreePathsRef = useRef<{
+    paths: readonly string[];
+    signature: string;
+  } | null>(null);
+
+  if (stableTreePathsRef.current?.signature !== treePathSignature) {
+    stableTreePathsRef.current = {
+      paths: rawTreePaths,
+      signature: treePathSignature,
+    };
+  }
+
+  const treePaths = stableTreePathsRef.current?.paths ?? rawTreePaths;
+  const filePathSet = useMemo(() => new Set(treePaths), [treePaths]);
   const activeTreePaths = useMemo(
     () => activePaths.map((path) => normalizeInputPath(path)),
     [activePaths],
-  );
-  const visibleRowCount = Math.min(
-    Math.max(getTreeRowCount(treePaths), MIN_TREE_ROWS),
-    MAX_VISIBLE_TREE_ROWS,
   );
   const filePathSetRef = useRef<ReadonlySet<string>>(filePathSet);
   const modelRef = useRef<PierreFileTreeModel | null>(null);
   const onOpenFileRef = useRef(onOpenFile);
   const onMoveFileRef = useRef(onMoveFile);
+  const pendingUserOpenPathRef = useRef<string | null>(null);
   const selectedPathRef = useRef<string | null>(null);
   const treePathsRef = useRef<readonly string[]>(treePaths);
   filePathSetRef.current = filePathSet;
@@ -269,7 +271,6 @@ export function PierreFileTree({
       },
     },
     flattenEmptyDirectories: true,
-    initialVisibleRowCount: visibleRowCount,
     initialExpansion: 1,
     onSelectionChange: (selectedPaths) => {
       const selectedPath = selectedPaths.at(-1);
@@ -278,6 +279,7 @@ export function PierreFileTree({
         : undefined;
 
       if (normalizedPath && filePathSetRef.current.has(normalizedPath)) {
+        pendingUserOpenPathRef.current = normalizedPath;
         onOpenFileRef.current(normalizedPath);
       }
     },
@@ -293,7 +295,13 @@ export function PierreFileTree({
 
   useEffect(() => {
     const nextSelectedPath = activeTreePaths.at(-1) ?? null;
+    const shouldPreserveScroll =
+      pendingUserOpenPathRef.current === nextSelectedPath;
+
     if (selectedPathRef.current === nextSelectedPath) {
+      if (shouldPreserveScroll) {
+        pendingUserOpenPathRef.current = null;
+      }
       return;
     }
 
@@ -306,16 +314,23 @@ export function PierreFileTree({
 
     if (nextSelectedPath) {
       model.getItem(nextSelectedPath)?.select();
-      model.scrollToPath(nextSelectedPath, { focus: false, offset: 'nearest' });
+      if (shouldPreserveScroll) {
+        pendingUserOpenPathRef.current = null;
+      } else {
+        model.scrollToPath(nextSelectedPath, {
+          focus: false,
+          offset: 'nearest',
+        });
+      }
     }
   }, [activeTreePaths, model]);
 
   return (
     <div
-      className={cn('flex min-h-0 flex-col', className)}
+      className={cn('flex min-h-0 flex-1 flex-col', className)}
       data-testid="bangle-file-explorer"
     >
-      <div className="relative flex min-h-0 flex-col overflow-visible">
+      <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
         <div className="group/files-header flex h-8 shrink-0 items-center gap-1 px-2">
           <span className="min-w-0 flex-1 truncate font-medium text-[11px] text-sidebar-foreground/55 uppercase tracking-wide">
             {t.app.components.appSidebar.filesLabel}
@@ -341,11 +356,8 @@ export function PierreFileTree({
         </div>
         <FileTree
           aria-label={t.app.components.appSidebar.fileTreeLabel}
-          className="min-h-0 overflow-hidden px-1"
+          className="min-h-0 flex-1 overflow-hidden"
           model={model}
-          style={{
-            height: `${visibleRowCount * model.getItemHeight()}px`,
-          }}
           renderContextMenu={(item, context) => {
             const entry = toEntry(item);
             const actions = getActionsForEntry(entry);
