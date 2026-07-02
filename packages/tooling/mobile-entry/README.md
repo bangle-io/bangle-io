@@ -20,10 +20,33 @@ See `plans/009-mobile-ios-expo-shell.md` for the roadmap and rationale.
   `io.bangle.app.dev`, `io.bangle.app.preview`, `io.bangle.app`
   (selected via `APP_VARIANT`, wired in `eas.json` profiles).
 
-## One-time setup (human)
+## Free local testing on your own iPhone (no paid account)
 
-1. Enroll in the Apple Developer Program (required for TestFlight;
-   https://developer.apple.com/programs/enroll/).
+Apple's free "personal team" provisioning installs the app on your own
+device via Xcode; the install expires after 7 days (rebuild to renew) and
+device builds must happen locally (EAS cloud device builds require the paid
+program). One-time prerequisites:
+
+1. Xcode: Settings → Accounts → add your Apple ID (creates a Personal Team).
+2. iPhone: Settings → Privacy & Security → Developer Mode → on (reboots).
+3. Tools: `brew install cocoapods` (and Xcode itself).
+
+Then, with the phone connected by cable:
+
+```bash
+APP_VARIANT=development pnpm exec expo run:ios --device
+```
+
+`expo run:ios` prompts once for the signing team (pick your Personal Team;
+it writes the choice into the generated project). If the install is blocked
+on the phone, trust the developer in Settings → General → VPN & Device
+Management. Free-provisioning caveat: Apple limits personal teams to ~10
+app IDs per week, so avoid churning bundle identifiers.
+
+## Paid setup (TestFlight, later)
+
+1. Enroll in the Apple Developer Program
+   (https://developer.apple.com/programs/enroll/).
 2. Create an Expo account and install the CLI: `npm i -g eas-cli`, then
    `eas login`.
 3. From this directory run `eas init` and export the printed project id as

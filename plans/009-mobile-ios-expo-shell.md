@@ -27,8 +27,10 @@ Decisions made (2026-07-02, with Kushan):
 
 - Architecture: Expo shell + WebView (not Capacitor, not a native RN rewrite).
 - Deploy service: EAS Build + EAS Submit (paid, hands-off signing).
-- Apple Developer account: not yet enrolled — enrollment is a prerequisite
-  for TestFlight; simulator/dev-client work is not blocked.
+- Apple Developer account: deferred (2026-07-02) — M0 device testing uses
+  Apple's free personal-team provisioning via local Xcode builds
+  (`expo run:ios --device`; installs expire after 7 days). The paid program
+  + EAS device builds + TestFlight come once the app feels stable.
 - First milestone ships browser-storage (IndexedDB) workspaces only; the
   Native FS workspace type stays hidden (the create-workspace dialog already
   disables it when `supportsNativeBrowserFs()` is false).
@@ -56,12 +58,15 @@ Decisions made (2026-07-02, with Kushan):
    (Continuous Native Generation), WebView pointed at a configurable URL —
    default `https://app.bangle.io`, overridable via `EXPO_PUBLIC_BANGLE_WEB_URL`
    (e.g. LAN Vite dev server for the dev loop).
-2. EAS project init (`eas init`, `eas build --profile development -p ios`),
-   dev client on device via QR install; `expo start --dev-client` for
-   iteration. No local CocoaPods/Xcode build needed (machine currently has
-   no CocoaPods and no simulator runtimes — same EAS-first loop t3code uses).
-3. Apple Developer enrollment → `eas build --profile preview -p ios` →
-   `eas submit` → TestFlight on Kushan's phone.
+2. Free local device install (no paid account): CocoaPods installed
+   locally, `expo prebuild --platform ios` verified, then
+   `APP_VARIANT=development pnpm exec expo run:ios --device` with a
+   personal-team Apple ID in Xcode. 7-day install lifetime; rebuild to
+   renew. See the package README for the phone-side steps.
+3. When stable: Apple Developer enrollment → EAS project init
+   (`eas init`) → `eas build --profile preview -p ios` → `eas submit` →
+   TestFlight. (EAS cloud builds for physical devices require the paid
+   program, which is why M0 device installs are local Xcode builds.)
 4. Known-accepted M0 gaps: no offline (remote URL + no service worker), no
    Files-app storage, desktop-oriented chrome in places, App Store review
    (guideline 4.2 "minimum functionality") not yet addressed — TestFlight
