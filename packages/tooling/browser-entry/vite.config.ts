@@ -63,13 +63,19 @@ export default defineConfig(async (env) => {
           data: { ...envVars.htmlInjections },
         },
       }),
+      tailwindcss(),
+      react(),
       sentryVitePlugin({
         authToken: process.env.SENTRY_AUTH_TOKEN,
         org: 'self-zf',
         project: 'bangle-v2',
+        release: {
+          name: envVars.releaseId,
+        },
+        sourcemaps: {
+          filesToDeleteAfterUpload: ['dist/**/*.map'],
+        },
       }),
-      tailwindcss(),
-      react(),
     ],
     define: {
       ...envVars.globalIdentifiers,

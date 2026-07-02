@@ -100,6 +100,7 @@ interface EnvVarsResult {
   helpDocsVersion?: string;
   appEnv: string;
   hot: boolean;
+  releaseId: string;
   htmlInjections: HtmlInjections;
   globalIdentifiers: GlobalIdentifiers;
 }
@@ -111,6 +112,7 @@ export default ({
   inlinedScripts = [],
 }: EnvVarsOptions): EnvVarsResult => {
   const appEnv = getAppEnv(isProduction);
+  const releaseId = getReleaseId(isProduction);
 
   const hot = Boolean(BANGLE_HOT_ENABLED);
   const bangleConfig = new BangleConfig({
@@ -129,7 +131,7 @@ export default ({
           ? 'github_actions'
           : 'local',
       nodeEnv: isProduction ? 'production' : 'development',
-      releaseId: getReleaseId(isProduction),
+      releaseId,
       releaseVersion: releaseVersion,
       storybook: isStorybook,
     },
@@ -177,6 +179,7 @@ export default ({
     helpDocsVersion,
     appEnv,
     hot,
+    releaseId,
     htmlInjections: {
       inlinedScripts: `
 <script>
