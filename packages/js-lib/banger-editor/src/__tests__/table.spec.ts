@@ -5,7 +5,7 @@ import { setupBase } from '../base';
 import { setupCodeBlock } from '../code-block';
 import { setupHardBreak } from '../hard-break';
 import { setupParagraph } from '../paragraph';
-import { CellSelection } from '../pm';
+import { CellSelection, NodeSelection } from '../pm';
 import { setupTable } from '../table';
 import { createBangerEditorTestSetup } from '../test-helpers';
 
@@ -362,6 +362,81 @@ describe('arrow-key boundary behavior', () => {
     );
     const handled = editor.runKeyDownHandlers('ArrowRight');
     expect(handled).toBe(false);
+  });
+});
+
+describe('moving a whole table (drag handle path)', () => {
+  // The drag handle node-selects the table, then the drop deletes the
+  // source selection. tableEditing must not rewrite that NodeSelection into
+  // a CellSelection, or the deletion only empties the cells and leaves a
+  // hollow table skeleton behind.
+  function selectTableNode(editor: ReturnType<typeof setup.createEditor>) {
+    const view = editor.view;
+    let tablePos = -1;
+    view.state.doc.forEach((node, offset) => {
+      if (node.type.name === 'table' && tablePos < 0) {
+        tablePos = offset;
+      }
+    });
+    view.dispatch(
+      view.state.tr.setSelection(
+        NodeSelection.create(view.state.doc, tablePos),
+      ),
+    );
+    return view;
+  }
+
+  it('a table NodeSelection survives dispatch instead of becoming a CellSelection', () => {
+    const editor = setup.createEditor(
+      doc(
+        p('hello world'),
+        tableNode(row(th('a'), th('b')), row(td('c'), td('d'))),
+      ),
+    );
+    const view = selectTableNode(editor);
+
+    const selection = view.state.selection;
+    expect(selection instanceof NodeSelection).toBe(true);
+    expect(selection instanceof NodeSelection && selection.node.type.name).toBe(
+      'table',
+    );
+  });
+
+  it('deleting the selected table removes it entirely, not just its cells', () => {
+    const editor = setup.createEditor(
+      doc(
+        p('hello world'),
+        tableNode(row(th('a'), th('b')), row(td('c'), td('d'))),
+      ),
+    );
+    const view = selectTableNode(editor);
+
+    // This is exactly what prosemirror-view's drop handler does for the
+    // moved source.
+    view.dispatch(view.state.tr.deleteSelection());
+
+    expect(view.state.doc.childCount).toBe(1);
+    expect(view.state.doc.child(0).type.name).toBe('paragraph');
+    let tables = 0;
+    view.state.doc.descendants((node) => {
+      if (node.type.name === 'table') {
+        tables++;
+      }
+      return true;
+    });
+    expect(tables).toBe(0);
+  });
+
+  it('the node-selected table slice carries the whole table for the drop', () => {
+    const editor = setup.createEditor(
+      doc(tableNode(row(th('a'), th('b')), row(td('c'), td('d')))),
+    );
+    const view = selectTableNode(editor);
+
+    const slice = view.state.selection.content();
+    expect(slice.content.childCount).toBe(1);
+    expect(slice.content.child(0).type.name).toBe('table');
+    expect(slice.content.child(0).textContent).toBe('abcd');
   });
 });
 

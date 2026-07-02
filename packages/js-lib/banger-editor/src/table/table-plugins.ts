@@ -26,7 +26,12 @@ import type { RequiredConfig } from './table-config';
 export function createTablePlugins(config: RequiredConfig) {
   return {
     keybindings: pluginKeybindings(config),
-    tableEditing: tableEditing(),
+    // Without allowTableNodeSelection, tableEditing's selection normalizer
+    // rewrites a table NodeSelection into a CellSelection over every cell.
+    // Drag-and-drop then "moves" only the cell contents: the drop inserts a
+    // full copy, but deleting the source CellSelection empties the cells and
+    // leaves a hollow table skeleton behind.
+    tableEditing: tableEditing({ allowTableNodeSelection: true }),
     fixTables: pluginFixTables(),
     activeCell: pluginActiveCell(),
   };
