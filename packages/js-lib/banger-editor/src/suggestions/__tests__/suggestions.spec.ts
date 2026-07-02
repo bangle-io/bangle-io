@@ -422,4 +422,61 @@ describe('suggestions provider state', () => {
     expect(wikiSelect).toHaveBeenCalledTimes(1);
     expect(slashSelect).not.toHaveBeenCalled();
   });
+
+  it('replaces the active suggestion range when selection has moved elsewhere', () => {
+    const localStore = createStore();
+    const mark = schema.mark('slash_command', { trigger: '/' });
+    const doc = schema.node('doc', null, [
+      schema.node('paragraph', null, [schema.text('/code', [mark])]),
+      schema.node('paragraph', null, [schema.text('tail')]),
+    ]);
+    const mount = document.createElement('div');
+    document.body.append(mount);
+    const state = EditorState.create({
+      doc,
+      schema,
+      selection: TextSelection.create(doc, doc.content.size - 1),
+      plugins: resolve([
+        collection({
+          id: 'test-store',
+          plugin: { store: editorStore.storePlugin(localStore) },
+        }),
+        setupBase(),
+        setupParagraph(),
+        setupLink(),
+        slashSuggestions,
+        wikiSuggestions,
+      ]).resolvePlugins({ schema }),
+    });
+    const view = new EditorView({ mount }, { state });
+    editors.push(view);
+    editorStore.set(
+      view.state,
+      $suggestions,
+      new Map([
+        [
+          view,
+          {
+            markName: 'slash_command',
+            trigger: '/',
+            show: true,
+            text: '/code',
+            position: 1,
+            refresh: 0,
+            anchorEl: () => null,
+            selectedIndex: 0,
+          },
+        ],
+      ]),
+    );
+
+    expect(
+      slashSuggestions.command.replaceSuggestMarkWith({ content: '' })(
+        view.state,
+        view.dispatch,
+        view,
+      ),
+    ).toBe(true);
+    expect(view.state.doc.textContent).toBe('tail');
+  });
 });

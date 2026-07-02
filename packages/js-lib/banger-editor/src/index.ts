@@ -6,11 +6,23 @@ export * from './code';
 export * from './code-block';
 export {
   type CollectionType,
+  canRunCommand,
   collection,
+  createSlashCommandContext,
+  EDITOR_SLASH_COMMAND_GROUPS,
+  type EditorSlashCommandGroupId,
   type MarkdownConfig,
   type MarkdownMarkConfig,
   type MarkdownNodeConfig,
   resolve,
+  resolveSlashCommandGroups,
+  runCommand,
+  runSlashCommandItem,
+  type SlashCommandContext,
+  type SlashCommandExtensions,
+  type SlashCommandGroup,
+  type SlashCommandItem,
+  type SlashCommandLabel,
   setGlobalConfig,
 } from './common';
 export * from './drag';

@@ -1,9 +1,11 @@
 import type { MarkdownSerializerState } from 'prosemirror-markdown';
 import {
+  blockCommandSlashItem,
   type CollectionType,
   collection,
   keybinding,
   PRIORITY,
+  type SlashCommandItem,
   setPriority,
 } from './common';
 import type { Command, EditorState, PMNode } from './pm';
@@ -131,8 +133,46 @@ export function setupList(userConfig: Partial<ListConfig> = {}) {
       isTaskListActive: isTaskListActive(config),
       isToggleListActive: isToggleListActive(config),
     },
+    slashCommand: slashCommands(config),
     markdown: markdown(config),
   });
+}
+
+function slashCommands(
+  config: RequiredConfig,
+): Record<string, SlashCommandItem> {
+  const bulletCommand = toggleBulletList(config);
+  const orderedCommand = toggleOrderedList(config);
+  const taskCommand = toggleTaskList(config);
+  return {
+    'bullet-list': blockCommandSlashItem({
+      id: 'bullet-list',
+      group: 'lists',
+      labelKey: { name: 'bulletList' },
+      label: 'Bullet list',
+      keywords: ['ul', 'unordered'],
+      priority: 100,
+      command: bulletCommand,
+    }),
+    'numbered-list': blockCommandSlashItem({
+      id: 'numbered-list',
+      group: 'lists',
+      labelKey: { name: 'numberedList' },
+      label: 'Numbered list',
+      keywords: ['ol', 'ordered'],
+      priority: 90,
+      command: orderedCommand,
+    }),
+    'todo-list': blockCommandSlashItem({
+      id: 'todo-list',
+      group: 'lists',
+      labelKey: { name: 'todoList' },
+      label: 'To-do list',
+      keywords: ['task', 'todo', 'checkbox'],
+      priority: 80,
+      command: taskCommand,
+    }),
+  };
 }
 
 // PLUGINS

@@ -10,6 +10,7 @@ import {
   PMPlugin,
 } from '../pm';
 import { getGlobalConfig } from './global-config';
+import type { SlashCommandItem } from './slash-command';
 
 export type CommandType = Command | ((...args: any[]) => Command);
 export type QueryType = (state: EditorState, ...args: any[]) => any;
@@ -21,6 +22,7 @@ export type CollectionType = {
   marks?: Record<string, MarkSpec>;
   command?: Record<string, CommandType>;
   query?: Record<string, QueryType>;
+  slashCommand?: Record<string, SlashCommandItem>;
   markdown?: MarkdownConfig;
 };
 

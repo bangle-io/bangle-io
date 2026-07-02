@@ -441,18 +441,30 @@ export function replaceSuggestMarkWith({
       return false;
     }
 
-    const [scanRangeStart, scanRangeEnd] = clampRange(
+    const [suggestionScanStart, suggestionScanEnd] = clampRange(
+      suggestion.position,
+      suggestion.position + Math.max(suggestion.text.length, 1),
+      state.doc.content.size,
+    );
+    const [selectionScanStart, selectionScanEnd] = clampRange(
       state.selection.from - MARK_SCAN_RANGE_PADDING,
       state.selection.to + MARK_SCAN_RANGE_PADDING,
       state.doc.content.size,
     );
 
-    const queryMark = findFirstMarkPosition(
-      markType,
-      state.doc,
-      scanRangeStart,
-      scanRangeEnd,
-    );
+    const queryMark =
+      findFirstMarkPosition(
+        markType,
+        state.doc,
+        suggestionScanStart,
+        suggestionScanEnd,
+      ) ??
+      findFirstMarkPosition(
+        markType,
+        state.doc,
+        selectionScanStart,
+        selectionScanEnd,
+      );
 
     if (!queryMark) {
       return false;
@@ -463,6 +475,11 @@ export function replaceSuggestMarkWith({
     // If no content is provided, simply remove the mark text
     if (!content) {
       tr = tr.delete(queryMark.start, queryMark.end);
+      const position = Math.min(
+        tr.mapping.map(queryMark.start),
+        tr.doc.content.size,
+      );
+      tr = tr.setSelection(Selection.near(tr.doc.resolve(position)));
       dispatch?.(tr);
       return true;
     }

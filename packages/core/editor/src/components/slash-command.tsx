@@ -1,5 +1,10 @@
 import { useCoreServices } from '@bangle.io/context';
-import { $suggestions, Fragment } from '@bangle.io/prosemirror-plugins';
+import {
+  $suggestions,
+  Fragment,
+  resolveSlashCommandGroups,
+  runSlashCommandItem,
+} from '@bangle.io/prosemirror-plugins';
 import {
   Command,
   CommandEmpty,
@@ -10,14 +15,6 @@ import {
   CommandList,
   CommandSeparator,
 } from '@bangle.io/ui-components';
-import {
-  addMonths,
-  addWeeks,
-  format,
-  startOfMonth,
-  startOfWeek,
-  subDays,
-} from 'date-fns';
 import { useAtomValue } from 'jotai';
 import React, {
   type ReactElement,
@@ -28,6 +25,12 @@ import React, {
 } from 'react';
 
 import { DATE_SUGGESTION } from '../extensions';
+import {
+  APP_SLASH_COMMAND_GROUPS,
+  type AppSlashCommandGroupId,
+  type AppSlashCommandItem,
+  appSlashCommands,
+} from '../slash-app-commands';
 import {
   FLOATING_INITIAL_STYLE,
   useFloatingPosition,
@@ -48,9 +51,31 @@ export function SlashCommand({
   const prevSelectedIndexRef = useRef<number>(0);
   const { pmEditorService } = useCoreServices();
   const editorView = pmEditorService.getEditor(editorName);
+  const ext = pmEditorService.extensions;
   const suggestion = editorView ? suggestions.get(editorView) : undefined;
   const active =
     suggestion?.markName === 'slash_command' ? suggestion : undefined;
+  const query = active?.text.slice(1) ?? '';
+  const appItems = useMemo(() => appSlashCommands(), []);
+  const commandGroups = useMemo(
+    () =>
+      editorView && active?.show
+        ? resolveSlashCommandGroups({
+            extensions: ext,
+            view: editorView,
+            query,
+            position: active.position,
+            groupOrder: APP_SLASH_COMMAND_GROUPS,
+            items: appItems,
+            searchAliases: (item) => [itemLabel(item)],
+          })
+        : [],
+    [active?.position, active?.show, appItems, editorView, ext, query],
+  );
+  const optionCount = commandGroups.reduce(
+    (count, group) => count + group.items.length,
+    0,
+  );
 
   // Add effect to watch selectedIndex changes
   useEffect(() => {
@@ -84,8 +109,9 @@ export function SlashCommand({
           commandRef.current.dispatchEvent(event);
         }
       },
+      optionCount,
     }),
-    [],
+    [optionCount],
   );
 
   useSuggestionUiHandler({
@@ -100,8 +126,6 @@ export function SlashCommand({
     anchorEl: () => active?.anchorEl() ?? null,
     boundarySelector: '.ProseMirror:not([contenteditable="false"])',
   });
-
-  const ext = pmEditorService.extensions;
 
   const dismissCommandUi = useCallback(() => {
     if (!editorView || !active) {
@@ -130,6 +154,26 @@ export function SlashCommand({
     })(editorView.state, editorView.dispatch, editorView);
   }, [editorView, active, ext]);
 
+  const runItem = useCallback(
+    (item: (typeof commandGroups)[number]['items'][number]) => {
+      if (!editorView) {
+        return;
+      }
+      if (item.id === 'date-picker') {
+        openDatePicker();
+        return;
+      }
+      dismissCommandUi();
+      runSlashCommandItem({
+        item,
+        view: editorView,
+        query,
+      });
+      editorView.focus();
+    },
+    [dismissCommandUi, editorView, openDatePicker, query],
+  );
+
   if (!editorView || !active?.show) {
     return null;
   }
@@ -139,217 +183,101 @@ export function SlashCommand({
       <Command
         ref={commandRef}
         className="overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md"
+        shouldFilter={false}
       >
-        <CommandInput
-          hidden
-          value={active.text.slice(1)}
-          onValueChange={() => {}}
-        />
+        <CommandInput hidden value={query} onValueChange={() => {}} />
         <CommandEmpty>
-          <span className="text-muted-foreground">Nothing found</span>
+          <span className="text-muted-foreground">
+            {t.app.editor.slashCommand.nothingFound}
+          </span>
         </CommandEmpty>
         <CommandList>
-          <CommandGroup heading="Basic">
-            <CommandItem
-              value="paragraph"
-              onSelect={() => {
-                dismissCommandUi();
-                ext.paragraph.command.convertToParagraph(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Paragraph
-            </CommandItem>
-            <CommandItem
-              value="heading-1"
-              onSelect={() => {
-                dismissCommandUi();
-                ext.heading.command.toggleHeading(1)(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Heading 1
-            </CommandItem>
-            <CommandItem
-              value="heading-2"
-              onSelect={() => {
-                dismissCommandUi();
-                ext.heading.command.toggleHeading(2)(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Heading 2
-            </CommandItem>
-            <CommandItem
-              value="heading-3"
-              onSelect={() => {
-                dismissCommandUi();
-                ext.heading.command.toggleHeading(3)(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Heading 3
-            </CommandItem>
-            <CommandItem
-              value="code-block code fenced-code snippet"
-              onSelect={() => {
-                dismissCommandUi();
-                ext.codeBlock.command.toggleCodeBlock(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Code block
-            </CommandItem>
-            <CommandItem
-              value="table grid"
-              onSelect={() => {
-                dismissCommandUi();
-                ext.table.command.insertTable()(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-                // Replacing the focused paragraph with the table drops DOM
-                // focus; restore it so typing goes into the first cell.
-                editorView.focus();
-              }}
-            >
-              {t.app.editor.slashCommand.table}
-            </CommandItem>
-          </CommandGroup>
-
-          <CommandSeparator />
-
-          <CommandGroup heading="Lists">
-            <CommandItem
-              value="bullet-list"
-              onSelect={() => {
-                dismissCommandUi();
-                ext.list.command.toggleBulletList(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Bullet list
-            </CommandItem>
-            <CommandItem
-              value="numbered-list"
-              onSelect={() => {
-                dismissCommandUi();
-                ext.list.command.toggleOrderedList(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Numbered list
-            </CommandItem>
-            <CommandItem
-              value="todo-list"
-              onSelect={() => {
-                dismissCommandUi();
-                ext.list.command.toggleTaskList(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              To-do list
-            </CommandItem>
-          </CommandGroup>
-
-          <CommandSeparator />
-
-          <CommandGroup heading="Time">
-            <CommandItem value="date calendar" onSelect={openDatePicker}>
-              {t.app.editor.slashCommand.date}
-            </CommandItem>
-            <CommandItem
-              value="today"
-              onSelect={() => {
-                dismissCommandUi();
-                const today = format(new Date(), 'PP');
-
-                ext.base.command.insertText({ text: today })(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Today
-            </CommandItem>
-            <CommandItem
-              value="yesterday"
-              onSelect={() => {
-                dismissCommandUi();
-                const yesterday = format(subDays(new Date(), 1), 'PP');
-                ext.base.command.insertText({ text: yesterday })(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Yesterday
-            </CommandItem>
-            <CommandItem
-              value="next-week"
-              onSelect={() => {
-                dismissCommandUi();
-                const nextWeek = format(
-                  startOfWeek(addWeeks(new Date(), 1)),
-                  'PPP',
-                );
-                ext.base.command.insertText({ text: nextWeek })(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Next week
-            </CommandItem>
-            <CommandItem
-              value="next-month"
-              onSelect={() => {
-                dismissCommandUi();
-                const nextMonth = format(
-                  startOfMonth(addMonths(new Date(), 1)),
-                  'PP',
-                );
-                ext.base.command.insertText({ text: nextMonth })(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Next month
-            </CommandItem>
-          </CommandGroup>
+          {commandGroups.map((group, index) => (
+            <React.Fragment key={group.id}>
+              {index > 0 ? <CommandSeparator /> : null}
+              <CommandGroup heading={groupLabel(group.id)}>
+                {group.items.map((item) => (
+                  <CommandItem
+                    key={item.id}
+                    value={[
+                      item.id,
+                      item.label,
+                      itemLabel(item),
+                      ...(item.keywords ?? []),
+                    ].join(' ')}
+                    onSelect={() => runItem(item)}
+                  >
+                    {itemLabel(item)}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </React.Fragment>
+          ))}
         </CommandList>
-        <CommandHints hints={['Enter to select', 'Escape to dismiss']} />
+        <CommandHints
+          hints={[
+            t.app.editor.slashCommand.enterToSelect,
+            t.app.editor.slashCommand.escapeToDismiss,
+          ]}
+        />
       </Command>
     </div>
   );
+}
+
+function groupLabel(id: AppSlashCommandGroupId): string {
+  switch (id) {
+    case 'basic':
+      return t.app.editor.slashCommand.groupBasic;
+    case 'lists':
+      return t.app.editor.slashCommand.groupLists;
+    case 'table':
+      return t.app.editor.slashCommand.groupTable;
+    case 'time':
+      return t.app.editor.slashCommand.groupTime;
+  }
+}
+
+function itemLabel(item: AppSlashCommandItem): string {
+  const { labelKey } = item;
+  switch (labelKey.name) {
+    case 'paragraph':
+      return t.app.editor.slashCommand.paragraph;
+    case 'heading':
+      return t.app.editor.slashCommand.heading({ level: labelKey.level });
+    case 'codeBlock':
+      return t.app.editor.slashCommand.codeBlock;
+    case 'table':
+      return t.app.editor.slashCommand.table;
+    case 'date':
+      return t.app.editor.slashCommand.date;
+    case 'bulletList':
+      return t.app.editor.slashCommand.bulletList;
+    case 'numberedList':
+      return t.app.editor.slashCommand.numberedList;
+    case 'todoList':
+      return t.app.editor.slashCommand.todoList;
+    case 'today':
+      return t.app.editor.slashCommand.today;
+    case 'yesterday':
+      return t.app.editor.slashCommand.yesterday;
+    case 'nextWeek':
+      return t.app.editor.slashCommand.nextWeek;
+    case 'nextMonth':
+      return t.app.editor.slashCommand.nextMonth;
+    case 'addRowAbove':
+      return t.app.editor.tableMenu.addRowAbove;
+    case 'addRowBelow':
+      return t.app.editor.tableMenu.addRowBelow;
+    case 'addColumnLeft':
+      return t.app.editor.tableMenu.addColumnLeft;
+    case 'addColumnRight':
+      return t.app.editor.tableMenu.addColumnRight;
+    case 'deleteRow':
+      return t.app.editor.tableMenu.deleteRow;
+    case 'deleteColumn':
+      return t.app.editor.tableMenu.deleteColumn;
+    case 'deleteTable':
+      return t.app.editor.tableMenu.deleteTable;
+  }
 }

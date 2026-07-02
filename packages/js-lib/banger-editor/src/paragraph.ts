@@ -1,9 +1,11 @@
 import {
+  blockCommandSlashItem,
   type CollectionType,
   collection,
   isMac,
   keybinding,
   PRIORITY,
+  type SlashCommandItem,
   setPriority,
 } from './common';
 import type { NodeSpec } from './pm';
@@ -105,8 +107,26 @@ export function setupParagraph(userConfig?: ParagraphConfig) {
       isParagraph: isParagraph(config),
       isTopLevelParagraph: isTopLevelParagraph(config),
     },
+    slashCommand: slashCommands(config),
     markdown: markdown(config),
   });
+}
+
+function slashCommands(
+  config: RequiredConfig,
+): Record<string, SlashCommandItem> {
+  const command = convertToParagraph(config);
+  return {
+    paragraph: blockCommandSlashItem({
+      id: 'paragraph',
+      group: 'basic',
+      labelKey: { name: 'paragraph' },
+      label: 'Paragraph',
+      keywords: ['text', 'normal'],
+      priority: 100,
+      command,
+    }),
+  };
 }
 
 // PLUGINS

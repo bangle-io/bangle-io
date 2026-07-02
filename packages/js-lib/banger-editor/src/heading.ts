@@ -1,4 +1,11 @@
-import { type CollectionType, collection, isMac, keybinding } from './common';
+import {
+  blockCommandSlashItem,
+  type CollectionType,
+  collection,
+  isMac,
+  keybinding,
+  type SlashCommandItem,
+} from './common';
 import {
   type Command,
   type EditorState,
@@ -143,8 +150,31 @@ export function setupHeading(userConfig?: HeadingConfig) {
       isHeadingActive: isHeadingActive(config),
       isInsideHeading: isInsideHeading(config),
     },
+    slashCommand: slashCommands(config),
     markdown: markdown(config),
   });
+}
+
+function slashCommands(
+  config: RequiredConfig,
+): Record<string, SlashCommandItem> {
+  return Object.fromEntries(
+    config.levels.slice(0, 3).map((level) => {
+      const command = toggleHeading(config)(level);
+      return [
+        `heading-${level}`,
+        blockCommandSlashItem({
+          id: `heading-${level}`,
+          group: 'basic',
+          labelKey: { name: 'heading', level },
+          label: `Heading ${level}`,
+          keywords: [`h${level}`, 'title'],
+          priority: 90 - level,
+          command,
+        }),
+      ];
+    }),
+  );
 }
 
 // PLUGINS

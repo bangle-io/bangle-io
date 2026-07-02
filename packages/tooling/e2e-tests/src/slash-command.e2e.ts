@@ -4,6 +4,7 @@ import {
   getEditorLocator,
   readStoredMarkdown,
   waitForEditorFocus,
+  writeStoredMarkdown,
 } from './common';
 
 // Pin the browser locale so `data-day` (written with the browser's default
@@ -252,4 +253,85 @@ test('slash date command dismisses with Escape after calendar interaction', asyn
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
     .toBe('After Escape');
+});
+
+test('slash command inside a table only offers commands that work there', async ({
+  page,
+}) => {
+  const workspaceName = 'slash-command-table-context';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'Home',
+    ['| Name | Status |', '| --- | --- |', '| Alpha | Beta |'].join('\n'),
+  );
+  await page.reload();
+
+  const editor = getEditorLocator(page, {});
+  await expect(editor.locator('table')).toBeVisible();
+  await expect(editor.locator('table td').first()).toHaveText('Alpha');
+  await editor
+    .locator('table tr')
+    .nth(1)
+    .locator('td')
+    .nth(1)
+    .evaluate((cell) => {
+      const editorElement = cell.closest('.ProseMirror');
+      if (!(editorElement instanceof HTMLElement)) {
+        throw new Error('Expected ProseMirror editor');
+      }
+      const textNode = document
+        .createTreeWalker(cell, NodeFilter.SHOW_TEXT)
+        .nextNode();
+      if (!(textNode instanceof Text)) {
+        throw new Error('Expected table cell text node');
+      }
+
+      editorElement.focus();
+      const range = document.createRange();
+      range.setStart(textNode, textNode.data.length);
+      range.collapse(true);
+
+      const selection = window.getSelection();
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+      document.dispatchEvent(new Event('selectionchange', { bubbles: true }));
+    });
+  await waitForEditorFocus(page, {});
+  await page.keyboard.press('Space');
+  await page.keyboard.insertText('/');
+
+  const commandItems = page.locator('[cmdk-item]');
+  await expect(commandItems.filter({ hasText: /^Heading 1$/ })).toHaveCount(0);
+  await expect(commandItems.filter({ hasText: /^Code block$/ })).toHaveCount(0);
+  await expect(commandItems.filter({ hasText: /^Table$/ })).toHaveCount(0);
+  await expect(commandItems.filter({ hasText: /^Bullet list$/ })).toHaveCount(
+    0,
+  );
+  await expect(commandItems.filter({ hasText: /^Numbered list$/ })).toHaveCount(
+    0,
+  );
+  await expect(commandItems.filter({ hasText: /^To-do list$/ })).toHaveCount(0);
+  await expect(
+    commandItems.filter({ hasText: /^Add row below$/ }),
+  ).toBeVisible();
+  await expect(commandItems.filter({ hasText: /^Today$/ })).toBeVisible();
+
+  await commandItems.filter({ hasText: /^Add row below$/ }).click();
+
+  await expect(editor.locator('table tr')).toHaveCount(3);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe(
+      [
+        '| Name | Status |',
+        '| --- | --- |',
+        '| Alpha | Beta |',
+        '|  |  |',
+      ].join('\n'),
+    );
 });

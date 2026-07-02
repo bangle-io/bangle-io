@@ -1,9 +1,11 @@
 import {
+  blockCommandSlashItem,
   type CollectionType,
   collection,
   isMac,
   keybinding,
   PRIORITY,
+  type SlashCommandItem,
 } from './common';
 import type {
   Command,
@@ -117,8 +119,25 @@ export function setupCodeBlock(userConfig?: CodeBlockConfig) {
     query: {
       isCodeBlockActive: isCodeBlockActive(config),
     },
+    slashCommand: slashCommands(config),
     markdown: markdown(config),
   });
+}
+
+function slashCommands(
+  config: RequiredConfig,
+): Record<string, SlashCommandItem> {
+  return {
+    'code-block': blockCommandSlashItem({
+      id: 'code-block',
+      group: 'basic',
+      labelKey: { name: 'codeBlock' },
+      label: 'Code block',
+      keywords: ['code', 'fenced-code', 'snippet'],
+      priority: 70,
+      command: toggleCodeBlock(config),
+    }),
+  };
 }
 
 function pluginKeybindings(config: RequiredConfig) {
