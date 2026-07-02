@@ -85,6 +85,7 @@ interface DropdownButtonProps {
   title: string;
   subtitle: string;
   fancy?: boolean;
+  density?: 'default' | 'compact';
   className?: string;
 }
 
@@ -94,11 +95,14 @@ function DropdownButton({
   title,
   subtitle,
   fancy = false,
+  density = 'default',
   className,
 }: DropdownButtonProps) {
+  const isCompact = density === 'compact';
   const getButtonClass = (isFancy: boolean) =>
     cn(
       'data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground',
+      isCompact && 'h-10 rounded-md px-2',
       isFancy &&
         'shadow-[0_0_20px_rgba(0,0,0,0.15)] dark:shadow-[0_2px_25px_rgba(255,255,255,0.25)]' +
           'border border-sidebar-accent dark:border-sidebar-accent-foreground',
@@ -110,29 +114,53 @@ function DropdownButton({
     fancy && 'font-bold tracking-tight',
   );
 
-  const subtitleClass = cn('truncate text-xs', fancy && 'font-medium');
+  const subtitleClass = cn(
+    'truncate text-xs',
+    isCompact && 'text-[11px] leading-3',
+    fancy && 'font-medium',
+  );
 
   return (
     <DropdownMenuTrigger asChild>
-      <SidebarMenuButton size="lg" className={cn(getButtonClass(fancy))}>
+      <SidebarMenuButton
+        size={isCompact ? 'default' : 'lg'}
+        className={cn(getButtonClass(fancy))}
+      >
         {imageSrc ? (
-          <div className="flex aspect-square size-10 items-center justify-center overflow-hidden rounded-lg text-sidebar-primary-foreground">
+          <div
+            className={cn(
+              'flex aspect-square items-center justify-center overflow-hidden rounded-lg text-sidebar-primary-foreground',
+              isCompact ? 'size-7' : 'size-10',
+            )}
+          >
             <img
               src={imageSrc}
               alt={title}
-              className="size-8 select-none object-contain"
+              className={cn(
+                'select-none object-contain',
+                isCompact ? 'size-5.5' : 'size-8',
+              )}
             />
           </div>
         ) : (
           IconComponent && (
-            <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
-              <IconComponent className="size-4" />
+            <div
+              className={cn(
+                'flex aspect-square items-center justify-center rounded-lg',
+                isCompact ? 'size-7' : 'size-8',
+              )}
+            >
+              <IconComponent className={isCompact ? 'size-3.5' : 'size-4'} />
             </div>
           )
         )}
         <div className={textClass}>
           <span
-            className={cn('font-semibold', fancy && 'text-base leading-snug')}
+            className={cn(
+              'font-semibold',
+              isCompact && 'leading-4',
+              fancy && 'text-base leading-snug',
+            )}
           >
             {title}
           </span>
@@ -169,7 +197,7 @@ export function AppSidebar({
 }: AppSidebarProps) {
   return (
     <Sidebar variant="sidebar" collapsible="offcanvas">
-      <SidebarHeader className={sidebarHeaderClassName}>
+      <SidebarHeader className={cn('gap-2 px-3 py-2', sidebarHeaderClassName)}>
         <div className={workspaceSwitcherWrapperClassName}>
           <WorkspaceSwitcher
             workspaces={workspaces}
@@ -269,7 +297,7 @@ function AppSidebarFooter({
   const { isMobile } = useSidebar();
 
   return (
-    <SidebarFooter>
+    <SidebarFooter className="px-3 py-2">
       <DropdownMenu>
         <DropdownButton
           imageSrc={bangleIcon}
@@ -308,7 +336,7 @@ function CommandButton({
       onKeyUp={(e) => e.key === 'Enter' && onClick()}
       className={cn('w-full cursor-pointer', className)}
     >
-      <SidebarGroup className="py-0">
+      <SidebarGroup className="p-0">
         <SidebarGroupContent className="relative">
           <Label htmlFor={commandButtonId} className="sr-only">
             {t.app.common.searchLabel}
@@ -316,7 +344,7 @@ function CommandButton({
           <SidebarInput
             id={commandButtonId}
             placeholder={t.app.common.searchInputPlaceholder}
-            className="pointer-events-none pr-8 pl-8"
+            className="pointer-events-none h-8 rounded-md bg-background/70 pr-8 pl-8"
             readOnly
           />
           <Search className="pointer-events-none absolute top-1/2 left-2 size-4 -translate-y-1/2 select-none opacity-50" />
@@ -350,6 +378,7 @@ function WorkspaceSwitcher({
         <DropdownMenu>
           <DropdownButton
             icon={Logo}
+            density="compact"
             title={
               activeWs
                 ? activeWs.name
@@ -362,7 +391,7 @@ function WorkspaceSwitcher({
             }
             className={
               !activeWs
-                ? 'bg-pop/10 hover:bg-pop/15 data-[state=open]:bg-pop/15'
+                ? 'bg-sidebar-accent/70 hover:bg-sidebar-accent data-[state=open]:bg-sidebar-accent'
                 : undefined
             }
           />

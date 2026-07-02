@@ -28,13 +28,23 @@ test('NativeFS picker error keeps readable destructive colors in dark mode', asy
 
   const styles = await errorMessage.evaluate((element) => {
     const style = getComputedStyle(element);
+    const normalizeColor = (color: string) => {
+      const probe = document.createElement('span');
+      probe.style.color = color;
+      document.body.append(probe);
+      const normalizedColor = getComputedStyle(probe).color;
+      probe.remove();
+
+      return normalizedColor;
+    };
+
     return {
-      backgroundColor: style.backgroundColor,
-      color: style.color,
-      destructive: style.getPropertyValue('--destructive').trim(),
-      destructiveForeground: style
-        .getPropertyValue('--destructive-foreground')
-        .trim(),
+      backgroundColor: normalizeColor(style.backgroundColor),
+      color: normalizeColor(style.color),
+      destructive: normalizeColor(style.getPropertyValue('--destructive')),
+      destructiveForeground: normalizeColor(
+        style.getPropertyValue('--destructive-foreground'),
+      ),
     };
   });
 

@@ -108,6 +108,12 @@
   width: 0;
 }
 
+.desktop-titlebar-surface {
+  border-bottom: 1px solid hsl(var(--BV-border) / 0.65);
+  background: hsl(var(--BV-background) / 0.94);
+  backdrop-filter: blur(18px);
+}
+
 html[data-bangle-desktop-platform] .desktop-titlebar-drag {
   -webkit-app-region: drag;
   app-region: drag;
@@ -133,30 +139,24 @@ html[data-bangle-window-controls-overlay="visible"]
   user-select: auto;
 }
 
-html[data-bangle-desktop-platform] .desktop-titlebar-surface {
-  border-bottom: 1px solid hsl(var(--BV-border) / 0.65);
-  background: hsl(var(--BV-background) / 0.94);
-  backdrop-filter: blur(18px);
-}
-
-html[data-bangle-window-controls-overlay="visible"] .desktop-titlebar-surface {
-  border-bottom: 1px solid hsl(var(--BV-border) / 0.65);
-  background: hsl(var(--BV-background) / 0.94);
-  backdrop-filter: blur(18px);
-  height: max(
-    52px,
-    var(--bangle-titlebar-area-height, env(titlebar-area-height, 52px))
-  );
-  padding-left: max(
-    0.75rem,
-    var(--bangle-titlebar-area-x, env(titlebar-area-x, 0px))
-  );
+html[data-bangle-window-controls-overlay="visible"][data-bangle-window-controls-overlay-controls="right"]
+  .desktop-titlebar-surface {
   padding-right: max(
     0.75rem,
     calc(
       100vw - var(--bangle-titlebar-area-x, env(titlebar-area-x, 0px)) -
         var(--bangle-titlebar-area-width, env(titlebar-area-width, 100vw))
     )
+  );
+}
+
+html[data-bangle-window-controls-overlay="visible"][data-bangle-window-controls-overlay-controls="left"]
+  .peer[data-state="collapsed"][data-side="left"]
+  ~ *
+  .desktop-titlebar-main-spacer {
+  width: max(
+    4.75rem,
+    calc(var(--bangle-titlebar-area-x, env(titlebar-area-x, 0px)) + 0.5rem)
   );
 }
 
@@ -168,7 +168,22 @@ html[data-bangle-desktop-platform="darwin"]
 }
 
 html[data-bangle-desktop-platform="darwin"] .desktop-sidebar-titlebar-header {
-  padding-top: 2.375rem;
+  padding-top: 2rem;
+}
+
+html[data-bangle-window-controls-overlay="visible"][data-bangle-window-controls-overlay-controls="left"]
+  .desktop-sidebar-titlebar-header {
+  padding-top: max(
+    0.5rem,
+    calc(
+      var(--bangle-titlebar-area-height, env(titlebar-area-height, 0px)) + 0.25rem
+    )
+  );
+}
+
+html[data-bangle-window-controls-overlay="visible"][data-bangle-window-controls-overlay-controls="right"]
+  .desktop-sidebar-titlebar-header {
+  padding-top: 0.5rem;
 }
 
 @theme inline {
@@ -262,6 +277,7 @@ html[data-bangle-desktop-platform="darwin"] .desktop-sidebar-titlebar-header {
 }
 
 :root {
+  --bangle-app-titlebar-height: 40px;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);

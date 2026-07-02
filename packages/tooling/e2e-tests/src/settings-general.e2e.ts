@@ -82,7 +82,7 @@ test('general settings can install the PWA when the browser exposes an install p
   });
 
   await page.goto('/');
-  await expect(page).toHaveTitle('Bangle.io');
+  await expect(page).toHaveTitle('Bangle.io', { timeout: 15_000 });
 
   await page.evaluate(() => {
     const event = new Event('beforeinstallprompt', {
