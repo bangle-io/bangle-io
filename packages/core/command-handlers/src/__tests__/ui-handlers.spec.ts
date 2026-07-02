@@ -118,6 +118,8 @@ describe('UI command handlers', () => {
       expect(dialog?.dialogId).toBe('dialog::delete-ws-path-dialog');
       expect(dialog?.placeholder).toBe(t.app.dialogs.deleteNote.placeholder);
       expect(dialog?.badgeText).toBe(t.app.dialogs.deleteNote.badgeText);
+      expect(dialog?.badgeTone).toBeUndefined();
+      expect(dialog?.hints).toEqual([t.app.dialogs.deleteNote.hintDelete]);
 
       dialog?.onSelect({ id: 'test-ws:test.md', title: 'test.md' });
       const alertDialog = testEnv.store.get(

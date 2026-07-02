@@ -115,7 +115,7 @@ export const t = {
         badgeText: 'Notiz löschen',
         groupHeading: 'Notizen',
         emptyMessage: 'Keine Notizen gefunden',
-        hintDelete: 'Enter drücken oder klicken zum Löschen',
+        hintDelete: 'Wählen Sie eine Notiz aus, um das Löschen zu bestätigen',
       },
       confirmDelete: {
         title: 'Löschen bestätigen',

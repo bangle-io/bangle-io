@@ -120,7 +120,7 @@ export const t = {
         badgeText: 'Delete Note',
         groupHeading: 'Notes',
         emptyMessage: 'No notes found',
-        hintDelete: 'Press Enter or Click to delete',
+        hintDelete: 'Select a note to confirm deletion',
       },
       confirmDelete: {
         title: 'Confirm Delete',

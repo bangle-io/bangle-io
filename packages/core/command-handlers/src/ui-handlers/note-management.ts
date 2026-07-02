@@ -51,7 +51,6 @@ export const noteManagementHandlers = [
           dialogId: 'dialog::delete-ws-path-dialog',
           placeholder: t.app.dialogs.deleteNote.placeholder,
           badgeText: t.app.dialogs.deleteNote.badgeText,
-          badgeTone: 'destructive',
           groupHeading: t.app.dialogs.deleteNote.groupHeading,
           emptyMessage: t.app.dialogs.deleteNote.emptyMessage,
           options: wsPaths.map((path) => ({
