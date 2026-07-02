@@ -239,13 +239,20 @@ export const noteManagementHandlers = [
             fileNameWithoutExtension: filePath.fileNameWithoutExtension,
           }),
           emptyMessage: t.app.dialogs.moveNote.emptyMessage,
+          emptyActionText: t.app.dialogs.moveNote.emptyActionText,
           options,
           Icon: FilePlus,
           groupHeading: t.app.dialogs.moveNote.groupHeading,
-          hints: [
-            t.app.dialogs.moveNote.hintClick,
-            t.app.dialogs.moveNote.hintDrag,
-          ],
+          hints:
+            options.length > 0
+              ? [
+                  t.app.dialogs.moveNote.hintClick,
+                  t.app.dialogs.moveNote.hintDrag,
+                ]
+              : [t.app.dialogs.moveNote.hintCreateDirectory],
+          onEmptyAction: () => {
+            dispatch('command::ui:create-directory-dialog', null);
+          },
           onSelect: (selectedDir) => {
             let newDirPath = selectedDir.id;
             if (newDirPath === ROOT_ID) {

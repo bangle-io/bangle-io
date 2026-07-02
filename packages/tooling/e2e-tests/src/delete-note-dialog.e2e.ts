@@ -63,6 +63,16 @@ test('move note dialog accepts directory destinations from the file tree', async
 
   const moveDialog = page.getByRole('dialog', { name: 'Move "move-target"' });
   await expect(moveDialog).toBeVisible();
+  await moveDialog.getByRole('button', { name: 'Cancel' }).click();
+  await expect(moveDialog).toBeHidden();
+  await expect(targetTreeItem).toBeVisible();
+
+  await targetTreeItem.hover();
+  await page
+    .getByRole('button', { name: 'More actions for move-target.md' })
+    .click();
+  await page.getByRole('menuitem', { name: 'Move' }).click();
+  await expect(moveDialog).toBeVisible();
   await moveDialog.getByRole('option', { name: /Projects\/?/ }).click();
 
   await targetTreeItem.click();
@@ -71,4 +81,27 @@ test('move note dialog accepts directory destinations from the file tree', async
       `${workspaceName}:Projects/move-target.md`,
     )}`,
   );
+});
+
+test('move note dialog offers folder creation when there is no destination', async ({
+  page,
+}) => {
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName: 'move-note-empty-destination-workspace',
+    noteName: 'root-note',
+  });
+
+  await pressAppShortcut(page, 'k');
+  await page.getByPlaceholder('Type a command or search...').fill('Move Note');
+  await page.getByRole('option', { name: '> Move Note' }).click();
+
+  const moveDialog = page.getByRole('dialog', { name: 'Move "root-note"' });
+  await expect(moveDialog).toBeVisible();
+  await expect(moveDialog).toContainText('No folders to move this note into.');
+  await moveDialog.getByRole('button', { name: 'Create Folder' }).click();
+
+  await expect(moveDialog).toBeHidden();
+  await expect(
+    page.getByRole('dialog', { name: 'Create Directory' }),
+  ).toBeVisible();
 });

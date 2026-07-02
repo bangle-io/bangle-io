@@ -78,8 +78,10 @@ function AllFilesContent({ search, onClose }: AllFilesContentProps) {
         fuzzySearchFunction: substringFuzzySearch,
       },
     );
-    const resultSet = new Set(results.map((r) => r.item));
-    return files.filter((file) => resultSet.has(file.title));
+    const filesByTitle = new Map(files.map((file) => [file.title, file]));
+    return results
+      .map((result) => filesByTitle.get(result.item))
+      .filter((file): file is (typeof files)[number] => Boolean(file));
   }, [files, search]);
 
   const rowVirtualizer = useVirtualizer({

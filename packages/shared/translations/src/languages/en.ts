@@ -144,10 +144,12 @@ export const t = {
         }: {
           fileNameWithoutExtension: string;
         }) => `Move "${fileNameWithoutExtension}"`,
-        emptyMessage: 'No directories found',
+        emptyMessage: 'No folders to move this note into.',
+        emptyActionText: 'Create Folder',
         groupHeading: 'Directories',
         hintClick: 'Press Enter or Click',
         hintDrag: 'Tip: Try dragging a note in the sidebar',
+        hintCreateDirectory: 'Create a folder first, then move this note.',
       },
       createDirectory: {
         placeholder: 'Input directory name',
@@ -190,6 +192,7 @@ export const t = {
         errorTitle: 'Error',
         noStorageTypes: 'No storage types are available.',
         selectTypeTitle: 'Select a workspace type',
+        selectTypeDescription: 'Choose where this workspace stores its notes.',
         dataPrivacyLink: 'Your data stays with you',
         enterNameTitle: 'Enter Workspace Name',
         enterNameDescription: 'Please enter a name for your workspace.',
@@ -342,6 +345,8 @@ export const t = {
         workspacesLabel: 'Workspaces',
         noWorkspaceSelectedTitle: 'No workspace selected',
         noWorkspaceSelectedSubtitle: 'Click to select a workspace',
+        mobileTitle: 'Sidebar',
+        mobileDescription: 'Navigate workspaces, notes, and app actions.',
       },
       breadcrumb: {
         moreSr: 'More',

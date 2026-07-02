@@ -139,11 +139,15 @@ export const t = {
         }: {
           fileNameWithoutExtension: string;
         }) => `Verschieben von "${fileNameWithoutExtension}"`,
-        emptyMessage: 'Keine Verzeichnisse gefunden',
+        emptyMessage:
+          'Keine Ordner vorhanden, in die diese Notiz verschoben werden kann.',
+        emptyActionText: 'Ordner erstellen',
         groupHeading: 'Verzeichnisse',
         hintClick: 'Enter drücken oder klicken',
         hintDrag:
           'Tipp: Versuchen Sie, eine Notiz in der Seitenleiste zu ziehen',
+        hintCreateDirectory:
+          'Erstellen Sie zuerst einen Ordner und verschieben Sie dann diese Notiz.',
       },
       createDirectory: {
         placeholder: 'Verzeichnisnamen eingeben',
@@ -187,6 +191,8 @@ export const t = {
         errorTitle: 'Fehler',
         noStorageTypes: 'Keine Speicherarten verfügbar.',
         selectTypeTitle: 'Wählen Sie einen Arbeitsbereichstyp',
+        selectTypeDescription:
+          'Wählen Sie, wo dieser Arbeitsbereich seine Notizen speichert.',
         dataPrivacyLink: 'Ihre Daten bleiben bei Ihnen',
         enterNameTitle: 'Arbeitsbereichsnamen eingeben',
         enterNameDescription:
@@ -351,6 +357,9 @@ export const t = {
         noWorkspaceSelectedTitle: 'Kein Arbeitsbereich ausgewählt',
         noWorkspaceSelectedSubtitle:
           'Klicken Sie, um einen Arbeitsbereich auszuwählen',
+        mobileTitle: 'Seitenleiste',
+        mobileDescription:
+          'Arbeitsbereiche, Notizen und App-Aktionen navigieren.',
       },
       breadcrumb: {
         moreSr: 'Mehr',

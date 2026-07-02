@@ -5,6 +5,8 @@ import {
   Separator,
   Sheet,
   SheetContent,
+  SheetDescription,
+  SheetTitle,
   Skeleton,
   Tooltip,
   TooltipContent,
@@ -144,6 +146,12 @@ const Sidebar = React.forwardRef<
             }
             side={side}
           >
+            <SheetTitle className="sr-only">
+              {t.app.components.appSidebar.mobileTitle}
+            </SheetTitle>
+            <SheetDescription className="sr-only">
+              {t.app.components.appSidebar.mobileDescription}
+            </SheetDescription>
             <div className="flex h-full w-full flex-col">{children}</div>
           </SheetContent>
         </Sheet>

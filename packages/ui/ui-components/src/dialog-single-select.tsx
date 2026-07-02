@@ -4,6 +4,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   Input,
@@ -26,6 +27,8 @@ export type DialogSingleSelectProps = {
   badgeTone?: 'destructive' | 'default';
   badgeText?: string;
   emptyMessage?: React.ReactNode;
+  emptyActionText?: string;
+  onEmptyAction?: () => void;
   Icon?: React.ElementType;
   initialSearch?: string;
   hints?: string[];
@@ -49,21 +52,29 @@ function DialogHints({ hints }: { hints?: string[] }) {
 
 function SingleSelectItem({
   option,
+  id,
   hasAnyIcon,
+  isActive,
   onSelect,
 }: {
   option: DialogSingleSelectProps['options'][0];
+  id: string;
   hasAnyIcon: boolean;
+  isActive: boolean;
   onSelect: (option: { id: string; title?: string }) => void;
 }) {
   const OptionIcon = option.icon;
   return (
     <Button
+      id={id}
       type="button"
       role="option"
-      aria-selected={option.active ? true : undefined}
+      aria-selected={isActive || option.active}
       variant="ghost"
-      className="h-auto w-full justify-start px-2 py-2 text-left font-normal"
+      className={cn(
+        'h-auto w-full justify-start px-2 py-2 text-left font-normal',
+        isActive && 'bg-accent text-accent-foreground',
+      )}
       onClick={() => onSelect(option)}
     >
       {hasAnyIcon && (
@@ -93,12 +104,16 @@ export function DialogSingleSelect({
   badgeText,
   badgeTone = 'default',
   emptyMessage = t.app.dialogs.singleSelect.emptyMessageDefault,
+  emptyActionText,
+  onEmptyAction,
   initialSearch = '',
   Icon,
   hints,
 }: DialogSingleSelectProps) {
   const [search, setSearch] = React.useState(initialSearch);
+  const [activeIndex, setActiveIndex] = React.useState(0);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const listboxId = React.useId();
   const title = badgeText || groupHeading || placeholder;
   const description = placeholder;
 
@@ -111,6 +126,7 @@ export function DialogSingleSelect({
       return;
     }
 
+    setActiveIndex(0);
     window.requestAnimationFrame(() => inputRef.current?.select());
   }, [open]);
 
@@ -122,6 +138,18 @@ export function DialogSingleSelect({
   }, [search, options]);
 
   const hasAnyIcon = options.some((option) => option.icon);
+  const activeOption = filteredOptions[activeIndex];
+  const activeOptionId = activeOption
+    ? `${listboxId}-option-${activeIndex}`
+    : undefined;
+
+  React.useEffect(() => {
+    setActiveIndex((current) =>
+      filteredOptions.length === 0
+        ? 0
+        : Math.min(current, filteredOptions.length - 1),
+    );
+  }, [filteredOptions.length]);
 
   const selectOption = React.useCallback(
     (option: { id: string; title?: string }) => {
@@ -130,6 +158,10 @@ export function DialogSingleSelect({
     },
     [onSelect, setOpen],
   );
+  const runEmptyAction = React.useCallback(() => {
+    onEmptyAction?.();
+    setOpen(false);
+  }, [onEmptyAction, setOpen]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -151,18 +183,40 @@ export function DialogSingleSelect({
           className="grid gap-4"
           onSubmit={(event) => {
             event.preventDefault();
-            const [firstOption] = filteredOptions;
-            if (firstOption) {
-              selectOption(firstOption);
+            if (activeOption) {
+              selectOption(activeOption);
+            } else if (onEmptyAction) {
+              runEmptyAction();
             }
           }}
         >
           <Input
             ref={inputRef}
             aria-label={placeholder}
+            aria-activedescendant={activeOptionId}
+            aria-controls={listboxId}
+            aria-expanded={open}
+            role="combobox"
             placeholder={placeholder}
             value={search}
-            onChange={(event) => setSearch(event.target.value)}
+            onChange={(event) => {
+              setSearch(event.target.value);
+              setActiveIndex(0);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                setActiveIndex((current) =>
+                  filteredOptions.length === 0
+                    ? 0
+                    : Math.min(current + 1, filteredOptions.length - 1),
+                );
+              }
+              if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                setActiveIndex((current) => Math.max(current - 1, 0));
+              }
+            }}
           />
 
           <div className="grid gap-2">
@@ -172,28 +226,53 @@ export function DialogSingleSelect({
               </div>
             )}
             <div
+              id={listboxId}
               role="listbox"
               aria-label={groupHeading || title}
               className="max-h-72 overflow-y-auto rounded-md border p-1"
             >
               {filteredOptions.length > 0 ? (
-                filteredOptions.map((option) => (
+                filteredOptions.map((option, index) => (
                   <SingleSelectItem
                     key={option.id}
+                    id={`${listboxId}-option-${index}`}
                     option={option}
                     hasAnyIcon={hasAnyIcon}
+                    isActive={index === activeIndex}
                     onSelect={selectOption}
                   />
                 ))
               ) : (
-                <div className="px-3 py-6 text-center text-muted-foreground text-sm">
-                  {emptyMessage}
+                <div className="grid gap-3 px-3 py-6 text-center">
+                  <div className="text-muted-foreground text-sm">
+                    {emptyMessage}
+                  </div>
+                  {emptyActionText && onEmptyAction && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="justify-self-center"
+                      onClick={runEmptyAction}
+                    >
+                      {emptyActionText}
+                    </Button>
+                  )}
                 </div>
               )}
             </div>
           </div>
 
           <DialogHints hints={hints} />
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen(false)}
+            >
+              {t.app.common.cancelButton}
+            </Button>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>

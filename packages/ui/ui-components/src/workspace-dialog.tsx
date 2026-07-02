@@ -156,6 +156,9 @@ export function CreateWorkspaceDialog({
             <DialogTitle>
               {t.app.dialogs.createWorkspace.errorTitle}
             </DialogTitle>
+            <DialogDescription>
+              {t.app.dialogs.createWorkspace.noStorageTypes}
+            </DialogDescription>
           </DialogHeader>
           <div className="text-destructive">
             {t.app.dialogs.createWorkspace.noStorageTypes}
@@ -179,6 +182,7 @@ export function CreateWorkspaceDialog({
             dispatch={dispatch}
             storageTypes={storageTypes}
             defaultStorage={defaultStorage}
+            onCancel={() => onOpenChange(false)}
           />
         )}
         {state.stage === 'selected-browser' && (
@@ -187,6 +191,7 @@ export function CreateWorkspaceDialog({
             dispatch={dispatch}
             validateWorkspace={validateWorkspace}
             onDone={onDone}
+            onCancel={() => onOpenChange(false)}
           />
         )}
         {state.stage === 'selected-nativefs' && (
@@ -196,6 +201,7 @@ export function CreateWorkspaceDialog({
             onDirectoryPick={onDirectoryPick}
             validateWorkspace={validateWorkspace}
             onDone={onDone}
+            onCancel={() => onOpenChange(false)}
           />
         )}
       </DialogContent>
@@ -208,6 +214,7 @@ interface StageSelectStorageProps {
   dispatch: React.Dispatch<Action>;
   storageTypes: StorageTypeConfig[];
   defaultStorage: WorkspaceStorageType;
+  onCancel: () => void;
 }
 
 const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
@@ -215,6 +222,7 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
   dispatch,
   storageTypes,
   defaultStorage,
+  onCancel,
 }) => {
   const { selected = defaultStorage, error } = state;
   const handleSelectStorage = (storage: WorkspaceStorageType) => {
@@ -234,6 +242,9 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
         <DialogTitle className="font-semibold text-lg">
           {t.app.dialogs.createWorkspace.selectTypeTitle}
         </DialogTitle>
+        <DialogDescription>
+          {t.app.dialogs.createWorkspace.selectTypeDescription}
+        </DialogDescription>
       </DialogHeader>
       <div
         className="space-y-4"
@@ -252,19 +263,24 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
         ))}
       </div>
       <ErrorMessage error={error} />
-      <DialogFooter className="flex-col sm:justify-between">
+      <DialogFooter className="gap-2 sm:items-center sm:justify-between sm:space-x-0">
         <Button
           variant="ghost"
-          className="ml-3 text-primary text-sm hover:underline"
+          className="justify-start px-0 text-primary text-sm hover:underline"
           asChild
         >
           <a href="https://bangle.io/privacy" target="_blank" rel="noreferrer">
             {t.app.dialogs.createWorkspace.dataPrivacyLink}
           </a>
         </Button>
-        <Button onClick={handleNext} disabled={!selected}>
-          {t.app.common.nextButton}
-        </Button>
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button variant="outline" onClick={onCancel}>
+            {t.app.common.cancelButton}
+          </Button>
+          <Button onClick={handleNext} disabled={!selected}>
+            {t.app.common.nextButton}
+          </Button>
+        </div>
       </DialogFooter>
     </>
   );
@@ -275,6 +291,7 @@ interface StageEnterWorkspaceNameProps {
   dispatch: React.Dispatch<Action>;
   validateWorkspace: CreateWorkspaceDialogProps['validateWorkspace'];
   onDone: CreateWorkspaceDialogProps['onDone'];
+  onCancel: () => void;
 }
 
 const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
@@ -282,6 +299,7 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
   dispatch,
   validateWorkspace,
   onDone,
+  onCancel,
 }) => {
   const { name, error } = state;
 
@@ -352,17 +370,22 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
         </div>
         <ErrorMessage error={error} />
       </div>
-      <DialogFooter className="flex justify-between">
+      <DialogFooter className="gap-2 sm:justify-between sm:space-x-0">
         <Button variant="outline" onClick={handleBack}>
           {t.app.common.backButton}
         </Button>
-        <Button
-          type="submit"
-          onClick={handleSubmit}
-          disabled={Boolean(error) || !name}
-        >
-          {t.app.common.createButton}
-        </Button>
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button variant="outline" onClick={onCancel}>
+            {t.app.common.cancelButton}
+          </Button>
+          <Button
+            type="submit"
+            onClick={handleSubmit}
+            disabled={Boolean(error) || !name}
+          >
+            {t.app.common.createButton}
+          </Button>
+        </div>
       </DialogFooter>
     </>
   );
@@ -374,6 +397,7 @@ interface StagePickDirectoryProps {
   onDirectoryPick?: CreateWorkspaceDialogProps['onDirectoryPick'];
   validateWorkspace: CreateWorkspaceDialogProps['validateWorkspace'];
   onDone: CreateWorkspaceDialogProps['onDone'];
+  onCancel: () => void;
 }
 
 const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
@@ -382,6 +406,7 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
   onDirectoryPick,
   validateWorkspace,
   onDone,
+  onCancel,
 }) => {
   const { dirHandle, error } = state;
 
@@ -470,13 +495,18 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
         <ErrorMessage error={error} />
       </div>
 
-      <DialogFooter className="flex justify-between">
+      <DialogFooter className="gap-2 sm:justify-between sm:space-x-0">
         <Button variant="outline" onClick={handleBack}>
           {t.app.common.backButton}
         </Button>
-        <Button onClick={handleSubmit} disabled={!dirHandle}>
-          {t.app.common.createButton}
-        </Button>
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button variant="outline" onClick={onCancel}>
+            {t.app.common.cancelButton}
+          </Button>
+          <Button onClick={handleSubmit} disabled={!dirHandle}>
+            {t.app.common.createButton}
+          </Button>
+        </div>
       </DialogFooter>
     </>
   );

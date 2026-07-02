@@ -76,6 +76,8 @@ export function AppDialogs() {
         badgeTone={singleSelectDialog?.badgeTone}
         groupHeading={singleSelectDialog?.groupHeading}
         emptyMessage={singleSelectDialog?.emptyMessage}
+        emptyActionText={singleSelectDialog?.emptyActionText}
+        onEmptyAction={singleSelectDialog?.onEmptyAction}
         Icon={singleSelectDialog?.Icon}
         initialSearch={singleSelectDialog?.initialSearch}
         hints={singleSelectDialog?.hints}
