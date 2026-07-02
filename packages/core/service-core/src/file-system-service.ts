@@ -71,6 +71,9 @@ export class FileSystemService extends BaseService {
       get(this.$fileForceUpdateCount)
     );
   });
+  $fileListRevisionCount = atom((get) => {
+    return get(this.$fileCreateCount) + get(this.$fileTreeChangeCount);
+  });
 
   constructor(
     context: BaseServiceContext,

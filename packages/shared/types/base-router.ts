@@ -52,6 +52,13 @@ export type AppRouteInfo =
       };
     }
   | {
+      route: 'settings-workspaces';
+      metadata?: Record<string, string>;
+      payload: {
+        returnTo?: string;
+      };
+    }
+  | {
       route: 'welcome';
       metadata?: Record<string, string>;
       payload: Record<string, never>;

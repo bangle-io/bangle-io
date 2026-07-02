@@ -130,8 +130,27 @@ export const t = {
         enabled: 'Aktiviert',
         disabled: 'Deaktiviert',
       },
+      workspaces: {
+        title: 'Arbeitsbereiche',
+        sectionTitle: 'Arbeitsbereiche',
+        newWorkspace: 'Neuer Arbeitsbereich',
+        emptyTitle: 'Keine Arbeitsbereiche',
+        emptyDescription:
+          'Erstellen Sie einen Arbeitsbereich, um Notizen zu schreiben.',
+        noteCount: ({ count }: { count: number }) =>
+          count === 1 ? '1 Notiz' : `${count} Notizen`,
+        noteCountLoading: 'Notizen werden geladen...',
+        noteCountUnavailable: 'Notizen nicht verfügbar',
+        lastOpened: 'Zuletzt geöffnet',
+        neverOpened: 'Nie geöffnet',
+        actionsLabel: ({ wsName }: { wsName: string }) =>
+          `Arbeitsbereichsaktionen für ${wsName}`,
+        openWorkspace: 'Arbeitsbereich öffnen',
+        deleteWorkspace: 'Arbeitsbereich löschen',
+      },
       nav: {
         general: 'Allgemein',
+        workspaces: 'Arbeitsbereiche',
       },
     },
     dialogs: {

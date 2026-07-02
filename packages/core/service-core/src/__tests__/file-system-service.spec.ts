@@ -88,6 +88,7 @@ describe('FileSystemService', () => {
 
     return {
       fileSystem: services.fileSystem,
+      store: testEnv.store,
       workspaceOps: services.workspaceOps,
       controller,
     };
@@ -109,5 +110,45 @@ describe('FileSystemService', () => {
 
     const notExistsResult = await fileSystem.exists(NON_EXISTING_FILE);
     expect(notExistsResult).toBe(false);
+  });
+
+  it('increments file-list revision for file list changes', async () => {
+    const { fileSystem, store } = await setupFileSystemTest({ controller });
+    const readRevision = () => store.get(fileSystem.$fileListRevisionCount);
+
+    const initialRevision = readRevision();
+
+    await fileSystem.createTextFile(
+      'test-workspace:created-after-settings.md',
+      'Test content',
+    );
+    expect(readRevision()).toBeGreaterThan(initialRevision);
+
+    // A content update (editing/saving an existing note) must NOT bump the
+    // revision: the file list is unchanged, so the settings note-count list must
+    // not refetch every workspace on each save.
+    const beforeContentUpdate = readRevision();
+    await fileSystem.writeFile(
+      'test-workspace:created-after-settings.md',
+      new File(['Updated content'], 'created-after-settings', {
+        type: 'text/plain',
+      }),
+    );
+    expect(readRevision()).toBe(beforeContentUpdate);
+
+    const afterCreateRevision = readRevision();
+    await fileSystem.renameFile({
+      oldWsPath: 'test-workspace:created-after-settings.md',
+      newWsPath: 'test-workspace:renamed-after-settings.md',
+    });
+    expect(readRevision()).toBeGreaterThan(afterCreateRevision);
+
+    const afterRenameRevision = readRevision();
+    await fileSystem.deleteFile('test-workspace:renamed-after-settings.md');
+    expect(readRevision()).toBeGreaterThan(afterRenameRevision);
+
+    const afterDeleteRevision = readRevision();
+    store.set(fileSystem.$fileForceUpdateCount, (count) => count + 1);
+    expect(readRevision()).toBeGreaterThan(afterDeleteRevision);
   });
 });

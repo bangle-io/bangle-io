@@ -71,7 +71,15 @@ export const basicOperationsHandlers = [
   }),
 
   c('command::ui:open-settings', ({ navigation }) => {
-    navigation.goSettingsGeneral();
+    navigation.goSettingsPage('settings-general');
+  }),
+
+  c('command::ui:open-settings-general', ({ navigation }) => {
+    navigation.goSettingsPage('settings-general');
+  }),
+
+  c('command::ui:open-settings-workspaces', ({ navigation }) => {
+    navigation.goSettingsPage('settings-workspaces');
   }),
 
   c(

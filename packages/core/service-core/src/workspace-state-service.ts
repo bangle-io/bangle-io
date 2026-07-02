@@ -95,7 +95,7 @@ export class WorkspaceStateService extends BaseService {
 
   $workspaces = createAsyncAtom(
     async (get) => {
-      get(this.workspaceOps.$workspaceInfoListChange);
+      get(this.workspaceOps.$workspaceInfoChange);
       const workspaces = await this.workspaceOps.getAllWorkspaces();
       return workspaces;
     },

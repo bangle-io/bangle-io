@@ -171,6 +171,25 @@ async function waitForStoredMarkdown(page, expected) {
   );
 }
 
+async function waitForEditorText(page, expected, label) {
+  const deadline = Date.now() + 10_000;
+  let lastValue;
+
+  while (Date.now() < deadline) {
+    lastValue = (await page.locator(editorSelector).innerText()).trim();
+    if (lastValue === expected) {
+      return;
+    }
+    await page.waitForTimeout(100);
+  }
+
+  throw new Error(
+    `[desktop-smoke] Expected note content after ${label} to be ${JSON.stringify(
+      expected,
+    )}, got ${JSON.stringify(lastValue)}.`,
+  );
+}
+
 let app = await launchApp();
 let page = await firstWindow(app);
 
@@ -190,14 +209,7 @@ try {
   await openNoteRoute(page);
   await page.locator(editorSelector).waitFor();
 
-  const textAfterReload = await page.locator(editorSelector).innerText();
-  if (textAfterReload.trim() !== noteContent) {
-    throw new Error(
-      `[desktop-smoke] Expected note content after reload to be ${JSON.stringify(
-        noteContent,
-      )}, got ${JSON.stringify(textAfterReload.trim())}.`,
-    );
-  }
+  await waitForEditorText(page, noteContent, 'reload');
   await waitForStoredMarkdown(page, noteContent);
 
   console.log('[desktop-smoke] Checking persistence after restart.');
@@ -207,14 +219,7 @@ try {
   await openNoteRoute(page);
   await page.locator(editorSelector).waitFor();
 
-  const textAfterRestart = await page.locator(editorSelector).innerText();
-  if (textAfterRestart.trim() !== noteContent) {
-    throw new Error(
-      `[desktop-smoke] Expected note content after restart to be ${JSON.stringify(
-        noteContent,
-      )}, got ${JSON.stringify(textAfterRestart.trim())}.`,
-    );
-  }
+  await waitForEditorText(page, noteContent, 'restart');
 
   console.log('[desktop-smoke] Electron persistence smoke passed.');
 } finally {

@@ -136,8 +136,26 @@ export const t = {
         enabled: 'Enabled',
         disabled: 'Disabled',
       },
+      workspaces: {
+        title: 'Workspaces',
+        sectionTitle: 'Workspaces',
+        newWorkspace: 'New workspace',
+        emptyTitle: 'No workspaces',
+        emptyDescription: 'Create a workspace to start writing notes.',
+        noteCount: ({ count }: { count: number }) =>
+          count === 1 ? '1 note' : `${count} notes`,
+        noteCountLoading: 'Loading notes...',
+        noteCountUnavailable: 'Notes unavailable',
+        lastOpened: 'Last opened',
+        neverOpened: 'Never opened',
+        actionsLabel: ({ wsName }: { wsName: string }) =>
+          `Workspace actions for ${wsName}`,
+        openWorkspace: 'Open workspace',
+        deleteWorkspace: 'Delete workspace',
+      },
       nav: {
         general: 'General',
+        workspaces: 'Workspaces',
       },
     },
     dialogs: {
