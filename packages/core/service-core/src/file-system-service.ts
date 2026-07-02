@@ -29,6 +29,11 @@ export type FileContentUpdateEvent = {
   wsPath: string;
 };
 
+export type FileCreateEvent = {
+  sequence: number;
+  wsPath: string;
+};
+
 type FileReadOptions = {
   signal?: AbortSignal;
 };
@@ -53,15 +58,17 @@ export class FileSystemService extends BaseService {
   $fileDeleteCount = atom(0);
   $fileRenameCount = atom(0);
   $fileForceUpdateCount = atom(0);
+  $fileCreateEvent = atom<FileCreateEvent | undefined>(undefined);
   $fileContentUpdateEvent = atom<FileContentUpdateEvent | undefined>(undefined);
 
+  private fileCreateSequence = 0;
   private fileContentUpdateSequence = 0;
 
   $fileTreeChangeCount = atom((get) => {
     return (
-      get(this.$fileCreateCount) +
       get(this.$fileDeleteCount) +
-      get(this.$fileRenameCount)
+      get(this.$fileRenameCount) +
+      get(this.$fileForceUpdateCount)
     );
   });
 
@@ -97,6 +104,11 @@ export class FileSystemService extends BaseService {
         switch (event.type) {
           case 'file-create': {
             this.store.set(this.$fileCreateCount, (c) => c + 1);
+            this.fileCreateSequence += 1;
+            this.store.set(this.$fileCreateEvent, {
+              sequence: this.fileCreateSequence,
+              wsPath: event.wsPath,
+            });
             break;
           }
           case 'file-content-update': {

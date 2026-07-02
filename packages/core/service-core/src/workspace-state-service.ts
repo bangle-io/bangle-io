@@ -79,6 +79,14 @@ function throwIfAborted(signal: AbortSignal): void {
   }
 }
 
+function appendSortedUniqueWsPath(paths: string[], wsPath: string): string[] {
+  if (paths.includes(wsPath)) {
+    return paths;
+  }
+
+  return [...paths, wsPath].sort((a, b) => a.localeCompare(b));
+}
+
 /**
  * Manages the state of current and available workspaces
  */
@@ -197,6 +205,9 @@ export class WorkspaceStateService extends BaseService {
     super(SERVICE_NAME.workspaceStateService, context, dep);
   }
 
+  private createdWsPathsBySequence = new Map<number, string>();
+  private handledFileCreateSequence = 0;
+
   async hookMount(): Promise<void> {
     this.addCleanup(
       this.store.sub(
@@ -204,6 +215,7 @@ export class WorkspaceStateService extends BaseService {
           const abortController = new AbortController();
           get(this.fileSystem.$fileTreeChangeCount);
           const wsName = get(this.$currentWsName);
+          const createSequenceAtScanStart = this.handledFileCreateSequence;
           if (!wsName) {
             set(this.$rawWsPaths, EMPTY_STRING_ARRAY);
             return;
@@ -214,12 +226,51 @@ export class WorkspaceStateService extends BaseService {
             this.emitAppError,
           ).then((paths) => {
             if (!abortController.signal.aborted) {
-              set(this.$rawWsPaths, paths);
+              set(
+                this.$rawWsPaths,
+                this.mergeCreatedWsPathsAfterSequence({
+                  paths,
+                  sequence: createSequenceAtScanStart,
+                  wsName,
+                }),
+              );
+              this.pruneCreatedWsPathsThrough(createSequenceAtScanStart);
             }
           });
           return () => {
             abortController.abort();
           };
+        }),
+        () => {},
+      ),
+    );
+
+    this.addCleanup(
+      this.store.sub(
+        atomEffect((get, set) => {
+          const createEvent = get(this.fileSystem.$fileCreateEvent);
+          if (
+            !createEvent ||
+            createEvent.sequence <= this.handledFileCreateSequence
+          ) {
+            return;
+          }
+          this.handledFileCreateSequence = createEvent.sequence;
+
+          const filePath = this.getSupportedFilePath(createEvent.wsPath);
+          const wsName = get(this.$currentWsName);
+          if (!wsName || !filePath || filePath.wsName !== wsName) {
+            return;
+          }
+          this.createdWsPathsBySequence.set(
+            createEvent.sequence,
+            filePath.wsPath,
+          );
+
+          set(
+            this.$rawWsPaths,
+            appendSortedUniqueWsPath(get(this.$rawWsPaths), filePath.wsPath),
+          );
         }),
         () => {},
       ),
@@ -236,6 +287,49 @@ export class WorkspaceStateService extends BaseService {
 
   private get workspaceOps() {
     return this.dep.workspaceOps;
+  }
+
+  private getSupportedFilePath(wsPath: string): WsFilePath | undefined {
+    const filePath = WsPath.safeParse(wsPath).data?.asFile();
+    const extension = filePath?.extension;
+    if (!filePath || !extension) {
+      return undefined;
+    }
+
+    return this.fileSystem.isFileTypeSupported({ extension })
+      ? filePath
+      : undefined;
+  }
+
+  private mergeCreatedWsPathsAfterSequence({
+    paths,
+    sequence,
+    wsName,
+  }: {
+    paths: string[];
+    sequence: number;
+    wsName: string;
+  }): string[] {
+    let nextPaths = paths;
+    for (const [createSequence, createdWsPath] of this
+      .createdWsPathsBySequence) {
+      if (createSequence <= sequence) {
+        continue;
+      }
+      const filePath = this.getSupportedFilePath(createdWsPath);
+      if (filePath?.wsName === wsName) {
+        nextPaths = appendSortedUniqueWsPath(nextPaths, filePath.wsPath);
+      }
+    }
+    return nextPaths;
+  }
+
+  private pruneCreatedWsPathsThrough(sequence: number): void {
+    for (const createSequence of this.createdWsPathsBySequence.keys()) {
+      if (createSequence <= sequence) {
+        this.createdWsPathsBySequence.delete(createSequence);
+      }
+    }
   }
 
   hasWorkspace(wsName: string) {

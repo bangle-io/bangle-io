@@ -277,3 +277,144 @@ describe('WorkspaceStateService backlink index', () => {
     }
   });
 });
+
+describe('WorkspaceStateService file tree updates', () => {
+  let controller = new AbortController();
+
+  beforeEach(() => {
+    controller = new AbortController();
+  });
+
+  afterEach(() => {
+    controller.abort();
+  });
+
+  it('adds newly created notes to workspace state without a full rescan', async () => {
+    const { services } = await setupWorkspaceStateService({ controller });
+    const newWsPath = `${WS_NAME}:NewNote.md`;
+    const originalListFiles = services.fileSystem.listFiles.bind(
+      services.fileSystem,
+    );
+    const listFiles = vi
+      .spyOn(services.fileSystem, 'listFiles')
+      .mockImplementation(originalListFiles);
+
+    await services.fileSystem.createTextFile(newWsPath, 'Created note');
+    services.navigation.goWsPath(newWsPath);
+
+    await vi.waitUntil(() => {
+      return (
+        services.workspaceState.resolveAtoms().currentWsPath?.wsPath ===
+        newWsPath
+      );
+    });
+
+    expect(
+      services.workspaceState.resolveAtoms().wsPaths.map((path) => path.wsPath),
+    ).toContain(newWsPath);
+    expect(listFiles).not.toHaveBeenCalled();
+  });
+
+  it('keeps an incremental create when an older full rescan resolves later', async () => {
+    const { services, store } = await setupWorkspaceStateService({
+      controller,
+    });
+    const newWsPath = `${WS_NAME}:CreatedDuringScan.md`;
+    const stalePaths = services.workspaceState
+      .resolveAtoms()
+      .wsPaths.map((path) => path.wsPath);
+    const blockedScan = createDeferred<string[]>();
+    const originalListFiles = services.fileSystem.listFiles.bind(
+      services.fileSystem,
+    );
+    let listFilesCalls = 0;
+    vi.spyOn(services.fileSystem, 'listFiles').mockImplementation(
+      (wsName, abortSignal) => {
+        listFilesCalls += 1;
+        if (listFilesCalls === 1) {
+          return blockedScan.promise;
+        }
+        return originalListFiles(wsName, abortSignal);
+      },
+    );
+
+    store.set(services.fileSystem.$fileForceUpdateCount, (count) => count + 1);
+    await vi.waitUntil(() => listFilesCalls === 1);
+
+    await services.fileSystem.createTextFile(newWsPath, 'Created note');
+    services.navigation.goWsPath(newWsPath);
+    await vi.waitUntil(() => {
+      return (
+        services.workspaceState.resolveAtoms().currentWsPath?.wsPath ===
+        newWsPath
+      );
+    });
+
+    blockedScan.resolve(stalePaths);
+    await blockedScan.promise;
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(
+      services.workspaceState.resolveAtoms().wsPaths.map((path) => path.wsPath),
+    ).toContain(newWsPath);
+    expect(services.workspaceState.resolveAtoms().currentWsPath?.wsPath).toBe(
+      newWsPath,
+    );
+  });
+
+  it('tracks multiple created notes without a full rescan', async () => {
+    const { services } = await setupWorkspaceStateService({ controller });
+    const firstWsPath = `${WS_NAME}:BurstOne.md`;
+    const secondWsPath = `${WS_NAME}:BurstTwo.md`;
+    const originalListFiles = services.fileSystem.listFiles.bind(
+      services.fileSystem,
+    );
+    const listFiles = vi
+      .spyOn(services.fileSystem, 'listFiles')
+      .mockImplementation(originalListFiles);
+
+    await Promise.all([
+      services.fileSystem.createTextFile(firstWsPath, 'First'),
+      services.fileSystem.createTextFile(secondWsPath, 'Second'),
+    ]);
+
+    await vi.waitUntil(() => {
+      const wsPaths = services.workspaceState
+        .resolveAtoms()
+        .wsPaths.map((path) => path.wsPath);
+      return wsPaths.includes(firstWsPath) && wsPaths.includes(secondWsPath);
+    });
+
+    expect(listFiles).not.toHaveBeenCalled();
+  });
+
+  it('does not add unsupported created files to workspace note state', async () => {
+    const { services, store } = await setupWorkspaceStateService({
+      controller,
+    });
+    const unsupportedWsPath = `${WS_NAME}:asset.txt`;
+    const originalListFiles = services.fileSystem.listFiles.bind(
+      services.fileSystem,
+    );
+    const listFiles = vi
+      .spyOn(services.fileSystem, 'listFiles')
+      .mockImplementation(originalListFiles);
+
+    await services.fileSystem.createFile(
+      unsupportedWsPath,
+      new File(['not a note'], 'asset.txt', { type: 'text/plain' }),
+    );
+
+    await vi.waitUntil(() => {
+      return (
+        store.get(services.fileSystem.$fileCreateEvent)?.wsPath ===
+        unsupportedWsPath
+      );
+    });
+
+    expect(
+      services.workspaceState.resolveAtoms().wsPaths.map((path) => path.wsPath),
+    ).not.toContain(unsupportedWsPath);
+    expect(listFiles).not.toHaveBeenCalled();
+  });
+});
