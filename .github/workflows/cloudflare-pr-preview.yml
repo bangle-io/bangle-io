@@ -6,7 +6,7 @@ on:
     types: [opened, reopened, synchronize, ready_for_review]
 
 concurrency:
-  group: cloudflare-pr-preview-oauth
+  group: cloudflare-pr-preview
   cancel-in-progress: false
 
 permissions:
@@ -43,14 +43,10 @@ jobs:
       - name: Build app
         run: pnpm build
 
-      - name: Deploy Cloudflare Pages preview
-        id: deploy
+      - name: Validate Cloudflare secrets
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLOUDFLARE_OAUTH_CONFIG: ${{ secrets.CLOUDFLARE_OAUTH_CONFIG }}
-          CLOUDFLARE_OAUTH_EXPIRATION_TIME: ${{ secrets.CLOUDFLARE_OAUTH_EXPIRATION_TIME }}
-          CLOUDFLARE_OAUTH_REFRESH_TOKEN: ${{ secrets.CLOUDFLARE_OAUTH_REFRESH_TOKEN }}
-          CLOUDFLARE_OAUTH_TOKEN: ${{ secrets.CLOUDFLARE_OAUTH_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           set -euo pipefail
 
@@ -59,55 +55,32 @@ jobs:
             exit 1
           fi
 
-          mkdir -p "$HOME/.wrangler/config"
-          config_file="$HOME/.wrangler/config/default.toml"
-
-          if [ -n "${CLOUDFLARE_OAUTH_CONFIG:-}" ]; then
-            printf '%s' "$CLOUDFLARE_OAUTH_CONFIG" > "$config_file"
-          else
-            for secret_name in \
-              CLOUDFLARE_OAUTH_EXPIRATION_TIME \
-              CLOUDFLARE_OAUTH_REFRESH_TOKEN \
-              CLOUDFLARE_OAUTH_TOKEN
-            do
-              if [ -z "${!secret_name:-}" ]; then
-                echo "Missing ${secret_name} repository secret." >&2
-                exit 1
-              fi
-            done
-
-            cat > "$config_file" <<EOF
-          oauth_token = "$CLOUDFLARE_OAUTH_TOKEN"
-          expiration_time = "$CLOUDFLARE_OAUTH_EXPIRATION_TIME"
-          refresh_token = "$CLOUDFLARE_OAUTH_REFRESH_TOKEN"
-          scopes = [
-            "account:read",
-            "user:read",
-            "pages:write",
-            "offline_access",
-          ]
-          EOF
-          fi
-          chmod 600 "$config_file"
-
-          set +e
-          output="$(pnpm exec wrangler pages deploy packages/tooling/browser-entry/dist \
-            --project-name "$CLOUDFLARE_PAGES_PROJECT" \
-            --branch "$CLOUDFLARE_PREVIEW_BRANCH" \
-            --commit-dirty=true 2>&1)"
-          wrangler_status=$?
-          set -e
-
-          printf '%s\n' "$output"
-
-          if [ "$wrangler_status" -ne 0 ]; then
-            exit "$wrangler_status"
+          if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
+            echo "Missing CLOUDFLARE_API_TOKEN repository secret." >&2
+            exit 1
           fi
 
-          preview_url="$(printf '%s\n' "$output" | sed -nE 's#.*(https://[^[:space:]]+\.pages\.dev).*#\1#p' | tail -n 1)"
+      - name: Deploy Cloudflare Pages preview
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy packages/tooling/browser-entry/dist --project-name=${{ env.CLOUDFLARE_PAGES_PROJECT }} --branch=${{ env.CLOUDFLARE_PREVIEW_BRANCH }} --commit-dirty=true
+          packageManager: pnpm
+
+      - name: Resolve Cloudflare preview URL
+        id: preview
+        env:
+          DEPLOYMENT_ALIAS_URL: ${{ steps.deploy.outputs.pages-deployment-alias-url }}
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment-url }}
+        run: |
+          set -euo pipefail
+
+          preview_url="${DEPLOYMENT_ALIAS_URL:-${DEPLOYMENT_URL:-}}"
 
           if [ -z "$preview_url" ]; then
-            echo "Could not parse Cloudflare preview URL from Wrangler output." >&2
+            echo "Cloudflare Pages deploy did not report a preview URL." >&2
             exit 1
           fi
 
@@ -116,42 +89,11 @@ jobs:
             echo "preview_branch=$CLOUDFLARE_PREVIEW_BRANCH"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Persist refreshed Cloudflare OAuth credentials
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          set -euo pipefail
-
-          if [ -z "${GH_TOKEN:-}" ]; then
-            echo "GH_TOKEN is not available; skipping Cloudflare OAuth secret refresh."
-            exit 0
-          fi
-
-          config_file="$HOME/.wrangler/config/default.toml"
-
-          read_toml_value() {
-            awk -F '"' -v key="$1" '$1 ~ "^" key " = " { print $2; exit }' "$config_file"
-          }
-
-          oauth_token="$(read_toml_value oauth_token)"
-          expiration_time="$(read_toml_value expiration_time)"
-          refresh_token="$(read_toml_value refresh_token)"
-
-          if [ -z "$oauth_token" ] || [ -z "$expiration_time" ] || [ -z "$refresh_token" ]; then
-            echo "Wrangler auth config did not contain refreshed OAuth credentials." >&2
-            exit 1
-          fi
-
-          if ! gh secret set CLOUDFLARE_OAUTH_CONFIG --repo "$GITHUB_REPOSITORY" < "$config_file"; then
-            echo "Could not persist refreshed Cloudflare OAuth config." >&2
-            exit 1
-          fi
-
       - name: Update PR preview comment
         uses: actions/github-script@v8
         env:
-          PREVIEW_URL: ${{ steps.deploy.outputs.preview_url }}
-          PREVIEW_BRANCH: ${{ steps.deploy.outputs.preview_branch }}
+          PREVIEW_URL: ${{ steps.preview.outputs.preview_url }}
+          PREVIEW_BRANCH: ${{ steps.preview.outputs.preview_branch }}
         with:
           script: |
             const marker = '<!-- bangle-cloudflare-pr-preview -->';
