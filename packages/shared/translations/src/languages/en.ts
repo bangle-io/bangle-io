@@ -122,6 +122,12 @@ export const t = {
       backToApp: 'Back to app',
       general: {
         title: 'General',
+        appSection: 'App',
+        installPwaTitle: 'Install Bangle.io',
+        installPwaDescription:
+          'Add Bangle.io to this device and open it in its own app window.',
+        installPwaButton: 'Install app',
+        installingPwa: 'Installing...',
         appearanceSection: 'Appearance',
         themeTitle: 'Theme',
         themeDescription: 'Choose how Bangle looks on this device.',

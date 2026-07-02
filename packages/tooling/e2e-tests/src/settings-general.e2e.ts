@@ -69,3 +69,83 @@ test('general settings returns to the route it was opened from', async ({
       .getByRole('button', { name: `${noteName}.md` }),
   ).toBeVisible();
 });
+
+test('general settings can install the PWA when the browser exposes an install prompt', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    window.addEventListener('beforeinstallprompt', (event) => {
+      Object.assign(window, {
+        __bangleTestBeforeInstallPromptPrevented: event.defaultPrevented,
+      });
+    });
+  });
+
+  await page.goto('/');
+  await expect(page).toHaveTitle('Bangle.io');
+
+  await page.evaluate(() => {
+    const event = new Event('beforeinstallprompt', {
+      cancelable: true,
+    }) as Event & {
+      prompt: () => Promise<void>;
+      userChoice: Promise<{ outcome: 'accepted' }>;
+    };
+
+    event.prompt = () => {
+      Object.assign(window, { __bangleTestPwaPrompted: true });
+      return Promise.resolve();
+    };
+    event.userChoice = Promise.resolve({ outcome: 'accepted' });
+
+    window.dispatchEvent(event);
+    Object.assign(window, {
+      __bangleTestBeforeInstallPromptPrevented: event.defaultPrevented,
+    });
+  });
+
+  await page.getByRole('button', { name: /Bangle\.io/ }).click();
+  await page.getByRole('menuitem', { name: 'Settings' }).click();
+
+  await expect(page.getByRole('heading', { name: 'General' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { exact: true, name: 'App' }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      'Add Bangle.io to this device and open it in its own app window.',
+    ),
+  ).toBeVisible();
+
+  await page.getByRole('button', { name: 'Install app' }).click();
+
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        Boolean(
+          (
+            window as typeof window & {
+              __bangleTestPwaPrompted?: boolean;
+            }
+          ).__bangleTestPwaPrompted,
+        ),
+      ),
+    )
+    .toBe(true);
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        Boolean(
+          (
+            window as typeof window & {
+              __bangleTestBeforeInstallPromptPrevented?: boolean;
+            }
+          ).__bangleTestBeforeInstallPromptPrevented,
+        ),
+      ),
+    )
+    .toBe(true);
+  await expect(page.getByRole('button', { name: 'Install app' })).toHaveCount(
+    0,
+  );
+});

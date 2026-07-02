@@ -110,11 +110,26 @@
 
 html[data-bangle-desktop-platform] .desktop-titlebar-drag {
   -webkit-app-region: drag;
+  app-region: drag;
+  user-select: none;
+}
+
+html[data-bangle-window-controls-overlay="visible"] .desktop-titlebar-drag {
+  -webkit-app-region: drag;
+  app-region: drag;
   user-select: none;
 }
 
 html[data-bangle-desktop-platform] .desktop-titlebar-no-drag {
   -webkit-app-region: no-drag;
+  app-region: no-drag;
+  user-select: auto;
+}
+
+html[data-bangle-window-controls-overlay="visible"]
+  .desktop-titlebar-no-drag {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
   user-select: auto;
 }
 
@@ -122,6 +137,27 @@ html[data-bangle-desktop-platform] .desktop-titlebar-surface {
   border-bottom: 1px solid hsl(var(--BV-border) / 0.65);
   background: hsl(var(--BV-background) / 0.94);
   backdrop-filter: blur(18px);
+}
+
+html[data-bangle-window-controls-overlay="visible"] .desktop-titlebar-surface {
+  border-bottom: 1px solid hsl(var(--BV-border) / 0.65);
+  background: hsl(var(--BV-background) / 0.94);
+  backdrop-filter: blur(18px);
+  height: max(
+    52px,
+    var(--bangle-titlebar-area-height, env(titlebar-area-height, 52px))
+  );
+  padding-left: max(
+    0.75rem,
+    var(--bangle-titlebar-area-x, env(titlebar-area-x, 0px))
+  );
+  padding-right: max(
+    0.75rem,
+    calc(
+      100vw - var(--bangle-titlebar-area-x, env(titlebar-area-x, 0px)) -
+        var(--bangle-titlebar-area-width, env(titlebar-area-width, 100vw))
+    )
+  );
 }
 
 html[data-bangle-desktop-platform="darwin"]
