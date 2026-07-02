@@ -1,0 +1,63 @@
+name: Mobile EAS Build
+
+# Manually triggered iOS build on EAS. Requires the EXPO_TOKEN repository
+# secret (an Expo access token) and a completed `eas init` for the project
+# (EAS_PROJECT_ID secret). See packages/tooling/mobile-entry/README.md.
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: EAS build profile
+        type: choice
+        default: preview
+        options:
+          - development
+          - preview
+          - production
+
+concurrency:
+  group: mobile-eas-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  eas-build:
+    name: EAS iOS build (${{ inputs.profile }})
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check EXPO_TOKEN
+        run: |
+          if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
+            echo "EXPO_TOKEN secret is not set; see packages/tooling/mobile-entry/README.md" >&2
+            exit 1
+          fi
+
+      - uses: actions/checkout@v6
+
+      - name: Install pnpm
+        run: |
+          corepack enable
+          corepack prepare --activate
+
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build on EAS
+        working-directory: packages/tooling/mobile-entry
+        env:
+          EAS_PROJECT_ID: ${{ secrets.EAS_PROJECT_ID }}
+        run: eas build --non-interactive --no-wait --platform ios --profile "${{ inputs.profile }}"

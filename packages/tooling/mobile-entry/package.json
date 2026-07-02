@@ -1,0 +1,56 @@
+{
+  "name": "@bangle.io/mobile-entry",
+  "description": "Expo (React Native) iOS/Android shell that wraps the Bangle.io web app in a WebView.",
+  "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/tooling/mobile-entry"
+  },
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "author": {
+    "name": "Kushan Joshi",
+    "email": "0o3ko0@gmail.com",
+    "url": "http://github.com/kepta"
+  },
+  "homepage": "https://bangle.io",
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "banglePackageConfig": {
+    "env": "browser",
+    "kind": "app"
+  },
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "dev": "expo start",
+    "dev:client": "APP_VARIANT=development expo start --dev-client",
+    "eas:dev": "eas build --profile development -p ios",
+    "eas:preview": "eas build --profile preview -p ios",
+    "eas:prod": "eas build --profile production -p ios",
+    "eas:submit": "eas submit -p ios",
+    "expo-config": "expo config",
+    "ios": "EXPO_NO_GIT_STATUS=1 expo prebuild --clean --platform ios && expo run:ios",
+    "typecheck": "tsgo --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "expo": "^56.0.0",
+    "expo-constants": "~56.0.16",
+    "expo-linking": "~56.0.12",
+    "react": "19.2.7",
+    "react-native": "0.85.3",
+    "react-native-webview": "^13.16.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.3",
+    "@types/react": "^19.2.17"
+  }
+}

@@ -75,7 +75,7 @@
     "preview-production": "pnpm -r --filter \"browser-entry\" run preview-production",
     "start": "pnpm -r --filter \"browser-entry\" run dev",
     "storybook": "pnpm -r --filter \"storybook\" run storybook",
-    "typecheck": "tsgo -b tsconfig.tsgo.json"
+    "typecheck": "tsgo -b tsconfig.tsgo.json && pnpm --filter \"@bangle.io/mobile-entry\" run typecheck"
   },
   "module": "index.ts",
   "type": "module",
