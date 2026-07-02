@@ -2,6 +2,15 @@ import getEnvVars from '@bangle.io/env-vars';
 import { defineConfig, devices } from '@playwright/experimental-ct-react';
 import tailwindcss from '@tailwindcss/vite';
 
+// `@tailwindcss/vite`'s plugin type is structurally compared against the
+// `vite` version vendored by `@playwright/experimental-ct-core`. Those two
+// copies of `vite` can diverge enough to blow TypeScript's structural
+// comparison depth (TS2321), so `ctViteConfig` is cast to Playwright's own
+// declared type instead of letting it be inferred.
+type CtViteConfig = NonNullable<
+  NonNullable<Parameters<typeof defineConfig>[0]['use']>['ctViteConfig']
+>;
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -30,7 +39,7 @@ export default defineConfig({
 
     /* Port to use for Playwright component endpoint. */
     ctPort: 3100,
-    ctViteConfig: async () => {
+    ctViteConfig: (async () => {
       const envVars = getEnvVars({
         isProduction: true,
         isStorybook: true,
@@ -42,7 +51,7 @@ export default defineConfig({
         },
         plugins: tailwindcss(),
       };
-    },
+    }) as unknown as CtViteConfig,
   },
 
   /* Configure projects for major browsers */

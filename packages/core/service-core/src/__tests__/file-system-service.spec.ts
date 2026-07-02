@@ -98,7 +98,6 @@ describe('FileSystemService', () => {
       fileSystem: services.fileSystem,
       store: testEnv.store,
       workspaceOps: services.workspaceOps,
-      store: testEnv.store,
       storage,
       controller,
     };
