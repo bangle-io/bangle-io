@@ -64,8 +64,8 @@ jobs:
         run: |
           set -euo pipefail
 
-          sentry-cli releases info "$RELEASE" >/dev/null 2>&1 ||
-            sentry-cli releases new "$RELEASE"
+          sentry-cli releases info --project "$SENTRY_PROJECT" "$RELEASE" >/dev/null 2>&1 ||
+            sentry-cli releases new --project "$SENTRY_PROJECT" "$RELEASE"
 
       - name: Build app
         env:
@@ -82,8 +82,8 @@ jobs:
         run: |
           set -euo pipefail
 
-          sentry-cli releases set-commits "$RELEASE" --auto
-          sentry-cli releases finalize "$RELEASE"
+          sentry-cli releases set-commits --project "$SENTRY_PROJECT" "$RELEASE" --auto
+          sentry-cli releases finalize --project "$SENTRY_PROJECT" "$RELEASE"
 
       - name: Validate Cloudflare secrets
         env:
@@ -115,7 +115,7 @@ jobs:
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           RELEASE: ${{ steps.release.outputs.release }}
-        run: sentry-cli releases deploys "$RELEASE" new -e production
+        run: sentry-cli releases deploys --project "$SENTRY_PROJECT" "$RELEASE" new -e production
 
       - name: Print deployment summary
         env:
