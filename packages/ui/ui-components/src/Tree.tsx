@@ -155,8 +155,13 @@ const TreeNode = function TreeNode({
         {itemActions.length > 0 && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <SidebarMenuAction showOnHover>
-                <MoreHorizontal />
+              <SidebarMenuAction
+                showOnHover
+                aria-label={t.app.components.tree.moreActionsSr({
+                  itemName: item.name,
+                })}
+              >
+                <MoreHorizontal aria-hidden="true" />
               </SidebarMenuAction>
             </DropdownMenuTrigger>
             <DropdownMenuContent side="right" align="start">
@@ -213,8 +218,13 @@ const TreeNode = function TreeNode({
         {itemActions.length > 0 && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <SidebarMenuAction showOnHover>
-                <MoreHorizontal />
+              <SidebarMenuAction
+                showOnHover
+                aria-label={t.app.components.tree.moreActionsSr({
+                  itemName: item.name,
+                })}
+              >
+                <MoreHorizontal aria-hidden="true" />
               </SidebarMenuAction>
             </DropdownMenuTrigger>
             <DropdownMenuContent side="right" align="start">

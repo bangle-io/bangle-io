@@ -259,7 +259,7 @@ export const noteManagementHandlers = [
             if (newDirPath === ROOT_ID) {
               newDirPath = '';
             } else {
-              validateInputPath(newDirPath);
+              newDirPath = WsPath.pathJoin(newDirPath);
             }
 
             dispatch('command::ws:move-ws-path', {

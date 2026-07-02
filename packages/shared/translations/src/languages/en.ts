@@ -351,9 +351,12 @@ export const t = {
         deleteAction: 'Delete',
         moveAction: 'Move',
         createNoteAction: 'Create Note',
+        moreActionsSr: ({ itemName }: { itemName: string }) =>
+          `More actions for ${itemName}`,
       },
       dialog: {
         closeSr: 'Close',
+        commandDescriptionSr: 'Type to search and select an item.',
       },
       sheet: {
         closeSr: 'Close',

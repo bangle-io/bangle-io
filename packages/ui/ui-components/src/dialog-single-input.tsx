@@ -1,12 +1,13 @@
-import { cx } from '@bangle.io/base-utils';
 import {
-  CommandBadge,
-  CommandDialog,
-  CommandGroup,
-  CommandHints,
-  CommandInput,
-  CommandItem,
-  CommandList,
+  Button,
+  cn,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Input,
 } from '@bangle.io/shadcn';
 import React from 'react';
 
@@ -27,9 +28,6 @@ export type DialogSingleInputProps = {
   hints?: string[];
 };
 
-/**
- * A simple dialog with a single option.
- */
 export function DialogSingleInput({
   open,
   setOpen,
@@ -44,48 +42,79 @@ export function DialogSingleInput({
   hints,
 }: DialogSingleInputProps) {
   const [search, setSearch] = React.useState(initialSearch);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const title = badgeText || option.title || option.id;
+  const description = hints?.join(' ') || placeholder;
+  const submitText = option.title || t.app.common.continueButton;
+
+  React.useEffect(() => {
+    setSearch(initialSearch);
+  }, [initialSearch]);
+
+  React.useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    window.requestAnimationFrame(() => inputRef.current?.select());
+  }, [open]);
+
   return (
-    <CommandDialog
-      open={open}
-      onOpenChange={setOpen}
-      shouldFilter={false}
-      screenReaderTitle="dialog input"
-    >
-      {badgeText && (
-        <CommandBadge
-          className={cx(badgeTone === 'destructive' && 'bg-destructive')}
-        >
-          <span
-            className={cx(
-              badgeTone === 'destructive' && 'text-destructive-foreground',
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle
+            className={cn(
+              'flex items-center gap-2',
+              badgeTone === 'destructive' && 'text-destructive',
             )}
           >
-            {badgeText}
-          </span>
-        </CommandBadge>
-      )}
-      <CommandInput
-        placeholder={placeholder}
-        value={search}
-        onValueChange={setSearch}
-        Icon={Icon}
-      />
-      <CommandList>
-        <CommandGroup heading={groupHeading}>
-          <CommandItem
-            key={option.id}
-            onSelect={() => {
-              if (search) {
-                onSelect(search);
-              }
-              setOpen(false);
-            }}
-          >
-            {option.title || option.id}
-          </CommandItem>
-        </CommandGroup>
-      </CommandList>
-      <CommandHints hints={hints} />
-    </CommandDialog>
+            {Icon && <Icon className="h-5 w-5" aria-hidden="true" />}
+            <span>{title}</span>
+          </DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
+
+        <form
+          className="grid gap-4"
+          onSubmit={(event) => {
+            event.preventDefault();
+            if (!search.trim()) {
+              return;
+            }
+
+            onSelect(search);
+            setOpen(false);
+          }}
+        >
+          {groupHeading && (
+            <div className="font-medium text-muted-foreground text-xs">
+              {groupHeading}
+            </div>
+          )}
+
+          <Input
+            ref={inputRef}
+            aria-label={placeholder}
+            placeholder={placeholder}
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+          />
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen(false)}
+            >
+              {t.app.common.cancelButton}
+            </Button>
+            <Button type="submit" disabled={!search.trim()}>
+              {submitText}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

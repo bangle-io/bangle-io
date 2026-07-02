@@ -217,8 +217,6 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
   defaultStorage,
 }) => {
   const { selected = defaultStorage, error } = state;
-  const titleId = useId();
-
   const handleSelectStorage = (storage: WorkspaceStorageType) => {
     dispatch({ type: 'UPDATE_SELECTED_STORAGE', storage });
   };
@@ -233,12 +231,15 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
   return (
     <>
       <DialogHeader className="mb-2">
-        <DialogTitle id={titleId} className="font-semibold text-lg">
+        <DialogTitle className="font-semibold text-lg">
           {t.app.dialogs.createWorkspace.selectTypeTitle}
         </DialogTitle>
       </DialogHeader>
-      {/* biome-ignore lint: Using ul as a container for radiogroup is a standard ARIA practice. */}
-      <ul className="space-y-4" role="radiogroup" aria-labelledby={titleId}>
+      <div
+        className="space-y-4"
+        role="radiogroup"
+        aria-label={t.app.dialogs.createWorkspace.selectTypeTitle}
+      >
         {storageTypes.map((config) => (
           <ListItem
             key={config.type}
@@ -249,7 +250,7 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
             disabled={config.disabled || false}
           />
         ))}
-      </ul>
+      </div>
       <ErrorMessage error={error} />
       <DialogFooter className="flex-col sm:justify-between">
         <Button
@@ -496,46 +497,44 @@ const ListItem: React.FC<ListItemProps> = ({
   onClick,
   disabled,
 }) => {
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if ((event.key === 'Enter' || event.key === ' ') && !disabled) {
-      event.preventDefault();
-      onClick();
-    }
-  };
-
   return (
-    <li>
-      <button
-        type="button"
-        onClick={disabled ? undefined : onClick}
-        aria-checked={isSelected}
-        onKeyDown={handleKeyDown}
-        className={cn(
-          'relative block w-full cursor-pointer select-none space-y-1 rounded-md p-3 text-left leading-none transition-colors duration-200 ease-in-out hover:bg-muted focus:bg-muted',
-          isSelected && 'bg-muted',
-          disabled && 'cursor-not-allowed opacity-50',
-        )}
+    <label
+      className={cn(
+        'relative block w-full cursor-pointer select-none space-y-1 rounded-md p-3 text-left leading-none transition-colors duration-200 ease-in-out focus-within:bg-muted focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:bg-muted',
+        isSelected && 'bg-muted',
+        disabled && 'cursor-not-allowed opacity-50',
+      )}
+    >
+      <input
+        type="radio"
+        name="workspace-storage-type"
+        checked={isSelected}
+        onChange={() => {
+          if (!disabled) {
+            onClick();
+          }
+        }}
         disabled={disabled}
-        // biome-ignore lint: Using a button for custom styling and behavior while maintaining radio button semantics.
-        role="radio"
-      >
-        <div className="flex items-center justify-between space-x-1">
-          <div>
-            <h3 className="mb-1 font-semibold text-sm leading-none tracking-tight">
-              {title}
-            </h3>
-            <p className="text-foreground/80 text-sm">{description}</p>
-          </div>
-          <div className="h-4 w-4 shrink-0">
-            <Check
-              className={`h-4 w-4 transition-opacity duration-300 ${
-                isSelected ? 'opacity-100' : 'opacity-0'
-              }`}
-            />
-          </div>
+        className="absolute inset-0 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
+      />
+      <div className="flex items-center justify-between space-x-1">
+        <div>
+          <span className="mb-1 block font-semibold text-sm leading-none tracking-tight">
+            {title}
+          </span>
+          <span className="block text-foreground/80 text-sm">
+            {description}
+          </span>
         </div>
-      </button>
-    </li>
+        <div className="h-4 w-4 shrink-0">
+          <Check
+            className={`h-4 w-4 transition-opacity duration-300 ${
+              isSelected ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
+        </div>
+      </div>
+    </label>
   );
 };
 

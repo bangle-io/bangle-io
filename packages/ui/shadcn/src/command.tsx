@@ -3,7 +3,12 @@ import type { DialogProps } from '@radix-ui/react-dialog';
 import { Command as CommandPrimitive } from 'cmdk';
 import { Search } from 'lucide-react';
 import * as React from 'react';
-import { Dialog, DialogContent, DialogTitle } from './dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from './dialog';
 
 const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
@@ -41,12 +46,15 @@ const CommandDialog = ({
 }) => {
   return (
     <Dialog {...props}>
-      <DialogTitle className="sr-only">{screenReaderTitle}</DialogTitle>
       <DialogContent
         className="overflow-hidden p-0 shadow-lg"
         onOpenAutoFocus={onOpenAutoFocus}
         onCloseAutoFocus={onCloseAutoFocus}
       >
+        <DialogTitle className="sr-only">{screenReaderTitle}</DialogTitle>
+        <DialogDescription className="sr-only">
+          {t.app.components.dialog.commandDescriptionSr}
+        </DialogDescription>
         <Command
           loop={loop}
           shouldFilter={shouldFilter}

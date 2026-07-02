@@ -205,7 +205,7 @@ describe('UI command handlers', () => {
         t.app.dialogs.moveNote.badgeText({ fileNameWithoutExtension: 'test' }),
       );
 
-      dialog?.onSelect({ id: 'dir', title: 'dir' });
+      dialog?.onSelect({ id: 'dir/', title: 'dir/' });
 
       await vi.waitFor(() => {
         expect(
@@ -213,6 +213,11 @@ describe('UI command handlers', () => {
             .filter((result) => result.type === 'success')
             .map((result) => result.command.id),
         ).toContain('command::ws:move-ws-path');
+        expect(
+          services.workspaceState
+            .resolveAtoms()
+            .wsPaths.map((path) => path.wsPath),
+        ).toContain('test-ws:dir/test.md');
       });
     });
   });

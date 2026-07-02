@@ -360,9 +360,13 @@ export const t = {
         deleteAction: 'Löschen',
         moveAction: 'Verschieben',
         createNoteAction: 'Notiz erstellen',
+        moreActionsSr: ({ itemName }: { itemName: string }) =>
+          `Weitere Aktionen für ${itemName}`,
       },
       dialog: {
         closeSr: 'Schließen',
+        commandDescriptionSr:
+          'Tippen Sie, um zu suchen und ein Element auszuwählen.',
       },
       sheet: {
         closeSr: 'Schließen',
