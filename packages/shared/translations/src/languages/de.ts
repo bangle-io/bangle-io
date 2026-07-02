@@ -1,5 +1,5 @@
 // de.ts
-import type { Translations } from '../types';
+import type { PartialTranslations } from '../types';
 
 export const t = {
   meta: {
@@ -487,4 +487,4 @@ export const t = {
       'Löst gerade den Weltfrieden ✌️',
     ],
   },
-} satisfies Translations;
+} satisfies PartialTranslations;
