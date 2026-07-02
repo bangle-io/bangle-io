@@ -79,6 +79,35 @@ describe('HashStrategy', () => {
       expect(result.search).toBe('');
       expect(result.hash).toMatch(/#route=editor(&wsPath=)?/);
     });
+
+    it('should encode settings general route', () => {
+      const routeInfo: AppRouteInfo = {
+        route: 'settings-general',
+        payload: {},
+      };
+
+      const result = strategy.encodeRouteInfo(routeInfo, basePath);
+      expect(result).toEqual({
+        pathname: '/app',
+        search: '',
+        hash: '#route=settings-general',
+      });
+    });
+
+    it('should encode settings general return target', () => {
+      const routeInfo: AppRouteInfo = {
+        route: 'settings-general',
+        payload: {
+          returnTo: '/ws#route=editor&wsPath=notes%3Aindex.md',
+        },
+      };
+
+      expect(strategy.encodeRouteInfo(routeInfo, basePath)).toEqual({
+        pathname: '/app',
+        search: '',
+        hash: '#route=settings-general&returnTo=%2Fws%23route%3Deditor%26wsPath%3Dnotes%253Aindex.md',
+      });
+    });
   });
 
   describe('decodeRouteInfo', () => {
@@ -132,6 +161,34 @@ describe('HashStrategy', () => {
       expect(result.route).toBe('fatal-error');
       expect((result.payload as { error: Error }).error.message).toBe('OMG');
     });
+
+    it('should decode settings general route', () => {
+      const encoded: EncodedRoute = {
+        pathname: '/app',
+        search: '',
+        hash: '#route=settings-general',
+      };
+
+      expect(strategy.decodeRouteInfo(encoded, basePath)).toEqual({
+        route: 'settings-general',
+        payload: {},
+      });
+    });
+
+    it('should decode settings general return target', () => {
+      const encoded: EncodedRoute = {
+        pathname: '/app',
+        search: '',
+        hash: '#route=settings-general&returnTo=%2Fws%23route%3Deditor%26wsPath%3Dnotes%253Aindex.md',
+      };
+
+      expect(strategy.decodeRouteInfo(encoded, basePath)).toEqual({
+        route: 'settings-general',
+        payload: {
+          returnTo: '/ws#route=editor&wsPath=notes%3Aindex.md',
+        },
+      });
+    });
   });
 
   describe('bidirectional conversion', () => {
@@ -163,6 +220,14 @@ describe('HashStrategy', () => {
           payload: { error: new Error('Test error') },
         },
         basePath: '/someBase',
+      },
+      {
+        name: 'settings general route with basePath',
+        routeInfo: {
+          route: 'settings-general',
+          payload: {},
+        },
+        basePath: '/app',
       },
     ];
 

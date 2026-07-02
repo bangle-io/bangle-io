@@ -66,6 +66,17 @@ export const uiCommands = narrow([
     autoFocusEditor: false,
     args: {},
   },
+  {
+    id: 'command::ui:open-settings',
+    title: 'Open Settings',
+    omniSearch: true,
+    keywords: ['settings', 'preferences', 'general'],
+    dependencies: {
+      services: ['navigation'],
+    },
+    autoFocusEditor: false,
+    args: null,
+  },
 
   // GROUP: NOTES MANAGEMENT
   {

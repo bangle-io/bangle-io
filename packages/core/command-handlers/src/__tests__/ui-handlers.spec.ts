@@ -31,6 +31,28 @@ describe('UI command handlers', () => {
     });
   });
 
+  describe('command::ui:open-settings', () => {
+    it('should navigate to general settings', async () => {
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ui:open-settings',
+      });
+
+      dispatch('command::ui:open-settings', null);
+
+      await vi.waitFor(() => {
+        expect(services.navigation.resolveAtoms().routeInfo).toEqual({
+          route: 'settings-general',
+          payload: {
+            returnTo: services.navigation.toUri({
+              route: 'welcome',
+              payload: {},
+            }),
+          },
+        });
+      });
+    });
+  });
+
   describe('command::ui:toggle-omni-search', () => {
     it('should toggle omni-search and prefill input if provided', async () => {
       const { dispatch, testEnv, services } = await setupTest({

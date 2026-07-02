@@ -69,6 +69,10 @@ export const basicOperationsHandlers = [
     workbenchState.reloadUi();
   }),
 
+  c('command::ui:open-settings', ({ navigation }) => {
+    navigation.goSettingsGeneral();
+  }),
+
   c(
     'command::ui:toggle-all-files',
     ({ workbenchState }, { prefillInput }, key) => {

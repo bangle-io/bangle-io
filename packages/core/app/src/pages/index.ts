@@ -3,6 +3,7 @@ export { PageFatalError } from './page-fatal-error';
 export { PageNativeFsAuthFailed } from './page-native-fs-auth-failed';
 export { PageNativeFsAuthReq } from './page-native-fs-auth-req';
 export { PageNotFound } from './page-not-found';
+export { PageSettings } from './page-settings';
 export { PageWelcome } from './page-welcome';
 export { PageWorkspaceNotFound } from './page-workspace-not-found';
 export { PageWsHome } from './page-ws-home';

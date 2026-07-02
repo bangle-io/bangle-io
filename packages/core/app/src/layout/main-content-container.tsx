@@ -12,6 +12,12 @@ export interface PageContentContainerProps {
    * @default true
    */
   applyPadding?: boolean;
+  /**
+   * If true, constrain content based on the editor width preference.
+   * Non-editor pages with their own layout should opt out.
+   * @default true
+   */
+  respectEditorWidthPreference?: boolean;
 }
 
 /**
@@ -20,6 +26,7 @@ export interface PageContentContainerProps {
 export function PageContentContainer({
   children,
   applyPadding = true,
+  respectEditorWidthPreference = true,
 }: PageContentContainerProps) {
   const coreServices = useCoreServices();
   const wideEditor = useAtomValue(coreServices.workbenchState.$wideEditor);
@@ -28,7 +35,9 @@ export function PageContentContainer({
     <main
       className={cx(
         'B-app-page-content flex min-w-0 flex-1 flex-col gap-4',
-        !wideEditor && 'mx-auto w-full max-w-(--breakpoint-md)',
+        respectEditorWidthPreference &&
+          !wideEditor &&
+          'mx-auto w-full max-w-(--breakpoint-md)',
         applyPadding && APP_MAIN_CONTENT_PADDING,
       )}
     >

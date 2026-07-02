@@ -45,6 +45,13 @@ export type AppRouteInfo =
       };
     }
   | {
+      route: 'settings-general';
+      metadata?: Record<string, string>;
+      payload: {
+        returnTo?: string;
+      };
+    }
+  | {
       route: 'welcome';
       metadata?: Record<string, string>;
       payload: Record<string, never>;

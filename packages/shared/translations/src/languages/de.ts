@@ -100,7 +100,7 @@ export const t = {
       appActionsLabel: 'App-Aktionen',
       omniSearch: 'Omni-Suche',
       allCommands: 'Alle Befehle',
-      changeTheme: 'Theme ändern',
+      settings: 'Einstellungen',
       linksLabel: 'Links',
       homepage: 'Startseite',
       githubProject: 'GitHub-Projekt',
@@ -110,6 +110,29 @@ export const t = {
       footerTitle: 'Bangle.io',
       toggleSidebarSr: 'Seitenleiste umschalten',
       toggleSidebarRailTitle: 'Seitenleiste umschalten',
+    },
+    settings: {
+      title: 'Einstellungen',
+      backToApp: 'Zurück zur App',
+      general: {
+        title: 'Allgemein',
+        appearanceSection: 'Darstellung',
+        themeTitle: 'Theme',
+        themeDescription: 'Wählen Sie, wie Bangle auf diesem Gerät aussieht.',
+        themeLabel: 'Theme-Einstellung',
+        editorSection: 'Editor',
+        wideEditorTitle: 'Editorbreite',
+        wideEditorDescription:
+          'Verfügbare Fensterbreite zum Bearbeiten von Notizen nutzen.',
+        wideEditorToggle: 'Breiten Editor verwenden',
+        defaultWidth: 'Standard',
+        wideWidth: 'Breit',
+        enabled: 'Aktiviert',
+        disabled: 'Deaktiviert',
+      },
+      nav: {
+        general: 'Allgemein',
+      },
     },
     dialogs: {
       changeTheme: {
