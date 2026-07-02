@@ -280,6 +280,11 @@ div.ProseMirror {
   & table {
     border-collapse: collapse;
     margin: 0.5rem 0;
+    /* The editor is a column flexbox, which stretches tables to the full
+       row width and dumps the slack into the widest column. Size to content
+       instead. */
+    width: fit-content;
+    align-self: flex-start;
     max-width: 100%;
     overflow-x: auto;
   }

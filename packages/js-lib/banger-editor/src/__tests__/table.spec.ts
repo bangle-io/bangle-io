@@ -362,6 +362,47 @@ describe('arrow-key boundary behavior', () => {
   });
 });
 
+describe('deleting empty blocks around tables', () => {
+  it('forward-delete removes an empty paragraph directly before a table', () => {
+    const editor = setup.createEditor(
+      doc(p('<cursor>'), tableNode(row(th('h')), row(td('a')))),
+    );
+    expect(editor.pressKey('Delete')).toBe(true);
+    expect(editor.view.state.doc.childCount).toBe(1);
+    expect(editor.view.state.doc.child(0).type.name).toBe('table');
+    expect(editor.selectionParentType()).toBe('table_header');
+  });
+
+  it('Backspace removes an empty paragraph directly after a table', () => {
+    const editor = setup.createEditor(
+      doc(tableNode(row(th('h')), row(td('a'))), p('<cursor>')),
+    );
+    expect(editor.pressKey('Backspace')).toBe(true);
+    expect(editor.view.state.doc.childCount).toBe(1);
+    expect(editor.selectionParentType()).toBe('table_cell');
+    expect(editor.selectionParentText()).toBe('a');
+  });
+
+  it('forward-delete leaves a non-empty paragraph before a table alone', () => {
+    const editor = setup.createEditor(
+      doc(p('text<cursor>'), tableNode(row(th('h')), row(td('a')))),
+    );
+    editor.pressKey('Delete');
+    expect(editor.view.state.doc.childCount).toBe(2);
+    expect(editor.view.state.doc.child(0).textContent).toBe('text');
+  });
+
+  it('Backspace inside an empty cell does not delete anything', () => {
+    const editor = setup.createEditor(
+      doc(tableNode(row(th('h')), row(td('<cursor>'), td('b')))),
+    );
+    editor.pressKey('Backspace');
+    const tableDoc = editor.view.state.doc.child(0);
+    expect(tableDoc.child(1).childCount).toBe(2);
+    expect(tableDoc.textContent).toBe('hb');
+  });
+});
+
 describe('queries', () => {
   it('reports the active cell', () => {
     const editor = setup.createEditor(docWithCursorInCell('a1'));

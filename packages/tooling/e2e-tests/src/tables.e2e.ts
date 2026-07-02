@@ -263,3 +263,42 @@ test('arrow keys navigate cell edges and exit the table at its boundaries', asyn
       ].join('\n'),
     );
 });
+
+test('table hugs its content width and empty neighbors delete into the table', async ({
+  page,
+}) => {
+  const workspaceName = 'table-width-delete';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+
+  const source = ['| a | b |', '| --- | --- |', '| c | d |'].join('\n');
+  await writeStoredMarkdown(page, workspaceName, 'Home', source);
+  await page.reload();
+
+  const editor = getEditorLocator(page, {});
+  await expect(editor.locator('table')).toBeVisible();
+
+  // The editor is a column flexbox; the table must not stretch to the full
+  // row width (which dumped all the slack into the widest column).
+  const tableBox = await editor.locator('table').boundingBox();
+  const editorBox = await editor.boundingBox();
+  if (!tableBox || !editorBox) {
+    throw new Error('Expected table and editor bounding boxes');
+  }
+  expect(tableBox.width).toBeLessThan(editorBox.width * 0.6);
+
+  // ArrowUp inserts an empty paragraph above; forward-delete removes it
+  // again instead of leaving the caret stuck at the table boundary.
+  await editor.locator('table th').first().click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.press('ArrowUp');
+  await page.keyboard.press('Delete');
+  await page.keyboard.insertText('in table');
+
+  await expect(editor.locator('table th').first()).toHaveText('in tablea');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe(['| in tablea | b |', '| --- | --- |', '| c | d |'].join('\n'));
+});

@@ -158,6 +158,8 @@ function pluginKeybindings(config: RequiredConfig) {
         ],
         ['ArrowLeft', moveCellHorizontal(-1, config)],
         ['ArrowRight', moveCellHorizontal(1, config)],
+        ['Delete', deleteEmptyBlockNextToTable('before')],
+        ['Backspace', deleteEmptyBlockNextToTable('after')],
       ],
       'table',
       PRIORITY.high,
@@ -449,6 +451,72 @@ function enterTableVertical(direction: 'up' | 'down'): Command {
         pos = tablePos + 1 + lastCell + cell.nodeSize - 1;
       }
       dispatch(state.tr.setSelection(TextSelection.create(state.doc, pos)));
+    }
+    return true;
+  };
+}
+
+/**
+ * Forward-delete in an empty textblock directly before a table (side
+ * 'before'), or Backspace in one directly after it (side 'after'), removes
+ * the empty block and moves the caret into the nearest cell. The default
+ * join commands cannot cross the table's isolating boundary and leave the
+ * document unchanged.
+ */
+function deleteEmptyBlockNextToTable(side: 'before' | 'after'): Command {
+  return (state, dispatch) => {
+    if (!state.selection.empty || isInTable(state)) {
+      return false;
+    }
+    const { $from } = state.selection;
+    if (
+      !$from.parent.isTextblock ||
+      $from.parent.content.size > 0 ||
+      $from.depth === 0
+    ) {
+      return false;
+    }
+
+    const tableType = getNodeType(state.schema, 'table');
+    const parent = $from.node($from.depth - 1);
+    const index = $from.index($from.depth - 1);
+    const sibling =
+      side === 'before'
+        ? index < parent.childCount - 1
+          ? parent.child(index + 1)
+          : null
+        : index > 0
+          ? parent.child(index - 1)
+          : null;
+    if (!sibling || sibling.type !== tableType) {
+      return false;
+    }
+
+    if (dispatch) {
+      const start = $from.before($from.depth);
+      const end = $from.after($from.depth);
+      const tr = state.tr.delete(start, end);
+      const map = TableMap.get(sibling);
+      if (side === 'before') {
+        // The table now starts where the deleted block began.
+        const first = map.map[0];
+        if (first != null) {
+          tr.setSelection(TextSelection.create(tr.doc, start + 1 + first + 1));
+        }
+      } else {
+        const tablePos = start - sibling.nodeSize;
+        const last = map.map[map.map.length - 1];
+        const cell = last != null ? sibling.nodeAt(last) : null;
+        if (last != null && cell) {
+          tr.setSelection(
+            TextSelection.create(
+              tr.doc,
+              tablePos + 1 + last + cell.nodeSize - 1,
+            ),
+          );
+        }
+      }
+      dispatch(tr);
     }
     return true;
   };
