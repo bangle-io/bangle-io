@@ -71,7 +71,7 @@ export const basicOperationsHandlers = [
   }),
 
   c('command::ui:open-settings', ({ navigation }) => {
-    navigation.goSettingsGeneral();
+    navigation.goSettingsPage('settings-general');
   }),
 
   c('command::ui:open-settings-general', ({ navigation }) => {

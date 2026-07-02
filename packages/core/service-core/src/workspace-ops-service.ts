@@ -18,8 +18,13 @@ import { atom } from 'jotai';
 export class WorkspaceOpsService extends BaseService {
   static deps = ['database'] as const;
 
-  $workspaceInfoAnyChange = atom(0);
-  $workspaceInfoListChange = atom(0);
+  /**
+   * Bumps on every workspaceInfo change (create, update, delete). Soft-deletes
+   * and restores go through `updateEntry`, which emits an 'update' change rather
+   * than 'delete', so consumers that track the visible (non-deleted) workspace
+   * set must treat any change as significant.
+   */
+  $workspaceInfoChange = atom(0);
 
   private workspaceInfoCache = new Map<string, WorkspaceInfo>();
 
@@ -35,13 +40,9 @@ export class WorkspaceOpsService extends BaseService {
   async hookMount(): Promise<void> {
     this.database.subscribe(
       { tableName: DATABASE_TABLE_NAME.workspaceInfo },
-      (_change) => {
+      () => {
         this.invalidateCache();
-        this.store.set(this.$workspaceInfoAnyChange, (v) => v + 1);
-        // Workspaces are soft-deleted (and restored) via `updateEntry`, which
-        // emits an 'update' change rather than 'delete'. Any change can therefore
-        // alter the visible (non-deleted) workspace set, so refresh the list.
-        this.store.set(this.$workspaceInfoListChange, (v) => v + 1);
+        this.store.set(this.$workspaceInfoChange, (v) => v + 1);
       },
       this.abortSignal,
     );

@@ -182,10 +182,6 @@ export class NavigationService extends BaseService {
     });
   }
 
-  public goSettingsGeneral() {
-    this.goSettingsPage('settings-general');
-  }
-
   public goSettingsPage(route: SettingsRoute) {
     const currentRoute = this.store.get(this.$routeInfo);
     const returnTo = isSettingsRouteInfo(currentRoute)
