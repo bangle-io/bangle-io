@@ -15,7 +15,11 @@ import type {
   CommandHandler,
   RootEmitter,
 } from '@bangle.io/types';
-import { createServiceSetup } from './service-setup';
+import {
+  coreServiceMap,
+  createServiceSetup,
+  defineAppServiceMap,
+} from './service-setup';
 
 const browserPlatformServiceMap = {
   errorService: BrowserErrorHandlerService,
@@ -25,6 +29,11 @@ const browserPlatformServiceMap = {
   fileStorageNativeFs: FileStorageNativeFs,
   router: BrowserRouterService,
 };
+
+const browserServiceMap = defineAppServiceMap({
+  ...browserPlatformServiceMap,
+  ...coreServiceMap,
+});
 
 export function initializeServices(
   commonOpts: BaseServiceCommonOptions,
@@ -40,7 +49,7 @@ export function initializeServices(
     commandHandlers,
     themeManager: theme,
     shortcutTarget: document,
-    platformServices: browserPlatformServiceMap,
+    serviceMap: browserServiceMap,
     fileStorageSlots: ['fileStorageIdb', 'fileStorageNativeFs'],
   });
 

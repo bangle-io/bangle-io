@@ -2,6 +2,7 @@ import { expectType } from '@bangle.io/mini-js-utils';
 import { describe, expect, test, vi } from 'vitest';
 import {
   Container,
+  defineServiceMap,
   type Service,
   type ServiceContext,
   ServiceStartupError,
@@ -63,6 +64,72 @@ describe('Container', () => {
     expect(services.serviceB.dependencies.serviceA).toBe(services.serviceA);
     expect(services.serviceC.dependencies.serviceA).toBe(services.serviceA);
     expect(services.serviceC.dependencies.serviceB).toBe(services.serviceB);
+  });
+
+  test('defineServiceMap preserves checked service inference', () => {
+    const serviceMap = defineServiceMap<TestContext>()({
+      serviceA: ServiceA,
+      serviceB: ServiceB,
+      serviceC: ServiceC,
+    });
+    const container = new Container(
+      { context: { env: 'test' }, abortSignal: new AbortController().signal },
+      serviceMap,
+    );
+
+    container.setConfig(ServiceA, { name: 'test' });
+    container.setConfig(ServiceC, { value: 42 });
+
+    const services = container.instantiateAll();
+
+    expect(services.serviceB.dependencies.serviceA).toBe(services.serviceA);
+    expect(services.serviceC.dependencies.serviceB).toBe(services.serviceB);
+  });
+
+  test('defineServiceMap type-checks declared service dependencies', () => {
+    class MissingStaticDep implements Service<TestContext> {
+      constructor(
+        _: { ctx: TestContext; serviceContext: ServiceContext },
+        public dependencies: { serviceA: ServiceA },
+        _config: undefined,
+      ) {}
+    }
+
+    class UnknownStaticDep implements Service<TestContext> {
+      static deps = ['missingService'] as const;
+      constructor(
+        _: { ctx: TestContext; serviceContext: ServiceContext },
+        public dependencies: { missingService: ServiceA },
+        _config: undefined,
+      ) {}
+    }
+
+    class WrongDependencyType implements Service<TestContext> {
+      static deps = ['serviceA'] as const;
+      constructor(
+        _: { ctx: TestContext; serviceContext: ServiceContext },
+        public dependencies: { serviceA: ServiceC },
+        _config: undefined,
+      ) {}
+    }
+
+    // @ts-expect-error constructor dependencies must be listed in static deps.
+    defineServiceMap<TestContext>()({
+      serviceA: ServiceA,
+      missingStaticDep: MissingStaticDep,
+    });
+
+    // @ts-expect-error static deps must name a registered service slot.
+    defineServiceMap<TestContext>()({
+      serviceA: ServiceA,
+      unknownStaticDep: UnknownStaticDep,
+    });
+
+    // @ts-expect-error registered dependency instances must satisfy constructor deps.
+    defineServiceMap<TestContext>()({
+      serviceA: ServiceA,
+      wrongDependencyType: WrongDependencyType,
+    });
   });
 
   test('last config wins', () => {

@@ -2,7 +2,13 @@ import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { commandHandlers } from '@bangle.io/command-handlers';
 import { getEnabledCommands } from '@bangle.io/commands';
 import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
-import { createServiceSetup } from '@bangle.io/initialize-services/setup';
+import type { CoreServices } from '@bangle.io/context';
+import {
+  coreServiceMap,
+  createServiceSetup,
+  defineAppServiceMap,
+} from '@bangle.io/initialize-services/setup';
+import type { ConstructorToInstance, Container } from '@bangle.io/poor-mans-di';
 import {
   FileStorageMemory,
   MemoryDatabaseService,
@@ -10,9 +16,9 @@ import {
   MemorySyncDatabaseService,
   TestErrorHandlerService,
 } from '@bangle.io/service-platform/testing';
-import type { Store } from '@bangle.io/types';
+import type { BaseServiceCommonOptions, Store } from '@bangle.io/types';
 import { vi } from 'vitest';
-import { makeTestCommonOpts } from './common-opts';
+import { type MockLog, makeTestCommonOpts } from './common-opts';
 
 export type { Store } from '@bangle.io/types';
 
@@ -27,6 +33,36 @@ const themeManager = {
   currentTheme: THEME_MANAGER_CONFIG.lightThemeClass,
 } as unknown as ThemeManager;
 
+const platformServicesMap = {
+  errorService: TestErrorHandlerService,
+  database: MemoryDatabaseService,
+  syncDatabase: MemorySyncDatabaseService,
+  fileStorageMemory: FileStorageMemory,
+  router: MemoryRouterService,
+};
+
+const serviceMap = defineAppServiceMap({
+  ...platformServicesMap,
+  ...coreServiceMap,
+});
+
+type TestServiceMap = typeof serviceMap;
+type TestServices = ConstructorToInstance<TestServiceMap>;
+type TestContainer = Container<BaseServiceCommonOptions, TestServiceMap>;
+
+export type TestEnvironment = {
+  logger: ReturnType<typeof makeTestCommonOpts>['commonOpts']['logger'];
+  mockLog: MockLog;
+  controller: AbortController;
+  rootEmitter: ReturnType<typeof makeTestCommonOpts>['rootEmitter'];
+  commonOpts: ReturnType<typeof makeTestCommonOpts>['commonOpts'];
+  store: Store;
+  getContainer: () => TestContainer;
+  coreServices: () => CoreServices;
+  mountAll: () => Promise<void>;
+  instantiateAll: (focusService?: keyof TestServices & string) => TestServices;
+};
+
 /**
  * Creates a fully configured test environment with in-memory platform
  * services. Core wiring comes from the same `createServiceSetup` builder the
@@ -36,19 +72,10 @@ export function createTestEnvironment({
   controller = new AbortController(),
 }: {
   controller?: AbortController;
-} = {}) {
+} = {}): TestEnvironment {
   const { commonOpts, mockLog, rootEmitter } = makeTestCommonOpts({
     controller,
   });
-
-  // Platform-specific service mappings to in-memory / mock equivalents.
-  const platformServicesMap = {
-    errorService: TestErrorHandlerService,
-    database: MemoryDatabaseService,
-    syncDatabase: MemorySyncDatabaseService,
-    fileStorageMemory: FileStorageMemory,
-    router: MemoryRouterService,
-  };
 
   const setup = createServiceSetup({
     commonOpts,
@@ -60,7 +87,7 @@ export function createTestEnvironment({
       addEventListener: vi.fn(),
       removeEventListener: vi.fn(),
     },
-    platformServices: platformServicesMap,
+    serviceMap,
     fileStorageSlots: ['fileStorageMemory'],
   });
 

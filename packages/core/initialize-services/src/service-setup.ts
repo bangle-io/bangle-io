@@ -5,6 +5,7 @@ import { PmEditorService } from '@bangle.io/editor';
 import {
   type ConstructorToInstance,
   Container,
+  defineServiceMap,
   type ServiceConstructor,
 } from '@bangle.io/poor-mans-di';
 import {
@@ -50,26 +51,25 @@ export const coreServiceMap = {
   workspaceState: WorkspaceStateService,
   userActivityService: UserActivityService,
   pmEditorService: PmEditorService,
-} satisfies Record<
-  CoreServiceSlotId,
-  ServiceConstructor<BaseServiceCommonOptions, any>
->;
+} satisfies Record<CoreServiceSlotId, unknown>;
 
 type PlatformServiceMap = Record<
   string,
   ServiceConstructor<BaseServiceCommonOptions, any>
 >;
+type AppServiceMap = PlatformServiceMap & typeof coreServiceMap;
+export const defineAppServiceMap = defineServiceMap<BaseServiceCommonOptions>();
 
 /** Platform slots whose instances act as file storage providers. */
-type FileStorageSlot<TPlatform extends PlatformServiceMap> = {
-  [K in keyof TPlatform & string]: InstanceType<
-    TPlatform[K]
+type FileStorageSlot<TServiceMap extends AppServiceMap> = {
+  [K in keyof TServiceMap & string]: InstanceType<
+    TServiceMap[K]
   > extends BaseFileStorageService
     ? K
     : never;
-}[keyof TPlatform & string];
+}[keyof TServiceMap & string];
 
-export type ServiceSetupOptions<TPlatform extends PlatformServiceMap> = {
+export type ServiceSetupOptions<TServiceMap extends AppServiceMap> = {
   commonOpts: BaseServiceCommonOptions;
   rootEmitter: RootEmitter;
   commands: Command[];
@@ -84,13 +84,13 @@ export type ServiceSetupOptions<TPlatform extends PlatformServiceMap> = {
     addEventListener: Document['addEventListener'];
     removeEventListener: Document['removeEventListener'];
   };
-  /** Environment-specific platform service slots. */
-  platformServices: TPlatform;
+  /** Complete, environment-specific service graph. */
+  serviceMap: TServiceMap;
   /**
    * Which platform slots provide file storage. After instantiation they are
    * keyed by their `workspaceType` and served to `FileSystemService`.
    */
-  fileStorageSlots: ReadonlyArray<FileStorageSlot<TPlatform>>;
+  fileStorageSlots: ReadonlyArray<FileStorageSlot<TServiceMap>>;
 };
 
 function isFileStorageService(
@@ -109,8 +109,8 @@ function isFileStorageService(
  * environment-independent service config. Callers add platform-specific
  * configs via `container.setConfig` before calling `instantiate()`.
  */
-export function createServiceSetup<TPlatform extends PlatformServiceMap>(
-  options: ServiceSetupOptions<TPlatform>,
+export function createServiceSetup<const TServiceMap extends AppServiceMap>(
+  options: ServiceSetupOptions<TServiceMap>,
 ) {
   const {
     commonOpts,
@@ -119,14 +119,9 @@ export function createServiceSetup<TPlatform extends PlatformServiceMap>(
     commandHandlers,
     themeManager,
     shortcutTarget,
-    platformServices,
+    serviceMap,
     fileStorageSlots,
   } = options;
-
-  const serviceMap = {
-    ...platformServices,
-    ...coreServiceMap,
-  };
   type ServiceInstances = ConstructorToInstance<typeof serviceMap>;
 
   let services: ServiceInstances | undefined;

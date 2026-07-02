@@ -38,12 +38,122 @@ export class ServiceStartupError extends Error {
 
 export type ServiceConstructor<
   TContext,
-  TDeps extends Record<string, Service<any>> = Record<string, Service<any>>,
+  TDeps extends Record<string, Service<any>> | null = Record<
+    string,
+    Service<any>
+  >,
   TConfig = any,
 > = Constructor<
   Service<TContext>,
   [{ ctx: TContext; serviceContext: ServiceContext }, TDeps, TConfig]
->;
+> & {
+  readonly deps?: readonly string[];
+};
+
+type AnyServiceConstructor<TContext> = ServiceConstructor<TContext, any, any>;
+
+export type ServiceDependencies<
+  TServices extends Record<string, Service<any>>,
+  TDeps extends readonly (keyof TServices & string)[],
+> = Pick<TServices, TDeps[number]>;
+
+type StaticDependencies<TClass> = TClass extends {
+  readonly deps: infer TDeps;
+}
+  ? TDeps extends readonly string[]
+    ? TDeps
+    : readonly []
+  : readonly [];
+
+type ConstructorDependencies<TClass> = TClass extends abstract new (
+  ...arguments_: infer TArguments
+) => unknown
+  ? TArguments extends [any, infer TDeps, ...unknown[]]
+    ? TDeps
+    : never
+  : never;
+
+type ConstructorDependencyKeys<TClass> =
+  ConstructorDependencies<TClass> extends null
+    ? never
+    : keyof ConstructorDependencies<TClass> & string;
+
+type ServiceMapInstances<
+  TMap extends Record<string, AnyServiceConstructor<any>>,
+> = {
+  [K in keyof TMap]: InstanceType<TMap[K]>;
+};
+
+type DeclaredDependencyKeys<
+  TMap extends Record<string, AnyServiceConstructor<any>>,
+  TClass,
+> = Extract<StaticDependencies<TClass>[number], keyof TMap & string>;
+
+type UnknownDependencyKeys<
+  TMap extends Record<string, AnyServiceConstructor<any>>,
+  TClass,
+> = Exclude<StaticDependencies<TClass>[number], keyof TMap & string>;
+
+type ExpectedDependencies<
+  TMap extends Record<string, AnyServiceConstructor<any>>,
+  TClass,
+> = Pick<ServiceMapInstances<TMap>, DeclaredDependencyKeys<TMap, TClass>>;
+
+type ConstructorAcceptsExpectedDependencies<TExpected, TActual> =
+  TActual extends null
+    ? keyof TExpected extends never
+      ? true
+      : false
+    : TExpected extends TActual
+      ? true
+      : false;
+
+type DependencyKeyDrift<
+  TMap extends Record<string, AnyServiceConstructor<any>>,
+  TClass,
+> =
+  | Exclude<
+      DeclaredDependencyKeys<TMap, TClass>,
+      ConstructorDependencyKeys<TClass>
+    >
+  | Exclude<
+      ConstructorDependencyKeys<TClass>,
+      DeclaredDependencyKeys<TMap, TClass>
+    >;
+
+type ValidateServiceConstructor<
+  TContext,
+  TMap extends Record<string, AnyServiceConstructor<TContext>>,
+  TKey extends keyof TMap,
+> =
+  UnknownDependencyKeys<TMap, TMap[TKey]> extends never
+    ? DependencyKeyDrift<TMap, TMap[TKey]> extends never
+      ? ConstructorAcceptsExpectedDependencies<
+          ExpectedDependencies<TMap, TMap[TKey]>,
+          ConstructorDependencies<TMap[TKey]>
+        > extends true
+        ? TMap[TKey]
+        : never
+      : never
+    : never;
+
+type ValidateServiceMap<
+  TContext,
+  TMap extends Record<string, AnyServiceConstructor<TContext>>,
+> = {
+  [K in keyof TMap]: ValidateServiceConstructor<TContext, TMap, K>;
+};
+
+export type ValidServiceMap<
+  TContext,
+  TMap extends Record<string, AnyServiceConstructor<TContext>>,
+> = TMap extends ValidateServiceMap<TContext, TMap> ? unknown : never;
+
+export function defineServiceMap<TContext>() {
+  return <const TMap extends Record<string, AnyServiceConstructor<TContext>>>(
+    serviceMap: TMap & ValidateServiceMap<TContext, TMap>,
+  ): TMap => serviceMap;
+}
 
 export type ServiceToConstructor<T extends Service<any>> = new (
   param: T extends Service<infer C>

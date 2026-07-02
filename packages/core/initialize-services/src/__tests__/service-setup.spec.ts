@@ -10,7 +10,11 @@ import {
 } from '@bangle.io/service-platform/testing';
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import { describe, expect, test, vi } from 'vitest';
-import { coreServiceMap, createServiceSetup } from '../service-setup';
+import {
+  coreServiceMap,
+  createServiceSetup,
+  defineAppServiceMap,
+} from '../service-setup';
 
 const themeManager = {
   currentPreference: 'system',
@@ -23,6 +27,18 @@ function makeSetup() {
   const controller = new AbortController();
   const { commonOpts, rootEmitter } = makeTestCommonOpts({ controller });
 
+  const platformServicesMap = {
+    errorService: TestErrorHandlerService,
+    database: MemoryDatabaseService,
+    syncDatabase: MemorySyncDatabaseService,
+    fileStorageMemory: FileStorageMemory,
+    router: MemoryRouterService,
+  };
+  const serviceMap = defineAppServiceMap({
+    ...platformServicesMap,
+    ...coreServiceMap,
+  });
+
   const setup = createServiceSetup({
     commonOpts,
     rootEmitter,
@@ -33,13 +49,7 @@ function makeSetup() {
       addEventListener: vi.fn(),
       removeEventListener: vi.fn(),
     },
-    platformServices: {
-      errorService: TestErrorHandlerService,
-      database: MemoryDatabaseService,
-      syncDatabase: MemorySyncDatabaseService,
-      fileStorageMemory: FileStorageMemory,
-      router: MemoryRouterService,
-    },
+    serviceMap,
     fileStorageSlots: ['fileStorageMemory'],
   });
 

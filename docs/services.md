@@ -9,7 +9,7 @@ workspace layers.
 - Slot IDs live in the service maps, not inside the service implementation.
   The core service map is in
   `packages/core/initialize-services/src/service-setup.ts`; each composition
-  root contributes its platform service map.
+  root combines it with its platform services through `defineAppServiceMap`.
 - Contracts live at the lowest layer that owns the concept. Shared contracts
   belong in `packages/shared/types`; core service APIs belong in
   `packages/core/service-core`; platform implementations belong in
@@ -44,9 +44,12 @@ export class NavigationService extends BaseService {
 
 `static deps` is the constructor contract for services. The container uses it to
 build the dependency graph, instantiate services in dependency order, and report
-startup diagnostics. If a service reads another service, that relationship
-should be visible in `static deps`; do not hide it in mutable module state,
-late lookups, or callbacks passed only to work around the graph.
+startup diagnostics. `defineAppServiceMap` also type-checks that every declared
+dependency exists in the map, that constructor dependency keys match
+`static deps`, and that the registered dependency instance is assignable to the
+constructor's dependency type. If a service reads another service, that
+relationship should be visible in `static deps`; do not hide it in mutable
+module state, late lookups, or callbacks passed only to work around the graph.
 
 Services should not call the container. They receive their declared
 dependencies and config through the constructor, then use their service context
@@ -59,11 +62,11 @@ uses them.
 Production setup and test setup share one composition builder:
 `createServiceSetup` in `@bangle.io/initialize-services/setup` (a
 platform-free subpath, safe to import from test code). The builder owns the
-canonical core service slot map and every environment-independent service
-config. A composition root supplies only what genuinely differs per
-environment:
+canonical core service configs. A composition root supplies a complete checked
+service map plus only what genuinely differs per environment:
 
-- the platform service slots (browser adapters vs memory/test adapters),
+- the complete service map from `defineAppServiceMap({ ...platformServices,
+  ...coreServiceMap })`,
 - which of those slots provide file storage,
 - platform-specific service configs (router strategy, error sink, Native FS
   root-handle resolution),
@@ -71,7 +74,7 @@ environment:
 
 The browser root is `@bangle.io/initialize-services`; the test root is
 `createTestEnvironment` in `@bangle.io/test-utils`. Both call the builder, so
-adding a core service means updating the builder's `coreServiceMap` (and the
+adding a core service means updating `coreServiceMap` (and the
 `CoreServiceSlotId` union in `@bangle.io/types` plus the `CoreServices`
 aggregate, which the compiler enforces) — test wiring follows automatically.
 
@@ -103,6 +106,7 @@ layer order, and service-specific import boundaries:
 
 Broader checks should only be added when they catch real drift. For example,
 checking every `static deps` relationship with text patterns would be fragile:
-some platform services have no dependencies, and TypeScript plus the container
-already fail missing declared dependencies at startup. Prefer a focused unit or
-integration test when a dependency contract needs more precision.
+some platform services have no dependencies, and `defineAppServiceMap` plus the
+container already fail missing or mismatched dependencies before release. Prefer
+a focused unit or integration test when a dependency contract needs more
+precision.
