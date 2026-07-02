@@ -243,6 +243,125 @@ describe('keyboard behavior', () => {
   });
 });
 
+describe('arrow-key boundary behavior', () => {
+  it('ArrowUp on the first row moves into the textblock above', () => {
+    const editor = setup.createEditor(
+      doc(p('before'), tableNode(row(th('h<cursor>')), row(td('a')))),
+    );
+    expect(editor.pressKey('ArrowUp')).toBe(true);
+    expect(editor.selectionParentType()).toBe('paragraph');
+    expect(editor.selectionParentText()).toBe('before');
+  });
+
+  it('ArrowUp on the first row inserts a paragraph when nothing is above', () => {
+    const editor = setup.createEditor(
+      doc(tableNode(row(th('h<cursor>')), row(td('a')))),
+    );
+    expect(editor.pressKey('ArrowUp')).toBe(true);
+    expect(editor.view.state.doc.child(0).type.name).toBe('paragraph');
+    expect(editor.selectionParentType()).toBe('paragraph');
+    expect(editor.view.state.doc.child(1).type.name).toBe('table');
+  });
+
+  it('ArrowUp on a body row stays inside the table', () => {
+    const editor = setup.createEditor(
+      doc(tableNode(row(th('h')), row(td('a<cursor>')))),
+    );
+    editor.pressKey('ArrowUp');
+    expect(editor.view.state.doc.childCount).toBe(1);
+    expect(editor.view.state.doc.child(0).type.name).toBe('table');
+  });
+
+  it('ArrowDown on the last row moves into the textblock below', () => {
+    const editor = setup.createEditor(
+      doc(tableNode(row(th('h')), row(td('a<cursor>'))), p('after')),
+    );
+    expect(editor.pressKey('ArrowDown')).toBe(true);
+    expect(editor.selectionParentText()).toBe('after');
+  });
+
+  it('ArrowDown on the last row inserts a paragraph when nothing is below', () => {
+    const editor = setup.createEditor(
+      doc(tableNode(row(th('h')), row(td('a<cursor>')))),
+    );
+    expect(editor.pressKey('ArrowDown')).toBe(true);
+    expect(editor.view.state.doc.child(1).type.name).toBe('paragraph');
+    expect(editor.selectionParentType()).toBe('paragraph');
+  });
+
+  it('ArrowRight at the end of a cell moves to the start of the next cell', () => {
+    const editor = setup.createEditor(
+      doc(tableNode(row(th('h1'), th('h2')), row(td('a1<cursor>'), td('b1')))),
+    );
+    expect(editor.pressKey('ArrowRight')).toBe(true);
+    expect(editor.selectionParentText()).toBe('b1');
+    expect(editor.selectionParentOffset()).toBe(0);
+  });
+
+  it('ArrowLeft at the start of a cell wraps to the end of the previous row', () => {
+    const editor = setup.createEditor(
+      doc(tableNode(row(th('h1'), th('h2')), row(td('<cursor>a1'), td('b1')))),
+    );
+    expect(editor.pressKey('ArrowLeft')).toBe(true);
+    expect(editor.selectionParentText()).toBe('h2');
+    expect(editor.selectionParentOffset()).toBe(2);
+  });
+
+  it('ArrowRight in the last cell exits below the table', () => {
+    const editor = setup.createEditor(
+      doc(tableNode(row(th('h')), row(td('a<cursor>'))), p('after')),
+    );
+    expect(editor.pressKey('ArrowRight')).toBe(true);
+    expect(editor.selectionParentText()).toBe('after');
+  });
+
+  it('ArrowLeft in the first cell exits above the table', () => {
+    const editor = setup.createEditor(
+      doc(tableNode(row(th('<cursor>h')), row(td('a')))),
+    );
+    expect(editor.pressKey('ArrowLeft')).toBe(true);
+    expect(editor.view.state.doc.child(0).type.name).toBe('paragraph');
+    expect(editor.selectionParentType()).toBe('paragraph');
+  });
+
+  it('ArrowDown in a paragraph above a table enters the first cell', () => {
+    const editor = setup.createEditor(
+      doc(p('above<cursor>'), tableNode(row(th('h')), row(td('a')))),
+    );
+    expect(editor.pressKey('ArrowDown')).toBe(true);
+    expect(editor.selectionParentType()).toBe('table_header');
+    expect(editor.selectionParentOffset()).toBe(0);
+  });
+
+  it('ArrowUp in a paragraph below a table enters the last cell', () => {
+    const editor = setup.createEditor(
+      doc(tableNode(row(th('h')), row(td('a'), td('b'))), p('<cursor>below')),
+    );
+    expect(editor.pressKey('ArrowUp')).toBe(true);
+    expect(editor.selectionParentType()).toBe('table_cell');
+    expect(editor.selectionParentText()).toBe('b');
+    expect(editor.selectionParentOffset()).toBe(1);
+  });
+
+  it('ArrowDown moves to the cell below within the table', () => {
+    const editor = setup.createEditor(
+      doc(tableNode(row(th('h1'), th('h2')), row(td('a1'), td('a<cursor>2')))),
+    );
+    // Cursor in header h2 -> down goes to a2 (same column).
+    editor.setSelection(editor.view.state.doc.resolve(8).pos);
+    expect(editor.pressKey('ArrowDown')).toBe(true);
+    expect(editor.selectionParentText()).toBe('a2');
+  });
+
+  it('ArrowRight mid-cell falls through to default text motion', () => {
+    const editor = setup.createEditor(
+      doc(tableNode(row(th('h')), row(td('a<cursor>b')))),
+    );
+    const handled = editor.runKeyDownHandlers('ArrowRight');
+    expect(handled).toBe(false);
+  });
+});
+
 describe('queries', () => {
   it('reports the active cell', () => {
     const editor = setup.createEditor(docWithCursorInCell('a1'));

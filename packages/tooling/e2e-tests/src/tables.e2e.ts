@@ -196,3 +196,70 @@ test('existing Markdown pipe tables load, edit, and round trip faithfully', asyn
       ].join('\n'),
     );
 });
+
+test('arrow keys navigate cell edges and exit the table at its boundaries', async ({
+  page,
+}) => {
+  const workspaceName = 'table-arrow-nav';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+
+  // Table as the only node in the note, so both exits must create paragraphs.
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'Home',
+    ['| a | b |', '| --- | --- |', '| c1 | d1 |'].join('\n'),
+  );
+  await page.reload();
+  const editor = getEditorLocator(page, {});
+  await expect(editor.locator('table')).toBeVisible();
+
+  // One initial click; everything after navigates by keyboard so the test
+  // exercises the caret behavior users actually rely on.
+  await editor.locator('table td', { hasText: 'c1' }).click();
+  await waitForEditorFocus(page, {});
+
+  // ArrowRight at the end of a cell hops to the start of the next cell.
+  await page.keyboard.press('End');
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.insertText('X');
+  await expect(editor.locator('table td').nth(1)).toHaveText('Xd1');
+
+  // ArrowLeft at the start of a cell hops back, wrapping to the header row.
+  await page.keyboard.press('Home');
+  await page.keyboard.press('ArrowLeft');
+  await page.keyboard.press('Home');
+  await page.keyboard.press('ArrowLeft');
+  await page.keyboard.insertText('Y');
+  await expect(editor.locator('table th').nth(1)).toHaveText('bY');
+
+  // ArrowUp on the header row exits above; with nothing there a paragraph is
+  // inserted.
+  await page.keyboard.press('ArrowUp');
+  await page.keyboard.insertText('above');
+  await expect(editor.locator('p', { hasText: 'above' })).toBeVisible();
+
+  // ArrowDown re-enters the table, walks the rows, and exits below the last
+  // row into a fresh paragraph.
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.insertText('below');
+
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe(
+      [
+        'above',
+        '',
+        '| a | bY |',
+        '| --- | --- |',
+        '| c1 | Xd1 |',
+        '',
+        'below',
+      ].join('\n'),
+    );
+});

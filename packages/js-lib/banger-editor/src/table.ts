@@ -10,6 +10,8 @@ import {
   addColumnBefore,
   addRow,
   type Command,
+  cellAround,
+  chainCommands,
   deleteColumn,
   deleteRow,
   deleteTable,
@@ -17,10 +19,12 @@ import {
   fixTables,
   goToNextCell,
   isInTable,
+  type NodeType,
   nextCell,
   Plugin,
   PluginKey,
   type PMNode,
+  type Schema,
   selectedRect,
   selectionCell,
   TableMap,
@@ -28,7 +32,14 @@ import {
   tableEditing,
   tableNodes,
 } from './pm';
-import { safeInsert } from './pm-utils';
+import {
+  defaultGetParagraphNodeType,
+  findParentNodeOfType,
+  getNodeType,
+  insertEmptyParagraphAboveNode,
+  insertEmptyParagraphBelowNode,
+  safeInsert,
+} from './pm-utils';
 
 export type TableCellAlign = 'left' | 'center' | 'right';
 
@@ -38,6 +49,7 @@ export type TableConfig = {
   tableGroup?: string;
   defaultRows?: number;
   defaultColumns?: number;
+  getParagraphNodeType?: (schema: Schema) => NodeType;
   // keys
   keyGoToNextCell?: string | false;
   keyGoToPrevCell?: string | false;
@@ -49,6 +61,7 @@ const DEFAULT_CONFIG: RequiredConfig = {
   tableGroup: 'block',
   defaultRows: 3,
   defaultColumns: 3,
+  getParagraphNodeType: defaultGetParagraphNodeType,
   keyGoToNextCell: 'Tab',
   keyGoToPrevCell: 'Shift-Tab',
 };
@@ -77,6 +90,11 @@ export function setupTable(userConfig?: TableConfig) {
       },
     },
   });
+
+  // Inline-content cells are textblocks, which makes the positions between
+  // cells valid gap-cursor spots by prosemirror-gapcursor's default rule.
+  // A gap cursor inside a row is never meaningful, so forbid it.
+  nodes.table_row = { ...nodes.table_row, allowGapCursor: false };
 
   const plugin = {
     keybindings: pluginKeybindings(config),
@@ -124,6 +142,22 @@ function pluginKeybindings(config: RequiredConfig) {
         // are deliberately blocked in v1.
         ['Shift-Enter', blockInsideCell()],
         ['Mod-Enter', blockInsideCell()],
+        [
+          'ArrowUp',
+          chainCommands(
+            moveRowVertical('up', config),
+            enterTableVertical('up'),
+          ),
+        ],
+        [
+          'ArrowDown',
+          chainCommands(
+            moveRowVertical('down', config),
+            enterTableVertical('down'),
+          ),
+        ],
+        ['ArrowLeft', moveCellHorizontal(-1, config)],
+        ['ArrowRight', moveCellHorizontal(1, config)],
       ],
       'table',
       PRIORITY.high,
@@ -315,6 +349,244 @@ function goToRowBelow(): Command {
 
 function blockInsideCell(): Command {
   return (state) => isInTable(state);
+}
+
+/**
+ * ArrowUp/ArrowDown inside a table moves to the cell above/below in the
+ * same column, and leaves the table from the first/last row — moving into
+ * the adjacent textblock or inserting an empty paragraph when the table
+ * sits at the edge of its parent (mirroring the code-block behavior).
+ *
+ * prosemirror-tables' own vertical arrow handling only applies when the
+ * caret sits at a cell's trailing edge; from any other position the
+ * browser's native caret motion fights the isolating cell boundaries and
+ * the cursor gets stuck, so the whole vertical move is owned here.
+ */
+function moveRowVertical(
+  direction: 'up' | 'down',
+  config: RequiredConfig,
+): Command {
+  return (state, dispatch, view) => {
+    if (!state.selection.empty || !isInTable(state)) {
+      return false;
+    }
+    // Stay inside the cell while the cursor can still move between wrapped
+    // visual lines.
+    if (view && !endOfTextblockSafe(view, direction)) {
+      return false;
+    }
+
+    const $cell = selectionCell(state);
+    const $next = nextCell($cell, 'vert', direction === 'up' ? -1 : 1);
+    if ($next) {
+      const cell = $next.nodeAfter;
+      if (!cell) {
+        return false;
+      }
+      const pos =
+        direction === 'down' ? $next.pos + 1 : $next.pos + cell.nodeSize - 1;
+      dispatch?.(state.tr.setSelection(TextSelection.create(state.doc, pos)));
+      return true;
+    }
+
+    return exitTable(direction, config)(state, dispatch);
+  };
+}
+
+/**
+ * ArrowDown at the bottom of a textblock directly above a table enters the
+ * table's first cell; ArrowUp above a table below does the reverse. Native
+ * caret motion cannot cross the table's isolating boundary, so without this
+ * the cursor gets stuck next to the table.
+ */
+function enterTableVertical(direction: 'up' | 'down'): Command {
+  return (state, dispatch, view) => {
+    if (!state.selection.empty || isInTable(state)) {
+      return false;
+    }
+    const { $from } = state.selection;
+    if (!$from.parent.isTextblock || $from.depth === 0) {
+      return false;
+    }
+    if (view && !endOfTextblockSafe(view, direction)) {
+      return false;
+    }
+
+    const tableType = getNodeType(state.schema, 'table');
+    const parent = $from.node($from.depth - 1);
+    const index = $from.index($from.depth - 1);
+    const sibling =
+      direction === 'down'
+        ? index < parent.childCount - 1
+          ? parent.child(index + 1)
+          : null
+        : index > 0
+          ? parent.child(index - 1)
+          : null;
+    if (!sibling || sibling.type !== tableType) {
+      return false;
+    }
+
+    const tablePos =
+      direction === 'down'
+        ? $from.after($from.depth)
+        : $from.before($from.depth) - sibling.nodeSize;
+    const map = TableMap.get(sibling);
+    if (dispatch) {
+      let pos: number;
+      if (direction === 'down') {
+        const firstCell = map.map[0];
+        if (firstCell == null) {
+          return false;
+        }
+        pos = tablePos + 1 + firstCell + 1;
+      } else {
+        const lastCell = map.map[map.map.length - 1];
+        const cell = lastCell != null ? sibling.nodeAt(lastCell) : null;
+        if (lastCell == null || !cell) {
+          return false;
+        }
+        pos = tablePos + 1 + lastCell + cell.nodeSize - 1;
+      }
+      dispatch(state.tr.setSelection(TextSelection.create(state.doc, pos)));
+    }
+    return true;
+  };
+}
+
+function endOfTextblockSafe(
+  view: NonNullable<Parameters<Command>[2]>,
+  direction: 'up' | 'down',
+): boolean {
+  try {
+    return view.endOfTextblock(direction);
+  } catch {
+    // Environments without layout (jsdom) cannot answer; cells hold a single
+    // logical line, so treat the cursor as being at the visual boundary.
+    return true;
+  }
+}
+
+function exitTable(direction: 'up' | 'down', config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    const tableType = getNodeType(state.schema, 'table');
+    const table = findParentNodeOfType(tableType)(state.selection);
+    if (!table) {
+      return false;
+    }
+
+    const $table = state.doc.resolve(table.pos);
+    const parent = $table.parent;
+    const index = $table.index();
+
+    if (direction === 'up') {
+      if (index > 0) {
+        const previous = parent.child(index - 1);
+        if (previous.isTextblock) {
+          dispatch?.(
+            state.tr.setSelection(
+              TextSelection.create(
+                state.doc,
+                table.pos - previous.nodeSize + 1 + previous.content.size,
+              ),
+            ),
+          );
+          return true;
+        }
+      }
+      return insertEmptyParagraphAboveNode(
+        tableType,
+        config.getParagraphNodeType,
+      )(state, dispatch);
+    }
+
+    if (index < parent.childCount - 1) {
+      const next = parent.child(index + 1);
+      if (next.isTextblock) {
+        dispatch?.(
+          state.tr.setSelection(
+            TextSelection.create(
+              state.doc,
+              table.pos + table.node.nodeSize + 1,
+            ),
+          ),
+        );
+        return true;
+      }
+    }
+    return insertEmptyParagraphBelowNode(
+      tableType,
+      config.getParagraphNodeType,
+    )(state, dispatch);
+  };
+}
+
+/**
+ * ArrowLeft/ArrowRight at the edge of a cell's content hops to the previous
+ * or next cell in reading order (wrapping across rows), and leaves the table
+ * from the very first or last cell.
+ */
+function moveCellHorizontal(dir: -1 | 1, config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    if (!isInTable(state)) {
+      return false;
+    }
+    const { selection } = state;
+    if (!(selection instanceof TextSelection) || !selection.empty) {
+      return false;
+    }
+    const $cursor = selection.$from;
+    const atBoundary =
+      dir === -1
+        ? $cursor.parentOffset === 0
+        : $cursor.parentOffset === $cursor.parent.content.size;
+    if (!atBoundary) {
+      return false;
+    }
+
+    const $cell = cellAround($cursor);
+    if (!$cell) {
+      return false;
+    }
+    const rect = selectedRect(state);
+    const { map, table, tableStart } = rect;
+    const current = $cell.pos - tableStart;
+    const order = map.map;
+    const currentIndex = order.indexOf(current);
+    if (currentIndex < 0) {
+      return false;
+    }
+
+    // map.map lists cell positions in reading order; skip span duplicates.
+    let target: number | null = null;
+    for (let i = currentIndex + dir; i >= 0 && i < order.length; i += dir) {
+      const pos = order[i];
+      if (pos != null && pos !== current) {
+        target = pos;
+        break;
+      }
+    }
+
+    if (target == null) {
+      // First or last cell of the table: move out of it.
+      return exitTable(dir === -1 ? 'up' : 'down', config)(state, dispatch);
+    }
+
+    const cell = table.nodeAt(target);
+    if (!cell) {
+      return false;
+    }
+    const pos =
+      dir === 1
+        ? tableStart + target + 1
+        : tableStart + target + cell.nodeSize - 1;
+    dispatch?.(
+      state.tr
+        .setSelection(TextSelection.create(state.doc, pos))
+        .scrollIntoView(),
+    );
+    return true;
+  };
 }
 
 function setColumnAlign(align: TableCellAlign | null): Command {

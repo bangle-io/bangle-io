@@ -38,9 +38,14 @@ V1 is implemented on branch `worktree-markdown-table-support` (2026-07-01):
 - `packages/js-lib/banger-editor/src/table.ts` owns the schema
   (`prosemirror-tables` `tableNodes`, inline-only cells, `align` cell attr),
   `tableEditing()`/`fixTables` plugins, commands (insert, add/delete
-  row/column, delete table, cell navigation, column alignment), Tab /
-  Shift-Tab / Enter keyboard behavior, the markdown-it `table` tokenizer
-  plugin, parse specs, and the pipe-table serializer.
+  row/column, delete table, cell navigation, column alignment), keyboard
+  behavior (Tab/Shift-Tab, Enter, and full arrow-key navigation: cell-to-cell
+  moves, edge hops that wrap rows, entering a table from adjacent textblocks,
+  and exiting into an adjacent or newly inserted paragraph — native caret
+  motion cannot cross the isolating cell boundaries), the markdown-it `table`
+  tokenizer plugin, parse specs, and the pipe-table serializer. Gap cursors
+  are disabled inside rows because inline-content cells are textblocks, which
+  made between-cell positions valid gap-cursor spots.
 - `packages/js-lib/banger-editor/src/table-menu/` exposes a `$tableMenu` atom
   (selection-menu pattern) that tracks the active table for the React UI.
 - `packages/core/editor` registers `setupTable()`/`setupTableMenu()`, adds the
