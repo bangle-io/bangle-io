@@ -165,6 +165,35 @@ describe('PathBasedStrategy', () => {
         hash: '',
       });
     });
+
+    it('should encode settings general route', () => {
+      const routeInfo: AppRouteInfo = {
+        route: 'settings-general',
+        payload: {},
+      };
+
+      expect(strategy.encodeRouteInfo(routeInfo, basePath)).toEqual({
+        pathname: '/app/settings-general',
+        search: '',
+        hash: '',
+      });
+    });
+
+    it('should encode settings general return target', () => {
+      const routeInfo: AppRouteInfo = {
+        route: 'settings-general',
+        payload: {
+          returnTo: '/ws#route=editor&wsPath=notes%3Aindex.md',
+        },
+      };
+
+      expect(strategy.encodeRouteInfo(routeInfo, basePath)).toEqual({
+        pathname: '/app/settings-general',
+        search:
+          '?returnTo=%2Fws%23route%3Deditor%26wsPath%3Dnotes%253Aindex.md',
+        hash: '',
+      });
+    });
   });
 
   describe('decodeRouteInfo', () => {
@@ -257,6 +286,33 @@ describe('PathBasedStrategy', () => {
         payload: { wsName: 'test' },
       });
     });
+
+    it('should decode settings general route', () => {
+      const encoded: EncodedRoute = {
+        pathname: '/settings-general',
+        search: '',
+      };
+
+      expect(strategy.decodeRouteInfo(encoded, basePath)).toEqual({
+        route: 'settings-general',
+        payload: {},
+      });
+    });
+
+    it('should decode settings general return target', () => {
+      const encoded: EncodedRoute = {
+        pathname: '/settings-general',
+        search:
+          '?returnTo=%2Fws%23route%3Deditor%26wsPath%3Dnotes%253Aindex.md',
+      };
+
+      expect(strategy.decodeRouteInfo(encoded, basePath)).toEqual({
+        route: 'settings-general',
+        payload: {
+          returnTo: '/ws#route=editor&wsPath=notes%3Aindex.md',
+        },
+      });
+    });
   });
 
   describe('bidirectional conversion', () => {
@@ -288,6 +344,14 @@ describe('PathBasedStrategy', () => {
           payload: { wsPath: 'test:file.md' },
         },
         basePath: '',
+      },
+      {
+        name: 'settings general route with basePath',
+        routeInfo: {
+          route: 'settings-general',
+          payload: {},
+        },
+        basePath: '/app',
       },
     ];
 

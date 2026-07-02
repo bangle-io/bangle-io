@@ -178,6 +178,19 @@ export class NavigationService extends BaseService {
     });
   }
 
+  public goSettingsGeneral() {
+    const currentRoute = this.store.get(this.$routeInfo);
+    const returnTo =
+      currentRoute.route === 'settings-general'
+        ? currentRoute.payload.returnTo
+        : this.toUri(currentRoute);
+
+    this.go({
+      route: 'settings-general',
+      payload: returnTo ? { returnTo } : {},
+    });
+  }
+
   private get routerService() {
     return this.dep.router;
   }

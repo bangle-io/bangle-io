@@ -144,6 +144,13 @@ export function handleRouteInfo(
       };
     }
 
+    case 'settings-general': {
+      return {
+        route: 'settings-general',
+        payload: params.returnTo ? { returnTo: params.returnTo } : {},
+      };
+    }
+
     default:
       return { route: 'not-found', payload: { path: route } };
   }

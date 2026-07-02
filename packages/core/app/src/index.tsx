@@ -20,6 +20,7 @@ import {
   PageNativeFsAuthFailed,
   PageNativeFsAuthReq,
   PageNotFound,
+  PageSettings,
   PageWelcome,
   PageWorkspaceNotFound,
   PageWsHome,
@@ -83,6 +84,8 @@ function AppRoutes() {
       return <PageFatalError />;
     case 'not-found':
       return <PageNotFound />;
+    case 'settings-general':
+      return <PageSettings />;
 
     default: {
       // Use assertion for exhaustiveness check

@@ -25,7 +25,9 @@ const SIDEBAR_WIDTH_ICON = '3rem';
 type SidebarContext = {
   state: 'expanded' | 'collapsed';
   open: boolean;
+  openMobile: boolean;
   setOpen: (open: boolean | ((currentOpen: boolean) => boolean)) => void;
+  setOpenMobile: (open: boolean | ((currentOpen: boolean) => boolean)) => void;
   isMobile: boolean;
   toggleSidebar: () => void;
 };
@@ -52,8 +54,8 @@ const SidebarProvider = React.forwardRef<
   const [openMobile, setOpenMobile] = React.useState(false);
 
   const toggleSidebar = React.useCallback(() => {
-    return setOpen((open) => !open);
-  }, [setOpen]);
+    return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open);
+  }, [isMobile, setOpen]);
 
   const state = open ? 'expanded' : 'collapsed';
 
@@ -115,7 +117,7 @@ const Sidebar = React.forwardRef<
     },
     ref,
   ) => {
-    const { isMobile, open, setOpen, state } = useSidebar();
+    const { isMobile, openMobile, setOpenMobile, state } = useSidebar();
 
     if (collapsible === 'none') {
       return (
@@ -134,7 +136,7 @@ const Sidebar = React.forwardRef<
 
     if (isMobile) {
       return (
-        <Sheet open={open} onOpenChange={setOpen} {...props}>
+        <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"

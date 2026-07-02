@@ -14,6 +14,7 @@ export * from './dialog-single-input';
 export * from './dialog-single-select';
 export * from './fun-missing';
 export * from './kbd';
+export * as SettingsPage from './settings-page';
 export * as Sidebar from './sidebar';
 export * from './star-button';
 export * from './toaster';

@@ -19,10 +19,10 @@ import {
   Folder,
   MessageCircle,
   Move,
-  Paintbrush2,
   Pencil,
   PlusIcon,
   Search,
+  Settings2,
   Trash2,
 } from 'lucide-react';
 import React, { useMemo } from 'react';
@@ -241,14 +241,15 @@ export const AppSidebar = ({ children }: SidebarProps) => {
               <Command className="mr-2 h-4 w-4" />
               <span>{t.app.sidebar.allCommands}</span>
             </DropdownMenu.DropdownMenuItem>
-            <DropdownMenu.DropdownMenuItem
-              onClick={() =>
-                commandDispatcher.dispatch('command::ui:switch-theme', {}, 'ui')
+            <SettingsMenuItem
+              onOpenSettings={() =>
+                commandDispatcher.dispatch(
+                  'command::ui:open-settings',
+                  null,
+                  'ui',
+                )
               }
-            >
-              <Paintbrush2 className="mr-2 h-4 w-4" />
-              <span>{t.app.sidebar.changeTheme}</span>
-            </DropdownMenu.DropdownMenuItem>
+            />
 
             <DropdownMenu.DropdownMenuSeparator />
             <DropdownMenu.DropdownMenuLabel className="text-muted-foreground text-xs">
@@ -306,3 +307,21 @@ export const AppSidebar = ({ children }: SidebarProps) => {
     </Sidebar.SidebarProvider>
   );
 };
+
+function SettingsMenuItem({ onOpenSettings }: { onOpenSettings: () => void }) {
+  const { isMobile, setOpenMobile } = Sidebar.useSidebar();
+
+  return (
+    <DropdownMenu.DropdownMenuItem
+      onClick={() => {
+        if (isMobile) {
+          setOpenMobile(false);
+        }
+        onOpenSettings();
+      }}
+    >
+      <Settings2 className="mr-2 h-4 w-4" />
+      <span>{t.app.sidebar.settings}</span>
+    </DropdownMenu.DropdownMenuItem>
+  );
+}
