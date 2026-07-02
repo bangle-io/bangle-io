@@ -59,17 +59,33 @@ test('slash command can insert a persisted code block', async ({ page }) => {
     .toBe('```\nconst viaSlash = true;\n```');
 });
 
-test('slash date command inserts a selected calendar date', async ({
-  page,
-}) => {
-  const workspaceName = 'slash-command-date-picker';
-  const selectedDate = new Date(2028, 11, 15);
-  selectedDate.setHours(0, 0, 0, 0);
-  const selectedDateLabel = new Intl.DateTimeFormat('en-US', {
+// Matches the date-fns `PP` format used by the slash command
+// (e.g. "Dec 15, 2028").
+function formatDateLabel(date: Date): string {
+  return new Intl.DateTimeFormat('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
-  }).format(selectedDate);
+  }).format(date);
+}
+
+// `data-day` is a stable contract set by our CalendarDayButton wrapper; it lets
+// us target a specific day without depending on react-day-picker's localized
+// aria labels, and disambiguates from same-numbered days of adjacent months.
+function daySelector(date: Date): string {
+  return `[data-day="${date.toLocaleDateString('en-US')}"]`;
+}
+
+test('slash date command inserts a day picked from the current month', async ({
+  page,
+}) => {
+  const workspaceName = 'slash-command-date-picker';
+  // The 15th always exists and needs no navigation, keeping the assertion
+  // deterministic regardless of when the suite runs.
+  const now = new Date();
+  const target = new Date(now.getFullYear(), now.getMonth(), 15);
+  const targetLabel = formatDateLabel(target);
+
   await createBrowserWorkspaceAndNote(page, {
     workspaceName,
     noteName: 'Home',
@@ -79,25 +95,58 @@ test('slash date command inserts a selected calendar date', async ({
   await editor.click();
   await waitForEditorFocus(page, {});
   await page.keyboard.insertText('/');
+  // Let the suggestion menu open before narrowing it; typing the query in the
+  // same tick as '/' races the mark creation and can drop the input.
+  await expect(page.getByText('Date', { exact: true })).toBeVisible();
   await page.keyboard.insertText('date');
 
   const dateCommand = page.getByText('Date', { exact: true });
   await expect(dateCommand).toBeVisible();
   await dateCommand.click();
 
-  await expect(page.getByRole('region', { name: 'Calendar' })).toBeVisible();
-  await page.getByRole('spinbutton', { name: 'Month' }).fill('12');
-  await page.getByRole('spinbutton', { name: 'Year' }).fill('2028');
-  await page.getByRole('button', { name: 'Go' }).click();
-  await expect(page.getByText('December 2028')).toBeVisible();
-  await page
-    .getByRole('button', { name: `Select ${selectedDateLabel}` })
-    .click();
+  await expect(page.locator('[data-slot="calendar"]')).toBeVisible();
+  await page.locator(daySelector(target)).click();
 
-  await expect(editor).toContainText(selectedDateLabel);
+  await expect(editor).toContainText(targetLabel);
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
-    .toBe(selectedDateLabel);
+    .toBe(targetLabel);
+});
+
+test('slash date command inserts a day after navigating months', async ({
+  page,
+}) => {
+  const workspaceName = 'slash-command-date-nav';
+  const now = new Date();
+  // Constructing from month + 1 naturally rolls over year boundaries.
+  const target = new Date(now.getFullYear(), now.getMonth() + 1, 10);
+  const targetLabel = formatDateLabel(target);
+
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('/');
+  // Let the suggestion menu open before narrowing it; typing the query in the
+  // same tick as '/' races the mark creation and can drop the input.
+  await expect(page.getByText('Date', { exact: true })).toBeVisible();
+  await page.keyboard.insertText('date');
+
+  await page.getByText('Date', { exact: true }).click();
+  await expect(page.locator('[data-slot="calendar"]')).toBeVisible();
+
+  // Advance one month using the calendar's built-in navigation.
+  await page.getByRole('button', { name: /next month/i }).click();
+  await page.locator(daySelector(target)).click();
+
+  await expect(editor).toContainText(targetLabel);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe(targetLabel);
 });
 
 test('slash date command dismisses with Escape after calendar interaction', async ({
@@ -113,15 +162,18 @@ test('slash date command dismisses with Escape after calendar interaction', asyn
   await editor.click();
   await waitForEditorFocus(page, {});
   await page.keyboard.insertText('/');
+  // Let the suggestion menu open before narrowing it; typing the query in the
+  // same tick as '/' races the mark creation and can drop the input.
+  await expect(page.getByText('Date', { exact: true })).toBeVisible();
   await page.keyboard.insertText('date');
 
   const dateCommand = page.getByText('Date', { exact: true });
   await expect(dateCommand).toBeVisible();
   await dateCommand.click();
 
-  const calendar = page.getByRole('region', { name: 'Calendar' });
+  const calendar = page.locator('[data-slot="calendar"]');
   await expect(calendar).toBeVisible();
-  await page.getByRole('button', { name: 'Next month' }).click();
+  await page.getByRole('button', { name: /next month/i }).click();
   await page.keyboard.press('Escape');
 
   await expect(calendar).toBeHidden();

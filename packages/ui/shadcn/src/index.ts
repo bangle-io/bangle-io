@@ -3,6 +3,7 @@ export * from '@bangle.io/ui-misc';
 export * from './accordion';
 export * from './alert-dialog';
 export * from './button';
+export * from './calendar';
 export * from './collapsible';
 export * from './command';
 export * from './dialog';
