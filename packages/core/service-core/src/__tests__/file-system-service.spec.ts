@@ -1,7 +1,7 @@
 import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import type { BaseFileStorageService } from '@bangle.io/types';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { FileSystemService } from '../file-system-service';
 
 describe('FileSystemService.getStorageServiceForType', () => {
@@ -86,10 +86,20 @@ describe('FileSystemService', () => {
 
     await services.fileSystem.createTextFile(EXISTING_FILE, 'Test content');
 
+    const storage =
+      services.fileSystem.fileStorageServices[WORKSPACE_STORAGE_TYPE.Memory];
+    if (!storage) {
+      throw new Error(
+        'Expected the in-memory storage service to be configured',
+      );
+    }
+
     return {
       fileSystem: services.fileSystem,
       store: testEnv.store,
       workspaceOps: services.workspaceOps,
+      store: testEnv.store,
+      storage,
       controller,
     };
   }
@@ -150,5 +160,95 @@ describe('FileSystemService', () => {
     const afterDeleteRevision = readRevision();
     store.set(fileSystem.$fileForceUpdateCount, (count) => count + 1);
     expect(readRevision()).toBeGreaterThan(afterDeleteRevision);
+  });
+
+  it('rolls back completed batch renames when a later rename fails', async () => {
+    const { fileSystem, storage } = await setupFileSystemTest({ controller });
+    const first = `${TEST_WS_NAME}:old/one.md`;
+    const second = `${TEST_WS_NAME}:old/two.md`;
+    await fileSystem.createTextFile(first, 'one');
+    await fileSystem.createTextFile(second, 'two');
+
+    // Fail at the real storage boundary so the test exercises the genuine
+    // partial-failure path regardless of how the batch is structured internally.
+    const renameFile = storage.renameFile.bind(storage);
+    const failingRename: typeof storage.renameFile = (wsPath, options) => {
+      if (wsPath === second) {
+        throw new Error('rename failed');
+      }
+
+      return renameFile(wsPath, options);
+    };
+    vi.spyOn(storage, 'renameFile').mockImplementation(failingRename);
+
+    await expect(
+      fileSystem.renameFiles([
+        { oldWsPath: first, newWsPath: `${TEST_WS_NAME}:new/one.md` },
+        { oldWsPath: second, newWsPath: `${TEST_WS_NAME}:new/two.md` },
+      ]),
+    ).rejects.toThrow('rename failed');
+
+    await expect(fileSystem.readFileAsText(first)).resolves.toBe('one');
+    await expect(fileSystem.readFileAsText(second)).resolves.toBe('two');
+    await expect(
+      fileSystem.readFileAsText(`${TEST_WS_NAME}:new/one.md`),
+    ).resolves.toBeUndefined();
+  });
+
+  it('restores completed batch deletes when a later delete fails', async () => {
+    const { fileSystem, storage } = await setupFileSystemTest({ controller });
+    const first = `${TEST_WS_NAME}:old/one.md`;
+    const second = `${TEST_WS_NAME}:old/two.md`;
+    await fileSystem.createTextFile(first, 'one');
+    await fileSystem.createTextFile(second, 'two');
+
+    const deleteFile = storage.deleteFile.bind(storage);
+    const failingDelete: typeof storage.deleteFile = (wsPath, options) => {
+      if (wsPath === second) {
+        throw new Error('delete failed');
+      }
+
+      return deleteFile(wsPath, options);
+    };
+    vi.spyOn(storage, 'deleteFile').mockImplementation(failingDelete);
+
+    await expect(fileSystem.deleteFiles([first, second])).rejects.toThrow(
+      'delete failed',
+    );
+
+    await expect(fileSystem.readFileAsText(first)).resolves.toBe('one');
+    await expect(fileSystem.readFileAsText(second)).resolves.toBe('two');
+  });
+
+  it('announces batch deletes in one burst after every durable write, so the workspace re-lists once', async () => {
+    const { fileSystem, store, storage } = await setupFileSystemTest({
+      controller,
+    });
+    const paths = [
+      `${TEST_WS_NAME}:batch/a.md`,
+      `${TEST_WS_NAME}:batch/b.md`,
+      `${TEST_WS_NAME}:batch/c.md`,
+    ];
+    for (const wsPath of paths) {
+      await fileSystem.createTextFile(wsPath, 'x');
+    }
+
+    const realDelete = storage.deleteFile.bind(storage);
+    // Record the delete-change counter observed *during* each durable delete.
+    const deleteCountDuringWrites: number[] = [];
+    const recordingDelete: typeof storage.deleteFile = (wsPath, options) => {
+      deleteCountDuringWrites.push(store.get(fileSystem.$fileDeleteCount));
+      return realDelete(wsPath, options);
+    };
+    vi.spyOn(storage, 'deleteFile').mockImplementation(recordingDelete);
+
+    const before = store.get(fileSystem.$fileDeleteCount);
+    await fileSystem.deleteFiles(paths);
+
+    // No change is announced while the durable deletes run — the counter stays
+    // frozen — so the workspace does not re-scan once per file mid-batch...
+    expect(deleteCountDuringWrites).toEqual([before, before, before]);
+    // ...and all three land together afterwards.
+    expect(store.get(fileSystem.$fileDeleteCount)).toBe(before + paths.length);
   });
 });

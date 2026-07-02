@@ -38,6 +38,11 @@ type FileReadOptions = {
   signal?: AbortSignal;
 };
 
+type RenameFilePair = {
+  oldWsPath: string;
+  newWsPath: string;
+};
+
 function throwIfAborted(signal: AbortSignal | undefined): void {
   if (signal?.aborted) {
     throw signal.reason ?? new Error('Operation aborted');
@@ -278,25 +283,82 @@ export class FileSystemService extends BaseService {
     });
   }
 
+  // Storage-only primitives (no change emission). Batch operations use these so
+  // they can perform every durable write first and then announce the changes in
+  // a single synchronous burst — see `deleteFiles`/`renameFiles`.
+  private async deleteFileFromStorage(wsPath: string): Promise<void> {
+    const storageService = await this.getStorageService({ wsPath });
+    await storageService.deleteFile(wsPath, {});
+  }
+
+  private async createFileInStorage(wsPath: string, file: File): Promise<void> {
+    const storageService = await this.getStorageService({ wsPath });
+    await storageService.createFile(wsPath, file, {});
+  }
+
   public async deleteFile(wsPath: string): Promise<void> {
     await this.mountPromise;
     WsPath.assertFile(wsPath);
 
-    const storageService = await this.getStorageService({ wsPath });
-    await storageService.deleteFile(wsPath, {});
+    await this.deleteFileFromStorage(wsPath);
     this.onChange({
       type: 'file-delete',
       payload: { wsPath },
     });
   }
 
+  public async deleteFiles(wsPaths: readonly string[]): Promise<void> {
+    await this.mountPromise;
+    const files = await Promise.all(
+      wsPaths.map(async (wsPath) => {
+        WsPath.assertFile(wsPath);
+        const file = await this.readFile(wsPath);
+
+        if (!file) {
+          throwAppError(
+            'error::file:invalid-note-path',
+            'Cannot delete missing file',
+            {
+              invalidWsPath: wsPath,
+            },
+          );
+        }
+
+        return { file, wsPath };
+      }),
+    );
+
+    const deleted: Array<{ file: File; wsPath: string }> = [];
+
+    try {
+      for (const entry of files) {
+        await this.deleteFileFromStorage(entry.wsPath);
+        deleted.push(entry);
+      }
+    } catch (error) {
+      // Restore anything already removed so a partial batch never loses data.
+      for (const entry of [...deleted].reverse()) {
+        if (!(await this.exists(entry.wsPath))) {
+          await this.createFileInStorage(entry.wsPath, entry.file);
+        }
+      }
+      // No change was announced mid-batch and the rollback returns storage to
+      // its pre-batch state, so the tree is already consistent — nothing to emit.
+      throw error;
+    }
+
+    // Announce every deletion synchronously so the workspace re-lists exactly
+    // once for the whole batch instead of once per file (Jotai batches the
+    // synchronous counter writes into a single re-scan).
+    for (const entry of deleted) {
+      this.onChange({ type: 'file-delete', payload: { wsPath: entry.wsPath } });
+    }
+  }
+
   public async renameFile({
     oldWsPath,
     newWsPath,
-  }: {
-    oldWsPath: string;
-    newWsPath: string;
-  }): Promise<void> {
+  }: RenameFilePair): Promise<void> {
     await this.mountPromise;
 
     const oldPath = WsPath.fromString(oldWsPath).asFile();
@@ -326,16 +388,74 @@ export class FileSystemService extends BaseService {
       );
     }
 
-    const storageService = await this.getStorageService({
-      wsPath: oldPath.wsPath,
-    });
-    await storageService.renameFile(oldWsPath, {
-      newWsPath,
-    });
+    await this.renameFileInStorage(oldWsPath, newWsPath);
     this.onChange({
       type: 'file-rename',
       payload: { oldWsPath, wsPath: newWsPath },
     });
+  }
+
+  private async renameFileInStorage(
+    oldWsPath: string,
+    newWsPath: string,
+  ): Promise<void> {
+    const storageService = await this.getStorageService({ wsPath: oldWsPath });
+    await storageService.renameFile(oldWsPath, { newWsPath });
+  }
+
+  public async renameFiles(pairs: readonly RenameFilePair[]): Promise<void> {
+    await this.mountPromise;
+    const oldPathSet = new Set(pairs.map((pair) => pair.oldWsPath));
+
+    await Promise.all(
+      pairs.map(async ({ oldWsPath, newWsPath }) => {
+        WsPath.assertFile(oldWsPath);
+        WsPath.assertFile(newWsPath);
+
+        if (!(await this.exists(oldWsPath))) {
+          throwAppError(
+            'error::file:invalid-note-path',
+            'Cannot rename missing file',
+            {
+              invalidWsPath: oldWsPath,
+            },
+          );
+        }
+
+        if ((await this.exists(newWsPath)) && !oldPathSet.has(newWsPath)) {
+          throwAppError('error::file:already-existing', 'File already exists', {
+            wsPath: newWsPath,
+          });
+        }
+      }),
+    );
+
+    const renamed: RenameFilePair[] = [];
+
+    try {
+      for (const pair of pairs) {
+        await this.renameFileInStorage(pair.oldWsPath, pair.newWsPath);
+        renamed.push(pair);
+      }
+    } catch (error) {
+      // Reverse the renames that already landed so a partial batch never leaves
+      // notes stranded under half-applied paths.
+      for (const pair of [...renamed].reverse()) {
+        if (await this.exists(pair.newWsPath)) {
+          await this.renameFileInStorage(pair.newWsPath, pair.oldWsPath);
+        }
+      }
+      throw error;
+    }
+
+    // Announce every rename synchronously so the workspace re-lists exactly once
+    // for the whole batch instead of once per file.
+    for (const pair of renamed) {
+      this.onChange({
+        type: 'file-rename',
+        payload: { oldWsPath: pair.oldWsPath, wsPath: pair.newWsPath },
+      });
+    }
   }
 
   static _getStorageServiceForType(

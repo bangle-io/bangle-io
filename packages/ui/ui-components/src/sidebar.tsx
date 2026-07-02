@@ -183,6 +183,9 @@ const Sidebar = React.forwardRef<
         <div
           className={cn(
             'fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex',
+            // When slid off-canvas, clip the panel so decorative shadows (e.g.
+            // the footer glow) don't bleed back across the viewport edge.
+            'group-data-[collapsible=offcanvas]:overflow-hidden',
             side === 'left'
               ? 'left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]'
               : 'right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]',

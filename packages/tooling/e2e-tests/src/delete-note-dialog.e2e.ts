@@ -29,9 +29,10 @@ test('delete note command opens confirmation without an intermediate picker', as
 
   await confirmation.getByRole('button', { name: 'Delete' }).click();
 
-  const deletedNoteTreeItem = page
-    .locator('[data-sidebar="menu-button"]')
-    .filter({ hasText: 'delete-target.md' });
+  const explorer = page.getByTestId('bangle-file-explorer');
+  const deletedNoteTreeItem = explorer.getByRole('treeitem', {
+    name: /delete-target\.md/,
+  });
   await expect(deletedNoteTreeItem).toHaveCount(0);
 
   await page.reload({ waitUntil: 'domcontentloaded' });
@@ -59,18 +60,23 @@ test('move note dialog accepts directory destinations from the file tree', async
   });
   await createDirectory.getByLabel('Folder name').fill('Projects');
   await createDirectory.getByRole('button', { name: 'Create' }).click();
-  const targetTreeItem = page
-    .locator('[data-sidebar="menu-button"]')
-    .filter({ hasText: 'move-target.md' })
-    .first();
+
+  const explorer = page.getByTestId('bangle-file-explorer');
+  const targetTreeItem = explorer.getByRole('treeitem', {
+    name: /^move-target\.md$/,
+  });
   await expect(targetTreeItem).toBeVisible();
   await expect(page.getByRole('link', { name: 'untitled-1.md' })).toBeVisible();
 
-  await targetTreeItem.hover();
-  await page
-    .getByRole('button', { name: 'More actions for move-target.md' })
-    .click();
-  await page.getByRole('menuitem', { name: 'Move' }).click();
+  const openMoveDialog = async () => {
+    await targetTreeItem.click({ button: 'right' });
+    await page
+      .locator('[data-file-tree-context-menu-root="true"]')
+      .getByRole('button', { name: 'Move' })
+      .click();
+  };
+
+  await openMoveDialog();
 
   const moveDialog = page.getByRole('dialog', { name: 'Move "move-target"' });
   await expect(moveDialog).toBeVisible();
@@ -78,20 +84,24 @@ test('move note dialog accepts directory destinations from the file tree', async
   await expect(moveDialog).toBeHidden();
   await expect(targetTreeItem).toBeVisible();
 
-  await targetTreeItem.hover();
-  await page
-    .getByRole('button', { name: 'More actions for move-target.md' })
-    .click();
-  await page.getByRole('menuitem', { name: 'Move' }).click();
+  await openMoveDialog();
   await expect(moveDialog).toBeVisible();
   await moveDialog.getByRole('option', { name: /Projects\/?/ }).click();
+  await expect(moveDialog).toBeHidden();
 
-  await targetTreeItem.click();
-  await expect(page).toHaveURL(
-    `/ws#route=editor&wsPath=${encodeURIComponent(
-      `${workspaceName}:Projects/move-target.md`,
-    )}`,
-  );
+  const movedTreeItem = explorer
+    .getByRole('treeitem', { name: /^move-target\.md$/ })
+    .and(explorer.getByRole('treeitem', { level: 2 }));
+  const expectedUrl = `/ws#route=editor&wsPath=${encodeURIComponent(
+    `${workspaceName}:Projects/move-target.md`,
+  )}`;
+
+  // The move settles the durable store and tree props asynchronously, so open
+  // the relocated note by retrying until the click actually navigates.
+  await expect(async () => {
+    await movedTreeItem.click();
+    await expect(page).toHaveURL(expectedUrl, { timeout: 1000 });
+  }).toPass();
 });
 
 test('move note dialog offers folder creation when there is no destination', async ({

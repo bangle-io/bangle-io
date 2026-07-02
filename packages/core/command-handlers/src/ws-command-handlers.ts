@@ -5,6 +5,28 @@ import { c, getCtx } from './helper';
 
 import { validateInputPath } from './utils';
 
+function assertDirectoryWsPath(wsPath: string, errorPath = wsPath): WsDirPath {
+  const dirPath = WsPath.fromString(wsPath).asDir();
+
+  if (!dirPath || dirPath.isRoot) {
+    throwAppError(
+      'error::ws-path:invalid-ws-path',
+      t.app.errors.wsPath.invalidDirectoryPath,
+      {
+        invalidPath: errorPath,
+      },
+    );
+  }
+
+  return dirPath;
+}
+
+function isUnderDirectory(filePath: WsPath, dirPath: WsDirPath): boolean {
+  return (
+    filePath.wsName === dirPath.wsName && filePath.path.startsWith(dirPath.path)
+  );
+}
+
 export const wsCommandHandlers = [
   c('command::ws:new-note-from-input', ({ navigation }, { inputPath }, key) => {
     const { dispatch } = getCtx(key);
@@ -117,10 +139,10 @@ export const wsCommandHandlers = [
       }
 
       const needsRedirect = navigation.resolveAtoms().wsPath?.wsPath === wsPath;
-      if (needsRedirect) {
-        navigation.goWorkspace();
-      }
 
+      // Keep the open note visible during the rename instead of navigating to
+      // ws-home first (which paints an intermediate screen for the duration of
+      // the async write). Redirect straight to the renamed path once it lands.
       void fileSystem
         .renameFile({
           oldWsPath: wsPath,
@@ -175,10 +197,13 @@ export const wsCommandHandlers = [
       }
 
       const needsRedirect = navigation.resolveAtoms().wsPath?.wsPath === wsPath;
-      if (needsRedirect) {
-        navigation.goWorkspace();
-      }
 
+      // Do not bounce the open note through the workspace-home screen while the
+      // rename is in flight: that navigation happens before the storage write
+      // and paints ws-home for the whole (async) rename. Instead keep showing
+      // the current note until the durable rename lands, then redirect straight
+      // to the new path. The wsPaths update and this redirect settle in the same
+      // microtask, so the moved note never flashes an intermediate screen.
       void fileSystem
         .renameFile({
           oldWsPath: wsPath,
@@ -233,6 +258,127 @@ export const wsCommandHandlers = [
       pathPrefix: dirPath.path,
     });
   }),
+
+  c(
+    'command::ws:rename-directory',
+    async (
+      { fileSystem, navigation, workspaceState },
+      { oldDirWsPath, newDirWsPath },
+      key,
+    ) => {
+      const { store } = getCtx(key);
+      const oldDir = assertDirectoryWsPath(oldDirWsPath);
+      const newDir = assertDirectoryWsPath(newDirWsPath);
+
+      if (oldDir.wsName !== newDir.wsName) {
+        throwAppError(
+          'error::file:invalid-operation',
+          t.app.errors.file.cannotRenameToDifferentWorkspace,
+          {
+            oldWsPath: oldDirWsPath,
+            newWsPath: newDirWsPath,
+            operation: 'rename-directory',
+          },
+        );
+      }
+
+      if (oldDir.path === newDir.path) {
+        return;
+      }
+
+      if (newDir.path.startsWith(oldDir.path)) {
+        throwAppError(
+          'error::file:invalid-operation',
+          t.app.errors.file.cannotMoveDuringRename,
+          {
+            oldWsPath: oldDirWsPath,
+            newWsPath: newDirWsPath,
+            operation: 'rename-directory',
+          },
+        );
+      }
+
+      const wsPaths = store.get(workspaceState.$wsPaths);
+      const descendants = wsPaths.filter((path) =>
+        isUnderDirectory(WsPath.fromString(path.wsPath), oldDir),
+      );
+
+      if (descendants.length === 0) {
+        return;
+      }
+
+      const currentWsPath = navigation.resolveAtoms().wsPath?.wsPath;
+      const pairs = descendants.map((path) => {
+        const filePath = WsPath.assertFile(path.wsPath);
+        const suffix = filePath.path.slice(oldDir.path.length);
+        return {
+          oldWsPath: filePath.wsPath,
+          newWsPath: WsPath.fromParts(
+            oldDir.wsName,
+            WsPath.pathJoin(newDir.path, suffix),
+          ).wsPath,
+        };
+      });
+
+      const oldPathSet = new Set(pairs.map((pair) => pair.oldWsPath));
+      const existingPathSet = new Set(wsPaths.map((path) => path.wsPath));
+      for (const pair of pairs) {
+        if (
+          existingPathSet.has(pair.newWsPath) &&
+          !oldPathSet.has(pair.newWsPath)
+        ) {
+          throwAppError(
+            'error::file:already-existing',
+            t.app.errors.file.alreadyExistsInDest,
+            {
+              wsPath: pair.newWsPath,
+            },
+          );
+        }
+      }
+
+      const redirectTarget = pairs.find(
+        (pair) => pair.oldWsPath === currentWsPath,
+      )?.newWsPath;
+
+      await fileSystem.renameFiles(pairs);
+
+      if (redirectTarget) {
+        navigation.goWsPath(redirectTarget);
+      }
+    },
+  ),
+
+  c(
+    'command::ws:delete-directory',
+    async ({ fileSystem, navigation, workspaceState }, { dirWsPath }, key) => {
+      const { store } = getCtx(key);
+      const dirPath = assertDirectoryWsPath(dirWsPath);
+      const descendants = store
+        .get(workspaceState.$wsPaths)
+        .filter((path) =>
+          isUnderDirectory(WsPath.fromString(path.wsPath), dirPath),
+        );
+
+      if (descendants.length === 0) {
+        return;
+      }
+
+      const currentWsPath = navigation.resolveAtoms().wsPath?.wsPath;
+      const deletingOpenNote =
+        currentWsPath !== undefined &&
+        descendants.some((path) => path.wsPath === currentWsPath);
+
+      // Delete first, then leave the (now-gone) note — keeping the note visible
+      // until the delete is durable means a failed delete leaves the user on it
+      // rather than stranded on ws-home.
+      await fileSystem.deleteFiles(descendants.map((path) => path.wsPath));
+
+      if (deletingOpenNote) {
+        navigation.goWorkspace();
+      }
+    },
+  ),
   c('command::ws:go-ws-home', ({ navigation }) => {
     navigation.goWorkspace();
   }),

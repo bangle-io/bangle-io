@@ -52,6 +52,29 @@ export const wsCommands = narrow([
       dirWsPath: T.String,
     },
   },
+  {
+    id: 'command::ws:rename-directory',
+    title: 'Rename Directory',
+    omniSearch: false,
+    dependencies: {
+      services: ['fileSystem', 'navigation', 'workspaceState'],
+    },
+    args: {
+      oldDirWsPath: T.String,
+      newDirWsPath: T.String,
+    },
+  },
+  {
+    id: 'command::ws:delete-directory',
+    title: 'Delete Directory',
+    omniSearch: false,
+    dependencies: {
+      services: ['fileSystem', 'navigation', 'workspaceState'],
+    },
+    args: {
+      dirWsPath: T.String,
+    },
+  },
 
   {
     id: 'command::ws:go-workspace',

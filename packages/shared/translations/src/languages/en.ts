@@ -222,6 +222,18 @@ export const t = {
         placeholder: 'Folder name',
         submitText: 'Create',
       },
+      renameDirectory: {
+        placeholder: 'Provide a new folder name',
+        badgeText: ({ directoryName }: { directoryName: string }) =>
+          `Rename "${directoryName}"`,
+        optionTitle: 'Confirm folder rename',
+      },
+      confirmDeleteDirectory: {
+        title: 'Confirm Delete',
+        description: ({ directoryName }: { directoryName: string }) =>
+          `Delete "${directoryName}" and every note inside it?`,
+        continueText: 'Delete Folder',
+      },
       switchWorkspace: {
         searchPlaceholder: 'Select a workspace to switch',
         title: 'Switch Workspace',
@@ -405,8 +417,18 @@ export const t = {
       appSidebar: {
         openedLabel: 'Opened',
         filesLabel: 'Files',
+        fileTreeLabel: 'Workspace files',
+        noteCount: ({ count }: { count: number }) =>
+          count === 1 ? '1 note' : `${count} notes`,
         newFileActionTitle: 'New File',
         newFileActionSr: 'Create File',
+        newFolderActionTitle: 'New Folder',
+        newNoteHereActionTitle: 'New Note Here',
+        newFolderHereActionTitle: 'New Folder Here',
+        searchFilesActionLabel: 'Search Files',
+        renameActionTitle: 'Rename',
+        moveActionTitle: 'Move',
+        deleteActionTitle: 'Delete',
         showMoreButton: 'Show More',
         workspacesLabel: 'Workspaces',
         noWorkspaceSelectedTitle: 'No workspace selected',
@@ -416,14 +438,6 @@ export const t = {
       },
       breadcrumb: {
         moreSr: 'More',
-      },
-      tree: {
-        renameAction: 'Rename',
-        deleteAction: 'Delete',
-        moveAction: 'Move',
-        createNoteAction: 'Create Note',
-        moreActionsSr: ({ itemName }: { itemName: string }) =>
-          `More actions for ${itemName}`,
       },
       dialog: {
         closeSr: 'Close',

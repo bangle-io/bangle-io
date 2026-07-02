@@ -335,7 +335,9 @@ describe('UI command handlers', () => {
           workspaces: [{ name: 'test-ws' }],
         });
 
-      dispatch('command::ui:create-directory-dialog', null);
+      dispatch('command::ui:create-directory-dialog', {
+        pathPrefix: undefined,
+      });
       const dialog = testEnv.store.get(
         services.workbenchState.$singleInputDialog,
       );
@@ -356,6 +358,54 @@ describe('UI command handlers', () => {
             .filter((result) => result.type === 'success')
             .map((result) => result.command.id),
         ).toContain('command::ws:create-directory');
+      });
+    });
+
+    it('should create directories under an optional path prefix', async () => {
+      const { dispatch, testEnv, services } = await setupTest({
+        targetId: 'command::ui:create-directory-dialog',
+        workspaces: [{ name: 'test-ws' }],
+      });
+      const createFileSpy = vi.spyOn(services.fileSystem, 'createFile');
+
+      dispatch('command::ui:create-directory-dialog', {
+        pathPrefix: 'parent',
+      });
+      const dialog = testEnv.store.get(
+        services.workbenchState.$singleInputDialog,
+      );
+
+      dialog?.onSelect('Child Directory');
+
+      await vi.waitFor(() => {
+        expect(createFileSpy).toHaveBeenCalledWith(
+          'test-ws:parent/Child Directory/untitled-1.md',
+          expect.any(File),
+        );
+      });
+    });
+
+    it('should preserve dotted names as directory paths', async () => {
+      const { dispatch, testEnv, services } = await setupTest({
+        targetId: 'command::ui:create-directory-dialog',
+        workspaces: [{ name: 'test-ws' }],
+      });
+      const createFileSpy = vi.spyOn(services.fileSystem, 'createFile');
+
+      dispatch('command::ui:create-directory-dialog', {
+        pathPrefix: undefined,
+      });
+      const dialog = testEnv.store.get(
+        services.workbenchState.$singleInputDialog,
+      );
+
+      dialog?.onSelect('v1.0');
+
+      await vi.waitFor(() => {
+        expect(createFileSpy).toHaveBeenCalledWith(
+          'test-ws:v1.0/untitled-1.md',
+          expect.any(File),
+        );
       });
     });
   });

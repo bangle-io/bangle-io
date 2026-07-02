@@ -1,5 +1,5 @@
 import { throwAppError } from '@bangle.io/base-utils';
-import { WsPath } from '@bangle.io/ws-path';
+import { WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { FilePlus } from 'lucide-react';
 import { c, getCtx } from '../helper';
 import { validateInputPath } from '../utils';
@@ -248,7 +248,9 @@ export const noteManagementHandlers = [
                 ]
               : [t.app.dialogs.moveNote.hintCreateDirectory],
           onEmptyAction: () => {
-            dispatch('command::ui:create-directory-dialog', null);
+            dispatch('command::ui:create-directory-dialog', {
+              pathPrefix: undefined,
+            });
           },
           onSelect: (selectedDir) => {
             let newDirPath = selectedDir.id;
@@ -260,7 +262,7 @@ export const noteManagementHandlers = [
 
             dispatch('command::ws:move-ws-path', {
               wsPath: oldWsPath.wsPath,
-              destDirWsPath: WsPath.fromParts(oldWsPath.wsName, newDirPath)
+              destDirWsPath: WsDirPath.fromParts(oldWsPath.wsName, newDirPath)
                 .wsPath,
             });
             dispatch('command::ui:focus-editor', null);
@@ -272,7 +274,7 @@ export const noteManagementHandlers = [
 
   c(
     'command::ui:create-directory-dialog',
-    ({ workbenchState, workspaceState }, _, key) => {
+    ({ workbenchState, workspaceState }, { pathPrefix }, key) => {
       const { store, dispatch } = getCtx(key);
       const wsName = store.get(workspaceState.$currentWsName);
 
@@ -294,11 +296,122 @@ export const noteManagementHandlers = [
           submitText: t.app.dialogs.createDirectory.submitText,
           onSelect: (_input) => {
             const input = _input.trim();
-            validateInputPath(input);
+            const dirPath = pathPrefix
+              ? WsPath.pathJoin(pathPrefix, input)
+              : input;
+
+            validateInputPath(dirPath);
             dispatch('command::ws:create-directory', {
-              dirWsPath: WsPath.fromParts(wsName, input).wsPath,
+              dirWsPath: WsDirPath.fromParts(wsName, dirPath).wsPath,
             });
           },
+        };
+      });
+    },
+  ),
+
+  c(
+    'command::ui:rename-directory-dialog',
+    ({ workbenchState }, { dirWsPath }, key) => {
+      const { store, dispatch } = getCtx(key);
+      const dirPath = WsPath.fromString(dirWsPath).asDir();
+
+      if (!dirPath || dirPath.isRoot) {
+        throwAppError(
+          'error::ws-path:invalid-ws-path',
+          t.app.errors.wsPath.invalidDirectoryPath,
+          {
+            invalidPath: dirWsPath,
+          },
+        );
+      }
+
+      store.set(workbenchState.$singleInputDialog, () => {
+        return {
+          dialogId: 'dialog::rename-directory-dialog',
+          title: t.app.dialogs.renameDirectory.badgeText({
+            directoryName: dirPath.name,
+          }),
+          inputLabel: t.app.dialogs.renameDirectory.placeholder,
+          placeholder: t.app.dialogs.renameDirectory.placeholder,
+          submitText: t.app.dialogs.renameDirectory.optionTitle,
+          initialSearch: dirPath.name,
+          Icon: FilePlus,
+          onSelect: (input) => {
+            const newDirectoryName = input.trim();
+            if (!newDirectoryName) {
+              throwAppError(
+                'error::file:invalid-operation',
+                t.app.errors.file.invalidNoteName,
+                {
+                  oldWsPath: dirWsPath,
+                  newWsPath: input,
+                  operation: 'rename-directory',
+                },
+              );
+            }
+
+            if (newDirectoryName.includes('/')) {
+              throwAppError(
+                'error::file:invalid-operation',
+                t.app.errors.file.cannotMoveDuringRename,
+                {
+                  oldWsPath: dirWsPath,
+                  newWsPath: input,
+                  operation: 'rename-directory',
+                },
+              );
+            }
+
+            validateInputPath(newDirectoryName);
+
+            const parentPath = dirPath.getParent()?.path ?? '';
+            const newDirPath = WsPath.pathJoin(parentPath, newDirectoryName);
+
+            dispatch('command::ws:rename-directory', {
+              oldDirWsPath: dirPath.wsPath,
+              newDirWsPath: WsDirPath.fromParts(dirPath.wsName, newDirPath)
+                .wsPath,
+            });
+            dispatch('command::ui:focus-editor', null);
+          },
+        };
+      });
+    },
+  ),
+
+  c(
+    'command::ui:delete-directory-dialog',
+    ({ workbenchState }, { dirWsPath }, key) => {
+      const { store, dispatch } = getCtx(key);
+      const dirPath = WsPath.fromString(dirWsPath).asDir();
+
+      if (!dirPath || dirPath.isRoot) {
+        throwAppError(
+          'error::ws-path:invalid-ws-path',
+          t.app.errors.wsPath.invalidDirectoryPath,
+          {
+            invalidPath: dirWsPath,
+          },
+        );
+      }
+
+      store.set(workbenchState.$alertDialog, () => {
+        return {
+          dialogId: 'dialog::delete-directory-alert',
+          title: t.app.dialogs.confirmDeleteDirectory.title,
+          tone: 'destructive',
+          description: t.app.dialogs.confirmDeleteDirectory.description({
+            directoryName: dirPath.name,
+          }),
+          continueText: t.app.dialogs.confirmDeleteDirectory.continueText,
+          onContinue: () => {
+            dispatch('command::ws:delete-directory', {
+              dirWsPath: dirPath.wsPath,
+            });
+            dispatch('command::ui:focus-editor', null);
+          },
+          onCancel: () => {},
         };
       });
     },
