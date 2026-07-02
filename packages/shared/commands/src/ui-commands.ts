@@ -131,7 +131,7 @@ export const uiCommands = narrow([
 
   {
     id: 'command::ui:create-directory-dialog',
-    title: 'New Directory',
+    title: 'New Folder',
     keywords: ['new', 'create', 'directory', 'folder'],
     dependencies: {
       services: ['workbenchState', 'workspaceState'],

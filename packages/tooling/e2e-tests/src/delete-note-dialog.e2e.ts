@@ -37,17 +37,13 @@ test('move note dialog accepts directory destinations from the file tree', async
   });
 
   await pressAppShortcut(page, 'k');
-  await page
-    .getByPlaceholder('Type a command or search...')
-    .fill('New Directory');
-  await page.getByRole('option', { name: '> New Directory' }).click();
+  await page.getByPlaceholder('Type a command or search...').fill('New Folder');
+  await page.getByRole('option', { name: '> New Folder' }).click();
 
   const createDirectory = page.getByRole('dialog', {
-    name: 'Create Directory',
+    name: 'Create Folder',
   });
-  await createDirectory
-    .getByPlaceholder('Input directory name')
-    .fill('Projects');
+  await createDirectory.getByLabel('Folder name').fill('Projects');
   await createDirectory.getByRole('button', { name: 'Create' }).click();
   const targetTreeItem = page
     .locator('[data-sidebar="menu-button"]')
@@ -103,6 +99,6 @@ test('move note dialog offers folder creation when there is no destination', asy
 
   await expect(moveDialog).toBeHidden();
   await expect(
-    page.getByRole('dialog', { name: 'Create Directory' }),
+    page.getByRole('dialog', { name: 'Create Folder' }),
   ).toBeVisible();
 });

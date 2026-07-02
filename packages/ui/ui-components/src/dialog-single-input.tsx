@@ -1,6 +1,5 @@
 import {
   Button,
-  cn,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -8,44 +7,40 @@ import {
   DialogHeader,
   DialogTitle,
   Input,
+  Label,
 } from '@bangle.io/shadcn';
 import React from 'react';
 
 export type DialogSingleInputProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
-  option: {
-    id: string;
-    title?: string;
-  };
   onSelect: (input: string) => void;
+  title?: string;
+  description?: string;
+  inputLabel?: string;
+  submitText?: string;
   placeholder?: string;
-  groupHeading?: string;
   Icon?: React.ElementType;
-  badgeTone?: 'destructive' | 'default';
-  badgeText?: string;
   initialSearch?: string;
-  hints?: string[];
 };
 
 export function DialogSingleInput({
   open,
   setOpen,
-  option,
   onSelect,
-  groupHeading = '',
   placeholder = t.app.dialogs.singleInput.placeholderDefault,
-  badgeText,
-  badgeTone = 'default',
+  title,
+  description,
+  inputLabel = placeholder,
+  submitText = t.app.common.continueButton,
   Icon,
   initialSearch = '',
-  hints,
 }: DialogSingleInputProps) {
   const [search, setSearch] = React.useState(initialSearch);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const title = badgeText || option.title || option.id;
-  const description = hints?.join(' ') || placeholder;
-  const submitText = option.title || t.app.common.continueButton;
+  const inputId = React.useId();
+  const dialogTitle = title || inputLabel;
+  const dialogDescription = description || placeholder;
 
   React.useEffect(() => {
     setSearch(initialSearch);
@@ -63,16 +58,11 @@ export function DialogSingleInput({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle
-            className={cn(
-              'flex items-center gap-2',
-              badgeTone === 'destructive' && 'text-destructive',
-            )}
-          >
+          <DialogTitle className="flex items-center gap-2">
             {Icon && <Icon className="h-5 w-5" aria-hidden="true" />}
-            <span>{title}</span>
+            <span>{dialogTitle}</span>
           </DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+          <DialogDescription>{dialogDescription}</DialogDescription>
         </DialogHeader>
 
         <form
@@ -87,19 +77,16 @@ export function DialogSingleInput({
             setOpen(false);
           }}
         >
-          {groupHeading && (
-            <div className="font-medium text-muted-foreground text-xs">
-              {groupHeading}
-            </div>
-          )}
-
-          <Input
-            ref={inputRef}
-            aria-label={placeholder}
-            placeholder={placeholder}
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
+          <div className="grid gap-2">
+            <Label htmlFor={inputId}>{inputLabel}</Label>
+            <Input
+              id={inputId}
+              ref={inputRef}
+              placeholder={placeholder}
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+            />
+          </div>
 
           <DialogFooter>
             <Button

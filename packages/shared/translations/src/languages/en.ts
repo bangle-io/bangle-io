@@ -111,9 +111,11 @@ export const t = {
         },
       },
       createNote: {
-        placeholder: 'Input a note name',
-        badgeText: 'Create Note',
-        optionTitle: 'Create',
+        title: 'Create Note',
+        description: 'Name the note before adding it to this workspace.',
+        inputLabel: 'Note name',
+        placeholder: 'Untitled note',
+        submitText: 'Create',
       },
       deleteNote: {
         placeholder: 'Select or type a note to delete',
@@ -129,13 +131,15 @@ export const t = {
         continueText: 'Delete',
       },
       renameNote: {
-        placeholder: 'Provide a new name',
-        badgeText: ({
+        title: 'Rename Note',
+        description: ({
           fileNameWithoutExtension,
         }: {
           fileNameWithoutExtension: string;
-        }) => `Renaming "${fileNameWithoutExtension}"`,
-        optionTitle: 'Confirm name change',
+        }) => `Choose a new name for "${fileNameWithoutExtension}".`,
+        inputLabel: 'New name',
+        placeholder: 'New note name',
+        submitText: 'Rename',
       },
       moveNote: {
         placeholder: 'Select a path to move the note',
@@ -152,9 +156,11 @@ export const t = {
         hintCreateDirectory: 'Create a folder first, then move this note.',
       },
       createDirectory: {
-        placeholder: 'Input directory name',
-        badgeText: 'Create Directory',
-        optionTitle: 'Create',
+        title: 'Create Folder',
+        description: 'Add a folder to organize notes in this workspace.',
+        inputLabel: 'Folder name',
+        placeholder: 'Folder name',
+        submitText: 'Create',
       },
       switchWorkspace: {
         placeholder: 'Select a workspace to switch',

@@ -452,7 +452,7 @@ test('creates and modifier-opens a relative Markdown note link', async ({
 
   await page.getByRole('link', { name: 'Home' }).click();
   await page.getByRole('button', { name: 'New Note' }).click();
-  await page.getByPlaceholder('Input a note name').fill('source');
+  await page.getByLabel('Note name').fill('source');
   await page.getByRole('button', { name: 'Create' }).click();
   await editor.click();
   await page.keyboard.insertText('open target');

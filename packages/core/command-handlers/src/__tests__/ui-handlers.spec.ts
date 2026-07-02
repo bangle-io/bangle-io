@@ -84,8 +84,10 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::new-note-dialog');
+      expect(dialog?.title).toBe(t.app.dialogs.createNote.title);
+      expect(dialog?.inputLabel).toBe(t.app.dialogs.createNote.inputLabel);
       expect(dialog?.placeholder).toBe(t.app.dialogs.createNote.placeholder);
-      expect(dialog?.badgeText).toBe(t.app.dialogs.createNote.badgeText);
+      expect(dialog?.submitText).toBe(t.app.dialogs.createNote.submitText);
 
       dialog?.onSelect('My Note');
 
@@ -177,12 +179,15 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::rename-note-dialog');
+      expect(dialog?.title).toBe(t.app.dialogs.renameNote.title);
+      expect(dialog?.inputLabel).toBe(t.app.dialogs.renameNote.inputLabel);
       expect(dialog?.placeholder).toBe(t.app.dialogs.renameNote.placeholder);
-      expect(dialog?.badgeText).toBe(
-        t.app.dialogs.renameNote.badgeText({
+      expect(dialog?.description).toBe(
+        t.app.dialogs.renameNote.description({
           fileNameWithoutExtension: 'test',
         }),
       );
+      expect(dialog?.submitText).toBe(t.app.dialogs.renameNote.submitText);
 
       dialog?.onSelect('New Name');
 
@@ -253,10 +258,12 @@ describe('UI command handlers', () => {
       );
       expect(dialog).toBeDefined();
       expect(dialog?.dialogId).toBe('dialog::new-directory-dialog');
+      expect(dialog?.title).toBe(t.app.dialogs.createDirectory.title);
+      expect(dialog?.inputLabel).toBe(t.app.dialogs.createDirectory.inputLabel);
       expect(dialog?.placeholder).toBe(
         t.app.dialogs.createDirectory.placeholder,
       );
-      expect(dialog?.badgeText).toBe(t.app.dialogs.createDirectory.badgeText);
+      expect(dialog?.submitText).toBe(t.app.dialogs.createDirectory.submitText);
 
       dialog?.onSelect('My Directory');
 

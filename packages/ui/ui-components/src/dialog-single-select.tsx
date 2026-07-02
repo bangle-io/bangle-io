@@ -55,26 +55,34 @@ function SingleSelectItem({
   id,
   hasAnyIcon,
   isActive,
+  itemRef,
+  onActive,
   onSelect,
 }: {
   option: DialogSingleSelectProps['options'][0];
   id: string;
   hasAnyIcon: boolean;
   isActive: boolean;
+  itemRef: (element: HTMLButtonElement | null) => void;
+  onActive: () => void;
   onSelect: (option: { id: string; title?: string }) => void;
 }) {
   const OptionIcon = option.icon;
   return (
     <Button
       id={id}
+      ref={itemRef}
       type="button"
       role="option"
       aria-selected={isActive || option.active}
+      tabIndex={-1}
       variant="ghost"
       className={cn(
         'h-auto w-full justify-start px-2 py-2 text-left font-normal',
         isActive && 'bg-accent text-accent-foreground',
       )}
+      onMouseDown={(event) => event.preventDefault()}
+      onMouseEnter={onActive}
       onClick={() => onSelect(option)}
     >
       {hasAnyIcon && (
@@ -113,6 +121,7 @@ export function DialogSingleSelect({
   const [search, setSearch] = React.useState(initialSearch);
   const [activeIndex, setActiveIndex] = React.useState(0);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const optionRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
   const listboxId = React.useId();
   const title = badgeText || groupHeading || placeholder;
   const description = placeholder;
@@ -150,6 +159,14 @@ export function DialogSingleSelect({
         : Math.min(current, filteredOptions.length - 1),
     );
   }, [filteredOptions.length]);
+
+  React.useEffect(() => {
+    if (!open || filteredOptions.length === 0) {
+      return;
+    }
+
+    optionRefs.current[activeIndex]?.scrollIntoView({ block: 'nearest' });
+  }, [activeIndex, filteredOptions.length, open]);
 
   const selectOption = React.useCallback(
     (option: { id: string; title?: string }) => {
@@ -239,6 +256,10 @@ export function DialogSingleSelect({
                     option={option}
                     hasAnyIcon={hasAnyIcon}
                     isActive={index === activeIndex}
+                    itemRef={(element) => {
+                      optionRefs.current[index] = element;
+                    }}
+                    onActive={() => setActiveIndex(index)}
                     onSelect={selectOption}
                   />
                 ))

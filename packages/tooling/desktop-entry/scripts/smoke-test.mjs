@@ -99,7 +99,7 @@ async function createBrowserWorkspaceAndNote(page) {
   await page.getByRole('heading', { name: workspaceName }).waitFor();
 
   await page.getByRole('button', { name: 'New Note' }).click();
-  await page.getByPlaceholder('Input a note name').fill(noteName);
+  await page.getByLabel('Note name').fill(noteName);
   await page.getByRole('button', { name: 'Create' }).click();
   await page
     .getByLabel('breadcrumb')

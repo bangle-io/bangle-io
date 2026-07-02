@@ -106,9 +106,12 @@ export const t = {
         },
       },
       createNote: {
-        placeholder: 'Geben Sie einen Notiznamen ein',
-        badgeText: 'Notiz erstellen',
-        optionTitle: 'Erstellen',
+        title: 'Notiz erstellen',
+        description:
+          'Benennen Sie die Notiz, bevor sie diesem Arbeitsbereich hinzugefügt wird.',
+        inputLabel: 'Notizname',
+        placeholder: 'Unbenannte Notiz',
+        submitText: 'Erstellen',
       },
       deleteNote: {
         placeholder: 'Wählen oder tippen Sie eine Notiz zum Löschen',
@@ -124,13 +127,15 @@ export const t = {
         continueText: 'Löschen',
       },
       renameNote: {
-        placeholder: 'Geben Sie einen neuen Namen an',
-        badgeText: ({
+        title: 'Notiz umbenennen',
+        description: ({
           fileNameWithoutExtension,
         }: {
           fileNameWithoutExtension: string;
-        }) => `Umbenennen von "${fileNameWithoutExtension}"`,
-        optionTitle: 'Namensänderung bestätigen',
+        }) => `Wählen Sie einen neuen Namen für „${fileNameWithoutExtension}“.`,
+        inputLabel: 'Neuer Name',
+        placeholder: 'Neuer Notizname',
+        submitText: 'Umbenennen',
       },
       moveNote: {
         placeholder: 'Wählen Sie einen Pfad zum Verschieben der Notiz',
@@ -150,9 +155,12 @@ export const t = {
           'Erstellen Sie zuerst einen Ordner und verschieben Sie dann diese Notiz.',
       },
       createDirectory: {
-        placeholder: 'Verzeichnisnamen eingeben',
-        badgeText: 'Verzeichnis erstellen',
-        optionTitle: 'Erstellen',
+        title: 'Ordner erstellen',
+        description:
+          'Fügen Sie einen Ordner hinzu, um Notizen in diesem Arbeitsbereich zu organisieren.',
+        inputLabel: 'Ordnername',
+        placeholder: 'Ordnername',
+        submitText: 'Erstellen',
       },
       switchWorkspace: {
         placeholder: 'Wählen Sie einen Arbeitsbereich zum Wechseln',

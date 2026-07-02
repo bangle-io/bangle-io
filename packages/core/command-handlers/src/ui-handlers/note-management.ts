@@ -12,19 +12,17 @@ export const noteManagementHandlers = [
       store.set(workbenchState.$singleInputDialog, () => {
         return {
           dialogId: 'dialog::new-note-dialog',
+          title: t.app.dialogs.createNote.title,
+          description: t.app.dialogs.createNote.description,
+          inputLabel: t.app.dialogs.createNote.inputLabel,
           placeholder: t.app.dialogs.createNote.placeholder,
-          badgeText: t.app.dialogs.createNote.badgeText,
-          option: {
-            id: 'new-note-dialog',
-            title: t.app.dialogs.createNote.optionTitle,
-          },
+          submitText: t.app.dialogs.createNote.submitText,
           onSelect: (input) => {
             dispatch('command::ws:new-note-from-input', {
               inputPath: input.trim(),
             });
             dispatch('command::ui:focus-editor', null);
           },
-          Icon: FilePlus,
           initialSearch: prefillName,
         };
       });
@@ -110,16 +108,14 @@ export const noteManagementHandlers = [
       store.set(workbenchState.$singleInputDialog, () => {
         return {
           dialogId: 'dialog::rename-note-dialog',
-          placeholder: t.app.dialogs.renameNote.placeholder,
-          badgeText: t.app.dialogs.renameNote.badgeText({
+          title: t.app.dialogs.renameNote.title,
+          description: t.app.dialogs.renameNote.description({
             fileNameWithoutExtension: fileOldWsPath.fileNameWithoutExtension,
           }),
+          inputLabel: t.app.dialogs.renameNote.inputLabel,
+          placeholder: t.app.dialogs.renameNote.placeholder,
           initialSearch: fileOldWsPath.fileNameWithoutExtension,
-          Icon: FilePlus,
-          option: {
-            id: 'rename-note-dialog',
-            title: t.app.dialogs.renameNote.optionTitle,
-          },
+          submitText: t.app.dialogs.renameNote.submitText,
           onSelect: (input) => {
             const trimmedInput = input.trim();
             if (!trimmedInput) {
@@ -290,12 +286,11 @@ export const noteManagementHandlers = [
       store.set(workbenchState.$singleInputDialog, () => {
         return {
           dialogId: 'dialog::new-directory-dialog',
+          title: t.app.dialogs.createDirectory.title,
+          description: t.app.dialogs.createDirectory.description,
+          inputLabel: t.app.dialogs.createDirectory.inputLabel,
           placeholder: t.app.dialogs.createDirectory.placeholder,
-          badgeText: t.app.dialogs.createDirectory.badgeText,
-          option: {
-            id: 'new-directory-dialog',
-            title: t.app.dialogs.createDirectory.optionTitle,
-          },
+          submitText: t.app.dialogs.createDirectory.submitText,
           onSelect: (_input) => {
             const input = _input.trim();
             validateInputPath(input);
@@ -303,7 +298,6 @@ export const noteManagementHandlers = [
               dirWsPath: WsPath.fromParts(wsName, input).wsPath,
             });
           },
-          Icon: FilePlus,
         };
       });
     },

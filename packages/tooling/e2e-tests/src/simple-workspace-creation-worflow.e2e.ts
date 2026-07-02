@@ -37,7 +37,7 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
     await expect(
       page.getByRole('dialog', { name: 'Create Note' }),
     ).toBeVisible();
-    await page.getByPlaceholder('Input a note name').fill('test-note-1');
+    await page.getByLabel('Note name').fill('test-note-1');
     await page.getByRole('button', { name: 'Create' }).click();
 
     await expect(

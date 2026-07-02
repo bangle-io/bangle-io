@@ -51,14 +51,13 @@ export function AppDialogs() {
           );
         }}
         onSelect={singleInputDialog?.onSelect || (() => {})}
+        title={singleInputDialog?.title}
+        description={singleInputDialog?.description}
+        inputLabel={singleInputDialog?.inputLabel}
+        submitText={singleInputDialog?.submitText}
         placeholder={singleInputDialog?.placeholder}
-        badgeText={singleInputDialog?.badgeText}
-        badgeTone={singleInputDialog?.badgeTone}
-        groupHeading={singleInputDialog?.groupHeading}
         Icon={singleInputDialog?.Icon}
-        option={singleInputDialog?.option || { id: '' }}
         initialSearch={singleInputDialog?.initialSearch}
-        hints={singleInputDialog?.hints}
       />
 
       <DialogSingleSelect
