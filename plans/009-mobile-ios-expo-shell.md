@@ -20,8 +20,8 @@ web app in a thin Expo (React Native) shell, mirroring how
 `packages/tooling/desktop-entry` wraps the browser build for Electron. The
 shell is a single full-screen WKWebView (`react-native-webview`) plus a small
 native bridge that grows over time. Build, signing, TestFlight, and App Store
-submission run through Expo's EAS service (the same pipeline `~/code/t3code`
-uses: EAS Build profiles + EAS-managed credentials + `eas submit`).
+submission run through Expo's EAS service: EAS Build profiles, EAS-managed
+credentials, and `eas submit`.
 
 Decisions made (2026-07-02, with Kushan):
 
@@ -45,10 +45,10 @@ Decisions made (2026-07-02, with Kushan):
   router/error services work in WKWebView.
 - The only hard WKWebView blocker is the File System Access API
   (`showDirectoryPicker`), which only affects the NativeFS workspace type.
-- t3code (`~/code/t3code/apps/mobile`) proves the EAS + pnpm-monorepo +
-  GitHub Actions pipeline; we copy its variant scheme (dev/preview/prod
-  bundle IDs, EAS profiles, fingerprint PR builds) without its full-native
-  UI architecture.
+- A maintainer-provided reference app (private) already proves the EAS +
+  pnpm-monorepo + GitHub Actions pipeline; we reuse its variant scheme
+  (dev/preview/prod bundle IDs, EAS profiles, fingerprint PR builds)
+  without its full-native UI architecture.
 
 ## Milestones
 
@@ -113,7 +113,7 @@ Decisions made (2026-07-02, with Kushan):
   no workspace runtime deps).
 - No changes to core/platform/ui packages.
 - `.github/workflows/mobile-eas.yml`: manual-dispatch EAS build, gated on
-  `EXPO_TOKEN` secret (copyable from t3code's PR-label flow later).
+  `EXPO_TOKEN` secret (a PR-label-triggered flow can come later).
 
 ## Out of scope (M0)
 

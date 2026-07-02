@@ -192,6 +192,13 @@ order is `service-platform` -> `service-core` -> `service-ui`.
   `fix: ...`, or `chore: ...`.
 - Prefer `rg`/`rg --files` for repository searches and exclude `node_modules`,
   `dist`, and `build` from broad scans.
+- When the maintainer points you at a private product, repository, or
+  codebase as a reference or source of inspiration, never name, link, or
+  path-reference it in anything durable or public: committed files, code
+  comments, plans, commit messages, PR titles/descriptions, or issues.
+  Describe the borrowed pattern generically (for example "a reference
+  Expo/EAS monorepo setup") so the artifact stands on its own. Naming such
+  references in the private working conversation is fine.
 
 ## Testing Conventions
 
