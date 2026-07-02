@@ -1,8 +1,21 @@
 import { getGithubUrl, handleAppError } from '@bangle.io/base-utils';
 import { useCoreServices, useLogger } from '@bangle.io/context';
-import type { RootEmitter } from '@bangle.io/types';
+import type { AppError, RootEmitter } from '@bangle.io/types';
 import { toast } from '@bangle.io/ui-components';
 import React, { useEffect } from 'react';
+
+export function shouldReportAppError(appError: AppError): boolean {
+  switch (appError.name) {
+    case 'error::database:unknown-error':
+    case 'error::editor:load-failed':
+    case 'error::editor:save-failed':
+    case 'error::main:network':
+    case 'error::main:unknown':
+      return true;
+    default:
+      return false;
+  }
+}
 
 export function AppErrorHandler({ rootEmitter }: { rootEmitter: RootEmitter }) {
   const coreServices = useCoreServices();
@@ -43,8 +56,13 @@ export function AppErrorHandler({ rootEmitter }: { rootEmitter: RootEmitter }) {
     };
 
     const handleAppLikeError = (error: Error) => {
-      logger.error(error);
       return handleAppError(error, (appError, error) => {
+        if (shouldReportAppError(appError)) {
+          logger.error(error);
+        } else {
+          logger.warn('Handled app error:', error.message);
+        }
+
         switch (appError.name) {
           case 'error::editor:save-failed': {
             const toastId = `editor-save-failed:${appError.payload.wsPath}`;

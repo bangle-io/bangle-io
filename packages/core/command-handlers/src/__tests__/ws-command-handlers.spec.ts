@@ -6,6 +6,47 @@ import { describe, expect, test, vi } from 'vitest';
 import { setupTest } from './test-utils';
 
 describe('WS command handlers', () => {
+  describe('command::ws:create-note', () => {
+    test('reports duplicate note creation as a command failure', async () => {
+      const NOTE_WS_PATH = 'test-ws:existing.md';
+      const { dispatch, services, getCommandResults, testEnv } =
+        await setupTest({
+          targetId: 'command::ws:create-note',
+          workspaces: [{ name: 'test-ws', notes: [NOTE_WS_PATH] }],
+          autoNavigate: 'workspace',
+        });
+
+      dispatch('command::ws:create-note', {
+        navigate: true,
+        wsPath: NOTE_WS_PATH,
+      });
+
+      await vi.waitFor(() => {
+        expect(
+          getCommandResults().filter((result) => result.type === 'failure'),
+        ).toEqual([
+          expect.objectContaining({
+            command: expect.objectContaining({
+              id: 'command::ws:create-note',
+            }),
+          }),
+        ]);
+        expect(testEnv.commonOpts.emitAppError).toHaveBeenCalledWith(
+          expect.objectContaining({
+            cause: expect.objectContaining({
+              name: 'error::file:already-existing',
+              payload: { wsPath: NOTE_WS_PATH },
+            }),
+          }),
+        );
+      });
+
+      expect(services.navigation.resolveAtoms().wsPath?.wsPath).not.toBe(
+        NOTE_WS_PATH,
+      );
+    });
+  });
+
   describe('command::ws:clone-note', () => {
     test.each([
       {
@@ -225,6 +266,37 @@ describe('WS command handlers', () => {
           services.userActivityService.resolveAtoms().starredWsPaths;
         // Since it was the only starred note, the list should be empty again.
         expect(starredPaths).toEqual([]);
+      });
+    });
+
+    test('reports toggle-star without an open note as a handled app error', async () => {
+      const { dispatch, getCommandResults, testEnv } = await setupTest({
+        targetId: 'command::workspace:toggle-star',
+        workspaces: [{ name: 'test-ws' }],
+        autoNavigate: 'workspace',
+      });
+
+      dispatch('command::workspace:toggle-star', {
+        wsPath: undefined,
+      });
+
+      await vi.waitFor(() => {
+        expect(
+          getCommandResults().filter((result) => result.type === 'failure'),
+        ).toEqual([
+          expect.objectContaining({
+            command: expect.objectContaining({
+              id: 'command::workspace:toggle-star',
+            }),
+          }),
+        ]);
+        expect(testEnv.commonOpts.emitAppError).toHaveBeenCalledWith(
+          expect.objectContaining({
+            cause: expect.objectContaining({
+              name: 'error::workspace:no-note-opened',
+            }),
+          }),
+        );
       });
     });
   });

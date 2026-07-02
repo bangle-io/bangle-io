@@ -33,7 +33,7 @@ export const wsCommandHandlers = [
 
   c(
     'command::ws:create-note',
-    ({ fileSystem, navigation }, { wsPath, navigate }) => {
+    async ({ fileSystem, navigation }, { wsPath, navigate }) => {
       const parsedPath = WsPath.fromString(wsPath);
       const wsName = parsedPath.wsName;
 
@@ -50,18 +50,16 @@ export const wsCommandHandlers = [
       const filePath = WsPath.assertFile(wsPath);
       const fileNameWithoutExt = filePath.fileNameWithoutExtension;
 
-      void fileSystem
-        .createFile(
-          wsPath,
-          new File([''], fileNameWithoutExt, {
-            type: 'text/plain',
-          }),
-        )
-        .then(() => {
-          if (navigate) {
-            navigation.goWsPath(wsPath);
-          }
-        });
+      await fileSystem.createFile(
+        wsPath,
+        new File([''], fileNameWithoutExt, {
+          type: 'text/plain',
+        }),
+      );
+
+      if (navigate) {
+        navigation.goWsPath(wsPath);
+      }
     },
   ),
 
