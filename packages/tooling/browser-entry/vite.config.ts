@@ -11,9 +11,16 @@ import { defineConfig } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import { translationsPlugin } from './translations-plugin';
 
-// Replaced after env vars are resolved so the locale URL is cache-busted per
-// release. Using a placeholder avoids computing `releaseId` twice.
+// The bootstrap must be built before `getEnvVars` (it is one of the
+// `inlinedScripts`), but the cache-busting `releaseId` is one of that call's
+// outputs. So the bootstrap ships a placeholder that is swapped for the real
+// release once it is known.
 const LOCALE_VERSION_PLACEHOLDER = '__BANGLE_LOCALE_VERSION__';
+
+/** Escape a value for safe substitution inside a double-quoted JS string literal. */
+function jsStringInner(value: string): string {
+  return JSON.stringify(value).slice(1, -1);
+}
 
 export default defineConfig(async (env) => {
   const isProduction = env.mode === 'production';
@@ -33,10 +40,12 @@ export default defineConfig(async (env) => {
     inlinedScripts: [translationInline, themeInline],
   });
 
+  // The placeholder sits inside a JS string literal, so escape the release
+  // before splicing it in.
   envVars.htmlInjections.inlinedScripts =
     envVars.htmlInjections.inlinedScripts.replaceAll(
       LOCALE_VERSION_PLACEHOLDER,
-      envVars.releaseId,
+      jsStringInner(envVars.releaseId),
     );
 
   return {

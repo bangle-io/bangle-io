@@ -18,7 +18,7 @@ interface LanguageModule {
   t: unknown;
 }
 
-const LANGUAGE_MAP = languages as unknown as Record<string, LanguageModule>;
+const LANGUAGE_MAP: Record<string, LanguageModule> = languages;
 
 /**
  * The default language every build must contain. It is the source of truth for
@@ -28,9 +28,10 @@ const LANGUAGE_MAP = languages as unknown as Record<string, LanguageModule>;
 export const DEFAULT_LANGUAGE = 'en';
 
 /**
- * Language codes with a bundled translation, e.g. `['de', 'en']`.
+ * Language codes with a bundled translation, e.g. `['de', 'en']`. Always
+ * includes {@link DEFAULT_LANGUAGE}.
  */
-export const SUPPORTED_LANGUAGES: string[] = Object.keys(LANGUAGE_MAP);
+export const SUPPORTED_LANGUAGES: readonly string[] = Object.keys(LANGUAGE_MAP);
 
 /**
  * Serialize a translation value into an executable JavaScript literal. Strings
@@ -78,7 +79,7 @@ export function getLanguageScriptSource(lang: string): string {
 
 interface BootstrapOptions {
   /** Language codes that have a `/locales/<lang>.js` asset. */
-  supported: string[];
+  supported: readonly string[];
   /** Cache-busting token appended as `?v=` to the locale URL. */
   version: string;
 }
@@ -92,6 +93,11 @@ interface BootstrapOptions {
  * English ({@link DEFAULT_LANGUAGE}) is always loaded as the fallback. An
  * English visitor downloads exactly one bundle; others download English plus
  * their language, never every translation.
+ *
+ * INVARIANT: the returned script must be injected as a synchronous, inline
+ * `<head>` script (never `async`/`defer`). Its `document.write` of the locale
+ * `<script>` tags relies on running during initial parsing; deferring it would
+ * blank the page and leave `t` undefined.
  */
 export function getTranslationBootstrapScript({
   supported,
@@ -106,9 +112,11 @@ export function getTranslationBootstrapScript({
   var supported=${supportedLiteral};
   var fallback=${fallbackLiteral};
   var version=${versionLiteral};
+  var hasOwn=Object.prototype.hasOwnProperty;
   function isObject(value){return value&&typeof value==="object"&&!Array.isArray(value);}
   function deepMerge(base,override){
     for(var key in override){
+      if(!hasOwn.call(override,key)||key==="__proto__"){continue;}
       base[key]=isObject(base[key])&&isObject(override[key])?deepMerge(base[key],override[key]):override[key];
     }
     return base;
