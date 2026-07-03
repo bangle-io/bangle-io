@@ -6,12 +6,13 @@ import { wsCommands } from './ws-commands';
 
 export const bangleAppCommands = [...uiCommands, ...wsCommands];
 
-export function getEnabledCommands(): Command[] {
-  const commands: Command[] = bangleAppCommands;
+export type BangleAppCommand = (typeof bangleAppCommands)[number];
+export type EnabledBangleAppCommand = BangleAppCommand & Command;
+
+export function getEnabledCommands(): EnabledBangleAppCommand[] {
+  const commands: EnabledBangleAppCommand[] = bangleAppCommands;
   return commands.filter((command) => !command.disabled);
 }
-
-export type BangleAppCommand = (typeof bangleAppCommands)[number];
 
 function validate(commands: Command[]) {
   const commandIds = new Set(commands.map((command) => command.id));

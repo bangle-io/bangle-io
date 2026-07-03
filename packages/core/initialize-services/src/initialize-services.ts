@@ -1,5 +1,6 @@
 import { getEventSenderMetadata, throwAppError } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
+import type { EnabledBangleAppCommand } from '@bangle.io/commands';
 import {
   BrowserErrorHandlerService,
   BrowserLocalStorageSyncDatabaseService,
@@ -11,7 +12,6 @@ import {
 } from '@bangle.io/service-platform';
 import type {
   BaseServiceCommonOptions,
-  Command,
   CommandHandler,
   RootEmitter,
 } from '@bangle.io/types';
@@ -38,7 +38,7 @@ const browserServiceMap = defineAppServiceMap({
 export function initializeServices(
   commonOpts: BaseServiceCommonOptions,
   rootEmitter: RootEmitter,
-  commands: Command[],
+  commands: EnabledBangleAppCommand[],
   commandHandlers: Array<{ id: string; handler: CommandHandler }>,
   theme: ThemeManager,
 ) {

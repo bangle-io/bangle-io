@@ -1,5 +1,6 @@
 import { assertIsDefined } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
+import type { EnabledBangleAppCommand } from '@bangle.io/commands';
 import type { CoreServices } from '@bangle.io/context';
 import { PmEditorService } from '@bangle.io/editor';
 import {
@@ -27,7 +28,6 @@ import {
 import type {
   BaseFileStorageService,
   BaseServiceCommonOptions,
-  Command,
   CommandHandler,
   CoreServiceSlotId,
   RootEmitter,
@@ -73,7 +73,7 @@ type FileStorageSlot<TServiceMap extends AppServiceMap> = {
 export type ServiceSetupOptions<TServiceMap extends AppServiceMap> = {
   commonOpts: BaseServiceCommonOptions;
   rootEmitter: RootEmitter;
-  commands: Command[];
+  commands: EnabledBangleAppCommand[];
   commandHandlers: Array<{ id: string; handler: CommandHandler }>;
   themeManager: ThemeManager;
   /**
@@ -189,7 +189,7 @@ export function createServiceSetup<const TServiceMap extends AppServiceMap>(
           },
           handler: (event) => {
             getServices().commandDispatcher.dispatch(
-              command.id as any,
+              command.id,
               event,
               `keyboard(${keys})`,
             );
