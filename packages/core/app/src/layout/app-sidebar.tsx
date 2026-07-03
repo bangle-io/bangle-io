@@ -27,8 +27,6 @@ import {
 } from 'lucide-react';
 import React, { useMemo } from 'react';
 
-const MAX_WS_PATHS = 800;
-
 interface SidebarProps {
   children: React.ReactNode;
 }
@@ -42,11 +40,6 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   const activeWsName = useAtomValue(navigation.$wsName);
   const activeWsPaths = useAtomValue(workspaceState.$activeWsPaths);
   const wsPaths = useAtomValue(workspaceState.$wsPaths);
-
-  const isTruncated = wsPaths.length > MAX_WS_PATHS;
-  const displayedWsPaths = useMemo(() => {
-    return !isTruncated ? wsPaths : wsPaths.slice(0, MAX_WS_PATHS);
-  }, [wsPaths, isTruncated]);
 
   const getActionsForEntry = useMemo(
     () =>
@@ -199,17 +192,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
           misc: ws.type,
           isActive: activeWsName === ws.name,
         }))}
-        filePaths={displayedWsPaths.map((wsPath) => wsPath.path)}
-        isTruncated={isTruncated}
-        onTruncatedClick={() => {
-          commandDispatcher.dispatch(
-            'command::ui:toggle-all-files',
-            {
-              prefillInput: undefined,
-            },
-            'ui',
-          );
-        }}
+        filePaths={wsPaths.map((wsPath) => wsPath.path)}
         navItems={activeWsPaths.map((wsPath) => ({
           title: wsPath.fileName || '',
           wsPath: wsPath.wsPath,

@@ -60,8 +60,6 @@ export type AppSidebarProps = {
   onSearchClick?: () => void;
   activeFilePaths?: string[];
   getActionsForEntry: (entry: FileTreeEntry) => readonly FileTreeEntryAction[];
-  isTruncated?: boolean;
-  onTruncatedClick?: () => void;
   onCreateDirectory: (pathPrefix: string | undefined) => void;
   onCreateNote: (pathPrefix: string | undefined) => void;
   onMoveFile: (
@@ -180,8 +178,6 @@ export function AppSidebar({
   onSearchClick = () => {},
   activeFilePaths = [],
   getActionsForEntry,
-  isTruncated = false,
-  onTruncatedClick = () => {},
   onCreateDirectory,
   onCreateNote,
   onMoveFile,
@@ -260,12 +256,10 @@ export function AppSidebar({
               activePaths={activeFilePaths}
               filePaths={filePaths}
               getActionsForEntry={getActionsForEntry}
-              isTruncated={isTruncated}
               onCreateDirectory={onCreateDirectory}
               onCreateNote={onCreateNote}
               onMoveFile={onMoveFile}
               onOpenFile={onOpenFile}
-              onShowMore={onTruncatedClick}
             />
           </SidebarGroupContent>
         </SidebarGroup>

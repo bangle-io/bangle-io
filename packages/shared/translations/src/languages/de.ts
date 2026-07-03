@@ -352,7 +352,7 @@ export const t = {
         clickedTooSoon: {
           title: 'Das hat nicht funktioniert',
           message:
-            'Bitte versuchen Sie erneut, auf die Schaltfläche "Durchsuchen" zu klicken.',
+            'Bitte versuchen Sie es erneut und wählen Sie Ihren Notizordner aus, wenn Sie dazu aufgefordert werden.',
         },
         accessDenied: {
           title: 'Zugriff verweigert',
@@ -459,7 +459,6 @@ export const t = {
         renameActionTitle: 'Umbenennen',
         moveActionTitle: 'Verschieben',
         deleteActionTitle: 'Löschen',
-        showMoreButton: 'Mehr anzeigen',
         workspacesLabel: 'Arbeitsbereiche',
         noWorkspaceSelectedTitle: 'Kein Arbeitsbereich ausgewählt',
         noWorkspaceSelectedSubtitle:

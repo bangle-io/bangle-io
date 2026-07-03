@@ -359,7 +359,8 @@ export const t = {
         },
         clickedTooSoon: {
           title: "That didn't work",
-          message: 'Please try clicking the Browse button again.',
+          message:
+            'Please try again and choose your notes folder when prompted.',
         },
         accessDenied: {
           title: 'Access was denied',
@@ -461,7 +462,6 @@ export const t = {
         renameActionTitle: 'Rename',
         moveActionTitle: 'Move',
         deleteActionTitle: 'Delete',
-        showMoreButton: 'Show More',
         workspacesLabel: 'Workspaces',
         noWorkspaceSelectedTitle: 'No workspace selected',
         noWorkspaceSelectedSubtitle: 'Click to select a workspace',

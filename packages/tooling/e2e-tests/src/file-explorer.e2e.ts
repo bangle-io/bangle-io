@@ -161,6 +161,48 @@ async function clickVisibleFileTreeRow(page: Page) {
   });
 }
 
+async function writeStoredFiles(
+  page: Page,
+  workspaceName: string,
+  files: Array<{ content: string; relativePath: string; type: string }>,
+) {
+  await page.evaluate(
+    async ({ workspace, files }) => {
+      const request = indexedDB.open('baby-idb-db-3');
+      const database = await new Promise<IDBDatabase>((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+
+      await new Promise<void>((resolve, reject) => {
+        const transaction = database.transaction(
+          'baby-idb-db-store-3',
+          'readwrite',
+        );
+        transaction.oncomplete = () => resolve();
+        transaction.onerror = () => reject(transaction.error);
+        transaction.onabort = () => reject(transaction.error);
+
+        const store = transaction.objectStore('baby-idb-db-store-3');
+        for (const file of files) {
+          store.put(
+            new File(
+              [file.content],
+              file.relativePath.split('/').at(-1) ?? file.relativePath,
+              {
+                type: file.type,
+              },
+            ),
+            `${workspace}/${file.relativePath}`,
+          );
+        }
+      });
+      database.close();
+    },
+    { files, workspace: workspaceName },
+  );
+}
+
 test('file explorer creates folders, opens notes, and survives reload', async ({
   page,
 }) => {
@@ -581,6 +623,41 @@ test('file explorer shows common workspace files and opens non-notes as assets',
     )}`,
   );
   await expect.poll(() => getEditorText(page, {})).toBe('Visible');
+});
+
+test('file explorer does not drop later root folders in large workspaces', async ({
+  page,
+}) => {
+  const workspaceName = `explorer-large-${Date.now()}`;
+  await createBrowserWorkspace(page, { workspaceName });
+
+  const earlierFiles = Array.from({ length: 850 }, (_, index) => ({
+    content: `export const value${index} = ${index};`,
+    relativePath: `apps/generated/file-${String(index).padStart(4, '0')}.ts`,
+    type: 'text/typescript',
+  }));
+  await writeStoredFiles(page, workspaceName, [
+    ...earlierFiles,
+    {
+      content: '# Guide',
+      relativePath: 'docs/guide.md',
+      type: 'text/markdown',
+    },
+  ]);
+
+  await page.goto(
+    `/ws#route=ws-home&wsName=${encodeURIComponent(workspaceName)}`,
+  );
+  await page.reload();
+
+  const explorer = page.getByTestId('bangle-file-explorer');
+  await expect(explorer).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /^apps \/ generated$/ }),
+  ).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /^docs$/ }),
+  ).toBeVisible();
 });
 
 test('moving the open note does not flash the workspace-home screen', async ({

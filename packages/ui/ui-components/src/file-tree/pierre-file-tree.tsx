@@ -186,7 +186,6 @@ export interface PierreFileTreeProps {
   activePaths?: readonly string[];
   className?: string;
   filePaths: readonly string[];
-  isTruncated?: boolean;
   onCreateDirectory: (pathPrefix: string | undefined) => void;
   onCreateNote: (pathPrefix: string | undefined) => void;
   onMoveFile: (
@@ -194,7 +193,6 @@ export interface PierreFileTreeProps {
     destinationDirectory: string | undefined,
   ) => void;
   onOpenFile: (relativePath: string) => void;
-  onShowMore: () => void;
   getActionsForEntry: (entry: FileTreeEntry) => readonly FileTreeEntryAction[];
 }
 
@@ -202,12 +200,10 @@ export function PierreFileTree({
   activePaths = [],
   className,
   filePaths,
-  isTruncated = false,
   onCreateDirectory,
   onCreateNote,
   onMoveFile,
   onOpenFile,
-  onShowMore,
   getActionsForEntry,
 }: PierreFileTreeProps) {
   const rawTreePaths = useMemo(
@@ -456,17 +452,6 @@ export function PierreFileTree({
             );
           }}
         />
-        {isTruncated && (
-          <div className="border-sidebar-border/70 border-t p-1.5">
-            <button
-              type="button"
-              className="w-full rounded-sm px-2 py-1.5 text-left text-sidebar-foreground/75 text-xs transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              onClick={onShowMore}
-            >
-              {t.app.components.appSidebar.showMoreButton}
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );
