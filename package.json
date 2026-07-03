@@ -20,7 +20,7 @@
     "@types/node": "^26.1.0",
     "@types/react": "^19.2.17",
     "@types/wicg-file-system-access": "^2023.10.7",
-    "@typescript/native-preview": "7.0.0-dev.20260702.3",
+    "@typescript/native-preview": "7.0.0-dev.20260703.1",
     "@vitest/browser": "^4.1.9",
     "@vitest/coverage-v8": "4.1.9",
     "fake-indexeddb": "^6.2.5",
