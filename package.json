@@ -57,6 +57,7 @@
     "desktop:dist": "pnpm --filter \"@bangle.io/desktop-entry\" run dist",
     "desktop:open": "pnpm desktop:build && BANGLE_DESKTOP_BROWSER_DIST=\"$PWD/packages/tooling/browser-entry/dist\" pnpm --filter \"@bangle.io/desktop-entry\" exec electron \"$PWD/packages/tooling/desktop-entry/dist/main.cjs\"",
     "desktop:release:stable": "pnpm --filter \"@bangle.io/desktop-entry\" run release:stable",
+    "dev-ports": "node scripts/dev-ports.js",
     "lint:ci": "pnpm run custom-validation && pnpm run typecheck && biome ci .  --diagnostic-level=error",
     "test:ci": "pnpm vitest run --configLoader runner --maxWorkers=50%",
     "e2e-install": "pnpm --filter \"@bangle.io/e2e-tests\" exec playwright install --with-deps chromium",

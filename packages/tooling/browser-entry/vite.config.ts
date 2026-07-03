@@ -16,10 +16,29 @@ import { translationsPlugin } from './translations-plugin';
 // outputs. So the bootstrap ships a placeholder that is swapped for the real
 // release once it is known.
 const LOCALE_VERSION_PLACEHOLDER = '__BANGLE_LOCALE_VERSION__';
+const MIN_DEV_PORT = 3000;
+const MAX_PORT = 65_535;
 
 /** Escape a value for safe substitution inside a double-quoted JS string literal. */
 function jsStringInner(value: string): string {
   return JSON.stringify(value).slice(1, -1);
+}
+
+function readPortEnv(name: string): number | undefined {
+  const value = process.env[name];
+
+  if (value === undefined || value === '') {
+    return undefined;
+  }
+
+  const port = Number(value);
+  if (!Number.isInteger(port) || port < MIN_DEV_PORT || port > MAX_PORT) {
+    throw new Error(
+      `${name} must be an integer port from ${MIN_DEV_PORT} to ${MAX_PORT}.`,
+    );
+  }
+
+  return port;
 }
 
 export default defineConfig(async (env) => {
@@ -51,6 +70,12 @@ export default defineConfig(async (env) => {
   return {
     build: {
       sourcemap: true,
+    },
+    server: {
+      port: readPortEnv('BANGLE_DEV_PORT'),
+    },
+    preview: {
+      port: readPortEnv('BANGLE_PREVIEW_PORT'),
     },
     plugins: [
       translationsPlugin(),

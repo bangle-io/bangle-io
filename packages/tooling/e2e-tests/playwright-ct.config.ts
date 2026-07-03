@@ -2,6 +2,26 @@ import getEnvVars from '@bangle.io/env-vars';
 import { defineConfig, devices } from '@playwright/experimental-ct-react';
 import tailwindcss from '@tailwindcss/vite';
 
+const MIN_DEV_PORT = 3000;
+const MAX_PORT = 65_535;
+
+function readPortEnv(name: string, fallback: number): number {
+  const value = process.env[name];
+
+  if (value === undefined || value === '') {
+    return fallback;
+  }
+
+  const port = Number(value);
+  if (!Number.isInteger(port) || port < MIN_DEV_PORT || port > MAX_PORT) {
+    throw new Error(
+      `${name} must be an integer port from ${MIN_DEV_PORT} to ${MAX_PORT}.`,
+    );
+  }
+
+  return port;
+}
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -29,7 +49,7 @@ export default defineConfig({
     trace: 'on-first-retry',
 
     /* Port to use for Playwright component endpoint. */
-    ctPort: 3100,
+    ctPort: readPortEnv('BANGLE_E2E_CT_PORT', 3100),
     ctViteConfig: async () => {
       const envVars = getEnvVars({
         isProduction: true,

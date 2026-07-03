@@ -1,6 +1,30 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const PORT = 5173;
+const MIN_DEV_PORT = 3000;
+const MAX_PORT = 65_535;
+
+function readPortEnv(name: string, fallback: number): number {
+  const value = process.env[name];
+
+  if (value === undefined || value === '') {
+    return fallback;
+  }
+
+  const port = Number(value);
+  if (!Number.isInteger(port) || port < MIN_DEV_PORT || port > MAX_PORT) {
+    throw new Error(
+      `${name} must be an integer port from ${MIN_DEV_PORT} to ${MAX_PORT}.`,
+    );
+  }
+
+  return port;
+}
+
+const PORT = readPortEnv(
+  'BANGLE_E2E_PORT',
+  readPortEnv('BANGLE_DEV_PORT', 5173),
+);
+const BASE_URL = `http://localhost:${PORT}`;
 const isCI = Boolean(process.env.CI);
 
 /**
@@ -24,7 +48,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    // baseURL: 'http://127.0.0.1:3000',
+    baseURL: BASE_URL,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -70,8 +94,8 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: `pnpm -w run start --port ${PORT}`,
-    port: PORT,
+    command: `BANGLE_DEV_PORT=${PORT} pnpm --dir ../browser-entry exec vite --configLoader runner --host localhost --port ${PORT} --strictPort`,
+    url: BASE_URL,
     reuseExistingServer: !isCI,
   },
 });

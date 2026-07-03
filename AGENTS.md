@@ -239,6 +239,37 @@ pnpm storybook               # Storybook on port 6006
 pnpm local-ci-check          # every root *:ci script
 ```
 
+## Worktree Ports
+
+Before running dev servers or Playwright from a Codex/git worktree, export a
+deterministic port set from the worktree root:
+
+```bash
+eval "$(node scripts/dev-ports.js --env)"
+```
+
+The script hashes the current git worktree path plus branch name into a stable
+bucket. It does not check whether a port is free; rare hash collisions are an
+accepted tradeoff. Use `BANGLE_PORT_SEED=<name>` when a worktree needs to share
+or override that identity.
+
+The exported variables are:
+
+- `BANGLE_DEV_PORT` for `pnpm start`.
+- `BANGLE_PREVIEW_PORT` for `pnpm preview-production`.
+- `BANGLE_STORYBOOK_PORT` for `pnpm storybook`.
+- `BANGLE_E2E_PORT` for the app server launched by `pnpm e2e:ci`.
+- `BANGLE_E2E_CT_PORT` for the Playwright component-test server.
+
+Generated ports stay in development ranges above 3000: CT `3100-3899`,
+preview `4173-4972`, dev `5173-5972`, Storybook `6006-6805`, and E2E
+`7173-7972`. Manual overrides below `3000` are rejected.
+
+Use `node scripts/dev-ports.js` to inspect the full set, or
+`node scripts/dev-ports.js dev` to print one role's port. Any variable can be
+manually overridden for a one-off command, for example
+`BANGLE_DEV_PORT=5317 pnpm start`.
+
 Custom repository maintenance runs with Bun from the root:
 
 ```bash

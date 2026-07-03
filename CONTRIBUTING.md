@@ -113,6 +113,18 @@ pnpm start
 
 The development instance will be available on `localhost:5173`.
 
+When working from multiple git worktrees, export a deterministic port set before
+running dev servers or Playwright:
+
+```bash
+eval "$(node scripts/dev-ports.js --env)"
+```
+
+This sets separate ports for the Vite dev server, production preview,
+Storybook, Playwright E2E, and Playwright component tests. Generated ports stay
+above `3000`, and manual overrides below `3000` are rejected. You can inspect
+the assigned ports with `node scripts/dev-ports.js`.
+
 **3. Explore the Codebase**
 
 - Explore the services setup in `packages/core/initialize-services`.
