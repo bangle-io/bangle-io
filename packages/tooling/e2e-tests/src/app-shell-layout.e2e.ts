@@ -31,9 +31,13 @@ test('app shell: full-height flush sidebar, thin titlebar, collapse/expand', asy
 
   // The titlebar is thin.
   const titlebar = page.locator('header.desktop-titlebar-surface').first();
+  await expect
+    .poll(async () => (await titlebar.boundingBox())?.height ?? 999)
+    .toBeLessThanOrEqual(42);
+
   const titlebarBox = await titlebar.boundingBox();
   expect(titlebarBox).not.toBeNull();
-  expect(titlebarBox?.height ?? 999).toBeLessThanOrEqual(56);
+  expect(titlebarBox?.height ?? 999).toBeGreaterThanOrEqual(38);
 
   // Collapsing slides the sidebar off-canvas (its panel leaves the viewport).
   await page.getByRole('button', { name: 'Toggle Sidebar' }).first().click();

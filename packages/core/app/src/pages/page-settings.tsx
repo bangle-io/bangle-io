@@ -6,6 +6,7 @@ import {
 import { useCoreServices } from '@bangle.io/context';
 import type { AppRouteInfo, ThemePreference } from '@bangle.io/types';
 import {
+  Button,
   cn,
   Select,
   SelectContent,
@@ -20,10 +21,16 @@ import { useAtom, useAtomValue } from 'jotai';
 import {
   ArrowLeft,
   BriefcaseBusiness,
+  Download,
   type LucideIcon,
   Settings2,
 } from 'lucide-react';
 import React from 'react';
+import {
+  getPwaInstallSnapshot,
+  promptPwaInstall,
+  subscribePwaInstallPrompt,
+} from '../common/pwa-install';
 import { AppHeader } from '../layout/app-header';
 import { PageContentContainer } from '../layout/main-content-container';
 import { WorkspacesSettingsPage } from './page-settings-workspaces';
@@ -94,6 +101,7 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
   const routeInfo = useAtomValue(navigation.$routeInfo);
   const themePref = useAtomValue(workbenchState.$themePref);
   const [wideEditor, setWideEditor] = useAtom(workbenchState.$wideEditor);
+  const pwaInstall = usePwaInstallPrompt();
   const returnTo = safeAppHref(getSettingsReturnTo(routeInfo));
 
   const backHref =
@@ -135,6 +143,31 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
           <SettingsPage.SettingsPageContent>
             {activePage === 'general' ? (
               <>
+                {pwaInstall.canInstall || pwaInstall.isInstalling ? (
+                  <SettingsPage.SettingsSection
+                    title={t.app.settings.general.appSection}
+                  >
+                    <SettingsPage.SettingsRow
+                      control={
+                        <Button
+                          disabled={pwaInstall.isInstalling}
+                          onClick={() => {
+                            void pwaInstall.install();
+                          }}
+                          type="button"
+                        >
+                          <Download className="h-4 w-4" />
+                          {pwaInstall.isInstalling
+                            ? t.app.settings.general.installingPwa
+                            : t.app.settings.general.installPwaButton}
+                        </Button>
+                      }
+                      description={t.app.settings.general.installPwaDescription}
+                      title={t.app.settings.general.installPwaTitle}
+                    />
+                  </SettingsPage.SettingsSection>
+                ) : null}
+
                 <SettingsPage.SettingsSection
                   title={t.app.settings.general.appearanceSection}
                 >
@@ -197,6 +230,19 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
       </PageContentContainer>
     </>
   );
+}
+
+function usePwaInstallPrompt() {
+  const snapshot = React.useSyncExternalStore(
+    subscribePwaInstallPrompt,
+    getPwaInstallSnapshot,
+    getPwaInstallSnapshot,
+  );
+
+  return {
+    ...snapshot,
+    install: promptPwaInstall,
+  };
 }
 
 function ThemePreferenceSelect({

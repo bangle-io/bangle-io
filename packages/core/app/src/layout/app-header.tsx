@@ -37,7 +37,7 @@ export function AppHeader({ children }: AppHeaderProps) {
   const showEditorToolbar = Boolean(currentWsPath);
 
   return (
-    <header className="desktop-titlebar-drag desktop-titlebar-surface flex h-[52px] shrink-0 items-center gap-2 px-3">
+    <header className="desktop-titlebar-drag desktop-titlebar-surface flex h-[var(--bangle-app-titlebar-height)] max-h-[var(--bangle-app-titlebar-height)] min-h-[var(--bangle-app-titlebar-height)] shrink-0 items-center gap-2 overflow-hidden px-3">
       <div
         aria-hidden="true"
         className="desktop-titlebar-main-spacer shrink-0"

@@ -11,6 +11,11 @@ import { Toaster } from '@bangle.io/ui-components';
 import { Provider, useAtomValue } from 'jotai/react';
 import React from 'react';
 import { AppErrorHandler } from './app-error-handler';
+import {
+  initializePwaInstallPromptTracking,
+  syncAppDocumentTitle,
+  syncWindowControlsOverlayState,
+} from './common/pwa-install';
 import { ErrorBoundary } from './components/feedback/error-boundary';
 import { AppDialogs } from './dialogs/app-dialogs';
 import { AppSidebar } from './layout/app-sidebar';
@@ -45,6 +50,7 @@ export function App({
         <PlatformServiceProvider services={services.platform}>
           <CoreServiceProvider services={services.core}>
             <ErrorBoundary>
+              <BrowserAppDocumentSetup />
               <AppDialogs />
               <OmniSearch />
               <Toaster position="top-center" />
@@ -59,6 +65,26 @@ export function App({
       </Provider>
     </LoggerProvider>
   );
+}
+
+function BrowserAppDocumentSetup() {
+  React.useEffect(() => {
+    const abortController = new AbortController();
+
+    syncAppDocumentTitle(document);
+    initializePwaInstallPromptTracking(window);
+    syncWindowControlsOverlayState({
+      documentRef: document,
+      navigatorRef: navigator,
+      signal: abortController.signal,
+    });
+
+    return () => {
+      abortController.abort();
+    };
+  }, []);
+
+  return null;
 }
 
 function AppRoutes() {
