@@ -50,10 +50,18 @@ below for why). Shipped on this branch:
 - The legacy `collapseContent` scaffold (attribute, `data-bangle-attrs`
   DOM blob, dormant `HeadingConfig.keyToggleCollapse`) was **removed** from
   `heading.ts` — it was a latent data-loss path.
+- The toggle renders through a small reusable primitive,
+  `createTrailingWidget` in
+  `packages/js-lib/banger-editor/src/trailing-slot.ts`: an inline widget slot
+  at the end of a block's text (`# heading ›`). It flows with the inline
+  content, so on a wrapped heading it trails the last line, and it leaves the
+  left gutter entirely to the block drag handle (an earlier gutter-stacked
+  design broke drag-node targeting). Future features can attach their own
+  trailing affordances to any block through the same helper; multiple slots
+  render side by side.
 - App wiring: `collapsibleHeading` extension in
-  `packages/core/editor/src/extensions.ts` (labels via translations), gutter
-  styles in `typography.css` (the drag handle shifts one slot left on headings
-  so both affordances coexist), omni-search commands
+  `packages/core/editor/src/extensions.ts` (labels via translations), slot and
+  toggle styles in `typography.css`, omni-search commands
   `command::ui:toggle-heading-collapse` and
   `command::ui:uncollapse-all-headings` with handlers calling
   `PmEditorService.toggleHeadingCollapse()` / `.uncollapseAllHeadings()`.

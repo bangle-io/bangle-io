@@ -19,6 +19,7 @@ import {
   type KeyCode,
   type PluginContext,
 } from './pm-utils';
+import { createTrailingWidget } from './trailing-slot';
 
 /**
  * Collapsible headings: fold the blocks that follow a heading (up to the next
@@ -460,19 +461,18 @@ function buildPluginState(
     }
 
     const isFolded = foldedSet.has(pos);
-    // The toggle renders inline at the end of the heading text, keeping the
-    // left gutter free for the block drag handle.
+    // The toggle renders in the block's trailing slot — inline at the end
+    // of the heading text — keeping the left gutter free for the block
+    // drag handle. Other features can add their own trailing widgets
+    // alongside it.
     decorations.push(
-      Decoration.widget(
-        pos + node.nodeSize - 1,
-        (view: EditorView) =>
-          createToggleWidget(view, pos, isFolded, config, toggleAtPos),
-        {
-          key: `collapsible-heading:${pos}:${isFolded}`,
-          side: 1,
-          ignoreSelection: true,
-        },
-      ),
+      createTrailingWidget({
+        node,
+        pos,
+        key: `collapsible-heading:${pos}:${isFolded}`,
+        render: (view: EditorView) =>
+          createToggleButton(view, pos, isFolded, config, toggleAtPos),
+      }),
     );
 
     if (!isFolded) {
@@ -577,17 +577,13 @@ function selectionOutsideFolds(
 const CHEVRON_PATH =
   'M6.34 7.76 4.93 9.17 12 16.24l7.07-7.07-1.41-1.41L12 13.41 6.34 7.76Z';
 
-function createToggleWidget(
+function createToggleButton(
   view: EditorView,
   headingPos: number,
   folded: boolean,
   config: RequiredConfig,
   toggleAtPos: (pos: number) => Command,
 ): HTMLElement {
-  const wrapper = document.createElement('span');
-  wrapper.className = 'B-collapsible-heading-toggle-wrapper';
-  wrapper.contentEditable = 'false';
-
   const button = document.createElement('button');
   button.type = 'button';
   button.className = 'B-collapsible-heading-toggle';
@@ -618,6 +614,5 @@ function createToggleWidget(
     toggleAtPos(headingPos)(view.state, view.dispatch);
   });
 
-  wrapper.appendChild(button);
-  return wrapper;
+  return button;
 }

@@ -265,3 +265,54 @@ test('collapse-all and expand-all heading commands work from omni search', async
     editor.getByRole('button', { name: 'Expand section' }),
   ).toHaveCount(0);
 });
+
+test('the fold toggle trails the last line of a wrapped heading', async ({
+  page,
+}) => {
+  const workspaceName = 'collapsible-headings-wrap';
+  const noteName = 'Home';
+  const longHeading = `# ${'really long heading that keeps going '.repeat(6)}and ends here`;
+  const source = [
+    longHeading,
+    '',
+    'content below',
+    '',
+    '# Next',
+    '',
+    'tail',
+  ].join('\n');
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(page, workspaceName, noteName, source);
+  await page.reload();
+
+  const editor = getEditorLocator(page, {});
+  const heading = editor.locator('h1').first();
+  await expect(heading).toContainText('and ends here');
+
+  const toggle = heading.getByRole('button', { name: 'Collapse section' });
+  const headingBox = await heading.boundingBox();
+  const toggleBox = await toggle.boundingBox();
+  if (!headingBox || !toggleBox) {
+    throw new Error('Expected the heading and its toggle to be visible');
+  }
+
+  // The heading wraps over multiple lines and the toggle flows with the
+  // inline content, so it sits on the LAST line — inside the heading box,
+  // in its bottom half — not floating beside the first line.
+  expect(headingBox.height).toBeGreaterThan(toggleBox.height * 3);
+  expect(toggleBox.y).toBeGreaterThan(headingBox.y + headingBox.height / 2);
+  expect(toggleBox.y + toggleBox.height).toBeLessThanOrEqual(
+    headingBox.y + headingBox.height + 1,
+  );
+
+  // Folding still works from the trailing toggle on a wrapped heading.
+  await toggle.click();
+  await expect(editor.getByText('content below')).toBeHidden();
+  await expect(editor.getByText('tail')).toBeVisible();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(source);
+
+  await heading.getByRole('button', { name: 'Expand section' }).click();
+  await expect(editor.getByText('content below')).toBeVisible();
+});

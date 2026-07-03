@@ -225,6 +225,27 @@ describe('toggle affordance', () => {
     expect(toggleButtons(editor.view)).toHaveLength(2);
   });
 
+  it('renders the toggle in a trailing slot after the heading text', () => {
+    const editor = editorTest.createEditor(doc(h1('One'), p('a')));
+    const headingDom = editor.view.dom.querySelector('h1');
+    const slot = headingDom?.querySelector('.B-block-trailing-slot');
+
+    expect(slot).not.toBeNull();
+    expect(
+      slot?.querySelector('button.B-collapsible-heading-toggle'),
+    ).not.toBeNull();
+    // The slot participates in the heading's inline flow, after the text —
+    // on a wrapped heading it trails the last line.
+    expect(slot?.parentElement).toBe(headingDom);
+    const text = headingDom?.firstChild;
+    expect(text?.textContent).toBe('One');
+    expect(
+      text &&
+        slot &&
+        slot.compareDocumentPosition(text) & Node.DOCUMENT_POSITION_PRECEDING,
+    ).toBeTruthy();
+  });
+
   it('clicking the toggle folds and unfolds the section', () => {
     const editor = editorTest.createEditor(doc(h1('One'), p('a'), p('b')));
     const { view } = editor;

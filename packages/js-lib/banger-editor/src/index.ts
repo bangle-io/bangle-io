@@ -35,5 +35,6 @@ export * from './suggestions';
 export * from './table';
 export * from './table-menu';
 export * from './trailing-node';
+export * from './trailing-slot';
 export * from './underline';
 export * from './wiki-link';

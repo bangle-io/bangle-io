@@ -519,11 +519,10 @@ div.ProseMirror {
   }
 }
 
-/* Collapsible headings: the fold toggle flows inline at the end of the
-   heading text (the left gutter stays reserved for the block drag handle);
-   folded sections stay in the document and are only visually concealed. */
 div.ProseMirror {
-  & .B-collapsible-heading-toggle-wrapper {
+  /* Trailing slot: inline widgets that follow a block's text (fold toggles,
+     future badges). On a wrapped block the slot flows with the last line. */
+  & .B-block-trailing-slot {
     display: inline-flex;
     align-items: center;
     vertical-align: middle;
@@ -570,10 +569,10 @@ div.ProseMirror {
     transform: rotate(-90deg);
   }
 
-  /* Hidden-content cue next to the toggle. Rendered inside the wrapper: a
+  /* Hidden-content cue next to the toggle. Rendered inside the slot: a
      ::after on the heading itself would land after ProseMirror's trailing
      break and wrap to its own line. */
-  & .B-collapsible-heading-toggle-wrapper:has(> [data-folded="true"])::after {
+  & .B-block-trailing-slot:has(> [data-folded="true"])::after {
     content: "\22EF"; /* Midline horizontal ellipsis */
     margin-left: 0.25rem;
     font-size: 0.6em;
