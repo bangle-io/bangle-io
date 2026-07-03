@@ -33,6 +33,16 @@ import {
 import { setupCodeHighlight } from './code-highlight';
 import { funPlaceholder } from './utils';
 
+/**
+ * The date picker is a first-class suggestion surface: `$date` is a real
+ * typed trigger, and the slash menu's "Date" item swaps the slash mark for
+ * this trigger text so both paths converge on the same suggestion mark.
+ */
+export const DATE_SUGGESTION = {
+  markName: 'date_suggestion',
+  trigger: '$date',
+} as const;
+
 export function setupExtensions(
   logger: Logger,
   onOpenLink?: LinkConfig['onOpenLink'],
@@ -77,6 +87,16 @@ export function setupExtensions(
       logger: logger.child('suggestions'),
     }),
     trailingNode: setupTrailingNode(),
+    dateSuggestions: setupSuggestions({
+      providerId: 'date-picker',
+      markName: DATE_SUGGESTION.markName,
+      trigger: DATE_SUGGESTION.trigger,
+      markClassName: 'text-pop',
+      // The suggestion keymap is installed once by the slash-command
+      // provider and dispatches by mark name, same as wikiSuggestions.
+      installKeymap: false,
+      logger: logger.child('date-suggestions'),
+    }),
     wikiSuggestions: setupSuggestions({
       providerId: 'wiki-link',
       markName: 'wiki_link_suggestion',

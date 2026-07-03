@@ -5,18 +5,18 @@ import {
 } from '@bangle.io/fuzzysearch';
 import {
   $suggestions,
-  $suggestionUi,
   Fragment,
   parseWikiLinkContent,
   type WikiLinkAttrs,
 } from '@bangle.io/prosemirror-plugins';
 import type { WsFilePath } from '@bangle.io/ws-path';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   FLOATING_INITIAL_STYLE,
   useFloatingPosition,
 } from './use-floating-position';
+import { useSuggestionUiHandler } from './use-suggestion-ui-handler';
 
 type WikiSearchRecord = {
   searchText: string;
@@ -70,7 +70,6 @@ export function WikiLinkMenu({ editorName }: { editorName: string }) {
   const suggestions = useAtomValue($suggestions);
   const { pmEditorService, workspaceState } = useCoreServices();
   const index = useAtomValue(workspaceState.$wikiLinkIndex);
-  const setSuggestionUi = useSetAtom($suggestionUi);
   const listRef = useRef<HTMLDivElement>(null);
   const editorView = pmEditorService.getEditor(editorName);
   const suggestion = editorView ? suggestions.get(editorView) : undefined;
@@ -111,33 +110,21 @@ export function WikiLinkMenu({ editorName }: { editorName: string }) {
     [editorView, pmEditorService],
   );
 
-  useEffect(() => {
-    if (!active || !editorView) return;
-    setSuggestionUi((existing) => {
-      const next = new Map(existing);
-      next.set(editorView, {
-        ...(next.get(editorView) ?? {}),
-        wiki_link_suggestion: {
-          optionCount: options.length,
-          onSelect: () => select(options[selectedIndex]),
-        },
-      });
-      return next;
-    });
-    return () => {
-      setSuggestionUi((existing) => {
-        const next = new Map(existing);
-        const handlers = { ...(next.get(editorView) ?? {}) };
-        delete handlers.wiki_link_suggestion;
-        if (Object.keys(handlers).length) {
-          next.set(editorView, handlers);
-        } else {
-          next.delete(editorView);
-        }
-        return next;
-      });
-    };
-  }, [active, editorView, options, select, selectedIndex, setSuggestionUi]);
+  const selectedOption = options[selectedIndex];
+  const wikiSuggestionUiHandler = useMemo(
+    () => ({
+      optionCount: options.length,
+      onSelect: () => select(selectedOption),
+    }),
+    [options.length, select, selectedOption],
+  );
+
+  useSuggestionUiHandler({
+    active: Boolean(active),
+    editorView,
+    handler: wikiSuggestionUiHandler,
+    markName: 'wiki_link_suggestion',
+  });
 
   useEffect(() => {
     listRef.current

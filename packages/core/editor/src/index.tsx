@@ -5,6 +5,7 @@ import { cx } from '@bangle.io/base-utils';
 import { useCoreServices } from '@bangle.io/context';
 import React, { useCallback } from 'react';
 import {
+  DatePickerMenu,
   InlineSelectionMenu,
   LinkMenu,
   SlashCommand,
@@ -56,6 +57,7 @@ export function Editor({
           )}
         />
         <SlashCommand editorName={name} />
+        <DatePickerMenu editorName={name} />
         <TableMenu editorName={name} />
         <WikiLinkMenu editorName={name} />
         <LinkMenu editorName={name} />

@@ -6,7 +6,13 @@ import { setupBase } from '../../base';
 import { collection, resolve } from '../../common';
 import { setupLink } from '../../link';
 import { setupParagraph } from '../../paragraph';
-import { EditorState, EditorView, Schema, TextSelection } from '../../pm';
+import {
+  EditorState,
+  EditorView,
+  Fragment,
+  Schema,
+  TextSelection,
+} from '../../pm';
 import { store as editorStore } from '../../store';
 import { setupSuggestions } from '../index';
 import {
@@ -28,6 +34,13 @@ const wikiSuggestions = setupSuggestions({
   markClassName: 'wiki',
   requireTriggerBoundary: false,
 });
+const dateSuggestions = setupSuggestions({
+  providerId: 'date-picker',
+  markName: 'date_suggestion',
+  trigger: '$date',
+  markClassName: 'date',
+  installKeymap: false,
+});
 const resolved = resolve([
   collection({ id: 'test-store' }),
   setupBase(),
@@ -35,6 +48,7 @@ const resolved = resolve([
   setupLink(),
   slashSuggestions,
   wikiSuggestions,
+  dateSuggestions,
 ]);
 const schema = new Schema({
   nodes: resolved.nodes,
@@ -83,6 +97,7 @@ function createEditor({
       setupLink(),
       slashSuggestions,
       wikiSuggestions,
+      dateSuggestions,
     ]).resolvePlugins({ schema }),
   });
   const view = new EditorView({ mount }, { state });
@@ -92,6 +107,40 @@ function createEditor({
       TextSelection.create(view.state.doc, text.length + 1),
     ),
   );
+  return view;
+}
+
+function createPlainEditor({
+  text,
+  store,
+}: {
+  text: string;
+  store: ReturnType<typeof createStore>;
+}) {
+  const doc = schema.node('doc', null, [
+    schema.node('paragraph', null, text ? [schema.text(text)] : undefined),
+  ]);
+  const mount = document.createElement('div');
+  document.body.append(mount);
+  const state = EditorState.create({
+    doc,
+    schema,
+    selection: TextSelection.create(doc, text.length + 1),
+    plugins: resolve([
+      collection({
+        id: 'test-store',
+        plugin: { store: editorStore.storePlugin(store) },
+      }),
+      setupBase(),
+      setupParagraph(),
+      setupLink(),
+      slashSuggestions,
+      wikiSuggestions,
+      dateSuggestions,
+    ]).resolvePlugins({ schema }),
+  });
+  const view = new EditorView({ mount }, { state });
+  editors.push(view);
   return view;
 }
 
@@ -181,7 +230,7 @@ describe('suggestions provider state', () => {
     editors.push(plainView);
 
     expect(handleTextInput(plainView, 7, 7, '[[')).toBe(true);
-    expect(plainView.state.doc.textContent).toBe('plain[[');
+    expect(plainView.state.doc.textContent).toBe('plain [[');
   });
 
   it('keeps an active provider suggestion when another provider is inactive in the same editor view', () => {
@@ -196,6 +245,86 @@ describe('suggestions provider state', () => {
       markName: 'slash_command',
       text: '/',
     });
+  });
+
+  it('keeps typed slash query text in the active provider suggestion', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: '', store });
+
+    expect(handleTextInput(view, 1, 1, '/')).toBe(true);
+    view.dispatch(view.state.tr.insertText('date'));
+
+    expect(view.state.doc.textContent).toBe('/date');
+    expect(editorStore.get(view.state, $suggestions).get(view)).toMatchObject({
+      markName: 'slash_command',
+      text: '/date',
+    });
+  });
+
+  it('activates a provider when its multi-char trigger is typed', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: '$dat', store });
+
+    expect(handleTextInput(view, 5, 5, 'e')).toBe(true);
+
+    expect(view.state.doc.textContent).toBe('$date');
+    expect(editorStore.get(view.state, $suggestions).get(view)).toMatchObject({
+      markName: 'date_suggestion',
+      text: '$date',
+      show: true,
+    });
+  });
+
+  it('activates a provider when its trigger arrives as a single inserted chunk', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: 'note ', store });
+
+    // Dictation/autocorrect can insert the whole trigger in one
+    // handleTextInput call; the boundary character must survive.
+    expect(handleTextInput(view, 6, 6, '$date')).toBe(true);
+
+    expect(view.state.doc.textContent).toBe('note $date');
+    expect(editorStore.get(view.state, $suggestions).get(view)).toMatchObject({
+      markName: 'date_suggestion',
+      text: '$date',
+      show: true,
+    });
+  });
+
+  it('hands off to another provider when the mark is swapped for its trigger text', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: '', store });
+
+    expect(handleTextInput(view, 1, 1, '/')).toBe(true);
+    view.dispatch(view.state.tr.insertText('date'));
+    expect(editorStore.get(view.state, $suggestions).get(view)).toMatchObject({
+      markName: 'slash_command',
+      text: '/date',
+    });
+
+    // This is the contract the slash menu's "Date" item relies on: replacing
+    // the slash mark with another provider's trigger text (carrying that
+    // provider's mark) activates the other provider's suggestion.
+    const mark = schema.mark('date_suggestion', { trigger: '$date' });
+    slashSuggestions.command.replaceSuggestMarkWith({
+      content: Fragment.from(schema.text('$date', [mark])),
+    })(view.state, view.dispatch, view);
+
+    expect(view.state.doc.textContent).toBe('$date');
+    expect(editorStore.get(view.state, $suggestions).get(view)).toMatchObject({
+      markName: 'date_suggestion',
+      text: '$date',
+      show: true,
+    });
+
+    // Committing the new provider replaces the trigger text with content and
+    // ends the suggestion.
+    dateSuggestions.command.replaceSuggestMarkWith({
+      content: 'Jul 2, 2026',
+    })(view.state, view.dispatch, view);
+
+    expect(view.state.doc.textContent).toBe('Jul 2, 2026');
+    expect(editorStore.get(view.state, $suggestions).get(view)).toBeUndefined();
   });
 
   it('keeps active suggestions and enter handlers scoped to each editor view', () => {
