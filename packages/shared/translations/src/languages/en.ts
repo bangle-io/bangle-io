@@ -456,6 +456,7 @@ export const t = {
         newFileActionTitle: 'New File',
         newFileActionSr: 'Create File',
         newFolderActionTitle: 'New Folder',
+        showNoteFilesOnlyActionTitle: 'Show Notes Only',
         newNoteHereActionTitle: 'New Note Here',
         newFolderHereActionTitle: 'New Folder Here',
         searchFilesActionLabel: 'Search Files',

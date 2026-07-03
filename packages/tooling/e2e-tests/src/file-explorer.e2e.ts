@@ -579,6 +579,10 @@ test('file explorer shows common workspace files and opens non-notes as assets',
 
   const explorer = page.getByTestId('bangle-file-explorer');
   await expect(explorer).toBeVisible();
+  const notesOnlyToggle = explorer.getByRole('button', {
+    name: 'Show Notes Only',
+  });
+  await expect(notesOnlyToggle).toHaveAttribute('aria-pressed', 'false');
 
   await expect(
     explorer.getByRole('treeitem', { name: /^notes$/ }),
@@ -596,6 +600,62 @@ test('file explorer shows common workspace files and opens non-notes as assets',
   await expect(
     explorer.getByRole('treeitem', { name: /report\.pdf/ }),
   ).toBeVisible();
+
+  await test.step('toggle notes-only filtering in the explorer', async () => {
+    await notesOnlyToggle.click();
+    await expect(notesOnlyToggle).toHaveAttribute('aria-pressed', 'true');
+    await expect(
+      explorer.getByRole('treeitem', { name: /^notes$/ }),
+    ).toBeVisible();
+    await expect(
+      explorer.getByRole('treeitem', { name: /visible\.md/ }),
+    ).toBeVisible();
+    await expect(explorer.getByRole('treeitem', { name: /^src$/ })).toHaveCount(
+      0,
+    );
+    await expect(
+      explorer.getByRole('treeitem', { name: /component\.tsx/ }),
+    ).toHaveCount(0);
+    await expect(
+      explorer.getByRole('treeitem', { name: /^assets$/ }),
+    ).toHaveCount(0);
+    await expect(
+      explorer.getByRole('treeitem', { name: /report\.pdf/ }),
+    ).toHaveCount(0);
+
+    await page.reload();
+    await expect(notesOnlyToggle).toHaveAttribute('aria-pressed', 'true');
+    await expect(
+      explorer.getByRole('treeitem', { name: /^notes$/ }),
+    ).toBeVisible();
+    await expect(
+      explorer.getByRole('treeitem', { name: /^assets$/ }),
+    ).toHaveCount(0);
+
+    await notesOnlyToggle.click();
+    await expect(notesOnlyToggle).toHaveAttribute('aria-pressed', 'false');
+    await expect(
+      explorer.getByRole('treeitem', { name: /^src$/ }),
+    ).toBeVisible();
+    await expect(
+      explorer.getByRole('treeitem', { name: /component\.tsx/ }),
+    ).toBeVisible();
+    await expect(
+      explorer.getByRole('treeitem', { name: /^assets$/ }),
+    ).toBeVisible();
+    await expect(
+      explorer.getByRole('treeitem', { name: /report\.pdf/ }),
+    ).toBeVisible();
+
+    await page.reload();
+    await expect(notesOnlyToggle).toHaveAttribute('aria-pressed', 'false');
+    await expect(
+      explorer.getByRole('treeitem', { name: /^assets$/ }),
+    ).toBeVisible();
+    await expect(
+      explorer.getByRole('treeitem', { name: /report\.pdf/ }),
+    ).toBeVisible();
+  });
 
   await expect(
     explorer.getByRole('treeitem', { name: /\.hidden\.md/ }),

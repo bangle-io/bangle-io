@@ -453,6 +453,7 @@ export const t = {
         newFileActionTitle: 'Neue Datei',
         newFileActionSr: 'Datei erstellen',
         newFolderActionTitle: 'Neuer Ordner',
+        showNoteFilesOnlyActionTitle: 'Nur Notizen anzeigen',
         newNoteHereActionTitle: 'Neue Notiz hier',
         newFolderHereActionTitle: 'Neuer Ordner hier',
         searchFilesActionLabel: 'Dateien suchen',

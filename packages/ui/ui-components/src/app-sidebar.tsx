@@ -67,6 +67,8 @@ export type AppSidebarProps = {
     destinationDirectory: string | undefined,
   ) => void;
   onOpenFile: (relativePath: string) => void;
+  showNoteFilesOnly: boolean;
+  onShowNoteFilesOnlyChange: (showNoteFilesOnly: boolean) => void;
   footerChildren?: React.ReactNode;
   footerTitle?: string;
   footerSubtitle?: string;
@@ -182,6 +184,8 @@ export function AppSidebar({
   onCreateNote,
   onMoveFile,
   onOpenFile,
+  showNoteFilesOnly,
+  onShowNoteFilesOnlyChange,
   footerChildren,
   footerTitle,
   footerSubtitle,
@@ -260,6 +264,8 @@ export function AppSidebar({
               onCreateNote={onCreateNote}
               onMoveFile={onMoveFile}
               onOpenFile={onOpenFile}
+              showNoteFilesOnly={showNoteFilesOnly}
+              onShowNoteFilesOnlyChange={onShowNoteFilesOnlyChange}
             />
           </SidebarGroupContent>
         </SidebarGroup>

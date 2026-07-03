@@ -37,9 +37,13 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   const setOpenOmniSearch = useSetAtom(workbenchState.$openOmniSearch);
   const workspaces = useAtomValue(workspaceState.$workspaces);
   const [sidebarOpen, setSidebarOpen] = useAtom(workbenchState.$sidebarOpen);
+  const [showNoteFilesOnly, setShowNoteFilesOnly] = useAtom(
+    workbenchState.$showNoteFilesOnlyInSidebar,
+  );
   const activeWsName = useAtomValue(navigation.$wsName);
   const activeWsPaths = useAtomValue(workspaceState.$activeWsPaths);
   const wsPaths = useAtomValue(workspaceState.$wsPaths);
+  const noteWsPaths = useAtomValue(workspaceState.$noteWsPaths);
 
   const getActionsForEntry = useMemo(
     () =>
@@ -192,7 +196,9 @@ export const AppSidebar = ({ children }: SidebarProps) => {
           misc: ws.type,
           isActive: activeWsName === ws.name,
         }))}
-        filePaths={wsPaths.map((wsPath) => wsPath.path)}
+        filePaths={(showNoteFilesOnly ? noteWsPaths : wsPaths).map(
+          (wsPath) => wsPath.path,
+        )}
         navItems={activeWsPaths.map((wsPath) => ({
           title: wsPath.fileName || '',
           wsPath: wsPath.wsPath,
@@ -261,6 +267,8 @@ export const AppSidebar = ({ children }: SidebarProps) => {
         }}
         activeFilePaths={activeWsPaths.map((wsPath) => wsPath.path)}
         commandButtonClassName="desktop-titlebar-no-drag"
+        showNoteFilesOnly={showNoteFilesOnly}
+        onShowNoteFilesOnlyChange={setShowNoteFilesOnly}
         onSearchClick={() => {
           setOpenOmniSearch(true);
         }}

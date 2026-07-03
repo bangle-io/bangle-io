@@ -7,7 +7,7 @@ import type {
   FileTree as PierreFileTreeModel,
 } from '@pierre/trees';
 import { FileTree, useFileTree } from '@pierre/trees/react';
-import { FilePlus2, FolderPlus } from 'lucide-react';
+import { FilePlus2, FileText, FolderPlus } from 'lucide-react';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { BANGLE_PIERRE_FILE_TREE_ICONS } from './pierre-file-tree-icons';
 import {
@@ -193,6 +193,8 @@ export interface PierreFileTreeProps {
     destinationDirectory: string | undefined,
   ) => void;
   onOpenFile: (relativePath: string) => void;
+  showNoteFilesOnly: boolean;
+  onShowNoteFilesOnlyChange: (showNoteFilesOnly: boolean) => void;
   getActionsForEntry: (entry: FileTreeEntry) => readonly FileTreeEntryAction[];
 }
 
@@ -204,6 +206,8 @@ export function PierreFileTree({
   onCreateNote,
   onMoveFile,
   onOpenFile,
+  showNoteFilesOnly,
+  onShowNoteFilesOnlyChange,
   getActionsForEntry,
 }: PierreFileTreeProps) {
   const rawTreePaths = useMemo(
@@ -388,6 +392,22 @@ export function PierreFileTree({
           <span className="min-w-0 flex-1 truncate font-medium text-[11px] text-sidebar-foreground/55 uppercase tracking-wide">
             {t.app.components.appSidebar.filesLabel}
           </span>
+          <button
+            type="button"
+            className={cn(
+              'inline-flex size-6 items-center justify-center rounded-sm text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+              showNoteFilesOnly &&
+                'bg-pop text-pop-foreground shadow-[0_0_0_1px_hsl(var(--BV-pop)_/_0.35),0_0_12px_hsl(var(--BV-pop)_/_0.28)] hover:bg-pop/90 hover:text-pop-foreground',
+            )}
+            aria-pressed={showNoteFilesOnly}
+            aria-label={
+              t.app.components.appSidebar.showNoteFilesOnlyActionTitle
+            }
+            title={t.app.components.appSidebar.showNoteFilesOnlyActionTitle}
+            onClick={() => onShowNoteFilesOnlyChange(!showNoteFilesOnly)}
+          >
+            <FileText className="size-3.5" />
+          </button>
           <button
             type="button"
             className="inline-flex size-6 items-center justify-center rounded-sm text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
