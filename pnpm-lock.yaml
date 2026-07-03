@@ -410,8 +410,8 @@ importers:
   packages/js-lib/banger-editor:
     dependencies:
       '@bangle.dev/prosemirror-all':
-        specifier: 2.0.0-alpha.19
-        version: 2.0.0-alpha.19
+        specifier: 2.0.0-alpha.20
+        version: 2.0.0-alpha.20
       jotai:
         specifier: ^2.20.1
         version: 2.20.1(@babel/core@7.29.7)(@babel/template@7.29.7)(@types/react@19.2.17)(react@19.2.7)
@@ -1692,8 +1692,8 @@ packages:
     peerDependencies:
       prosemirror-markdown: '*'
 
-  '@bangle.dev/prosemirror-all@2.0.0-alpha.19':
-    resolution: {integrity: sha512-eV1R7UiWDBxxWOXM55C9asnbDARx6jKuZNoYTGq4cgUlxNm0P9fZd+NmzLBN2xxeJZP2/PcnFOuIb6lxp4O7uA==}
+  '@bangle.dev/prosemirror-all@2.0.0-alpha.20':
+    resolution: {integrity: sha512-PzFuH6WYSwAtw5TdSIMi2Cjc1h6+3Zx//b0u8iaD8/mr2uleerpQUCeW8hQ3ZuL2SQ0xDH00vV9u7sxOg0NCeQ==}
 
   '@bangle.io/config-template@0.0.7':
     resolution: {integrity: sha512-nPFkcM3aU/w+NJxwiQrpfu7Md3wpQrVY870ieeaZNyqPGvYj7qOng06Z7GalEvR2a6dLsvsQC3X1MgQImEOCGw==}
@@ -4636,10 +4636,6 @@ packages:
 
   '@types/node@26.1.0':
     resolution: {integrity: sha512-O0A1G3xPGy4w7AgQdAQYUlQ+BKk2Oovw8eRpofyp5KdBZULnbe+WqaOVNrm705SHphCiG4XHsACrSmPu1f+Kgw==}
-
-  '@types/orderedmap@2.0.0':
-    resolution: {integrity: sha512-e57+dE3grPT8gdqBTAbgWxGiNvUIRYHOpIpnj6pe6yNAjWQ2Ia2njnj6Is+KnX8cFqr+mq6vq+ptIJ9gmdrffA==}
-    deprecated: This is a stub types definition. orderedmap provides its own type definitions, so you do not need this installed.
 
   '@types/picomatch@4.0.3':
     resolution: {integrity: sha512-iG0T6+nYJ9FAPmx9SsUlnwcq1ZVRuCXcVEvWnntoPlrOpwtSTKNDC9uVAxTsC3PUvJ+99n4RpAcNgBbHX3JSnQ==}
@@ -10143,9 +10139,8 @@ snapshots:
       markdown-it: 14.3.0
       prosemirror-markdown: 1.13.4
 
-  '@bangle.dev/prosemirror-all@2.0.0-alpha.19':
+  '@bangle.dev/prosemirror-all@2.0.0-alpha.20':
     dependencies:
-      '@types/orderedmap': 2.0.0
       orderedmap: 2.1.1
       prosemirror-commands: 1.7.1
       prosemirror-dropcursor: 1.8.2
@@ -13057,10 +13052,6 @@ snapshots:
   '@types/node@26.1.0':
     dependencies:
       undici-types: 8.3.0
-
-  '@types/orderedmap@2.0.0':
-    dependencies:
-      orderedmap: 2.1.1
 
   '@types/picomatch@4.0.3': {}
 
