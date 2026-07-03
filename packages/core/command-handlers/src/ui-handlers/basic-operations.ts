@@ -123,4 +123,12 @@ export const basicOperationsHandlers = [
       pmEditorService.focusEditor();
     },
   ),
+
+  c('command::ui:toggle-heading-collapse', ({ pmEditorService }) => {
+    pmEditorService.toggleHeadingCollapse();
+  }),
+
+  c('command::ui:uncollapse-all-headings', ({ pmEditorService }) => {
+    pmEditorService.uncollapseAllHeadings();
+  }),
 ];

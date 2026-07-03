@@ -64,6 +64,10 @@ export const t = {
         copied: 'Copied',
         editLanguage: 'Edit language',
       },
+      collapsibleHeading: {
+        collapse: 'Collapse section',
+        expand: 'Expand section',
+      },
       wikiLinkMenu: {
         label: 'Link to a note',
         empty: 'No notes found',

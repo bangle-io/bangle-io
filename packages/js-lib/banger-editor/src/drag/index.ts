@@ -11,7 +11,7 @@ type DragConfig = {
   pluginOptions?: Partial<GlobalDragHandlePluginOptions> | undefined;
 };
 
-function defaultCalculateNodeOffset(args: NodeOffsetCalculationArgs) {
+export function defaultCalculateNodeOffset(args: NodeOffsetCalculationArgs) {
   const { node, rect, lineHeight, paddingTop } = args;
   const newRect = { ...rect };
 

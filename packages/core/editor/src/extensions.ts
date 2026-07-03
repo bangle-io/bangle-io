@@ -1,5 +1,6 @@
 import type { Logger } from '@bangle.io/logger';
 import {
+  defaultCalculateNodeOffset,
   type LinkConfig,
   setupActiveNode,
   setupBase,
@@ -7,6 +8,7 @@ import {
   setupBold,
   setupCode,
   setupCodeBlock,
+  setupCollapsibleHeading,
   setupDragNode,
   setupDropGapCursor,
   setupHardBreak,
@@ -55,6 +57,15 @@ export function setupExtensions(
       pluginOptions: {
         notDraggableClassName: 'prosemirror-flat-list',
         excludedTags: ['blockquote'],
+        calculateNodeOffset: (args) => {
+          const rect = defaultCalculateNodeOffset(args);
+          // Headings host the fold toggle in the gutter slot next to the
+          // text; move the drag handle one slot further left.
+          if (args.node.matches('h1, h2, h3, h4, h5, h6')) {
+            rect.left -= 24;
+          }
+          return rect;
+        },
       },
     }),
     dropGapCursor: setupDropGapCursor({
@@ -66,6 +77,10 @@ export function setupExtensions(
     }),
     hardBreak: setupHardBreak(),
     heading: setupHeading(),
+    collapsibleHeading: setupCollapsibleHeading({
+      collapseLabel: t.app.editor.collapsibleHeading.collapse,
+      expandLabel: t.app.editor.collapsibleHeading.expand,
+    }),
     history: setupHistory(),
     paragraph: setupParagraph(),
     strike: setupStrike(),

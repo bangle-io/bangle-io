@@ -475,4 +475,41 @@ export class PmEditorService extends BaseService {
       }
     }
   }
+
+  /** Folds/unfolds the heading section at the current selection. */
+  toggleHeadingCollapse(): boolean {
+    const view = this.getActiveEditorView();
+    if (!view) {
+      return false;
+    }
+    return this.extensions.collapsibleHeading.command.toggleHeadingCollapse(
+      view.state,
+      view.dispatch,
+    );
+  }
+
+  /** Expands every folded heading section in the active editor. */
+  uncollapseAllHeadings(): boolean {
+    const view = this.getActiveEditorView();
+    if (!view) {
+      return false;
+    }
+    return this.extensions.collapsibleHeading.command.uncollapseAllHeadings(
+      view.state,
+      view.dispatch,
+    );
+  }
+
+  private getActiveEditorView() {
+    let fallback: ReturnType<typeof createEditor> | undefined;
+    for (const editor of this.editors.values()) {
+      if ('editorView' in editor && !editor.editorView.isDestroyed) {
+        if (editor.editorView.hasFocus()) {
+          return editor.editorView;
+        }
+        fallback ??= editor.editorView;
+      }
+    }
+    return fallback;
+  }
 }

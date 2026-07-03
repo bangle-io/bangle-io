@@ -4,6 +4,7 @@ export * from './blockquote';
 export * from './bold';
 export * from './code';
 export * from './code-block';
+export * from './collapsible-heading';
 export {
   type CollectionType,
   collection,

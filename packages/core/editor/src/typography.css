@@ -518,3 +518,91 @@ div.ProseMirror {
     }
   }
 }
+
+/* Collapsible headings: the fold toggle sits in the left gutter of each
+   foldable heading; folded sections stay in the document and are only
+   visually concealed. */
+div.ProseMirror {
+  & h1,
+  & h2,
+  & h3,
+  & h4,
+  & h5,
+  & h6 {
+    position: relative;
+  }
+
+  & .B-collapsible-heading-toggle-wrapper {
+    position: absolute;
+    right: 100%;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    padding-right: 0.125rem;
+    user-select: none;
+  }
+
+  & .B-collapsible-heading-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    padding: 0;
+    border: none;
+    border-radius: 0.25rem;
+    background: transparent;
+    color: hsl(var(--BV-muted-foreground));
+    cursor: pointer;
+    opacity: 0;
+    transition:
+      opacity 0.15s ease,
+      background-color 0.15s ease;
+  }
+
+  & .B-collapsible-heading-toggle svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.15s ease;
+  }
+
+  & :is(h1, h2, h3, h4, h5, h6):hover .B-collapsible-heading-toggle,
+  & .B-collapsible-heading-toggle:focus-visible,
+  & .B-collapsible-heading-toggle[data-folded="true"] {
+    opacity: 1;
+  }
+
+  & .B-collapsible-heading-toggle:hover {
+    background-color: hsl(var(--BV-accent));
+    color: hsl(var(--BV-foreground));
+  }
+
+  & .B-collapsible-heading-toggle[data-folded="true"] svg {
+    transform: rotate(-90deg);
+  }
+
+  & .B-collapsible-heading-folded::after {
+    content: "\22EF"; /* Midline horizontal ellipsis */
+    margin-left: 0.5rem;
+    font-size: 0.6em;
+    opacity: 0.5;
+  }
+
+  & .B-collapsible-heading-hidden {
+    display: none;
+  }
+}
+
+@media (hover: none) {
+  div.ProseMirror .B-collapsible-heading-toggle {
+    opacity: 0.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  div.ProseMirror .B-collapsible-heading-toggle,
+  div.ProseMirror .B-collapsible-heading-toggle svg {
+    transition: none;
+  }
+}
