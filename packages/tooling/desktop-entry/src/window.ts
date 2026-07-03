@@ -2,6 +2,10 @@ import { join } from 'node:path';
 import type { BrowserWindowConstructorOptions, WebContents } from 'electron';
 import { DESKTOP_PLATFORM_ATTRIBUTE } from './desktop-document';
 
+const DESKTOP_TITLEBAR_HEIGHT = 40;
+const MACOS_TRAFFIC_LIGHT_SIZE = 14;
+const MACOS_TRAFFIC_LIGHT_X = 14;
+
 export interface ExternalLinkDecision {
   readonly action: 'allow-app-navigation' | 'open-external' | 'deny';
   readonly url: string;
@@ -19,13 +23,19 @@ export function getBrowserWindowOptions(
     minWidth: 900,
     minHeight: 640,
     title: 'Bangle.io',
+    titleBarStyle: 'hidden',
+    titleBarOverlay: {
+      height: DESKTOP_TITLEBAR_HEIGHT,
+    },
     ...(platform === 'darwin'
       ? ({
-          titleBarStyle: 'hiddenInset',
-          trafficLightPosition: { x: 14, y: 18 },
+          trafficLightPosition: {
+            x: MACOS_TRAFFIC_LIGHT_X,
+            y: (DESKTOP_TITLEBAR_HEIGHT - MACOS_TRAFFIC_LIGHT_SIZE) / 2,
+          },
         } satisfies Pick<
           BrowserWindowConstructorOptions,
-          'titleBarStyle' | 'trafficLightPosition'
+          'trafficLightPosition'
         >)
       : {}),
     show: false,

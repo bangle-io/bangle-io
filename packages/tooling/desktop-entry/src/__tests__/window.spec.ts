@@ -20,19 +20,23 @@ describe('desktop BrowserWindow defaults', () => {
     });
   });
 
-  it('uses a clean hidden inset macOS title bar', () => {
+  it('uses the shared titleless overlay chrome on macOS', () => {
     const options = getBrowserWindowOptions('/tmp/preload.cjs', 'darwin');
 
     expect(options).toMatchObject({
-      titleBarStyle: 'hiddenInset',
-      trafficLightPosition: { x: 14, y: 18 },
+      titleBarOverlay: { height: 40 },
+      titleBarStyle: 'hidden',
+      trafficLightPosition: { x: 14, y: 13 },
     });
   });
 
-  it('keeps the native frame on non-macOS platforms', () => {
+  it('exposes native overlay controls on non-macOS platforms', () => {
     const options = getBrowserWindowOptions('/tmp/preload.cjs', 'linux');
 
-    expect(options.titleBarStyle).toBeUndefined();
+    expect(options).toMatchObject({
+      titleBarOverlay: { height: 40 },
+      titleBarStyle: 'hidden',
+    });
     expect(options.trafficLightPosition).toBeUndefined();
   });
 });

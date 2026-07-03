@@ -58,7 +58,7 @@
     "desktop:open": "pnpm desktop:build && BANGLE_DESKTOP_BROWSER_DIST=\"$PWD/packages/tooling/browser-entry/dist\" pnpm --filter \"@bangle.io/desktop-entry\" exec electron \"$PWD/packages/tooling/desktop-entry/dist/main.cjs\"",
     "desktop:release:stable": "pnpm --filter \"@bangle.io/desktop-entry\" run release:stable",
     "lint:ci": "pnpm run custom-validation && pnpm run typecheck && biome ci .  --diagnostic-level=error",
-    "test:ci": "pnpm vitest run  --configLoader runner",
+    "test:ci": "pnpm vitest run --configLoader runner --maxWorkers=50%",
     "e2e-install": "pnpm --filter \"@bangle.io/e2e-tests\" exec playwright install --with-deps chromium",
     "e2e:ci": "pnpm --filter \"@bangle.io/e2e-tests\" run test && pnpm run e2e-ct-test",
     "e2e-ui-mode": "pnpm --filter \"@bangle.io/e2e-tests\" run test-ui-mode",
