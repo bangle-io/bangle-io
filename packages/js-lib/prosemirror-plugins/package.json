@@ -28,7 +28,7 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/pm-markdown": "2.0.0-alpha.18",
+    "@bangle.dev/pm-markdown": "2.0.0-alpha.20",
     "@bangle.io/banger-editor": "workspace:*",
     "markdown-it": "14.3.0",
     "prosemirror-model": "^1.25.9"

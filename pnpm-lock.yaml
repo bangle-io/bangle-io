@@ -500,8 +500,8 @@ importers:
   packages/js-lib/prosemirror-plugins:
     dependencies:
       '@bangle.dev/pm-markdown':
-        specifier: 2.0.0-alpha.18
-        version: 2.0.0-alpha.18(prosemirror-markdown@1.13.4)
+        specifier: 2.0.0-alpha.20
+        version: 2.0.0-alpha.20(prosemirror-markdown@1.13.4)
       '@bangle.io/banger-editor':
         specifier: workspace:*
         version: link:../banger-editor
@@ -1687,8 +1687,8 @@ packages:
     resolution: {integrity: sha512-4zBIxpPzowiZpusoFkyGVwakdRJUyuH5PxQ/PrqghfdFWWasvnCdPfQXHrenDai+gyLARulZjZowCOj6fjT4pA==}
     engines: {node: '>=6.9.0'}
 
-  '@bangle.dev/pm-markdown@2.0.0-alpha.18':
-    resolution: {integrity: sha512-20UmIb1oQ+9cuJvl6lSH5QiSoqb//SX2XqrjKki7i5vdLaxfb/8jOR/Bz96Inv6h15o3asdXl5OoLH1Yn6genw==}
+  '@bangle.dev/pm-markdown@2.0.0-alpha.20':
+    resolution: {integrity: sha512-+4C2O4TwweRkuBx2nVppsT/BqmdD1HwQoOkK/3uFdCWvX5ygW3CIdUX+9JfwPoMIr6geu9moM508E66D7q1Rng==}
     peerDependencies:
       prosemirror-markdown: '*'
 
@@ -10137,7 +10137,7 @@ snapshots:
       '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
 
-  '@bangle.dev/pm-markdown@2.0.0-alpha.18(prosemirror-markdown@1.13.4)':
+  '@bangle.dev/pm-markdown@2.0.0-alpha.20(prosemirror-markdown@1.13.4)':
     dependencies:
       '@types/markdown-it': 14.1.2
       markdown-it: 14.3.0
