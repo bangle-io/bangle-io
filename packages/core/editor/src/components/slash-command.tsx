@@ -1,7 +1,10 @@
 import { useCoreServices } from '@bangle.io/context';
-import { $suggestions, $suggestionUi } from '@bangle.io/prosemirror-plugins';
 import {
-  Calendar,
+  $suggestions,
+  $suggestionUi,
+  Fragment,
+} from '@bangle.io/prosemirror-plugins';
+import {
   Command,
   CommandEmpty,
   CommandGroup,
@@ -25,19 +28,13 @@ import React, {
   useCallback,
   useEffect,
   useRef,
-  useState,
 } from 'react';
 
+import { DATE_SUGGESTION } from '../extensions';
 import {
   FLOATING_INITIAL_STYLE,
   useFloatingPosition,
 } from './use-floating-position';
-
-type SlashCommandView = 'menu' | 'date-picker';
-
-// Bound the calendar's month/year dropdowns to a generous window around the
-// current year so far-off dates remain reachable without endless clicking.
-const CALENDAR_YEAR_SPAN = 100;
 
 /**
  * SlashCommand displays a floating "slash" menu when the user is inside
@@ -52,11 +49,8 @@ export function SlashCommand({
   const setSuggestionUi = useSetAtom($suggestionUi);
   const commandRef = useRef<HTMLDivElement>(null);
   const prevSelectedIndexRef = useRef<number>(0);
-  const [commandView, setCommandView] = useState<SlashCommandView>('menu');
-  const [selectedDate, setSelectedDate] = useState(() => new Date());
   const { pmEditorService } = useCoreServices();
   const editorView = pmEditorService.getEditor(editorName);
-  const ext = pmEditorService.extensions;
   const suggestion = editorView ? suggestions.get(editorView) : undefined;
   const active =
     suggestion?.markName === 'slash_command' ? suggestion : undefined;
@@ -81,36 +75,6 @@ export function SlashCommand({
     prevSelectedIndexRef.current = selectedIndex;
   }, [active?.selectedIndex]);
 
-  const replaceSlashCommandWithText = useCallback(
-    (text: string) => {
-      if (!editorView || !active) {
-        return;
-      }
-
-      ext.suggestions.command.replaceSuggestMarkWith({
-        content: text,
-      })(editorView.state, editorView.dispatch, editorView);
-    },
-    [editorView, active, ext],
-  );
-
-  const insertSelectedDate = useCallback(
-    (date: Date) => {
-      replaceSlashCommandWithText(format(date, 'PP'));
-      // Selecting a day moves DOM focus into the calendar; return focus to the
-      // editor so the caret lands right after the inserted date.
-      editorView?.focus();
-    },
-    [replaceSlashCommandWithText, editorView],
-  );
-
-  useEffect(() => {
-    if (!active?.show) {
-      setCommandView('menu');
-      setSelectedDate(new Date());
-    }
-  }, [active?.show]);
-
   useEffect(() => {
     if (!editorView || !active) {
       return;
@@ -121,10 +85,6 @@ export function SlashCommand({
       next.set(editorView, {
         ...(next.get(editorView) ?? {}),
         slash_command: {
-          // Enter is only wired for the menu view: forward it to cmdk so the
-          // highlighted item is chosen. In the date-picker view the calendar
-          // owns pointer selection and Escape dismisses; committing "today" on
-          // Enter is already covered by the dedicated "Today" menu item.
           onSelect: () => {
             if (commandRef.current) {
               const event = new KeyboardEvent('keydown', {
@@ -161,6 +121,8 @@ export function SlashCommand({
     boundarySelector: '.ProseMirror:not([contenteditable="false"])',
   });
 
+  const ext = pmEditorService.extensions;
+
   const dismissCommandUi = useCallback(() => {
     if (!editorView || !active) {
       return;
@@ -171,55 +133,25 @@ export function SlashCommand({
     })(editorView.state, editorView.dispatch, editorView);
   }, [editorView, active, ext]);
 
-  const handleCommandKeyDown = useCallback(
-    (event: React.KeyboardEvent) => {
-      if (event.key !== 'Escape') {
-        return;
-      }
+  const openDatePicker = useCallback(() => {
+    if (!editorView || !active) {
+      return;
+    }
 
-      event.preventDefault();
-      event.stopPropagation();
-      dismissCommandUi();
-    },
-    [dismissCommandUi],
-  );
+    // Swap the slash mark for the date trigger text carrying the
+    // `date_suggestion` mark — the same document state as if the user had
+    // typed the trigger — so the DatePickerMenu surface takes over.
+    const { schema } = editorView.state;
+    const mark = schema.mark(DATE_SUGGESTION.markName, {
+      trigger: DATE_SUGGESTION.trigger,
+    });
+    ext.suggestions.command.replaceSuggestMarkWith({
+      content: Fragment.from(schema.text(DATE_SUGGESTION.trigger, [mark])),
+    })(editorView.state, editorView.dispatch, editorView);
+  }, [editorView, active, ext]);
 
   if (!editorView || !active?.show) {
     return null;
-  }
-
-  if (commandView === 'date-picker') {
-    const currentYear = new Date().getFullYear();
-
-    return (
-      // biome-ignore lint/a11y/noStaticElementInteractions: Escape handling for a floating popover, not an interactive control.
-      <div
-        ref={slashRef}
-        style={FLOATING_INITIAL_STYLE}
-        className="w-fit overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md"
-        onKeyDown={handleCommandKeyDown}
-      >
-        <Calendar
-          mode="single"
-          captionLayout="dropdown"
-          // Hide adjacent-month days so only the visible month is selectable
-          // (avoids ambiguous day cells near month boundaries).
-          showOutsideDays={false}
-          startMonth={new Date(currentYear - CALENDAR_YEAR_SPAN, 0)}
-          endMonth={new Date(currentYear + CALENDAR_YEAR_SPAN, 11)}
-          defaultMonth={selectedDate}
-          selected={selectedDate}
-          onSelect={(date) => {
-            if (!date) {
-              return;
-            }
-            setSelectedDate(date);
-            insertSelectedDate(date);
-          }}
-        />
-        <CommandHints hints={['Click a day to insert', 'Escape to dismiss']} />
-      </div>
-    );
   }
 
   return (
@@ -227,7 +159,6 @@ export function SlashCommand({
       <Command
         ref={commandRef}
         className="overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md"
-        onKeyDown={handleCommandKeyDown}
       >
         <CommandInput
           hidden
@@ -369,13 +300,8 @@ export function SlashCommand({
           <CommandSeparator />
 
           <CommandGroup heading="Time">
-            <CommandItem
-              value="date calendar"
-              onSelect={() => {
-                setCommandView('date-picker');
-              }}
-            >
-              Date
+            <CommandItem value="date calendar" onSelect={openDatePicker}>
+              {t.app.editor.slashCommand.date}
             </CommandItem>
             <CommandItem
               value="today"

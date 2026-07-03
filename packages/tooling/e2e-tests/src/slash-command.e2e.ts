@@ -162,6 +162,63 @@ test('slash date command inserts a day after navigating months', async ({
     .toBe(targetLabel);
 });
 
+test('typing the $date trigger directly opens the calendar and inserts a day', async ({
+  page,
+}) => {
+  const workspaceName = 'date-trigger-direct';
+  const now = new Date();
+  const target = new Date(now.getFullYear(), now.getMonth(), 15);
+  const targetLabel = formatDateLabel(target);
+
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('$date');
+
+  await expect(page.locator('[data-slot="calendar"]')).toBeVisible();
+  await page.locator(daySelector(target)).click();
+
+  await expect(editor).toContainText(targetLabel);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe(targetLabel);
+});
+
+test('an abandoned $date trigger persists as plain text across reload', async ({
+  page,
+}) => {
+  const workspaceName = 'date-trigger-abandoned';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('note ');
+  await page.keyboard.insertText('$date');
+
+  const calendar = page.locator('[data-slot="calendar"]');
+  await expect(calendar).toBeVisible();
+
+  // The suggestion mark serializes to nothing; an abandoned trigger stays in
+  // the note as plain text — same contract as an abandoned `[[` wiki trigger.
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe('note $date');
+
+  await page.reload();
+  const reloadedEditor = getEditorLocator(page, {});
+  await expect(reloadedEditor).toContainText('note $date');
+  await expect(page.locator('[data-slot="calendar"]')).toBeHidden();
+});
+
 test('slash date command dismisses with Escape after calendar interaction', async ({
   page,
 }) => {

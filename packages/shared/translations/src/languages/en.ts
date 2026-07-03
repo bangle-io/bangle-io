@@ -84,6 +84,11 @@ export const t = {
       },
       slashCommand: {
         table: 'Table',
+        date: 'Date',
+      },
+      datePicker: {
+        hintSelect: 'Click a day to insert',
+        hintDismiss: 'Escape to dismiss',
       },
       tableMenu: {
         label: 'Table options',
