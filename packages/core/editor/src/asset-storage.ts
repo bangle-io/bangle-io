@@ -11,12 +11,41 @@ import {
   WsPath,
 } from '@bangle.io/ws-path';
 
-type FileSystem = {
+export type AssetStorageFileSystem = {
   createFile: (wsPath: string, file: File) => Promise<void>;
+  getMaxFileSizeBytes: (wsPath: string) => Promise<number>;
+};
+
+export type StoredWorkspaceAsset = {
+  file: File;
+  wsPath: WsFilePath;
+  href?: string;
+  label: string;
+  isImage: boolean;
+};
+
+export type StoredMarkdownAsset = StoredWorkspaceAsset & {
+  href: string;
+};
+
+export type StoreWorkspaceAssetFilesInput = {
+  sourceWsPath?: string | WsFilePath;
+  targetDirectoryWsPath?: string | WsDirPath;
+  files: readonly File[];
+  preference: AssetLocationPreference;
+  fileSystem: AssetStorageFileSystem;
+  onFileError?: (error: {
+    file: File;
+    cause: unknown;
+    error: Error;
+    sourceWsPath?: string | WsFilePath;
+    targetDirectoryWsPath?: string | WsDirPath;
+  }) => void;
 };
 
 export type AssetDestinationInput = {
-  currentWsPath: string | WsFilePath;
+  sourceWsPath?: string | WsFilePath;
+  targetDirectoryWsPath?: string | WsDirPath;
   file: File;
   preference: AssetLocationPreference;
   now?: Date;
@@ -97,16 +126,16 @@ function slugBasename(value: string, fallback: string): string {
 }
 
 function targetDirectory(
-  current: WsFilePath,
+  source: WsFilePath,
   preference: AssetLocationPreference,
 ): WsDirPath {
   const parent =
-    current.getParent() ?? WsDirPath.fromString(`${current.wsName}:`);
+    source.getParent() ?? WsDirPath.fromString(`${source.wsName}:`);
   if (preference === 'adjacent') {
     return parent;
   }
   return WsDirPath.fromString(
-    `${current.wsName}:${WsPath.pathJoin(parent.path, 'assets')}/`,
+    `${source.wsName}:${WsPath.pathJoin(parent.path, 'assets')}/`,
   );
 }
 
@@ -123,39 +152,69 @@ export function createAssetFileName({
 }
 
 export function getAssetDestination({
-  currentWsPath,
+  sourceWsPath,
+  targetDirectoryWsPath,
   file,
   preference,
   now = new Date(),
 }: AssetDestinationInput): WsFilePath | undefined {
-  const current = WsPath.safeParse(currentWsPath).data?.asFile();
-  if (!current) {
+  const targetDirectoryPath = targetDirectoryWsPath
+    ? WsPath.safeParse(targetDirectoryWsPath).data?.asDir()
+    : undefined;
+  const source = sourceWsPath
+    ? WsPath.safeParse(sourceWsPath).data?.asFile()
+    : undefined;
+  const destinationDirectory =
+    targetDirectoryPath ??
+    (source ? targetDirectory(source, preference) : undefined);
+  if (!destinationDirectory) {
     return undefined;
   }
-  return targetDirectory(current, preference).createFilePath(
+  return destinationDirectory.createFilePath(
     createAssetFileName({ file, now }),
   );
 }
 
 export async function writeAssetFile({
-  currentWsPath,
+  sourceWsPath,
+  targetDirectoryWsPath,
   file,
   preference,
   fileSystem,
 }: {
-  currentWsPath: string;
+  sourceWsPath?: string | WsFilePath;
+  targetDirectoryWsPath?: string | WsDirPath;
   file: File;
   preference: AssetLocationPreference;
-  fileSystem: FileSystem;
-}): Promise<{ wsPath: WsFilePath; href: string } | undefined> {
+  fileSystem: AssetStorageFileSystem;
+}): Promise<{ wsPath: WsFilePath; href?: string } | undefined> {
   const baseDestination = getAssetDestination({
-    currentWsPath,
+    sourceWsPath,
+    targetDirectoryWsPath,
     file,
     preference,
   });
-  const current = WsPath.safeParse(currentWsPath).data?.asFile();
-  if (!baseDestination || !current) {
+  const source = sourceWsPath
+    ? WsPath.safeParse(sourceWsPath).data?.asFile()
+    : undefined;
+  if (!baseDestination) {
     return undefined;
+  }
+
+  const maxFileSizeBytes = await fileSystem.getMaxFileSizeBytes(
+    baseDestination.wsPath,
+  );
+  if (file.size > maxFileSizeBytes) {
+    throw createAppError(
+      'error::file:size-too-large',
+      'File is too large for this workspace storage provider',
+      {
+        fileName: displayNameForAsset(file),
+        fileSizeBytes: file.size,
+        maxFileSizeBytes,
+        wsPath: baseDestination.wsPath,
+      },
+    );
   }
 
   for (let attempt = 1; attempt <= 100; attempt += 1) {
@@ -167,8 +226,10 @@ export async function writeAssetFile({
           );
     try {
       await fileSystem.createFile(destination.wsPath, file);
-      const href = relativeMarkdownAssetHref(current, destination);
-      return href ? { wsPath: destination, href } : undefined;
+      const href = source
+        ? relativeMarkdownAssetHref(source, destination)
+        : undefined;
+      return { wsPath: destination, href };
     } catch (cause) {
       if (isAppError(cause)) {
         const appError = getAppErrorCause(cause);
@@ -187,6 +248,48 @@ export async function writeAssetFile({
       wsPath: baseDestination.wsPath,
     },
   );
+}
+
+export async function storeWorkspaceAssetFiles({
+  sourceWsPath,
+  targetDirectoryWsPath,
+  files,
+  preference,
+  fileSystem,
+  onFileError,
+}: StoreWorkspaceAssetFilesInput): Promise<StoredWorkspaceAsset[]> {
+  const stored: StoredWorkspaceAsset[] = [];
+
+  for (const file of files) {
+    try {
+      const result = await writeAssetFile({
+        sourceWsPath,
+        targetDirectoryWsPath,
+        file,
+        preference,
+        fileSystem,
+      });
+      if (result) {
+        stored.push({
+          file,
+          wsPath: result.wsPath,
+          href: result.href,
+          label: displayNameForAsset(file),
+          isImage: isImageFile(file),
+        });
+      }
+    } catch (cause) {
+      onFileError?.({
+        file,
+        cause,
+        error: cause instanceof Error ? cause : new Error(String(cause)),
+        sourceWsPath,
+        targetDirectoryWsPath,
+      });
+    }
+  }
+
+  return stored;
 }
 
 export function displayNameForAsset(file: File): string {

@@ -6,6 +6,8 @@ import {
   readStoredMarkdown,
 } from './common';
 
+const BROWSER_MAX_FILE_SIZE_BYTES = 25 * 1024 * 1024;
+
 const dispatchAssetPasteEvent = (element: Element) => {
   const pngBytes = Uint8Array.from([
     137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0, 1, 0,
@@ -15,7 +17,11 @@ const dispatchAssetPasteEvent = (element: Element) => {
   ]);
   const dataTransfer = new DataTransfer();
   dataTransfer.items.add(
-    new File([pngBytes], 'Image Drop.PNG', { type: 'image/png' }),
+    new File(
+      [pngBytes],
+      'Extremely Long Image Drop Filename For Toast UX.PNG',
+      { type: 'image/png' },
+    ),
   );
   dataTransfer.items.add(
     new File(['%PDF-1.4\n'], 'Spec Sheet.PDF', {
@@ -42,7 +48,11 @@ function createAssetDataTransferHandle(page: Page) {
     ]);
     const dataTransfer = new DataTransfer();
     dataTransfer.items.add(
-      new File([pngBytes], 'Image Drop.PNG', { type: 'image/png' }),
+      new File(
+        [pngBytes],
+        'Extremely Long Image Drop Filename For Toast UX.PNG',
+        { type: 'image/png' },
+      ),
     );
     dataTransfer.items.add(
       new File(['%PDF-1.4\n'], 'Spec Sheet.PDF', {
@@ -51,6 +61,19 @@ function createAssetDataTransferHandle(page: Page) {
     );
     return dataTransfer;
   });
+}
+
+function createOversizedAssetDataTransferHandle(page: Page, size: number) {
+  return page.evaluateHandle((fileSize) => {
+    const file = new File(['small body'], 'Too Large Archive.zip', {
+      type: 'application/zip',
+    });
+    Object.defineProperty(file, 'size', { value: fileSize });
+
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    return dataTransfer;
+  }, size);
 }
 
 test('pastes workspace-backed image and PDF assets, reloads, and opens asset page', async ({
@@ -66,7 +89,14 @@ test('pastes workspace-backed image and PDF assets, reloads, and opens asset pag
 
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toContain('![Image Drop.PNG](assets/image-drop-');
+    .toContain(
+      '![Extremely Long Image Drop Filename For Toast UX.PNG](assets/extremely-long-image-drop-filename-for-toast-ux-',
+    );
+  await expect(
+    page.getByText(
+      'Saved Extremely Long Image Drop...For Toast UX.PNG + 1 more',
+    ),
+  ).toBeVisible();
   const markdown = await readStoredMarkdown(page, workspaceName, noteName);
   expect(markdown).not.toContain('data:');
   expect(markdown).toContain('[Spec Sheet.PDF](assets/spec-sheet-');
@@ -109,10 +139,60 @@ test('drops workspace-backed image and PDF assets as relative Markdown', async (
 
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toContain('![Image Drop.PNG](assets/image-drop-');
+    .toContain(
+      '![Extremely Long Image Drop Filename For Toast UX.PNG](assets/extremely-long-image-drop-filename-for-toast-ux-',
+    );
+  await expect(
+    page.getByText(
+      'Saved Extremely Long Image Drop...For Toast UX.PNG + 1 more',
+    ),
+  ).toBeVisible();
   const markdown = await readStoredMarkdown(page, workspaceName, noteName);
   expect(markdown).not.toContain('data:');
   expect(markdown).toContain('[Spec Sheet.PDF](assets/spec-sheet-');
   expect(markdown).toContain('.pdf)');
   await expect(editor.locator('img')).toHaveAttribute('src', /^blob:/);
+
+  await page.getByRole('button', { name: 'Open' }).click();
+  await expect(
+    page.getByRole('heading', {
+      name: /extremely-long-image-drop-filename-for-toast-ux-.*\.png/i,
+    }),
+  ).toBeVisible();
+});
+
+test('rejects dropped files larger than the workspace storage provider limit', async ({
+  page,
+}, testInfo) => {
+  const workspaceName = `asset-drop-large-${testInfo.workerIndex}-${Date.now()}`;
+  const noteName = 'source';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  const dataTransfer = await createOversizedAssetDataTransferHandle(
+    page,
+    BROWSER_MAX_FILE_SIZE_BYTES + 1,
+  );
+  await page.locator(EDITOR_SELECTOR).dispatchEvent('drop', {
+    clientX: 20,
+    clientY: 20,
+    dataTransfer,
+  });
+  await dataTransfer.dispose();
+
+  await expect(
+    page.getByText(
+      'Too Large Archive.zip is too large. Maximum file size is 25 MB.',
+    ),
+  ).toBeVisible();
+  await expect
+    .poll(
+      async () =>
+        (await readStoredMarkdown(page, workspaceName, noteName)) ?? '',
+    )
+    .not.toContain('Too Large Archive.zip');
+  await expect(
+    editor.getByRole('link', { name: 'Too Large Archive.zip' }),
+  ).toHaveCount(0);
 });

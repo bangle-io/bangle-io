@@ -226,6 +226,14 @@ export const t = {
         placeholder: 'New note name',
         submitText: 'Rename',
       },
+      renameFile: {
+        title: 'Rename File',
+        description: ({ fileName }: { fileName: string }) =>
+          `Choose a new name for "${fileName}".`,
+        inputLabel: 'New file name',
+        placeholder: 'New file name',
+        submitText: 'Rename',
+      },
       moveNote: {
         searchPlaceholder: 'Select a path to move the note',
         title: ({
@@ -378,6 +386,60 @@ export const t = {
       },
     },
     toasts: {
+      assetSaveInProgress: ({
+        fileName,
+        remainingCount,
+      }: {
+        fileName: string;
+        remainingCount: number;
+      }) =>
+        remainingCount > 0
+          ? `Saving ${fileName} + ${remainingCount} more...`
+          : `Saving ${fileName}...`,
+      assetSavePartial: ({
+        failedCount,
+        failedFileName,
+        failedRemainingCount,
+        savedFileName,
+        savedRemainingCount,
+      }: {
+        failedCount: number;
+        failedFileName: string;
+        failedRemainingCount: number;
+        savedFileName?: string;
+        savedRemainingCount: number;
+      }) => {
+        const failedLabel =
+          failedRemainingCount > 0
+            ? `${failedFileName} + ${failedRemainingCount} more`
+            : failedFileName;
+        if (!savedFileName) {
+          return `Could not save ${failedLabel}.`;
+        }
+        const savedLabel =
+          savedRemainingCount > 0
+            ? `${savedFileName} + ${savedRemainingCount} more`
+            : savedFileName;
+        return `${savedLabel} saved; ${failedCount} failed.`;
+      },
+      assetSaveSucceeded: ({
+        fileName,
+        remainingCount,
+      }: {
+        fileName: string;
+        remainingCount: number;
+      }) =>
+        remainingCount > 0
+          ? `Saved ${fileName} + ${remainingCount} more`
+          : `Saved ${fileName}`,
+      assetTooLarge: ({
+        fileName,
+        maxFileSize,
+      }: {
+        fileName: string;
+        maxFileSize: string;
+      }) => `${fileName} is too large. Maximum file size is ${maxFileSize}.`,
+      openAsset: 'Open',
       permissionNotGranted: 'Permission not granted',
       retrySave: 'Retry save',
       saveFailed: 'Changes could not be saved. Retry to keep your latest edit.',
@@ -437,6 +499,12 @@ export const t = {
       goBackButton: 'Go Back',
       goHomeButton: 'Go Home',
     },
+    fileNotFoundView: {
+      title: 'File Not Found',
+      description:
+        "The file you're looking for doesn't exist or has been moved.",
+      viewAllFilesButton: 'View All Files',
+    },
     workspaceNotFoundView: {
       title: 'Workspace Not Found',
       description: ({ wsName }: { wsName: string }) =>
@@ -460,6 +528,7 @@ export const t = {
         newNoteHereActionTitle: 'New Note Here',
         newFolderHereActionTitle: 'New Folder Here',
         searchFilesActionLabel: 'Search Files',
+        openActionTitle: 'Open',
         renameActionTitle: 'Rename',
         moveActionTitle: 'Move',
         deleteActionTitle: 'Delete',

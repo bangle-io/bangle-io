@@ -448,6 +448,27 @@ describe('WorkspaceStateService file tree updates', () => {
     ).not.toContain(visibleWsPath);
   });
 
+  it('does not expose non-markdown files as the current editor path', async () => {
+    const { services } = await setupWorkspaceStateService({ controller });
+    const assetWsPath = `${WS_NAME}:asset.pdf`;
+
+    await services.fileSystem.createFile(
+      assetWsPath,
+      new File(['pdf'], 'asset.pdf', { type: 'application/pdf' }),
+    );
+    services.navigation.go({
+      route: 'editor',
+      payload: { wsPath: assetWsPath },
+    });
+
+    expect(
+      services.workspaceState.resolveAtoms().currentWsPath,
+    ).toBeUndefined();
+    expect(
+      services.workspaceState.resolveAtoms().currentWsFilePath?.wsPath,
+    ).toBe(assetWsPath);
+  });
+
   it('does not add ignored created files to workspace file state', async () => {
     const { services, store } = await setupWorkspaceStateService({
       controller,

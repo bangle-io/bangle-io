@@ -1,4 +1,7 @@
-import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
+import {
+  FILE_STORAGE_MAX_FILE_SIZE_BYTES,
+  WORKSPACE_STORAGE_TYPE,
+} from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import type { BaseFileStorageService } from '@bangle.io/types';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -69,6 +72,11 @@ describe('FileSystemService', () => {
   const EXISTING_FILE = 'test-workspace:exists.md';
   const NON_EXISTING_FILE = 'test-workspace:not-exists.md';
 
+  function fileWithSize(file: File, size: number): File {
+    Object.defineProperty(file, 'size', { value: size });
+    return file;
+  }
+
   async function setupFileSystemTest({
     controller = new AbortController(),
   } = {}) {
@@ -112,6 +120,70 @@ describe('FileSystemService', () => {
 
     const notExistsResult = await fileSystem.exists(NON_EXISTING_FILE);
     expect(notExistsResult).toBe(false);
+  });
+
+  it('exposes the active storage provider file-size limit', async () => {
+    const { fileSystem } = await setupFileSystemTest({ controller });
+
+    await expect(fileSystem.getMaxFileSizeBytes(EXISTING_FILE)).resolves.toBe(
+      FILE_STORAGE_MAX_FILE_SIZE_BYTES.memory,
+    );
+  });
+
+  it('rejects creates larger than the active storage provider limit', async () => {
+    const { fileSystem, storage } = await setupFileSystemTest({ controller });
+    const wsPath = `${TEST_WS_NAME}:too-large.bin`;
+    Object.defineProperty(storage, 'maxFileSizeBytes', { value: 4 });
+
+    await expect(
+      fileSystem.createFile(
+        wsPath,
+        fileWithSize(
+          new File(['12345'], 'too-large.bin', {
+            type: 'application/octet-stream',
+          }),
+          5,
+        ),
+      ),
+    ).rejects.toMatchObject({
+      cause: expect.objectContaining({
+        name: 'error::file:size-too-large',
+        payload: expect.objectContaining({
+          fileName: 'too-large.bin',
+          fileSizeBytes: 5,
+          maxFileSizeBytes: 4,
+          wsPath,
+        }),
+      }),
+    });
+
+    await expect(fileSystem.exists(wsPath)).resolves.toBe(false);
+  });
+
+  it('rejects writes larger than the active storage provider limit without mutating existing content', async () => {
+    const { fileSystem, storage } = await setupFileSystemTest({ controller });
+    Object.defineProperty(storage, 'maxFileSizeBytes', { value: 4 });
+
+    await expect(
+      fileSystem.writeFile(
+        EXISTING_FILE,
+        fileWithSize(new File(['12345'], 'exists.md'), 5),
+      ),
+    ).rejects.toMatchObject({
+      cause: expect.objectContaining({
+        name: 'error::file:size-too-large',
+        payload: expect.objectContaining({
+          fileName: 'exists.md',
+          fileSizeBytes: 5,
+          maxFileSizeBytes: 4,
+          wsPath: EXISTING_FILE,
+        }),
+      }),
+    });
+
+    await expect(fileSystem.readFileAsText(EXISTING_FILE)).resolves.toBe(
+      'Test content',
+    );
   });
 
   it('increments file-list revision for file list changes', async () => {

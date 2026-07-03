@@ -28,6 +28,10 @@ export function isIgnoredWorkspacePathSegment(segment: string): boolean {
   );
 }
 
+export function isVisibleWorkspaceDirectoryName(name: string): boolean {
+  return !isIgnoredWorkspacePathSegment(name);
+}
+
 export function isVisibleWorkspaceFilePath(
   wsPath: string | WsFilePath,
 ): wsPath is WsFilePath {

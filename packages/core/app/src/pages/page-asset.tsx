@@ -6,6 +6,8 @@ import { Download } from 'lucide-react';
 import React from 'react';
 import { ContentSection } from '../components/common/content-section';
 import { PageHeader } from '../components/common/page-header';
+import { FileNotFoundView } from '../components/feedback/file-not-found-view';
+import { WorkspaceNotFoundView } from '../components/feedback/workspace-not-found-view';
 import { AppHeader } from '../layout/app-header';
 import { PageContentContainer } from '../layout/main-content-container';
 
@@ -16,13 +18,19 @@ type AssetState =
   | { status: 'error'; fileName: string };
 
 export function PageAsset() {
-  const { fileSystem, navigation } = useCoreServices();
+  const { fileSystem, navigation, workspaceState } = useCoreServices();
   const routeInfo = useAtomValue(navigation.$routeInfo);
-  const wsPath =
-    routeInfo.route === 'asset' ? routeInfo.payload.wsPath : undefined;
-  const fileName = wsPath
-    ? (WsPath.safeParseFile(wsPath).data?.fileName ?? t.app.common.unknown)
-    : t.app.common.unknown;
+  const currentWsName = useAtomValue(workspaceState.$currentWsName);
+  const currentWsFilePath = useAtomValue(workspaceState.$currentWsFilePath);
+  const routeFilePath =
+    routeInfo.route === 'asset'
+      ? WsPath.safeParseFile(routeInfo.payload.wsPath).data
+      : undefined;
+  const wsPath = currentWsFilePath?.wsPath;
+  const fileName =
+    currentWsFilePath?.fileName ??
+    routeFilePath?.fileName ??
+    t.app.common.unknown;
   const [state, setState] = React.useState<AssetState>({ status: 'loading' });
 
   React.useEffect(() => {
@@ -61,6 +69,32 @@ export function PageAsset() {
       }
     };
   }, [fileName, fileSystem, wsPath]);
+
+  if (!currentWsName) {
+    return (
+      <>
+        <AppHeader />
+        <PageContentContainer>
+          <ContentSection hasPadding>
+            <WorkspaceNotFoundView wsName={navigation.resolveAtoms().wsName} />
+          </ContentSection>
+        </PageContentContainer>
+      </>
+    );
+  }
+
+  if (!currentWsFilePath) {
+    return (
+      <>
+        <AppHeader />
+        <PageContentContainer>
+          <ContentSection hasPadding>
+            <FileNotFoundView />
+          </ContentSection>
+        </PageContentContainer>
+      </>
+    );
+  }
 
   return (
     <>

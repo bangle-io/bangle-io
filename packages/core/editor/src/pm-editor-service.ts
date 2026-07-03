@@ -14,6 +14,7 @@ import type {
   WorkspaceStateService,
 } from '@bangle.io/service-core';
 import type { Store } from '@bangle.io/types';
+import { toast } from '@bangle.io/ui-components';
 import {
   createMissingWikiLinkTarget,
   createWikiLinkIndex,
@@ -25,8 +26,8 @@ import {
 
 import {
   displayNameForAsset,
-  isImageFile,
-  writeAssetFile,
+  type StoredMarkdownAsset,
+  storeWorkspaceAssetFiles,
 } from './asset-storage';
 import {
   createEditorSaveQueueStore,
@@ -44,6 +45,43 @@ import { createLocalImageNodeView } from './local-image-node-view';
 import { createEditor } from './pm-setup';
 
 const editorSaveQueueStore = createEditorSaveQueueStore();
+const ASSET_TOAST_FILE_NAME_MAX_LENGTH = 44;
+
+function formatFileSize(bytes: number): string {
+  const units = ['B', 'KB', 'MB', 'GB'];
+  let value = bytes;
+  let unitIndex = 0;
+
+  while (value >= 1024 && unitIndex < units.length - 1) {
+    value /= 1024;
+    unitIndex += 1;
+  }
+
+  return `${value >= 10 || unitIndex === 0 ? Math.round(value) : value.toFixed(1)} ${units[unitIndex]}`;
+}
+
+function truncateAssetToastFileName(fileName: string): string {
+  const normalized = fileName.trim() || 'asset';
+  if (normalized.length <= ASSET_TOAST_FILE_NAME_MAX_LENGTH) {
+    return normalized;
+  }
+
+  const suffixLength = 16;
+  const prefixLength = ASSET_TOAST_FILE_NAME_MAX_LENGTH - suffixLength - 3;
+  return `${normalized.slice(0, prefixLength)}...${normalized.slice(
+    -suffixLength,
+  )}`;
+}
+
+function getAssetToastLabelInput(fileNames: readonly string[]): {
+  fileName: string;
+  remainingCount: number;
+} {
+  return {
+    fileName: truncateAssetToastFileName(fileNames[0] ?? 'asset'),
+    remainingCount: Math.max(0, fileNames.length - 1),
+  };
+}
 
 /**
  * Manages ProseMirror editor instances and state
@@ -356,7 +394,7 @@ export class PmEditorService extends BaseService {
   private async storeAssetFiles(
     editorView: ReturnType<typeof createEditor>,
     files: readonly File[],
-  ) {
+  ): Promise<StoredMarkdownAsset[]> {
     const editor = [...this.editors.values()].find(
       (entry) => 'editorView' in entry && entry.editorView === editorView,
     );
@@ -367,25 +405,38 @@ export class PmEditorService extends BaseService {
     const preference = this.store.get(
       this.dependencies.workbenchState.$assetLocationPreference,
     );
-    const stored = [];
-    for (const file of files) {
-      try {
-        const result = await writeAssetFile({
-          currentWsPath: editor.wsPath,
-          file,
-          preference,
-          fileSystem: this.dependencies.fileSystem,
-        });
-        if (result) {
-          stored.push({
-            file,
-            href: result.href,
-            label: displayNameForAsset(file),
-            isImage: isImageFile(file),
-          });
+
+    const inputToastLabel = getAssetToastLabelInput(
+      files.map(displayNameForAsset),
+    );
+    let failedCount = 0;
+    const failedAssetNames: string[] = [];
+    let oversizedAsset: { fileName: string; maxFileSize: string } | undefined;
+    const toastId = `editor-assets:${editor.wsPath}:${Date.now()}`;
+    toast.loading(t.app.toasts.assetSaveInProgress(inputToastLabel), {
+      id: toastId,
+    });
+
+    const stored = await storeWorkspaceAssetFiles({
+      sourceWsPath: editor.wsPath,
+      files,
+      preference,
+      fileSystem: this.dependencies.fileSystem,
+      onFileError: ({ error, file }) => {
+        failedCount += 1;
+        failedAssetNames.push(displayNameForAsset(file));
+        if (isAppError(error)) {
+          const appError = getAppErrorCause(error);
+          if (appError?.name === 'error::file:size-too-large') {
+            oversizedAsset ??= {
+              fileName: truncateAssetToastFileName(appError.payload.fileName),
+              maxFileSize: formatFileSize(appError.payload.maxFileSizeBytes),
+            };
+            this.logger.warn('Rejected oversized asset', error);
+            this.emitAppError(error);
+            return;
+          }
         }
-      } catch (cause) {
-        const error = cause instanceof Error ? cause : new Error(String(cause));
         this.logger.error('Unable to store pasted asset', error);
         this.emitAppError(
           createAppError(
@@ -397,9 +448,57 @@ export class PmEditorService extends BaseService {
             },
           ),
         );
+      },
+    });
+    const markdownAssets = stored.filter(
+      (asset): asset is StoredMarkdownAsset => Boolean(asset.href),
+    );
+    if (failedCount > 0) {
+      if (failedCount === 1 && markdownAssets.length === 0 && oversizedAsset) {
+        toast.error(t.app.toasts.assetTooLarge(oversizedAsset), {
+          id: toastId,
+          duration: 7000,
+        });
+        return markdownAssets;
       }
+
+      const savedToastLabel =
+        markdownAssets.length > 0
+          ? getAssetToastLabelInput(markdownAssets.map((asset) => asset.label))
+          : undefined;
+      const failedToastLabel = getAssetToastLabelInput(failedAssetNames);
+      toast.error(
+        t.app.toasts.assetSavePartial({
+          failedCount,
+          failedFileName: failedToastLabel.fileName,
+          failedRemainingCount: failedToastLabel.remainingCount,
+          savedFileName: savedToastLabel?.fileName,
+          savedRemainingCount: savedToastLabel?.remainingCount ?? 0,
+        }),
+        { id: toastId, duration: 5000 },
+      );
+    } else if (markdownAssets.length > 0) {
+      const firstAsset = markdownAssets[0];
+      const savedToastLabel = getAssetToastLabelInput(
+        markdownAssets.map((asset) => asset.label),
+      );
+      toast.success(t.app.toasts.assetSaveSucceeded(savedToastLabel), {
+        id: toastId,
+        duration: 5000,
+        action: firstAsset
+          ? {
+              label: t.app.toasts.openAsset,
+              onClick: () => {
+                this.dependencies.navigation.goWsFile(firstAsset.wsPath.wsPath);
+                toast.dismiss(toastId);
+              },
+            }
+          : undefined,
+      });
+    } else {
+      toast.dismiss(toastId);
     }
-    return stored;
+    return markdownAssets;
   }
 
   /** Opens a web link externally or routes a relative Markdown link in-app. */

@@ -258,6 +258,39 @@ export class FileSystemService extends BaseService {
     return storageService.fileExists(wsPath, {});
   }
 
+  public async getMaxFileSizeBytes(wsPath: string): Promise<number> {
+    await this.mountPromise;
+    WsPath.assertFile(wsPath);
+
+    const storageService = await this.getStorageService({ wsPath });
+    return storageService.maxFileSizeBytes;
+  }
+
+  private async assertFileSizeWithinProviderLimit(
+    wsPath: string,
+    file: File,
+    storageService: BaseFileStorageService,
+  ): Promise<void> {
+    const fileSizeBytes = file.size;
+    if (
+      !Number.isFinite(fileSizeBytes) ||
+      fileSizeBytes <= storageService.maxFileSizeBytes
+    ) {
+      return;
+    }
+
+    throwAppError(
+      'error::file:size-too-large',
+      'File is too large for this workspace storage provider',
+      {
+        fileName: file.name || WsPath.assertFile(wsPath).fileName,
+        fileSizeBytes,
+        maxFileSizeBytes: storageService.maxFileSizeBytes,
+        wsPath,
+      },
+    );
+  }
+
   public async createFile(
     wsPath: string,
     file: File,
@@ -267,6 +300,7 @@ export class FileSystemService extends BaseService {
     WsPath.assertFile(wsPath);
 
     const storageService = await this.getStorageService({ wsPath });
+    await this.assertFileSizeWithinProviderLimit(wsPath, file, storageService);
     await storageService.createFile(wsPath, file, {});
     this.onChange({
       type: 'file-create',
@@ -294,6 +328,7 @@ export class FileSystemService extends BaseService {
     WsPath.assertFile(wsPath);
 
     const storageService = await this.getStorageService({ wsPath });
+    await this.assertFileSizeWithinProviderLimit(wsPath, file, storageService);
     await storageService.writeFile(wsPath, file, {
       sha: options.sha,
     });

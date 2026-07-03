@@ -14,12 +14,16 @@ import {
   isWorkerGlobalScope,
   throwAppError,
 } from '@bangle.io/base-utils';
-import { SERVICE_NAME, WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
+import {
+  FILE_STORAGE_MAX_FILE_SIZE_BYTES,
+  SERVICE_NAME,
+  WORKSPACE_STORAGE_TYPE,
+} from '@bangle.io/constants';
 import type {
   BaseFileStorageProvider,
   FileStorageChangeEvent,
 } from '@bangle.io/types';
-import { WsPath } from '@bangle.io/ws-path';
+import { isVisibleWorkspaceDirectoryName, WsPath } from '@bangle.io/ws-path';
 
 type Config = {
   getRootDirHandle: (
@@ -43,6 +47,7 @@ export class FileStorageNativeFs
   public readonly workspaceType = WORKSPACE_STORAGE_TYPE.NativeFS;
   public readonly displayName = 'Native Storage';
   public readonly description = 'Saves data on your hard drive';
+  public readonly maxFileSizeBytes = FILE_STORAGE_MAX_FILE_SIZE_BYTES.nativeFs;
 
   private fsCache: Map<string, NativeBrowserFileSystem> = new Map();
 
@@ -147,10 +152,8 @@ export class FileStorageNativeFs
 
     const fs = new NativeBrowserFileSystem({
       rootDirHandle: rootDirHandle,
-      allowedFile: () => {
-        // TODO implement ignoring weird files
-        return true;
-      },
+      allowedDir: (entry) => isVisibleWorkspaceDirectoryName(entry.name),
+      allowedFile: () => true,
     });
 
     this.fsCache.set(wsName, fs);

@@ -218,19 +218,25 @@ export function AppSidebar({
             </SidebarGroupLabel>
             <SidebarMenu className="gap-2">
               {navItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.title} className="min-w-0">
                   <SidebarMenuButton asChild>
                     <a
                       href={wsPathToHref ? wsPathToHref(item.wsPath) : '#dead'}
-                      className="font-medium"
+                      title={item.title}
+                      className="min-w-0 font-medium"
                     >
-                      {item.title}
+                      <span className="block min-w-0 truncate">
+                        {item.title}
+                      </span>
                     </a>
                   </SidebarMenuButton>
                   {item.items?.length ? (
                     <SidebarMenuSub className="ml-0 border-l-0 px-1.5">
                       {item.items.map((item) => (
-                        <SidebarMenuSubItem key={item.title}>
+                        <SidebarMenuSubItem
+                          key={item.title}
+                          className="min-w-0"
+                        >
                           <SidebarMenuSubButton asChild>
                             <a
                               href={
@@ -238,8 +244,12 @@ export function AppSidebar({
                                   ? wsPathToHref(item.wsPath)
                                   : '#dead'
                               }
+                              title={item.title}
+                              className="min-w-0"
                             >
-                              {item.title}
+                              <span className="block min-w-0 truncate">
+                                {item.title}
+                              </span>
                             </a>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>

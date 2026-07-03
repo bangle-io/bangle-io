@@ -104,6 +104,15 @@ export type AppError =
         wsPath: string;
       };
     }
+  | {
+      name: `error::file:size-too-large`;
+      payload: {
+        fileName: string;
+        fileSizeBytes: number;
+        maxFileSizeBytes: number;
+        wsPath: string;
+      };
+    }
 
   // User Activity errors
   | {

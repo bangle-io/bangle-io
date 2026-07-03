@@ -141,6 +141,19 @@ export const uiCommands = narrow([
     },
   },
   {
+    id: 'command::ui:delete-file-dialog',
+    title: 'Delete File',
+    keywords: ['delete', 'file', 'remove'],
+    dependencies: {
+      services: ['workbenchState', 'workspaceState'],
+      commands: ['command::ws:delete-ws-path', 'command::ui:focus-editor'],
+    },
+    autoFocusEditor: false,
+    args: {
+      wsPath: T.String,
+    },
+  },
+  {
     id: 'command::ui:rename-note-dialog',
     title: 'Rename Note',
     keywords: ['rename', 'note', 'file'],
@@ -152,6 +165,19 @@ export const uiCommands = narrow([
     autoFocusEditor: false,
     args: {
       wsPath: T.Optional(T.String),
+    },
+  },
+  {
+    id: 'command::ui:rename-file-dialog',
+    title: 'Rename File',
+    keywords: ['rename', 'file'],
+    dependencies: {
+      services: ['workspaceState', 'workbenchState'],
+      commands: ['command::ws:rename-ws-path', 'command::ui:focus-editor'],
+    },
+    autoFocusEditor: false,
+    args: {
+      wsPath: T.String,
     },
   },
   {

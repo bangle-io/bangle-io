@@ -176,14 +176,27 @@ export class WorkspaceStateService extends BaseService {
   });
 
   /**
-   * This atom is used to check if the current note path
-   * is on the disk.
-   * TODO: rename to currentWsFilePath
+   * This atom is used to check if the current file path is on the disk.
    */
-  $currentWsPath = atom((get) => {
-    const wsPath = get(this.navigation.$wsFilePath);
+  $currentWsFilePath = atom((get) => {
+    const routeInfo = get(this.navigation.$routeInfo);
+    if (routeInfo.route !== 'editor' && routeInfo.route !== 'asset') {
+      return undefined;
+    }
+
+    const wsPath = WsPath.safeParseFile(routeInfo.payload.wsPath).data;
     const rawWsPaths = get(this.$rawWsPaths);
     return wsPath && rawWsPaths.includes(wsPath.wsPath) ? wsPath : undefined;
+  });
+
+  /**
+   * This atom is used to check if the current note path is on the disk.
+   */
+  $currentWsPath = atom((get) => {
+    const routeInfo = get(this.navigation.$routeInfo);
+    const currentFilePath =
+      routeInfo.route === 'editor' ? get(this.$currentWsFilePath) : undefined;
+    return currentFilePath?.isMarkdown() ? currentFilePath : undefined;
   });
 
   /**
@@ -202,6 +215,7 @@ export class WorkspaceStateService extends BaseService {
       wsPaths: this.store.get(this.$wsPaths),
       noteWsPaths: this.store.get(this.$noteWsPaths),
       currentWsName: this.store.get(this.$currentWsName),
+      currentWsFilePath: this.store.get(this.$currentWsFilePath),
       currentWsPath: this.store.get(this.$currentWsPath),
     };
   }

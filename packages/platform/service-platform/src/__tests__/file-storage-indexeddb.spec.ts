@@ -2,6 +2,7 @@
  * @vitest-environment happy-dom
  */
 
+import { FILE_STORAGE_MAX_FILE_SIZE_BYTES } from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { FileStorageIndexedDB } from '../file-storage-indexeddb';
@@ -26,6 +27,14 @@ async function setup() {
 describe('FileStorageIndexedDB', () => {
   beforeEach(() => {
     // indexedDB gets cleared in between tests by happy-dom
+  });
+
+  it('declares a conservative browser storage file-size limit', async () => {
+    const { service } = await setup();
+
+    expect(service.maxFileSizeBytes).toBe(
+      FILE_STORAGE_MAX_FILE_SIZE_BYTES.browser,
+    );
   });
 
   it('should create and read a file', async () => {

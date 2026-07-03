@@ -207,6 +207,14 @@ export const t = {
         placeholder: 'Neuer Notizname',
         submitText: 'Umbenennen',
       },
+      renameFile: {
+        title: 'Datei umbenennen',
+        description: ({ fileName }: { fileName: string }) =>
+          `Wählen Sie einen neuen Namen für "${fileName}".`,
+        inputLabel: 'Neuer Dateiname',
+        placeholder: 'Neuer Dateiname',
+        submitText: 'Umbenennen',
+      },
       moveNote: {
         searchPlaceholder: 'Wählen Sie einen Pfad zum Verschieben der Notiz',
         title: ({
@@ -372,6 +380,61 @@ export const t = {
       },
     },
     toasts: {
+      assetSaveInProgress: ({
+        fileName,
+        remainingCount,
+      }: {
+        fileName: string;
+        remainingCount: number;
+      }) =>
+        remainingCount > 0
+          ? `${fileName} + ${remainingCount} weitere werden gespeichert...`
+          : `${fileName} wird gespeichert...`,
+      assetSavePartial: ({
+        failedCount,
+        failedFileName,
+        failedRemainingCount,
+        savedFileName,
+        savedRemainingCount,
+      }: {
+        failedCount: number;
+        failedFileName: string;
+        failedRemainingCount: number;
+        savedFileName?: string;
+        savedRemainingCount: number;
+      }) => {
+        const failedLabel =
+          failedRemainingCount > 0
+            ? `${failedFileName} + ${failedRemainingCount} weitere`
+            : failedFileName;
+        if (!savedFileName) {
+          return `${failedLabel} konnte nicht gespeichert werden.`;
+        }
+        const savedLabel =
+          savedRemainingCount > 0
+            ? `${savedFileName} + ${savedRemainingCount} weitere`
+            : savedFileName;
+        return `${savedLabel} gespeichert; ${failedCount} fehlgeschlagen.`;
+      },
+      assetSaveSucceeded: ({
+        fileName,
+        remainingCount,
+      }: {
+        fileName: string;
+        remainingCount: number;
+      }) =>
+        remainingCount > 0
+          ? `${fileName} + ${remainingCount} weitere gespeichert`
+          : `${fileName} gespeichert`,
+      assetTooLarge: ({
+        fileName,
+        maxFileSize,
+      }: {
+        fileName: string;
+        maxFileSize: string;
+      }) =>
+        `${fileName} ist zu gross. Maximale Dateigroesse ist ${maxFileSize}.`,
+      openAsset: 'Öffnen',
       permissionNotGranted: 'Berechtigung nicht erteilt',
       retrySave: 'Speichern erneut versuchen',
       saveFailed:
@@ -433,6 +496,11 @@ export const t = {
       goBackButton: 'Zurück',
       goHomeButton: 'Startseite',
     },
+    fileNotFoundView: {
+      title: 'Datei nicht gefunden',
+      description: 'Die gesuchte Datei existiert nicht oder wurde verschoben.',
+      viewAllFilesButton: 'Alle Dateien anzeigen',
+    },
     workspaceNotFoundView: {
       title: 'Arbeitsbereich nicht gefunden',
       description: ({ wsName }: { wsName: string }) =>
@@ -457,6 +525,7 @@ export const t = {
         newNoteHereActionTitle: 'Neue Notiz hier',
         newFolderHereActionTitle: 'Neuer Ordner hier',
         searchFilesActionLabel: 'Dateien suchen',
+        openActionTitle: 'Öffnen',
         renameActionTitle: 'Umbenennen',
         moveActionTitle: 'Verschieben',
         deleteActionTitle: 'Löschen',

@@ -1,9 +1,21 @@
-import { spawn } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const packageRoot = fileURLToPath(new URL('..', import.meta.url));
-const baseUrl = process.env.BANGLE_E2E_BASE_URL ?? 'http://127.0.0.1:5173';
+const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url));
+const host = process.env.BANGLE_E2E_HOST ?? '127.0.0.1';
 const serverLogPrefix = '[E2E WebServer]';
+
+function resolveE2EPort(): string {
+  if (process.env.BANGLE_E2E_PORT) {
+    return process.env.BANGLE_E2E_PORT;
+  }
+
+  return execFileSync(process.execPath, ['scripts/dev-ports.js', 'e2e'], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  }).trim();
+}
 
 function pipeWithPrefix(
   stream: NodeJS.ReadableStream | null,
@@ -79,6 +91,8 @@ async function runChild(
 
 async function main() {
   let serverExited = false;
+  const port = resolveE2EPort();
+  const baseUrl = process.env.BANGLE_E2E_BASE_URL ?? `http://${host}:${port}`;
   const server = spawnCommand(
     'pnpm',
     [
@@ -89,9 +103,9 @@ async function main() {
       '--configLoader',
       'runner',
       '--host',
-      '127.0.0.1',
+      host,
       '--port',
-      '5173',
+      port,
       '--strictPort',
     ],
     { stdio: 'pipe' },

@@ -2,6 +2,7 @@
  * @vitest-environment happy-dom
  */
 
+import { FILE_STORAGE_MAX_FILE_SIZE_BYTES } from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { FileStorageNativeFs } from '../file-storage-nativefs';
@@ -35,10 +36,12 @@ class FakeDirectoryHandle {
   readonly kind = 'directory';
   private entries = new Map<string, FakeDirectoryHandle | FakeFileHandle>();
   shouldThrowNotFoundOnRead = false;
+  valuesCalls = 0;
 
   constructor(readonly name: string) {}
 
   async *values(): AsyncIterableIterator<FileSystemHandle> {
+    this.valuesCalls += 1;
     if (this.shouldThrowNotFoundOnRead) {
       throw new DOMException('Directory not found', 'NotFoundError');
     }
@@ -117,6 +120,14 @@ async function setup() {
 }
 
 describe('FileStorageNativeFs', () => {
+  it('declares a larger native storage file-size limit', async () => {
+    const { service } = await setup();
+
+    expect(service.maxFileSizeBytes).toBe(
+      FILE_STORAGE_MAX_FILE_SIZE_BYTES.nativeFs,
+    );
+  });
+
   it('provider contract: createFile rejects existing files without overwriting', async () => {
     const { service, onChange } = await setup();
     const wsPath = 'myWorkspace:myNote.md';
@@ -153,5 +164,27 @@ describe('FileStorageNativeFs', () => {
         },
       }),
     });
+  });
+
+  it('prunes ignored directories before recursive native listing descends into them', async () => {
+    const { service } = await setup();
+    const rootDirHandle = await service.getRootDirHandle('myWorkspace');
+    const root = rootDirHandle.handle as unknown as FakeDirectoryHandle;
+    const docs = await root.getDirectoryHandle('docs', { create: true });
+    await docs.getFileHandle('keep.md', { create: true });
+    const nodeModules = await root.getDirectoryHandle('node_modules', {
+      create: true,
+    });
+    await nodeModules.getFileHandle('ignored.ts', { create: true });
+    const git = await root.getDirectoryHandle('.git', { create: true });
+    await git.getFileHandle('config', { create: true });
+
+    await expect(
+      service.listAllFiles('myWorkspace', new AbortController().signal),
+    ).resolves.toEqual(['myWorkspace:docs/keep.md']);
+
+    expect(docs.valuesCalls).toBe(1);
+    expect(nodeModules.valuesCalls).toBe(0);
+    expect(git.valuesCalls).toBe(0);
   });
 });

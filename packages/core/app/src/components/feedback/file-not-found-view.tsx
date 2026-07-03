@@ -4,19 +4,10 @@ import { FileX } from 'lucide-react';
 import React from 'react';
 import { NoticeView } from './notice-view';
 
-/** Displays a notice indicating that the requested note could not be found, using NoticeView. */
-export function NoteNotFoundView() {
+export function FileNotFoundView() {
   const coreServices = useCoreServices();
 
-  const handleNewNote = () => {
-    coreServices.commandDispatcher.dispatch(
-      'command::ui:create-note-dialog',
-      { prefillName: undefined },
-      'ui',
-    );
-  };
-
-  const handleViewAllNotes = () => {
+  const handleViewAllFiles = () => {
     coreServices.commandDispatcher.dispatch(
       'command::ui:toggle-all-files',
       { prefillInput: undefined },
@@ -26,10 +17,10 @@ export function NoteNotFoundView() {
 
   return (
     <NoticeView
-      title={t.app.noteNotFoundView.title}
+      title={t.app.fileNotFoundView.title}
       description={
         <>
-          {t.app.noteNotFoundView.description}
+          {t.app.fileNotFoundView.description}
           <br />
           <FunMissing />
         </>
@@ -44,13 +35,9 @@ export function NoteNotFoundView() {
       }
       actions={[
         {
-          label: t.app.pageWsHome.newNoteButton,
-          onClick: handleNewNote,
-        },
-        {
-          label: t.app.noteNotFoundView.viewAllNotesButton,
+          label: t.app.fileNotFoundView.viewAllFilesButton,
           variant: 'outline',
-          onClick: handleViewAllNotes,
+          onClick: handleViewAllFiles,
         },
       ]}
     />

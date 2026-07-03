@@ -10,18 +10,13 @@ import {
   type Transaction,
 } from '@bangle.io/prosemirror-plugins';
 
-export type StoredAsset = {
-  file: File;
-  href: string;
-  label: string;
-  isImage: boolean;
-};
+import type { StoredMarkdownAsset } from './asset-storage';
 
 export type AssetFilePluginConfig = {
   storeFiles: (
     view: EditorView,
     files: readonly File[],
-  ) => Promise<StoredAsset[]>;
+  ) => Promise<StoredMarkdownAsset[]>;
 };
 
 const PROSEMIRROR_SLICE_TYPE = 'application/x-prosemirror-slice';
@@ -76,7 +71,7 @@ function isInternalProseMirrorDrag(dataTransfer: DataTransfer): boolean {
 
 function createAssetNodes(
   view: EditorView,
-  assets: readonly StoredAsset[],
+  assets: readonly StoredMarkdownAsset[],
 ): PMNode[] {
   const { schema } = view.state;
   const imageType = schema.nodes.image;
@@ -259,57 +254,8 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
               },
             },
             view(view) {
-              const handlePasteCapture = (event: ClipboardEvent) => {
-                const clipboardData = event.clipboardData;
-                if (!clipboardData) {
-                  return;
-                }
-
-                const files = collectFiles(clipboardData);
-                if (
-                  handleFilesAtPosition(view, files, view.state.selection.from)
-                ) {
-                  claimFileEvent(event);
-                }
-              };
-
-              const handleDropCapture = (event: DragEvent) => {
-                const dataTransfer = event.dataTransfer;
-                if (!dataTransfer || isInternalProseMirrorDrag(dataTransfer)) {
-                  return;
-                }
-
-                const files = collectFiles(dataTransfer);
-                const coordinates = view.posAtCoords({
-                  left: event.clientX,
-                  top: event.clientY,
-                });
-                if (
-                  handleFilesAtPosition(
-                    view,
-                    files,
-                    coordinates?.pos ?? view.state.selection.from,
-                  )
-                ) {
-                  claimFileEvent(event);
-                }
-              };
-
-              view.dom.addEventListener('paste', handlePasteCapture, {
-                capture: true,
-              });
-              view.dom.addEventListener('drop', handleDropCapture, {
-                capture: true,
-              });
-
               return {
                 destroy() {
-                  view.dom.removeEventListener('paste', handlePasteCapture, {
-                    capture: true,
-                  });
-                  view.dom.removeEventListener('drop', handleDropCapture, {
-                    capture: true,
-                  });
                   destroyedViews.add(view);
                 },
               };

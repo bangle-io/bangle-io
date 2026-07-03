@@ -47,6 +47,42 @@ describe('WS command handlers', () => {
     });
   });
 
+  describe('command::ws:delete-ws-path', () => {
+    test('keeps an open asset route stable after durable delete', async () => {
+      const ASSET_WS_PATH = 'test-ws:assets/report.pdf';
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ws:delete-ws-path',
+        workspaces: [{ name: 'test-ws', notes: [ASSET_WS_PATH] }],
+        autoNavigate: 'workspace',
+      });
+
+      services.navigation.goWsPath(ASSET_WS_PATH);
+      await vi.waitFor(() => {
+        expect(services.navigation.resolveAtoms().routeInfo).toEqual({
+          route: 'asset',
+          payload: { wsPath: ASSET_WS_PATH },
+        });
+      });
+
+      dispatch('command::ws:delete-ws-path', {
+        wsPath: ASSET_WS_PATH,
+      });
+
+      await vi.waitFor(async () => {
+        expect(
+          await services.fileSystem.readFile(ASSET_WS_PATH),
+        ).toBeUndefined();
+        expect(services.navigation.resolveAtoms().routeInfo).toEqual({
+          route: 'asset',
+          payload: { wsPath: ASSET_WS_PATH },
+        });
+        expect(services.workspaceState.resolveAtoms().currentWsFilePath).toBe(
+          undefined,
+        );
+      });
+    });
+  });
+
   describe('command::ws:clone-note', () => {
     test.each([
       {

@@ -126,6 +126,62 @@ export const AppSidebar = ({ children }: SidebarProps) => {
         const wsPath = getFileWsPath(entry.path);
         const filePath = wsPath ? WsPath.safeParseFile(wsPath).data : undefined;
 
+        if (filePath && !filePath.isNote()) {
+          actions.push({
+            id: 'open',
+            label: t.app.components.appSidebar.openActionTitle,
+            Icon: ExternalLink,
+            onClick: (entry) => {
+              const wsPath = getFileWsPath(entry.path);
+              if (!wsPath) {
+                return;
+              }
+              commandDispatcher.dispatch(
+                'command::ws:go-ws-path',
+                { wsPath },
+                'ui',
+              );
+            },
+          });
+
+          actions.push({
+            id: 'rename-file',
+            label: t.app.components.appSidebar.renameActionTitle,
+            Icon: Pencil,
+            onClick: (entry) => {
+              const wsPath = getFileWsPath(entry.path);
+              if (!wsPath) {
+                return;
+              }
+              commandDispatcher.dispatch(
+                'command::ui:rename-file-dialog',
+                { wsPath },
+                'ui',
+              );
+            },
+          });
+
+          actions.push({
+            id: 'delete-file',
+            label: t.app.components.appSidebar.deleteActionTitle,
+            Icon: Trash2,
+            variant: 'destructive' as const,
+            onClick: (entry) => {
+              const wsPath = getFileWsPath(entry.path);
+              if (!wsPath) {
+                return;
+              }
+              commandDispatcher.dispatch(
+                'command::ui:delete-file-dialog',
+                { wsPath },
+                'ui',
+              );
+            },
+          });
+
+          return actions;
+        }
+
         if (filePath?.isNote()) {
           actions.push({
             id: 'rename',

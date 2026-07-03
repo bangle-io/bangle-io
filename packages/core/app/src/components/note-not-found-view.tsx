@@ -29,7 +29,8 @@ export function NoteNotFoundView() {
       title={t.app.noteNotFoundView.title}
       description={
         <>
-          <p>{t.app.noteNotFoundView.description}</p>
+          {t.app.noteNotFoundView.description}
+          <br />
           <FunMissing />
         </>
       }

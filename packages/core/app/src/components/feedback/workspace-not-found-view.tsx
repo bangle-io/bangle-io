@@ -25,11 +25,10 @@ export function WorkspaceNotFoundView({ wsName }: { wsName?: string }) {
       title={t.app.workspaceNotFoundView.title}
       description={
         <>
-          <p>
-            {wsName
-              ? t.app.workspaceNotFoundView.description({ wsName })
-              : t.app.workspaceNotFoundView.genericDescription}
-          </p>
+          {wsName
+            ? t.app.workspaceNotFoundView.description({ wsName })
+            : t.app.workspaceNotFoundView.genericDescription}
+          <br />
           <FunMissing />
         </>
       }

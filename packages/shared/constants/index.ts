@@ -62,6 +62,12 @@ export const WORKSPACE_STORAGE_TYPE = {
 export type WorkspaceStorageType =
   (typeof WORKSPACE_STORAGE_TYPE)[keyof typeof WORKSPACE_STORAGE_TYPE];
 
+export const FILE_STORAGE_MAX_FILE_SIZE_BYTES = {
+  browser: 25 * 1024 * 1024,
+  memory: 25 * 1024 * 1024,
+  nativeFs: 250 * 1024 * 1024,
+} as const;
+
 // Add all service names here
 export const SERVICE_NAME = {
   browserErrorHandlerService: 'browser-error-handler',

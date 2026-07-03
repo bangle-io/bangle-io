@@ -32,11 +32,12 @@ import {
   setupWikiLink,
   type WikiLinkConfig,
 } from '@bangle.io/prosemirror-plugins';
-import { type StoredAsset, setupAssetFilePlugin } from './asset-file-plugin';
+import { setupAssetFilePlugin } from './asset-file-plugin';
 import {
   type AssetLinkPluginConfig,
   setupAssetLinkPlugin,
 } from './asset-link-plugin';
+import type { StoredMarkdownAsset } from './asset-storage';
 import { setupCodeHighlight } from './code-highlight';
 import { funPlaceholder } from './utils';
 
@@ -58,7 +59,7 @@ export function setupExtensions(
     storeFiles: (
       view: EditorView,
       files: readonly File[],
-    ) => Promise<StoredAsset[]>;
+    ) => Promise<StoredMarkdownAsset[]>;
   },
   assetLinkConfig?: AssetLinkPluginConfig,
 ) {

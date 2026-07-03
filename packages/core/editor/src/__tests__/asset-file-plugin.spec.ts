@@ -7,8 +7,10 @@ import {
   schema,
   TextSelection,
 } from '@bangle.io/prosemirror-plugins';
+import { WsFilePath } from '@bangle.io/ws-path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { type StoredAsset, setupAssetFilePlugin } from '../asset-file-plugin';
+import { setupAssetFilePlugin } from '../asset-file-plugin';
+import type { StoredMarkdownAsset } from '../asset-storage';
 
 function deferred<T>() {
   let resolve: (value: T) => void = () => {};
@@ -26,7 +28,7 @@ function createView({
   storeFiles: (
     view: EditorView,
     files: readonly File[],
-  ) => Promise<StoredAsset[]>;
+  ) => Promise<StoredMarkdownAsset[]>;
 }) {
   const pluginFactory = setupAssetFilePlugin({ storeFiles }).plugin
     ?.handleDropPasteFiles;
@@ -73,7 +75,7 @@ afterEach(() => {
 
 describe('setupAssetFilePlugin', () => {
   it('maps delayed asset insertion through edits made while storage is pending', async () => {
-    const stored = deferred<StoredAsset[]>();
+    const stored = deferred<StoredMarkdownAsset[]>();
     const storeFiles = vi.fn(() => stored.promise);
     const { view } = createView({ storeFiles });
 
@@ -90,6 +92,7 @@ describe('setupAssetFilePlugin', () => {
         file: new File(['%PDF-1.4\n'], 'Doc.pdf', {
           type: 'application/pdf',
         }),
+        wsPath: WsFilePath.fromString('workspace:notes/assets/doc.pdf'),
         href: 'assets/doc.pdf',
         label: 'Doc.pdf',
         isImage: false,
@@ -103,7 +106,7 @@ describe('setupAssetFilePlugin', () => {
   });
 
   it('does not dispatch delayed asset insertion after the view is destroyed', async () => {
-    const stored = deferred<StoredAsset[]>();
+    const stored = deferred<StoredMarkdownAsset[]>();
     const storeFiles = vi.fn(() => stored.promise);
     const { view } = createView({ storeFiles });
 
@@ -120,6 +123,7 @@ describe('setupAssetFilePlugin', () => {
         file: new File(['%PDF-1.4\n'], 'Doc.pdf', {
           type: 'application/pdf',
         }),
+        wsPath: WsFilePath.fromString('workspace:notes/assets/doc.pdf'),
         href: 'assets/doc.pdf',
         label: 'Doc.pdf',
         isImage: false,

@@ -164,6 +164,18 @@ describe('HashStrategy', () => {
       expect(result.payload).toEqual({ path: '/invalid-wsPath' });
     });
 
+    it('should reject non-note file paths for editor routes', () => {
+      const encoded: EncodedRoute = {
+        pathname: '/app',
+        search: '',
+        hash: '#route=editor&wsPath=test:assets/report.pdf',
+      };
+
+      const result = strategy.decodeRouteInfo(encoded, basePath);
+      expect(result.route).toBe('not-found');
+      expect(result.payload).toEqual({ path: '/invalid-wsPath' });
+    });
+
     it('should decode a fatal-error route', () => {
       const encoded: EncodedRoute = {
         pathname: '/app',
