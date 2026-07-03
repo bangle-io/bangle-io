@@ -1,9 +1,5 @@
 import { useCoreServices } from '@bangle.io/context';
-import {
-  $suggestions,
-  $suggestionUi,
-  Fragment,
-} from '@bangle.io/prosemirror-plugins';
+import { $suggestions, Fragment } from '@bangle.io/prosemirror-plugins';
 import {
   Command,
   CommandEmpty,
@@ -22,11 +18,12 @@ import {
   startOfWeek,
   subDays,
 } from 'date-fns';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 import React, {
   type ReactElement,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
 } from 'react';
 
@@ -35,6 +32,7 @@ import {
   FLOATING_INITIAL_STYLE,
   useFloatingPosition,
 } from './use-floating-position';
+import { useSuggestionUiHandler } from './use-suggestion-ui-handler';
 
 /**
  * SlashCommand displays a floating "slash" menu when the user is inside
@@ -46,7 +44,6 @@ export function SlashCommand({
   editorName: string;
 }): ReactElement | null {
   const suggestions = useAtomValue($suggestions);
-  const setSuggestionUi = useSetAtom($suggestionUi);
   const commandRef = useRef<HTMLDivElement>(null);
   const prevSelectedIndexRef = useRef<number>(0);
   const { pmEditorService } = useCoreServices();
@@ -75,45 +72,28 @@ export function SlashCommand({
     prevSelectedIndexRef.current = selectedIndex;
   }, [active?.selectedIndex]);
 
-  useEffect(() => {
-    if (!editorView || !active) {
-      return;
-    }
-
-    setSuggestionUi((existing) => {
-      const next = new Map(existing);
-      next.set(editorView, {
-        ...(next.get(editorView) ?? {}),
-        slash_command: {
-          onSelect: () => {
-            if (commandRef.current) {
-              const event = new KeyboardEvent('keydown', {
-                key: 'Enter',
-                cancelable: true,
-                bubbles: true,
-              });
-              commandRef.current.dispatchEvent(event);
-            }
-          },
-        },
-      });
-      return next;
-    });
-
-    return () => {
-      setSuggestionUi((existing) => {
-        const next = new Map(existing);
-        const handlers = { ...(next.get(editorView) ?? {}) };
-        delete handlers.slash_command;
-        if (Object.keys(handlers).length) {
-          next.set(editorView, handlers);
-        } else {
-          next.delete(editorView);
+  const slashCommandUiHandler = useMemo(
+    () => ({
+      onSelect: () => {
+        if (commandRef.current) {
+          const event = new KeyboardEvent('keydown', {
+            key: 'Enter',
+            cancelable: true,
+            bubbles: true,
+          });
+          commandRef.current.dispatchEvent(event);
         }
-        return next;
-      });
-    };
-  }, [active, editorView, setSuggestionUi]);
+      },
+    }),
+    [],
+  );
+
+  useSuggestionUiHandler({
+    active: Boolean(active),
+    editorView,
+    handler: slashCommandUiHandler,
+    markName: 'slash_command',
+  });
 
   const slashRef = useFloatingPosition({
     show: Boolean(active?.show),

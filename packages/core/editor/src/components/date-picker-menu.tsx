@@ -1,12 +1,13 @@
 import { useCoreServices } from '@bangle.io/context';
-import { $suggestions, $suggestionUi } from '@bangle.io/prosemirror-plugins';
+import { $suggestions } from '@bangle.io/prosemirror-plugins';
 import { Calendar, CommandHints } from '@bangle.io/ui-components';
 import { format } from 'date-fns';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 import React, {
   type ReactElement,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -16,6 +17,7 @@ import {
   FLOATING_INITIAL_STYLE,
   useFloatingPosition,
 } from './use-floating-position';
+import { useSuggestionUiHandler } from './use-suggestion-ui-handler';
 
 // Bound the calendar's month/year dropdowns to a generous window around the
 // current year so far-off dates remain reachable without endless clicking.
@@ -33,7 +35,6 @@ export function DatePickerMenu({
   editorName: string;
 }): ReactElement | null {
   const suggestions = useAtomValue($suggestions);
-  const setSuggestionUi = useSetAtom($suggestionUi);
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const selectedDateRef = useRef(selectedDate);
   selectedDateRef.current = selectedDate;
@@ -73,39 +74,22 @@ export function DatePickerMenu({
     }
   }, [active?.show]);
 
-  useEffect(() => {
-    if (!editorView || !active) {
-      return;
-    }
+  const dateSuggestionUiHandler = useMemo(
+    () => ({
+      // Enter while the editor still has focus commits the highlighted day;
+      // once focus is inside the calendar react-day-picker handles Enter/arrow
+      // navigation itself.
+      onSelect: () => insertDate(selectedDateRef.current),
+    }),
+    [insertDate],
+  );
 
-    setSuggestionUi((existing) => {
-      const next = new Map(existing);
-      next.set(editorView, {
-        ...(next.get(editorView) ?? {}),
-        [DATE_SUGGESTION.markName]: {
-          // Enter while the editor still has focus commits the highlighted
-          // day; once focus is inside the calendar react-day-picker handles
-          // Enter/arrow navigation itself.
-          onSelect: () => insertDate(selectedDateRef.current),
-        },
-      });
-      return next;
-    });
-
-    return () => {
-      setSuggestionUi((existing) => {
-        const next = new Map(existing);
-        const handlers = { ...(next.get(editorView) ?? {}) };
-        delete handlers[DATE_SUGGESTION.markName];
-        if (Object.keys(handlers).length) {
-          next.set(editorView, handlers);
-        } else {
-          next.delete(editorView);
-        }
-        return next;
-      });
-    };
-  }, [active, editorView, insertDate, setSuggestionUi]);
+  useSuggestionUiHandler({
+    active: Boolean(active),
+    editorView,
+    handler: dateSuggestionUiHandler,
+    markName: DATE_SUGGESTION.markName,
+  });
 
   const floatingRef = useFloatingPosition({
     show: Boolean(active?.show),
