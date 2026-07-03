@@ -30,7 +30,11 @@ Head to <https://bangle.io> to use the app.
 
 - `pnpm install` to install
 
-- `pnpm start` to start a development instance on `localhost:4000`
+- `pnpm start` to start a development instance on `localhost:5173`
+
+For parallel worktrees, run `eval "$(node scripts/dev-ports.js --env)"` first
+to give dev, preview, Storybook, and Playwright servers deterministic ports for
+that worktree.
 
 Please read [Contributing.md](./CONTRIBUTING.md) for more details.
 

@@ -31,7 +31,7 @@
   "scripts": {
     "build-chromatic": "pnpm chromatic --project-token $CHROMATIC_PROJECT_TOKEN",
     "build-storybook": "storybook build",
-    "storybook": "storybook dev -p 6006",
+    "storybook": "storybook dev --port ${BANGLE_STORYBOOK_PORT:-6006}",
     "test-storybook": "test-storybook"
   },
   "dependencies": {
