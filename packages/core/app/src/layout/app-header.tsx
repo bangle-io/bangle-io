@@ -23,7 +23,7 @@ export interface AppHeaderProps {
 /** The main application header container, holding the toolbar content and optional children. */
 export function AppHeader({ children }: AppHeaderProps) {
   const coreServices = useCoreServices();
-  const wsPaths = useAtomValue(coreServices.workspaceState.$wsPaths);
+  const wsPaths = useAtomValue(coreServices.workspaceState.$noteWsPaths);
   const currentWsPath = useAtomValue(
     coreServices.workspaceState.$currentWsPath,
   );

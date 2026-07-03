@@ -157,7 +157,7 @@ export class PmEditorService extends BaseService {
       }),
     );
     this.addCleanup(
-      this.store.sub(this.dependencies.workspaceState.$wsPaths, () => {
+      this.store.sub(this.dependencies.workspaceState.$noteWsPaths, () => {
         for (const editor of this.editors.values()) {
           if ('editorView' in editor) {
             editor.editorView.dispatch(
@@ -537,7 +537,9 @@ export class PmEditorService extends BaseService {
     if (currentIndex?.wsName === wsName) {
       return currentIndex;
     }
-    const wsPaths = this.store.get(this.dependencies.workspaceState.$wsPaths);
+    const wsPaths = this.store.get(
+      this.dependencies.workspaceState.$noteWsPaths,
+    );
     return createWikiLinkIndex(wsPaths, wsName);
   }
 

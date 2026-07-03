@@ -114,15 +114,21 @@ export class WorkspaceStateService extends BaseService {
       .filter((path) => path !== undefined);
   });
 
+  $noteWsPaths = atom<WsFilePath[]>((get) => {
+    return get(this.$wsPaths).filter((path) => path.isMarkdown());
+  });
+
   $wikiLinkIndex = atom<WikiLinkIndex | undefined>((get) => {
     const wsName = get(this.$currentWsName);
-    return wsName ? createWikiLinkIndex(get(this.$wsPaths), wsName) : undefined;
+    return wsName
+      ? createWikiLinkIndex(get(this.$noteWsPaths), wsName)
+      : undefined;
   });
 
   private $backlinkIndexAsync = atom<Promise<BacklinkIndexState>>(
     async (get, { signal }) => {
       const wsName = get(this.$currentWsName);
-      const wsPaths = get(this.$wsPaths);
+      const wsPaths = get(this.$noteWsPaths);
       get(this.fileSystem.$fileContentUpdateCount);
 
       if (!wsName) {
@@ -160,7 +166,12 @@ export class WorkspaceStateService extends BaseService {
   );
 
   $activeWsPaths = atom<WsFilePath[]>((get) => {
-    const wsPath = get(this.navigation.$wsFilePath);
+    const routeInfo = get(this.navigation.$routeInfo);
+    if (routeInfo.route !== 'editor' && routeInfo.route !== 'asset') {
+      return EMPTY_FILE_PATH_ARRAY;
+    }
+
+    const wsPath = WsPath.safeParseFile(routeInfo.payload.wsPath).data;
     return wsPath ? [wsPath] : EMPTY_FILE_PATH_ARRAY;
   });
 
@@ -189,6 +200,7 @@ export class WorkspaceStateService extends BaseService {
     return {
       workspaces: this.store.get(this.$workspaces),
       wsPaths: this.store.get(this.$wsPaths),
+      noteWsPaths: this.store.get(this.$noteWsPaths),
       currentWsName: this.store.get(this.$currentWsName),
       currentWsPath: this.store.get(this.$currentWsPath),
     };
@@ -221,7 +233,7 @@ export class WorkspaceStateService extends BaseService {
             return;
           }
           void wrapPromiseInAppErrorHandler(
-            this.fileSystem.listFiles(wsName, abortController.signal),
+            this.fileSystem.listWorkspaceFiles(wsName, abortController.signal),
             EMPTY_STRING_ARRAY,
             this.emitAppError,
           ).then((paths) => {
@@ -291,12 +303,11 @@ export class WorkspaceStateService extends BaseService {
 
   private getSupportedFilePath(wsPath: string): WsFilePath | undefined {
     const filePath = WsPath.safeParse(wsPath).data?.asFile();
-    const extension = filePath?.extension;
-    if (!filePath || !extension) {
+    if (!filePath) {
       return undefined;
     }
 
-    return this.fileSystem.isFileTypeSupported({ extension })
+    return this.fileSystem.isWorkspaceFileVisible(filePath.wsPath)
       ? filePath
       : undefined;
   }

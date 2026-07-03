@@ -144,10 +144,28 @@ export class NavigationService extends BaseService {
   }
 
   public goWsPath(wsPath: string) {
-    this.go({
-      route: 'editor',
-      payload: { wsPath },
-    });
+    this.go(this.routeInfoForWsFile(wsPath));
+  }
+
+  public routeInfoForWsFile(wsPath: string): AppRouteInfo {
+    const filePath = WsPath.assertFile(wsPath);
+    return filePath.isMarkdown()
+      ? {
+          route: 'editor',
+          payload: { wsPath: filePath.wsPath },
+        }
+      : {
+          route: 'asset',
+          payload: { wsPath: filePath.wsPath },
+        };
+  }
+
+  public toWsFileUri(wsPath: string): string {
+    return this.toUri(this.routeInfoForWsFile(wsPath));
+  }
+
+  public goWsFile(wsPath: string) {
+    this.go(this.routeInfoForWsFile(wsPath));
   }
 
   public goWorkspace(

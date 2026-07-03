@@ -127,8 +127,9 @@ export const AppSidebar = ({ children }: SidebarProps) => {
         }
 
         const wsPath = getFileWsPath(entry.path);
+        const filePath = wsPath ? WsPath.safeParseFile(wsPath).data : undefined;
 
-        if (wsPath) {
+        if (filePath?.isNote()) {
           actions.push({
             id: 'rename',
             label: t.app.components.appSidebar.renameActionTitle,
@@ -213,12 +214,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
           title: wsPath.fileName || '',
           wsPath: wsPath.wsPath,
         }))}
-        wsPathToHref={(wsPath) =>
-          navigation.toUri({
-            route: 'editor',
-            payload: { wsPath },
-          })
-        }
+        wsPathToHref={(wsPath) => navigation.toWsFileUri(wsPath)}
         wsNameToHref={(wsName) =>
           navigation.toUri({
             route: 'ws-home',

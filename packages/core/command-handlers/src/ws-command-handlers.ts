@@ -89,7 +89,7 @@ export const wsCommandHandlers = [
     navigation.goWorkspace(wsName);
   }),
   c('command::ws:go-ws-path', ({ navigation }, { wsPath }) => {
-    navigation.goWsPath(wsPath);
+    navigation.goWsFile(wsPath);
   }),
 
   c(
@@ -219,7 +219,7 @@ export const wsCommandHandlers = [
 
   c('command::ws:quick-new-note', ({ workspaceState }, { pathPrefix }, key) => {
     const { store, dispatch } = getCtx(key);
-    const wsPaths = store.get(workspaceState.$wsPaths) || [];
+    const wsPaths = store.get(workspaceState.$noteWsPaths) || [];
 
     const untitledNotes = wsPaths
       .map((path) => path.fileNameWithoutExtension)
@@ -404,7 +404,7 @@ export const wsCommandHandlers = [
       const base = match ? match[1] : origName;
 
       // Get all sibling notes in the same directory
-      const wsNotes = store.get(workspaceState.$wsPaths);
+      const wsNotes = store.get(workspaceState.$noteWsPaths);
       const siblingNames = new Set<string>();
       for (const note of wsNotes) {
         const noteParsed = WsPath.fromString(note.wsPath);

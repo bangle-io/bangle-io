@@ -153,7 +153,7 @@ export function PageWsHome() {
 /** A hook that groups workspace notes into 'recently viewed', 'last 7 days', and 'all', based on user activity. */
 function useGroupedWorkspaceNotes() {
   const coreServices = useCoreServices();
-  const allWsPaths = useAtomValue(coreServices.workspaceState.$wsPaths);
+  const allWsPaths = useAtomValue(coreServices.workspaceState.$noteWsPaths);
   const recentWsPaths = useAtomValue(
     coreServices.userActivityService.$recentWsPaths,
   );

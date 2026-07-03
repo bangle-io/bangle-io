@@ -16,7 +16,7 @@ import type {
   ScopedEmitter,
   WorkspaceInfo,
 } from '@bangle.io/types';
-import { WsPath } from '@bangle.io/ws-path';
+import { isVisibleWorkspaceFilePath, WsPath } from '@bangle.io/ws-path';
 import { atom } from 'jotai';
 import type { WorkspaceOpsService } from './workspace-ops-service';
 
@@ -146,13 +146,35 @@ export class FileSystemService extends BaseService {
     );
   }
 
-  public isFileTypeSupported({ extension }: { extension: string }) {
-    return WsPath.VALID_NOTE_EXTENSIONS_SET.has(extension);
+  public isWorkspaceFileVisible(wsPath: string) {
+    return isVisibleWorkspaceFilePath(wsPath);
+  }
+
+  public async listWorkspaceFiles(
+    wsName: string,
+    abortSignal: AbortSignal = new AbortController().signal,
+  ): Promise<string[]> {
+    return this.listFilesWithFilter(wsName, abortSignal, (filePath) =>
+      this.isWorkspaceFileVisible(filePath.wsPath),
+    );
   }
 
   public async listFiles(
     wsName: string,
     abortSignal: AbortSignal = new AbortController().signal,
+  ): Promise<string[]> {
+    return this.listFilesWithFilter(
+      wsName,
+      abortSignal,
+      (filePath) =>
+        filePath.isNote() && this.isWorkspaceFileVisible(filePath.wsPath),
+    );
+  }
+
+  private async listFilesWithFilter(
+    wsName: string,
+    abortSignal: AbortSignal,
+    predicate: (filePath: ReturnType<typeof WsPath.assertFile>) => boolean,
   ): Promise<string[]> {
     await this.mountPromise;
     // A dummy path is used to identify the correct storage service for this workspace.
@@ -178,10 +200,7 @@ export class FileSystemService extends BaseService {
         );
         return false;
       }
-      const extension = filePath.extension;
-      const isSupported = extension
-        ? this.isFileTypeSupported({ extension })
-        : false;
+      const isSupported = predicate(filePath);
 
       if (!isSupported) {
         this.logger.warn(

@@ -5,6 +5,7 @@ import {
   getEditorLocator,
   getEditorText,
   readStoredMarkdown,
+  writeStoredFile,
   writeStoredMarkdown,
 } from './common';
 
@@ -484,6 +485,102 @@ test('file explorer keeps folders expanded when a note is moved', async ({
       explorer.getByRole('treeitem', { name: /deep\.md/ }),
     ).toBeVisible();
   });
+});
+
+test('file explorer shows common workspace files and opens non-notes as assets', async ({
+  page,
+}) => {
+  const workspaceName = `explorer-files-${Date.now()}`;
+  await createBrowserWorkspace(page, { workspaceName });
+
+  await writeStoredMarkdown(page, workspaceName, 'notes/visible', 'Visible');
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'src/component.tsx',
+    'export function Component() { return null; }',
+    'text/typescript',
+  );
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'assets/report.pdf',
+    '%PDF-1.4',
+    'application/pdf',
+  );
+  await writeStoredFile(
+    page,
+    workspaceName,
+    '.hidden.md',
+    'Hidden dotfile',
+    'text/markdown',
+  );
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'node_modules/pkg/index.ts',
+    'export const ignored = true;',
+    'text/typescript',
+  );
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'dist/bundle.js',
+    'console.log("ignored");',
+    'text/javascript',
+  );
+
+  await page.goto(
+    `/ws#route=ws-home&wsName=${encodeURIComponent(workspaceName)}`,
+  );
+  await page.reload();
+
+  const explorer = page.getByTestId('bangle-file-explorer');
+  await expect(explorer).toBeVisible();
+
+  await expect(
+    explorer.getByRole('treeitem', { name: /^notes$/ }),
+  ).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /visible\.md/ }),
+  ).toBeVisible();
+  await expect(explorer.getByRole('treeitem', { name: /^src$/ })).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /component\.tsx/ }),
+  ).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /^assets$/ }),
+  ).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /report\.pdf/ }),
+  ).toBeVisible();
+
+  await expect(
+    explorer.getByRole('treeitem', { name: /\.hidden\.md/ }),
+  ).toHaveCount(0);
+  await expect(
+    explorer.getByRole('treeitem', { name: /^node_modules$/ }),
+  ).toHaveCount(0);
+  await expect(explorer.getByRole('treeitem', { name: /^dist$/ })).toHaveCount(
+    0,
+  );
+
+  await explorer.getByRole('treeitem', { name: /report\.pdf/ }).click();
+  await expect(page).toHaveURL(
+    `/ws#route=asset&wsPath=${encodeURIComponent(
+      `${workspaceName}:assets/report.pdf`,
+    )}`,
+  );
+  await expect(page.getByRole('heading', { name: 'report.pdf' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Download' })).toBeVisible();
+
+  await explorer.getByRole('treeitem', { name: /visible\.md/ }).click();
+  await expect(page).toHaveURL(
+    `/ws#route=editor&wsPath=${encodeURIComponent(
+      `${workspaceName}:notes/visible.md`,
+    )}`,
+  );
+  await expect.poll(() => getEditorText(page, {})).toBe('Visible');
 });
 
 test('moving the open note does not flash the workspace-home screen', async ({

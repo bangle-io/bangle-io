@@ -154,6 +154,43 @@ describe('FileSystemService', () => {
     expect(readRevision()).toBeGreaterThan(afterDeleteRevision);
   });
 
+  it('lists note files separately from sidebar-visible workspace files', async () => {
+    const { fileSystem } = await setupFileSystemTest({ controller });
+
+    await fileSystem.createTextFile(
+      `${TEST_WS_NAME}:src/component.tsx`,
+      'export function Component() { return null; }',
+    );
+    await fileSystem.createFile(
+      `${TEST_WS_NAME}:assets/report.pdf`,
+      new File(['pdf'], 'report.pdf', { type: 'application/pdf' }),
+    );
+    await fileSystem.createTextFile(
+      `${TEST_WS_NAME}:node_modules/pkg/index.ts`,
+      'export const ignored = true;',
+    );
+    await fileSystem.createTextFile(
+      `${TEST_WS_NAME}:.hidden.md`,
+      'hidden note',
+    );
+    await fileSystem.createFile(
+      `${TEST_WS_NAME}:assets/archive.bin`,
+      new File(['binary'], 'archive.bin', {
+        type: 'application/octet-stream',
+      }),
+    );
+
+    await expect(fileSystem.listFiles(TEST_WS_NAME)).resolves.toEqual([
+      EXISTING_FILE,
+    ]);
+    await expect(fileSystem.listWorkspaceFiles(TEST_WS_NAME)).resolves.toEqual([
+      `${TEST_WS_NAME}:assets/archive.bin`,
+      `${TEST_WS_NAME}:assets/report.pdf`,
+      EXISTING_FILE,
+      `${TEST_WS_NAME}:src/component.tsx`,
+    ]);
+  });
+
   it('rolls back completed batch renames when a later rename fails', async () => {
     const { fileSystem, storage } = await setupFileSystemTest({ controller });
     const first = `${TEST_WS_NAME}:old/one.md`;

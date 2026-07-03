@@ -95,7 +95,7 @@ export class UserActivityService extends BaseService {
     async (get): Promise<string[]> => {
       await this.mountPromise;
       const wsName = get(this.workspaceState.$currentWsName);
-      const wsPaths = get(this.workspaceState.$wsPaths);
+      const wsPaths = get(this.workspaceState.$noteWsPaths);
       const wsPathsSet = new Set(wsPaths.map((path) => path.wsPath));
 
       if (!wsName) {
@@ -142,7 +142,7 @@ export class UserActivityService extends BaseService {
     async (get): Promise<string[]> => {
       await this.mountPromise;
       get(this.$starredItemsChangeCounter);
-      const wsPaths = get(this.workspaceState.$wsPaths);
+      const wsPaths = get(this.workspaceState.$noteWsPaths);
       const wsName = get(this.workspaceState.$currentWsName);
       if (wsPaths.length === 0 || !wsName) {
         return [];
@@ -410,7 +410,7 @@ class StarredItemManager {
     wsName: string,
     updateFn: (currentItems: string[]) => string[],
   ): Promise<void> {
-    const { currentWsName, wsPaths } = this.workspaceState.resolveAtoms();
+    const { currentWsName, noteWsPaths } = this.workspaceState.resolveAtoms();
     if (currentWsName !== wsName) {
       this.logger.warn(
         `Current workspace ${currentWsName} does not match requested workspace ${wsName}.`,
@@ -419,7 +419,7 @@ class StarredItemManager {
     }
 
     await this.workspaceOps.updateWorkspaceMetadata(wsName, (metadata) => {
-      const wsPathsSet = new Set(wsPaths.map((path) => path.wsPath));
+      const wsPathsSet = new Set(noteWsPaths.map((path) => path.wsPath));
       let existingRawStarredItems = metadata[STARRED_ITEMS_KEY] ?? [];
       if (!Array.isArray(existingRawStarredItems)) {
         this.logger.error(
@@ -466,8 +466,8 @@ class StarredItemManager {
       return [];
     }
 
-    const { wsPaths } = this.workspaceState.resolveAtoms();
-    const existingWsPaths = new Set(wsPaths.map((p) => p.wsPath));
+    const { noteWsPaths } = this.workspaceState.resolveAtoms();
+    const existingWsPaths = new Set(noteWsPaths.map((p) => p.wsPath));
     const validStarredPaths: string[] = rawStarredItems.filter((item) =>
       existingWsPaths.has(item),
     );
