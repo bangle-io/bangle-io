@@ -1,6 +1,5 @@
 import type { Logger } from '@bangle.io/logger';
 import {
-  defaultCalculateNodeOffset,
   type LinkConfig,
   setupActiveNode,
   setupBase,
@@ -57,19 +56,6 @@ export function setupExtensions(
       pluginOptions: {
         notDraggableClassName: 'prosemirror-flat-list',
         excludedTags: ['blockquote'],
-        calculateNodeOffset: (args) => {
-          const rect = defaultCalculateNodeOffset(args);
-          // Headings host the fold toggle in the gutter slot beside the
-          // first line; stack the drag handle directly beneath it (flush,
-          // no gap — a gap would let the hover tracking lose the heading on
-          // the way down) instead of pushing it further left, where it can
-          // fall off narrow screens.
-          if (args.node.matches('h1, h2, h3, h4, h5, h6')) {
-            rect.top += 22;
-            rect.left -= 2;
-          }
-          return rect;
-        },
       },
     }),
     dropGapCursor: setupDropGapCursor({

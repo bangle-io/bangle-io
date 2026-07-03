@@ -460,14 +460,16 @@ function buildPluginState(
     }
 
     const isFolded = foldedSet.has(pos);
+    // The toggle renders inline at the end of the heading text, keeping the
+    // left gutter free for the block drag handle.
     decorations.push(
       Decoration.widget(
-        pos + 1,
+        pos + node.nodeSize - 1,
         (view: EditorView) =>
           createToggleWidget(view, pos, isFolded, config, toggleAtPos),
         {
           key: `collapsible-heading:${pos}:${isFolded}`,
-          side: -1,
+          side: 1,
           ignoreSelection: true,
         },
       ),
