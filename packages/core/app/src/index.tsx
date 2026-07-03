@@ -20,6 +20,7 @@ import { ErrorBoundary } from './components/feedback/error-boundary';
 import { AppDialogs } from './dialogs/app-dialogs';
 import { AppSidebar } from './layout/app-sidebar';
 import {
+  PageAsset,
   PageEditor,
   PageFatalError,
   PageNativeFsAuthFailed,
@@ -92,6 +93,8 @@ function AppRoutes() {
   switch (route) {
     case 'editor':
       return <PageEditor />;
+    case 'asset':
+      return <PageAsset />;
     case 'ws-home':
       return <PageWsHome />;
     case 'welcome':

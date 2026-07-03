@@ -2,6 +2,7 @@ import type { ThemeConfig } from '@bangle.io/color-scheme-manager';
 
 export type ColorScheme = 'light' | 'dark';
 export type ThemePreference = ThemeConfig['defaultPreference'];
+export type AssetLocationPreference = 'assets-folder' | 'adjacent';
 
 export type { WorkspaceStorageType } from '@bangle.io/constants';
 export type * from '@bangle.io/mini-js-utils';

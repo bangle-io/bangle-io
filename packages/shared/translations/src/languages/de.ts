@@ -121,6 +121,11 @@ export const t = {
         themeDescription: 'Wählen Sie, wie Bangle auf diesem Gerät aussieht.',
         themeLabel: 'Theme-Einstellung',
         editorSection: 'Editor',
+        assetLocationTitle: 'Asset-Speicherort',
+        assetLocationDescription:
+          'Waehle, wo eingefuegte und abgelegte Dateien neben Notizen gespeichert werden.',
+        assetsFolder: 'Assets-Ordner',
+        adjacentToNote: 'Neben der Notiz',
         wideEditorTitle: 'Editorbreite',
         wideEditorDescription:
           'Verfügbare Fensterbreite zum Bearbeiten von Notizen nutzen.',
@@ -152,6 +157,11 @@ export const t = {
         general: 'Allgemein',
         workspaces: 'Arbeitsbereiche',
       },
+    },
+    pageAsset: {
+      downloadButton: 'Download',
+      loading: 'Asset wird geladen...',
+      unavailable: 'Dieses Asset kann nicht geladen werden.',
     },
     dialogs: {
       changeTheme: {

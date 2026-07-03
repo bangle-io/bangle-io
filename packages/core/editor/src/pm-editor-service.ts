@@ -10,17 +10,24 @@ import { TextSelection } from '@bangle.io/prosemirror-plugins';
 import type {
   FileSystemService,
   NavigationService,
+  WorkbenchStateService,
   WorkspaceStateService,
 } from '@bangle.io/service-core';
 import type { Store } from '@bangle.io/types';
 import {
   createMissingWikiLinkTarget,
   createWikiLinkIndex,
+  resolveLocalMarkdownAsset,
   resolveWikiLinkTarget,
   type WikiLinkIndex,
   WsPath,
 } from '@bangle.io/ws-path';
 
+import {
+  displayNameForAsset,
+  isImageFile,
+  writeAssetFile,
+} from './asset-storage';
 import {
   createEditorSaveQueueStore,
   EditorSaveQueue,
@@ -33,6 +40,7 @@ import {
   normalizeStoredMarkdownLinkTarget,
   resolveInternalLink,
 } from './link-target';
+import { createLocalImageNodeView } from './local-image-node-view';
 import { createEditor } from './pm-setup';
 
 const editorSaveQueueStore = createEditorSaveQueueStore();
@@ -41,7 +49,12 @@ const editorSaveQueueStore = createEditorSaveQueueStore();
  * Manages ProseMirror editor instances and state
  */
 export class PmEditorService extends BaseService {
-  static deps = ['fileSystem', 'navigation', 'workspaceState'] as const;
+  static deps = [
+    'fileSystem',
+    'navigation',
+    'workbenchState',
+    'workspaceState',
+  ] as const;
 
   public readonly extensions: ReturnType<typeof setupExtensions>;
 
@@ -64,6 +77,7 @@ export class PmEditorService extends BaseService {
     private dependencies: {
       fileSystem: FileSystemService;
       navigation: NavigationService;
+      workbenchState: WorkbenchStateService;
       workspaceState: WorkspaceStateService;
     },
   ) {
@@ -94,6 +108,12 @@ export class PmEditorService extends BaseService {
         },
         unresolvedAriaLabel: ({ displayText }) =>
           t.app.editor.wikiLink.unresolvedLabel({ label: displayText }),
+      },
+      {
+        storeFiles: (view, files) => this.storeAssetFiles(view, files),
+      },
+      {
+        openAssetLink: (view, href) => this.openAssetLink(view, href),
       },
     );
     this.saveQueue = new EditorSaveQueue(
@@ -205,6 +225,12 @@ export class PmEditorService extends BaseService {
           this.saveQueue.enqueue(wsPath, doc);
         },
         extensions: this.extensions,
+        nodeViews: {
+          image: createLocalImageNodeView({
+            currentWsPath: wsPath,
+            fileSystem: this.dependencies.fileSystem,
+          }),
+        },
       });
 
       this.editors.set(domNode, { name, editorView, wsPath });
@@ -327,6 +353,55 @@ export class PmEditorService extends BaseService {
     return undefined;
   }
 
+  private async storeAssetFiles(
+    editorView: ReturnType<typeof createEditor>,
+    files: readonly File[],
+  ) {
+    const editor = [...this.editors.values()].find(
+      (entry) => 'editorView' in entry && entry.editorView === editorView,
+    );
+    if (!editor || !('editorView' in editor)) {
+      return [];
+    }
+
+    const preference = this.store.get(
+      this.dependencies.workbenchState.$assetLocationPreference,
+    );
+    const stored = [];
+    for (const file of files) {
+      try {
+        const result = await writeAssetFile({
+          currentWsPath: editor.wsPath,
+          file,
+          preference,
+          fileSystem: this.dependencies.fileSystem,
+        });
+        if (result) {
+          stored.push({
+            file,
+            href: result.href,
+            label: displayNameForAsset(file),
+            isImage: isImageFile(file),
+          });
+        }
+      } catch (cause) {
+        const error = cause instanceof Error ? cause : new Error(String(cause));
+        this.logger.error('Unable to store pasted asset', error);
+        this.emitAppError(
+          createAppError(
+            'error::editor:asset-write-failed',
+            'Unable to store asset',
+            {
+              error,
+              wsPath: editor.wsPath,
+            },
+          ),
+        );
+      }
+    }
+    return stored;
+  }
+
   /** Opens a web link externally or routes a relative Markdown link in-app. */
   openLink(editorView: ReturnType<typeof createEditor>, href: string): void {
     const editor = [...this.editors.values()].find(
@@ -353,9 +428,45 @@ export class PmEditorService extends BaseService {
       return;
     }
 
+    if (this.openAssetLink(editorView, href, { includeMarkdown: true })) {
+      return;
+    }
+
     if (target?.kind === 'external') {
       window.open(target.href, '_blank', 'noopener,noreferrer');
     }
+  }
+
+  private openAssetLink(
+    editorView: ReturnType<typeof createEditor>,
+    href: string,
+    options: { includeMarkdown?: boolean } = {},
+  ): boolean {
+    const editor = [...this.editors.values()].find(
+      (entry) => 'editorView' in entry && entry.editorView === editorView,
+    );
+    if (!editor || !('editorView' in editor)) {
+      return false;
+    }
+
+    const assetWsPath = resolveLocalMarkdownAsset(editor.wsPath, href);
+    if (!assetWsPath) {
+      return false;
+    }
+
+    if (assetWsPath.isMarkdown()) {
+      if (!options.includeMarkdown) {
+        return false;
+      }
+      this.dependencies.navigation.goWsPath(assetWsPath.wsPath);
+      return true;
+    }
+
+    this.dependencies.navigation.go({
+      route: 'asset',
+      payload: { wsPath: assetWsPath.wsPath },
+    });
+    return true;
   }
 
   /** Opens an existing wiki target, or creates a safe missing Markdown target. */

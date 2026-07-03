@@ -137,6 +137,13 @@ export type AppError =
         wsPath: string;
       };
     }
+  | {
+      name: `error::editor:asset-write-failed`;
+      payload: {
+        error: Error;
+        wsPath: string;
+      };
+    }
 
   // WS Path errors
   | {

@@ -13,6 +13,7 @@ export {
   type MarkdownNodeConfig,
   resolve,
   setGlobalConfig,
+  setPriority,
 } from './common';
 export * from './drag';
 export * from './drop-gap-cursor';

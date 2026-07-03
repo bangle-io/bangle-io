@@ -4,7 +4,11 @@ import {
   type SettingsPageId,
 } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
-import type { AppRouteInfo, ThemePreference } from '@bangle.io/types';
+import type {
+  AppRouteInfo,
+  AssetLocationPreference,
+  ThemePreference,
+} from '@bangle.io/types';
 import {
   Button,
   cn,
@@ -47,6 +51,25 @@ const THEME_OPTIONS: Array<{ value: ThemePreference; label: string }> = [
   { value: 'dark', label: t.app.dialogs.changeTheme.options.dark },
 ];
 
+const ASSET_LOCATION_VALUES = [
+  'assets-folder',
+  'adjacent',
+] as const satisfies readonly AssetLocationPreference[];
+
+const ASSET_LOCATION_OPTIONS: Array<{
+  value: AssetLocationPreference;
+  label: string;
+}> = [
+  {
+    value: 'assets-folder',
+    label: t.app.settings.general.assetsFolder,
+  },
+  {
+    value: 'adjacent',
+    label: t.app.settings.general.adjacentToNote,
+  },
+];
+
 // Presentation for each settings page. Keyed by SettingsPageId so adding a page
 // to SETTINGS_PAGE_DEFINITIONS (in @bangle.io/constants) forces a matching entry
 // here at compile time.
@@ -68,6 +91,12 @@ const SETTINGS_PAGE_META: Record<
 
 function isThemePreference(value: string): value is ThemePreference {
   return THEME_VALUES.some((theme) => theme === value);
+}
+
+function isAssetLocationPreference(
+  value: string,
+): value is AssetLocationPreference {
+  return ASSET_LOCATION_VALUES.some((preference) => preference === value);
 }
 
 function getSettingsReturnTo(routeInfo: AppRouteInfo) {
@@ -102,6 +131,9 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
   const themePref = useAtomValue(workbenchState.$themePref);
   const [wideEditor, setWideEditor] = useAtom(workbenchState.$wideEditor);
   const pwaInstall = usePwaInstallPrompt();
+  const [assetLocationPreference, setAssetLocationPreference] = useAtom(
+    workbenchState.$assetLocationPreference,
+  );
   const returnTo = safeAppHref(getSettingsReturnTo(routeInfo));
 
   const backHref =
@@ -190,6 +222,18 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
                 >
                   <SettingsPage.SettingsRow
                     control={
+                      <AssetLocationSelect
+                        onValueChange={setAssetLocationPreference}
+                        value={assetLocationPreference}
+                      />
+                    }
+                    description={
+                      t.app.settings.general.assetLocationDescription
+                    }
+                    title={t.app.settings.general.assetLocationTitle}
+                  />
+                  <SettingsPage.SettingsRow
+                    control={
                       <SegmentedControl
                         aria-label={t.app.settings.general.wideEditorToggle}
                         onValueChange={(value) => {
@@ -243,6 +287,39 @@ function usePwaInstallPrompt() {
     ...snapshot,
     install: promptPwaInstall,
   };
+}
+
+function AssetLocationSelect({
+  value,
+  onValueChange,
+}: {
+  value: AssetLocationPreference;
+  onValueChange: (value: AssetLocationPreference) => void;
+}) {
+  return (
+    <Select
+      onValueChange={(nextValue) => {
+        if (isAssetLocationPreference(nextValue)) {
+          onValueChange(nextValue);
+        }
+      }}
+      value={value}
+    >
+      <SelectTrigger
+        aria-label={t.app.settings.general.assetLocationTitle}
+        className="w-full sm:w-48"
+      >
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent align="end" className="min-w-44">
+        {ASSET_LOCATION_OPTIONS.map((option) => (
+          <SelectItem key={option.value} value={option.value}>
+            {option.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
 }
 
 function ThemePreferenceSelect({

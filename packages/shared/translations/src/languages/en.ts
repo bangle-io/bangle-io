@@ -142,6 +142,11 @@ export const t = {
         themeDescription: 'Choose how Bangle looks on this device.',
         themeLabel: 'Theme preference',
         editorSection: 'Editor',
+        assetLocationTitle: 'Asset location',
+        assetLocationDescription:
+          'Choose where pasted and dropped files are stored beside notes.',
+        assetsFolder: 'Assets folder',
+        adjacentToNote: 'Adjacent to note',
         wideEditorTitle: 'Editor width',
         wideEditorDescription:
           'Use the available window width for note editing.',
@@ -172,6 +177,11 @@ export const t = {
         general: 'General',
         workspaces: 'Workspaces',
       },
+    },
+    pageAsset: {
+      downloadButton: 'Download',
+      loading: 'Loading asset...',
+      unavailable: 'Unable to load this asset.',
     },
     dialogs: {
       changeTheme: {

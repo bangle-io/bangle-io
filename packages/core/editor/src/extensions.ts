@@ -1,5 +1,6 @@
 import type { Logger } from '@bangle.io/logger';
 import {
+  type EditorView,
   type LinkConfig,
   setupActiveNode,
   setupBase,
@@ -31,6 +32,11 @@ import {
   setupWikiLink,
   type WikiLinkConfig,
 } from '@bangle.io/prosemirror-plugins';
+import { type StoredAsset, setupAssetFilePlugin } from './asset-file-plugin';
+import {
+  type AssetLinkPluginConfig,
+  setupAssetLinkPlugin,
+} from './asset-link-plugin';
 import { setupCodeHighlight } from './code-highlight';
 import { funPlaceholder } from './utils';
 
@@ -48,10 +54,23 @@ export function setupExtensions(
   logger: Logger,
   onOpenLink?: LinkConfig['onOpenLink'],
   wikiLinkConfig?: WikiLinkConfig,
+  assetFileConfig?: {
+    storeFiles: (
+      view: EditorView,
+      files: readonly File[],
+    ) => Promise<StoredAsset[]>;
+  },
+  assetLinkConfig?: AssetLinkPluginConfig,
 ) {
   const link = setupLink({ onOpenLink });
   return {
     image: setupImage(),
+    ...(assetFileConfig
+      ? { assetFilePlugin: setupAssetFilePlugin(assetFileConfig) }
+      : {}),
+    ...(assetLinkConfig
+      ? { assetLinkPlugin: setupAssetLinkPlugin(assetLinkConfig) }
+      : {}),
     activeNode: setupActiveNode({
       // 'table': the flash animation re-triggers on every cell move and makes
       // rows appear to blink while navigating with arrow keys.

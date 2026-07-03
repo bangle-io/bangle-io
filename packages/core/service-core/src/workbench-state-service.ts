@@ -11,6 +11,7 @@ import type {
 import { SERVICE_NAME } from '@bangle.io/constants';
 import { T } from '@bangle.io/mini-js-utils';
 import type {
+  AssetLocationPreference,
   BaseDatabaseService,
   BaseSyncDatabaseService,
   ScopedEmitter,
@@ -24,6 +25,18 @@ import { atom, type PrimitiveAtom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
 
 type Route = 'omni-home' | 'omni-command' | 'omni-filtered';
+
+const ASSET_LOCATION_VALUES = new Set<AssetLocationPreference>([
+  'assets-folder',
+  'adjacent',
+]);
+
+const AssetLocationPreferenceValidator = {
+  validate: (value: unknown): value is AssetLocationPreference =>
+    typeof value === 'string' &&
+    ASSET_LOCATION_VALUES.has(value as AssetLocationPreference),
+  typeName: 'asset-location-preference',
+};
 
 function determineOmniSearchRoute(input: string, currentRoute: Route): Route {
   switch (currentRoute) {
@@ -63,6 +76,9 @@ export class WorkbenchStateService extends BaseService {
   private $_wideEditor: PrimitiveAtom<boolean> | undefined;
   private $_sidebarOpen: PrimitiveAtom<boolean> | undefined;
   private $_linkedMentionsCollapsed: PrimitiveAtom<boolean> | undefined;
+  private $_assetLocationPreference:
+    | PrimitiveAtom<AssetLocationPreference>
+    | undefined;
 
   $openWsDialog = atom(false);
   $openOmniSearch = atom(false);
@@ -214,5 +230,19 @@ export class WorkbenchStateService extends BaseService {
       });
     }
     return this.$_linkedMentionsCollapsed;
+  }
+
+  get $assetLocationPreference() {
+    if (!this.$_assetLocationPreference) {
+      this.$_assetLocationPreference = atomStorage({
+        serviceName: this.name,
+        key: 'asset-location-preference',
+        initValue: 'assets-folder',
+        syncDb: this.dep.syncDatabase,
+        validator: AssetLocationPreferenceValidator,
+        logger: this.logger,
+      });
+    }
+    return this.$_assetLocationPreference;
   }
 }

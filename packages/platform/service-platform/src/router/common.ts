@@ -86,6 +86,18 @@ export function handleRouteInfo(
       };
     }
 
+    case 'asset': {
+      const wsPath = params.wsPath?.trim() || '';
+      const check = WsPath.safeParseFile(wsPath);
+      if (!check.ok) {
+        return { route: 'not-found', payload: { path: '/invalid-wsPath' } };
+      }
+      return {
+        route: 'asset',
+        payload: { wsPath },
+      };
+    }
+
     case 'ws-home': {
       const wsName = params.wsName || '';
       const result = WsPath.validation.validateWsName(wsName);
