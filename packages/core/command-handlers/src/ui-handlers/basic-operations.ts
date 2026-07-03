@@ -131,4 +131,16 @@ export const basicOperationsHandlers = [
   c('command::ui:uncollapse-all-headings', ({ pmEditorService }) => {
     pmEditorService.uncollapseAllHeadings();
   }),
+
+  c('command::ui:collapse-all-headings-1', ({ pmEditorService }) => {
+    pmEditorService.collapseAllHeadings(1);
+  }),
+
+  c('command::ui:collapse-all-headings-2', ({ pmEditorService }) => {
+    pmEditorService.collapseAllHeadings(2);
+  }),
+
+  c('command::ui:collapse-all-headings-3', ({ pmEditorService }) => {
+    pmEditorService.collapseAllHeadings(3);
+  }),
 ];

@@ -3,8 +3,10 @@ import {
   type Command,
   Decoration,
   DecorationSet,
+  dropPoint,
   type EditorState,
   type EditorView,
+  NodeSelection,
   Plugin,
   PluginKey,
   type PMNode,
@@ -56,6 +58,7 @@ export type HeadingFoldRange = {
 
 type FoldMeta =
   | { type: 'toggle'; pos: number }
+  | { type: 'fold'; positions: number[] }
   | { type: 'unfold'; positions: number[] }
   | { type: 'unfoldAll' };
 
@@ -149,6 +152,97 @@ export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
     return toggleAtPos(found.pos)(state, dispatch);
   };
 
+  const collapseAllAtLevel = (level: number): Command => {
+    return (state, dispatch) => {
+      const pluginState = key.getState(state);
+      if (!pluginState) {
+        return false;
+      }
+      const targets: number[] = [];
+      state.doc.descendants((node, pos) => {
+        if (node.type.name !== config.headingName) {
+          return true;
+        }
+        if (
+          node.attrs.level === level &&
+          !pluginState.folded.includes(pos) &&
+          // A heading already hidden inside another folded section is left
+          // alone: folding it too would silently stack recursive fold state.
+          !pluginState.ranges.some((r) => pos > r.from && pos < r.to) &&
+          getHeadingFoldRange(state.doc, pos, config.headingName)
+        ) {
+          targets.push(pos);
+        }
+        return false;
+      });
+      if (targets.length === 0) {
+        return false;
+      }
+      if (dispatch) {
+        dispatch(
+          state.tr.setMeta(key, {
+            type: 'fold',
+            positions: targets,
+          } satisfies FoldMeta),
+        );
+      }
+      return true;
+    };
+  };
+
+  /**
+   * Moves a folded heading together with its hidden section to `dropPos`.
+   * Nested fold state inside the section is preserved by re-anchoring it
+   * relative to the heading's new position. Fails (returns false) for drops
+   * inside the section itself and for non-top-level headings.
+   */
+  const moveFoldedSection = (headingPos: number, dropPos: number): Command => {
+    return (state, dispatch) => {
+      const pluginState = key.getState(state);
+      if (!pluginState?.folded.includes(headingPos)) {
+        return false;
+      }
+      if (state.doc.resolve(headingPos).depth !== 0) {
+        return false;
+      }
+      const range = getHeadingFoldRange(
+        state.doc,
+        headingPos,
+        config.headingName,
+      );
+      if (!range) {
+        return false;
+      }
+      if (dropPos >= headingPos && dropPos <= range.to) {
+        return false;
+      }
+      const slice = state.doc.slice(headingPos, range.to);
+      const insertPos = dropPoint(state.doc, dropPos, slice);
+      if (
+        insertPos == null ||
+        (insertPos >= headingPos && insertPos <= range.to)
+      ) {
+        return false;
+      }
+      if (dispatch) {
+        const tr = state.tr;
+        tr.delete(headingPos, range.to);
+        const mapped = tr.mapping.map(insertPos);
+        tr.insert(mapped, slice.content);
+        tr.setMeta(key, {
+          type: 'fold',
+          positions: pluginState.folded
+            .filter((pos) => pos >= headingPos && pos < range.to)
+            .map((pos) => mapped + (pos - headingPos)),
+        } satisfies FoldMeta);
+        tr.setSelection(NodeSelection.create(tr.doc, mapped));
+        tr.scrollIntoView();
+        dispatch(tr);
+      }
+      return true;
+    };
+  };
+
   const uncollapseAll: Command = (state, dispatch) => {
     const pluginState = key.getState(state);
     if (!pluginState || pluginState.folded.length === 0) {
@@ -189,7 +283,7 @@ export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
   };
 
   const plugin = {
-    fold: pluginFold(config, key, toggleAtPos),
+    fold: pluginFold(config, key, toggleAtPos, moveFoldedSection),
     keybindings: pluginKeybindings(config, toggleAtSelection),
   };
 
@@ -197,6 +291,8 @@ export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
     id: 'collapsible-heading',
     plugin,
     command: {
+      collapseAllHeadingsAtLevel: collapseAllAtLevel,
+      moveFoldedHeadingSection: moveFoldedSection,
       toggleHeadingCollapse: toggleAtSelection,
       toggleHeadingCollapseAtPos: toggleAtPos,
       uncollapseAllHeadings: uncollapseAll,
@@ -221,6 +317,7 @@ function pluginFold(
   config: RequiredConfig,
   key: PluginKey<FoldPluginState>,
   toggleAtPos: (pos: number) => Command,
+  moveFoldedSection: (headingPos: number, dropPos: number) => Command,
 ) {
   return ({ schema }: PluginContext) => {
     // Ensure the heading node exists so a misconfigured name fails loudly.
@@ -247,6 +344,8 @@ function pluginFold(
             folded = folded.includes(meta.pos)
               ? folded.filter((pos) => pos !== meta.pos)
               : [...folded, meta.pos];
+          } else if (meta?.type === 'fold') {
+            folded = [...new Set([...folded, ...meta.positions])];
           } else if (meta?.type === 'unfold') {
             folded = folded.filter((pos) => !meta.positions.includes(pos));
           } else if (meta?.type === 'unfoldAll') {
@@ -301,6 +400,35 @@ function pluginFold(
       props: {
         decorations(state) {
           return key.getState(state)?.decorations ?? DecorationSet.empty;
+        },
+        // A folded heading must travel with its hidden section. The default
+        // drop handling would move only the heading node (the drag handle
+        // sets a NodeSelection on it), leaving the section behind and
+        // silently expanding it — so the drop is rebuilt here instead.
+        handleDrop(view, event, _slice, moved) {
+          if (!moved) {
+            return false;
+          }
+          const state = view.state;
+          const selection = state.selection;
+          if (!(selection instanceof NodeSelection)) {
+            return false;
+          }
+          const pluginState = key.getState(state);
+          if (!pluginState?.folded.includes(selection.from)) {
+            return false;
+          }
+          const coords = view.posAtCoords({
+            left: event.clientX,
+            top: event.clientY,
+          });
+          if (coords) {
+            moveFoldedSection(selection.from, coords.pos)(state, view.dispatch);
+          }
+          // Swallow the drop even when the move was a no-op (e.g. dropping a
+          // section onto itself): the default handler would tear the folded
+          // section apart.
+          return true;
         },
       },
     });

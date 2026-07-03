@@ -488,6 +488,17 @@ export class PmEditorService extends BaseService {
     );
   }
 
+  /** Folds every heading of the given level in the active editor. */
+  collapseAllHeadings(level: number): boolean {
+    const view = this.getActiveEditorView();
+    if (!view) {
+      return false;
+    }
+    return this.extensions.collapsibleHeading.command.collapseAllHeadingsAtLevel(
+      level,
+    )(view.state, view.dispatch);
+  }
+
   /** Expands every folded heading section in the active editor. */
   uncollapseAllHeadings(): boolean {
     const view = this.getActiveEditorView();

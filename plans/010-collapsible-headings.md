@@ -60,6 +60,15 @@ below for why). Shipped on this branch:
 - Fold state is intentionally per-session (resets on reload); nothing is ever
   written to the `.md`. Persisting fold state outside the note remains
   possible future work.
+- Per-level commands: `command::ui:collapse-all-headings-1/2/3` fold every
+  heading of that level without recursively folding deeper headings (a
+  heading already hidden inside a folded section is skipped). Nested fold
+  state composes: folding an outer section preserves inner folds, so
+  unfolding restores the previous view.
+- Dragging a folded heading (via the block drag handle) moves the entire
+  hidden section with it and re-folds at the destination, preserving nested
+  fold state — the plugin intercepts `handleDrop` and rebuilds the move,
+  since the default drop would relocate only the heading node.
 
 Verification: unit specs in
 `packages/js-lib/banger-editor/src/__tests__/collapsible-heading.spec.ts`

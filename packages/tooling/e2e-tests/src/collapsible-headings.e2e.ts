@@ -1,7 +1,8 @@
-import { expect, test } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 import {
   createBrowserWorkspaceAndNote,
   getEditorLocator,
+  pressAppShortcut,
   readStoredMarkdown,
   waitForEditorFocus,
   writeStoredMarkdown,
@@ -23,7 +24,7 @@ const SOURCE = [
   'gamma',
 ].join('\n');
 
-async function openSeededNote(page: import('@playwright/test').Page) {
+async function openSeededNote(page: Page) {
   const workspaceName = 'collapsible-headings';
   const noteName = 'Home';
   await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
@@ -119,4 +120,147 @@ test('the cursor cannot get stranded inside a folded section', async ({
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, noteName))
     .toContain('X');
+});
+
+test('dragging a folded heading moves the whole section without losing content', async ({
+  page,
+}) => {
+  const { editor, noteName, workspaceName } = await openSeededNote(page);
+
+  await editor
+    .getByRole('button', { name: 'Collapse section' })
+    .first()
+    .click();
+  await expect(editor.getByText('alpha')).toBeHidden();
+
+  // Reveal the drag handle by hovering the folded heading, then drive a
+  // native drag from the handle to below the last paragraph. Stepped moves
+  // with settled frames keep the HTML5 drag gesture from collapsing into a
+  // click.
+  const headingBox = await editor.getByText('One').boundingBox();
+  const gammaBox = await editor.getByText('gamma').boundingBox();
+  if (!headingBox || !gammaBox) {
+    throw new Error('Expected heading and drop target to be visible');
+  }
+  await page.mouse.move(
+    headingBox.x + headingBox.width / 2,
+    headingBox.y + headingBox.height / 2,
+  );
+  const handle = page.locator('[data-drag-handle]');
+  await expect(handle).toBeVisible();
+  const handleBox = await handle.boundingBox();
+  if (!handleBox) {
+    throw new Error('Expected the drag handle to be visible');
+  }
+
+  const startX = handleBox.x + handleBox.width / 2;
+  const startY = handleBox.y + handleBox.height / 2;
+  const dropX = gammaBox.x + gammaBox.width / 2;
+  const dropY = gammaBox.y + gammaBox.height + 12;
+  const settleFrame = () => page.waitForTimeout(60);
+
+  await page.mouse.move(startX, startY);
+  await page.mouse.down();
+  await settleFrame();
+  await page.mouse.move(startX, startY - 8);
+  await settleFrame();
+  await page.mouse.move((startX + dropX) / 2, (startY + dropY) / 2);
+  await settleFrame();
+  await page.mouse.move(dropX, dropY);
+  await settleFrame();
+  await page.mouse.move(dropX, dropY);
+  await settleFrame();
+  await page.mouse.up();
+
+  // The whole section travelled: it is still folded at its new home and
+  // nothing is missing once expanded.
+  await expect(editor.getByText('One')).toBeVisible();
+  await expect(editor.getByText('alpha')).toBeHidden();
+  await expect
+    .poll(async () => {
+      const markdown =
+        (await readStoredMarkdown(page, workspaceName, noteName)) ?? '';
+      return (
+        markdown.indexOf('gamma') !== -1 &&
+        markdown.indexOf('gamma') < markdown.indexOf('# One')
+      );
+    })
+    .toBe(true);
+  const movedMarkdown =
+    (await readStoredMarkdown(page, workspaceName, noteName)) ?? '';
+  for (const line of ['alpha', 'beta', '## Sub', 'nested content', 'gamma']) {
+    expect(movedMarkdown).toContain(line);
+  }
+
+  await editor.getByRole('button', { name: 'Expand section' }).click();
+  await expect(editor.getByText('alpha')).toBeVisible();
+  await expect(editor.getByText('nested content')).toBeVisible();
+});
+
+test('nested folds survive folding and unfolding the outer section', async ({
+  page,
+}) => {
+  const { editor } = await openSeededNote(page);
+  const collapseToggles = editor.getByRole('button', {
+    name: 'Collapse section',
+  });
+
+  // Fold the inner "## Sub" first (toggles are in document order).
+  await collapseToggles.nth(1).click();
+  await expect(editor.getByText('nested content')).toBeHidden();
+  await expect(editor.getByText('beta')).toBeVisible();
+
+  // Fold the enclosing "# One": everything under it hides, including Sub.
+  await collapseToggles.first().click();
+  await expect(editor.getByText('alpha')).toBeHidden();
+  await expect(editor.getByText('Sub')).toBeHidden();
+
+  // Unfold "# One": Sub comes back still folded.
+  await editor.getByRole('button', { name: 'Expand section' }).first().click();
+  await expect(editor.getByText('Sub')).toBeVisible();
+  await expect(editor.getByText('alpha')).toBeVisible();
+  await expect(editor.getByText('nested content')).toBeHidden();
+
+  // Unfold "## Sub": back exactly where we started.
+  await editor.getByRole('button', { name: 'Expand section' }).first().click();
+  await expect(editor.getByText('nested content')).toBeVisible();
+  await expect(
+    editor.getByRole('button', { name: 'Expand section' }),
+  ).toHaveCount(0);
+});
+
+test('collapse-all and expand-all heading commands work from omni search', async ({
+  page,
+}) => {
+  const { editor } = await openSeededNote(page);
+  await editor.getByText('gamma').click();
+  await waitForEditorFocus(page, {});
+
+  await pressAppShortcut(page, 'k');
+  const commandInput = page.getByPlaceholder('Type a command or search...');
+  await commandInput.fill('Collapse All Heading 1');
+  await page.keyboard.press('Enter');
+
+  // Both level-1 sections fold; the nested "## Sub" hides with One's section
+  // but must not gain fold state of its own.
+  await expect(editor.getByText('alpha')).toBeHidden();
+  await expect(editor.getByText('beta')).toBeHidden();
+  await expect(editor.getByText('Sub')).toBeHidden();
+  await expect(editor.getByText('nested content')).toBeHidden();
+  await expect(editor.getByText('gamma')).toBeHidden();
+  await expect(editor.getByText('One')).toBeVisible();
+  await expect(editor.getByText('Two')).toBeVisible();
+
+  await pressAppShortcut(page, 'k');
+  await commandInput.fill('Expand All Heading Sections');
+  await page.keyboard.press('Enter');
+
+  // Everything is visible again — expand-all also proves collapse-all did
+  // not recursively fold "## Sub" (it comes back expanded).
+  for (const text of ['alpha', 'beta', 'Sub', 'nested content', 'gamma']) {
+    await expect(editor.getByText(text)).toBeVisible();
+  }
+  await expect(
+    editor.getByRole('button', { name: 'Expand section' }),
+  ).toHaveCount(0);
 });

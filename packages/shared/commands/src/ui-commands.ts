@@ -317,4 +317,37 @@ export const uiCommands = narrow([
     omniSearch: true,
     args: null,
   },
+
+  {
+    id: 'command::ui:collapse-all-headings-1',
+    title: 'Collapse All Heading 1 Sections',
+    keywords: ['collapse', 'fold', 'heading', 'h1', 'all', 'section'],
+    dependencies: {
+      services: ['pmEditorService'],
+    },
+    omniSearch: true,
+    args: null,
+  },
+
+  {
+    id: 'command::ui:collapse-all-headings-2',
+    title: 'Collapse All Heading 2 Sections',
+    keywords: ['collapse', 'fold', 'heading', 'h2', 'all', 'section'],
+    dependencies: {
+      services: ['pmEditorService'],
+    },
+    omniSearch: true,
+    args: null,
+  },
+
+  {
+    id: 'command::ui:collapse-all-headings-3',
+    title: 'Collapse All Heading 3 Sections',
+    keywords: ['collapse', 'fold', 'heading', 'h3', 'all', 'section'],
+    dependencies: {
+      services: ['pmEditorService'],
+    },
+    omniSearch: true,
+    args: null,
+  },
 ]);
