@@ -59,10 +59,14 @@ export function setupExtensions(
         excludedTags: ['blockquote'],
         calculateNodeOffset: (args) => {
           const rect = defaultCalculateNodeOffset(args);
-          // Headings host the fold toggle in the gutter slot next to the
-          // text; move the drag handle one slot further left.
+          // Headings host the fold toggle in the gutter slot beside the
+          // first line; stack the drag handle directly beneath it (flush,
+          // no gap — a gap would let the hover tracking lose the heading on
+          // the way down) instead of pushing it further left, where it can
+          // fall off narrow screens.
           if (args.node.matches('h1, h2, h3, h4, h5, h6')) {
-            rect.left -= 24;
+            rect.top += 22;
+            rect.left -= 2;
           }
           return rect;
         },

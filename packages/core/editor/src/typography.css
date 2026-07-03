@@ -535,8 +535,12 @@ div.ProseMirror {
   & .B-collapsible-heading-toggle-wrapper {
     position: absolute;
     right: 100%;
-    top: 0;
-    bottom: 0;
+    /* Hug the toggle button, centered on the first line: the drag handle
+       stacks directly beneath it in the same gutter slot, and a taller
+       (transparent) wrapper would sit under the handle and interfere with
+       drag hit-testing. */
+    top: calc((1lh - 1.25rem) / 2);
+    height: 1.25rem;
     display: flex;
     align-items: center;
     padding-right: 0.125rem;

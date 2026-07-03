@@ -162,7 +162,8 @@ test('dragging a folded heading moves the whole section without losing content',
   await page.mouse.move(startX, startY);
   await page.mouse.down();
   await settleFrame();
-  await page.mouse.move(startX, startY - 8);
+  // Wiggle towards the drop target to start the drag.
+  await page.mouse.move(startX, startY + 8);
   await settleFrame();
   await page.mouse.move((startX + dropX) / 2, (startY + dropY) / 2);
   await settleFrame();

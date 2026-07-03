@@ -430,6 +430,28 @@ describe('collapse all headings at a level', () => {
     ).toEqual(['One']);
   });
 
+  it('skips a hidden heading even when it is the first folded child', () => {
+    const editor = editorTest.createEditor(
+      doc(h1('One'), h2('Sub'), p('b'), h1('Two'), p('c')),
+    );
+    const { view } = editor;
+    collapsible.command.toggleHeadingCollapseAtPos(
+      headingPos(view.state.doc, 'One'),
+    )(view.state, view.dispatch);
+
+    expect(
+      collapsible.command.collapseAllHeadingsAtLevel(2)(
+        view.state,
+        view.dispatch,
+      ),
+    ).toBe(false);
+    expect(
+      collapsible.query
+        .listCollapsedHeadings(view.state)
+        .map((f) => f.node.textContent),
+    ).toEqual(['One']);
+  });
+
   it('returns false when no heading of that level is foldable', () => {
     const editor = editorTest.createEditor(doc(h1('One'), p('a')));
     const { view } = editor;

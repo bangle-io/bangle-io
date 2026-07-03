@@ -15,6 +15,7 @@ import {
 import {
   findParentNodeOfType,
   getNodeType,
+  isNodeSelection,
   type KeyCode,
   type PluginContext,
 } from './pm-utils';
@@ -168,7 +169,9 @@ export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
           !pluginState.folded.includes(pos) &&
           // A heading already hidden inside another folded section is left
           // alone: folding it too would silently stack recursive fold state.
-          !pluginState.ranges.some((r) => pos > r.from && pos < r.to) &&
+          !pluginState.ranges.some((range) =>
+            isNodeStartInsideFoldedContent(pos, range),
+          ) &&
           getHeadingFoldRange(state.doc, pos, config.headingName)
         ) {
           targets.push(pos);
@@ -411,7 +414,7 @@ function pluginFold(
           }
           const state = view.state;
           const selection = state.selection;
-          if (!(selection instanceof NodeSelection)) {
+          if (!isNodeSelection(selection)) {
             return false;
           }
           const pluginState = key.getState(state);
@@ -517,6 +520,13 @@ function hiddenBlockDecorations(
     childPos += child.nodeSize;
   }
   return decorations;
+}
+
+function isNodeStartInsideFoldedContent(
+  pos: number,
+  range: HeadingFoldRange,
+): boolean {
+  return pos >= range.from && pos < range.to;
 }
 
 /**
