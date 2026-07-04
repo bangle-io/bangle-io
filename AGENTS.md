@@ -56,6 +56,9 @@ recovery path over convenience.
 
 - Before adding functionality, inspect the owning package and lower layers for
   existing behavior that should be extended or shared.
+- Put behavior where the concept is owned, not where the first caller happens
+  to need it. Keep local mechanism close to its owner, and move reusable policy
+  or meaning behind a typed API at the lowest appropriate layer.
 - Duplicate business rules or state transitions across files are a code smell.
   Extract shared behavior into the lowest workspace allowed by the dependency
   graph (`js-lib`, `shared`, `platform`, `ui`, or a service), with a typed public
@@ -166,12 +169,6 @@ order is `service-platform` -> `service-core` -> `service-ui`.
   ProseMirror transactions and positions, editor history grouping, drag/drop or
   clipboard payload inspection, abort/cleanup tied to an editor view, or when it
   needs a synchronous return value to let a lower-level library continue.
-- Keep route parsing and route-name branching inside navigation/router-owned
-  APIs. Downstream services and atoms should consume typed navigation
-  abstractions such as "current note path", "active workspace file", or
-  "current workspace" instead of checking route discriminants themselves. If a
-  new route needs to participate in shared state, extend the owning navigation
-  abstraction first; do not duplicate route semantics in consumers.
 - Service dependencies are constructor-injected and declared with `static deps`.
   Configure or replace services before container instantiation. Register
   cleanup against the service/root abort signal.
