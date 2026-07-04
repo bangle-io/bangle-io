@@ -1,14 +1,13 @@
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
-import { commandHandlers } from '@bangle.io/command-handlers';
+import { commandHandlers as defaultCommandHandlers } from '@bangle.io/command-handlers';
 import { getEnabledCommands } from '@bangle.io/commands';
 import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
 import type { CoreServices } from '@bangle.io/context';
 import {
-  coreServiceMap,
+  type CoreConfigOverrides,
   createServiceSetup,
-  defineAppServiceMap,
 } from '@bangle.io/initialize-services/setup';
-import type { ConstructorToInstance, Container } from '@bangle.io/poor-mans-di';
+import { slot } from '@bangle.io/poor-mans-di';
 import {
   FileStorageMemory,
   MemoryDatabaseService,
@@ -16,7 +15,11 @@ import {
   MemorySyncDatabaseService,
   TestErrorHandlerService,
 } from '@bangle.io/service-platform/testing';
-import type { BaseServiceCommonOptions, Store } from '@bangle.io/types';
+import type {
+  BaseServiceCommonOptions,
+  CommandHandler,
+  Store,
+} from '@bangle.io/types';
 import { vi } from 'vitest';
 import { type MockLog, makeTestCommonOpts } from './common-opts';
 
@@ -33,22 +36,49 @@ const themeManager = {
   currentTheme: THEME_MANAGER_CONFIG.lightThemeClass,
 } as unknown as ThemeManager;
 
-const platformServicesMap = {
-  errorService: TestErrorHandlerService,
-  database: MemoryDatabaseService,
-  syncDatabase: MemorySyncDatabaseService,
-  fileStorageMemory: FileStorageMemory,
-  router: MemoryRouterService,
-};
+const PLATFORM_SLOT_IDS = [
+  'errorService',
+  'database',
+  'syncDatabase',
+  'fileStorageMemory',
+  'router',
+] as const;
 
-const serviceMap = defineAppServiceMap({
-  ...platformServicesMap,
-  ...coreServiceMap,
-});
+type TestSetup = ReturnType<typeof createTestServiceSetup>;
+type TestServices = ReturnType<TestSetup['instantiate']>;
 
-type TestServiceMap = typeof serviceMap;
-type TestServices = ConstructorToInstance<TestServiceMap>;
-type TestContainer = Container<BaseServiceCommonOptions, TestServiceMap>;
+function createTestServiceSetup(
+  commonOpts: BaseServiceCommonOptions,
+  rootEmitter: ReturnType<typeof makeTestCommonOpts>['rootEmitter'],
+  commands: ReturnType<typeof getEnabledCommands>,
+  commandHandlers: Array<{ id: string; handler: CommandHandler }>,
+  coreConfigOverrides: CoreConfigOverrides | undefined,
+) {
+  return createServiceSetup({
+    commonOpts,
+    rootEmitter,
+    commands,
+    commandHandlers,
+    themeManager,
+    shortcutTarget: {
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    },
+    platformServices: {
+      errorService: TestErrorHandlerService,
+      database: MemoryDatabaseService,
+      syncDatabase: MemorySyncDatabaseService,
+      fileStorageMemory: slot(FileStorageMemory, () => ({
+        onChange: (change) => {
+          commonOpts.logger.info('File storage change:', change);
+        },
+      })),
+      router: MemoryRouterService,
+    },
+    fileStorageSlots: ['fileStorageMemory'],
+    coreConfigOverrides,
+  });
+}
 
 export type TestEnvironment = {
   logger: ReturnType<typeof makeTestCommonOpts>['commonOpts']['logger'];
@@ -57,7 +87,6 @@ export type TestEnvironment = {
   rootEmitter: ReturnType<typeof makeTestCommonOpts>['rootEmitter'];
   commonOpts: ReturnType<typeof makeTestCommonOpts>['commonOpts'];
   store: Store;
-  getContainer: () => TestContainer;
   coreServices: () => CoreServices;
   mountAll: () => Promise<void>;
   instantiateAll: (focusService?: keyof TestServices & string) => TestServices;
@@ -67,35 +96,31 @@ export type TestEnvironment = {
  * Creates a fully configured test environment with in-memory platform
  * services. Core wiring comes from the same `createServiceSetup` builder the
  * browser composition root uses, so test setup mirrors production setup.
+ * Tests tune core services through `coreConfigOverrides` (decorators over the
+ * canonical configs) or by supplying `commands`/`commandHandlers`.
  */
 export function createTestEnvironment({
   controller = new AbortController(),
+  commands = getEnabledCommands(),
+  commandHandlers = defaultCommandHandlers,
+  coreConfigOverrides,
 }: {
   controller?: AbortController;
+  commands?: ReturnType<typeof getEnabledCommands>;
+  commandHandlers?: Array<{ id: string; handler: CommandHandler }>;
+  coreConfigOverrides?: CoreConfigOverrides;
 } = {}): TestEnvironment {
   const { commonOpts, mockLog, rootEmitter } = makeTestCommonOpts({
     controller,
   });
 
-  const setup = createServiceSetup({
+  const setup = createTestServiceSetup(
     commonOpts,
     rootEmitter,
-    commands: getEnabledCommands(),
+    commands,
     commandHandlers,
-    themeManager,
-    shortcutTarget: {
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-    },
-    serviceMap,
-    fileStorageSlots: ['fileStorageMemory'],
-  });
-
-  setup.container.setConfig(FileStorageMemory, () => ({
-    onChange: (change) => {
-      commonOpts.logger.info('File storage change:', change);
-    },
-  }));
+    coreConfigOverrides,
+  );
 
   return {
     logger: commonOpts.logger,
@@ -104,12 +129,6 @@ export function createTestEnvironment({
     rootEmitter,
     commonOpts,
     store: commonOpts.store as Store,
-
-    /**
-     * Returns the DI container holding all services. Tests can override
-     * individual service configs before calling `instantiateAll()`.
-     */
-    getContainer: () => setup.container,
 
     /**
      * The typed core-facing service aggregate, as consumed by React.
@@ -127,19 +146,10 @@ export function createTestEnvironment({
      * Instantiates all services, optionally focusing on a particular service.
      * This is helpful if you want to bring up only a subset of services in tests.
      */
-    instantiateAll: (
-      focusService?: NonNullable<
-        Parameters<typeof setup.instantiate>[0]
-      >[number],
-    ) => {
+    instantiateAll: (focusService?: keyof TestServices & string) => {
       const focuses = focusService
         ? // always instantiate platform services plus the focused one
-          [
-            ...(Object.keys(platformServicesMap) as Array<
-              keyof typeof platformServicesMap
-            >),
-            focusService,
-          ]
+          [...PLATFORM_SLOT_IDS, focusService]
         : undefined;
 
       return setup.instantiate(focuses);

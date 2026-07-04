@@ -45,14 +45,16 @@ export class NavigationService extends BaseService {
 `static deps` is the constructor contract for services. Always declare it
 `as const`; a widened `string[]` is rejected by the map validation below. The
 container uses it to build the dependency graph, instantiate services in
-dependency order, and report startup diagnostics. `defineAppServiceMap` (and
-`createServiceSetup` itself, so the check cannot be bypassed) type-checks that
+dependency order, and report startup diagnostics. Service map validation
+(`defineServiceMap`, applied by `createServiceSetup` to the platform map and
+locked over the core graph by a compile-time assertion) type-checks that
 every declared dependency exists in the map, that constructor dependency keys
-match `static deps`, and that the registered dependency instance is assignable
-to the constructor's dependency type. A validation failure surfaces as the
-offending map entry not being assignable to `never`; check that slot's
-`static deps`, constructor dependency keys, and `as const` first. If a service
-reads another service, that
+match `static deps`, that the registered dependency instance is assignable
+to the constructor's dependency type, and that a service whose constructor
+requires a config is registered via `slot()` rather than bare. A validation
+failure surfaces as the offending map entry not being assignable to `never`;
+check that slot's `static deps`, constructor dependency keys, `as const`, and
+missing `slot()` config first. If a service reads another service, that
 relationship should be visible in `static deps`; do not hide it in mutable
 module state, late lookups, or callbacks passed only to work around the graph.
 
@@ -67,15 +69,22 @@ uses them.
 Production setup and test setup share one composition builder:
 `createServiceSetup` in `@bangle.io/initialize-services/setup` (a
 platform-free subpath, safe to import from test code). The builder owns the
-canonical core service configs. A composition root supplies a complete checked
-service map plus only what genuinely differs per environment:
+core service slots and every core config; the map is the complete composition
+— there is no post-construction mutation phase (`setConfig`/`use` do not
+exist). A composition root supplies only what genuinely differs per
+environment:
 
-- the complete service map from `defineAppServiceMap({ ...platformServices,
-  ...coreServiceMap })`,
-- which of those slots provide file storage,
-- platform-specific service configs (router strategy, error sink, Native FS
-  root-handle resolution),
+- `platformServices`: the environment's platform slots, with each required
+  config attached at declaration via `slot(Class, () => config)` (router
+  strategy, error sink, Native FS root-handle resolution, storage `onChange`).
+  A config-requiring class registered bare fails to type-check, and the map
+  must satisfy `PlatformRequirements` — the router/database/syncDatabase
+  contracts core services depend on.
+- `fileStorageSlots`: which of those slots provide file storage.
 - the keyboard shortcut target and the theme manager.
+- `coreConfigOverrides` (optional, meant for tests): per-slot decorators over
+  the canonical core configs, e.g. tuning `userActivityService` cooldowns
+  while keeping the production wiring as the base.
 
 The browser root is `@bangle.io/initialize-services`; the test root is
 `createTestEnvironment` in `@bangle.io/test-utils`. Both call the builder, so
@@ -86,10 +95,8 @@ aggregate, which the compiler enforces) — test wiring follows automatically.
 General rules:
 
 - Use the same slot IDs for equivalent services.
-- Configure services before `instantiate()` via `container.setConfig`.
-  Configs are keyed by service class; a config for a class that no registered
-  slot uses (for example after a `use()` replacement) fails at
-  `instantiate()` instead of silently never applying.
+- Declare configs with their slot via `slot(Class, () => config)`; the factory
+  runs lazily at `instantiate()`.
 - Keep browser-specific choices in the production composition root.
 - Keep memory, fake, or test-only replacements in `@bangle.io/test-utils`.
 - Mount services through the returned setup helper rather than from individual
@@ -114,7 +121,7 @@ layer order, and service-specific import boundaries:
 
 Broader checks should only be added when they catch real drift. For example,
 checking every `static deps` relationship with text patterns would be fragile:
-some platform services have no dependencies, and `defineAppServiceMap` plus the
+some platform services have no dependencies, and the map validation plus the
 container already fail missing or mismatched dependencies before release. Prefer
 a focused unit or integration test when a dependency contract needs more
 precision.

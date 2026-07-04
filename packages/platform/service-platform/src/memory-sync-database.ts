@@ -16,7 +16,7 @@ export class MemorySyncDatabaseService
   private storage = new Map<string, unknown>();
   private changeBus?: TypedBroadcastBus<SyncDatabaseChange>;
 
-  constructor(context: BaseServiceContext, dependencies: null, _config: null) {
+  constructor(context: BaseServiceContext, dependencies: null) {
     super(SERVICE_NAME.memorySyncDatabaseService, context, dependencies);
   }
 

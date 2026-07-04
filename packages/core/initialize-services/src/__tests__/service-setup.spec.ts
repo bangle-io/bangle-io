@@ -1,6 +1,7 @@
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { commandHandlers } from '@bangle.io/command-handlers';
 import { getEnabledCommands } from '@bangle.io/commands';
+import { slot } from '@bangle.io/poor-mans-di';
 import {
   FileStorageMemory,
   MemoryDatabaseService,
@@ -10,11 +11,7 @@ import {
 } from '@bangle.io/service-platform/testing';
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import { describe, expect, test, vi } from 'vitest';
-import {
-  coreServiceMap,
-  createServiceSetup,
-  defineAppServiceMap,
-} from '../service-setup';
+import { coreServiceMap, createServiceSetup } from '../service-setup';
 
 const themeManager = {
   currentPreference: 'system',
@@ -23,21 +20,13 @@ const themeManager = {
   currentTheme: 'BU_light-scheme',
 } as unknown as ThemeManager;
 
-function makeSetup() {
+function makeSetup({
+  fileStorageConfig = () => ({ onChange: () => {} }),
+}: {
+  fileStorageConfig?: () => { onChange: () => void };
+} = {}) {
   const controller = new AbortController();
   const { commonOpts, rootEmitter } = makeTestCommonOpts({ controller });
-
-  const platformServicesMap = {
-    errorService: TestErrorHandlerService,
-    database: MemoryDatabaseService,
-    syncDatabase: MemorySyncDatabaseService,
-    fileStorageMemory: FileStorageMemory,
-    router: MemoryRouterService,
-  };
-  const serviceMap = defineAppServiceMap({
-    ...platformServicesMap,
-    ...coreServiceMap,
-  });
 
   const setup = createServiceSetup({
     commonOpts,
@@ -49,13 +38,15 @@ function makeSetup() {
       addEventListener: vi.fn(),
       removeEventListener: vi.fn(),
     },
-    serviceMap,
+    platformServices: {
+      errorService: TestErrorHandlerService,
+      database: MemoryDatabaseService,
+      syncDatabase: MemorySyncDatabaseService,
+      fileStorageMemory: slot(FileStorageMemory, fileStorageConfig),
+      router: MemoryRouterService,
+    },
     fileStorageSlots: ['fileStorageMemory'],
   });
-
-  setup.container.setConfig(FileStorageMemory, () => ({
-    onChange: () => {},
-  }));
 
   return { setup, controller };
 }
@@ -70,7 +61,7 @@ describe('createServiceSetup', () => {
     controller.abort();
   });
 
-  test('rejects invalid service maps even without defineAppServiceMap', () => {
+  test('rejects platform maps that do not satisfy the core requirements', () => {
     const controller = new AbortController();
     const { commonOpts, rootEmitter } = makeTestCommonOpts({ controller });
 
@@ -84,15 +75,44 @@ describe('createServiceSetup', () => {
         addEventListener: vi.fn(),
         removeEventListener: vi.fn(),
       },
-      // @ts-expect-error NavigationService declares a 'router' dep with no
-      // slot; the builder validates the map itself, so skipping the helper
-      // cannot smuggle an unchecked graph into the container.
-      serviceMap: {
+      // @ts-expect-error the platform map must provide every contract core
+      // services depend on; omitting the router slot fails to type-check.
+      platformServices: {
         errorService: TestErrorHandlerService,
         database: MemoryDatabaseService,
         syncDatabase: MemorySyncDatabaseService,
+        fileStorageMemory: slot(FileStorageMemory, () => ({
+          onChange: () => {},
+        })),
+      },
+      fileStorageSlots: [],
+    });
+
+    controller.abort();
+  });
+
+  test('rejects a config-requiring platform service registered bare', () => {
+    const controller = new AbortController();
+    const { commonOpts, rootEmitter } = makeTestCommonOpts({ controller });
+
+    createServiceSetup({
+      commonOpts,
+      rootEmitter,
+      commands: [],
+      commandHandlers: [],
+      themeManager,
+      shortcutTarget: {
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      },
+      platformServices: {
+        errorService: TestErrorHandlerService,
+        database: MemoryDatabaseService,
+        syncDatabase: MemorySyncDatabaseService,
+        // @ts-expect-error FileStorageMemory requires a config; it must be
+        // registered via slot() so the config cannot silently go missing.
         fileStorageMemory: FileStorageMemory,
-        ...coreServiceMap,
+        router: MemoryRouterService,
       },
       fileStorageSlots: [],
     });
@@ -130,15 +150,64 @@ describe('createServiceSetup', () => {
     const controller = new AbortController();
     const { commonOpts, rootEmitter } = makeTestCommonOpts({ controller });
 
-    const serviceMap = defineAppServiceMap({
-      errorService: TestErrorHandlerService,
-      database: MemoryDatabaseService,
-      syncDatabase: MemorySyncDatabaseService,
-      fileStorageMemory: FileStorageMemory,
-      fileStorageMemoryDuplicate: FileStorageMemory,
-      router: MemoryRouterService,
-      ...coreServiceMap,
+    const setup = createServiceSetup({
+      commonOpts,
+      rootEmitter,
+      commands: getEnabledCommands(),
+      commandHandlers,
+      themeManager,
+      shortcutTarget: {
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      },
+      platformServices: {
+        errorService: TestErrorHandlerService,
+        database: MemoryDatabaseService,
+        syncDatabase: MemorySyncDatabaseService,
+        fileStorageMemory: slot(FileStorageMemory, () => ({
+          onChange: () => {},
+        })),
+        fileStorageMemoryDuplicate: slot(FileStorageMemory, () => ({
+          onChange: () => {},
+        })),
+        router: MemoryRouterService,
+      },
+      fileStorageSlots: ['fileStorageMemory', 'fileStorageMemoryDuplicate'],
     });
+
+    expect(() => setup.instantiate()).toThrow(
+      /"fileStorageMemory" and "fileStorageMemoryDuplicate" both claim workspace type/,
+    );
+
+    controller.abort();
+  });
+
+  test('startup failure surfaces the slot id and phase', async () => {
+    const { setup, controller } = makeSetup({
+      fileStorageConfig: () => {
+        throw new Error('boom');
+      },
+    });
+
+    expect(() => setup.instantiate()).toThrow(
+      /Service "fileStorageMemory" failed during instantiate: boom/,
+    );
+    expect(setup.describe().failedSlot).toMatchObject({
+      slotId: 'fileStorageMemory',
+      phase: 'instantiate',
+    });
+
+    controller.abort();
+  });
+
+  test('core config overrides decorate the canonical config', async () => {
+    const controller = new AbortController();
+    const { commonOpts, rootEmitter } = makeTestCommonOpts({ controller });
+
+    const [excludedCommand] = getEnabledCommands();
+    if (!excludedCommand) {
+      throw new Error('Expected at least one enabled command.');
+    }
 
     const setup = createServiceSetup({
       commonOpts,
@@ -150,35 +219,31 @@ describe('createServiceSetup', () => {
         addEventListener: vi.fn(),
         removeEventListener: vi.fn(),
       },
-      serviceMap,
-      fileStorageSlots: ['fileStorageMemory', 'fileStorageMemoryDuplicate'],
+      platformServices: {
+        errorService: TestErrorHandlerService,
+        database: MemoryDatabaseService,
+        syncDatabase: MemorySyncDatabaseService,
+        fileStorageMemory: slot(FileStorageMemory, () => ({
+          onChange: () => {},
+        })),
+        router: MemoryRouterService,
+      },
+      fileStorageSlots: ['fileStorageMemory'],
+      coreConfigOverrides: {
+        commandRegistry: (base) => ({
+          ...base,
+          commands: base.commands.filter(
+            (command) => command.id !== excludedCommand.id,
+          ),
+        }),
+      },
     });
 
-    setup.container.setConfig(FileStorageMemory, () => ({
-      onChange: () => {},
-    }));
+    const services = setup.instantiate();
 
-    expect(() => setup.instantiate()).toThrow(
-      /"fileStorageMemory" and "fileStorageMemoryDuplicate" both claim workspace type/,
-    );
-
-    controller.abort();
-  });
-
-  test('startup failure surfaces the slot id and phase', async () => {
-    const { setup, controller } = makeSetup();
-
-    setup.container.setConfig(FileStorageMemory, () => {
-      throw new Error('boom');
-    });
-
-    expect(() => setup.instantiate()).toThrow(
-      /Service "fileStorageMemory" failed during instantiate: boom/,
-    );
-    expect(setup.describe().failedSlot).toMatchObject({
-      slotId: 'fileStorageMemory',
-      phase: 'instantiate',
-    });
+    expect(() =>
+      services.commandRegistry.getCommand(excludedCommand.id),
+    ).toThrow(/not found/);
 
     controller.abort();
   });

@@ -339,49 +339,4 @@ describe('BaseService', () => {
 
     expect(mountOrder).toEqual(['ServiceA', 'ServiceB', 'ServiceC']);
   });
-
-  test('should replace service using container.use()', async () => {
-    const { commonOpts, abortController } = await setup();
-
-    class MainService extends BaseService {
-      mockHookMount = vi.fn();
-      dep = {};
-
-      constructor(context: BaseServiceContext, dependencies: null) {
-        super('MainService', context, dependencies);
-      }
-
-      hookMount(): void {
-        this.mockHookMount();
-      }
-    }
-
-    class ReplacementService extends BaseService {
-      mockHookMount = vi.fn();
-      dep = {};
-
-      constructor(context: BaseServiceContext, dependencies: null) {
-        super('ReplacementService', context, dependencies);
-      }
-
-      hookMount(): void {
-        this.mockHookMount();
-      }
-    }
-
-    const container = new Container(
-      { context: commonOpts, abortSignal: abortController.signal },
-      {
-        originalService: MainService,
-      },
-    );
-
-    container.use('originalService', ReplacementService);
-    const services = container.instantiateAll();
-
-    await services.originalService.mount();
-
-    expect(services.originalService).toBeInstanceOf(ReplacementService);
-    expect(services.originalService.mockHookMount).toHaveBeenCalled();
-  });
 });
