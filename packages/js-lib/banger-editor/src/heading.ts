@@ -40,7 +40,6 @@ export type HeadingConfig = {
   keyEmptyCut?: KeyCode;
   keyInsertEmptyParaAbove?: KeyCode;
   keyInsertEmptyParaBelow?: KeyCode;
-  keyToggleCollapse?: KeyCode;
   keyJumpToStartOfHeading?: KeyCode;
   keyJumpToEndOfHeading?: KeyCode;
 };
@@ -65,7 +64,6 @@ const DEFAULT_CONFIG: RequiredConfig = {
   keyEmptyCut: false,
   keyInsertEmptyParaAbove: 'Mod-Shift-Enter',
   keyInsertEmptyParaBelow: 'Mod-Enter',
-  keyToggleCollapse: false,
   // TODO base keymap already handles these, it possible doesnt handle inline nodes (need to check)
   keyJumpToStartOfHeading: false,
   keyJumpToEndOfHeading: false,
@@ -85,9 +83,6 @@ export function setupHeading(userConfig?: HeadingConfig) {
         level: {
           default: 1,
         },
-        collapseContent: {
-          default: null,
-        },
       },
       content: 'inline*',
       group: 'block',
@@ -96,31 +91,13 @@ export function setupHeading(userConfig?: HeadingConfig) {
       parseDOM: config.levels.map((level) => {
         return {
           tag: `h${level}`,
-          getAttrs: (dom: HTMLElement) => {
-            const result = { level: parseLevel(level) };
-            const attrs = dom.getAttribute('data-bangle-attrs');
-
-            if (!attrs) {
-              return result;
-            }
-
-            const obj = JSON.parse(attrs);
-
-            return Object.assign({}, result, obj);
+          getAttrs: () => {
+            return { level: parseLevel(level) };
           },
         };
       }),
       toDOM: (node: PMNode) => {
-        const result: any = [`h${node.attrs.level}`, {}, 0];
-
-        if (node.attrs.collapseContent) {
-          result[1]['data-bangle-attrs'] = JSON.stringify({
-            collapseContent: node.attrs.collapseContent,
-          });
-          result[1].class = 'bangle-heading-collapsed';
-        }
-
-        return result;
+        return [`h${node.attrs.level}`, {}, 0];
       },
     },
   };

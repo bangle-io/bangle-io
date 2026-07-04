@@ -7,6 +7,7 @@ import {
   setupBold,
   setupCode,
   setupCodeBlock,
+  setupCollapsibleHeading,
   setupDragNode,
   setupDropGapCursor,
   setupHardBreak,
@@ -76,6 +77,10 @@ export function setupExtensions(
     }),
     hardBreak: setupHardBreak(),
     heading: setupHeading(),
+    collapsibleHeading: setupCollapsibleHeading({
+      collapseLabel: t.app.editor.collapsibleHeading.collapse,
+      expandLabel: t.app.editor.collapsibleHeading.expand,
+    }),
     history: setupHistory(),
     paragraph: setupParagraph(),
     strike: setupStrike(),
