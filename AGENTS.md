@@ -156,6 +156,16 @@ order is `service-platform` -> `service-core` -> `service-ui`.
 - Command IDs use namespaced kebab-case such as
   `command::ui:toggle-sidebar`. Definitions stay in `@bangle.io/commands`;
   handlers stay in `@bangle.io/command-handlers`.
+- Use commands for app-level actions that can be described with typed,
+  serializable args and owned by services or command handlers: navigation,
+  durable workspace/file mutations, dialogs, settings changes, and reusable UI
+  actions such as copying a workspace path. Commands do not need to be
+  user-facing or omni-search visible.
+- Do not force local interaction mechanics into commands. Keep behavior in the
+  owning component/plugin/service when it depends on live DOM events,
+  ProseMirror transactions and positions, editor history grouping, drag/drop or
+  clipboard payload inspection, abort/cleanup tied to an editor view, or when it
+  needs a synchronous return value to let a lower-level library continue.
 - Service dependencies are constructor-injected and declared with `static deps`.
   Configure or replace services before container instantiation. Register
   cleanup against the service/root abort signal.
