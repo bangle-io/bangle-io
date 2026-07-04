@@ -8,8 +8,9 @@ workspace layers.
 
 - Slot IDs live in the service maps, not inside the service implementation.
   The core service map is in
-  `packages/core/initialize-services/src/service-setup.ts`; each composition
-  root combines it with its platform services through `defineAppServiceMap`.
+  `packages/core/initialize-services/src/service-setup.ts`; composition roots
+  supply only platform slots through `createServiceSetup`, attaching required
+  platform configs with `slot(Class, () => config)`.
 - Contracts live at the lowest layer that owns the concept. Shared contracts
   belong in `packages/shared/types`; core service APIs belong in
   `packages/core/service-core`; platform implementations belong in
