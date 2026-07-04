@@ -21,9 +21,8 @@
     "env": "universal",
     "kind": "js-util"
   },
-  "main": "src/index.js",
-  "module": "src/index.js",
-  "types": "src/index.d.ts",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
   "type": "module",
   "publishConfig": {
     "access": "public"

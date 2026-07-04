@@ -1,15 +1,58 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
+  "treatConfigHintsAsErrors": true,
   "workspaces": {
     ".": {
+      "entry": [".github/scripts/**/*.cjs"],
       "project": ["*.{js,ts}", ".github/scripts/**/*.cjs"]
     },
     "packages/tooling/browser-entry": {
-      "vite": false,
-      "entry": ["index.html", "src/main.tsx", "vite.config.ts"]
+      "entry": ["index.html"],
+      "project": ["src/**/*.{css,ts,tsx}", "translations-plugin.ts"],
+      "vite": {
+        "config": ["vite.config.ts"]
+      }
     },
     "packages/tooling/custom-scripts": {
-      "entry": ["scripts/*.ts"]
+      "entry": ["scripts/*.ts"],
+      "project": ["**/*.ts"]
+    },
+    "packages/tooling/desktop-entry": {
+      "entry": [
+        "electron-builder.config.cjs",
+        "scripts/*.{mjs,ts}"
+      ],
+      "project": ["scripts/*.{mjs,ts}", "src/**/*.ts"],
+      "vite": {
+        "config": ["vite.config.ts"]
+      }
+    },
+    "packages/tooling/e2e-tests": {
+      "entry": [
+        "scripts/*.ts",
+        "src/**/*.ct.tsx",
+        "src/**/*.e2e.ts"
+      ],
+      "project": [
+        "playwright/**/*.{css,ts,tsx}",
+        "playwright*.config.ts",
+        "scripts/*.ts",
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "packages/tooling/mobile-entry": {
+      "entry": ["babel.config.js"],
+      "project": ["*.{js,ts}", "src/**/*.tsx"],
+      "expo": {
+        "config": ["app.config.ts"]
+      }
+    },
+    "packages/tooling/storybook": {
+      "entry": ["src/**/*.stories.{ts,tsx}"],
+      "project": ["**/*.{css,js,ts,tsx}"],
+      "storybook": {
+        "entry": ["src/**/*.stories.{ts,tsx}"]
+      }
     }
   },
   "rules": {

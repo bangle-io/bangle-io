@@ -35,7 +35,7 @@
   "homepage": "https://bangle.io",
   "license": "AGPL-3.0-or-later",
   "main": "index.ts",
-  "module": "index.js",
+  "module": "index.ts",
   "publishConfig": {
     "access": "public"
   },
