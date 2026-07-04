@@ -1,6 +1,5 @@
 // packages/core/command-handlers/src/ws-command-handlers.ts
 import { throwAppError } from '@bangle.io/base-utils';
-import type { AppRouteInfo } from '@bangle.io/types';
 import { WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { c, getCtx } from './helper';
 
@@ -26,14 +25,6 @@ function isUnderDirectory(filePath: WsPath, dirPath: WsDirPath): boolean {
   return (
     filePath.wsName === dirPath.wsName && filePath.path.startsWith(dirPath.path)
   );
-}
-
-function getRoutedFileWsPath(routeInfo: AppRouteInfo): string | undefined {
-  if (routeInfo.route !== 'editor' && routeInfo.route !== 'asset') {
-    return undefined;
-  }
-
-  return WsPath.safeParseFile(routeInfo.payload.wsPath).data?.wsPath;
 }
 
 export const wsCommandHandlers = [
@@ -145,7 +136,7 @@ export const wsCommandHandlers = [
       }
 
       const needsRedirect =
-        getRoutedFileWsPath(navigation.resolveAtoms().routeInfo) === wsPath;
+        navigation.resolveAtoms().activeWsFilePath?.wsPath === wsPath;
 
       // Keep the open note visible during the rename instead of navigating to
       // ws-home first (which paints an intermediate screen for the duration of
@@ -204,7 +195,7 @@ export const wsCommandHandlers = [
       }
 
       const needsRedirect =
-        getRoutedFileWsPath(navigation.resolveAtoms().routeInfo) === wsPath;
+        navigation.resolveAtoms().activeWsFilePath?.wsPath === wsPath;
 
       // Do not bounce the open note through the workspace-home screen while the
       // rename is in flight: that navigation happens before the storage write
@@ -315,9 +306,7 @@ export const wsCommandHandlers = [
         return;
       }
 
-      const currentWsPath = getRoutedFileWsPath(
-        navigation.resolveAtoms().routeInfo,
-      );
+      const currentWsPath = navigation.resolveAtoms().activeWsFilePath?.wsPath;
       const pairs = descendants.map((path) => {
         const filePath = WsPath.assertFile(path.wsPath);
         const suffix = filePath.path.slice(oldDir.path.length);
