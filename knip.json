@@ -76,17 +76,17 @@
     "files": "error",
     "dependencies": "error",
     "devDependencies": "error",
-    "optionalPeerDependencies": "warn",
+    "optionalPeerDependencies": "error",
     "unlisted": "error",
     "binaries": "error",
-    "unresolved": "warn",
+    "unresolved": "error",
     "exports": "error",
-    "nsExports": "warn",
+    "nsExports": "error",
     "types": "error",
-    "nsTypes": "warn",
-    "enumMembers": "warn",
-    "namespaceMembers": "warn",
-    "duplicates": "warn",
-    "catalog": "warn"
+    "nsTypes": "error",
+    "enumMembers": "error",
+    "namespaceMembers": "error",
+    "duplicates": "error",
+    "catalog": "error"
   }
 }
