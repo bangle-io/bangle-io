@@ -69,6 +69,31 @@ function dispatchPaste(view: EditorView, file: File) {
   );
 }
 
+function dispatchDrop(view: EditorView, file: File, position: number) {
+  view.posAtCoords = vi.fn(() => ({ pos: position, inside: -1 }));
+  const event = {
+    clientX: 10,
+    clientY: 10,
+    preventDefault: vi.fn(),
+    stopPropagation: vi.fn(),
+    stopImmediatePropagation: vi.fn(),
+    dataTransfer: {
+      items: [
+        {
+          kind: 'file',
+          getAsFile: () => file,
+        },
+      ],
+      files: [file],
+      types: ['Files'],
+    },
+  } as unknown as DragEvent;
+
+  return view.someProp('handleDOMEvents', (handlers) =>
+    handlers.drop?.(view, event),
+  );
+}
+
 afterEach(() => {
   document.body.replaceChildren();
 });
@@ -134,5 +159,73 @@ describe('setupAssetFilePlugin', () => {
     await Promise.resolve();
 
     expect(view.state.doc.textContent).toBe('Hello ');
+  });
+
+  it('inserts a dropped image at a document-boundary drop position', async () => {
+    const stored = deferred<StoredMarkdownAsset[]>();
+    const storeFiles = vi.fn(() => stored.promise);
+    const { view } = createView({ storeFiles });
+
+    expect(
+      dispatchDrop(
+        view,
+        new File(['image'], 'Photo.jpg', { type: 'image/jpeg' }),
+        0,
+      ),
+    ).toBe(true);
+
+    stored.resolve([
+      {
+        file: new File(['image'], 'Photo.jpg', { type: 'image/jpeg' }),
+        wsPath: WsFilePath.fromString('workspace:notes/assets/photo.jpg'),
+        href: 'assets/photo.jpg',
+        label: 'Photo.jpg',
+        isImage: true,
+      },
+    ]);
+
+    await vi.waitFor(() => {
+      const firstNode = view.state.doc.firstChild?.firstChild;
+      expect(firstNode?.type.name).toBe('image');
+      expect(firstNode?.attrs).toMatchObject({
+        src: 'assets/photo.jpg',
+        alt: 'Photo.jpg',
+      });
+    });
+    view.destroy();
+  });
+
+  it('inserts a dropped non-image asset as a link at a document-boundary drop position', async () => {
+    const stored = deferred<StoredMarkdownAsset[]>();
+    const storeFiles = vi.fn(() => stored.promise);
+    const { view } = createView({ storeFiles });
+
+    expect(
+      dispatchDrop(
+        view,
+        new File(['%PDF-1.4\n'], 'Doc.pdf', { type: 'application/pdf' }),
+        0,
+      ),
+    ).toBe(true);
+
+    stored.resolve([
+      {
+        file: new File(['%PDF-1.4\n'], 'Doc.pdf', {
+          type: 'application/pdf',
+        }),
+        wsPath: WsFilePath.fromString('workspace:notes/assets/doc.pdf'),
+        href: 'assets/doc.pdf',
+        label: 'Doc.pdf',
+        isImage: false,
+      },
+    ]);
+
+    await vi.waitFor(() => {
+      const firstNode = view.state.doc.firstChild?.firstChild;
+      expect(firstNode?.text).toBe('Doc.pdf');
+      expect(firstNode?.marks[0]?.type.name).toBe('link');
+      expect(firstNode?.marks[0]?.attrs.href).toBe('assets/doc.pdf');
+    });
+    view.destroy();
   });
 });

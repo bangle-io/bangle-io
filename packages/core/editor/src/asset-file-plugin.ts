@@ -1,12 +1,14 @@
 import {
   collection,
+  dropPoint,
   type EditorView,
   Fragment,
   Plugin,
   PluginKey,
   type PMNode,
-  safeInsert,
+  Slice,
   setPriority,
+  TextSelection,
   type Transaction,
 } from '@bangle.io/prosemirror-plugins';
 
@@ -123,7 +125,25 @@ function insertAssetNodes(
     separatedNodes.push(node);
   }
 
-  return safeInsert(Fragment.fromArray(separatedNodes), position)(tr);
+  const slice = new Slice(Fragment.fromArray(separatedNodes), 0, 0);
+  const insertPosition = dropPoint(tr.doc, position, slice) ?? position;
+  const mappedPosition = tr.mapping.map(insertPosition);
+  const docBeforeInsert = tr.doc;
+
+  tr.replaceRange(mappedPosition, mappedPosition, slice);
+
+  if (tr.doc.eq(docBeforeInsert)) {
+    return tr;
+  }
+
+  let selectionPosition = tr.mapping.map(insertPosition);
+  tr.mapping.maps.at(-1)?.forEach((_oldStart, _oldEnd, _newStart, newEnd) => {
+    selectionPosition = newEnd;
+  });
+
+  return tr.setSelection(
+    TextSelection.near(tr.doc.resolve(selectionPosition), -1),
+  );
 }
 
 function claimFileEvent(event: ClipboardEvent | DragEvent) {

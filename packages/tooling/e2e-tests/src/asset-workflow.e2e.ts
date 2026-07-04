@@ -4,6 +4,7 @@ import {
   EDITOR_SELECTOR,
   getEditorLocator,
   readStoredMarkdown,
+  writeStoredMarkdown,
 } from './common';
 
 const BROWSER_MAX_FILE_SIZE_BYTES = 25 * 1024 * 1024;
@@ -159,6 +160,60 @@ test('drops workspace-backed image and PDF assets as relative Markdown', async (
       name: /extremely-long-image-drop-filename-for-toast-ux-.*\.png/i,
     }),
   ).toBeVisible();
+});
+
+test('drops workspace-backed assets at the top edge before existing note content', async ({
+  page,
+}, testInfo) => {
+  const workspaceName = `asset-drop-top-${testInfo.workerIndex}-${Date.now()}`;
+  const noteName = 'source';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    noteName,
+    'Existing paragraph',
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await expect(editor).toContainText('Existing paragraph');
+
+  const editorBox = await editor.boundingBox();
+  if (!editorBox) {
+    throw new Error('Expected editor to have a visible bounding box');
+  }
+
+  const dataTransfer = await createAssetDataTransferHandle(page);
+  await page.locator(EDITOR_SELECTOR).dispatchEvent('drop', {
+    clientX: editorBox.x + 4,
+    clientY: editorBox.y + 4,
+    dataTransfer,
+  });
+  await dataTransfer.dispose();
+
+  const imageMarkdownPrefix =
+    '![Extremely Long Image Drop Filename For Toast UX.PNG](assets/extremely-long-image-drop-filename-for-toast-ux-';
+  const linkMarkdownPrefix = '[Spec Sheet.PDF](assets/spec-sheet-';
+
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toContain(imageMarkdownPrefix);
+  const markdown = await readStoredMarkdown(page, workspaceName, noteName);
+  if (!markdown) {
+    throw new Error('Expected dropped assets to be persisted into Markdown');
+  }
+  expect(markdown).not.toContain('data:');
+
+  const imageIndex = markdown.indexOf(imageMarkdownPrefix);
+  const linkIndex = markdown.indexOf(linkMarkdownPrefix);
+  const existingIndex = markdown.indexOf('Existing paragraph');
+  expect(imageIndex).toBeGreaterThanOrEqual(0);
+  expect(linkIndex).toBeGreaterThanOrEqual(0);
+  expect(existingIndex).toBeGreaterThanOrEqual(0);
+  expect(imageIndex).toBeLessThan(existingIndex);
+  expect(linkIndex).toBeLessThan(existingIndex);
+  await expect(editor.locator('img')).toHaveAttribute('src', /^blob:/);
 });
 
 test('rejects dropped files larger than the workspace storage provider limit', async ({
