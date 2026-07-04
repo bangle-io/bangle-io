@@ -1,6 +1,7 @@
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import {
+  bangleTransparentIconUrl,
   DropdownMenu,
   type FileTreeEntry,
   type FileTreeEntryAction,
@@ -8,7 +9,6 @@ import {
   Sidebar,
   AppSidebar as UIAppSidebar,
 } from '@bangle.io/ui-components';
-import bangleIcon from '@bangle.io/ui-components/src/bangle-transparent_x512.png';
 import { WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
@@ -422,7 +422,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
               onClick={() => window.open('https://bangle.io', '_blank')}
             >
               <img
-                src={bangleIcon}
+                src={bangleTransparentIconUrl}
                 alt={t.app.common.bangleLogoAlt}
                 className="mr-2 h-4 w-4 grayscale"
               />

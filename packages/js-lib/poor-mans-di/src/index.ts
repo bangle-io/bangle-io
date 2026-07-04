@@ -2,14 +2,17 @@ import { type DependencyDefinition, recursiveInstantiate } from './recurse';
 
 const STATIC_FIELD = 'deps';
 
+/** @public */
 export type Constructor<T, Arguments extends unknown[] = any[]> = new (
   ...arguments_: Arguments
 ) => T;
 
+/** @public */
 export type ServiceContext = {
   abortSignal: AbortSignal;
 };
 
+/** @public */
 export interface Service<_TContext> {
   mountPromise?: Promise<void>;
   mount?: () => Promise<void>;
@@ -18,8 +21,10 @@ export interface Service<_TContext> {
   postInstantiate?(): void;
 }
 
+/** @public */
 export type ServiceStartupPhase = 'instantiate' | 'postInstantiate' | 'mount';
 
+/** @public */
 export class ServiceStartupError extends Error {
   name = 'ServiceStartupError';
 
@@ -36,6 +41,7 @@ export class ServiceStartupError extends Error {
   }
 }
 
+/** @public */
 export type ServiceConstructor<
   TContext,
   TDeps extends Record<string, Service<any>> | null = Record<
@@ -52,6 +58,7 @@ export type ServiceConstructor<
 
 type AnyServiceConstructor<TContext> = ServiceConstructor<TContext, any, any>;
 
+/** @public */
 export type ConstructorConfig<TClass extends Constructor<any, any[]>> =
   TClass extends Constructor<any, [any, any, infer TConfig, ...any[]]>
     ? TConfig
@@ -62,6 +69,7 @@ export type ConstructorConfig<TClass extends Constructor<any, any[]>> =
  * its constructor config. The factory runs lazily, immediately before the
  * service is constructed during `instantiateAll()`.
  */
+/** @public */
 export type ServiceSlot<
   TClass extends AnyServiceConstructor<any> = AnyServiceConstructor<any>,
 > = {
@@ -77,13 +85,16 @@ export type ServiceSlot<
  * so a required config can never silently go missing. The one-arg form exists
  * for config-less services that still want slot-shaped entries.
  */
+/** @public */
 export function slot<TClass extends AnyServiceConstructor<any>>(
   service: RequiresConfig<TClass> extends false ? TClass : never,
 ): ServiceSlot<TClass>;
+/** @public */
 export function slot<TClass extends AnyServiceConstructor<any>>(
   service: TClass,
   config: () => ConstructorConfig<TClass>,
 ): ServiceSlot<TClass>;
+/** @public */
 export function slot<TClass extends AnyServiceConstructor<any>>(
   service: TClass,
   config?: () => ConstructorConfig<TClass>,
@@ -93,11 +104,13 @@ export function slot<TClass extends AnyServiceConstructor<any>>(
     : { kind: 'service-slot', service };
 }
 
+/** @public */
 export type ServiceMapEntry<TContext> =
   | AnyServiceConstructor<TContext>
   | ServiceSlot<AnyServiceConstructor<TContext>>;
 
 /** The service class held by a map entry, whether bare or slotted. */
+/** @public */
 export type SlotClass<TEntry> =
   TEntry extends ServiceSlot<infer TClass extends AnyServiceConstructor<any>>
     ? TClass
@@ -105,6 +118,7 @@ export type SlotClass<TEntry> =
       ? TEntry
       : never;
 
+/** @public */
 export type ServiceDependencies<
   TServices extends Record<string, Service<any>>,
   TDeps extends readonly (keyof TServices & string)[],
@@ -218,6 +232,7 @@ type ValidateServiceMapEntry<
  * requires a config (use `slot()` to attach one). `static deps` must be
  * declared `as const` — a widened `string[]` fails validation.
  */
+/** @public */
 export type ValidateServiceMap<
   TContext,
   TMap extends Record<string, ServiceMapEntry<TContext>>,
@@ -225,12 +240,14 @@ export type ValidateServiceMap<
   [K in keyof TMap]: ValidateServiceMapEntry<TMap, K>;
 };
 
+/** @public */
 export function defineServiceMap<TContext>() {
   return <const TMap extends Record<string, ServiceMapEntry<TContext>>>(
     serviceMap: TMap & ValidateServiceMap<TContext, TMap>,
   ): TMap => serviceMap;
 }
 
+/** @public */
 export type ServiceToConstructor<T extends Service<any>> = new (
   param: T extends Service<infer C>
     ? { ctx: C; serviceContext: ServiceContext }
@@ -239,12 +256,14 @@ export type ServiceToConstructor<T extends Service<any>> = new (
   config: any,
 ) => T;
 
+/** @public */
 export type ConstructorToInstance<
   T extends Record<string, Constructor<any> | ServiceSlot<any>>,
 > = {
   [K in keyof T]: InstanceType<SlotClass<T[K]>>;
 };
 
+/** @public */
 export type ContainerDescription = {
   dependencyOrder: string[];
   failedSlot?: {
@@ -271,6 +290,7 @@ export type ContainerDescription = {
  *  - mountAll()
  *  - describe()
  */
+/** @public */
 export class Container<
   TContext,
   TContainer extends Record<string, ServiceMapEntry<TContext>>,

@@ -1,4 +1,4 @@
-import { MainContent } from '@bangle.io/ui-components/src/Dhancha/Dhancha.stories.tsx';
+import { MainContent } from '@bangle.io/ui-components/testing';
 import { expect, test } from '@playwright/experimental-ct-react';
 import React from 'react';
 

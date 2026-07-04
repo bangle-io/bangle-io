@@ -10,6 +10,7 @@ const LogLevelPriority: { [key in LogLevelName]: number } = {
 let GLOBAL_LOG_LEVEL: LogLevelName = 'info';
 
 // Type for external error reporting service
+/** @public */
 export type ErrorReporter = {
   captureException: (error: Error) => void;
 };
@@ -17,14 +18,17 @@ export type ErrorReporter = {
 // Global error reporter instance, can be set by applications
 let errorReporter: ErrorReporter | null = null;
 
+/** @public */
 export function setGlobalLogLevel(level: LogLevelName) {
   GLOBAL_LOG_LEVEL = level;
 }
 
+/** @public */
 export function setErrorReporter(reporter: ErrorReporter) {
   errorReporter = reporter;
 }
 
+/** @public */
 export class Logger {
   constructor(
     private prefix = '',

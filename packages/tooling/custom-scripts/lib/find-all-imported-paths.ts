@@ -1,7 +1,7 @@
 export function findAllImportedPackages(sourceCode: string): string[] {
-  // Regular expression to match standard and dynamic import statements
+  // Match static imports, dynamic imports, and CommonJS requires.
   const importRegex =
-    /import\s+(?:[^'"]+\s+from\s+)?['"]([^'"]+)['"]|import\(['"]([^'"]+)['"]\)/g;
+    /import\s+(?:[^'"]+\s+from\s+)?['"]([^'"]+)['"]|import\(\s*['"]([^'"]+)['"]\s*\)|require\(\s*['"]([^'"]+)['"]\s*\)/g;
 
   let match: RegExpExecArray | null;
   const allPkg = new Set<string>();
@@ -10,10 +10,9 @@ export function findAllImportedPackages(sourceCode: string): string[] {
   // biome-ignore lint/suspicious/noAssignInExpressions: needed for regex exec loop
   while ((match = importRegex.exec(sourceCode)) !== null) {
     // Adding the captured group which is not null to the set
-    if (match[1]) {
-      allPkg.add(match[1]);
-    } else if (match[2]) {
-      allPkg.add(match[2]);
+    const importPath = match[1] ?? match[2] ?? match[3];
+    if (importPath) {
+      allPkg.add(importPath);
     }
   }
 

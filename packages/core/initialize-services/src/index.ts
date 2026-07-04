@@ -11,6 +11,7 @@ import type {
 } from '@bangle.io/types';
 import { initializeServices as initializeServices2 } from './initialize-services';
 
+/** @public */
 export function initializeServices(
   logger: Logger,
   rootEmitter: RootEmitter,

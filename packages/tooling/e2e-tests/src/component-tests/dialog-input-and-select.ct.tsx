@@ -1,4 +1,4 @@
-import stories from '@bangle.io/ui-components/src/dialog-input-and-select.stories.portable';
+import { dialogInputAndSelectStories as stories } from '@bangle.io/ui-components/testing';
 import { expect, test } from '@playwright/experimental-ct-react';
 import React from 'react';
 

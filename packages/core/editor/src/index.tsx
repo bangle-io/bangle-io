@@ -13,9 +13,12 @@ import {
 } from './components';
 import { useEditorCoreServices } from './use-editor-core-services';
 
+/** @public */
 export { PmEditorService } from './pm-editor-service';
+/** @public */
 export { useEditorCoreServices } from './use-editor-core-services';
 
+/** @public */
 export function Editor({
   wsPath,
   className,

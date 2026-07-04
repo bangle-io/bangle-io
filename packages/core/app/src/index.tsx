@@ -34,6 +34,7 @@ import {
 } from './pages';
 import { SaveProtection } from './save-protection';
 
+/** @public */
 export function App({
   logger,
   store,

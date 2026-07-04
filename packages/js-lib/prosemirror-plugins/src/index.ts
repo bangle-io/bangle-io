@@ -1,3 +1,4 @@
+/** @public */
 export * from '@bangle.io/banger-editor';
-export * from '@bangle.io/banger-editor/src/pm';
+/** @public */
 export { createMarkdownTokenizer, markdownLoader } from './markdown-loader';

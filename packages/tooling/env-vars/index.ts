@@ -106,6 +106,7 @@ interface EnvVarsResult {
   globalIdentifiers: GlobalIdentifiers;
 }
 
+/** @public */
 export default ({
   isProduction = false,
   isStorybook = false,

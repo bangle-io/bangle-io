@@ -1,4 +1,4 @@
-import bangleIcon from '@bangle.io/ui-components/src/bangle-transparent_x512.png';
+import { bangleTransparentIconUrl } from '@bangle.io/ui-components';
 import React from 'react';
 
 interface PageHeaderProps {
@@ -22,7 +22,7 @@ export function PageHeader({ title, illustration }: PageHeaderProps) {
       aria-label={t.app.common.bangleLogoAlt}
     >
       <img
-        src={bangleIcon}
+        src={bangleTransparentIconUrl}
         alt={t.app.common.bangleLogoAlt}
         className="h-28 w-28 opacity-40 grayscale"
       />

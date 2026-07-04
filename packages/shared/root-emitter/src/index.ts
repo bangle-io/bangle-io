@@ -1,11 +1,13 @@
 import { Emitter, type EventListener } from '@bangle.io/mini-js-utils';
 import type { Command } from '@bangle.io/types';
 
+/** @public */
 export type EventSenderMetadata = {
   id: string;
   tag?: string;
 };
 
+/** @public */
 export type RootEvents =
   | {
       event: 'event::error:uncaught-error';
@@ -65,14 +67,17 @@ export type RootEvents =
     };
 
 // These events are allowed to be broadcasted to other tabs
+/** @public */
 export const CROSS_TAB_EVENTS = [
   'event::file:update',
   'event::file:force-update',
   'event::app:reload-ui',
 ] as const satisfies RootEvents['event'][];
 
+/** @public */
 export type CrossTabEvent = (typeof CROSS_TAB_EVENTS)[number];
 
+/** @public */
 export class RootEmitter {
   private publisher: Emitter;
   private subscriber: Emitter;
@@ -172,6 +177,7 @@ export class RootEmitter {
   }
 }
 
+/** @public */
 export class ScopedEmitter<TScope extends RootEvents['event']> {
   constructor(
     private config: {
