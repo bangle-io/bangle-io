@@ -160,7 +160,7 @@ describe('FileSystemService', () => {
     await expect(fileSystem.exists(wsPath)).resolves.toBe(false);
   });
 
-  it('rejects writes larger than the active storage provider limit without mutating existing content', async () => {
+  it('allows oversized writes to existing notes so legacy large notes remain saveable', async () => {
     const { fileSystem, storage } = await setupFileSystemTest({ controller });
     Object.defineProperty(storage, 'maxFileSizeBytes', { value: 4 });
 
@@ -169,20 +169,10 @@ describe('FileSystemService', () => {
         EXISTING_FILE,
         fileWithSize(new File(['12345'], 'exists.md'), 5),
       ),
-    ).rejects.toMatchObject({
-      cause: expect.objectContaining({
-        name: 'error::file:size-too-large',
-        payload: expect.objectContaining({
-          fileName: 'exists.md',
-          fileSizeBytes: 5,
-          maxFileSizeBytes: 4,
-          wsPath: EXISTING_FILE,
-        }),
-      }),
-    });
+    ).resolves.toBeUndefined();
 
     await expect(fileSystem.readFileAsText(EXISTING_FILE)).resolves.toBe(
-      'Test content',
+      '12345',
     );
   });
 
@@ -245,6 +235,14 @@ describe('FileSystemService', () => {
       `${TEST_WS_NAME}:.hidden.md`,
       'hidden note',
     );
+    await fileSystem.createTextFile(
+      `${TEST_WS_NAME}:temp/legacy.md`,
+      'legacy note',
+    );
+    await fileSystem.createTextFile(
+      `${TEST_WS_NAME}:.archive/old.md`,
+      'archived note',
+    );
     await fileSystem.createFile(
       `${TEST_WS_NAME}:assets/archive.bin`,
       new File(['binary'], 'archive.bin', {
@@ -253,13 +251,19 @@ describe('FileSystemService', () => {
     );
 
     await expect(fileSystem.listFiles(TEST_WS_NAME)).resolves.toEqual([
+      `${TEST_WS_NAME}:.archive/old.md`,
+      `${TEST_WS_NAME}:.hidden.md`,
       EXISTING_FILE,
+      `${TEST_WS_NAME}:temp/legacy.md`,
     ]);
     await expect(fileSystem.listWorkspaceFiles(TEST_WS_NAME)).resolves.toEqual([
+      `${TEST_WS_NAME}:.archive/old.md`,
+      `${TEST_WS_NAME}:.hidden.md`,
       `${TEST_WS_NAME}:assets/archive.bin`,
       `${TEST_WS_NAME}:assets/report.pdf`,
       EXISTING_FILE,
       `${TEST_WS_NAME}:src/component.tsx`,
+      `${TEST_WS_NAME}:temp/legacy.md`,
     ]);
   });
 

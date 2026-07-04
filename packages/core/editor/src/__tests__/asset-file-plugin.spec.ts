@@ -237,6 +237,96 @@ describe('setupAssetFilePlugin', () => {
     expect(view.state.doc.textContent).toBe('Hello ');
   });
 
+  it('aborts and cleans up delayed asset insertion when the tracked position is deleted', async () => {
+    const stored = deferred<StoredMarkdownAsset[]>();
+    let signal: AbortSignal | undefined;
+    const storeFiles = vi.fn(
+      (
+        _view: EditorView,
+        _files: readonly File[],
+        abortSignal: AbortSignal,
+      ) => {
+        signal = abortSignal;
+        return stored.promise;
+      },
+    );
+    const cleanupStoredFiles = vi.fn();
+    const { view } = createView({ cleanupStoredFiles, storeFiles });
+
+    expect(
+      dispatchPaste(
+        view,
+        new File(['%PDF-1.4\n'], 'Doc.pdf', { type: 'application/pdf' }),
+      ),
+    ).toBe(true);
+    expect(signal?.aborted).toBe(false);
+
+    view.dispatch(view.state.tr.delete(0, view.state.doc.content.size));
+    expect(signal?.aborted).toBe(true);
+
+    const storedAssets = [
+      {
+        file: new File(['%PDF-1.4\n'], 'Doc.pdf', {
+          type: 'application/pdf',
+        }),
+        wsPath: WsFilePath.fromString('workspace:notes/assets/doc.pdf'),
+        href: 'assets/doc.pdf',
+        label: 'Doc.pdf',
+        isImage: false,
+      },
+    ];
+    stored.resolve(storedAssets);
+
+    await vi.waitFor(() => {
+      expect(cleanupStoredFiles).toHaveBeenCalledWith(storedAssets);
+    });
+    expect(view.state.doc.textContent).not.toContain('Doc.pdf');
+    view.destroy();
+  });
+
+  it('deduplicates the same pasted file reported through items and files', async () => {
+    const stored = deferred<StoredMarkdownAsset[]>();
+    const storeFiles = vi.fn(() => stored.promise);
+    const { view } = createView({ storeFiles });
+    const fileFromItem = new File(['image'], 'Photo.png', {
+      type: 'image/png',
+    });
+    const fileFromFiles = new File(['image'], 'Photo.png', {
+      type: 'image/png',
+    });
+    const event = {
+      preventDefault: vi.fn(),
+      clipboardData: {
+        items: [
+          {
+            kind: 'file',
+            getAsFile: () => fileFromItem,
+          },
+        ],
+        files: [fileFromFiles],
+        types: ['Files'],
+        getData: () => '',
+      },
+    } as unknown as ClipboardEvent;
+
+    expect(
+      view.someProp('handlePaste', (handler) =>
+        handler(view, event, Slice.empty),
+      ),
+    ).toBe(true);
+    expect(storeFiles).toHaveBeenCalledWith(
+      view,
+      [fileFromItem],
+      expect.any(AbortSignal),
+    );
+
+    stored.resolve([]);
+    await vi.waitFor(() => {
+      expect(view.state.doc.textContent).toBe('Hello ');
+    });
+    view.destroy();
+  });
+
   it('inserts a dropped image at a document-boundary drop position', async () => {
     const stored = deferred<StoredMarkdownAsset[]>();
     const storeFiles = vi.fn(() => stored.promise);
@@ -481,6 +571,26 @@ describe('setupAssetFilePlugin', () => {
     expect(view.state.doc.textContent.startsWith('assets/photo.png')).toBe(
       true,
     );
+    view.destroy();
+  });
+
+  it('ignores internal ProseMirror text drops before resolving asset references', () => {
+    const storeFiles = vi.fn(async () => []);
+    const resolveAssetReference = vi.fn(
+      (): MarkdownAssetReference | undefined => ({
+        href: 'assets/photo.png',
+        label: 'photo.png',
+        isImage: true,
+      }),
+    );
+    const { view } = createView({ resolveAssetReference, storeFiles });
+    view.dragging = { slice: Slice.empty, move: true };
+
+    expect(dispatchDropText(view, 'assets/photo.png', 0)).toBeFalsy();
+    expect(resolveAssetReference).not.toHaveBeenCalled();
+    expect(view.state.doc.textContent).toBe('Hello ');
+
+    view.dragging = null;
     view.destroy();
   });
 

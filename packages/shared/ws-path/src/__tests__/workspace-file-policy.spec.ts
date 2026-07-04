@@ -7,6 +7,9 @@ import {
 describe('workspace file visibility policy', () => {
   it.each([
     'garden:notes/index.md',
+    'garden:.hidden.md',
+    'garden:.archive/old.md',
+    'garden:temp/legacy.md',
     'garden:assets/report.pdf',
     'garden:src/component.tsx',
     'garden:archive/data.bin',
@@ -15,8 +18,6 @@ describe('workspace file visibility policy', () => {
   });
 
   it.each([
-    'garden:.hidden.md',
-    'garden:notes/.draft.md',
     'garden:.obsidian/workspace.json',
     'garden:node_modules/pkg/index.ts',
     'garden:dist/bundle.js',
@@ -39,5 +40,10 @@ describe('workspace file visibility policy', () => {
     '__pycache__',
   ])('identifies ignored path segment %s', (segment) => {
     expect(isIgnoredWorkspacePathSegment(segment)).toBe(true);
+  });
+
+  it('matches ASCII ignore lists without locale-sensitive lowercasing', () => {
+    expect(isIgnoredWorkspacePathSegment('DIST')).toBe(true);
+    expect(isVisibleWorkspaceFilePath('garden:assets/THUMBS.DB')).toBe(false);
   });
 });

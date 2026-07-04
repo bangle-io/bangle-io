@@ -68,6 +68,8 @@ describe('embeddable workspace assets', () => {
   it.each([
     'workspace:assets/image.png',
     'workspace:assets/image.JPG',
+    'workspace:assets/logo.GIF',
+    'workspace:assets/photo.AVIF',
     'workspace:assets/diagram.svg',
     'workspace:assets/animation.webp',
   ])('treats image path %s as embeddable', (wsPath) => {

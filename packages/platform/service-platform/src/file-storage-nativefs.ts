@@ -23,7 +23,7 @@ import type {
   BaseFileStorageProvider,
   FileStorageChangeEvent,
 } from '@bangle.io/types';
-import { isVisibleWorkspaceDirectoryName, WsPath } from '@bangle.io/ws-path';
+import { WsPath } from '@bangle.io/ws-path';
 
 type Config = {
   getRootDirHandle: (
@@ -152,7 +152,7 @@ export class FileStorageNativeFs
 
     const fs = new NativeBrowserFileSystem({
       rootDirHandle: rootDirHandle,
-      allowedDir: (entry) => isVisibleWorkspaceDirectoryName(entry.name),
+      allowedDir: () => true,
       allowedFile: () => true,
     });
 

@@ -597,6 +597,7 @@ test('file explorer shows common workspace files and opens non-notes as assets',
     'Hidden dotfile',
     'text/markdown',
   );
+  await writeStoredMarkdown(page, workspaceName, 'temp/legacy', 'Legacy note');
   await writeStoredFile(
     page,
     workspaceName,
@@ -643,6 +644,15 @@ test('file explorer shows common workspace files and opens non-notes as assets',
   await expect(
     explorer.getByRole('treeitem', { name: longFileName }),
   ).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /\.hidden\.md/ }),
+  ).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /^temp$/ }),
+  ).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /legacy\.md/ }),
+  ).toBeVisible();
 
   await test.step('non-note file options menu opens from the three-dot button', async () => {
     const reportRow = explorer.getByRole('treeitem', { name: /report\.pdf/ });
@@ -671,6 +681,15 @@ test('file explorer shows common workspace files and opens non-notes as assets',
     await expect(
       explorer.getByRole('treeitem', { name: /visible\.md/ }),
     ).toBeVisible();
+    await expect(
+      explorer.getByRole('treeitem', { name: /\.hidden\.md/ }),
+    ).toBeVisible();
+    await expect(
+      explorer.getByRole('treeitem', { name: /^temp$/ }),
+    ).toBeVisible();
+    await expect(
+      explorer.getByRole('treeitem', { name: /legacy\.md/ }),
+    ).toBeVisible();
     await expect(explorer.getByRole('treeitem', { name: /^src$/ })).toHaveCount(
       0,
     );
@@ -688,6 +707,9 @@ test('file explorer shows common workspace files and opens non-notes as assets',
     await expect(notesOnlyToggle).toHaveAttribute('aria-pressed', 'true');
     await expect(
       explorer.getByRole('treeitem', { name: /^notes$/ }),
+    ).toBeVisible();
+    await expect(
+      explorer.getByRole('treeitem', { name: /\.hidden\.md/ }),
     ).toBeVisible();
     await expect(
       explorer.getByRole('treeitem', { name: /^assets$/ }),
@@ -764,7 +786,7 @@ test('file explorer shows common workspace files and opens non-notes as assets',
 
   await expect(
     explorer.getByRole('treeitem', { name: /\.hidden\.md/ }),
-  ).toHaveCount(0);
+  ).toBeVisible();
   await expect(
     explorer.getByRole('treeitem', { name: /^node_modules$/ }),
   ).toHaveCount(0);

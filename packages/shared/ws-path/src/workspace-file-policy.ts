@@ -24,7 +24,7 @@ function pathSegments(filePath: WsFilePath): readonly string[] {
 export function isIgnoredWorkspacePathSegment(segment: string): boolean {
   return (
     segment.startsWith('.') ||
-    IGNORED_DIRECTORY_NAMES.has(segment.toLocaleLowerCase())
+    IGNORED_DIRECTORY_NAMES.has(segment.toLowerCase())
   );
 }
 
@@ -46,9 +46,13 @@ export function isVisibleWorkspaceFilePath(
     return false;
   }
 
+  if (filePath.isNote()) {
+    return true;
+  }
+
   if (
     fileName.startsWith('.') ||
-    IGNORED_FILE_NAMES.has(fileName.toLocaleLowerCase())
+    IGNORED_FILE_NAMES.has(fileName.toLowerCase())
   ) {
     return false;
   }

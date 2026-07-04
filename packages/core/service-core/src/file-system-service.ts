@@ -328,7 +328,6 @@ export class FileSystemService extends BaseService {
     WsPath.assertFile(wsPath);
 
     const storageService = await this.getStorageService({ wsPath });
-    await this.assertFileSizeWithinProviderLimit(wsPath, file, storageService);
     await storageService.writeFile(wsPath, file, {
       sha: options.sha,
     });

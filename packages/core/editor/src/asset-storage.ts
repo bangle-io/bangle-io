@@ -101,7 +101,7 @@ function splitFileName(name: string): { baseName: string; extension: string } {
   }
   return {
     baseName: lastSegment.slice(0, lastDot),
-    extension: lastSegment.slice(lastDot).toLocaleLowerCase(),
+    extension: lastSegment.slice(lastDot).toLowerCase(),
   };
 }
 
@@ -110,16 +110,14 @@ function safeExtension(file: File): string {
   if (/^\.[a-z0-9][a-z0-9-]{0,15}$/.test(extension)) {
     return extension;
   }
-  return (
-    MIME_EXTENSION_BY_TYPE.get((file.type ?? '').toLocaleLowerCase()) ?? '.bin'
-  );
+  return MIME_EXTENSION_BY_TYPE.get((file.type ?? '').toLowerCase()) ?? '.bin';
 }
 
 function slugBasename(value: string, fallback: string): string {
   const normalized = value
     .normalize('NFKD')
     .replace(/[\u0300-\u036f]/g, '')
-    .toLocaleLowerCase()
+    .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 80);

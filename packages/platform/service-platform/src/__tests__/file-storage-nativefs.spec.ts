@@ -166,7 +166,7 @@ describe('FileStorageNativeFs', () => {
     });
   });
 
-  it('prunes ignored directories before recursive native listing descends into them', async () => {
+  it('keeps native storage traversal unfiltered so existing ignored-dir files remain readable', async () => {
     const { service } = await setup();
     const rootDirHandle = await service.getRootDirHandle('myWorkspace');
     const root = rootDirHandle.handle as unknown as FakeDirectoryHandle;
@@ -181,10 +181,18 @@ describe('FileStorageNativeFs', () => {
 
     await expect(
       service.listAllFiles('myWorkspace', new AbortController().signal),
-    ).resolves.toEqual(['myWorkspace:docs/keep.md']);
+    ).resolves.toEqual([
+      'myWorkspace:.git/config',
+      'myWorkspace:docs/keep.md',
+      'myWorkspace:node_modules/ignored.ts',
+    ]);
+
+    await expect(
+      service.readFile('myWorkspace:node_modules/ignored.ts'),
+    ).resolves.toBeDefined();
 
     expect(docs.valuesCalls).toBe(1);
-    expect(nodeModules.valuesCalls).toBe(0);
-    expect(git.valuesCalls).toBe(0);
+    expect(nodeModules.valuesCalls).toBe(1);
+    expect(git.valuesCalls).toBe(1);
   });
 });

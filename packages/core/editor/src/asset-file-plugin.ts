@@ -62,31 +62,42 @@ type AssetFilePluginMeta =
 
 function collectFiles(dataTransfer: DataTransfer): File[] {
   const files: File[] = [];
-  const seen = new Set<File>();
+  const seen = new Set<string>();
+
+  const addFile = (file: File) => {
+    const key = `${file.name}\0${file.size}\0${file.type}\0${file.lastModified}`;
+    if (seen.has(key)) {
+      return;
+    }
+    files.push(file);
+    seen.add(key);
+  };
 
   for (const item of Array.from(dataTransfer.items ?? [])) {
     if (item.kind !== 'file') {
       continue;
     }
     const file = item.getAsFile();
-    if (file && !seen.has(file)) {
-      files.push(file);
-      seen.add(file);
+    if (file) {
+      addFile(file);
     }
   }
 
   for (const file of Array.from(dataTransfer.files ?? [])) {
-    if (!seen.has(file)) {
-      files.push(file);
-      seen.add(file);
-    }
+    addFile(file);
   }
 
   return files;
 }
 
-function isInternalProseMirrorDrag(dataTransfer: DataTransfer): boolean {
-  return Array.from(dataTransfer.types ?? []).includes(PROSEMIRROR_SLICE_TYPE);
+function isInternalProseMirrorDrag(
+  view: EditorView,
+  dataTransfer: DataTransfer,
+): boolean {
+  return (
+    view.dragging !== null ||
+    Array.from(dataTransfer.types ?? []).includes(PROSEMIRROR_SLICE_TYPE)
+  );
 }
 
 function getPlainText(dataTransfer: DataTransfer): string | undefined {
@@ -349,6 +360,20 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
     }
   }
 
+  function cancelAbandonedInsertionsForView(view: EditorView): void {
+    const pluginState = ASSET_FILE_PLUGIN_KEY.getState(view.state);
+    for (const [id, pending] of pendingInsertions) {
+      if (pending.view !== view) {
+        continue;
+      }
+      if (pluginState?.insertions.has(id)) {
+        continue;
+      }
+      pending.abortController.abort();
+      pendingInsertions.delete(id);
+    }
+  }
+
   function handleFilesAtPosition(
     view: EditorView,
     files: readonly File[],
@@ -434,6 +459,9 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
             },
             view(view) {
               return {
+                update(view) {
+                  cancelAbandonedInsertionsForView(view);
+                },
                 destroy() {
                   destroyedViews.add(view);
                   cancelPendingInsertionsForView(view);
@@ -447,7 +475,7 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
                   const dataTransfer = event.dataTransfer;
                   if (
                     !dataTransfer ||
-                    isInternalProseMirrorDrag(dataTransfer)
+                    isInternalProseMirrorDrag(view, dataTransfer)
                   ) {
                     return false;
                   }

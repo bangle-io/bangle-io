@@ -43,7 +43,7 @@ export function getEmbeddableWorkspaceAssetKind(
     return undefined;
   }
 
-  if (EMBEDDABLE_IMAGE_EXTENSIONS.has(filePath.extension.toLocaleLowerCase())) {
+  if (EMBEDDABLE_IMAGE_EXTENSIONS.has(filePath.extension.toLowerCase())) {
     return 'image';
   }
 
