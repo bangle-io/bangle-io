@@ -469,6 +469,31 @@ describe('WorkspaceStateService file tree updates', () => {
     ).toBe(assetWsPath);
   });
 
+  it('exposes asset routes as the current file without making them current notes', async () => {
+    const { services } = await setupWorkspaceStateService({ controller });
+    const assetWsPath = `${WS_NAME}:image.png`;
+
+    await services.fileSystem.createFile(
+      assetWsPath,
+      new File(['image'], 'image.png', { type: 'image/png' }),
+    );
+    services.navigation.goWsFile(assetWsPath);
+
+    await vi.waitUntil(() => {
+      return (
+        services.workspaceState.resolveAtoms().currentWsFilePath?.wsPath ===
+        assetWsPath
+      );
+    });
+
+    expect(
+      services.workspaceState.resolveAtoms().currentWsPath,
+    ).toBeUndefined();
+    expect(
+      services.workspaceState.resolveAtoms().wsPaths.map((path) => path.wsPath),
+    ).toContain(assetWsPath);
+  });
+
   it('does not add ignored created files to workspace file state', async () => {
     const { services, store } = await setupWorkspaceStateService({
       controller,

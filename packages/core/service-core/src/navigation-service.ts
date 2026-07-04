@@ -57,9 +57,18 @@ export class NavigationService extends BaseService {
     return wsPath.data?.asFile();
   });
 
+  $activeWsFilePath = atom<WsFilePath | undefined>((get) => {
+    const routeInfo = get(this.$routeInfo);
+    if (routeInfo.route !== 'editor' && routeInfo.route !== 'asset') {
+      return undefined;
+    }
+
+    return WsPath.safeParseFile(routeInfo.payload.wsPath).data;
+  });
+
   $wsName = atom<string | undefined>((get) => {
     // prefer wsFilePath over routeInfo
-    const wsPath = get(this.$wsFilePath);
+    const wsPath = get(this.$activeWsFilePath);
     if (wsPath) {
       return wsPath?.wsName;
     }
@@ -115,6 +124,7 @@ export class NavigationService extends BaseService {
     return {
       wsName: this.store.get(this.$wsName),
       wsPath: this.store.get(this.$wsFilePath),
+      activeWsFilePath: this.store.get(this.$activeWsFilePath),
       lifeCycle: this.store.get(this.$lifeCycle),
       routeInfo: this.store.get(this.$routeInfo),
     };

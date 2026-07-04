@@ -166,12 +166,7 @@ export class WorkspaceStateService extends BaseService {
   );
 
   $activeWsPaths = atom<WsFilePath[]>((get) => {
-    const routeInfo = get(this.navigation.$routeInfo);
-    if (routeInfo.route !== 'editor' && routeInfo.route !== 'asset') {
-      return EMPTY_FILE_PATH_ARRAY;
-    }
-
-    const wsPath = WsPath.safeParseFile(routeInfo.payload.wsPath).data;
+    const wsPath = get(this.navigation.$activeWsFilePath);
     return wsPath ? [wsPath] : EMPTY_FILE_PATH_ARRAY;
   });
 
@@ -179,12 +174,7 @@ export class WorkspaceStateService extends BaseService {
    * This atom is used to check if the current file path is on the disk.
    */
   $currentWsFilePath = atom((get) => {
-    const routeInfo = get(this.navigation.$routeInfo);
-    if (routeInfo.route !== 'editor' && routeInfo.route !== 'asset') {
-      return undefined;
-    }
-
-    const wsPath = WsPath.safeParseFile(routeInfo.payload.wsPath).data;
+    const wsPath = get(this.navigation.$activeWsFilePath);
     const rawWsPaths = get(this.$rawWsPaths);
     return wsPath && rawWsPaths.includes(wsPath.wsPath) ? wsPath : undefined;
   });
@@ -193,10 +183,11 @@ export class WorkspaceStateService extends BaseService {
    * This atom is used to check if the current note path is on the disk.
    */
   $currentWsPath = atom((get) => {
-    const routeInfo = get(this.navigation.$routeInfo);
-    const currentFilePath =
-      routeInfo.route === 'editor' ? get(this.$currentWsFilePath) : undefined;
-    return currentFilePath?.isMarkdown() ? currentFilePath : undefined;
+    const wsPath = get(this.navigation.$wsFilePath);
+    const rawWsPaths = get(this.$rawWsPaths);
+    return wsPath?.isMarkdown() && rawWsPaths.includes(wsPath.wsPath)
+      ? wsPath
+      : undefined;
   });
 
   /**
