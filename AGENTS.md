@@ -221,8 +221,11 @@ order is `service-platform` -> `service-core` -> `service-ui`.
   role, label, or accessible-name locators; keep state isolated and
   deterministic; do not use arbitrary sleeps. Cover reload/persistence and the
   relevant failure or recovery path when the feature can affect user data.
-- Prefer real memory services, fake IndexedDB, DI containers, and actual
-  parsers over mocks. Test observable contracts rather than private calls.
+- Write unit tests as close to production wiring as practical. Prefer real
+  memory services, fake IndexedDB, DI containers, actual parsers, and real
+  command handlers over mocks. Mock only at external or hard-to-control
+  boundaries such as browser permissions, clipboard, timers, network, or
+  platform prompts. Test observable contracts rather than private calls.
 - Data-path changes must cover failure and abort behavior, not only success.
   Storage changes should cover reload/persistence; editor changes should cover
   both Markdown output and visible editor behavior.
