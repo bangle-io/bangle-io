@@ -533,3 +533,39 @@ export async function writeStoredMarkdown(
     { workspace: workspaceName, note: noteName, content: markdown },
   );
 }
+
+/** Writes an arbitrary Browser-workspace file to simulate external files. */
+export async function writeStoredFile(
+  page: Page,
+  workspaceName: string,
+  relativePath: string,
+  content: string,
+  type = 'text/plain',
+) {
+  await page.evaluate(
+    async ({ workspace, filePath, content, type }) => {
+      const request = indexedDB.open('baby-idb-db-3');
+      const database = await new Promise<IDBDatabase>((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+      await new Promise<void>((resolve, reject) => {
+        const transaction = database.transaction(
+          'baby-idb-db-store-3',
+          'readwrite',
+        );
+        transaction.oncomplete = () => resolve();
+        transaction.onerror = () => reject(transaction.error);
+        transaction.onabort = () => reject(transaction.error);
+        transaction.objectStore('baby-idb-db-store-3').put(
+          new File([content], filePath.split('/').at(-1) ?? filePath, {
+            type,
+          }),
+          `${workspace}/${filePath}`,
+        );
+      });
+      database.close();
+    },
+    { workspace: workspaceName, filePath: relativePath, content, type },
+  );
+}

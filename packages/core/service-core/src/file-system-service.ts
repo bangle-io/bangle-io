@@ -16,7 +16,7 @@ import type {
   ScopedEmitter,
   WorkspaceInfo,
 } from '@bangle.io/types';
-import { WsPath } from '@bangle.io/ws-path';
+import { isVisibleWorkspaceFilePath, WsPath } from '@bangle.io/ws-path';
 import { atom } from 'jotai';
 import type { WorkspaceOpsService } from './workspace-ops-service';
 
@@ -146,13 +146,42 @@ export class FileSystemService extends BaseService {
     );
   }
 
-  public isFileTypeSupported({ extension }: { extension: string }) {
-    return WsPath.VALID_NOTE_EXTENSIONS_SET.has(extension);
+  private isWorkspaceFileVisible(wsPath: string) {
+    return isVisibleWorkspaceFilePath(wsPath);
   }
 
-  public async listFiles(
+  /**
+   * Lists supported visible workspace files, including notes, assets, and other
+   * files that the workspace UI can show.
+   */
+  public async listWorkspaceFiles(
     wsName: string,
     abortSignal: AbortSignal = new AbortController().signal,
+  ): Promise<string[]> {
+    return this.listWorkspaceFilesWithFilter(wsName, abortSignal, (filePath) =>
+      this.isWorkspaceFileVisible(filePath.wsPath),
+    );
+  }
+
+  /**
+   * Lists supported visible Markdown notes only.
+   */
+  public async listNoteFiles(
+    wsName: string,
+    abortSignal: AbortSignal = new AbortController().signal,
+  ): Promise<string[]> {
+    return this.listWorkspaceFilesWithFilter(
+      wsName,
+      abortSignal,
+      (filePath) =>
+        filePath.isNote() && this.isWorkspaceFileVisible(filePath.wsPath),
+    );
+  }
+
+  private async listWorkspaceFilesWithFilter(
+    wsName: string,
+    abortSignal: AbortSignal,
+    predicate: (filePath: ReturnType<typeof WsPath.assertFile>) => boolean,
   ): Promise<string[]> {
     await this.mountPromise;
     // A dummy path is used to identify the correct storage service for this workspace.
@@ -166,7 +195,7 @@ export class FileSystemService extends BaseService {
       const result = WsPath.safeParse(r);
       if (!result.ok) {
         this.logger.warn(
-          `listFiles: Ignoring file "${r}" as it is not a valid wsPath`,
+          `listWorkspaceFiles: Ignoring file "${r}" as it is not a valid wsPath`,
         );
         return false;
       }
@@ -174,18 +203,15 @@ export class FileSystemService extends BaseService {
       const filePath = wsPath?.asFile();
       if (!filePath) {
         this.logger.warn(
-          `listFiles: Ignoring file "${r}" as it is not a file path`,
+          `listWorkspaceFiles: Ignoring file "${r}" as it is not a file path`,
         );
         return false;
       }
-      const extension = filePath.extension;
-      const isSupported = extension
-        ? this.isFileTypeSupported({ extension })
-        : false;
+      const isSupported = predicate(filePath);
 
       if (!isSupported) {
         this.logger.warn(
-          `listFiles: Ignoring file "${r}" as it is not supported`,
+          `listWorkspaceFiles: Ignoring file "${r}" as it is not supported`,
         );
       }
       return isSupported;
@@ -239,6 +265,39 @@ export class FileSystemService extends BaseService {
     return storageService.fileExists(wsPath, {});
   }
 
+  public async getMaxFileSizeBytes(wsPath: string): Promise<number> {
+    await this.mountPromise;
+    WsPath.assertFile(wsPath);
+
+    const storageService = await this.getStorageService({ wsPath });
+    return storageService.maxFileSizeBytes;
+  }
+
+  private async assertFileSizeWithinProviderLimit(
+    wsPath: string,
+    file: File,
+    storageService: BaseFileStorageService,
+  ): Promise<void> {
+    const fileSizeBytes = file.size;
+    if (
+      !Number.isFinite(fileSizeBytes) ||
+      fileSizeBytes <= storageService.maxFileSizeBytes
+    ) {
+      return;
+    }
+
+    throwAppError(
+      'error::file:size-too-large',
+      'File is too large for this workspace storage provider',
+      {
+        fileName: file.name || WsPath.assertFile(wsPath).fileName,
+        fileSizeBytes,
+        maxFileSizeBytes: storageService.maxFileSizeBytes,
+        wsPath,
+      },
+    );
+  }
+
   public async createFile(
     wsPath: string,
     file: File,
@@ -248,6 +307,7 @@ export class FileSystemService extends BaseService {
     WsPath.assertFile(wsPath);
 
     const storageService = await this.getStorageService({ wsPath });
+    await this.assertFileSizeWithinProviderLimit(wsPath, file, storageService);
     await storageService.createFile(wsPath, file, {});
     this.onChange({
       type: 'file-create',

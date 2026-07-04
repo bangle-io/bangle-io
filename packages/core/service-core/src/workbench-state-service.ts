@@ -8,9 +8,10 @@ import type {
   ThemeConfig,
   ThemeManager,
 } from '@bangle.io/color-scheme-manager';
-import { SERVICE_NAME } from '@bangle.io/constants';
+import { isAssetLocationPreference, SERVICE_NAME } from '@bangle.io/constants';
 import { T } from '@bangle.io/mini-js-utils';
 import type {
+  AssetLocationPreference,
   BaseDatabaseService,
   BaseSyncDatabaseService,
   ScopedEmitter,
@@ -24,6 +25,11 @@ import { atom, type PrimitiveAtom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
 
 type Route = 'omni-home' | 'omni-command' | 'omni-filtered';
+
+const AssetLocationPreferenceValidator = {
+  validate: isAssetLocationPreference,
+  typeName: 'asset-location-preference',
+};
 
 function determineOmniSearchRoute(input: string, currentRoute: Route): Route {
   switch (currentRoute) {
@@ -63,6 +69,10 @@ export class WorkbenchStateService extends BaseService {
   private $_wideEditor: PrimitiveAtom<boolean> | undefined;
   private $_sidebarOpen: PrimitiveAtom<boolean> | undefined;
   private $_linkedMentionsCollapsed: PrimitiveAtom<boolean> | undefined;
+  private $_showNoteFilesOnlyInSidebar: PrimitiveAtom<boolean> | undefined;
+  private $_assetLocationPreference:
+    | PrimitiveAtom<AssetLocationPreference>
+    | undefined;
 
   $openWsDialog = atom(false);
   $openOmniSearch = atom(false);
@@ -214,5 +224,33 @@ export class WorkbenchStateService extends BaseService {
       });
     }
     return this.$_linkedMentionsCollapsed;
+  }
+
+  get $showNoteFilesOnlyInSidebar() {
+    if (!this.$_showNoteFilesOnlyInSidebar) {
+      this.$_showNoteFilesOnlyInSidebar = atomStorage({
+        serviceName: this.name,
+        key: 'show-note-files-only-in-sidebar',
+        initValue: false,
+        syncDb: this.dep.syncDatabase,
+        validator: T.Boolean,
+        logger: this.logger,
+      });
+    }
+    return this.$_showNoteFilesOnlyInSidebar;
+  }
+
+  get $assetLocationPreference() {
+    if (!this.$_assetLocationPreference) {
+      this.$_assetLocationPreference = atomStorage({
+        serviceName: this.name,
+        key: 'asset-location-preference',
+        initValue: 'assets-folder',
+        syncDb: this.dep.syncDatabase,
+        validator: AssetLocationPreferenceValidator,
+        logger: this.logger,
+      });
+    }
+    return this.$_assetLocationPreference;
   }
 }

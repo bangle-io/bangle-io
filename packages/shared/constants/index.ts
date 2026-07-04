@@ -50,6 +50,23 @@ export function isSettingsRouteInfo<RouteInfo extends { route: string }>(
   return isSettingsRoute(routeInfo.route);
 }
 
+export const ASSET_LOCATION_PREFERENCES = [
+  'assets-folder',
+  'adjacent',
+] as const;
+
+export type AssetLocationPreference =
+  (typeof ASSET_LOCATION_PREFERENCES)[number];
+
+export function isAssetLocationPreference(
+  value: unknown,
+): value is AssetLocationPreference {
+  return (
+    typeof value === 'string' &&
+    ASSET_LOCATION_PREFERENCES.includes(value as AssetLocationPreference)
+  );
+}
+
 export const WORKSPACE_STORAGE_TYPE = {
   Help: 'helpfs',
   NativeFS: 'nativefs',
@@ -61,6 +78,12 @@ export const WORKSPACE_STORAGE_TYPE = {
 
 export type WorkspaceStorageType =
   (typeof WORKSPACE_STORAGE_TYPE)[keyof typeof WORKSPACE_STORAGE_TYPE];
+
+export const FILE_STORAGE_MAX_FILE_SIZE_BYTES = {
+  browser: 25 * 1024 * 1024,
+  memory: 25 * 1024 * 1024,
+  nativeFs: 250 * 1024 * 1024,
+} as const;
 
 // Add all service names here
 export const SERVICE_NAME = {

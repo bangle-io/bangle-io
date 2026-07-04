@@ -7,7 +7,7 @@ import type {
   FileTree as PierreFileTreeModel,
 } from '@pierre/trees';
 import { FileTree, useFileTree } from '@pierre/trees/react';
-import { FilePlus2, FolderPlus } from 'lucide-react';
+import { FilePlus2, FileText, FolderPlus } from 'lucide-react';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { BANGLE_PIERRE_FILE_TREE_ICONS } from './pierre-file-tree-icons';
 import {
@@ -186,7 +186,6 @@ export interface PierreFileTreeProps {
   activePaths?: readonly string[];
   className?: string;
   filePaths: readonly string[];
-  isTruncated?: boolean;
   onCreateDirectory: (pathPrefix: string | undefined) => void;
   onCreateNote: (pathPrefix: string | undefined) => void;
   onMoveFile: (
@@ -194,7 +193,8 @@ export interface PierreFileTreeProps {
     destinationDirectory: string | undefined,
   ) => void;
   onOpenFile: (relativePath: string) => void;
-  onShowMore: () => void;
+  showNoteFilesOnly: boolean;
+  onShowNoteFilesOnlyChange: (showNoteFilesOnly: boolean) => void;
   getActionsForEntry: (entry: FileTreeEntry) => readonly FileTreeEntryAction[];
 }
 
@@ -202,12 +202,12 @@ export function PierreFileTree({
   activePaths = [],
   className,
   filePaths,
-  isTruncated = false,
   onCreateDirectory,
   onCreateNote,
   onMoveFile,
   onOpenFile,
-  onShowMore,
+  showNoteFilesOnly,
+  onShowNoteFilesOnlyChange,
   getActionsForEntry,
 }: PierreFileTreeProps) {
   const rawTreePaths = useMemo(
@@ -243,6 +243,8 @@ export function PierreFileTree({
   const onMoveFileRef = useRef(onMoveFile);
   const pendingUserOpenPathRef = useRef<string | null>(null);
   const selectedPathRef = useRef<string | null>(null);
+  const suppressSelectionOpenRef = useRef(false);
+  const suppressSelectionOpenTimerRef = useRef<number | undefined>(undefined);
   const treePathsRef = useRef<readonly string[]>(treePaths);
   filePathSetRef.current = filePathSet;
   onOpenFileRef.current = onOpenFile;
@@ -280,6 +282,33 @@ export function PierreFileTree({
   const canDropFile = (event: FileTreeDropContext): boolean =>
     resolveDropMove(event) !== null;
 
+  const resetSelectionOpenSuppression = (): void => {
+    suppressSelectionOpenRef.current = false;
+    if (suppressSelectionOpenTimerRef.current !== undefined) {
+      window.clearTimeout(suppressSelectionOpenTimerRef.current);
+      suppressSelectionOpenTimerRef.current = undefined;
+    }
+  };
+
+  const suppressSelectionOpenForDrag = (): void => {
+    resetSelectionOpenSuppression();
+    suppressSelectionOpenRef.current = true;
+    suppressSelectionOpenTimerRef.current = window.setTimeout(() => {
+      suppressSelectionOpenRef.current = false;
+      suppressSelectionOpenTimerRef.current = undefined;
+    }, 1500);
+  };
+
+  const canDragFile = (paths: readonly string[]): boolean => {
+    const canDrag =
+      paths.length === 1 &&
+      filePathSetRef.current.has(normalizePierreFilePath(paths[0] || ''));
+    if (canDrag) {
+      suppressSelectionOpenForDrag();
+    }
+    return canDrag;
+  };
+
   const commitDurableDrop = (
     event: FileTreeDropContext | FileTreeDropResult,
   ): boolean => {
@@ -293,6 +322,7 @@ export function PierreFileTree({
   };
 
   const handleDropComplete = (event: FileTreeDropResult): void => {
+    resetSelectionOpenSuppression();
     commitDurableDrop(event);
     if (modelRef.current) {
       resetModelPathsPreservingExpansion(
@@ -313,12 +343,11 @@ export function PierreFileTree({
     density: 'default',
     icons: BANGLE_PIERRE_FILE_TREE_ICONS,
     dragAndDrop: {
-      canDrag: (paths) =>
-        paths.length === 1 &&
-        filePathSetRef.current.has(normalizePierreFilePath(paths[0] || '')),
+      canDrag: canDragFile,
       canDrop: canDropFile,
       onDropComplete: handleDropComplete,
       onDropError: () => {
+        resetSelectionOpenSuppression();
         if (modelRef.current) {
           resetModelPathsPreservingExpansion(
             modelRef.current,
@@ -336,6 +365,9 @@ export function PierreFileTree({
         : undefined;
 
       if (normalizedPath && filePathSetRef.current.has(normalizedPath)) {
+        if (suppressSelectionOpenRef.current) {
+          return;
+        }
         pendingUserOpenPathRef.current = normalizedPath;
         onOpenFileRef.current(normalizedPath);
       }
@@ -382,6 +414,17 @@ export function PierreFileTree({
     }
   }, [activeTreePaths, model]);
 
+  useEffect(
+    () => () => {
+      suppressSelectionOpenRef.current = false;
+      if (suppressSelectionOpenTimerRef.current !== undefined) {
+        window.clearTimeout(suppressSelectionOpenTimerRef.current);
+        suppressSelectionOpenTimerRef.current = undefined;
+      }
+    },
+    [],
+  );
+
   return (
     <div
       className={cn('flex min-h-0 flex-1 flex-col', className)}
@@ -392,6 +435,22 @@ export function PierreFileTree({
           <span className="min-w-0 flex-1 truncate font-medium text-[11px] text-sidebar-foreground/55 uppercase tracking-wide">
             {t.app.components.appSidebar.filesLabel}
           </span>
+          <button
+            type="button"
+            className={cn(
+              'inline-flex size-6 items-center justify-center rounded-sm text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+              showNoteFilesOnly &&
+                'bg-pop text-pop-foreground shadow-[0_0_0_1px_hsl(var(--BV-pop)_/_0.35),0_0_12px_hsl(var(--BV-pop)_/_0.28)] hover:bg-pop/90 hover:text-pop-foreground',
+            )}
+            aria-pressed={showNoteFilesOnly}
+            aria-label={
+              t.app.components.appSidebar.showNoteFilesOnlyActionTitle
+            }
+            title={t.app.components.appSidebar.showNoteFilesOnlyActionTitle}
+            onClick={() => onShowNoteFilesOnlyChange(!showNoteFilesOnly)}
+          >
+            <FileText className="size-3.5" />
+          </button>
           <button
             type="button"
             className="inline-flex size-6 items-center justify-center rounded-sm text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
@@ -456,17 +515,6 @@ export function PierreFileTree({
             );
           }}
         />
-        {isTruncated && (
-          <div className="border-sidebar-border/70 border-t p-1.5">
-            <button
-              type="button"
-              className="w-full rounded-sm px-2 py-1.5 text-left text-sidebar-foreground/75 text-xs transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              onClick={onShowMore}
-            >
-              {t.app.components.appSidebar.showMoreButton}
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );

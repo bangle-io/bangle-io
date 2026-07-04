@@ -9,7 +9,11 @@ import {
   type BaseServiceContext,
   throwAppError,
 } from '@bangle.io/base-utils';
-import { SERVICE_NAME, WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
+import {
+  FILE_STORAGE_MAX_FILE_SIZE_BYTES,
+  SERVICE_NAME,
+  WORKSPACE_STORAGE_TYPE,
+} from '@bangle.io/constants';
 import type {
   BaseFileStorageProvider,
   FileStorageChangeEvent,
@@ -27,6 +31,7 @@ export class FileStorageIndexedDB
   public readonly workspaceType = WORKSPACE_STORAGE_TYPE.Browser;
   public readonly displayName = 'Browser Storage';
   public readonly description = "Saves data in your browser's local storage";
+  public readonly maxFileSizeBytes = FILE_STORAGE_MAX_FILE_SIZE_BYTES.browser;
 
   private idb = new IndexedDBFileSystem();
   private onChange: (event: FileStorageChangeEvent) => void;

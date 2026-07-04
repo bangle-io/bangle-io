@@ -121,6 +121,11 @@ export const t = {
         themeDescription: 'Wählen Sie, wie Bangle auf diesem Gerät aussieht.',
         themeLabel: 'Theme-Einstellung',
         editorSection: 'Editor',
+        assetLocationTitle: 'Asset-Speicherort',
+        assetLocationDescription:
+          'Waehle, wo eingefuegte und abgelegte Dateien neben Notizen gespeichert werden.',
+        assetsFolder: 'Assets-Ordner',
+        adjacentToNote: 'Neben der Notiz',
         wideEditorTitle: 'Editorbreite',
         wideEditorDescription:
           'Verfügbare Fensterbreite zum Bearbeiten von Notizen nutzen.',
@@ -152,6 +157,11 @@ export const t = {
         general: 'Allgemein',
         workspaces: 'Arbeitsbereiche',
       },
+    },
+    pageAsset: {
+      downloadButton: 'Download',
+      loading: 'Asset wird geladen...',
+      unavailable: 'Dieses Asset kann nicht geladen werden.',
     },
     dialogs: {
       changeTheme: {
@@ -195,6 +205,14 @@ export const t = {
         }) => `Wählen Sie einen neuen Namen für „${fileNameWithoutExtension}“.`,
         inputLabel: 'Neuer Name',
         placeholder: 'Neuer Notizname',
+        submitText: 'Umbenennen',
+      },
+      renameFile: {
+        title: 'Datei umbenennen',
+        description: ({ fileName }: { fileName: string }) =>
+          `Wählen Sie einen neuen Namen für "${fileName}".`,
+        inputLabel: 'Neuer Dateiname',
+        placeholder: 'Neuer Dateiname',
         submitText: 'Umbenennen',
       },
       moveNote: {
@@ -342,7 +360,7 @@ export const t = {
         clickedTooSoon: {
           title: 'Das hat nicht funktioniert',
           message:
-            'Bitte versuchen Sie erneut, auf die Schaltfläche "Durchsuchen" zu klicken.',
+            'Bitte versuchen Sie es erneut und wählen Sie Ihren Notizordner aus, wenn Sie dazu aufgefordert werden.',
         },
         accessDenied: {
           title: 'Zugriff verweigert',
@@ -362,6 +380,63 @@ export const t = {
       },
     },
     toasts: {
+      assetSaveInProgress: ({
+        fileName,
+        remainingCount,
+      }: {
+        fileName: string;
+        remainingCount: number;
+      }) =>
+        remainingCount > 0
+          ? `${fileName} + ${remainingCount} weitere werden gespeichert...`
+          : `${fileName} wird gespeichert...`,
+      assetSavePartial: ({
+        failedCount,
+        failedFileName,
+        failedRemainingCount,
+        savedFileName,
+        savedRemainingCount,
+      }: {
+        failedCount: number;
+        failedFileName: string;
+        failedRemainingCount: number;
+        savedFileName?: string;
+        savedRemainingCount: number;
+      }) => {
+        const failedLabel =
+          failedRemainingCount > 0
+            ? `${failedFileName} + ${failedRemainingCount} weitere`
+            : failedFileName;
+        if (!savedFileName) {
+          return `${failedLabel} konnte nicht gespeichert werden.`;
+        }
+        const savedLabel =
+          savedRemainingCount > 0
+            ? `${savedFileName} + ${savedRemainingCount} weitere`
+            : savedFileName;
+        return `${savedLabel} gespeichert; ${failedCount} fehlgeschlagen.`;
+      },
+      assetSaveSucceeded: ({
+        fileName,
+        remainingCount,
+      }: {
+        fileName: string;
+        remainingCount: number;
+      }) =>
+        remainingCount > 0
+          ? `${fileName} + ${remainingCount} weitere gespeichert`
+          : `${fileName} gespeichert`,
+      assetTooLarge: ({
+        fileName,
+        maxFileSize,
+      }: {
+        fileName: string;
+        maxFileSize: string;
+      }) =>
+        `${fileName} ist zu gross. Maximale Dateigroesse ist ${maxFileSize}.`,
+      openAsset: 'Öffnen',
+      pathCopied: 'Pfad kopiert',
+      pathCopyFailed: 'Pfad konnte nicht kopiert werden',
       permissionNotGranted: 'Berechtigung nicht erteilt',
       retrySave: 'Speichern erneut versuchen',
       saveFailed:
@@ -423,6 +498,11 @@ export const t = {
       goBackButton: 'Zurück',
       goHomeButton: 'Startseite',
     },
+    fileNotFoundView: {
+      title: 'Datei nicht gefunden',
+      description: 'Die gesuchte Datei existiert nicht oder wurde verschoben.',
+      viewAllFilesButton: 'Alle Dateien anzeigen',
+    },
     workspaceNotFoundView: {
       title: 'Arbeitsbereich nicht gefunden',
       description: ({ wsName }: { wsName: string }) =>
@@ -443,13 +523,15 @@ export const t = {
         newFileActionTitle: 'Neue Datei',
         newFileActionSr: 'Datei erstellen',
         newFolderActionTitle: 'Neuer Ordner',
+        showNoteFilesOnlyActionTitle: 'Nur Notizen anzeigen',
         newNoteHereActionTitle: 'Neue Notiz hier',
         newFolderHereActionTitle: 'Neuer Ordner hier',
         searchFilesActionLabel: 'Dateien suchen',
+        copyPathActionTitle: 'Pfad kopieren',
+        openActionTitle: 'Öffnen',
         renameActionTitle: 'Umbenennen',
         moveActionTitle: 'Verschieben',
         deleteActionTitle: 'Löschen',
-        showMoreButton: 'Mehr anzeigen',
         workspacesLabel: 'Arbeitsbereiche',
         noWorkspaceSelectedTitle: 'Kein Arbeitsbereich ausgewählt',
         noWorkspaceSelectedSubtitle:

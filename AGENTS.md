@@ -56,6 +56,9 @@ recovery path over convenience.
 
 - Before adding functionality, inspect the owning package and lower layers for
   existing behavior that should be extended or shared.
+- Put behavior where the concept is owned, not where the first caller happens
+  to need it. Keep local mechanism close to its owner, and move reusable policy
+  or meaning behind a typed API at the lowest appropriate layer.
 - Duplicate business rules or state transitions across files are a code smell.
   Extract shared behavior into the lowest workspace allowed by the dependency
   graph (`js-lib`, `shared`, `platform`, `ui`, or a service), with a typed public
@@ -156,6 +159,16 @@ order is `service-platform` -> `service-core` -> `service-ui`.
 - Command IDs use namespaced kebab-case such as
   `command::ui:toggle-sidebar`. Definitions stay in `@bangle.io/commands`;
   handlers stay in `@bangle.io/command-handlers`.
+- Use commands for app-level actions that can be described with typed,
+  serializable args and owned by services or command handlers: navigation,
+  durable workspace/file mutations, dialogs, settings changes, and reusable UI
+  actions such as copying a workspace path. Commands do not need to be
+  user-facing or omni-search visible.
+- Do not force local interaction mechanics into commands. Keep behavior in the
+  owning component/plugin/service when it depends on live DOM events,
+  ProseMirror transactions and positions, editor history grouping, drag/drop or
+  clipboard payload inspection, abort/cleanup tied to an editor view, or when it
+  needs a synchronous return value to let a lower-level library continue.
 - Service dependencies are constructor-injected and declared with `static deps`.
   Configure or replace services before container instantiation. Register
   cleanup against the service/root abort signal.
@@ -211,8 +224,11 @@ order is `service-platform` -> `service-core` -> `service-ui`.
   role, label, or accessible-name locators; keep state isolated and
   deterministic; do not use arbitrary sleeps. Cover reload/persistence and the
   relevant failure or recovery path when the feature can affect user data.
-- Prefer real memory services, fake IndexedDB, DI containers, and actual
-  parsers over mocks. Test observable contracts rather than private calls.
+- Write unit tests as close to production wiring as practical. Prefer real
+  memory services, fake IndexedDB, DI containers, actual parsers, and real
+  command handlers over mocks. Mock only at external or hard-to-control
+  boundaries such as browser permissions, clipboard, timers, network, or
+  platform prompts. Test observable contracts rather than private calls.
 - Data-path changes must cover failure and abort behavior, not only success.
   Storage changes should cover reload/persistence; editor changes should cover
   both Markdown output and visible editor behavior.

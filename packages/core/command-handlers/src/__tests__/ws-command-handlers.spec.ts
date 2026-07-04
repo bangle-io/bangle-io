@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 /// <reference types="@vitest/browser/matchers" />
 import '@testing-library/jest-dom/vitest';
-import { assertIsDefined } from '@bangle.io/base-utils';
+import { assertIsDefined, createAppError } from '@bangle.io/base-utils';
 import { describe, expect, test, vi } from 'vitest';
 import { setupTest } from './test-utils';
 
@@ -43,6 +43,120 @@ describe('WS command handlers', () => {
 
       expect(services.navigation.resolveAtoms().wsPath?.wsPath).not.toBe(
         NOTE_WS_PATH,
+      );
+    });
+  });
+
+  describe('command::ws:delete-ws-path', () => {
+    test('keeps an open asset route stable after durable delete', async () => {
+      const ASSET_WS_PATH = 'test-ws:assets/report.pdf';
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ws:delete-ws-path',
+        workspaces: [{ name: 'test-ws', notes: [ASSET_WS_PATH] }],
+        autoNavigate: 'workspace',
+      });
+
+      services.navigation.goWsPath(ASSET_WS_PATH);
+      await vi.waitFor(() => {
+        expect(services.navigation.resolveAtoms().routeInfo).toEqual({
+          route: 'asset',
+          payload: { wsPath: ASSET_WS_PATH },
+        });
+      });
+
+      dispatch('command::ws:delete-ws-path', {
+        wsPath: ASSET_WS_PATH,
+      });
+
+      await vi.waitFor(async () => {
+        expect(
+          await services.fileSystem.readFile(ASSET_WS_PATH),
+        ).toBeUndefined();
+        expect(services.navigation.resolveAtoms().routeInfo).toEqual({
+          route: 'asset',
+          payload: { wsPath: ASSET_WS_PATH },
+        });
+        expect(services.workspaceState.resolveAtoms().currentWsFilePath).toBe(
+          undefined,
+        );
+      });
+    });
+  });
+
+  describe('command::ws:rename-ws-path', () => {
+    test('reports storage rename failures before navigating to the destination', async () => {
+      const SOURCE_WS_PATH = 'test-ws:source.md';
+      const DESTINATION_WS_PATH = 'test-ws:destination.md';
+      const { dispatch, services, getCommandResults } = await setupTest({
+        targetId: 'command::ws:rename-ws-path',
+        workspaces: [{ name: 'test-ws', notes: [SOURCE_WS_PATH] }],
+        autoNavigate: 'ws-path',
+      });
+      vi.spyOn(services.fileSystem, 'renameFile').mockRejectedValueOnce(
+        createAppError('error::file:already-existing', 'rename failed', {
+          wsPath: DESTINATION_WS_PATH,
+        }),
+      );
+
+      dispatch('command::ws:rename-ws-path', {
+        wsPath: SOURCE_WS_PATH,
+        newWsPath: DESTINATION_WS_PATH,
+      });
+
+      await vi.waitFor(() => {
+        expect(
+          getCommandResults().filter((result) => result.type === 'failure'),
+        ).toEqual([
+          expect.objectContaining({
+            command: expect.objectContaining({
+              id: 'command::ws:rename-ws-path',
+            }),
+          }),
+        ]);
+      });
+      expect(services.navigation.resolveAtoms().wsPath?.wsPath).toBe(
+        SOURCE_WS_PATH,
+      );
+    });
+  });
+
+  describe('command::ws:move-ws-path', () => {
+    test('reports storage move failures before navigating to the destination', async () => {
+      const SOURCE_WS_PATH = 'test-ws:source.md';
+      const DESTINATION_DIR_WS_PATH = 'test-ws:archive/';
+      const DESTINATION_WS_PATH = 'test-ws:archive/source.md';
+      const { dispatch, services, getCommandResults } = await setupTest({
+        targetId: 'command::ws:move-ws-path',
+        workspaces: [{ name: 'test-ws', notes: [SOURCE_WS_PATH] }],
+        autoNavigate: 'ws-path',
+      });
+      vi.spyOn(services.fileSystem, 'renameFile').mockRejectedValueOnce(
+        createAppError('error::file:already-existing', 'move failed', {
+          wsPath: DESTINATION_WS_PATH,
+        }),
+      );
+
+      dispatch('command::ws:move-ws-path', {
+        wsPath: SOURCE_WS_PATH,
+        destDirWsPath: DESTINATION_DIR_WS_PATH,
+      });
+
+      await vi.waitFor(() => {
+        expect(
+          getCommandResults().filter((result) => result.type === 'failure'),
+        ).toEqual([
+          expect.objectContaining({
+            command: expect.objectContaining({
+              id: 'command::ws:move-ws-path',
+            }),
+          }),
+        ]);
+      });
+      expect(services.navigation.resolveAtoms().wsPath?.wsPath).toBe(
+        SOURCE_WS_PATH,
+      );
+      expect(services.navigation.resolveAtoms().wsPath?.wsPath).not.toBe(
+        DESTINATION_WS_PATH,
       );
     });
   });

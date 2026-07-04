@@ -1,8 +1,31 @@
 import { throwAppError } from '@bangle.io/base-utils';
+import { toast } from '@bangle.io/ui-components';
 import { WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { FilePlus } from 'lucide-react';
 import { c, getCtx } from '../helper';
 import { validateInputPath } from '../utils';
+
+async function writeTextToClipboard(value: string): Promise<void> {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(value);
+    return;
+  }
+
+  const textArea = document.createElement('textarea');
+  textArea.value = value;
+  textArea.setAttribute('readonly', 'true');
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-9999px';
+  document.body.append(textArea);
+  textArea.select();
+  try {
+    if (!document.execCommand('copy')) {
+      throw new Error('Clipboard copy command failed');
+    }
+  } finally {
+    textArea.remove();
+  }
+}
 
 export const noteManagementHandlers = [
   c(
@@ -75,6 +98,40 @@ export const noteManagementHandlers = [
       });
     },
   ),
+
+  c('command::ui:delete-file-dialog', ({ workbenchState }, { wsPath }, key) => {
+    const { store, dispatch } = getCtx(key);
+    const filePath = WsPath.safeParse(wsPath).data?.asFile();
+
+    if (!filePath) {
+      throwAppError(
+        'error::file:invalid-note-path',
+        t.app.errors.file.invalidNotePath,
+        {
+          invalidWsPath: wsPath,
+        },
+      );
+    }
+
+    store.set(workbenchState.$alertDialog, () => {
+      return {
+        dialogId: 'dialog::delete-file-alert',
+        title: t.app.dialogs.confirmDelete.title,
+        tone: 'destructive',
+        description: t.app.dialogs.confirmDelete.description({
+          fileName: filePath.fileName,
+        }),
+        continueText: t.app.dialogs.confirmDelete.continueText,
+        onContinue: () => {
+          dispatch('command::ws:delete-ws-path', {
+            wsPath: filePath.wsPath,
+          });
+          dispatch('command::ui:focus-editor', null);
+        },
+        onCancel: () => {},
+      };
+    });
+  }),
 
   c(
     'command::ui:rename-note-dialog',
@@ -177,6 +234,90 @@ export const noteManagementHandlers = [
       });
     },
   ),
+
+  c('command::ui:rename-file-dialog', ({ workbenchState }, { wsPath }, key) => {
+    const { store, dispatch } = getCtx(key);
+    const filePath = WsPath.safeParse(wsPath).data?.asFile();
+
+    if (!filePath) {
+      throwAppError(
+        'error::file:invalid-note-path',
+        t.app.errors.file.invalidNotePath,
+        {
+          invalidWsPath: wsPath,
+        },
+      );
+    }
+
+    store.set(workbenchState.$singleInputDialog, () => {
+      return {
+        dialogId: 'dialog::rename-file-dialog',
+        title: t.app.dialogs.renameFile.title,
+        description: t.app.dialogs.renameFile.description({
+          fileName: filePath.fileName,
+        }),
+        inputLabel: t.app.dialogs.renameFile.inputLabel,
+        placeholder: t.app.dialogs.renameFile.placeholder,
+        initialSearch: filePath.fileName,
+        submitText: t.app.dialogs.renameFile.submitText,
+        onSelect: (input) => {
+          const newFileName = input.trim();
+          if (!newFileName) {
+            throwAppError(
+              'error::file:invalid-operation',
+              t.app.errors.file.invalidNoteName,
+              {
+                oldWsPath: filePath.wsPath,
+                newWsPath: input,
+                operation: 'rename-file',
+              },
+            );
+          }
+
+          if (newFileName.includes('/')) {
+            throwAppError(
+              'error::file:invalid-operation',
+              t.app.errors.file.cannotMoveDuringRename,
+              {
+                oldWsPath: filePath.wsPath,
+                newWsPath: input,
+                operation: 'rename-file',
+              },
+            );
+          }
+
+          const parentDirPath = filePath.getParent();
+          const relativeNewPath = parentDirPath
+            ? WsPath.pathJoin(parentDirPath.path, newFileName)
+            : newFileName;
+          validateInputPath(relativeNewPath);
+
+          dispatch('command::ws:rename-ws-path', {
+            newWsPath: filePath.replaceFileName(newFileName).wsPath,
+            wsPath: filePath.wsPath,
+          });
+          dispatch('command::ui:focus-editor', null);
+        },
+      };
+    });
+  }),
+
+  c('command::ui:copy-workspace-path', async (_, { wsPath }) => {
+    const target = WsPath.safeParseFile(wsPath).data;
+    const copiedPath = target?.path;
+
+    if (!copiedPath) {
+      toast.error(t.app.toasts.pathCopyFailed);
+      return;
+    }
+
+    try {
+      await writeTextToClipboard(copiedPath);
+      toast.success(t.app.toasts.pathCopied);
+    } catch {
+      toast.error(t.app.toasts.pathCopyFailed);
+    }
+  }),
 
   c(
     'command::ui:move-note-dialog',

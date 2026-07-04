@@ -1,3 +1,4 @@
+export { PageAsset } from './page-asset';
 export { PageEditor } from './page-editor';
 export { PageFatalError } from './page-fatal-error';
 export { PageNativeFsAuthFailed } from './page-native-fs-auth-failed';

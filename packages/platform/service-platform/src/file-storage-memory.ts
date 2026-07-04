@@ -4,7 +4,11 @@ import {
   type BaseServiceContext,
   throwAppError,
 } from '@bangle.io/base-utils';
-import { SERVICE_NAME, WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
+import {
+  FILE_STORAGE_MAX_FILE_SIZE_BYTES,
+  SERVICE_NAME,
+  WORKSPACE_STORAGE_TYPE,
+} from '@bangle.io/constants';
 import type {
   BaseFileStorageProvider,
   FileStorageChangeEvent,
@@ -24,6 +28,7 @@ export class FileStorageMemory
   public readonly workspaceType = WORKSPACE_STORAGE_TYPE.Memory;
   public readonly displayName = 'Memory Storage';
   public readonly description = 'Temporarily saves data in memory';
+  public readonly maxFileSizeBytes = FILE_STORAGE_MAX_FILE_SIZE_BYTES.memory;
 
   private fileEntries = new Map<string, FileEntry>();
   private onChange: (event: FileStorageChangeEvent) => void;

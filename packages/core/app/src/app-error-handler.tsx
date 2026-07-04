@@ -7,6 +7,7 @@ import React, { useEffect } from 'react';
 export function shouldReportAppError(appError: AppError): boolean {
   switch (appError.name) {
     case 'error::file:already-existing':
+    case 'error::file:size-too-large':
     case 'error::file-storage:file-does-not-exist':
     case 'error::workspace:native-fs-auth-needed':
     case 'error::workspace:no-note-opened':
@@ -97,6 +98,10 @@ export function AppErrorHandler({ rootEmitter }: { rootEmitter: RootEmitter }) {
               { wsName: appError.payload.wsName },
               'AppErrorHandler',
             );
+            return;
+          }
+
+          case 'error::file:size-too-large': {
             return;
           }
 

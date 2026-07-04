@@ -61,7 +61,7 @@
     "lint:ci": "pnpm run custom-validation && pnpm run typecheck && biome ci .  --diagnostic-level=error",
     "test:ci": "pnpm vitest run --configLoader runner --maxWorkers=50%",
     "e2e-install": "pnpm --filter \"@bangle.io/e2e-tests\" exec playwright install --with-deps chromium",
-    "e2e:ci": "pnpm --filter \"@bangle.io/e2e-tests\" run test && pnpm run e2e-ct-test",
+    "e2e:ci": "pnpm --filter \"@bangle.io/e2e-tests\" exec tsx scripts/run-e2e-ci.ts && pnpm run e2e-ct-test",
     "e2e-ui-mode": "pnpm --filter \"@bangle.io/e2e-tests\" run test-ui-mode",
     "e2e-ct-test": "pnpm --filter \"@bangle.io/e2e-tests\" run test-ct",
     "e2e-update-snapshots": "pnpm --filter \"@bangle.io/e2e-tests\" run test --update-snapshots",

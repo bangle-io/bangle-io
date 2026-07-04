@@ -282,6 +282,42 @@ describe('UI command handlers', () => {
     });
   });
 
+  describe('command::ui:copy-workspace-path', () => {
+    it('copies the workspace-local file path', async () => {
+      const writeText = vi.fn().mockResolvedValue(undefined);
+      const originalClipboard = Object.getOwnPropertyDescriptor(
+        navigator,
+        'clipboard',
+      );
+      Object.defineProperty(navigator, 'clipboard', {
+        configurable: true,
+        value: { writeText },
+      });
+
+      try {
+        const { dispatch } = await setupTest({
+          targetId: 'command::ui:copy-workspace-path',
+        });
+
+        dispatch('command::ui:copy-workspace-path', {
+          wsPath: 'test-ws:docs/getting-started/codex-prerequisites.md',
+        });
+
+        await vi.waitFor(() => {
+          expect(writeText).toHaveBeenCalledWith(
+            'docs/getting-started/codex-prerequisites.md',
+          );
+        });
+      } finally {
+        if (originalClipboard) {
+          Object.defineProperty(navigator, 'clipboard', originalClipboard);
+        } else {
+          delete (navigator as unknown as { clipboard?: Clipboard }).clipboard;
+        }
+      }
+    });
+  });
+
   describe('command::ui:move-note-dialog', () => {
     it('should open the move note dialog and dispatch command::ws:move-ws-path on selection', async () => {
       const { dispatch, testEnv, services, getCommandResults } =

@@ -340,12 +340,6 @@ describe('WorkspaceStateService file tree updates', () => {
   it('adds newly created notes to workspace state without a full rescan', async () => {
     const { services } = await setupWorkspaceStateService({ controller });
     const newWsPath = `${WS_NAME}:NewNote.md`;
-    const originalListFiles = services.fileSystem.listFiles.bind(
-      services.fileSystem,
-    );
-    const listFiles = vi
-      .spyOn(services.fileSystem, 'listFiles')
-      .mockImplementation(originalListFiles);
 
     await services.fileSystem.createTextFile(newWsPath, 'Created note');
     services.navigation.goWsPath(newWsPath);
@@ -360,7 +354,6 @@ describe('WorkspaceStateService file tree updates', () => {
     expect(
       services.workspaceState.resolveAtoms().wsPaths.map((path) => path.wsPath),
     ).toContain(newWsPath);
-    expect(listFiles).not.toHaveBeenCalled();
   });
 
   it('keeps an incremental create when an older full rescan resolves later', async () => {
@@ -372,22 +365,21 @@ describe('WorkspaceStateService file tree updates', () => {
       .resolveAtoms()
       .wsPaths.map((path) => path.wsPath);
     const blockedScan = createDeferred<string[]>();
-    const originalListFiles = services.fileSystem.listFiles.bind(
-      services.fileSystem,
-    );
-    let listFilesCalls = 0;
-    vi.spyOn(services.fileSystem, 'listFiles').mockImplementation(
+    const originalListWorkspaceFiles =
+      services.fileSystem.listWorkspaceFiles.bind(services.fileSystem);
+    let listWorkspaceFilesCalls = 0;
+    vi.spyOn(services.fileSystem, 'listWorkspaceFiles').mockImplementation(
       (wsName, abortSignal) => {
-        listFilesCalls += 1;
-        if (listFilesCalls === 1) {
+        listWorkspaceFilesCalls += 1;
+        if (listWorkspaceFilesCalls === 1) {
           return blockedScan.promise;
         }
-        return originalListFiles(wsName, abortSignal);
+        return originalListWorkspaceFiles(wsName, abortSignal);
       },
     );
 
     store.set(services.fileSystem.$fileForceUpdateCount, (count) => count + 1);
-    await vi.waitUntil(() => listFilesCalls === 1);
+    await vi.waitUntil(() => listWorkspaceFilesCalls === 1);
 
     await services.fileSystem.createTextFile(newWsPath, 'Created note');
     services.navigation.goWsPath(newWsPath);
@@ -414,12 +406,6 @@ describe('WorkspaceStateService file tree updates', () => {
     const { services } = await setupWorkspaceStateService({ controller });
     const firstWsPath = `${WS_NAME}:BurstOne.md`;
     const secondWsPath = `${WS_NAME}:BurstTwo.md`;
-    const originalListFiles = services.fileSystem.listFiles.bind(
-      services.fileSystem,
-    );
-    const listFiles = vi
-      .spyOn(services.fileSystem, 'listFiles')
-      .mockImplementation(originalListFiles);
 
     await Promise.all([
       services.fileSystem.createTextFile(firstWsPath, 'First'),
@@ -432,37 +418,138 @@ describe('WorkspaceStateService file tree updates', () => {
         .wsPaths.map((path) => path.wsPath);
       return wsPaths.includes(firstWsPath) && wsPaths.includes(secondWsPath);
     });
-
-    expect(listFiles).not.toHaveBeenCalled();
   });
 
-  it('does not add unsupported created files to workspace note state', async () => {
+  it('adds visible non-note files to workspace file state', async () => {
     const { services, store } = await setupWorkspaceStateService({
       controller,
     });
-    const unsupportedWsPath = `${WS_NAME}:asset.txt`;
-    const originalListFiles = services.fileSystem.listFiles.bind(
-      services.fileSystem,
-    );
-    const listFiles = vi
-      .spyOn(services.fileSystem, 'listFiles')
-      .mockImplementation(originalListFiles);
+    const visibleWsPath = `${WS_NAME}:asset.txt`;
 
     await services.fileSystem.createFile(
-      unsupportedWsPath,
+      visibleWsPath,
       new File(['not a note'], 'asset.txt', { type: 'text/plain' }),
     );
 
     await vi.waitUntil(() => {
       return (
         store.get(services.fileSystem.$fileCreateEvent)?.wsPath ===
-        unsupportedWsPath
+        visibleWsPath
       );
     });
 
     expect(
       services.workspaceState.resolveAtoms().wsPaths.map((path) => path.wsPath),
-    ).not.toContain(unsupportedWsPath);
-    expect(listFiles).not.toHaveBeenCalled();
+    ).toContain(visibleWsPath);
+    expect(
+      services.workspaceState
+        .resolveAtoms()
+        .noteWsPaths.map((path) => path.wsPath),
+    ).not.toContain(visibleWsPath);
+  });
+
+  it('does not expose non-markdown files as the current editor path', async () => {
+    const { services } = await setupWorkspaceStateService({ controller });
+    const assetWsPath = `${WS_NAME}:asset.pdf`;
+
+    await services.fileSystem.createFile(
+      assetWsPath,
+      new File(['pdf'], 'asset.pdf', { type: 'application/pdf' }),
+    );
+    services.navigation.go({
+      route: 'editor',
+      payload: { wsPath: assetWsPath },
+    });
+
+    expect(
+      services.workspaceState.resolveAtoms().currentWsPath,
+    ).toBeUndefined();
+    expect(
+      services.workspaceState.resolveAtoms().currentWsFilePath?.wsPath,
+    ).toBe(assetWsPath);
+  });
+
+  it('exposes asset routes as the current file without making them current notes', async () => {
+    const { services } = await setupWorkspaceStateService({ controller });
+    const assetWsPath = `${WS_NAME}:image.png`;
+
+    await services.fileSystem.createFile(
+      assetWsPath,
+      new File(['image'], 'image.png', { type: 'image/png' }),
+    );
+    services.navigation.goWsFile(assetWsPath);
+
+    await vi.waitUntil(() => {
+      return (
+        services.workspaceState.resolveAtoms().currentWsFilePath?.wsPath ===
+        assetWsPath
+      );
+    });
+
+    expect(
+      services.workspaceState.resolveAtoms().currentWsPath,
+    ).toBeUndefined();
+    expect(
+      services.workspaceState.resolveAtoms().wsPaths.map((path) => path.wsPath),
+    ).toContain(assetWsPath);
+  });
+
+  it('does not add ignored created files to workspace file state', async () => {
+    const { services, store } = await setupWorkspaceStateService({
+      controller,
+    });
+    const ignoredWsPath = `${WS_NAME}:node_modules/pkg/index.ts`;
+
+    await services.fileSystem.createFile(
+      ignoredWsPath,
+      new File(['ignored'], 'index.ts', { type: 'text/plain' }),
+    );
+
+    await vi.waitUntil(() => {
+      return (
+        store.get(services.fileSystem.$fileCreateEvent)?.wsPath ===
+        ignoredWsPath
+      );
+    });
+
+    expect(
+      services.workspaceState.resolveAtoms().wsPaths.map((path) => path.wsPath),
+    ).not.toContain(ignoredWsPath);
+  });
+
+  it('does not expose ignored Markdown files returned by storage scans', async () => {
+    const { services, store } = await setupWorkspaceStateService({
+      controller,
+    });
+    const originalListWorkspaceFiles =
+      services.fileSystem.listWorkspaceFiles.bind(services.fileSystem);
+    const ignoredWsPaths = [
+      `${WS_NAME}:node_modules/pkg/README.md`,
+      `${WS_NAME}:.git/hooks/post-commit.md`,
+      `${WS_NAME}:notes/.draft.md`,
+    ];
+    let callCount = 0;
+
+    vi.spyOn(services.fileSystem, 'listWorkspaceFiles').mockImplementation(
+      async (wsName, abortSignal) => {
+        callCount += 1;
+        return [
+          ...(await originalListWorkspaceFiles(wsName, abortSignal)),
+          ...ignoredWsPaths,
+        ];
+      },
+    );
+
+    store.set(services.fileSystem.$fileForceUpdateCount, (count) => count + 1);
+
+    await vi.waitUntil(() => callCount > 0);
+
+    const atoms = services.workspaceState.resolveAtoms();
+    expect(atoms.wsPaths.map((path) => path.wsPath)).not.toEqual(
+      expect.arrayContaining(ignoredWsPaths),
+    );
+    expect(atoms.noteWsPaths.map((path) => path.wsPath)).not.toEqual(
+      expect.arrayContaining(ignoredWsPaths),
+    );
   });
 });

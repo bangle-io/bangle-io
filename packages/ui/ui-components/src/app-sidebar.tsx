@@ -60,8 +60,6 @@ export type AppSidebarProps = {
   onSearchClick?: () => void;
   activeFilePaths?: string[];
   getActionsForEntry: (entry: FileTreeEntry) => readonly FileTreeEntryAction[];
-  isTruncated?: boolean;
-  onTruncatedClick?: () => void;
   onCreateDirectory: (pathPrefix: string | undefined) => void;
   onCreateNote: (pathPrefix: string | undefined) => void;
   onMoveFile: (
@@ -69,6 +67,8 @@ export type AppSidebarProps = {
     destinationDirectory: string | undefined,
   ) => void;
   onOpenFile: (relativePath: string) => void;
+  showNoteFilesOnly: boolean;
+  onShowNoteFilesOnlyChange: (showNoteFilesOnly: boolean) => void;
   footerChildren?: React.ReactNode;
   footerTitle?: string;
   footerSubtitle?: string;
@@ -180,12 +180,12 @@ export function AppSidebar({
   onSearchClick = () => {},
   activeFilePaths = [],
   getActionsForEntry,
-  isTruncated = false,
-  onTruncatedClick = () => {},
   onCreateDirectory,
   onCreateNote,
   onMoveFile,
   onOpenFile,
+  showNoteFilesOnly,
+  onShowNoteFilesOnlyChange,
   footerChildren,
   footerTitle,
   footerSubtitle,
@@ -218,19 +218,25 @@ export function AppSidebar({
             </SidebarGroupLabel>
             <SidebarMenu className="gap-2">
               {navItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.title} className="min-w-0">
                   <SidebarMenuButton asChild>
                     <a
                       href={wsPathToHref ? wsPathToHref(item.wsPath) : '#dead'}
-                      className="font-medium"
+                      title={item.title}
+                      className="min-w-0 font-medium"
                     >
-                      {item.title}
+                      <span className="block min-w-0 truncate">
+                        {item.title}
+                      </span>
                     </a>
                   </SidebarMenuButton>
                   {item.items?.length ? (
                     <SidebarMenuSub className="ml-0 border-l-0 px-1.5">
                       {item.items.map((item) => (
-                        <SidebarMenuSubItem key={item.title}>
+                        <SidebarMenuSubItem
+                          key={item.title}
+                          className="min-w-0"
+                        >
                           <SidebarMenuSubButton asChild>
                             <a
                               href={
@@ -238,8 +244,12 @@ export function AppSidebar({
                                   ? wsPathToHref(item.wsPath)
                                   : '#dead'
                               }
+                              title={item.title}
+                              className="min-w-0"
                             >
-                              {item.title}
+                              <span className="block min-w-0 truncate">
+                                {item.title}
+                              </span>
                             </a>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
@@ -260,12 +270,12 @@ export function AppSidebar({
               activePaths={activeFilePaths}
               filePaths={filePaths}
               getActionsForEntry={getActionsForEntry}
-              isTruncated={isTruncated}
               onCreateDirectory={onCreateDirectory}
               onCreateNote={onCreateNote}
               onMoveFile={onMoveFile}
               onOpenFile={onOpenFile}
-              onShowMore={onTruncatedClick}
+              showNoteFilesOnly={showNoteFilesOnly}
+              onShowNoteFilesOnlyChange={onShowNoteFilesOnlyChange}
             />
           </SidebarGroupContent>
         </SidebarGroup>

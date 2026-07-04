@@ -17,7 +17,7 @@ const isWideEditor = checkWidescreen();
 /** The main application toolbar containing navigation controls like sidebar toggle, breadcrumbs, and editor width toggle. */
 export function AppToolbar() {
   const coreServices = useCoreServices();
-  const wsPaths = useAtomValue(coreServices.workspaceState.$wsPaths);
+  const wsPaths = useAtomValue(coreServices.workspaceState.$noteWsPaths);
   const wsPath = useAtomValue(coreServices.workspaceState.$currentWsPath);
   const wsName = useAtomValue(coreServices.workspaceState.$currentWsName);
   const [wideEditor, setWideEditor] = useAtom(

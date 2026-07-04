@@ -251,7 +251,7 @@ function useWorkspaceNoteCounts(
     void Promise.all(
       workspaceNames.map(async (wsName) => {
         try {
-          const files = await fileSystem.listFiles(
+          const files = await fileSystem.listNoteFiles(
             wsName,
             abortController.signal,
           );

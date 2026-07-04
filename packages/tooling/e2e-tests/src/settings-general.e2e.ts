@@ -29,6 +29,9 @@ test('general settings update and persist user preferences', async ({
   await expect(defaultWidth).toBeChecked();
   await expect(wideWidth).not.toBeChecked();
 
+  await page.getByRole('combobox', { name: 'Asset location' }).click();
+  await page.getByRole('option', { name: 'Adjacent to note' }).click();
+
   await page.reload({ waitUntil: 'networkidle' });
 
   await expect(page.getByRole('heading', { name: 'General' })).toBeVisible();
@@ -39,6 +42,9 @@ test('general settings update and persist user preferences', async ({
   await expect(
     page.getByRole('combobox', { name: 'Theme preference' }),
   ).toContainText('Dark');
+  await expect(
+    page.getByRole('combobox', { name: 'Asset location' }),
+  ).toContainText('Adjacent to note');
   await expect(page.getByRole('radio', { name: 'Default' })).toBeChecked();
 });
 

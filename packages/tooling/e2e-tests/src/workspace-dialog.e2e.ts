@@ -1,6 +1,10 @@
 import { expect, test } from '@playwright/test';
 
-test('Submit workspace name', async ({ page }) => {
+test('creates a browser workspace from the workspace selector dialog', async ({
+  page,
+}) => {
+  const workspaceName = `dialog-workspace-${Date.now()}`;
+
   await page.goto('/');
 
   await page.getByRole('button', { name: 'No workspace selected' }).click();
@@ -10,10 +14,11 @@ test('Submit workspace name', async ({ page }) => {
     .click();
   await expect(
     page.getByRole('dialog', { name: 'Select a workspace type' }),
-  ).not.toHaveClass(/slide-in-from-left/);
+  ).toBeVisible();
   await expect(
     page.getByText('Choose where this workspace stores its notes.'),
   ).toBeVisible();
+
   await page.getByRole('button', { name: 'Cancel' }).click();
   await expect(
     page.getByRole('dialog', { name: 'Select a workspace type' }),
@@ -25,12 +30,23 @@ test('Submit workspace name', async ({ page }) => {
     .getByText('New Workspace')
     .click();
 
-  // Select browser storage type
-  await page.getByRole('radio', { name: /Browser Storage/i }).click();
-  await page.getByRole('button', { name: /next/i }).click();
-
-  // Fill workspace name
-  await page.getByLabel('Workspace Name', { exact: true }).fill('test');
-
+  await page
+    .getByRole('radio', { name: 'Browser Save workspace data' })
+    .click();
+  await page.getByRole('button', { name: 'Next' }).click();
+  await page.getByLabel('Workspace Name', { exact: true }).fill(workspaceName);
   await page.getByRole('button', { name: 'Create' }).click();
+
+  await expect(
+    page.getByRole('heading', { name: workspaceName }),
+  ).toBeVisible();
+
+  await page.reload();
+
+  await expect(
+    page.getByRole('button', { name: `${workspaceName} browser` }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: workspaceName }),
+  ).toBeVisible();
 });

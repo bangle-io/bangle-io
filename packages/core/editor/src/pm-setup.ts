@@ -5,6 +5,7 @@ import {
   EditorView,
   store as editorStore,
   markdownLoader,
+  type NodeViewConstructor,
   Plugin,
   type PMNode,
   type ResolvedPos,
@@ -25,12 +26,14 @@ export function createEditor({
   onDocChange,
   store,
   extensions,
+  nodeViews,
 }: {
   domNode: HTMLElement;
   defaultContent?: string;
   onDocChange?: (doc: string) => void;
   store: Store;
   extensions: ReturnType<typeof setupExtensions>;
+  nodeViews?: Record<string, NodeViewConstructor>;
 }) {
   const resolved = resolve(
     {
@@ -84,6 +87,7 @@ export function createEditor({
         schema,
         plugins: resolved.resolvePlugins({ schema }),
       }),
+      nodeViews,
     },
   );
 

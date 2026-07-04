@@ -1,6 +1,35 @@
 import { expect, test } from '@playwright/test';
 import { expectReadableContrast } from './common';
 
+function parseOklchColor(value: string): [number, number, number] | undefined {
+  const match = value.match(
+    /^oklch\(\s*([\d.]+)(%)?\s+([\d.]+)\s+([\d.]+)\s*\)$/i,
+  );
+  if (!match) {
+    return undefined;
+  }
+
+  const lightness = Number(match[1]);
+  return [
+    match[2] ? lightness / 100 : lightness,
+    Number(match[3]),
+    Number(match[4]),
+  ];
+}
+
+function expectCssColorEquivalent(actual: string, expected: string) {
+  const actualOklch = parseOklchColor(actual);
+  const expectedOklch = parseOklchColor(expected);
+  if (actualOklch && expectedOklch) {
+    for (const index of [0, 1, 2] as const) {
+      expect(actualOklch[index]).toBeCloseTo(expectedOklch[index], 4);
+    }
+    return;
+  }
+
+  expect(actual).toBe(expected);
+}
+
 test('NativeFS picker error keeps readable destructive colors in dark mode', async ({
   page,
 }) => {
@@ -48,8 +77,8 @@ test('NativeFS picker error keeps readable destructive colors in dark mode', asy
     };
   });
 
-  expect(styles.backgroundColor).toBe(styles.destructive);
-  expect(styles.color).toBe(styles.destructiveForeground);
+  expectCssColorEquivalent(styles.backgroundColor, styles.destructive);
+  expectCssColorEquivalent(styles.color, styles.destructiveForeground);
 });
 
 test('contrast helper treats opaque rgb backgrounds as opaque', async ({

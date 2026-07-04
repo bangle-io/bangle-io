@@ -76,12 +76,24 @@ export function handleRouteInfo(
   switch (route) {
     case 'editor': {
       const wsPath = params.wsPath?.trim() || '';
-      const check = WsPath.safeParse(wsPath);
-      if (!check.ok) {
+      const check = WsPath.safeParseFile(wsPath);
+      if (!check.ok || !check.data?.isMarkdown()) {
         return { route: 'not-found', payload: { path: '/invalid-wsPath' } };
       }
       return {
         route: 'editor',
+        payload: { wsPath },
+      };
+    }
+
+    case 'asset': {
+      const wsPath = params.wsPath?.trim() || '';
+      const check = WsPath.safeParseFile(wsPath);
+      if (!check.ok) {
+        return { route: 'not-found', payload: { path: '/invalid-wsPath' } };
+      }
+      return {
+        route: 'asset',
         payload: { wsPath },
       };
     }

@@ -9,6 +9,7 @@ import {
 import { SERVICE_NAME } from '@bangle.io/constants';
 import {
   createWikiLinkIndex,
+  isVisibleWorkspaceFilePath,
   type WikiLinkIndex,
   type WsFilePath,
   WsPath,
@@ -114,15 +115,21 @@ export class WorkspaceStateService extends BaseService {
       .filter((path) => path !== undefined);
   });
 
+  $noteWsPaths = atom<WsFilePath[]>((get) => {
+    return get(this.$wsPaths).filter((path) => path.isMarkdown());
+  });
+
   $wikiLinkIndex = atom<WikiLinkIndex | undefined>((get) => {
     const wsName = get(this.$currentWsName);
-    return wsName ? createWikiLinkIndex(get(this.$wsPaths), wsName) : undefined;
+    return wsName
+      ? createWikiLinkIndex(get(this.$noteWsPaths), wsName)
+      : undefined;
   });
 
   private $backlinkIndexAsync = atom<Promise<BacklinkIndexState>>(
     async (get, { signal }) => {
       const wsName = get(this.$currentWsName);
-      const wsPaths = get(this.$wsPaths);
+      const wsPaths = get(this.$noteWsPaths);
       get(this.fileSystem.$fileContentUpdateCount);
 
       if (!wsName) {
@@ -160,19 +167,28 @@ export class WorkspaceStateService extends BaseService {
   );
 
   $activeWsPaths = atom<WsFilePath[]>((get) => {
-    const wsPath = get(this.navigation.$wsFilePath);
+    const wsPath = get(this.navigation.$activeWsFilePath);
     return wsPath ? [wsPath] : EMPTY_FILE_PATH_ARRAY;
   });
 
   /**
-   * This atom is used to check if the current note path
-   * is on the disk.
-   * TODO: rename to currentWsFilePath
+   * This atom is used to check if the current file path is on the disk.
+   */
+  $currentWsFilePath = atom((get) => {
+    const wsPath = get(this.navigation.$activeWsFilePath);
+    const rawWsPaths = get(this.$rawWsPaths);
+    return wsPath && rawWsPaths.includes(wsPath.wsPath) ? wsPath : undefined;
+  });
+
+  /**
+   * This atom is used to check if the current note path is on the disk.
    */
   $currentWsPath = atom((get) => {
     const wsPath = get(this.navigation.$wsFilePath);
     const rawWsPaths = get(this.$rawWsPaths);
-    return wsPath && rawWsPaths.includes(wsPath.wsPath) ? wsPath : undefined;
+    return wsPath?.isMarkdown() && rawWsPaths.includes(wsPath.wsPath)
+      ? wsPath
+      : undefined;
   });
 
   /**
@@ -189,7 +205,9 @@ export class WorkspaceStateService extends BaseService {
     return {
       workspaces: this.store.get(this.$workspaces),
       wsPaths: this.store.get(this.$wsPaths),
+      noteWsPaths: this.store.get(this.$noteWsPaths),
       currentWsName: this.store.get(this.$currentWsName),
+      currentWsFilePath: this.store.get(this.$currentWsFilePath),
       currentWsPath: this.store.get(this.$currentWsPath),
     };
   }
@@ -221,7 +239,7 @@ export class WorkspaceStateService extends BaseService {
             return;
           }
           void wrapPromiseInAppErrorHandler(
-            this.fileSystem.listFiles(wsName, abortController.signal),
+            this.fileSystem.listWorkspaceFiles(wsName, abortController.signal),
             EMPTY_STRING_ARRAY,
             this.emitAppError,
           ).then((paths) => {
@@ -257,7 +275,7 @@ export class WorkspaceStateService extends BaseService {
           }
           this.handledFileCreateSequence = createEvent.sequence;
 
-          const filePath = this.getSupportedFilePath(createEvent.wsPath);
+          const filePath = this.getVisibleWorkspaceFilePath(createEvent.wsPath);
           const wsName = get(this.$currentWsName);
           if (!wsName || !filePath || filePath.wsName !== wsName) {
             return;
@@ -289,14 +307,9 @@ export class WorkspaceStateService extends BaseService {
     return this.dep.workspaceOps;
   }
 
-  private getSupportedFilePath(wsPath: string): WsFilePath | undefined {
+  private getVisibleWorkspaceFilePath(wsPath: string): WsFilePath | undefined {
     const filePath = WsPath.safeParse(wsPath).data?.asFile();
-    const extension = filePath?.extension;
-    if (!filePath || !extension) {
-      return undefined;
-    }
-
-    return this.fileSystem.isFileTypeSupported({ extension })
+    return filePath && isVisibleWorkspaceFilePath(filePath)
       ? filePath
       : undefined;
   }
@@ -310,13 +323,16 @@ export class WorkspaceStateService extends BaseService {
     sequence: number;
     wsName: string;
   }): string[] {
-    let nextPaths = paths;
+    let nextPaths = paths.flatMap((wsPath) => {
+      const filePath = this.getVisibleWorkspaceFilePath(wsPath);
+      return filePath?.wsName === wsName ? [filePath.wsPath] : [];
+    });
     for (const [createSequence, createdWsPath] of this
       .createdWsPathsBySequence) {
       if (createSequence <= sequence) {
         continue;
       }
-      const filePath = this.getSupportedFilePath(createdWsPath);
+      const filePath = this.getVisibleWorkspaceFilePath(createdWsPath);
       if (filePath?.wsName === wsName) {
         nextPaths = appendSortedUniqueWsPath(nextPaths, filePath.wsPath);
       }

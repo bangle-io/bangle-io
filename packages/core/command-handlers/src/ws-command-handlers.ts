@@ -89,7 +89,7 @@ export const wsCommandHandlers = [
     navigation.goWorkspace(wsName);
   }),
   c('command::ws:go-ws-path', ({ navigation }, { wsPath }) => {
-    navigation.goWsPath(wsPath);
+    navigation.goWsFile(wsPath);
   }),
 
   c(
@@ -103,16 +103,13 @@ export const wsCommandHandlers = [
     },
   ),
 
-  c('command::ws:delete-ws-path', ({ fileSystem, navigation }, { wsPath }) => {
-    if (navigation.resolveAtoms().wsPath?.wsPath === wsPath) {
-      navigation.goWorkspace();
-    }
-    fileSystem.deleteFile(wsPath);
+  c('command::ws:delete-ws-path', async ({ fileSystem }, { wsPath }) => {
+    await fileSystem.deleteFile(wsPath);
   }),
 
   c(
     'command::ws:rename-ws-path',
-    ({ fileSystem, navigation }, { wsPath, newWsPath }) => {
+    async ({ fileSystem, navigation }, { wsPath, newWsPath }) => {
       const oldPath = WsPath.fromString(wsPath);
       const newPath = WsPath.fromString(newWsPath);
 
@@ -138,27 +135,25 @@ export const wsCommandHandlers = [
         );
       }
 
-      const needsRedirect = navigation.resolveAtoms().wsPath?.wsPath === wsPath;
+      const needsRedirect =
+        navigation.resolveAtoms().activeWsFilePath?.wsPath === wsPath;
 
       // Keep the open note visible during the rename instead of navigating to
       // ws-home first (which paints an intermediate screen for the duration of
       // the async write). Redirect straight to the renamed path once it lands.
-      void fileSystem
-        .renameFile({
-          oldWsPath: wsPath,
-          newWsPath,
-        })
-        .then(() => {
-          if (needsRedirect) {
-            navigation.goWsPath(newWsPath);
-          }
-        });
+      await fileSystem.renameFile({
+        oldWsPath: wsPath,
+        newWsPath,
+      });
+      if (needsRedirect) {
+        navigation.goWsPath(newWsPath);
+      }
     },
   ),
 
   c(
     'command::ws:move-ws-path',
-    (
+    async (
       { fileSystem, navigation, workspaceState },
       { wsPath, destDirWsPath },
       key,
@@ -196,7 +191,8 @@ export const wsCommandHandlers = [
         );
       }
 
-      const needsRedirect = navigation.resolveAtoms().wsPath?.wsPath === wsPath;
+      const needsRedirect =
+        navigation.resolveAtoms().activeWsFilePath?.wsPath === wsPath;
 
       // Do not bounce the open note through the workspace-home screen while the
       // rename is in flight: that navigation happens before the storage write
@@ -204,22 +200,19 @@ export const wsCommandHandlers = [
       // the current note until the durable rename lands, then redirect straight
       // to the new path. The wsPaths update and this redirect settle in the same
       // microtask, so the moved note never flashes an intermediate screen.
-      void fileSystem
-        .renameFile({
-          oldWsPath: wsPath,
-          newWsPath,
-        })
-        .then(() => {
-          if (needsRedirect) {
-            navigation.goWsPath(newWsPath);
-          }
-        });
+      await fileSystem.renameFile({
+        oldWsPath: wsPath,
+        newWsPath,
+      });
+      if (needsRedirect) {
+        navigation.goWsPath(newWsPath);
+      }
     },
   ),
 
   c('command::ws:quick-new-note', ({ workspaceState }, { pathPrefix }, key) => {
     const { store, dispatch } = getCtx(key);
-    const wsPaths = store.get(workspaceState.$wsPaths) || [];
+    const wsPaths = store.get(workspaceState.$noteWsPaths) || [];
 
     const untitledNotes = wsPaths
       .map((path) => path.fileNameWithoutExtension)
@@ -307,7 +300,7 @@ export const wsCommandHandlers = [
         return;
       }
 
-      const currentWsPath = navigation.resolveAtoms().wsPath?.wsPath;
+      const currentWsPath = navigation.resolveAtoms().activeWsFilePath?.wsPath;
       const pairs = descendants.map((path) => {
         const filePath = WsPath.assertFile(path.wsPath);
         const suffix = filePath.path.slice(oldDir.path.length);
@@ -351,7 +344,7 @@ export const wsCommandHandlers = [
 
   c(
     'command::ws:delete-directory',
-    async ({ fileSystem, navigation, workspaceState }, { dirWsPath }, key) => {
+    async ({ fileSystem, workspaceState }, { dirWsPath }, key) => {
       const { store } = getCtx(key);
       const dirPath = assertDirectoryWsPath(dirWsPath);
       const descendants = store
@@ -364,19 +357,10 @@ export const wsCommandHandlers = [
         return;
       }
 
-      const currentWsPath = navigation.resolveAtoms().wsPath?.wsPath;
-      const deletingOpenNote =
-        currentWsPath !== undefined &&
-        descendants.some((path) => path.wsPath === currentWsPath);
-
-      // Delete first, then leave the (now-gone) note — keeping the note visible
-      // until the delete is durable means a failed delete leaves the user on it
-      // rather than stranded on ws-home.
+      // Delete first, then leave the route stable. The editor and asset pages
+      // derive existence from workspace-state atoms and render not-found states
+      // when the routed file disappears.
       await fileSystem.deleteFiles(descendants.map((path) => path.wsPath));
-
-      if (deletingOpenNote) {
-        navigation.goWorkspace();
-      }
     },
   ),
   c('command::ws:go-ws-home', ({ navigation }) => {
@@ -404,7 +388,7 @@ export const wsCommandHandlers = [
       const base = match ? match[1] : origName;
 
       // Get all sibling notes in the same directory
-      const wsNotes = store.get(workspaceState.$wsPaths);
+      const wsNotes = store.get(workspaceState.$noteWsPaths);
       const siblingNames = new Set<string>();
       for (const note of wsNotes) {
         const noteParsed = WsPath.fromString(note.wsPath);

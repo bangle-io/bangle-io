@@ -2,9 +2,11 @@ import { expect, type Page, test } from '@playwright/test';
 import {
   clearEditor,
   createBrowserWorkspace,
+  expectNoPageHorizontalOverflow,
   getEditorLocator,
   getEditorText,
   readStoredMarkdown,
+  writeStoredFile,
   writeStoredMarkdown,
 } from './common';
 
@@ -122,6 +124,36 @@ async function setFileExplorerScrollTop(page: Page, scrollTop: number) {
     }, scrollTop);
 }
 
+async function readStoredFileText(
+  page: Page,
+  workspaceName: string,
+  relativePath: string,
+): Promise<string | undefined> {
+  return page.evaluate(
+    async ({ filePath, workspace }) => {
+      const request = indexedDB.open('baby-idb-db-3');
+      const database = await new Promise<IDBDatabase>((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+      const transaction = database.transaction(
+        'baby-idb-db-store-3',
+        'readonly',
+      );
+      const getRequest = transaction
+        .objectStore('baby-idb-db-store-3')
+        .get(`${workspace}/${filePath}`);
+      const file = await new Promise<File | undefined>((resolve, reject) => {
+        getRequest.onsuccess = () => resolve(getRequest.result);
+        getRequest.onerror = () => reject(getRequest.error);
+      });
+      database.close();
+      return file?.text();
+    },
+    { filePath: relativePath, workspace: workspaceName },
+  );
+}
+
 async function clickVisibleFileTreeRow(page: Page) {
   return page.getByTestId('bangle-file-explorer').evaluate((explorer) => {
     const host = explorer.querySelector('file-tree-container') as HTMLElement;
@@ -158,6 +190,48 @@ async function clickVisibleFileTreeRow(page: Page) {
       label: row.getAttribute('aria-label') ?? '',
     };
   });
+}
+
+async function writeStoredFiles(
+  page: Page,
+  workspaceName: string,
+  files: Array<{ content: string; relativePath: string; type: string }>,
+) {
+  await page.evaluate(
+    async ({ workspace, files }) => {
+      const request = indexedDB.open('baby-idb-db-3');
+      const database = await new Promise<IDBDatabase>((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+
+      await new Promise<void>((resolve, reject) => {
+        const transaction = database.transaction(
+          'baby-idb-db-store-3',
+          'readwrite',
+        );
+        transaction.oncomplete = () => resolve();
+        transaction.onerror = () => reject(transaction.error);
+        transaction.onabort = () => reject(transaction.error);
+
+        const store = transaction.objectStore('baby-idb-db-store-3');
+        for (const file of files) {
+          store.put(
+            new File(
+              [file.content],
+              file.relativePath.split('/').at(-1) ?? file.relativePath,
+              {
+                type: file.type,
+              },
+            ),
+            `${workspace}/${file.relativePath}`,
+          );
+        }
+      });
+      database.close();
+    },
+    { files, workspace: workspaceName },
+  );
 }
 
 test('file explorer creates folders, opens notes, and survives reload', async ({
@@ -484,6 +558,324 @@ test('file explorer keeps folders expanded when a note is moved', async ({
       explorer.getByRole('treeitem', { name: /deep\.md/ }),
     ).toBeVisible();
   });
+});
+
+test('file explorer shows common workspace files and opens non-notes as assets', async ({
+  page,
+}) => {
+  const workspaceName = `explorer-files-${Date.now()}`;
+  const longFileName =
+    'this-is-a-really-long-file-name-that-should-truncate-in-the-opened-section-instead-of-overflowing-the-sidebar.pdf';
+  await createBrowserWorkspace(page, { workspaceName });
+
+  await writeStoredMarkdown(page, workspaceName, 'notes/visible', 'Visible');
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'src/component.tsx',
+    'export function Component() { return null; }',
+    'text/typescript',
+  );
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'assets/report.pdf',
+    '%PDF-1.4',
+    'application/pdf',
+  );
+  await writeStoredFile(
+    page,
+    workspaceName,
+    longFileName,
+    '%PDF-1.4 long name',
+    'application/pdf',
+  );
+  await writeStoredFile(
+    page,
+    workspaceName,
+    '.hidden.md',
+    'Hidden dotfile',
+    'text/markdown',
+  );
+  await writeStoredMarkdown(page, workspaceName, 'temp/legacy', 'Legacy note');
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'node_modules/pkg/index.ts',
+    'export const ignored = true;',
+    'text/typescript',
+  );
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'dist/bundle.js',
+    'console.log("ignored");',
+    'text/javascript',
+  );
+
+  await page.goto(
+    `/ws#route=ws-home&wsName=${encodeURIComponent(workspaceName)}`,
+  );
+  await page.reload();
+
+  const explorer = page.getByTestId('bangle-file-explorer');
+  await expect(explorer).toBeVisible();
+  const notesOnlyToggle = explorer.getByRole('button', {
+    name: 'Show Notes Only',
+  });
+  await expect(notesOnlyToggle).toHaveAttribute('aria-pressed', 'false');
+
+  await expect(
+    explorer.getByRole('treeitem', { name: /^notes$/ }),
+  ).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /visible\.md/ }),
+  ).toBeVisible();
+  await expect(explorer.getByRole('treeitem', { name: /^src$/ })).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /component\.tsx/ }),
+  ).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /^assets$/ }),
+  ).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /report\.pdf/ }),
+  ).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: longFileName }),
+  ).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /\.hidden\.md/ }),
+  ).toBeVisible();
+  await expect(explorer.getByRole('treeitem', { name: /^temp$/ })).toHaveCount(
+    0,
+  );
+  await expect(
+    explorer.getByRole('treeitem', { name: /legacy\.md/ }),
+  ).toHaveCount(0);
+
+  await test.step('non-note file options menu opens from the three-dot button', async () => {
+    const reportRow = explorer.getByRole('treeitem', { name: /report\.pdf/ });
+
+    await reportRow.hover();
+    await explorer.getByRole('button', { name: 'Options' }).click();
+    await expectContextMenuIsNotClipped(page);
+    await expect(page.getByRole('button', { name: 'Open' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Rename' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Delete' })).toBeVisible();
+
+    await page.getByRole('button', { name: 'Rename' }).click();
+    await expect(
+      page.getByRole('dialog', { name: 'Rename File' }),
+    ).toBeVisible();
+    await expect(page.getByLabel('New file name')).toHaveValue('report.pdf');
+    await page.keyboard.press('Escape');
+  });
+
+  await test.step('toggle notes-only filtering in the explorer', async () => {
+    await notesOnlyToggle.click();
+    await expect(notesOnlyToggle).toHaveAttribute('aria-pressed', 'true');
+    await expect(
+      explorer.getByRole('treeitem', { name: /^notes$/ }),
+    ).toBeVisible();
+    await expect(
+      explorer.getByRole('treeitem', { name: /visible\.md/ }),
+    ).toBeVisible();
+    await expect(
+      explorer.getByRole('treeitem', { name: /\.hidden\.md/ }),
+    ).toBeVisible();
+    await expect(
+      explorer.getByRole('treeitem', { name: /^temp$/ }),
+    ).toHaveCount(0);
+    await expect(
+      explorer.getByRole('treeitem', { name: /legacy\.md/ }),
+    ).toHaveCount(0);
+    await expect(explorer.getByRole('treeitem', { name: /^src$/ })).toHaveCount(
+      0,
+    );
+    await expect(
+      explorer.getByRole('treeitem', { name: /component\.tsx/ }),
+    ).toHaveCount(0);
+    await expect(
+      explorer.getByRole('treeitem', { name: /^assets$/ }),
+    ).toHaveCount(0);
+    await expect(
+      explorer.getByRole('treeitem', { name: /report\.pdf/ }),
+    ).toHaveCount(0);
+
+    await page.reload();
+    await expect(notesOnlyToggle).toHaveAttribute('aria-pressed', 'true');
+    await expect(
+      explorer.getByRole('treeitem', { name: /^notes$/ }),
+    ).toBeVisible();
+    await expect(
+      explorer.getByRole('treeitem', { name: /\.hidden\.md/ }),
+    ).toBeVisible();
+    await expect(
+      explorer.getByRole('treeitem', { name: /^assets$/ }),
+    ).toHaveCount(0);
+
+    await notesOnlyToggle.click();
+    await expect(notesOnlyToggle).toHaveAttribute('aria-pressed', 'false');
+    await expect(
+      explorer.getByRole('treeitem', { name: /^src$/ }),
+    ).toBeVisible();
+    await expect(
+      explorer.getByRole('treeitem', { name: /component\.tsx/ }),
+    ).toBeVisible();
+    await expect(
+      explorer.getByRole('treeitem', { name: /^assets$/ }),
+    ).toBeVisible();
+    await expect(
+      explorer.getByRole('treeitem', { name: /report\.pdf/ }),
+    ).toBeVisible();
+
+    await page.reload();
+    await expect(notesOnlyToggle).toHaveAttribute('aria-pressed', 'false');
+    await expect(
+      explorer.getByRole('treeitem', { name: /^assets$/ }),
+    ).toBeVisible();
+    await expect(
+      explorer.getByRole('treeitem', { name: /report\.pdf/ }),
+    ).toBeVisible();
+  });
+
+  await test.step('long opened filenames truncate without widening the sidebar', async () => {
+    await explorer.getByRole('treeitem', { name: longFileName }).click();
+    await expect(page).toHaveURL(
+      `/ws#route=asset&wsPath=${encodeURIComponent(
+        `${workspaceName}:${longFileName}`,
+      )}`,
+    );
+
+    const openedLink = page
+      .locator('[data-sidebar="menu-button"]')
+      .filter({ hasText: longFileName })
+      .first();
+    await expect(openedLink).toBeVisible();
+
+    const openedLinkLayout = await openedLink.evaluate((link) => {
+      const sidebar = link.closest('[data-sidebar="sidebar"]');
+      const label = link.querySelector('span');
+      const linkRect = link.getBoundingClientRect();
+      const labelRect = label?.getBoundingClientRect();
+      const sidebarRect = sidebar?.getBoundingClientRect();
+
+      return {
+        labelClientWidth: label?.clientWidth ?? 0,
+        labelRectWidth: labelRect?.width ?? 0,
+        labelScrollWidth: label?.scrollWidth ?? 0,
+        linkRight: linkRect.right,
+        sidebarRight: sidebarRect?.right ?? 0,
+        sidebarWidth: sidebarRect?.width ?? 0,
+      };
+    });
+
+    expect(openedLinkLayout.labelScrollWidth).toBeGreaterThan(
+      openedLinkLayout.labelClientWidth,
+    );
+    expect(openedLinkLayout.labelRectWidth).toBeLessThanOrEqual(
+      openedLinkLayout.labelClientWidth + 1,
+    );
+    expect(openedLinkLayout.linkRight).toBeLessThanOrEqual(
+      openedLinkLayout.sidebarRight + 1,
+    );
+    expect(openedLinkLayout.sidebarWidth).toBeLessThanOrEqual(272);
+    await expectNoPageHorizontalOverflow(page);
+  });
+
+  await expect(
+    explorer.getByRole('treeitem', { name: /\.hidden\.md/ }),
+  ).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /^node_modules$/ }),
+  ).toHaveCount(0);
+  await expect(explorer.getByRole('treeitem', { name: /^dist$/ })).toHaveCount(
+    0,
+  );
+
+  await explorer.getByRole('treeitem', { name: /report\.pdf/ }).click();
+  await expect(page).toHaveURL(
+    `/ws#route=asset&wsPath=${encodeURIComponent(
+      `${workspaceName}:assets/report.pdf`,
+    )}`,
+  );
+  await expect(page.getByRole('heading', { name: 'report.pdf' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Download' })).toBeVisible();
+
+  await test.step('deleting the open non-note asset leaves the asset view', async () => {
+    const reportRow = explorer.getByRole('treeitem', { name: /report\.pdf/ });
+
+    await reportRow.hover();
+    await explorer.getByRole('button', { name: 'Options' }).click();
+    await page.getByRole('button', { name: 'Delete' }).click();
+
+    const confirmDeleteDialog = page.getByRole('alertdialog', {
+      name: 'Confirm Delete',
+    });
+    await expect(confirmDeleteDialog).toBeVisible();
+    await expect(confirmDeleteDialog).toContainText('report.pdf');
+    await confirmDeleteDialog.getByRole('button', { name: 'Delete' }).click();
+
+    await expect(page).toHaveURL(
+      `/ws#route=asset&wsPath=${encodeURIComponent(
+        `${workspaceName}:assets/report.pdf`,
+      )}`,
+    );
+    await expect(page.getByRole('heading', { name: 'report.pdf' })).toHaveCount(
+      0,
+    );
+    await expect(
+      page.getByRole('heading', { name: 'File Not Found' }),
+    ).toBeVisible();
+    await expect(reportRow).toHaveCount(0);
+    await expect
+      .poll(() => readStoredFileText(page, workspaceName, 'assets/report.pdf'))
+      .toBeUndefined();
+  });
+
+  await explorer.getByRole('treeitem', { name: /visible\.md/ }).click();
+  await expect(page).toHaveURL(
+    `/ws#route=editor&wsPath=${encodeURIComponent(
+      `${workspaceName}:notes/visible.md`,
+    )}`,
+  );
+  await expect.poll(() => getEditorText(page, {})).toBe('Visible');
+});
+
+test('file explorer does not drop later root folders in large workspaces', async ({
+  page,
+}) => {
+  const workspaceName = `explorer-large-${Date.now()}`;
+  await createBrowserWorkspace(page, { workspaceName });
+
+  const earlierFiles = Array.from({ length: 850 }, (_, index) => ({
+    content: `export const value${index} = ${index};`,
+    relativePath: `apps/generated/file-${String(index).padStart(4, '0')}.ts`,
+    type: 'text/typescript',
+  }));
+  await writeStoredFiles(page, workspaceName, [
+    ...earlierFiles,
+    {
+      content: '# Guide',
+      relativePath: 'docs/guide.md',
+      type: 'text/markdown',
+    },
+  ]);
+
+  await page.goto(
+    `/ws#route=ws-home&wsName=${encodeURIComponent(workspaceName)}`,
+  );
+  await page.reload();
+
+  const explorer = page.getByTestId('bangle-file-explorer');
+  await expect(explorer).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /^apps \/ generated$/ }),
+  ).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /^docs$/ }),
+  ).toBeVisible();
 });
 
 test('moving the open note does not flash the workspace-home screen', async ({

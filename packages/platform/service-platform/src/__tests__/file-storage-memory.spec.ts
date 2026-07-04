@@ -2,6 +2,7 @@
  * @vitest-environment happy-dom
  */
 
+import { FILE_STORAGE_MAX_FILE_SIZE_BYTES } from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { FileStorageMemory } from '../file-storage-memory';
@@ -26,6 +27,14 @@ async function setup() {
 describe('FileStorageMemory', () => {
   beforeEach(() => {
     // Clear internal state if needed
+  });
+
+  it('declares a memory storage file-size limit', async () => {
+    const { service } = await setup();
+
+    expect(service.maxFileSizeBytes).toBe(
+      FILE_STORAGE_MAX_FILE_SIZE_BYTES.memory,
+    );
   });
 
   it('should create and read a file', async () => {

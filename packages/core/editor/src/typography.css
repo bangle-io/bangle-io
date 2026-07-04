@@ -91,6 +91,13 @@ div.ProseMirror {
     cursor: pointer;
   }
 
+  & img.bangle-local-image-broken {
+    min-width: 8rem;
+    min-height: 4rem;
+    border: 1px dashed hsl(var(--border));
+    background: hsl(var(--muted));
+  }
+
   & p,
   & ul,
   & ol,

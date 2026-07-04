@@ -24,8 +24,9 @@ const PORT = readPortEnv(
   'BANGLE_E2E_PORT',
   readPortEnv('BANGLE_DEV_PORT', 5173),
 );
-const BASE_URL = `http://localhost:${PORT}`;
+const BASE_URL = process.env.BANGLE_E2E_BASE_URL ?? `http://localhost:${PORT}`;
 const isCI = Boolean(process.env.CI);
+const useExternalServer = process.env.BANGLE_E2E_EXTERNAL_SERVER === '1';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -93,9 +94,11 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  webServer: {
-    command: `BANGLE_DEV_PORT=${PORT} pnpm --dir ../browser-entry exec vite --configLoader runner --host localhost --port ${PORT} --strictPort`,
-    url: BASE_URL,
-    reuseExistingServer: !isCI,
-  },
+  webServer: useExternalServer
+    ? undefined
+    : {
+        command: `BANGLE_DEV_PORT=${PORT} pnpm --dir ../browser-entry exec vite --configLoader runner --host localhost --port ${PORT} --strictPort`,
+        url: BASE_URL,
+        reuseExistingServer: !isCI,
+      },
 });

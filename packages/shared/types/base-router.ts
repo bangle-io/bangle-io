@@ -24,6 +24,13 @@ export type AppRouteInfo =
       };
     }
   | {
+      route: 'asset';
+      metadata?: Record<string, string>;
+      payload: {
+        wsPath: string;
+      };
+    }
+  | {
       route: 'native-fs-auth-failed';
       metadata?: Record<string, string>;
       payload: {

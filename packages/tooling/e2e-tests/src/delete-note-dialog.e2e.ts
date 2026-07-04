@@ -34,10 +34,13 @@ test('delete note command opens confirmation without an intermediate picker', as
     name: /delete-target\.md/,
   });
   await expect(deletedNoteTreeItem).toHaveCount(0);
+  await expect(
+    page.getByRole('heading', { name: 'Note Not Found' }),
+  ).toBeVisible();
 
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(
-    page.getByRole('heading', { name: workspaceName }),
+    page.getByRole('heading', { name: 'Note Not Found' }),
   ).toBeVisible();
   await expect(deletedNoteTreeItem).toHaveCount(0);
 });

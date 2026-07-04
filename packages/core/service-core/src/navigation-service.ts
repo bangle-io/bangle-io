@@ -57,9 +57,18 @@ export class NavigationService extends BaseService {
     return wsPath.data?.asFile();
   });
 
+  $activeWsFilePath = atom<WsFilePath | undefined>((get) => {
+    const routeInfo = get(this.$routeInfo);
+    if (routeInfo.route !== 'editor' && routeInfo.route !== 'asset') {
+      return undefined;
+    }
+
+    return WsPath.safeParseFile(routeInfo.payload.wsPath).data;
+  });
+
   $wsName = atom<string | undefined>((get) => {
     // prefer wsFilePath over routeInfo
-    const wsPath = get(this.$wsFilePath);
+    const wsPath = get(this.$activeWsFilePath);
     if (wsPath) {
       return wsPath?.wsName;
     }
@@ -72,6 +81,7 @@ export class NavigationService extends BaseService {
     }
     if (
       routeInfo.route === 'editor' ||
+      routeInfo.route === 'asset' ||
       routeInfo.route === 'ws-path-not-found'
     ) {
       return WsPath.safeParse(routeInfo.payload.wsPath).data?.wsName;
@@ -114,6 +124,7 @@ export class NavigationService extends BaseService {
     return {
       wsName: this.store.get(this.$wsName),
       wsPath: this.store.get(this.$wsFilePath),
+      activeWsFilePath: this.store.get(this.$activeWsFilePath),
       lifeCycle: this.store.get(this.$lifeCycle),
       routeInfo: this.store.get(this.$routeInfo),
     };
@@ -143,10 +154,28 @@ export class NavigationService extends BaseService {
   }
 
   public goWsPath(wsPath: string) {
-    this.go({
-      route: 'editor',
-      payload: { wsPath },
-    });
+    this.go(this.routeInfoForWsFile(wsPath));
+  }
+
+  public routeInfoForWsFile(wsPath: string): AppRouteInfo {
+    const filePath = WsPath.assertFile(wsPath);
+    return filePath.isMarkdown()
+      ? {
+          route: 'editor',
+          payload: { wsPath: filePath.wsPath },
+        }
+      : {
+          route: 'asset',
+          payload: { wsPath: filePath.wsPath },
+        };
+  }
+
+  public toWsFileUri(wsPath: string): string {
+    return this.toUri(this.routeInfoForWsFile(wsPath));
+  }
+
+  public goWsFile(wsPath: string) {
+    this.go(this.routeInfoForWsFile(wsPath));
   }
 
   public goWorkspace(

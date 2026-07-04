@@ -104,6 +104,15 @@ export type AppError =
         wsPath: string;
       };
     }
+  | {
+      name: `error::file:size-too-large`;
+      payload: {
+        fileName: string;
+        fileSizeBytes: number;
+        maxFileSizeBytes: number;
+        wsPath: string;
+      };
+    }
 
   // User Activity errors
   | {
@@ -132,6 +141,13 @@ export type AppError =
     }
   | {
       name: `error::editor:save-failed`;
+      payload: {
+        error: Error;
+        wsPath: string;
+      };
+    }
+  | {
+      name: `error::editor:asset-write-failed`;
       payload: {
         error: Error;
         wsPath: string;

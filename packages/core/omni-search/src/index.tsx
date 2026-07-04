@@ -155,7 +155,7 @@ function HomeRoute({
       )}
       <CommandGroupSection heading="> Commands" items={allCommands} />
       <CommandSeparator />
-      <CommandGroupSection heading="All Notes" items={allFiles} />
+      <CommandGroupSection heading="All Files" items={allFiles} />
     </>
   );
 }

@@ -37,6 +37,7 @@ export interface BaseFileStorageProvider {
   readonly displayName: string;
   // hide creating a workspace of this type
   readonly hidden?: boolean;
+  readonly maxFileSizeBytes: number;
   readonly workspaceType: string;
 
   isSupported: () => boolean | Promise<boolean>;

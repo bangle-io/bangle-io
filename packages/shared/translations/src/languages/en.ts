@@ -142,6 +142,11 @@ export const t = {
         themeDescription: 'Choose how Bangle looks on this device.',
         themeLabel: 'Theme preference',
         editorSection: 'Editor',
+        assetLocationTitle: 'Asset location',
+        assetLocationDescription:
+          'Choose where pasted and dropped files are stored beside notes.',
+        assetsFolder: 'Assets folder',
+        adjacentToNote: 'Adjacent to note',
         wideEditorTitle: 'Editor width',
         wideEditorDescription:
           'Use the available window width for note editing.',
@@ -172,6 +177,11 @@ export const t = {
         general: 'General',
         workspaces: 'Workspaces',
       },
+    },
+    pageAsset: {
+      downloadButton: 'Download',
+      loading: 'Loading asset...',
+      unavailable: 'Unable to load this asset.',
     },
     dialogs: {
       changeTheme: {
@@ -214,6 +224,14 @@ export const t = {
         }) => `Choose a new name for "${fileNameWithoutExtension}".`,
         inputLabel: 'New name',
         placeholder: 'New note name',
+        submitText: 'Rename',
+      },
+      renameFile: {
+        title: 'Rename File',
+        description: ({ fileName }: { fileName: string }) =>
+          `Choose a new name for "${fileName}".`,
+        inputLabel: 'New file name',
+        placeholder: 'New file name',
         submitText: 'Rename',
       },
       moveNote: {
@@ -349,7 +367,8 @@ export const t = {
         },
         clickedTooSoon: {
           title: "That didn't work",
-          message: 'Please try clicking the Browse button again.',
+          message:
+            'Please try again and choose your notes folder when prompted.',
         },
         accessDenied: {
           title: 'Access was denied',
@@ -367,6 +386,62 @@ export const t = {
       },
     },
     toasts: {
+      assetSaveInProgress: ({
+        fileName,
+        remainingCount,
+      }: {
+        fileName: string;
+        remainingCount: number;
+      }) =>
+        remainingCount > 0
+          ? `Saving ${fileName} + ${remainingCount} more...`
+          : `Saving ${fileName}...`,
+      assetSavePartial: ({
+        failedCount,
+        failedFileName,
+        failedRemainingCount,
+        savedFileName,
+        savedRemainingCount,
+      }: {
+        failedCount: number;
+        failedFileName: string;
+        failedRemainingCount: number;
+        savedFileName?: string;
+        savedRemainingCount: number;
+      }) => {
+        const failedLabel =
+          failedRemainingCount > 0
+            ? `${failedFileName} + ${failedRemainingCount} more`
+            : failedFileName;
+        if (!savedFileName) {
+          return `Could not save ${failedLabel}.`;
+        }
+        const savedLabel =
+          savedRemainingCount > 0
+            ? `${savedFileName} + ${savedRemainingCount} more`
+            : savedFileName;
+        return `${savedLabel} saved; ${failedCount} failed.`;
+      },
+      assetSaveSucceeded: ({
+        fileName,
+        remainingCount,
+      }: {
+        fileName: string;
+        remainingCount: number;
+      }) =>
+        remainingCount > 0
+          ? `Saved ${fileName} + ${remainingCount} more`
+          : `Saved ${fileName}`,
+      assetTooLarge: ({
+        fileName,
+        maxFileSize,
+      }: {
+        fileName: string;
+        maxFileSize: string;
+      }) => `${fileName} is too large. Maximum file size is ${maxFileSize}.`,
+      openAsset: 'Open',
+      pathCopied: 'Path copied',
+      pathCopyFailed: 'Could not copy path',
       permissionNotGranted: 'Permission not granted',
       retrySave: 'Retry save',
       saveFailed: 'Changes could not be saved. Retry to keep your latest edit.',
@@ -426,6 +501,12 @@ export const t = {
       goBackButton: 'Go Back',
       goHomeButton: 'Go Home',
     },
+    fileNotFoundView: {
+      title: 'File Not Found',
+      description:
+        "The file you're looking for doesn't exist or has been moved.",
+      viewAllFilesButton: 'View All Files',
+    },
     workspaceNotFoundView: {
       title: 'Workspace Not Found',
       description: ({ wsName }: { wsName: string }) =>
@@ -445,13 +526,15 @@ export const t = {
         newFileActionTitle: 'New File',
         newFileActionSr: 'Create File',
         newFolderActionTitle: 'New Folder',
+        showNoteFilesOnlyActionTitle: 'Show Notes Only',
         newNoteHereActionTitle: 'New Note Here',
         newFolderHereActionTitle: 'New Folder Here',
         searchFilesActionLabel: 'Search Files',
+        copyPathActionTitle: 'Copy path',
+        openActionTitle: 'Open',
         renameActionTitle: 'Rename',
         moveActionTitle: 'Move',
         deleteActionTitle: 'Delete',
-        showMoreButton: 'Show More',
         workspacesLabel: 'Workspaces',
         noWorkspaceSelectedTitle: 'No workspace selected',
         noWorkspaceSelectedSubtitle: 'Click to select a workspace',

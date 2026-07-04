@@ -1,33 +1,33 @@
 import { useCoreServices } from '@bangle.io/context';
 import { FunMissing } from '@bangle.io/ui-components';
-import { Briefcase } from 'lucide-react';
+import { FileX } from 'lucide-react';
 import React from 'react';
 import { NoticeView } from './notice-view';
 
-/** Displays a notice indicating that the requested workspace could not be found. */
-export function WorkspaceNotFoundView({ wsName }: { wsName?: string }) {
+export function FileNotFoundView() {
   const coreServices = useCoreServices();
 
-  const handleGoHome = () => {
-    coreServices.navigation.goHome();
+  const handleViewAllFiles = () => {
+    coreServices.commandDispatcher.dispatch(
+      'command::ui:toggle-all-files',
+      { prefillInput: undefined },
+      'ui',
+    );
   };
 
   return (
     <NoticeView
-      title={t.app.workspaceNotFoundView.title}
+      title={t.app.fileNotFoundView.title}
       description={
         <>
-          <p>
-            {wsName
-              ? t.app.workspaceNotFoundView.description({ wsName })
-              : t.app.workspaceNotFoundView.genericDescription}
-          </p>
+          {t.app.fileNotFoundView.description}
+          <br />
           <FunMissing />
         </>
       }
       illustration={
         <div className="flex items-center justify-center">
-          <Briefcase
+          <FileX
             className="h-24 w-24 stroke-[1.5] stroke-muted-foreground"
             aria-hidden="true"
           />
@@ -35,8 +35,9 @@ export function WorkspaceNotFoundView({ wsName }: { wsName?: string }) {
       }
       actions={[
         {
-          label: t.app.workspaceNotFoundView.goHomeButton,
-          onClick: handleGoHome,
+          label: t.app.fileNotFoundView.viewAllFilesButton,
+          variant: 'outline',
+          onClick: handleViewAllFiles,
         },
       ]}
     />

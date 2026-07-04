@@ -1,4 +1,7 @@
-import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
+import {
+  FILE_STORAGE_MAX_FILE_SIZE_BYTES,
+  WORKSPACE_STORAGE_TYPE,
+} from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import type { BaseFileStorageService } from '@bangle.io/types';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -69,6 +72,11 @@ describe('FileSystemService', () => {
   const EXISTING_FILE = 'test-workspace:exists.md';
   const NON_EXISTING_FILE = 'test-workspace:not-exists.md';
 
+  function fileWithSize(file: File, size: number): File {
+    Object.defineProperty(file, 'size', { value: size });
+    return file;
+  }
+
   async function setupFileSystemTest({
     controller = new AbortController(),
   } = {}) {
@@ -114,6 +122,60 @@ describe('FileSystemService', () => {
     expect(notExistsResult).toBe(false);
   });
 
+  it('exposes the active storage provider file-size limit', async () => {
+    const { fileSystem } = await setupFileSystemTest({ controller });
+
+    await expect(fileSystem.getMaxFileSizeBytes(EXISTING_FILE)).resolves.toBe(
+      FILE_STORAGE_MAX_FILE_SIZE_BYTES.memory,
+    );
+  });
+
+  it('rejects creates larger than the active storage provider limit', async () => {
+    const { fileSystem, storage } = await setupFileSystemTest({ controller });
+    const wsPath = `${TEST_WS_NAME}:too-large.bin`;
+    Object.defineProperty(storage, 'maxFileSizeBytes', { value: 4 });
+
+    await expect(
+      fileSystem.createFile(
+        wsPath,
+        fileWithSize(
+          new File(['12345'], 'too-large.bin', {
+            type: 'application/octet-stream',
+          }),
+          5,
+        ),
+      ),
+    ).rejects.toMatchObject({
+      cause: expect.objectContaining({
+        name: 'error::file:size-too-large',
+        payload: expect.objectContaining({
+          fileName: 'too-large.bin',
+          fileSizeBytes: 5,
+          maxFileSizeBytes: 4,
+          wsPath,
+        }),
+      }),
+    });
+
+    await expect(fileSystem.exists(wsPath)).resolves.toBe(false);
+  });
+
+  it('allows oversized writes to existing notes so legacy large notes remain saveable', async () => {
+    const { fileSystem, storage } = await setupFileSystemTest({ controller });
+    Object.defineProperty(storage, 'maxFileSizeBytes', { value: 4 });
+
+    await expect(
+      fileSystem.writeFile(
+        EXISTING_FILE,
+        fileWithSize(new File(['12345'], 'exists.md'), 5),
+      ),
+    ).resolves.toBeUndefined();
+
+    await expect(fileSystem.readFileAsText(EXISTING_FILE)).resolves.toBe(
+      '12345',
+    );
+  });
+
   it('increments file-list revision for file list changes', async () => {
     const { fileSystem, store } = await setupFileSystemTest({ controller });
     const readRevision = () => store.get(fileSystem.$fileListRevisionCount);
@@ -152,6 +214,53 @@ describe('FileSystemService', () => {
     const afterDeleteRevision = readRevision();
     store.set(fileSystem.$fileForceUpdateCount, (count) => count + 1);
     expect(readRevision()).toBeGreaterThan(afterDeleteRevision);
+  });
+
+  it('lists note files separately from sidebar-visible workspace files', async () => {
+    const { fileSystem } = await setupFileSystemTest({ controller });
+
+    await fileSystem.createTextFile(
+      `${TEST_WS_NAME}:src/component.tsx`,
+      'export function Component() { return null; }',
+    );
+    await fileSystem.createFile(
+      `${TEST_WS_NAME}:assets/report.pdf`,
+      new File(['pdf'], 'report.pdf', { type: 'application/pdf' }),
+    );
+    await fileSystem.createTextFile(
+      `${TEST_WS_NAME}:node_modules/pkg/index.ts`,
+      'export const ignored = true;',
+    );
+    await fileSystem.createTextFile(
+      `${TEST_WS_NAME}:.hidden.md`,
+      'hidden note',
+    );
+    await fileSystem.createTextFile(
+      `${TEST_WS_NAME}:temp/legacy.md`,
+      'legacy note',
+    );
+    await fileSystem.createTextFile(
+      `${TEST_WS_NAME}:.archive/old.md`,
+      'archived note',
+    );
+    await fileSystem.createFile(
+      `${TEST_WS_NAME}:assets/archive.bin`,
+      new File(['binary'], 'archive.bin', {
+        type: 'application/octet-stream',
+      }),
+    );
+
+    await expect(fileSystem.listNoteFiles(TEST_WS_NAME)).resolves.toEqual([
+      `${TEST_WS_NAME}:.hidden.md`,
+      EXISTING_FILE,
+    ]);
+    await expect(fileSystem.listWorkspaceFiles(TEST_WS_NAME)).resolves.toEqual([
+      `${TEST_WS_NAME}:.hidden.md`,
+      `${TEST_WS_NAME}:assets/archive.bin`,
+      `${TEST_WS_NAME}:assets/report.pdf`,
+      EXISTING_FILE,
+      `${TEST_WS_NAME}:src/component.tsx`,
+    ]);
   });
 
   it('rolls back completed batch renames when a later rename fails', async () => {

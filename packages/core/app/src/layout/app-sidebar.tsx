@@ -14,6 +14,7 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
   BugPlay,
   Command,
+  Copy,
   ExternalLink,
   Folder,
   FolderPlus,
@@ -27,8 +28,6 @@ import {
 } from 'lucide-react';
 import React, { useMemo } from 'react';
 
-const MAX_WS_PATHS = 800;
-
 interface SidebarProps {
   children: React.ReactNode;
 }
@@ -39,14 +38,13 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   const setOpenOmniSearch = useSetAtom(workbenchState.$openOmniSearch);
   const workspaces = useAtomValue(workspaceState.$workspaces);
   const [sidebarOpen, setSidebarOpen] = useAtom(workbenchState.$sidebarOpen);
+  const [showNoteFilesOnly, setShowNoteFilesOnly] = useAtom(
+    workbenchState.$showNoteFilesOnlyInSidebar,
+  );
   const activeWsName = useAtomValue(navigation.$wsName);
   const activeWsPaths = useAtomValue(workspaceState.$activeWsPaths);
   const wsPaths = useAtomValue(workspaceState.$wsPaths);
-
-  const isTruncated = wsPaths.length > MAX_WS_PATHS;
-  const displayedWsPaths = useMemo(() => {
-    return !isTruncated ? wsPaths : wsPaths.slice(0, MAX_WS_PATHS);
-  }, [wsPaths, isTruncated]);
+  const noteWsPaths = useAtomValue(workspaceState.$noteWsPaths);
 
   const getActionsForEntry = useMemo(
     () =>
@@ -127,8 +125,84 @@ export const AppSidebar = ({ children }: SidebarProps) => {
         }
 
         const wsPath = getFileWsPath(entry.path);
+        const filePath = wsPath ? WsPath.safeParseFile(wsPath).data : undefined;
 
-        if (wsPath) {
+        if (filePath) {
+          actions.push({
+            id: 'copy-path',
+            label: t.app.components.appSidebar.copyPathActionTitle,
+            Icon: Copy,
+            onClick: (entry) => {
+              const wsPath = getFileWsPath(entry.path);
+              if (!wsPath) {
+                return;
+              }
+              commandDispatcher.dispatch(
+                'command::ui:copy-workspace-path',
+                { wsPath },
+                'ui',
+              );
+            },
+          });
+        }
+
+        if (filePath && !filePath.isNote()) {
+          actions.push({
+            id: 'open',
+            label: t.app.components.appSidebar.openActionTitle,
+            Icon: ExternalLink,
+            onClick: (entry) => {
+              const wsPath = getFileWsPath(entry.path);
+              if (!wsPath) {
+                return;
+              }
+              commandDispatcher.dispatch(
+                'command::ws:go-ws-path',
+                { wsPath },
+                'ui',
+              );
+            },
+          });
+
+          actions.push({
+            id: 'rename-file',
+            label: t.app.components.appSidebar.renameActionTitle,
+            Icon: Pencil,
+            onClick: (entry) => {
+              const wsPath = getFileWsPath(entry.path);
+              if (!wsPath) {
+                return;
+              }
+              commandDispatcher.dispatch(
+                'command::ui:rename-file-dialog',
+                { wsPath },
+                'ui',
+              );
+            },
+          });
+
+          actions.push({
+            id: 'delete-file',
+            label: t.app.components.appSidebar.deleteActionTitle,
+            Icon: Trash2,
+            variant: 'destructive' as const,
+            onClick: (entry) => {
+              const wsPath = getFileWsPath(entry.path);
+              if (!wsPath) {
+                return;
+              }
+              commandDispatcher.dispatch(
+                'command::ui:delete-file-dialog',
+                { wsPath },
+                'ui',
+              );
+            },
+          });
+
+          return actions;
+        }
+
+        if (filePath?.isNote()) {
           actions.push({
             id: 'rename',
             label: t.app.components.appSidebar.renameActionTitle,
@@ -198,27 +272,14 @@ export const AppSidebar = ({ children }: SidebarProps) => {
           misc: ws.type,
           isActive: activeWsName === ws.name,
         }))}
-        filePaths={displayedWsPaths.map((wsPath) => wsPath.path)}
-        isTruncated={isTruncated}
-        onTruncatedClick={() => {
-          commandDispatcher.dispatch(
-            'command::ui:toggle-all-files',
-            {
-              prefillInput: undefined,
-            },
-            'ui',
-          );
-        }}
+        filePaths={(showNoteFilesOnly ? noteWsPaths : wsPaths).map(
+          (wsPath) => wsPath.path,
+        )}
         navItems={activeWsPaths.map((wsPath) => ({
           title: wsPath.fileName || '',
           wsPath: wsPath.wsPath,
         }))}
-        wsPathToHref={(wsPath) =>
-          navigation.toUri({
-            route: 'editor',
-            payload: { wsPath },
-          })
-        }
+        wsPathToHref={(wsPath) => navigation.toWsFileUri(wsPath)}
         wsNameToHref={(wsName) =>
           navigation.toUri({
             route: 'ws-home',
@@ -282,6 +343,8 @@ export const AppSidebar = ({ children }: SidebarProps) => {
         }}
         activeFilePaths={activeWsPaths.map((wsPath) => wsPath.path)}
         commandButtonClassName="desktop-titlebar-no-drag"
+        showNoteFilesOnly={showNoteFilesOnly}
+        onShowNoteFilesOnlyChange={setShowNoteFilesOnly}
         onSearchClick={() => {
           setOpenOmniSearch(true);
         }}
