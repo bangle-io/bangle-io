@@ -1,7 +1,7 @@
 import { Button } from '@bangle.io/ui-components';
 import React from 'react';
 
-export interface Item {
+interface Item {
   label: string;
   href: string;
   rightElement?: React.ReactNode;

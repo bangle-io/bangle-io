@@ -8,7 +8,6 @@ import { registerAppProtocol as registerDesktopAppProtocol } from './protocol-ha
 import { configureAutoUpdater } from './updater';
 import {
   getBrowserWindowOptions,
-  getPreloadPath,
   installDesktopDocumentMarker,
   installExternalLinkHandlers,
 } from './window';
@@ -60,7 +59,7 @@ async function createMainWindow(): Promise<BrowserWindow> {
   ensureAppProtocolRegistered(browserDistDir);
 
   const window = new BrowserWindow(
-    getBrowserWindowOptions(getPreloadPath(mainDir)),
+    getBrowserWindowOptions(join(mainDir, 'preload.cjs')),
   );
   mainWindow = window;
 

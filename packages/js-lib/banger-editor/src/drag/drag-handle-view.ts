@@ -12,7 +12,7 @@ import {
 let dragHandleElement: HTMLElement | null = null;
 let listType = '';
 
-export const dragHandleViewPluginKey = new PluginKey('drag-handle-view');
+const dragHandleViewPluginKey = new PluginKey('drag-handle-view');
 
 function handleDragStart(
   event: DragEvent,

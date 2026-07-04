@@ -3,13 +3,27 @@ import { Sidebar } from '@bangle.io/ui-components';
 import { type RenderResult, render } from '@testing-library/react';
 import { Provider } from 'jotai/react';
 import React from 'react';
-import { createTestEnvironment } from './test-service-setup';
+import {
+  createTestEnvironment,
+  type TestEnvironment,
+} from './test-service-setup';
+
+type RenderWithServicesResult = {
+  autoMountServices: () => Promise<
+    ReturnType<TestEnvironment['instantiateAll']>
+  >;
+  mountComponent: (input: { ui: React.ReactNode }) => {
+    result: RenderResult;
+    rerender: (ui: React.ReactNode) => void;
+  };
+  testEnv: TestEnvironment;
+};
 
 export function renderWithServices({
   testEnvArgs = {},
 }: {
   testEnvArgs?: Parameters<typeof createTestEnvironment>[0];
-} = {}) {
+} = {}): RenderWithServicesResult {
   const testEnv = createTestEnvironment(testEnvArgs);
 
   return {

@@ -8,7 +8,7 @@ export type ValidationResult<T> =
   | { ok: false; validationError: ValidationError };
 
 // biome-ignore lint/suspicious/noControlCharactersInRegex: Need to match control characters
-export const INVALID_CHARS_REGEX = /[<>:"\\|?*\x00-\x1F]/g;
+const INVALID_CHARS_REGEX = /[<>:"\\|?*\x00-\x1F]/g;
 
 export function validateWsName(wsName: string): ValidationResult<string> {
   if (!wsName) {

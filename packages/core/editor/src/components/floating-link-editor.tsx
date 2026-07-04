@@ -46,7 +46,7 @@ type LinkEditorProps = {
 type CopyFeedback = 'failure' | 'idle' | 'success';
 
 /** A controlled, draft-only link input. */
-export function LinkEditor({
+function LinkEditor({
   value,
   onChange,
   onSubmit,

@@ -10,16 +10,10 @@ import meta, {
 
 type PortableStory = React.ComponentType;
 
-export const Default: PortableStory = composeStory(DefaultStory, meta);
-export const NativeFs: PortableStory = composeStory(NativeFsStory, meta);
-export const NativeFsError: PortableStory = composeStory(
-  NativeFsErrorStory,
-  meta,
-);
-export const InvalidWsName: PortableStory = composeStory(
-  InvalidWsNameStory,
-  meta,
-);
+const Default: PortableStory = composeStory(DefaultStory, meta);
+const NativeFs: PortableStory = composeStory(NativeFsStory, meta);
+const NativeFsError: PortableStory = composeStory(NativeFsErrorStory, meta);
+const InvalidWsName: PortableStory = composeStory(InvalidWsNameStory, meta);
 
 const composedStories: Record<
   'Default' | 'NativeFs' | 'NativeFsError' | 'InvalidWsName',
