@@ -1,4 +1,3 @@
-import { useCoreServices } from '@bangle.io/context';
 import {
   $tableMenu,
   type Command,
@@ -10,6 +9,7 @@ import { useAtomValue } from 'jotai';
 import { ChevronDown, Table } from 'lucide-react';
 import React from 'react';
 import type { PmEditorService } from '../pm-editor-service';
+import { useEditorCoreServices } from '../use-editor-core-services';
 import {
   FLOATING_INITIAL_STYLE,
   useFloatingPosition,
@@ -25,7 +25,7 @@ type Extensions = PmEditorService['extensions'];
  */
 export function TableMenu({ editorName }: { editorName: string }) {
   const tableMenus = useAtomValue($tableMenu);
-  const { pmEditorService } = useCoreServices();
+  const { pmEditorService } = useEditorCoreServices();
   const editorView = pmEditorService.getEditor(editorName);
   const tableMenu = editorView ? tableMenus.get(editorView) : undefined;
 

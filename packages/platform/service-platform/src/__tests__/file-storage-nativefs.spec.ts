@@ -107,11 +107,13 @@ async function setup() {
       },
     },
     null,
-    { onChange },
+    {
+      getRootDirHandle: async () => ({ handle: rootDirHandle }),
+      onChange,
+    },
   );
-  service.getRootDirHandle = async () => ({ handle: rootDirHandle });
   await service.mount();
-  return { service, onChange };
+  return { service, onChange, rootDirHandle };
 }
 
 describe('FileStorageNativeFs', () => {
@@ -135,10 +137,9 @@ describe('FileStorageNativeFs', () => {
   });
 
   it('maps missing native workspace roots during listing to a typed app error', async () => {
-    const { service } = await setup();
-    const rootDirHandle = await service.getRootDirHandle('myWorkspace');
+    const { service, rootDirHandle } = await setup();
     (
-      rootDirHandle.handle as unknown as FakeDirectoryHandle
+      rootDirHandle as unknown as FakeDirectoryHandle
     ).shouldThrowNotFoundOnRead = true;
 
     await expect(

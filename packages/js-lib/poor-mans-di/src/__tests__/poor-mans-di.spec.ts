@@ -2,9 +2,12 @@ import { expectType } from '@bangle.io/mini-js-utils';
 import { describe, expect, test, vi } from 'vitest';
 import {
   Container,
+  defineServiceMap,
   type Service,
   type ServiceContext,
+  ServiceStartupError,
   type ServiceToConstructor,
+  slot,
 } from '../index';
 import { recursiveInstantiate } from '../recurse';
 
@@ -27,7 +30,6 @@ describe('Container', () => {
     constructor(
       _: unknown,
       public dependencies: { serviceA: ServiceA },
-      _config: undefined,
     ) {}
     postInstantiate() {}
   }
@@ -46,14 +48,11 @@ describe('Container', () => {
     const container = new Container(
       { context: { env: 'test' }, abortSignal: new AbortController().signal },
       {
-        serviceA: ServiceA,
+        serviceA: slot(ServiceA, () => ({ name: 'test' })),
         serviceB: ServiceB,
-        serviceC: ServiceC,
+        serviceC: slot(ServiceC, () => ({ value: 42 })),
       },
     );
-
-    container.setConfig(ServiceA, { name: 'test' });
-    container.setConfig(ServiceC, { value: 42 });
 
     const services = container.instantiateAll();
 
@@ -64,25 +63,111 @@ describe('Container', () => {
     expect(services.serviceC.dependencies.serviceB).toBe(services.serviceB);
   });
 
-  test('last config wins', () => {
+  test('defineServiceMap preserves checked service inference', () => {
+    const serviceMap = defineServiceMap<TestContext>()({
+      serviceA: slot(ServiceA, () => ({ name: 'test' })),
+      serviceB: ServiceB,
+      serviceC: slot(ServiceC, () => ({ value: 42 })),
+    });
+    const container = new Container(
+      { context: { env: 'test' }, abortSignal: new AbortController().signal },
+      serviceMap,
+    );
+
+    const services = container.instantiateAll();
+
+    expect(services.serviceB.dependencies.serviceA).toBe(services.serviceA);
+    expect(services.serviceC.dependencies.serviceB).toBe(services.serviceB);
+  });
+
+  test('defineServiceMap type-checks declared service dependencies', () => {
+    class MissingStaticDep implements Service<TestContext> {
+      constructor(
+        _: { ctx: TestContext; serviceContext: ServiceContext },
+        public dependencies: { serviceA: ServiceA },
+      ) {}
+    }
+
+    class UnknownStaticDep implements Service<TestContext> {
+      static deps = ['missingService'] as const;
+      constructor(
+        _: { ctx: TestContext; serviceContext: ServiceContext },
+        public dependencies: { missingService: ServiceA },
+      ) {}
+    }
+
+    class WrongDependencyType implements Service<TestContext> {
+      static deps = ['serviceA'] as const;
+      constructor(
+        _: { ctx: TestContext; serviceContext: ServiceContext },
+        public dependencies: { serviceA: ServiceC },
+      ) {}
+    }
+
+    // @ts-expect-error constructor dependencies must be listed in static deps.
+    defineServiceMap<TestContext>()({
+      serviceA: slot(ServiceA, () => ({ name: 'x' })),
+      missingStaticDep: MissingStaticDep,
+    });
+
+    // @ts-expect-error static deps must name a registered service slot.
+    defineServiceMap<TestContext>()({
+      serviceA: slot(ServiceA, () => ({ name: 'x' })),
+      unknownStaticDep: UnknownStaticDep,
+    });
+
+    // @ts-expect-error registered dependency instances must satisfy constructor deps.
+    defineServiceMap<TestContext>()({
+      serviceA: slot(ServiceA, () => ({ name: 'x' })),
+      wrongDependencyType: WrongDependencyType,
+    });
+  });
+
+  test('a class with a required config cannot be registered bare', () => {
+    // @ts-expect-error ServiceA requires a config; it must be registered via slot().
+    defineServiceMap<TestContext>()({
+      serviceA: ServiceA,
+    });
+
+    // @ts-expect-error the slot config factory must return the constructor's config type.
+    slot(ServiceA, () => ({ name: 42 }));
+  });
+
+  test('slot config factories run lazily at instantiation time', () => {
+    let name = 'early';
     const container = new Container(
       { context: { env: 'test' }, abortSignal: new AbortController().signal },
       {
-        serviceA: ServiceA,
-        serviceB: ServiceB,
-        serviceC: ServiceC,
+        serviceA: slot(ServiceA, () => ({ name })),
       },
     );
 
-    container.setConfig(ServiceA, { name: 'test' });
-    container.setConfig(ServiceC, { value: 42 });
-    container.setConfig(ServiceC, { value: 2 });
-
+    name = 'late';
     const services = container.instantiateAll();
-    expect(services.serviceC.config.value).toBe(2);
+
+    expect(services.serviceA.config.name).toBe('late');
   });
 
-  test('service replacement with use()', () => {
+  test('a throwing config factory fails the owning slot', () => {
+    const container = new Container(
+      { context: { env: 'test' }, abortSignal: new AbortController().signal },
+      {
+        serviceA: slot(ServiceA, (): { name: string } => {
+          throw new Error('boom');
+        }),
+      },
+    );
+
+    expect(() => container.instantiateAll()).toThrow(
+      'Service "serviceA" failed during instantiate: boom',
+    );
+    expect(container.describe().failedSlot).toMatchObject({
+      phase: 'instantiate',
+      slotId: 'serviceA',
+    });
+  });
+
+  test('a slot accepts a subclass with its own config', () => {
     class MockServiceA extends ServiceA {
       mockMethod() {
         return 'mocked';
@@ -92,22 +177,19 @@ describe('Container', () => {
     const container = new Container(
       { context: { env: 'test' }, abortSignal: new AbortController().signal },
       {
-        serviceA: ServiceA,
+        serviceA: slot(MockServiceA, () => ({ name: 'mock' })),
         serviceB: ServiceB,
       },
     );
 
-    container.use('serviceA', MockServiceA);
-    container.setConfig(MockServiceA, { name: 'mock' });
-
     const services = container.instantiateAll();
 
     expect(services.serviceA instanceof MockServiceA).toBe(true);
-    expect((services.serviceA as MockServiceA).mockMethod()).toBe('mocked');
+    expect(services.serviceA.mockMethod()).toBe('mocked');
     expect(services.serviceB.dependencies.serviceA).toBe(services.serviceA);
   });
 
-  test("configuring without config doesn't throw error", () => {
+  test("registering without config doesn't throw error", () => {
     const container = new Container(
       { context: { env: 'test' }, abortSignal: new AbortController().signal },
       {
@@ -123,30 +205,13 @@ describe('Container', () => {
     container.instantiateAll();
   });
 
-  test('calling setConfig after instantiateAll throws', () => {
-    const container = new Container(
-      { context: { env: 'test' }, abortSignal: new AbortController().signal },
-      {
-        serviceA: ServiceA,
-        serviceB: ServiceB,
-      },
-    );
-    container.setConfig(ServiceA, { name: 'test' });
-    container.instantiateAll();
-    expect(() => container.setConfig(ServiceA, { name: 'again' })).toThrowError(
-      'Cannot call setConfig() after instantiateAll() has been called.',
-    );
-  });
-
   test('abort signal propagation', () => {
     const abortController = new AbortController();
     const abortSpy = vi.fn();
 
     class TestServiceA implements Service<TestContext> {
-      config!: { name: string };
       constructor(
         {
-          ctx,
           serviceContext,
         }: { ctx: TestContext; serviceContext: ServiceContext },
         _deps: Record<string, never>,
@@ -164,7 +229,6 @@ describe('Container', () => {
       },
     );
 
-    container.setConfig(TestServiceA, { name: 'test' });
     container.instantiateAll();
     abortController.abort();
     expect(abortSpy).toHaveBeenCalled();
@@ -203,11 +267,10 @@ describe('Container', () => {
     const container = new Container(
       { context: { env: 'test' }, abortSignal: new AbortController().signal },
       {
-        serviceA: ServiceA,
+        serviceA: slot(ServiceA, () => ({ name: 'test' })),
       },
     );
 
-    container.setConfig(ServiceA, { name: 'test' });
     container.instantiateAll();
 
     expect(() => {
@@ -251,20 +314,20 @@ describe('Container', () => {
 
     expect(() => {
       container.instantiateAll();
-    }).toThrowError("No dependency definition found for 'nonExistent'");
+    }).toThrowError(
+      'Service "broken" failed during instantiate: Missing dependency "nonExistent"',
+    );
+
+    expect(container.describe().failedSlot).toMatchObject({
+      phase: 'instantiate',
+      slotId: 'broken',
+    });
   });
 
-  test('use method type safety and runtime behavior', () => {
+  test('interface-typed slots accept a conforming implementation', () => {
     interface IServiceX extends Service<any> {
       method(): string;
     }
-
-    const container = new Container(
-      { context: { env: 'test' }, abortSignal: new AbortController().signal },
-      {
-        serviceX: {} as ServiceToConstructor<IServiceX>,
-      },
-    );
 
     class ConcreteServiceX implements IServiceX {
       constructor(
@@ -277,79 +340,19 @@ describe('Container', () => {
       postInstantiate(): void {}
     }
 
-    container.use('serviceX', ConcreteServiceX);
+    const implementation: ServiceToConstructor<IServiceX> = ConcreteServiceX;
+
+    const container = new Container(
+      { context: { env: 'test' }, abortSignal: new AbortController().signal },
+      {
+        serviceX: implementation,
+      },
+    );
 
     const services = container.instantiateAll();
 
     expect(services.serviceX.method()).toBe('concrete');
     expectType<IServiceX, typeof services.serviceX>(services.serviceX);
-  });
-
-  test('use method cannot be called after instantiation', () => {
-    const container = new Container(
-      { context: { env: 'test' }, abortSignal: new AbortController().signal },
-      {
-        serviceA: ServiceA,
-      },
-    );
-
-    container.setConfig(ServiceA, { name: 'test' });
-    container.instantiateAll();
-
-    expect(() => {
-      container.use('serviceA', ServiceA);
-    }).toThrowError(
-      'Cannot call use() after instantiateAll() has been called.',
-    );
-  });
-
-  test('replacing existing class with similar implementation', () => {
-    class OriginalService implements Service<TestContext> {
-      config!: { value: number };
-      constructor(
-        _context: { ctx: TestContext; serviceContext: ServiceContext },
-        _deps: Record<string, never>,
-      ) {}
-      getValue() {
-        return this.config.value;
-      }
-    }
-
-    class ReplacementService implements Service<TestContext> {
-      config!: {
-        value: number;
-        value2: boolean;
-      };
-      constructor(
-        _context: { ctx: TestContext; serviceContext: ServiceContext },
-        _deps: {
-          serviceA: ServiceA;
-        },
-      ) {}
-      getValue() {
-        return 0;
-      }
-    }
-
-    const container = new Container(
-      { context: { env: 'test' }, abortSignal: new AbortController().signal },
-      {
-        service: OriginalService,
-      },
-    );
-
-    // This is allowed even though config shape differs, as test ensures runtime flexibility.
-    container.use(
-      'service',
-      // @ts-expect-error
-      ReplacementService,
-    );
-    container.setConfig(ReplacementService, { value: 5, value2: true });
-
-    const services = container.instantiateAll();
-
-    expect(services.service instanceof ReplacementService).toBe(true);
-    expect(services.service.getValue()).toBe(0);
   });
 
   test('mountAll should call mount on all services', async () => {
@@ -381,6 +384,149 @@ describe('Container', () => {
     await container.mountAll();
     expect(services.serviceA.mount).toHaveBeenCalled();
     expect(services.serviceB.mount).toHaveBeenCalled();
+  });
+
+  test('mountAll starts independent services in parallel', async () => {
+    const mountEvents: string[] = [];
+    let releaseA!: () => void;
+    const serviceAReady = new Promise<void>((resolve) => {
+      releaseA = resolve;
+    });
+
+    class MountableServiceA implements Service<TestContext> {
+      async mount() {
+        mountEvents.push('a:start');
+        await serviceAReady;
+        mountEvents.push('a:end');
+      }
+      constructor(
+        public context: { ctx: TestContext; serviceContext: ServiceContext },
+        public _deps: Record<string, never>,
+      ) {}
+    }
+
+    class MountableServiceB implements Service<TestContext> {
+      async mount() {
+        mountEvents.push('b:start');
+      }
+      constructor(
+        public context: { ctx: TestContext; serviceContext: ServiceContext },
+        public _deps: Record<string, never>,
+      ) {}
+    }
+
+    const container = new Container(
+      { context: { env: 'test' }, abortSignal: new AbortController().signal },
+      {
+        serviceA: MountableServiceA,
+        serviceB: MountableServiceB,
+      },
+    );
+
+    container.instantiateAll();
+    const mountPromise = container.mountAll();
+    await Promise.resolve();
+
+    expect(mountEvents).toEqual(['a:start', 'b:start']);
+
+    releaseA();
+    await mountPromise;
+
+    expect(mountEvents).toEqual(['a:start', 'b:start', 'a:end']);
+  });
+
+  test('describe reports graph order and mounted count', async () => {
+    class MountableServiceA implements Service<TestContext> {
+      mounted = false;
+      async mount() {
+        this.mounted = true;
+      }
+      constructor(
+        public context: { ctx: TestContext; serviceContext: ServiceContext },
+        public _deps: Record<string, never>,
+      ) {}
+    }
+
+    class MountableServiceB implements Service<TestContext> {
+      static deps = ['serviceA'] as const;
+      mounted = false;
+      async mount() {
+        this.mounted = true;
+      }
+      constructor(
+        public context: { ctx: TestContext; serviceContext: ServiceContext },
+        public _deps: { serviceA: MountableServiceA },
+      ) {}
+    }
+
+    const container = new Container(
+      { context: { env: 'test' }, abortSignal: new AbortController().signal },
+      {
+        serviceA: MountableServiceA,
+        serviceB: MountableServiceB,
+      },
+    );
+
+    container.instantiateAll();
+    await container.mountAll();
+
+    expect(container.describe()).toMatchObject({
+      dependencyOrder: ['serviceA', 'serviceB'],
+      mountedCount: 2,
+      services: [
+        {
+          slotId: 'serviceA',
+          dependencies: [],
+          instantiated: true,
+          mounted: true,
+        },
+        {
+          slotId: 'serviceB',
+          dependencies: ['serviceA'],
+          instantiated: true,
+          mounted: true,
+        },
+      ],
+    });
+  });
+
+  test('mountAll reports dependency mount failures on the failing slot', async () => {
+    class FailingDependencyService implements Service<TestContext> {
+      async mount() {
+        throw new Error('dependency failed');
+      }
+      constructor(
+        public context: { ctx: TestContext; serviceContext: ServiceContext },
+        public _deps: Record<string, never>,
+      ) {}
+    }
+
+    class DependentService implements Service<TestContext> {
+      static deps = ['dependency'] as const;
+      async mount() {}
+      constructor(
+        public context: { ctx: TestContext; serviceContext: ServiceContext },
+        public _deps: { dependency: FailingDependencyService },
+      ) {}
+    }
+
+    const container = new Container(
+      { context: { env: 'test' }, abortSignal: new AbortController().signal },
+      {
+        dependency: FailingDependencyService,
+        dependent: DependentService,
+      },
+    );
+
+    container.instantiateAll();
+
+    await expect(container.mountAll()).rejects.toThrow(
+      'Service "dependency" failed during mount: dependency failed',
+    );
+    expect(container.describe().failedSlot).toMatchObject({
+      phase: 'mount',
+      slotId: 'dependency',
+    });
   });
 
   test('mountAll should throw if instantiateAll has not been called', async () => {
@@ -441,13 +587,12 @@ describe('Container', () => {
     const container = new Container(
       { context: { env: 'test' }, abortSignal: new AbortController().signal },
       {
-        serviceA: ServiceA,
+        serviceA: slot(ServiceA, () => ({ name: 'test' })),
         serviceB: ServiceB,
         testService: TestServiceWithDeps,
       },
     );
 
-    container.setConfig(ServiceA, { name: 'test' });
     const services = container.instantiateAll();
 
     expect(services.testService.deps.serviceA).toBe(services.serviceA);
@@ -475,7 +620,60 @@ describe('Container', () => {
 
     expect(() => {
       container.instantiateAll();
-    }).toThrow(/No dependency definition found for 'nonExistent'/);
+    }).toThrow(/Service "broken" failed during instantiate/);
+  });
+
+  test('startup errors include service slot and phase', async () => {
+    class BadPostInstantiateService implements Service<TestContext> {
+      constructor(
+        public context: { ctx: TestContext; serviceContext: ServiceContext },
+        public _deps: Record<string, never>,
+      ) {}
+
+      postInstantiate() {
+        throw new Error('post failed');
+      }
+    }
+
+    const postContainer = new Container(
+      { context: { env: 'test' }, abortSignal: new AbortController().signal },
+      {
+        bad: BadPostInstantiateService,
+      },
+    );
+
+    expect(() => postContainer.instantiateAll()).toThrow(ServiceStartupError);
+    expect(postContainer.describe().failedSlot).toMatchObject({
+      phase: 'postInstantiate',
+      slotId: 'bad',
+    });
+
+    class BadMountService implements Service<TestContext> {
+      constructor(
+        public context: { ctx: TestContext; serviceContext: ServiceContext },
+        public _deps: Record<string, never>,
+      ) {}
+
+      async mount() {
+        throw new Error('mount failed');
+      }
+    }
+
+    const mountContainer = new Container(
+      { context: { env: 'test' }, abortSignal: new AbortController().signal },
+      {
+        bad: BadMountService,
+      },
+    );
+    mountContainer.instantiateAll();
+
+    await expect(mountContainer.mountAll()).rejects.toThrow(
+      ServiceStartupError,
+    );
+    expect(mountContainer.describe().failedSlot).toMatchObject({
+      phase: 'mount',
+      slotId: 'bad',
+    });
   });
 
   test('cyclic dependency detection', () => {

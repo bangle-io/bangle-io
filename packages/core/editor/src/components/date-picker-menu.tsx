@@ -1,4 +1,3 @@
-import { useCoreServices } from '@bangle.io/context';
 import { $suggestions } from '@bangle.io/prosemirror-plugins';
 import { Calendar, CommandHints } from '@bangle.io/ui-components';
 import { format } from 'date-fns';
@@ -13,6 +12,7 @@ import React, {
 } from 'react';
 
 import { DATE_SUGGESTION } from '../extensions';
+import { useEditorCoreServices } from '../use-editor-core-services';
 import {
   FLOATING_INITIAL_STYLE,
   useFloatingPosition,
@@ -38,7 +38,7 @@ export function DatePickerMenu({
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const selectedDateRef = useRef(selectedDate);
   selectedDateRef.current = selectedDate;
-  const { pmEditorService } = useCoreServices();
+  const { pmEditorService } = useEditorCoreServices();
   const editorView = pmEditorService.getEditor(editorName);
   const ext = pmEditorService.extensions;
   const suggestion = editorView ? suggestions.get(editorView) : undefined;

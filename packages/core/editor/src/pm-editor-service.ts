@@ -37,10 +37,6 @@ import { createEditor } from './pm-setup';
 
 const editorSaveQueueStore = createEditorSaveQueueStore();
 
-export type PmEditorServiceConfig = {
-  nothing: boolean;
-};
-
 /**
  * Manages ProseMirror editor instances and state
  */
@@ -70,7 +66,6 @@ export class PmEditorService extends BaseService {
       navigation: NavigationService;
       workspaceState: WorkspaceStateService;
     },
-    _config: PmEditorServiceConfig,
   ) {
     super(SERVICE_NAME.pmEditorService, context, dependencies);
 

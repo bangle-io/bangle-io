@@ -1,8 +1,8 @@
-import { useCoreServices } from '@bangle.io/context';
 import { $linkMenu, type LinkMenuState } from '@bangle.io/prosemirror-plugins';
 import { useAtomValue } from 'jotai';
 import React from 'react';
 import type { PmEditorService } from '../pm-editor-service';
+import { useEditorCoreServices } from '../use-editor-core-services';
 import {
   FloatingLinkEditor,
   isValidHttpUrl,
@@ -14,7 +14,7 @@ export { isValidHttpUrl, normalizeHttpUrl };
 /** Floating link editor for an existing link under a collapsed cursor. */
 export function LinkMenu({ editorName }: { editorName: string }) {
   const linkMenus = useAtomValue($linkMenu);
-  const { pmEditorService } = useCoreServices();
+  const { pmEditorService } = useEditorCoreServices();
   const editorView = pmEditorService.getEditor(editorName);
   const linkMenu = editorView ? linkMenus.get(editorView) : undefined;
 

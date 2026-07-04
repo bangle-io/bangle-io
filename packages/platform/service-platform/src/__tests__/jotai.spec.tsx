@@ -15,7 +15,7 @@ async function setup() {
       abortSignal: commonOpts.rootAbortSignal,
     },
   };
-  const service = new MemorySyncDatabaseService(context, null, null);
+  const service = new MemorySyncDatabaseService(context, null);
   await service.mount();
   const syncDb = service;
   const logger = commonOpts.logger;

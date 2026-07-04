@@ -1,12 +1,14 @@
-import type { CoreServices } from '@bangle.io/types';
 import React, { createContext } from 'react';
+import type { CoreServices, PmEditorServiceContract } from './service-types';
 
 export const CoreServiceContext = createContext<CoreServices>(
   {} as CoreServices,
 );
 
-export function useCoreServices() {
-  return React.useContext(CoreServiceContext);
+export function useCoreServices<
+  TPmEditorService extends PmEditorServiceContract = PmEditorServiceContract,
+>() {
+  return React.useContext(CoreServiceContext) as CoreServices<TPmEditorService>;
 }
 
 export function CoreServiceProvider({

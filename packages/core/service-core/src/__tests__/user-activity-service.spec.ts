@@ -3,7 +3,6 @@ import { createTestEnvironment, sleep } from '@bangle.io/test-utils';
 import { WsPath } from '@bangle.io/ws-path';
 import { createStore } from 'jotai';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { UserActivityService } from '../user-activity-service';
 
 const TEST_WS_NAME = 'test-workspace';
 const TEST_WS_PATH = 'test-workspace:test.md';
@@ -24,16 +23,16 @@ async function setupUserActivityService({
   controller?: AbortController;
 }) {
   const store = createStore();
-  const testEnv = createTestEnvironment({ controller }).setDefaultConfig();
-
-  testEnv.getContainer().setConfig(UserActivityService, () => ({
-    activityCooldownMs: cooldownMs,
-    maxRecentEntries: maxEntries,
-    emitter: testEnv.rootEmitter.scoped(
-      ['event::command:result'],
-      controller.signal,
-    ),
-  }));
+  const testEnv = createTestEnvironment({
+    controller,
+    coreConfigOverrides: {
+      userActivityService: (base) => ({
+        ...base,
+        activityCooldownMs: cooldownMs,
+        maxRecentEntries: maxEntries,
+      }),
+    },
+  });
 
   const services = testEnv.instantiateAll('userActivityService');
   const navigation = services.navigation;

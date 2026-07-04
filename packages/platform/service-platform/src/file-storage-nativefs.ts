@@ -22,6 +22,9 @@ import type {
 import { WsPath } from '@bangle.io/ws-path';
 
 type Config = {
+  getRootDirHandle: (
+    wsName: string,
+  ) => Promise<{ handle: FileSystemDirectoryHandle }>;
   onChange: (event: FileStorageChangeEvent) => void;
 };
 
@@ -42,9 +45,6 @@ export class FileStorageNativeFs
   public readonly description = 'Saves data on your hard drive';
 
   private fsCache: Map<string, NativeBrowserFileSystem> = new Map();
-  getRootDirHandle!: (
-    wsName: string,
-  ) => Promise<{ handle: FileSystemDirectoryHandle }>;
 
   constructor(
     context: BaseServiceContext,
@@ -55,7 +55,7 @@ export class FileStorageNativeFs
   }
 
   async hookMount(): Promise<void> {
-    assertIsDefined(this.getRootDirHandle, 'getRootDirHandle');
+    assertIsDefined(this.config.getRootDirHandle, 'getRootDirHandle');
     this.addCleanup(() => {
       return this.invalidateCache();
     });
@@ -142,7 +142,8 @@ export class FileStorageNativeFs
       return cachedFs;
     }
 
-    const { handle: rootDirHandle } = await this.getRootDirHandle(wsName);
+    const { handle: rootDirHandle } =
+      await this.config.getRootDirHandle(wsName);
 
     const fs = new NativeBrowserFileSystem({
       rootDirHandle: rootDirHandle,

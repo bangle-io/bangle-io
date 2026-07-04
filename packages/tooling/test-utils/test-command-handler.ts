@@ -1,20 +1,19 @@
 import { commandHandlers as defaultCommandHandlers } from '@bangle.io/command-handlers';
-import { type BangleAppCommand, getEnabledCommands } from '@bangle.io/commands';
 import {
-  type CommandDispatchService,
-  type CommandHandlerConfig,
-  CommandRegistryService,
-} from '@bangle.io/service-core';
+  type BangleAppCommand,
+  type EnabledBangleAppCommand,
+  getEnabledCommands,
+} from '@bangle.io/commands';
+import type { CommandExposedServices } from '@bangle.io/context';
 import type {
-  Command,
-  CommandArgs,
-  CommandExposedServices,
-  RootEvents,
-} from '@bangle.io/types';
+  CommandDispatchService,
+  CommandHandlerConfig,
+} from '@bangle.io/service-core';
+import type { CommandArgs, RootEvents } from '@bangle.io/types';
 import { createTestEnvironment } from './test-service-setup';
 
 type TestCommandHandlerArgs = {
-  commands?: Command[];
+  commands?: EnabledBangleAppCommand[];
   commandHandlers?: CommandHandlerConfig[];
   target: CommandHandlerConfig;
   testEnvArgs?: Parameters<typeof createTestEnvironment>[0];
@@ -41,7 +40,16 @@ export function testCommandHandler({
   target,
   testEnvArgs = {},
 }: TestCommandHandlerArgs): TestCommandHandlerReturnType {
-  const testEnv = createTestEnvironment(testEnvArgs);
+  const allCommandHandlers = commandHandlers.filter(
+    (handler) => handler.id !== target.id,
+  );
+  allCommandHandlers.push(target);
+
+  const testEnv = createTestEnvironment({
+    ...testEnvArgs,
+    commands,
+    commandHandlers: allCommandHandlers,
+  });
 
   let commandDispatcher: CommandDispatchService | undefined;
 
@@ -57,15 +65,6 @@ export function testCommandHandler({
       commandDispatcher.dispatch(id, args, 'test');
     },
     autoMountServices: async () => {
-      testEnv.setDefaultConfig();
-      const allCommandHandlers = commandHandlers.filter(
-        (handler) => handler.id !== target.id,
-      );
-      allCommandHandlers.push(target);
-      testEnv.getContainer().setConfig(CommandRegistryService, () => ({
-        commands,
-        commandHandlers: allCommandHandlers,
-      }));
       const services = testEnv.instantiateAll();
 
       commandDispatcher = services.commandDispatcher;

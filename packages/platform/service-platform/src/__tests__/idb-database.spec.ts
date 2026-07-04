@@ -17,7 +17,7 @@ async function setup() {
     },
   };
 
-  const service = new IdbDatabaseService(context, null, null);
+  const service = new IdbDatabaseService(context, null);
   await service.mount();
 
   return { service, commonOpts };

@@ -50,7 +50,7 @@ describe('WorkspacesSettingsPage', () => {
     const services = await testRender.autoMountServices();
     await setupWorkspaces(services);
 
-    testRender.mountComponent({ ui: <WorkspacesSettingsPage />, services });
+    testRender.mountComponent({ ui: <WorkspacesSettingsPage /> });
 
     await waitFor(() => {
       expect(
@@ -73,7 +73,7 @@ describe('WorkspacesSettingsPage', () => {
       new Error('listing failed'),
     );
 
-    testRender.mountComponent({ ui: <WorkspacesSettingsPage />, services });
+    testRender.mountComponent({ ui: <WorkspacesSettingsPage /> });
 
     await waitFor(() => {
       expect(

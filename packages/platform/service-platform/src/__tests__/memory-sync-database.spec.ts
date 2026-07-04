@@ -12,7 +12,7 @@ async function setup() {
     },
   };
 
-  const service = new MemorySyncDatabaseService(context, null, null);
+  const service = new MemorySyncDatabaseService(context, null);
   await service.mount();
 
   return {

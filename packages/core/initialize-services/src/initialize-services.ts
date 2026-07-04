@@ -4,23 +4,9 @@ import {
   throwAppError,
 } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
-import { PmEditorService } from '@bangle.io/editor';
-import { Container } from '@bangle.io/poor-mans-di';
-import {
-  CommandDispatchService,
-  CommandRegistryService,
-  EditorService,
-  FileSystemService,
-  NavigationService,
-  ShortcutService,
-  type ShortcutServiceConfig,
-  UserActivityService,
-  WorkbenchService,
-  WorkbenchStateService,
-  WorkspaceOpsService,
-  WorkspaceService,
-  WorkspaceStateService,
-} from '@bangle.io/service-core';
+import type { EnabledBangleAppCommand } from '@bangle.io/commands';
+import { slot } from '@bangle.io/poor-mans-di';
+import type { WorkspaceOpsService } from '@bangle.io/service-core';
 import {
   BrowserErrorHandlerService,
   BrowserLocalStorageSyncDatabaseService,
@@ -32,227 +18,91 @@ import {
 } from '@bangle.io/service-platform';
 import type {
   BaseServiceCommonOptions,
-  Command,
   CommandHandler,
-  CoreServices,
-  PlatformServices,
   RootEmitter,
 } from '@bangle.io/types';
+import { createServiceSetup } from './service-setup';
 
 export function initializeServices(
   commonOpts: BaseServiceCommonOptions,
   rootEmitter: RootEmitter,
-  commands: Command[],
+  commands: EnabledBangleAppCommand[],
   commandHandlers: Array<{ id: string; handler: CommandHandler }>,
   theme: ThemeManager,
 ) {
-  const container = new Container(
-    {
-      context: commonOpts,
-      abortSignal: commonOpts.rootAbortSignal,
-    },
-    {
-      // Platform services
-      errorService: BrowserErrorHandlerService,
-      database: IdbDatabaseService,
-      syncDatabase: BrowserLocalStorageSyncDatabaseService,
-      fileStorageIdb: FileStorageIndexedDB,
-      fileStorageNativeFs: FileStorageNativeFs,
-      router: BrowserRouterService,
+  // Native FS root-handle resolution needs workspace metadata, which lives in
+  // a core service. The lookup is late-bound: it is wired right after the
+  // setup is created and only runs after services are instantiated.
+  let getWorkspaceOps: (() => WorkspaceOpsService) | undefined;
 
-      // Core services
-      commandDispatcher: CommandDispatchService,
-      commandRegistry: CommandRegistryService,
-      fileSystem: FileSystemService,
-      navigation: NavigationService,
-      shortcut: ShortcutService,
-      editorService: EditorService,
-      workbench: WorkbenchService,
-      workbenchState: WorkbenchStateService,
-      workspace: WorkspaceService,
-      workspaceOps: WorkspaceOpsService,
-      workspaceState: WorkspaceStateService,
-      userActivityService: UserActivityService,
-      pmEditorService: PmEditorService,
-    },
-  );
+  const browserPlatformServices = {
+    errorService: slot(BrowserErrorHandlerService, () => ({
+      onError: (params) => {
+        rootEmitter.emit('event::error:uncaught-error', {
+          ...params,
+          sender: getEventSenderMetadata({ tag: 'BrowserErrorHandlerService' }),
+        });
+      },
+    })),
+    database: IdbDatabaseService,
+    syncDatabase: BrowserLocalStorageSyncDatabaseService,
+    fileStorageIdb: slot(FileStorageIndexedDB, () => ({
+      onChange: (change) => {
+        commonOpts.logger.info('File storage change:', change);
+      },
+    })),
+    fileStorageNativeFs: slot(FileStorageNativeFs, () => ({
+      onChange: (change) => {
+        commonOpts.logger.info('File storage change:', change);
+      },
+      getRootDirHandle: async (wsName: string) => {
+        assertIsDefined(getWorkspaceOps, 'getWorkspaceOps');
+        const { rootDirHandle } =
+          await getWorkspaceOps().getWorkspaceMetadata(wsName);
 
-  container.setConfig(BrowserRouterService, () => ({
-    strategy: new HashStrategy(),
-    basePath: '/ws',
-  }));
+        if (!rootDirHandle) {
+          throwAppError(
+            'error::workspace:invalid-metadata',
+            `Invalid workspace metadata for ${wsName}`,
+            { wsName },
+          );
+        }
 
-  container.setConfig(BrowserErrorHandlerService, () => ({
-    onError: (params) => {
-      rootEmitter.emit('event::error:uncaught-error', {
-        ...params,
-        sender: getEventSenderMetadata({ tag: 'BrowserErrorHandlerService' }),
-      });
-    },
-  }));
+        if (!(await FileStorageNativeFs.hasPermission(rootDirHandle))) {
+          throwAppError(
+            'error::workspace:native-fs-auth-needed',
+            `Need permission for ${rootDirHandle.name}`,
+            { wsName },
+          );
+        }
 
-  container.setConfig(FileStorageIndexedDB, () => ({
-    onChange: (change) => {
-      commonOpts.logger.info('File storage change:', change);
-    },
-  }));
+        return { handle: rootDirHandle };
+      },
+    })),
+    router: slot(BrowserRouterService, () => ({
+      strategy: new HashStrategy(),
+      basePath: '/ws',
+    })),
+  };
 
-  // Core service configs
-  container.setConfig(CommandRegistryService, () => ({
+  const setup = createServiceSetup({
+    commonOpts,
+    rootEmitter,
     commands,
     commandHandlers,
-  }));
-
-  container.setConfig(CommandDispatchService, () => ({
-    emitResult: (result) => {
-      rootEmitter.emit('event::command:result', result);
-    },
-    focusEditor: () => {
-      services.pmEditorService.focusEditor();
-    },
-  }));
-
-  container.setConfig(FileSystemService, () => ({
-    emitter: rootEmitter.scoped(
-      ['event::file:update', 'event::file:force-update'],
-      commonOpts.rootAbortSignal,
-    ),
-  }));
-
-  container.setConfig(ShortcutService, () => ({
-    target: document,
-    shortcuts: commands
-      .filter((command) => command.keybindings)
-      .map((command): ShortcutServiceConfig => {
-        assertIsDefined(command.keybindings);
-        const keys = command.keybindings.join('-');
-        return {
-          keyBinding: {
-            id: command.id,
-            keys,
-          },
-          handler: (event) => {
-            services.commandDispatcher.dispatch(
-              command.id as any,
-              event,
-              `keyboard(${keys})`,
-            );
-          },
-          options: {
-            ...(command.allowShortcutInInputs ? { allowInInput: true } : {}),
-            unique: true,
-          },
-        };
-      }),
-  }));
-
-  container.setConfig(UserActivityService, () => ({
-    emitter: rootEmitter.scoped(
-      ['event::command:result'],
-      commonOpts.rootAbortSignal,
-    ),
-  }));
-
-  container.setConfig(WorkbenchStateService, () => ({
     themeManager: theme,
-    emitter: rootEmitter.scoped(
-      ['event::app:reload-ui'],
-      commonOpts.rootAbortSignal,
-    ),
-  }));
+    shortcutTarget: document,
+    platformServices: browserPlatformServices,
+    fileStorageSlots: ['fileStorageIdb', 'fileStorageNativeFs'],
+  });
 
-  container.setConfig(EditorService, () => ({
-    emitter: rootEmitter.scoped(
-      ['event::editor:reload-editor', 'event::file:force-update'],
-      commonOpts.rootAbortSignal,
-    ),
-  }));
+  getWorkspaceOps = () => setup.getServices().workspaceOps;
 
-  container.setConfig(FileStorageNativeFs, () => ({
-    onChange: (change) => {
-      commonOpts.logger.info('File storage change:', change);
-    },
-  }));
-
-  container.setConfig(PmEditorService, () => ({
-    nothing: true,
-  }));
-
-  const services = container.instantiateAll();
-
-  services.commandDispatcher.exposedServices = {
-    ...services,
-  };
-
-  const fileStorageServices = {
-    [services.fileStorageIdb.workspaceType]: services.fileStorageIdb,
-    [services.fileStorageNativeFs.workspaceType]: services.fileStorageNativeFs,
-  };
-  services.fileSystem.fileStorageServices = fileStorageServices;
-  services.fileSystem.getWorkspaceInfo = async ({ wsName }) => {
-    const wsInfo = await services.workspaceOps.getWorkspaceInfo(wsName);
-    if (!wsInfo) {
-      throwAppError(
-        'error::workspace:not-found',
-        `Workspace not found: ${wsName}`,
-        {
-          wsName,
-        },
-      );
-    }
-    return wsInfo;
-  };
-
-  services.fileStorageNativeFs.getRootDirHandle = async (wsName: string) => {
-    const { rootDirHandle } =
-      await services.workspaceOps.getWorkspaceMetadata(wsName);
-
-    if (!rootDirHandle) {
-      throwAppError(
-        'error::workspace:invalid-metadata',
-        `Invalid workspace metadata for ${wsName}`,
-        { wsName },
-      );
-    }
-
-    if (!(await FileStorageNativeFs.hasPermission(rootDirHandle))) {
-      throwAppError(
-        'error::workspace:native-fs-auth-needed',
-        `Need permission for ${rootDirHandle.name}`,
-        { wsName },
-      );
-    }
-
-    return { handle: rootDirHandle };
-  };
-
-  const platformServices = {
-    errorService: services.errorService,
-    database: services.database,
-    syncDatabase: services.syncDatabase,
-    fileStorage: fileStorageServices,
-    router: services.router,
-  } satisfies PlatformServices;
+  setup.instantiate();
 
   return {
-    platformServices,
-    coreServices: {
-      commandDispatcher: services.commandDispatcher,
-      commandRegistry: services.commandRegistry,
-      fileSystem: services.fileSystem,
-      navigation: services.navigation,
-      shortcut: services.shortcut,
-      editorService: services.editorService,
-      workbench: services.workbench,
-      workbenchState: services.workbenchState,
-      workspace: services.workspace,
-      workspaceOps: services.workspaceOps,
-      workspaceState: services.workspaceState,
-      userActivityService: services.userActivityService,
-      pmEditorService: services.pmEditorService,
-    } satisfies CoreServices,
-    mountAll: () => {
-      container.mountAll();
-    },
+    coreServices: setup.coreServices(),
+    mountAll: setup.mountAll,
+    describe: setup.describe,
   };
 }

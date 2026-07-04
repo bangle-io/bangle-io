@@ -229,6 +229,55 @@ describe('BaseService', () => {
     expect(service.mounted).toBe(true);
   });
 
+  test('should mark mounted only after hookMount resolves', async () => {
+    const { commonOpts, serviceContext } = await setup();
+    let resolveMount!: () => void;
+
+    class SlowService extends BaseService {
+      constructor(context: BaseServiceContext, dependencies: null) {
+        super('SlowService', context, dependencies);
+      }
+
+      hookMount() {
+        return new Promise<void>((resolve) => {
+          resolveMount = resolve;
+        });
+      }
+    }
+
+    const service = new SlowService({ ctx: commonOpts, serviceContext }, null);
+    const mountPromise = service.mount();
+
+    await Promise.resolve();
+    expect(service.mounted).toBe(false);
+
+    resolveMount();
+    await mountPromise;
+    expect(service.mounted).toBe(true);
+  });
+
+  test('should keep mounted false when hookMount fails', async () => {
+    const { commonOpts, serviceContext } = await setup();
+
+    class FailingService extends BaseService {
+      constructor(context: BaseServiceContext, dependencies: null) {
+        super('FailingService', context, dependencies);
+      }
+
+      hookMount() {
+        throw new Error('mount failed');
+      }
+    }
+
+    const service = new FailingService(
+      { ctx: commonOpts, serviceContext },
+      null,
+    );
+
+    await expect(service.mount()).rejects.toThrow('mount failed');
+    expect(service.mounted).toBe(false);
+  });
+
   test('integration with Container - should handle dependency chain properly', async () => {
     const { commonOpts, abortController } = await setup();
     const mountOrder: string[] = [];
@@ -289,50 +338,5 @@ describe('BaseService', () => {
     await services.serviceC.mount();
 
     expect(mountOrder).toEqual(['ServiceA', 'ServiceB', 'ServiceC']);
-  });
-
-  test('should replace service using container.use()', async () => {
-    const { commonOpts, abortController } = await setup();
-
-    class MainService extends BaseService {
-      mockHookMount = vi.fn();
-      dep = {};
-
-      constructor(context: BaseServiceContext, dependencies: null) {
-        super('MainService', context, dependencies);
-      }
-
-      hookMount(): void {
-        this.mockHookMount();
-      }
-    }
-
-    class ReplacementService extends BaseService {
-      mockHookMount = vi.fn();
-      dep = {};
-
-      constructor(context: BaseServiceContext, dependencies: null) {
-        super('ReplacementService', context, dependencies);
-      }
-
-      hookMount(): void {
-        this.mockHookMount();
-      }
-    }
-
-    const container = new Container(
-      { context: commonOpts, abortSignal: abortController.signal },
-      {
-        originalService: MainService,
-      },
-    );
-
-    container.use('originalService', ReplacementService);
-    const services = container.instantiateAll();
-
-    await services.originalService.mount();
-
-    expect(services.originalService).toBeInstanceOf(ReplacementService);
-    expect(services.originalService.mockHookMount).toHaveBeenCalled();
   });
 });

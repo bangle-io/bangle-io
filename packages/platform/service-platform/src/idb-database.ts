@@ -43,7 +43,7 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
   db!: idb.IDBPDatabase<AppDatabase>;
   private changeBus!: TypedBroadcastBus<DatabaseChange>;
 
-  constructor(context: BaseServiceContext, dependencies: null, _config: null) {
+  constructor(context: BaseServiceContext, dependencies: null) {
     super(SERVICE_NAME.idbDatabaseService, context, dependencies);
   }
 
