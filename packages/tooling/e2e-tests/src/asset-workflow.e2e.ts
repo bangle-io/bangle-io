@@ -1,4 +1,4 @@
-import { expect, type Page, test } from '@playwright/test';
+import { expect, type Locator, type Page, test } from '@playwright/test';
 import {
   createBrowserWorkspaceAndNote,
   ctrlKey,
@@ -97,6 +97,40 @@ function createTextDataTransferHandle(page: Page, text: string) {
     dataTransfer.setData('text/plain', value);
     return dataTransfer;
   }, text);
+}
+
+// The file tree starts its real drag session from native mouse movement, and
+// that path is what guards against opening the row while dragging.
+async function dragTreeItemOntoEditor(
+  page: Page,
+  source: Locator,
+  editor: Locator,
+) {
+  const sourceBox = await source.boundingBox();
+  const editorBox = await editor.boundingBox();
+
+  if (!sourceBox || !editorBox) {
+    throw new Error('Expected drag source and editor target to be visible');
+  }
+
+  const sourceX = sourceBox.x + sourceBox.width / 2;
+  const sourceY = sourceBox.y + sourceBox.height / 2;
+  const targetX = editorBox.x + Math.min(40, editorBox.width / 2);
+  const targetY = editorBox.y + Math.min(40, editorBox.height / 2);
+  const settleFrame = () => page.waitForTimeout(60);
+
+  await page.mouse.move(sourceX, sourceY);
+  await page.mouse.down();
+  await settleFrame();
+  await page.mouse.move(sourceX + 12, sourceY);
+  await settleFrame();
+  await page.mouse.move((sourceX + targetX) / 2, (sourceY + targetY) / 2);
+  await settleFrame();
+  await page.mouse.move(targetX, targetY);
+  await settleFrame();
+  await page.mouse.move(targetX, targetY);
+  await settleFrame();
+  await page.mouse.up();
 }
 
 test('pastes workspace-backed image and PDF assets, reloads, and opens asset page', async ({
@@ -373,6 +407,55 @@ test('copies workspace paths and smart-links pasted or dropped existing assets',
     'src',
     /^blob:/,
   );
+});
+
+test('drags existing sidebar assets into the editor as smart Markdown links', async ({
+  page,
+}, testInfo) => {
+  const workspaceName = `asset-sidebar-drag-${testInfo.workerIndex}-${Date.now()}`;
+  const noteName = 'source';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'assets/photo.png',
+    'png bytes',
+    'image/png',
+  );
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'assets/report.pdf',
+    '%PDF-1.4',
+    'application/pdf',
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const explorer = page.getByTestId('bangle-file-explorer');
+  const editor = getEditorLocator(page, {});
+  await expect(editor).toBeVisible();
+  const editorRoute = page.url();
+
+  const photoRow = explorer.getByRole('treeitem', { name: /photo\.png/ });
+  await expect(photoRow).toBeVisible();
+  await dragTreeItemOntoEditor(page, photoRow, editor);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toContain('![photo.png](assets/photo.png)');
+  await expect(editor.locator('img[alt="photo.png"]')).toHaveAttribute(
+    'src',
+    /^blob:/,
+  );
+  expect(page.url()).toBe(editorRoute);
+
+  const reportRow = explorer.getByRole('treeitem', { name: /report\.pdf/ });
+  await expect(reportRow).toBeVisible();
+  await dragTreeItemOntoEditor(page, reportRow, editor);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toContain('[report.pdf](assets/report.pdf)');
+  await expect(editor.getByRole('link', { name: 'report.pdf' })).toBeVisible();
+  expect(page.url()).toBe(editorRoute);
 });
 
 test('copied nested workspace paths paste and drop from another note', async ({
