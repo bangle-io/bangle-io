@@ -272,6 +272,8 @@ export class Container<
       throw new Error('instantiateAll() can only be called once.');
     }
 
+    this.assertNoOrphanedConfigs();
+
     const dependencyList = this.createDependencyList();
     let instantiatedServicesMap: Record<string, Service<TContext>>;
     try {
@@ -372,6 +374,28 @@ export class Container<
   }
 
   // ---------------- Private Methods ----------------
+
+  /**
+   * Configs are keyed by service class, so a config registered for a class
+   * that no slot uses (a typo, or the slot was replaced via `use()`) would
+   * otherwise silently never apply and the service would receive `{}`.
+   */
+  private assertNoOrphanedConfigs(): void {
+    const registeredClasses = new Set<unknown>(
+      Object.values(this.registeredServices),
+    );
+    for (const configuredClass of this.serviceConfigs.keys()) {
+      if (!registeredClasses.has(configuredClass)) {
+        throw this.startupError(
+          'container',
+          'instantiate',
+          new Error(
+            `setConfig() was called for class "${configuredClass.name}", but no registered slot uses it. If the slot was replaced via use(), set the config on the replacement class.`,
+          ),
+        );
+      }
+    }
+  }
 
   /**
    * Initialize the registeredServices map from the provided serviceMap.

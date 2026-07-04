@@ -126,6 +126,45 @@ describe('createServiceSetup', () => {
     controller.abort();
   });
 
+  test('two file storage slots claiming one workspace type fail loudly', () => {
+    const controller = new AbortController();
+    const { commonOpts, rootEmitter } = makeTestCommonOpts({ controller });
+
+    const serviceMap = defineAppServiceMap({
+      errorService: TestErrorHandlerService,
+      database: MemoryDatabaseService,
+      syncDatabase: MemorySyncDatabaseService,
+      fileStorageMemory: FileStorageMemory,
+      fileStorageMemoryDuplicate: FileStorageMemory,
+      router: MemoryRouterService,
+      ...coreServiceMap,
+    });
+
+    const setup = createServiceSetup({
+      commonOpts,
+      rootEmitter,
+      commands: getEnabledCommands(),
+      commandHandlers,
+      themeManager,
+      shortcutTarget: {
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      },
+      serviceMap,
+      fileStorageSlots: ['fileStorageMemory', 'fileStorageMemoryDuplicate'],
+    });
+
+    setup.container.setConfig(FileStorageMemory, () => ({
+      onChange: () => {},
+    }));
+
+    expect(() => setup.instantiate()).toThrow(
+      /"fileStorageMemory" and "fileStorageMemoryDuplicate" both claim workspace type/,
+    );
+
+    controller.abort();
+  });
+
   test('startup failure surfaces the slot id and phase', async () => {
     const { setup, controller } = makeSetup();
 

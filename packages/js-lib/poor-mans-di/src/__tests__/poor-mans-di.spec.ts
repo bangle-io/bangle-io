@@ -175,6 +175,50 @@ describe('Container', () => {
     expect(services.serviceB.dependencies.serviceA).toBe(services.serviceA);
   });
 
+  test('instantiateAll rejects a config for a class no slot uses', () => {
+    class UnrelatedService implements Service<TestContext> {
+      constructor(
+        _: { ctx: TestContext; serviceContext: ServiceContext },
+        _deps: null,
+        public config: { name: string },
+      ) {}
+    }
+
+    const container = new Container(
+      { context: { env: 'test' }, abortSignal: new AbortController().signal },
+      {
+        serviceA: ServiceA,
+        serviceB: ServiceB,
+      },
+    );
+
+    container.setConfig(ServiceA, { name: 'test' });
+    container.setConfig(UnrelatedService, { name: 'orphan' });
+
+    expect(() => container.instantiateAll()).toThrow(
+      /setConfig\(\) was called for class "UnrelatedService"/,
+    );
+  });
+
+  test('instantiateAll rejects a config left behind by a use() replacement', () => {
+    class MockServiceA extends ServiceA {}
+
+    const container = new Container(
+      { context: { env: 'test' }, abortSignal: new AbortController().signal },
+      {
+        serviceA: ServiceA,
+        serviceB: ServiceB,
+      },
+    );
+
+    container.setConfig(ServiceA, { name: 'original' });
+    container.use('serviceA', MockServiceA);
+
+    expect(() => container.instantiateAll()).toThrow(
+      /setConfig\(\) was called for class "ServiceA".+replacement class/,
+    );
+  });
+
   test("configuring without config doesn't throw error", () => {
     const container = new Container(
       { context: { env: 'test' }, abortSignal: new AbortController().signal },

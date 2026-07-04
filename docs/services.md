@@ -87,6 +87,9 @@ General rules:
 
 - Use the same slot IDs for equivalent services.
 - Configure services before `instantiate()` via `container.setConfig`.
+  Configs are keyed by service class; a config for a class that no registered
+  slot uses (for example after a `use()` replacement) fails at
+  `instantiate()` instead of silently never applying.
 - Keep browser-specific choices in the production composition root.
 - Keep memory, fake, or test-only replacements in `@bangle.io/test-utils`.
 - Mount services through the returned setup helper rather than from individual

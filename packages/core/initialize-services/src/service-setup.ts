@@ -138,6 +138,24 @@ export function createServiceSetup<const TServiceMap extends AppServiceMap>(
     return services;
   };
 
+  const toCoreServices = (s: ServiceInstances): CoreServices => {
+    return {
+      commandDispatcher: s.commandDispatcher,
+      commandRegistry: s.commandRegistry,
+      fileSystem: s.fileSystem,
+      navigation: s.navigation,
+      shortcut: s.shortcut,
+      editorService: s.editorService,
+      workbench: s.workbench,
+      workbenchState: s.workbenchState,
+      workspace: s.workspace,
+      workspaceOps: s.workspaceOps,
+      workspaceState: s.workspaceState,
+      userActivityService: s.userActivityService,
+      pmEditorService: s.pmEditorService,
+    } satisfies CoreServices;
+  };
+
   const container = new Container(
     {
       context: commonOpts,
@@ -158,7 +176,16 @@ export function createServiceSetup<const TServiceMap extends AppServiceMap>(
     focusEditor: () => {
       getServices().pmEditorService.focusEditor();
     },
-    getExposedServices: () => getServices(),
+    // Hand the dispatcher only the command-exposed core slots; platform
+    // services must stay unreachable from command handlers even at runtime.
+    getExposedServices: () => {
+      const {
+        commandDispatcher: _commandDispatcher,
+        commandRegistry: _commandRegistry,
+        ...exposed
+      } = toCoreServices(getServices());
+      return exposed;
+    },
   }));
 
   container.setConfig(FileSystemService, () => ({
@@ -241,6 +268,7 @@ export function createServiceSetup<const TServiceMap extends AppServiceMap>(
       services = container.instantiateAll(focus);
 
       fileStorageServices = {};
+      const slotByWorkspaceType = new Map<string, string>();
       for (const slot of fileStorageSlots) {
         const storage: unknown = services[slot];
         if (!isFileStorageService(storage)) {
@@ -248,6 +276,13 @@ export function createServiceSetup<const TServiceMap extends AppServiceMap>(
             `Service slot "${slot}" does not implement the file storage contract.`,
           );
         }
+        const existingSlot = slotByWorkspaceType.get(storage.workspaceType);
+        if (existingSlot) {
+          throw new Error(
+            `File storage slots "${existingSlot}" and "${slot}" both claim workspace type "${storage.workspaceType}".`,
+          );
+        }
+        slotByWorkspaceType.set(storage.workspaceType, slot);
         fileStorageServices[storage.workspaceType] = storage;
       }
 
@@ -258,24 +293,7 @@ export function createServiceSetup<const TServiceMap extends AppServiceMap>(
     getServices,
 
     /** The typed core-facing service aggregate consumed by React. */
-    coreServices: (): CoreServices => {
-      const s = getServices();
-      return {
-        commandDispatcher: s.commandDispatcher,
-        commandRegistry: s.commandRegistry,
-        fileSystem: s.fileSystem,
-        navigation: s.navigation,
-        shortcut: s.shortcut,
-        editorService: s.editorService,
-        workbench: s.workbench,
-        workbenchState: s.workbenchState,
-        workspace: s.workspace,
-        workspaceOps: s.workspaceOps,
-        workspaceState: s.workspaceState,
-        userActivityService: s.userActivityService,
-        pmEditorService: s.pmEditorService,
-      } satisfies CoreServices;
-    },
+    coreServices: (): CoreServices => toCoreServices(getServices()),
 
     mountAll: async (): Promise<void> => {
       commonOpts.logger.debug('Service graph', container.describe());
