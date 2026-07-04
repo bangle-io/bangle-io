@@ -1,9 +1,11 @@
 import { expect, type Page, test } from '@playwright/test';
 import {
   createBrowserWorkspaceAndNote,
+  ctrlKey,
   EDITOR_SELECTOR,
   getEditorLocator,
   readStoredMarkdown,
+  writeStoredFile,
   writeStoredMarkdown,
 } from './common';
 
@@ -30,6 +32,18 @@ const dispatchAssetPasteEvent = (element: Element) => {
     }),
   );
 
+  const event = new Event('paste', {
+    bubbles: true,
+    cancelable: true,
+  });
+  Object.defineProperty(event, 'clipboardData', { value: dataTransfer });
+  element.dispatchEvent(event);
+  return event.defaultPrevented;
+};
+
+const dispatchTextPasteEvent = (element: Element, text: string) => {
+  const dataTransfer = new DataTransfer();
+  dataTransfer.setData('text/plain', text);
   const event = new Event('paste', {
     bubbles: true,
     cancelable: true,
@@ -75,6 +89,14 @@ function createOversizedAssetDataTransferHandle(page: Page, size: number) {
     dataTransfer.items.add(file);
     return dataTransfer;
   }, size);
+}
+
+function createTextDataTransferHandle(page: Page, text: string) {
+  return page.evaluateHandle((value) => {
+    const dataTransfer = new DataTransfer();
+    dataTransfer.setData('text/plain', value);
+    return dataTransfer;
+  }, text);
 }
 
 test('pastes workspace-backed image and PDF assets, reloads, and opens asset page', async ({
@@ -250,4 +272,105 @@ test('rejects dropped files larger than the workspace storage provider limit', a
   await expect(
     editor.getByRole('link', { name: 'Too Large Archive.zip' }),
   ).toHaveCount(0);
+});
+
+test('copies workspace paths and smart-links pasted or dropped existing assets', async ({
+  context,
+  page,
+}, testInfo) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  const workspaceName = `asset-path-link-${testInfo.workerIndex}-${Date.now()}`;
+  const noteName = 'source';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'assets/photo.png',
+    'png bytes',
+    'image/png',
+  );
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'assets/report.pdf',
+    '%PDF-1.4',
+    'application/pdf',
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const explorer = page.getByTestId('bangle-file-explorer');
+  await expect(
+    explorer.getByRole('treeitem', { name: /^assets$/ }),
+  ).toBeVisible();
+  const photoRow = explorer.getByRole('treeitem', { name: /photo\.png/ });
+  await expect(photoRow).toBeVisible();
+  await photoRow.click({ button: 'right' });
+  await page.getByRole('button', { name: 'Copy path' }).click();
+  await expect(page.getByText('Path copied')).toBeVisible();
+  await expect
+    .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+    .toBe('assets/photo.png');
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await page
+    .locator(EDITOR_SELECTOR)
+    .evaluate(dispatchTextPasteEvent, 'assets/photo.png');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toContain('![photo.png](assets/photo.png)');
+  await expect(editor.locator('img[alt="photo.png"]')).toHaveAttribute(
+    'src',
+    /^blob:/,
+  );
+
+  await editor.press(`${ctrlKey}+Z`);
+  await expect
+    .poll(
+      async () =>
+        (await readStoredMarkdown(page, workspaceName, noteName)) ?? '',
+    )
+    .toBe('assets/photo.png');
+  await expect(editor.locator('img[alt="photo.png"]')).toHaveCount(0);
+
+  await page.evaluate(() => navigator.clipboard.writeText('assets/report.pdf'));
+  await editor.click();
+  await page
+    .locator(EDITOR_SELECTOR)
+    .evaluate(dispatchTextPasteEvent, 'assets/report.pdf');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toContain('[report.pdf](assets/report.pdf)');
+  await expect(editor.getByRole('link', { name: 'report.pdf' })).toBeVisible();
+
+  await editor.press(`${ctrlKey}+Z`);
+  await expect
+    .poll(
+      async () =>
+        (await readStoredMarkdown(page, workspaceName, noteName)) ?? '',
+    )
+    .toBe('assets/photo.pngassets/report.pdf');
+
+  const editorBox = await editor.boundingBox();
+  if (!editorBox) {
+    throw new Error('Expected editor to have a visible bounding box');
+  }
+  const dataTransfer = await createTextDataTransferHandle(
+    page,
+    'assets/photo.png',
+  );
+  await page.locator(EDITOR_SELECTOR).dispatchEvent('drop', {
+    clientX: editorBox.x + 4,
+    clientY: editorBox.y + 4,
+    dataTransfer,
+  });
+  await dataTransfer.dispose();
+
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toContain('![photo.png](assets/photo.png)');
+  await expect(editor.locator('img[alt="photo.png"]')).toHaveAttribute(
+    'src',
+    /^blob:/,
+  );
 });

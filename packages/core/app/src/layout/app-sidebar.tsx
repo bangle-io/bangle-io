@@ -6,14 +6,21 @@ import {
   type FileTreeEntryAction,
   KbdShortcut,
   Sidebar,
+  toast,
   AppSidebar as UIAppSidebar,
 } from '@bangle.io/ui-components';
 import bangleIcon from '@bangle.io/ui-components/src/bangle-transparent_x512.png';
-import { WsDirPath, WsPath } from '@bangle.io/ws-path';
+import {
+  relativeMarkdownAssetHref,
+  WsDirPath,
+  WsPath,
+  workspaceRootMarkdownAssetHref,
+} from '@bangle.io/ws-path';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
   BugPlay,
   Command,
+  Copy,
   ExternalLink,
   Folder,
   FolderPlus,
@@ -31,6 +38,28 @@ interface SidebarProps {
   children: React.ReactNode;
 }
 
+async function writeTextToClipboard(value: string): Promise<void> {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(value);
+    return;
+  }
+
+  const textArea = document.createElement('textarea');
+  textArea.value = value;
+  textArea.setAttribute('readonly', 'true');
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-9999px';
+  document.body.append(textArea);
+  textArea.select();
+  try {
+    if (!document.execCommand('copy')) {
+      throw new Error('Clipboard copy command failed');
+    }
+  } finally {
+    textArea.remove();
+  }
+}
+
 export const AppSidebar = ({ children }: SidebarProps) => {
   const { commandDispatcher, workspaceState, workbenchState, navigation } =
     useCoreServices();
@@ -42,6 +71,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   );
   const activeWsName = useAtomValue(navigation.$wsName);
   const activeWsPaths = useAtomValue(workspaceState.$activeWsPaths);
+  const currentWsPath = useAtomValue(workspaceState.$currentWsPath);
   const wsPaths = useAtomValue(workspaceState.$wsPaths);
   const noteWsPaths = useAtomValue(workspaceState.$noteWsPaths);
 
@@ -125,6 +155,38 @@ export const AppSidebar = ({ children }: SidebarProps) => {
 
         const wsPath = getFileWsPath(entry.path);
         const filePath = wsPath ? WsPath.safeParseFile(wsPath).data : undefined;
+
+        if (filePath) {
+          actions.push({
+            id: 'copy-path',
+            label: t.app.components.appSidebar.copyPathActionTitle,
+            Icon: Copy,
+            onClick: (entry) => {
+              const wsPath = getFileWsPath(entry.path);
+              const target = wsPath
+                ? WsPath.safeParseFile(wsPath).data
+                : undefined;
+              const href = target
+                ? ((currentWsPath
+                    ? relativeMarkdownAssetHref(currentWsPath, target)
+                    : undefined) ?? workspaceRootMarkdownAssetHref(target))
+                : undefined;
+
+              if (!href) {
+                toast.error(t.app.toasts.pathCopyFailed);
+                return;
+              }
+
+              void writeTextToClipboard(href)
+                .then(() => {
+                  toast.success(t.app.toasts.pathCopied);
+                })
+                .catch(() => {
+                  toast.error(t.app.toasts.pathCopyFailed);
+                });
+            },
+          });
+        }
 
         if (filePath && !filePath.isNote()) {
           actions.push({
@@ -238,7 +300,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
 
         return actions;
       },
-    [activeWsName, commandDispatcher],
+    [activeWsName, commandDispatcher, currentWsPath],
   );
 
   return (

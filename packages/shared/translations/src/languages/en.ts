@@ -440,6 +440,8 @@ export const t = {
         maxFileSize: string;
       }) => `${fileName} is too large. Maximum file size is ${maxFileSize}.`,
       openAsset: 'Open',
+      pathCopied: 'Path copied',
+      pathCopyFailed: 'Could not copy path',
       permissionNotGranted: 'Permission not granted',
       retrySave: 'Retry save',
       saveFailed: 'Changes could not be saved. Retry to keep your latest edit.',
@@ -528,6 +530,7 @@ export const t = {
         newNoteHereActionTitle: 'New Note Here',
         newFolderHereActionTitle: 'New Folder Here',
         searchFilesActionLabel: 'Search Files',
+        copyPathActionTitle: 'Copy path',
         openActionTitle: 'Open',
         renameActionTitle: 'Rename',
         moveActionTitle: 'Move',

@@ -6,7 +6,7 @@ import {
   isAppError,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
-import { TextSelection } from '@bangle.io/prosemirror-plugins';
+import { type EditorView, TextSelection } from '@bangle.io/prosemirror-plugins';
 import type {
   FileSystemService,
   NavigationService,
@@ -18,12 +18,17 @@ import { toast } from '@bangle.io/ui-components';
 import {
   createMissingWikiLinkTarget,
   createWikiLinkIndex,
+  getEmbeddableWorkspaceAssetKind,
+  relativeMarkdownAssetHref,
   resolveLocalMarkdownAsset,
   resolveWikiLinkTarget,
+  resolveWorkspaceMarkdownAssetReference,
   type WikiLinkIndex,
   WsPath,
+  workspaceRootMarkdownAssetHref,
 } from '@bangle.io/ws-path';
 
+import type { MarkdownAssetReference } from './asset-file-plugin';
 import {
   displayNameForAsset,
   type StoredMarkdownAsset,
@@ -149,6 +154,8 @@ export class PmEditorService extends BaseService {
       },
       {
         storeFiles: (view, files) => this.storeAssetFiles(view, files),
+        resolveAssetReference: (view, target) =>
+          this.resolveAssetReference(view, target),
       },
       {
         openAssetLink: (view, href) => this.openAssetLink(view, href),
@@ -499,6 +506,48 @@ export class PmEditorService extends BaseService {
       toast.dismiss(toastId);
     }
     return markdownAssets;
+  }
+
+  private resolveAssetReference(
+    view: EditorView,
+    target: string,
+  ): MarkdownAssetReference | undefined {
+    const editor = [...this.editors.values()].find(
+      (entry) => 'editorView' in entry && entry.editorView === view,
+    );
+    if (!editor || !('editorView' in editor)) {
+      return undefined;
+    }
+
+    const currentWsPath = WsPath.safeParse(editor.wsPath).data?.asFile();
+    const assetWsPath = currentWsPath
+      ? resolveWorkspaceMarkdownAssetReference(currentWsPath, target)
+      : undefined;
+    if (!currentWsPath || !assetWsPath) {
+      return undefined;
+    }
+
+    const existingWsPaths = new Set(
+      this.store
+        .get(this.dependencies.workspaceState.$wsPaths)
+        .map((path) => path.wsPath),
+    );
+    if (!existingWsPaths.has(assetWsPath.wsPath)) {
+      return undefined;
+    }
+
+    const href =
+      relativeMarkdownAssetHref(currentWsPath, assetWsPath) ??
+      workspaceRootMarkdownAssetHref(assetWsPath);
+    if (!href) {
+      return undefined;
+    }
+
+    return {
+      href,
+      isImage: getEmbeddableWorkspaceAssetKind(assetWsPath) === 'image',
+      label: assetWsPath.fileName,
+    };
   }
 
   /** Opens a web link externally or routes a relative Markdown link in-app. */

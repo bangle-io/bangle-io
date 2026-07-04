@@ -1,6 +1,5 @@
 import type { Logger } from '@bangle.io/logger';
 import {
-  type EditorView,
   type LinkConfig,
   setupActiveNode,
   setupBase,
@@ -32,12 +31,14 @@ import {
   setupWikiLink,
   type WikiLinkConfig,
 } from '@bangle.io/prosemirror-plugins';
-import { setupAssetFilePlugin } from './asset-file-plugin';
+import {
+  type AssetFilePluginConfig,
+  setupAssetFilePlugin,
+} from './asset-file-plugin';
 import {
   type AssetLinkPluginConfig,
   setupAssetLinkPlugin,
 } from './asset-link-plugin';
-import type { StoredMarkdownAsset } from './asset-storage';
 import { setupCodeHighlight } from './code-highlight';
 import { funPlaceholder } from './utils';
 
@@ -55,12 +56,7 @@ export function setupExtensions(
   logger: Logger,
   onOpenLink?: LinkConfig['onOpenLink'],
   wikiLinkConfig?: WikiLinkConfig,
-  assetFileConfig?: {
-    storeFiles: (
-      view: EditorView,
-      files: readonly File[],
-    ) => Promise<StoredMarkdownAsset[]>;
-  },
+  assetFileConfig?: AssetFilePluginConfig,
   assetLinkConfig?: AssetLinkPluginConfig,
 ) {
   const link = setupLink({ onOpenLink });

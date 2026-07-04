@@ -1,4 +1,5 @@
 import {
+  closeHistory,
   collection,
   dropPoint,
   type EditorView,
@@ -14,11 +15,21 @@ import {
 
 import type { StoredMarkdownAsset } from './asset-storage';
 
+export type MarkdownAssetReference = {
+  href: string;
+  label: string;
+  isImage: boolean;
+};
+
 export type AssetFilePluginConfig = {
   storeFiles: (
     view: EditorView,
     files: readonly File[],
   ) => Promise<StoredMarkdownAsset[]>;
+  resolveAssetReference?: (
+    view: EditorView,
+    target: string,
+  ) => MarkdownAssetReference | undefined;
 };
 
 const PROSEMIRROR_SLICE_TYPE = 'application/x-prosemirror-slice';
@@ -71,9 +82,22 @@ function isInternalProseMirrorDrag(dataTransfer: DataTransfer): boolean {
   return Array.from(dataTransfer.types ?? []).includes(PROSEMIRROR_SLICE_TYPE);
 }
 
+function getPlainText(dataTransfer: DataTransfer): string | undefined {
+  if (!Array.from(dataTransfer.types ?? []).includes('text/plain')) {
+    return undefined;
+  }
+
+  const text = dataTransfer.getData('text/plain').trim();
+  if (!text || text.includes('\n') || text.includes('\r')) {
+    return undefined;
+  }
+
+  return text;
+}
+
 function createAssetNodes(
   view: EditorView,
-  assets: readonly StoredMarkdownAsset[],
+  assets: readonly MarkdownAssetReference[],
 ): PMNode[] {
   const { schema } = view.state;
   const imageType = schema.nodes.image;
@@ -144,6 +168,72 @@ function insertAssetNodes(
   return tr.setSelection(
     TextSelection.near(tr.doc.resolve(selectionPosition), -1),
   );
+}
+
+function replaceRangeWithAssetNodes(
+  tr: Transaction,
+  from: number,
+  to: number,
+  nodes: readonly PMNode[],
+) {
+  if (nodes.length === 0) {
+    return tr;
+  }
+
+  const separatedNodes: PMNode[] = [];
+  const hardBreak = tr.doc.type.schema.nodes.hard_break;
+  for (const [index, node] of nodes.entries()) {
+    if (index > 0 && hardBreak) {
+      separatedNodes.push(hardBreak.create());
+    }
+    separatedNodes.push(node);
+  }
+
+  const slice = new Slice(Fragment.fromArray(separatedNodes), 0, 0);
+  const docBeforeInsert = tr.doc;
+  tr.replaceRange(from, to, slice);
+
+  if (tr.doc.eq(docBeforeInsert)) {
+    return tr;
+  }
+
+  let selectionPosition = from;
+  tr.mapping.maps.at(-1)?.forEach((_oldStart, _oldEnd, _newStart, newEnd) => {
+    selectionPosition = newEnd;
+  });
+
+  return tr.setSelection(
+    TextSelection.near(tr.doc.resolve(selectionPosition), -1),
+  );
+}
+
+function insertPlainTextAtPosition(
+  view: EditorView,
+  position: number,
+  text: string,
+): { from: number; to: number } | undefined {
+  const textNode = view.state.schema.text(text);
+  const slice = new Slice(Fragment.from(textNode), 0, 0);
+  const insertPosition = dropPoint(view.state.doc, position, slice) ?? position;
+  const tr = view.state.tr;
+  const mappedPosition = tr.mapping.map(insertPosition);
+  const docBeforeInsert = tr.doc;
+
+  tr.replaceRange(mappedPosition, mappedPosition, slice);
+
+  if (tr.doc.eq(docBeforeInsert)) {
+    return undefined;
+  }
+
+  let from = mappedPosition;
+  let to = mappedPosition;
+  tr.mapping.maps.at(-1)?.forEach((_oldStart, _oldEnd, newStart, newEnd) => {
+    from = newStart;
+    to = newEnd;
+  });
+
+  view.dispatch(closeHistory(tr));
+  return { from, to };
 }
 
 function claimFileEvent(event: ClipboardEvent | DragEvent) {
@@ -240,6 +330,35 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
     return true;
   }
 
+  function handleAssetReferenceAtPosition(
+    view: EditorView,
+    target: string | undefined,
+    position: number,
+  ): boolean {
+    if (!target) {
+      return false;
+    }
+
+    const asset = config.resolveAssetReference?.(view, target);
+    if (!asset) {
+      return false;
+    }
+
+    const inserted = insertPlainTextAtPosition(view, position, target);
+    if (!inserted) {
+      return false;
+    }
+
+    const tr = replaceRangeWithAssetNodes(
+      view.state.tr,
+      inserted.from,
+      inserted.to,
+      createAssetNodes(view, [asset]),
+    );
+    view.dispatch(closeHistory(tr));
+    return true;
+  }
+
   return collection({
     id: 'asset-file-plugin',
     plugin: {
@@ -294,7 +413,19 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
 
                   const files = collectFiles(dataTransfer);
                   if (files.length === 0) {
-                    return false;
+                    const coordinates = view.posAtCoords({
+                      left: event.clientX,
+                      top: event.clientY,
+                    });
+                    const handled = handleAssetReferenceAtPosition(
+                      view,
+                      getPlainText(dataTransfer),
+                      coordinates?.pos ?? view.state.selection.from,
+                    );
+                    if (handled) {
+                      claimFileEvent(event);
+                    }
+                    return handled;
                   }
 
                   claimFileEvent(event);
@@ -319,7 +450,15 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
 
                 const files = collectFiles(clipboardData);
                 if (files.length === 0) {
-                  return false;
+                  const handled = handleAssetReferenceAtPosition(
+                    view,
+                    getPlainText(clipboardData),
+                    view.state.selection.from,
+                  );
+                  if (handled) {
+                    claimFileEvent(event);
+                  }
+                  return handled;
                 }
 
                 claimFileEvent(event);

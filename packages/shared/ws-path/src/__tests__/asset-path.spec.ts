@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
+  getEmbeddableWorkspaceAssetKind,
+  isEmbeddableWorkspaceAsset,
   relativeMarkdownAssetHref,
   resolveLocalMarkdownAsset,
+  resolveWorkspaceMarkdownAssetReference,
+  workspaceRootMarkdownAssetHref,
 } from '../asset-path';
 
 describe('resolveLocalMarkdownAsset', () => {
@@ -56,5 +60,57 @@ describe('relativeMarkdownAssetHref', () => {
     ['workspace:notes/current.md', 'other:notes/file.pdf', undefined],
   ])('creates href from %s to %s', (source, asset, expected) => {
     expect(relativeMarkdownAssetHref(source, asset)).toBe(expected);
+  });
+});
+
+describe('embeddable workspace assets', () => {
+  it.each([
+    'workspace:assets/image.png',
+    'workspace:assets/image.JPG',
+    'workspace:assets/diagram.svg',
+    'workspace:assets/animation.webp',
+  ])('treats image path %s as embeddable', (wsPath) => {
+    expect(isEmbeddableWorkspaceAsset(wsPath)).toBe(true);
+    expect(getEmbeddableWorkspaceAssetKind(wsPath)).toBe('image');
+  });
+
+  it.each([
+    'workspace:assets/report.pdf',
+    'workspace:notes/current.md',
+    'workspace:assets/archive.zip',
+    'workspace:assets/',
+    'not a ws path',
+  ])('does not treat %s as embeddable', (wsPath) => {
+    expect(isEmbeddableWorkspaceAsset(wsPath)).toBe(false);
+    expect(getEmbeddableWorkspaceAssetKind(wsPath)).toBeUndefined();
+  });
+
+  it('creates workspace-root Markdown hrefs', () => {
+    expect(
+      workspaceRootMarkdownAssetHref('workspace:assets/My Image.png'),
+    ).toBe('/assets/My%20Image.png');
+    expect(workspaceRootMarkdownAssetHref('workspace:assets/')).toBeUndefined();
+  });
+
+  it.each([
+    ['assets/image.png', 'workspace:notes/deep/assets/image.png'],
+    ['/assets/image.png', 'workspace:assets/image.png'],
+    ['workspace:assets/image.png', 'workspace:assets/image.png'],
+  ])('resolves copied asset reference %s', (target, expected) => {
+    expect(
+      resolveWorkspaceMarkdownAssetReference(
+        'workspace:notes/deep/current.md',
+        target,
+      )?.wsPath,
+    ).toBe(expected);
+  });
+
+  it('rejects copied wsPaths from another workspace', () => {
+    expect(
+      resolveWorkspaceMarkdownAssetReference(
+        'workspace:notes/current.md',
+        'other:assets/image.png',
+      ),
+    ).toBeUndefined();
   });
 });

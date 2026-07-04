@@ -1,6 +1,17 @@
 import { type WsFilePath, WsPath } from './ws-path';
 
 const EXPLICIT_SCHEME_RE = /^[a-z][a-z\d+.-]*:/i;
+const EMBEDDABLE_IMAGE_EXTENSIONS = new Set([
+  '.avif',
+  '.gif',
+  '.jpg',
+  '.jpeg',
+  '.png',
+  '.svg',
+  '.webp',
+]);
+
+export type EmbeddableWorkspaceAssetKind = 'image';
 
 function decodeSafeSegment(value: string): string | undefined {
   if (!value || value.includes('\\')) {
@@ -22,6 +33,61 @@ function decodeSafeSegment(value: string): string | undefined {
 
 function encodeSegment(value: string): string {
   return encodeURIComponent(value);
+}
+
+export function getEmbeddableWorkspaceAssetKind(
+  wsPath: string | WsFilePath,
+): EmbeddableWorkspaceAssetKind | undefined {
+  const filePath = WsPath.safeParseFile(wsPath).data;
+  if (!filePath) {
+    return undefined;
+  }
+
+  if (EMBEDDABLE_IMAGE_EXTENSIONS.has(filePath.extension.toLocaleLowerCase())) {
+    return 'image';
+  }
+
+  return undefined;
+}
+
+export function isEmbeddableWorkspaceAsset(
+  wsPath: string | WsFilePath,
+): boolean {
+  return getEmbeddableWorkspaceAssetKind(wsPath) !== undefined;
+}
+
+export function workspaceRootMarkdownAssetHref(
+  assetWsPath: string | WsFilePath,
+): string | undefined {
+  const asset = WsPath.safeParse(assetWsPath).data?.asFile();
+  if (!asset) {
+    return undefined;
+  }
+
+  const encodedPath = asset.path
+    .split('/')
+    .filter(Boolean)
+    .map(encodeSegment)
+    .join('/');
+  return encodedPath ? `/${encodedPath}` : undefined;
+}
+
+export function resolveWorkspaceMarkdownAssetReference(
+  currentWsPath: string | WsFilePath,
+  target: string,
+): WsFilePath | undefined {
+  const current = WsPath.safeParse(currentWsPath).data?.asFile();
+  if (!current) {
+    return undefined;
+  }
+
+  const input = target.trim();
+  const direct = WsPath.safeParse(input).data?.asFile();
+  if (direct) {
+    return direct.wsName === current.wsName ? direct : undefined;
+  }
+
+  return resolveLocalMarkdownAsset(current, input);
 }
 
 /**

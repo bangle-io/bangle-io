@@ -435,6 +435,8 @@ export const t = {
       }) =>
         `${fileName} ist zu gross. Maximale Dateigroesse ist ${maxFileSize}.`,
       openAsset: 'Öffnen',
+      pathCopied: 'Pfad kopiert',
+      pathCopyFailed: 'Pfad konnte nicht kopiert werden',
       permissionNotGranted: 'Berechtigung nicht erteilt',
       retrySave: 'Speichern erneut versuchen',
       saveFailed:
@@ -525,6 +527,7 @@ export const t = {
         newNoteHereActionTitle: 'Neue Notiz hier',
         newFolderHereActionTitle: 'Neuer Ordner hier',
         searchFilesActionLabel: 'Dateien suchen',
+        copyPathActionTitle: 'Pfad kopieren',
         openActionTitle: 'Öffnen',
         renameActionTitle: 'Umbenennen',
         moveActionTitle: 'Verschieben',

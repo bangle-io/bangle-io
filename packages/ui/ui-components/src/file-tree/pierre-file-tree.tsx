@@ -243,6 +243,8 @@ export function PierreFileTree({
   const onMoveFileRef = useRef(onMoveFile);
   const pendingUserOpenPathRef = useRef<string | null>(null);
   const selectedPathRef = useRef<string | null>(null);
+  const suppressSelectionOpenRef = useRef(false);
+  const suppressSelectionOpenTimerRef = useRef<number | undefined>(undefined);
   const treePathsRef = useRef<readonly string[]>(treePaths);
   filePathSetRef.current = filePathSet;
   onOpenFileRef.current = onOpenFile;
@@ -280,6 +282,33 @@ export function PierreFileTree({
   const canDropFile = (event: FileTreeDropContext): boolean =>
     resolveDropMove(event) !== null;
 
+  const resetSelectionOpenSuppression = (): void => {
+    suppressSelectionOpenRef.current = false;
+    if (suppressSelectionOpenTimerRef.current !== undefined) {
+      window.clearTimeout(suppressSelectionOpenTimerRef.current);
+      suppressSelectionOpenTimerRef.current = undefined;
+    }
+  };
+
+  const suppressSelectionOpenForDrag = (): void => {
+    resetSelectionOpenSuppression();
+    suppressSelectionOpenRef.current = true;
+    suppressSelectionOpenTimerRef.current = window.setTimeout(() => {
+      suppressSelectionOpenRef.current = false;
+      suppressSelectionOpenTimerRef.current = undefined;
+    }, 1500);
+  };
+
+  const canDragFile = (paths: readonly string[]): boolean => {
+    const canDrag =
+      paths.length === 1 &&
+      filePathSetRef.current.has(normalizePierreFilePath(paths[0] || ''));
+    if (canDrag) {
+      suppressSelectionOpenForDrag();
+    }
+    return canDrag;
+  };
+
   const commitDurableDrop = (
     event: FileTreeDropContext | FileTreeDropResult,
   ): boolean => {
@@ -293,6 +322,7 @@ export function PierreFileTree({
   };
 
   const handleDropComplete = (event: FileTreeDropResult): void => {
+    resetSelectionOpenSuppression();
     commitDurableDrop(event);
     if (modelRef.current) {
       resetModelPathsPreservingExpansion(
@@ -313,12 +343,11 @@ export function PierreFileTree({
     density: 'default',
     icons: BANGLE_PIERRE_FILE_TREE_ICONS,
     dragAndDrop: {
-      canDrag: (paths) =>
-        paths.length === 1 &&
-        filePathSetRef.current.has(normalizePierreFilePath(paths[0] || '')),
+      canDrag: canDragFile,
       canDrop: canDropFile,
       onDropComplete: handleDropComplete,
       onDropError: () => {
+        resetSelectionOpenSuppression();
         if (modelRef.current) {
           resetModelPathsPreservingExpansion(
             modelRef.current,
@@ -336,6 +365,9 @@ export function PierreFileTree({
         : undefined;
 
       if (normalizedPath && filePathSetRef.current.has(normalizedPath)) {
+        if (suppressSelectionOpenRef.current) {
+          return;
+        }
         pendingUserOpenPathRef.current = normalizedPath;
         onOpenFileRef.current(normalizedPath);
       }
@@ -381,6 +413,17 @@ export function PierreFileTree({
       }
     }
   }, [activeTreePaths, model]);
+
+  useEffect(
+    () => () => {
+      suppressSelectionOpenRef.current = false;
+      if (suppressSelectionOpenTimerRef.current !== undefined) {
+        window.clearTimeout(suppressSelectionOpenTimerRef.current);
+        suppressSelectionOpenTimerRef.current = undefined;
+      }
+    },
+    [],
+  );
 
   return (
     <div

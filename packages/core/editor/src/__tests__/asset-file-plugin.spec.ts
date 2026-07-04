@@ -3,13 +3,18 @@
 import {
   EditorState,
   EditorView,
+  history,
   Slice,
   schema,
   TextSelection,
+  undo,
 } from '@bangle.io/prosemirror-plugins';
 import { WsFilePath } from '@bangle.io/ws-path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { setupAssetFilePlugin } from '../asset-file-plugin';
+import {
+  type MarkdownAssetReference,
+  setupAssetFilePlugin,
+} from '../asset-file-plugin';
 import type { StoredMarkdownAsset } from '../asset-storage';
 
 function deferred<T>() {
@@ -23,15 +28,22 @@ function deferred<T>() {
 }
 
 function createView({
+  resolveAssetReference,
   storeFiles,
 }: {
+  resolveAssetReference?: (
+    view: EditorView,
+    target: string,
+  ) => MarkdownAssetReference | undefined;
   storeFiles: (
     view: EditorView,
     files: readonly File[],
   ) => Promise<StoredMarkdownAsset[]>;
 }) {
-  const pluginFactory = setupAssetFilePlugin({ storeFiles }).plugin
-    ?.handleDropPasteFiles;
+  const pluginFactory = setupAssetFilePlugin({
+    resolveAssetReference,
+    storeFiles,
+  }).plugin?.handleDropPasteFiles;
   if (!pluginFactory) {
     throw new Error('Expected asset file plugin factory');
   }
@@ -42,7 +54,7 @@ function createView({
   const state = EditorState.create({
     doc,
     selection: TextSelection.create(doc, doc.content.size - 1),
-    plugins: [pluginFactory()],
+    plugins: [history(), pluginFactory()],
   });
   const mount = document.createElement('div');
   document.body.append(mount);
@@ -69,6 +81,22 @@ function dispatchPaste(view: EditorView, file: File) {
   );
 }
 
+function dispatchPasteText(view: EditorView, text: string) {
+  const event = {
+    preventDefault: vi.fn(),
+    clipboardData: {
+      items: [],
+      files: [],
+      types: ['text/plain'],
+      getData: (type: string) => (type === 'text/plain' ? text : ''),
+    },
+  } as unknown as ClipboardEvent;
+
+  return view.someProp('handlePaste', (handler) =>
+    handler(view, event, Slice.empty),
+  );
+}
+
 function dispatchDrop(view: EditorView, file: File, position: number) {
   view.posAtCoords = vi.fn(() => ({ pos: position, inside: -1 }));
   const event = {
@@ -86,6 +114,27 @@ function dispatchDrop(view: EditorView, file: File, position: number) {
       ],
       files: [file],
       types: ['Files'],
+    },
+  } as unknown as DragEvent;
+
+  return view.someProp('handleDOMEvents', (handlers) =>
+    handlers.drop?.(view, event),
+  );
+}
+
+function dispatchDropText(view: EditorView, text: string, position: number) {
+  view.posAtCoords = vi.fn(() => ({ pos: position, inside: -1 }));
+  const event = {
+    clientX: 10,
+    clientY: 10,
+    preventDefault: vi.fn(),
+    stopPropagation: vi.fn(),
+    stopImmediatePropagation: vi.fn(),
+    dataTransfer: {
+      items: [],
+      files: [],
+      types: ['text/plain'],
+      getData: (type: string) => (type === 'text/plain' ? text : ''),
     },
   } as unknown as DragEvent;
 
@@ -226,6 +275,108 @@ describe('setupAssetFilePlugin', () => {
       expect(firstNode?.marks[0]?.type.name).toBe('link');
       expect(firstNode?.marks[0]?.attrs.href).toBe('assets/doc.pdf');
     });
+    view.destroy();
+  });
+
+  it('pastes a resolved embeddable asset path as an image', () => {
+    const storeFiles = vi.fn(async () => []);
+    const resolveAssetReference = vi.fn(
+      (
+        _view: EditorView,
+        target: string,
+      ): MarkdownAssetReference | undefined =>
+        target === 'assets/photo.png'
+          ? {
+              href: 'assets/photo.png',
+              label: 'photo.png',
+              isImage: true,
+            }
+          : undefined,
+    );
+    const { view } = createView({ resolveAssetReference, storeFiles });
+
+    expect(dispatchPasteText(view, 'assets/photo.png')).toBe(true);
+
+    const imageNode = view.state.doc.firstChild?.child(1);
+    expect(imageNode?.type.name).toBe('image');
+    expect(imageNode?.attrs).toMatchObject({
+      src: 'assets/photo.png',
+      alt: 'photo.png',
+    });
+    expect(storeFiles).not.toHaveBeenCalled();
+
+    expect(undo(view.state, view.dispatch)).toBe(true);
+    expect(view.state.doc.textContent).toBe('Hello assets/photo.png');
+    view.destroy();
+  });
+
+  it('pastes a resolved non-embeddable workspace path as a link', () => {
+    const storeFiles = vi.fn(async () => []);
+    const resolveAssetReference = vi.fn(
+      (
+        _view: EditorView,
+        target: string,
+      ): MarkdownAssetReference | undefined =>
+        target === 'assets/report.pdf'
+          ? {
+              href: 'assets/report.pdf',
+              label: 'report.pdf',
+              isImage: false,
+            }
+          : undefined,
+    );
+    const { view } = createView({ resolveAssetReference, storeFiles });
+
+    expect(dispatchPasteText(view, 'assets/report.pdf')).toBe(true);
+
+    const linkedText = view.state.doc.firstChild?.child(1);
+    expect(linkedText?.text).toBe('report.pdf');
+    expect(linkedText?.marks[0]?.type.name).toBe('link');
+    expect(linkedText?.marks[0]?.attrs.href).toBe('assets/report.pdf');
+
+    expect(undo(view.state, view.dispatch)).toBe(true);
+    expect(view.state.doc.textContent).toBe('Hello assets/report.pdf');
+    view.destroy();
+  });
+
+  it('drops a resolved embeddable asset path at the drop position', () => {
+    const storeFiles = vi.fn(async () => []);
+    const resolveAssetReference = vi.fn(
+      (
+        _view: EditorView,
+        target: string,
+      ): MarkdownAssetReference | undefined =>
+        target === 'assets/photo.png'
+          ? {
+              href: 'assets/photo.png',
+              label: 'photo.png',
+              isImage: true,
+            }
+          : undefined,
+    );
+    const { view } = createView({ resolveAssetReference, storeFiles });
+
+    expect(dispatchDropText(view, 'assets/photo.png', 0)).toBe(true);
+
+    const imageNode = view.state.doc.firstChild?.firstChild;
+    expect(imageNode?.type.name).toBe('image');
+    expect(imageNode?.attrs.src).toBe('assets/photo.png');
+    expect(storeFiles).not.toHaveBeenCalled();
+
+    expect(undo(view.state, view.dispatch)).toBe(true);
+    expect(view.state.doc.textContent.startsWith('assets/photo.png')).toBe(
+      true,
+    );
+    view.destroy();
+  });
+
+  it('ignores pasted unresolved asset paths', () => {
+    const storeFiles = vi.fn(async () => []);
+    const resolveAssetReference = vi.fn(() => undefined);
+    const { view } = createView({ resolveAssetReference, storeFiles });
+
+    expect(dispatchPasteText(view, 'assets/missing.png')).toBeFalsy();
+    expect(view.state.doc.textContent).toBe('Hello ');
     view.destroy();
   });
 });
