@@ -25,7 +25,9 @@ export type AssetFilePluginConfig = {
   storeFiles: (
     view: EditorView,
     files: readonly File[],
+    signal: AbortSignal,
   ) => Promise<StoredMarkdownAsset[]>;
+  cleanupStoredFiles?: (assets: readonly StoredMarkdownAsset[]) => void;
   resolveAssetReference?: (
     view: EditorView,
     target: string,
@@ -40,6 +42,11 @@ const ASSET_FILE_PLUGIN_KEY = new PluginKey<AssetFilePluginState>(
 
 type AssetFilePluginState = {
   insertions: Map<number, number>;
+};
+
+type PendingInsertion = {
+  abortController: AbortController;
+  view: EditorView;
 };
 
 type AssetFilePluginMeta =
@@ -248,16 +255,29 @@ async function storeAndInsertFiles({
   insertionId,
   config,
   isViewActive,
+  pendingInsertions,
 }: {
   view: EditorView;
   files: readonly File[];
   insertionId: number;
   config: AssetFilePluginConfig;
   isViewActive: (view: EditorView) => boolean;
+  pendingInsertions: Map<number, PendingInsertion>;
 }) {
   try {
-    const assets = await config.storeFiles(view, files);
-    if (!isViewActive(view)) {
+    const pending = pendingInsertions.get(insertionId);
+    if (!pending) {
+      return;
+    }
+
+    const assets = await config.storeFiles(
+      view,
+      files,
+      pending.abortController.signal,
+    );
+    if (!isViewActive(view) || !pendingInsertions.has(insertionId)) {
+      pendingInsertions.delete(insertionId);
+      config.cleanupStoredFiles?.(assets);
       return;
     }
 
@@ -265,9 +285,12 @@ async function storeAndInsertFiles({
       insertionId,
     );
     if (position === undefined) {
+      pendingInsertions.delete(insertionId);
+      config.cleanupStoredFiles?.(assets);
       return;
     }
 
+    pendingInsertions.delete(insertionId);
     const tr = insertAssetNodes(
       view.state.tr.setMeta(ASSET_FILE_PLUGIN_KEY, {
         type: 'remove',
@@ -278,6 +301,7 @@ async function storeAndInsertFiles({
     );
     view.dispatch(tr);
   } catch {
+    pendingInsertions.delete(insertionId);
     if (isViewActive(view)) {
       view.dispatch(
         view.state.tr.setMeta(ASSET_FILE_PLUGIN_KEY, {
@@ -292,6 +316,7 @@ async function storeAndInsertFiles({
 export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
   let nextInsertionId = 1;
   const destroyedViews = new WeakSet<EditorView>();
+  const pendingInsertions = new Map<number, PendingInsertion>();
 
   function isViewActive(view: EditorView): boolean {
     return !view.isDestroyed && !destroyedViews.has(view);
@@ -300,6 +325,10 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
   function startPendingInsertion(view: EditorView, position: number): number {
     const insertionId = nextInsertionId;
     nextInsertionId += 1;
+    pendingInsertions.set(insertionId, {
+      abortController: new AbortController(),
+      view,
+    });
     view.dispatch(
       view.state.tr.setMeta(ASSET_FILE_PLUGIN_KEY, {
         type: 'add',
@@ -308,6 +337,16 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
       } satisfies AssetFilePluginMeta),
     );
     return insertionId;
+  }
+
+  function cancelPendingInsertionsForView(view: EditorView): void {
+    for (const [id, pending] of pendingInsertions) {
+      if (pending.view !== view) {
+        continue;
+      }
+      pending.abortController.abort();
+      pendingInsertions.delete(id);
+    }
   }
 
   function handleFilesAtPosition(
@@ -326,6 +365,7 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
       insertionId,
       config,
       isViewActive,
+      pendingInsertions,
     });
     return true;
   }
@@ -396,6 +436,7 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
               return {
                 destroy() {
                   destroyedViews.add(view);
+                  cancelPendingInsertionsForView(view);
                 },
               };
             },

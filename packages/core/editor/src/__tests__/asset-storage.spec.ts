@@ -163,6 +163,31 @@ describe('asset storage naming', () => {
     expect(result.map((asset) => asset.file)).toEqual([files[0], files[2]]);
   });
 
+  it('stops starting new asset writes after cancellation', async () => {
+    const abortController = new AbortController();
+    const createFile = vi
+      .fn<(wsPath: string, file: File) => Promise<void>>()
+      .mockImplementationOnce(async () => {
+        abortController.abort();
+      })
+      .mockResolvedValue(undefined);
+    const files = [
+      testFile('one.png', 'image/png'),
+      testFile('two.pdf', 'application/pdf'),
+    ];
+
+    const result = await storeWorkspaceAssetFiles({
+      sourceWsPath: 'workspace:notes/current.md',
+      files,
+      preference: 'adjacent',
+      fileSystem: testFileSystem(createFile),
+      signal: abortController.signal,
+    });
+
+    expect(createFile).toHaveBeenCalledTimes(1);
+    expect(result.map((asset) => asset.file)).toEqual([files[0]]);
+  });
+
   it('can store directly into a target directory without Markdown source context', async () => {
     const createFile = vi
       .fn<(wsPath: string, file: File) => Promise<void>>()

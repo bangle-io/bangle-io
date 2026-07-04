@@ -153,7 +153,11 @@ export class PmEditorService extends BaseService {
           t.app.editor.wikiLink.unresolvedLabel({ label: displayText }),
       },
       {
-        storeFiles: (view, files) => this.storeAssetFiles(view, files),
+        storeFiles: (view, files, signal) =>
+          this.storeAssetFiles(view, files, signal),
+        cleanupStoredFiles: (assets) => {
+          void this.cleanupStoredAssetFiles(assets);
+        },
         resolveAssetReference: (view, target) =>
           this.resolveAssetReference(view, target),
       },
@@ -401,6 +405,7 @@ export class PmEditorService extends BaseService {
   private async storeAssetFiles(
     editorView: ReturnType<typeof createEditor>,
     files: readonly File[],
+    signal: AbortSignal,
   ): Promise<StoredMarkdownAsset[]> {
     const editor = [...this.editors.values()].find(
       (entry) => 'editorView' in entry && entry.editorView === editorView,
@@ -429,6 +434,7 @@ export class PmEditorService extends BaseService {
       files,
       preference,
       fileSystem: this.dependencies.fileSystem,
+      signal,
       onFileError: ({ error, file }) => {
         failedCount += 1;
         failedAssetNames.push(displayNameForAsset(file));
@@ -460,6 +466,11 @@ export class PmEditorService extends BaseService {
     const markdownAssets = stored.filter(
       (asset): asset is StoredMarkdownAsset => Boolean(asset.href),
     );
+    if (signal.aborted) {
+      toast.dismiss(toastId);
+      return markdownAssets;
+    }
+
     if (failedCount > 0) {
       if (failedCount === 1 && markdownAssets.length === 0 && oversizedAsset) {
         toast.error(t.app.toasts.assetTooLarge(oversizedAsset), {
@@ -506,6 +517,22 @@ export class PmEditorService extends BaseService {
       toast.dismiss(toastId);
     }
     return markdownAssets;
+  }
+
+  private async cleanupStoredAssetFiles(
+    assets: readonly StoredMarkdownAsset[],
+  ): Promise<void> {
+    await Promise.all(
+      assets.map(async (asset) => {
+        try {
+          await this.dependencies.fileSystem.deleteFile(asset.wsPath.wsPath);
+        } catch (cause) {
+          const error =
+            cause instanceof Error ? cause : new Error(String(cause));
+          this.logger.warn('Unable to clean up unused stored asset', error);
+        }
+      }),
+    );
   }
 
   private resolveAssetReference(

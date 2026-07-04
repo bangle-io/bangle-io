@@ -28,9 +28,11 @@ function deferred<T>() {
 }
 
 function createView({
+  cleanupStoredFiles,
   resolveAssetReference,
   storeFiles,
 }: {
+  cleanupStoredFiles?: (assets: readonly StoredMarkdownAsset[]) => void;
   resolveAssetReference?: (
     view: EditorView,
     target: string,
@@ -38,9 +40,11 @@ function createView({
   storeFiles: (
     view: EditorView,
     files: readonly File[],
+    signal: AbortSignal,
   ) => Promise<StoredMarkdownAsset[]>;
 }) {
   const pluginFactory = setupAssetFilePlugin({
+    cleanupStoredFiles,
     resolveAssetReference,
     storeFiles,
   }).plugin?.handleDropPasteFiles;
@@ -189,8 +193,19 @@ describe('setupAssetFilePlugin', () => {
 
   it('does not dispatch delayed asset insertion after the view is destroyed', async () => {
     const stored = deferred<StoredMarkdownAsset[]>();
-    const storeFiles = vi.fn(() => stored.promise);
-    const { view } = createView({ storeFiles });
+    let signal: AbortSignal | undefined;
+    const storeFiles = vi.fn(
+      (
+        _view: EditorView,
+        _files: readonly File[],
+        abortSignal: AbortSignal,
+      ) => {
+        signal = abortSignal;
+        return stored.promise;
+      },
+    );
+    const cleanupStoredFiles = vi.fn();
+    const { view } = createView({ cleanupStoredFiles, storeFiles });
 
     expect(
       dispatchPaste(
@@ -198,9 +213,11 @@ describe('setupAssetFilePlugin', () => {
         new File(['%PDF-1.4\n'], 'Doc.pdf', { type: 'application/pdf' }),
       ),
     ).toBe(true);
+    expect(signal?.aborted).toBe(false);
     view.destroy();
+    expect(signal?.aborted).toBe(true);
 
-    stored.resolve([
+    const storedAssets = [
       {
         file: new File(['%PDF-1.4\n'], 'Doc.pdf', {
           type: 'application/pdf',
@@ -210,10 +227,12 @@ describe('setupAssetFilePlugin', () => {
         label: 'Doc.pdf',
         isImage: false,
       },
-    ]);
+    ];
+    stored.resolve(storedAssets);
 
-    await Promise.resolve();
-    await Promise.resolve();
+    await vi.waitFor(() => {
+      expect(cleanupStoredFiles).toHaveBeenCalledWith(storedAssets);
+    });
 
     expect(view.state.doc.textContent).toBe('Hello ');
   });

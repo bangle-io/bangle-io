@@ -34,6 +34,7 @@ export type StoreWorkspaceAssetFilesInput = {
   files: readonly File[];
   preference: AssetLocationPreference;
   fileSystem: AssetStorageFileSystem;
+  signal?: AbortSignal;
   onFileError?: (error: {
     file: File;
     cause: unknown;
@@ -181,12 +182,14 @@ export async function writeAssetFile({
   file,
   preference,
   fileSystem,
+  signal,
 }: {
   sourceWsPath?: string | WsFilePath;
   targetDirectoryWsPath?: string | WsDirPath;
   file: File;
   preference: AssetLocationPreference;
   fileSystem: AssetStorageFileSystem;
+  signal?: AbortSignal;
 }): Promise<{ wsPath: WsFilePath; href?: string } | undefined> {
   const baseDestination = getAssetDestination({
     sourceWsPath,
@@ -200,10 +203,16 @@ export async function writeAssetFile({
   if (!baseDestination) {
     return undefined;
   }
+  if (signal?.aborted) {
+    return undefined;
+  }
 
   const maxFileSizeBytes = await fileSystem.getMaxFileSizeBytes(
     baseDestination.wsPath,
   );
+  if (signal?.aborted) {
+    return undefined;
+  }
   if (file.size > maxFileSizeBytes) {
     throw createAppError(
       'error::file:size-too-large',
@@ -218,6 +227,9 @@ export async function writeAssetFile({
   }
 
   for (let attempt = 1; attempt <= 100; attempt += 1) {
+    if (signal?.aborted) {
+      return undefined;
+    }
     const destination =
       attempt === 1
         ? baseDestination
@@ -256,11 +268,15 @@ export async function storeWorkspaceAssetFiles({
   files,
   preference,
   fileSystem,
+  signal,
   onFileError,
 }: StoreWorkspaceAssetFilesInput): Promise<StoredWorkspaceAsset[]> {
   const stored: StoredWorkspaceAsset[] = [];
 
   for (const file of files) {
+    if (signal?.aborted) {
+      break;
+    }
     try {
       const result = await writeAssetFile({
         sourceWsPath,
@@ -268,6 +284,7 @@ export async function storeWorkspaceAssetFiles({
         file,
         preference,
         fileSystem,
+        signal,
       });
       if (result) {
         stored.push({
@@ -279,6 +296,9 @@ export async function storeWorkspaceAssetFiles({
         });
       }
     } catch (cause) {
+      if (signal?.aborted) {
+        break;
+      }
       onFileError?.({
         file,
         cause,
