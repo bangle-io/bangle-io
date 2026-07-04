@@ -145,11 +145,16 @@ The `local-ci-check` script runs all CI validation scripts defined in package.js
 
 - `test:ci` - Unit tests with Vitest
 - `lint:ci` - Custom validation, typecheck, and biome linting
-- `knip:ci` - Workspace reachability, dependency, and public export checks
+- `knip:ci` - Full workspace Knip plus production reachability from runtime/tooling entries
 - `e2e:ci` - End-to-end and component tests
 - `desktop:ci` - Electron desktop tests, build, and smoke test
 
 This ensures your changes will pass CI before pushing to the repository.
+
+`knip:ci` runs two passes:
+
+- `pnpm knip` checks the full repo graph, including tests and tooling, for dependency hygiene and stale files/exports.
+- `pnpm knip:production` checks production reachability from the browser Vite entry, Electron main/preload entries, React Native mobile entry, and executable tooling entries. Test-only helpers and specs are excluded from this production graph so tests cannot keep otherwise-dead runtime code alive.
 
 **Typecheck**
 

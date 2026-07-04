@@ -1,14 +1,9 @@
 // @vitest-environment jsdom
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import {
-  getPwaInstallSnapshot,
-  initializePwaInstallPromptTracking,
-  promptPwaInstall,
-  resetPwaInstallPromptTrackingForTests,
-  subscribePwaInstallPrompt,
-  syncAppDocumentTitle,
-  syncWindowControlsOverlayState,
-} from '../pwa-install';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+type PwaInstallModule = typeof import('../pwa-install');
+
+let pwaInstall: PwaInstallModule;
 
 type TestWindowControlsOverlayGeometryChangeEvent = Event & {
   titlebarAreaRect?: Pick<DOMRectReadOnly, 'height' | 'width' | 'x' | 'y'>;
@@ -30,22 +25,23 @@ function makeInstallPromptEvent(
   return event;
 }
 
-describe('PWA install prompt tracking', () => {
-  afterEach(() => {
-    resetPwaInstallPromptTrackingForTests();
-  });
+beforeEach(async () => {
+  vi.resetModules();
+  pwaInstall = await import('../pwa-install');
+});
 
+describe('PWA install prompt tracking', () => {
   it('captures the browser install prompt and exposes install availability', () => {
-    initializePwaInstallPromptTracking(window);
+    pwaInstall.initializePwaInstallPromptTracking(window);
     const listener = vi.fn();
-    const unsubscribe = subscribePwaInstallPrompt(listener);
+    const unsubscribe = pwaInstall.subscribePwaInstallPrompt(listener);
     const event = makeInstallPromptEvent();
 
     window.dispatchEvent(event);
 
     expect(event.defaultPrevented).toBe(true);
     expect(listener).toHaveBeenCalled();
-    expect(getPwaInstallSnapshot()).toMatchObject({
+    expect(pwaInstall.getPwaInstallSnapshot()).toMatchObject({
       canInstall: true,
       isInstalled: false,
     });
@@ -54,23 +50,23 @@ describe('PWA install prompt tracking', () => {
   });
 
   it('prompts once and clears the deferred prompt after user choice', async () => {
-    initializePwaInstallPromptTracking(window);
+    pwaInstall.initializePwaInstallPromptTracking(window);
     const event = makeInstallPromptEvent('dismissed');
 
     window.dispatchEvent(event);
-    await expect(promptPwaInstall()).resolves.toBe('dismissed');
+    await expect(pwaInstall.promptPwaInstall()).resolves.toBe('dismissed');
 
     expect(event.prompt).toHaveBeenCalledTimes(1);
-    expect(getPwaInstallSnapshot().canInstall).toBe(false);
+    expect(pwaInstall.getPwaInstallSnapshot().canInstall).toBe(false);
   });
 
   it('hides install availability after appinstalled fires', () => {
-    initializePwaInstallPromptTracking(window);
+    pwaInstall.initializePwaInstallPromptTracking(window);
     window.dispatchEvent(makeInstallPromptEvent());
 
     window.dispatchEvent(new Event('appinstalled'));
 
-    expect(getPwaInstallSnapshot()).toMatchObject({
+    expect(pwaInstall.getPwaInstallSnapshot()).toMatchObject({
       canInstall: false,
       isInstalled: true,
     });
@@ -84,7 +80,7 @@ describe('app document title', () => {
       subtitle: '',
     } as Document & { subtitle: string };
 
-    syncAppDocumentTitle(documentRef);
+    pwaInstall.syncAppDocumentTitle(documentRef);
 
     expect(documentRef.title).toBe('Bangle.io');
     expect(documentRef.subtitle).toBe('Notes');
@@ -108,7 +104,7 @@ describe('window controls overlay', () => {
       y: 0,
     });
 
-    syncWindowControlsOverlayState({
+    pwaInstall.syncWindowControlsOverlayState({
       documentRef: document,
       navigatorRef: {
         windowControlsOverlay,
@@ -138,7 +134,7 @@ describe('window controls overlay', () => {
     };
     windowControlsOverlay.visible = true;
 
-    syncWindowControlsOverlayState({
+    pwaInstall.syncWindowControlsOverlayState({
       documentRef: document,
       navigatorRef: {
         windowControlsOverlay,
@@ -161,7 +157,7 @@ describe('window controls overlay', () => {
     };
     windowControlsOverlay.visible = true;
 
-    syncWindowControlsOverlayState({
+    pwaInstall.syncWindowControlsOverlayState({
       documentRef: document,
       navigatorRef: {
         windowControlsOverlay,

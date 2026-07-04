@@ -253,18 +253,3 @@ export async function promptPwaInstall(): Promise<PwaInstallOutcome> {
     emitChange();
   }
 }
-
-export function resetPwaInstallPromptTrackingForTests() {
-  trackingAbortController?.abort();
-  initializedWindow = undefined;
-  trackingAbortController = undefined;
-  deferredInstallPrompt = undefined;
-  installedByAppEvent = false;
-  isInstalling = false;
-  currentSnapshot = {
-    canInstall: false,
-    isInstalled: false,
-    isInstalling: false,
-  };
-  listeners.clear();
-}
