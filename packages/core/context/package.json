@@ -32,5 +32,6 @@
     "@bangle.io/service-core": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "react": "19.2.7"
-  }
+  },
+  "devDependencies": {}
 }

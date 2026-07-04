@@ -154,9 +154,6 @@ importers:
       react:
         specifier: 19.2.7
         version: 19.2.7
-      react-dom:
-        specifier: 19.2.7
-        version: 19.2.7(react@19.2.7)
       react-error-boundary:
         specifier: ^6.1.2
         version: 6.1.2(react@19.2.7)
@@ -354,9 +351,6 @@ importers:
       react:
         specifier: 19.2.7
         version: 19.2.7
-      react-dom:
-        specifier: 19.2.7
-        version: 19.2.7(react@19.2.7)
 
   packages/core/service-core:
     dependencies:
@@ -840,6 +834,9 @@ importers:
 
   packages/tooling/desktop-entry:
     dependencies:
+      electron:
+        specifier: 43.0.0
+        version: 43.0.0
       electron-updater:
         specifier: ^6.8.9
         version: 6.8.9
@@ -850,9 +847,6 @@ importers:
       '@types/node':
         specifier: ^26.1.0
         version: 26.1.0
-      electron:
-        specifier: 43.0.0
-        version: 43.0.0
       electron-builder:
         specifier: 26.15.3
         version: 26.15.3(electron-builder-squirrel-windows@26.15.3)
@@ -1101,9 +1095,6 @@ importers:
 
   packages/ui/shadcn:
     dependencies:
-      '@bangle.io/translations':
-        specifier: workspace:*
-        version: link:../../shared/translations
       '@bangle.io/ui-misc':
         specifier: workspace:*
         version: link:../ui-misc
@@ -1161,9 +1152,6 @@ importers:
       react-day-picker:
         specifier: ^9.11.0
         version: 9.14.0(react@19.2.7)
-      react-dom:
-        specifier: 19.2.7
-        version: 19.2.7(react@19.2.7)
     devDependencies:
       '@storybook/react':
         specifier: ^10.4.6
@@ -1198,42 +1186,21 @@ importers:
       '@pierre/trees':
         specifier: 1.0.0-beta.5
         version: 1.0.0-beta.5(@shikijs/themes@4.3.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(shiki@4.3.0)
-      '@radix-ui/react-collapsible':
-        specifier: ^1.1.15
-        version: 1.1.15(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@radix-ui/react-dialog':
-        specifier: ^1.1.18
-        version: 1.1.18(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@radix-ui/react-dropdown-menu':
-        specifier: ^2.1.19
-        version: 2.1.19(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@radix-ui/react-separator':
-        specifier: ^1.1.11
-        version: 1.1.11(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@radix-ui/react-slot':
         specifier: ^1.3.0
         version: 1.3.0(@types/react@19.2.17)(react@19.2.7)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
       lucide-react:
         specifier: ^1.23.0
         version: 1.23.0(react@19.2.7)
       react:
         specifier: 19.2.7
         version: 19.2.7
-      react-dom:
-        specifier: 19.2.7
-        version: 19.2.7(react@19.2.7)
       sonner:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      tailwind-merge:
-        specifier: ^3.6.0
-        version: 3.6.0
     devDependencies:
       '@storybook/react':
         specifier: ^10.4.6

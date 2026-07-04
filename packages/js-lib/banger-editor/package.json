@@ -27,9 +27,6 @@
     "access": "public"
   },
   "scripts": {},
-  "devDependencies": {
-    "@types/markdown-it": "^14.1.2"
-  },
   "dependencies": {
     "@bangle.dev/prosemirror-all": "2.0.0-alpha.19",
     "jotai": "^2.20.1",
@@ -50,5 +47,8 @@
     "prosemirror-test-builder": "^1.1.1",
     "prosemirror-transform": "^1.12.0",
     "prosemirror-view": "^1.42.0"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2"
   }
 }

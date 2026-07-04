@@ -34,5 +34,6 @@
     "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/root-emitter": "workspace:*",
     "jotai": "^2.20.1"
-  }
+  },
+  "devDependencies": {}
 }

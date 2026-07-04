@@ -49,5 +49,6 @@
     "prosemirror-view": "^1.42.0",
     "react": "19.2.7",
     "shiki": "^4.3.0"
-  }
+  },
+  "devDependencies": {}
 }
