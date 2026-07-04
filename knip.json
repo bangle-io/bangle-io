@@ -17,6 +17,7 @@
     },
     "packages/tooling/browser-entry": {
       "entry": ["index.html"],
+      "ignoreFiles": ["src/default-theme.css"],
       "project": ["src/**/*.{css,ts,tsx}", "translations-plugin.ts"],
       "vite": {
         "config": ["vite.config.ts"]
@@ -31,6 +32,7 @@
         "electron-builder.config.cjs",
         "scripts/*.{mjs,ts}"
       ],
+      "ignoreFiles": ["src/main.ts", "src/preload.ts"],
       "project": ["scripts/*.{mjs,ts}", "src/**/*.ts"],
       "vite": {
         "config": ["vite.config.ts"]
@@ -47,7 +49,8 @@
         "playwright*.config.ts",
         "scripts/*.ts",
         "src/**/*.{ts,tsx}"
-      ]
+      ],
+      "ignoreFiles": ["playwright/index.css"]
     },
     "packages/tooling/mobile-entry": {
       "entry": ["babel.config.js"],
@@ -70,7 +73,7 @@
     }
   },
   "rules": {
-    "files": "warn",
+    "files": "error",
     "dependencies": "error",
     "devDependencies": "error",
     "optionalPeerDependencies": "warn",
