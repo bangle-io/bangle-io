@@ -647,12 +647,12 @@ test('file explorer shows common workspace files and opens non-notes as assets',
   await expect(
     explorer.getByRole('treeitem', { name: /\.hidden\.md/ }),
   ).toBeVisible();
-  await expect(
-    explorer.getByRole('treeitem', { name: /^temp$/ }),
-  ).toBeVisible();
+  await expect(explorer.getByRole('treeitem', { name: /^temp$/ })).toHaveCount(
+    0,
+  );
   await expect(
     explorer.getByRole('treeitem', { name: /legacy\.md/ }),
-  ).toBeVisible();
+  ).toHaveCount(0);
 
   await test.step('non-note file options menu opens from the three-dot button', async () => {
     const reportRow = explorer.getByRole('treeitem', { name: /report\.pdf/ });
@@ -686,10 +686,10 @@ test('file explorer shows common workspace files and opens non-notes as assets',
     ).toBeVisible();
     await expect(
       explorer.getByRole('treeitem', { name: /^temp$/ }),
-    ).toBeVisible();
+    ).toHaveCount(0);
     await expect(
       explorer.getByRole('treeitem', { name: /legacy\.md/ }),
-    ).toBeVisible();
+    ).toHaveCount(0);
     await expect(explorer.getByRole('treeitem', { name: /^src$/ })).toHaveCount(
       0,
     );

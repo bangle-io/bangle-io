@@ -166,10 +166,9 @@ describe('FileStorageNativeFs', () => {
     });
   });
 
-  it('keeps native storage traversal unfiltered so existing ignored-dir files remain readable', async () => {
-    const { service } = await setup();
-    const rootDirHandle = await service.getRootDirHandle('myWorkspace');
-    const root = rootDirHandle.handle as unknown as FakeDirectoryHandle;
+  it('prunes ignored dirs during native storage listing without blocking explicit reads', async () => {
+    const { service, rootDirHandle } = await setup();
+    const root = rootDirHandle as unknown as FakeDirectoryHandle;
     const docs = await root.getDirectoryHandle('docs', { create: true });
     await docs.getFileHandle('keep.md', { create: true });
     const nodeModules = await root.getDirectoryHandle('node_modules', {
@@ -181,18 +180,14 @@ describe('FileStorageNativeFs', () => {
 
     await expect(
       service.listAllFiles('myWorkspace', new AbortController().signal),
-    ).resolves.toEqual([
-      'myWorkspace:.git/config',
-      'myWorkspace:docs/keep.md',
-      'myWorkspace:node_modules/ignored.ts',
-    ]);
+    ).resolves.toEqual(['myWorkspace:docs/keep.md']);
 
     await expect(
       service.readFile('myWorkspace:node_modules/ignored.ts'),
     ).resolves.toBeDefined();
 
     expect(docs.valuesCalls).toBe(1);
-    expect(nodeModules.valuesCalls).toBe(1);
-    expect(git.valuesCalls).toBe(1);
+    expect(nodeModules.valuesCalls).toBe(0);
+    expect(git.valuesCalls).toBe(0);
   });
 });

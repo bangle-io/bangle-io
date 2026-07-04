@@ -131,6 +131,36 @@ describe('asset storage naming', () => {
     ]);
   });
 
+  it('uses the embeddable extension policy for image classification', async () => {
+    const createFile = vi
+      .fn<(wsPath: string, file: File) => Promise<void>>()
+      .mockResolvedValue(undefined);
+    const files = [
+      testFile('', 'image/png'),
+      testFile('scan.heic', 'image/heic'),
+    ];
+
+    const result = await storeWorkspaceAssetFiles({
+      sourceWsPath: 'workspace:notes/current.md',
+      files,
+      preference: 'assets-folder',
+      fileSystem: testFileSystem(createFile),
+    });
+
+    expect(result).toEqual([
+      expect.objectContaining({
+        file: files[0],
+        href: expect.stringMatching(/^assets\/image-.*\.png$/),
+        isImage: true,
+      }),
+      expect.objectContaining({
+        file: files[1],
+        href: expect.stringMatching(/^assets\/scan-.*\.heic$/),
+        isImage: false,
+      }),
+    ]);
+  });
+
   it('reports per-file storage failures and keeps later files in order', async () => {
     const failure = new Error('quota exceeded');
     const createFile = vi

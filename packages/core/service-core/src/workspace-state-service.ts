@@ -323,7 +323,10 @@ export class WorkspaceStateService extends BaseService {
     sequence: number;
     wsName: string;
   }): string[] {
-    let nextPaths = paths;
+    let nextPaths = paths.flatMap((wsPath) => {
+      const filePath = this.getVisibleWorkspaceFilePath(wsPath);
+      return filePath?.wsName === wsName ? [filePath.wsPath] : [];
+    });
     for (const [createSequence, createdWsPath] of this
       .createdWsPathsBySequence) {
       if (createSequence <= sequence) {

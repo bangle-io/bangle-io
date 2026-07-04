@@ -84,6 +84,17 @@ function getAssetToastLabelInput(fileNames: readonly string[]): {
   };
 }
 
+type EditorEntry =
+  | {
+      name: string;
+      editorView: ReturnType<typeof createEditor>;
+      wsPath: string;
+    }
+  | { name: string; status: 'failed'; error: Error; wsPath: string }
+  | { name: string; status: 'pending'; wsPath: string };
+
+type ReadyEditorEntry = Extract<EditorEntry, { editorView: unknown }>;
+
 /**
  * Manages ProseMirror editor instances and state
  */
@@ -100,16 +111,7 @@ export class PmEditorService extends BaseService {
   private saveQueue: EditorSaveQueue;
   private pendingHeading: { fragment: string; wsPath: string } | undefined;
 
-  private editors = new Map<
-    HTMLElement,
-    | {
-        name: string;
-        editorView: ReturnType<typeof createEditor>;
-        wsPath: string;
-      }
-    | { name: string; status: 'failed'; error: Error; wsPath: string }
-    | { name: string; status: 'pending'; wsPath: string }
-  >();
+  private editors = new Map<HTMLElement, EditorEntry>();
 
   constructor(
     context: BaseServiceContext,
@@ -130,11 +132,10 @@ export class PmEditorService extends BaseService {
           void this.openWikiLink(view, attrs.target);
         },
         resolveTarget: (attrs, state) => {
-          const editor = [...this.editors.values()].find(
-            (entry) =>
-              'editorView' in entry && entry.editorView.state === state,
+          const editor = this.getEditorEntryByView(
+            (view) => view.state === state,
           );
-          if (!editor || !('editorView' in editor)) return false;
+          if (!editor) return false;
           const current = WsPath.safeParse(editor.wsPath).data?.asFile();
           if (!current) return false;
           return Boolean(
@@ -398,15 +399,33 @@ export class PmEditorService extends BaseService {
     return undefined;
   }
 
+  private getEditorEntryByView(
+    editorView:
+      | ReturnType<typeof createEditor>
+      | ((editorView: ReturnType<typeof createEditor>) => boolean),
+  ): ReadyEditorEntry | undefined {
+    for (const editor of this.editors.values()) {
+      if (!('editorView' in editor)) {
+        continue;
+      }
+      const matches =
+        typeof editorView === 'function'
+          ? editorView(editor.editorView)
+          : editor.editorView === editorView;
+      if (matches) {
+        return editor;
+      }
+    }
+    return undefined;
+  }
+
   private async storeAssetFiles(
     editorView: ReturnType<typeof createEditor>,
     files: readonly File[],
     signal: AbortSignal,
   ): Promise<StoredMarkdownAsset[]> {
-    const editor = [...this.editors.values()].find(
-      (entry) => 'editorView' in entry && entry.editorView === editorView,
-    );
-    if (!editor || !('editorView' in editor)) {
+    const editor = this.getEditorEntryByView(editorView);
+    if (!editor) {
       return [];
     }
 
@@ -576,10 +595,8 @@ export class PmEditorService extends BaseService {
 
   /** Opens a web link externally or routes a relative Markdown link in-app. */
   openLink(editorView: ReturnType<typeof createEditor>, href: string): void {
-    const editor = [...this.editors.values()].find(
-      (entry) => 'editorView' in entry && entry.editorView === editorView,
-    );
-    if (!editor || !('editorView' in editor)) {
+    const editor = this.getEditorEntryByView(editorView);
+    if (!editor) {
       return;
     }
 
@@ -614,10 +631,8 @@ export class PmEditorService extends BaseService {
     href: string,
     options: { includeMarkdown?: boolean } = {},
   ): boolean {
-    const editor = [...this.editors.values()].find(
-      (entry) => 'editorView' in entry && entry.editorView === editorView,
-    );
-    if (!editor || !('editorView' in editor)) {
+    const editor = this.getEditorEntryByView(editorView);
+    if (!editor) {
       return false;
     }
 
@@ -646,10 +661,8 @@ export class PmEditorService extends BaseService {
     editorView: ReturnType<typeof createEditor>,
     target: string,
   ): Promise<void> {
-    const editor = [...this.editors.values()].find(
-      (entry) => 'editorView' in entry && entry.editorView === editorView,
-    );
-    if (!editor || !('editorView' in editor)) return;
+    const editor = this.getEditorEntryByView(editorView);
+    if (!editor) return;
     const current = WsPath.safeParse(editor.wsPath).data?.asFile();
     if (!current) return;
     const resolved = resolveWikiLinkTarget(

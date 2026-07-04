@@ -29,14 +29,18 @@ function deferred<T>() {
 
 function createView({
   cleanupStoredFiles,
+  docText = 'Hello ',
   resolveAssetReference,
+  selection,
   storeFiles,
 }: {
   cleanupStoredFiles?: (assets: readonly StoredMarkdownAsset[]) => void;
+  docText?: string;
   resolveAssetReference?: (
     view: EditorView,
     target: string,
   ) => MarkdownAssetReference | undefined;
+  selection?: { from: number; to: number };
   storeFiles: (
     view: EditorView,
     files: readonly File[],
@@ -53,11 +57,13 @@ function createView({
   }
 
   const doc = schema.nodes.doc.create(null, [
-    schema.nodes.paragraph.create(null, schema.text('Hello ')),
+    schema.nodes.paragraph.create(null, schema.text(docText)),
   ]);
   const state = EditorState.create({
     doc,
-    selection: TextSelection.create(doc, doc.content.size - 1),
+    selection: selection
+      ? TextSelection.create(doc, selection.from, selection.to)
+      : TextSelection.create(doc, doc.content.size - 1),
     plugins: [history(), pluginFactory()],
   });
   const mount = document.createElement('div');
@@ -188,6 +194,117 @@ describe('setupAssetFilePlugin', () => {
     await vi.waitFor(() => {
       expect(view.state.doc.textContent).toBe('Hello typed Doc.pdf');
     });
+    view.destroy();
+  });
+
+  it('replaces the selected range when pasting an asset file', async () => {
+    const stored = deferred<StoredMarkdownAsset[]>();
+    const storeFiles = vi.fn(() => stored.promise);
+    const { view } = createView({
+      docText: 'Hello replace-me',
+      selection: { from: 7, to: 17 },
+      storeFiles,
+    });
+
+    expect(
+      dispatchPaste(
+        view,
+        new File(['%PDF-1.4\n'], 'Doc.pdf', { type: 'application/pdf' }),
+      ),
+    ).toBe(true);
+    expect(view.state.doc.textContent).toBe('Hello replace-me');
+    stored.resolve([
+      {
+        file: new File(['%PDF-1.4\n'], 'Doc.pdf', {
+          type: 'application/pdf',
+        }),
+        wsPath: WsFilePath.fromString('workspace:notes/assets/doc.pdf'),
+        href: 'assets/doc.pdf',
+        label: 'Doc.pdf',
+        isImage: false,
+      },
+    ]);
+
+    await vi.waitFor(() => {
+      expect(view.state.doc.textContent).toBe('Hello Doc.pdf');
+    });
+    view.destroy();
+  });
+
+  it('keeps selected text when pasted asset storage stores no files', async () => {
+    const stored = deferred<StoredMarkdownAsset[]>();
+    const storeFiles = vi.fn(() => stored.promise);
+    const { view } = createView({
+      docText: 'Hello replace-me',
+      selection: { from: 7, to: 17 },
+      storeFiles,
+    });
+
+    expect(
+      dispatchPaste(
+        view,
+        new File(['%PDF-1.4\n'], 'Too-large.pdf', {
+          type: 'application/pdf',
+        }),
+      ),
+    ).toBe(true);
+    expect(view.state.doc.textContent).toBe('Hello replace-me');
+
+    stored.resolve([]);
+
+    await vi.waitFor(() => {
+      expect(view.state.doc.textContent).toBe('Hello replace-me');
+    });
+    view.destroy();
+  });
+
+  it('cancels selected-range asset insertion when the range changes before storage completes', async () => {
+    const stored = deferred<StoredMarkdownAsset[]>();
+    let signal: AbortSignal | undefined;
+    const storeFiles = vi.fn(
+      (
+        _view: EditorView,
+        _files: readonly File[],
+        abortSignal: AbortSignal,
+      ) => {
+        signal = abortSignal;
+        return stored.promise;
+      },
+    );
+    const cleanupStoredFiles = vi.fn();
+    const { view } = createView({
+      cleanupStoredFiles,
+      docText: 'Hello replace-me',
+      selection: { from: 7, to: 17 },
+      storeFiles,
+    });
+
+    expect(
+      dispatchPaste(
+        view,
+        new File(['%PDF-1.4\n'], 'Doc.pdf', { type: 'application/pdf' }),
+      ),
+    ).toBe(true);
+    view.dispatch(view.state.tr.insertText('typed'));
+    expect(signal?.aborted).toBe(true);
+
+    const storedAssets = [
+      {
+        file: new File(['%PDF-1.4\n'], 'Doc.pdf', {
+          type: 'application/pdf',
+        }),
+        wsPath: WsFilePath.fromString('workspace:notes/assets/doc.pdf'),
+        href: 'assets/doc.pdf',
+        label: 'Doc.pdf',
+        isImage: false,
+      },
+    ];
+    stored.resolve(storedAssets);
+
+    await vi.waitFor(() => {
+      expect(cleanupStoredFiles).toHaveBeenCalledWith(storedAssets);
+    });
+    expect(view.state.doc.textContent).toBe('Hello typed');
     view.destroy();
   });
 
@@ -540,6 +657,39 @@ describe('setupAssetFilePlugin', () => {
 
     expect(undo(view.state, view.dispatch)).toBe(true);
     expect(view.state.doc.textContent).toBe('Hello assets/report.pdf');
+    view.destroy();
+  });
+
+  it('replaces selected text when pasting a resolved workspace asset path', () => {
+    const storeFiles = vi.fn(async () => []);
+    const resolveAssetReference = vi.fn(
+      (
+        _view: EditorView,
+        target: string,
+      ): MarkdownAssetReference | undefined =>
+        target === 'assets/report.pdf'
+          ? {
+              href: 'assets/report.pdf',
+              label: 'report.pdf',
+              isImage: false,
+            }
+          : undefined,
+    );
+    const { view } = createView({
+      docText: 'Hello replace-me',
+      resolveAssetReference,
+      selection: { from: 7, to: 17 },
+      storeFiles,
+    });
+
+    expect(dispatchPasteText(view, 'assets/report.pdf')).toBe(true);
+
+    expect(view.state.doc.textContent).toBe('Hello report.pdf');
+    const linkedText = view.state.doc.firstChild?.child(1);
+    expect(linkedText?.text).toBe('report.pdf');
+    expect(linkedText?.marks[0]?.type.name).toBe('link');
+    expect(linkedText?.marks[0]?.attrs.href).toBe('assets/report.pdf');
+    expect(storeFiles).not.toHaveBeenCalled();
     view.destroy();
   });
 

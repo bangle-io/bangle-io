@@ -5,6 +5,7 @@ import {
   EDITOR_SELECTOR,
   getEditorLocator,
   readStoredMarkdown,
+  selectEditorText,
   writeStoredFile,
   writeStoredMarkdown,
 } from './common';
@@ -44,6 +45,24 @@ const dispatchAssetPasteEvent = (element: Element) => {
 const dispatchTextPasteEvent = (element: Element, text: string) => {
   const dataTransfer = new DataTransfer();
   dataTransfer.setData('text/plain', text);
+
+  const event = new Event('paste', {
+    bubbles: true,
+    cancelable: true,
+  });
+  Object.defineProperty(event, 'clipboardData', { value: dataTransfer });
+  element.dispatchEvent(event);
+  return event.defaultPrevented;
+};
+
+const dispatchPdfPasteEvent = (element: Element) => {
+  const dataTransfer = new DataTransfer();
+  dataTransfer.items.add(
+    new File(['%PDF-1.4\n'], 'Replacement.PDF', {
+      type: 'application/pdf',
+    }),
+  );
+
   const event = new Event('paste', {
     bubbles: true,
     cancelable: true,
@@ -175,6 +194,26 @@ test('pastes workspace-backed image and PDF assets, reloads, and opens asset pag
     'download',
     /spec-sheet-.*\.pdf/,
   );
+});
+
+test('pasting a workspace asset replaces selected editor text', async ({
+  page,
+}, testInfo) => {
+  const workspaceName = `asset-paste-selection-${testInfo.workerIndex}-${Date.now()}`;
+  const noteName = 'source';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await page.keyboard.type('Keep replace-me suffix');
+  await selectEditorText(page, 'replace-me');
+  await page.locator(EDITOR_SELECTOR).evaluate(dispatchPdfPasteEvent);
+
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toMatch(
+      /^Keep \[Replacement\.PDF\]\(assets\/replacement-.*\.pdf\) suffix$/,
+    );
 });
 
 test('drops workspace-backed image and PDF assets as relative Markdown', async ({

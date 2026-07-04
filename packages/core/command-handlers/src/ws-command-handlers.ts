@@ -109,7 +109,7 @@ export const wsCommandHandlers = [
 
   c(
     'command::ws:rename-ws-path',
-    ({ fileSystem, navigation }, { wsPath, newWsPath }) => {
+    async ({ fileSystem, navigation }, { wsPath, newWsPath }) => {
       const oldPath = WsPath.fromString(wsPath);
       const newPath = WsPath.fromString(newWsPath);
 
@@ -141,22 +141,19 @@ export const wsCommandHandlers = [
       // Keep the open note visible during the rename instead of navigating to
       // ws-home first (which paints an intermediate screen for the duration of
       // the async write). Redirect straight to the renamed path once it lands.
-      void fileSystem
-        .renameFile({
-          oldWsPath: wsPath,
-          newWsPath,
-        })
-        .then(() => {
-          if (needsRedirect) {
-            navigation.goWsPath(newWsPath);
-          }
-        });
+      await fileSystem.renameFile({
+        oldWsPath: wsPath,
+        newWsPath,
+      });
+      if (needsRedirect) {
+        navigation.goWsPath(newWsPath);
+      }
     },
   ),
 
   c(
     'command::ws:move-ws-path',
-    (
+    async (
       { fileSystem, navigation, workspaceState },
       { wsPath, destDirWsPath },
       key,
@@ -203,16 +200,13 @@ export const wsCommandHandlers = [
       // the current note until the durable rename lands, then redirect straight
       // to the new path. The wsPaths update and this redirect settle in the same
       // microtask, so the moved note never flashes an intermediate screen.
-      void fileSystem
-        .renameFile({
-          oldWsPath: wsPath,
-          newWsPath,
-        })
-        .then(() => {
-          if (needsRedirect) {
-            navigation.goWsPath(newWsPath);
-          }
-        });
+      await fileSystem.renameFile({
+        oldWsPath: wsPath,
+        newWsPath,
+      });
+      if (needsRedirect) {
+        navigation.goWsPath(newWsPath);
+      }
     },
   ),
 

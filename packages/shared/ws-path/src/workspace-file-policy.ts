@@ -46,8 +46,15 @@ export function isVisibleWorkspaceFilePath(
     return false;
   }
 
+  const parentSegments = segments.slice(0, -1);
+  if (
+    parentSegments.some((segment) => isIgnoredWorkspacePathSegment(segment))
+  ) {
+    return false;
+  }
+
   if (filePath.isNote()) {
-    return true;
+    return parentSegments.length === 0 || !fileName.startsWith('.');
   }
 
   if (
@@ -57,7 +64,5 @@ export function isVisibleWorkspaceFilePath(
     return false;
   }
 
-  return segments
-    .slice(0, -1)
-    .every((segment) => !isIgnoredWorkspacePathSegment(segment));
+  return true;
 }

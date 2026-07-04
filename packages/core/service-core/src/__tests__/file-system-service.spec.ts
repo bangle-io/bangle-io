@@ -251,19 +251,15 @@ describe('FileSystemService', () => {
     );
 
     await expect(fileSystem.listNoteFiles(TEST_WS_NAME)).resolves.toEqual([
-      `${TEST_WS_NAME}:.archive/old.md`,
       `${TEST_WS_NAME}:.hidden.md`,
       EXISTING_FILE,
-      `${TEST_WS_NAME}:temp/legacy.md`,
     ]);
     await expect(fileSystem.listWorkspaceFiles(TEST_WS_NAME)).resolves.toEqual([
-      `${TEST_WS_NAME}:.archive/old.md`,
       `${TEST_WS_NAME}:.hidden.md`,
       `${TEST_WS_NAME}:assets/archive.bin`,
       `${TEST_WS_NAME}:assets/report.pdf`,
       EXISTING_FILE,
       `${TEST_WS_NAME}:src/component.tsx`,
-      `${TEST_WS_NAME}:temp/legacy.md`,
     ]);
   });
 

@@ -1,7 +1,7 @@
 import { type WsFilePath, WsPath } from './ws-path';
 
 const EXPLICIT_SCHEME_RE = /^[a-z][a-z\d+.-]*:/i;
-const EMBEDDABLE_IMAGE_EXTENSIONS = new Set([
+export const EMBEDDABLE_IMAGE_EXTENSIONS = [
   '.avif',
   '.gif',
   '.jpg',
@@ -9,9 +9,13 @@ const EMBEDDABLE_IMAGE_EXTENSIONS = new Set([
   '.png',
   '.svg',
   '.webp',
-]);
+] as const;
 
 export type EmbeddableWorkspaceAssetKind = 'image';
+
+const EMBEDDABLE_IMAGE_EXTENSION_SET = new Set<string>(
+  EMBEDDABLE_IMAGE_EXTENSIONS,
+);
 
 function decodeSafeSegment(value: string): string | undefined {
   if (!value || value.includes('\\')) {
@@ -35,6 +39,10 @@ function encodeSegment(value: string): string {
   return encodeURIComponent(value);
 }
 
+export function isEmbeddableImageExtension(extension: string): boolean {
+  return EMBEDDABLE_IMAGE_EXTENSION_SET.has(extension.toLowerCase());
+}
+
 export function getEmbeddableWorkspaceAssetKind(
   wsPath: string | WsFilePath,
 ): EmbeddableWorkspaceAssetKind | undefined {
@@ -43,7 +51,7 @@ export function getEmbeddableWorkspaceAssetKind(
     return undefined;
   }
 
-  if (EMBEDDABLE_IMAGE_EXTENSIONS.has(filePath.extension.toLowerCase())) {
+  if (isEmbeddableImageExtension(filePath.extension)) {
     return 'image';
   }
 

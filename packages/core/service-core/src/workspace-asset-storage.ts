@@ -5,6 +5,7 @@ import {
 } from '@bangle.io/base-utils';
 import type { AssetLocationPreference } from '@bangle.io/types';
 import {
+  isEmbeddableImageExtension,
   relativeMarkdownAssetHref,
   WsDirPath,
   type WsFilePath,
@@ -62,16 +63,6 @@ const MIME_EXTENSION_BY_TYPE = new Map<string, string>([
   ['application/pdf', '.pdf'],
   ['text/plain', '.txt'],
   ['text/markdown', '.md'],
-]);
-
-const IMAGE_EXTENSIONS = new Set([
-  '.avif',
-  '.gif',
-  '.jpg',
-  '.jpeg',
-  '.png',
-  '.svg',
-  '.webp',
 ]);
 
 function pad(value: number, length = 2): string {
@@ -316,9 +307,5 @@ export function displayNameForAsset(file: File): string {
 }
 
 export function isImageFile(file: File): boolean {
-  if ((file.type ?? '').startsWith('image/')) {
-    return true;
-  }
-  const { extension } = splitFileName(file.name ?? '');
-  return IMAGE_EXTENSIONS.has(extension);
+  return isEmbeddableImageExtension(safeExtension(file));
 }

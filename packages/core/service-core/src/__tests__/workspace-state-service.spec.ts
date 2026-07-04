@@ -516,4 +516,40 @@ describe('WorkspaceStateService file tree updates', () => {
       services.workspaceState.resolveAtoms().wsPaths.map((path) => path.wsPath),
     ).not.toContain(ignoredWsPath);
   });
+
+  it('does not expose ignored Markdown files returned by storage scans', async () => {
+    const { services, store } = await setupWorkspaceStateService({
+      controller,
+    });
+    const originalListWorkspaceFiles =
+      services.fileSystem.listWorkspaceFiles.bind(services.fileSystem);
+    const ignoredWsPaths = [
+      `${WS_NAME}:node_modules/pkg/README.md`,
+      `${WS_NAME}:.git/hooks/post-commit.md`,
+      `${WS_NAME}:notes/.draft.md`,
+    ];
+    let callCount = 0;
+
+    vi.spyOn(services.fileSystem, 'listWorkspaceFiles').mockImplementation(
+      async (wsName, abortSignal) => {
+        callCount += 1;
+        return [
+          ...(await originalListWorkspaceFiles(wsName, abortSignal)),
+          ...ignoredWsPaths,
+        ];
+      },
+    );
+
+    store.set(services.fileSystem.$fileForceUpdateCount, (count) => count + 1);
+
+    await vi.waitUntil(() => callCount > 0);
+
+    const atoms = services.workspaceState.resolveAtoms();
+    expect(atoms.wsPaths.map((path) => path.wsPath)).not.toEqual(
+      expect.arrayContaining(ignoredWsPaths),
+    );
+    expect(atoms.noteWsPaths.map((path) => path.wsPath)).not.toEqual(
+      expect.arrayContaining(ignoredWsPaths),
+    );
+  });
 });

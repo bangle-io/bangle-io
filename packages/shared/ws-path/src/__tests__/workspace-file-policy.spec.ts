@@ -8,8 +8,6 @@ describe('workspace file visibility policy', () => {
   it.each([
     'garden:notes/index.md',
     'garden:.hidden.md',
-    'garden:.archive/old.md',
-    'garden:temp/legacy.md',
     'garden:assets/report.pdf',
     'garden:src/component.tsx',
     'garden:archive/data.bin',
@@ -18,8 +16,13 @@ describe('workspace file visibility policy', () => {
   });
 
   it.each([
+    'garden:notes/.draft.md',
+    'garden:.archive/old.md',
+    'garden:.git/hooks/post-commit.md',
+    'garden:temp/legacy.md',
     'garden:.obsidian/workspace.json',
     'garden:node_modules/pkg/index.ts',
+    'garden:node_modules/pkg/README.md',
     'garden:dist/bundle.js',
     'garden:coverage/report.json',
     'garden:assets/Thumbs.db',

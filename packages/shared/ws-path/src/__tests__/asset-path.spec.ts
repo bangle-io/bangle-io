@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   getEmbeddableWorkspaceAssetKind,
+  isEmbeddableImageExtension,
   isEmbeddableWorkspaceAsset,
   relativeMarkdownAssetHref,
   resolveLocalMarkdownAsset,
@@ -37,6 +38,30 @@ describe('resolveLocalMarkdownAsset', () => {
     '',
   ])('rejects unsafe target %j', (href) => {
     expect(resolveLocalMarkdownAsset(current, href)).toBeUndefined();
+  });
+});
+
+describe('isEmbeddableImageExtension', () => {
+  it.each([
+    '.avif',
+    '.gif',
+    '.jpg',
+    '.jpeg',
+    '.png',
+    '.svg',
+    '.webp',
+  ])('accepts embeddable image extension %s', (extension) => {
+    expect(isEmbeddableImageExtension(extension)).toBe(true);
+    expect(isEmbeddableImageExtension(extension.toUpperCase())).toBe(true);
+  });
+
+  it.each([
+    '',
+    '.pdf',
+    '.mov',
+    'png',
+  ])('rejects non-embeddable image extension %s', (extension) => {
+    expect(isEmbeddableImageExtension(extension)).toBe(false);
   });
 });
 

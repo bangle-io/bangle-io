@@ -40,7 +40,7 @@ const ASSET_FILE_PLUGIN_KEY = new PluginKey<AssetFilePluginState>(
 );
 
 type AssetFilePluginState = {
-  insertions: Map<number, number>;
+  insertions: Map<number, { from: number; to: number }>;
 };
 
 type PendingInsertion = {
@@ -52,7 +52,7 @@ type AssetFilePluginMeta =
   | {
       type: 'add';
       id: number;
-      position: number;
+      range: { from: number; to: number };
     }
   | {
       type: 'remove';
@@ -224,19 +224,75 @@ function replaceRangeWithAssetNodes(
   );
 }
 
-function insertPlainTextAtPosition(
+function insertOrReplaceRangeWithAssetNodes(
+  tr: Transaction,
+  range: { from: number; to: number },
+  nodes: readonly PMNode[],
+) {
+  if (range.from === range.to) {
+    return insertAssetNodes(tr, range.from, nodes);
+  }
+  return replaceRangeWithAssetNodes(tr, range.from, range.to, nodes);
+}
+
+function mapPendingRange(
+  tr: Transaction,
+  range: { from: number; to: number },
+): { from: number; to: number } | undefined {
+  if (range.from === range.to) {
+    const mapped = tr.mapping.mapResult(range.from, 1);
+    return mapped.deletedAcross
+      ? undefined
+      : { from: mapped.pos, to: mapped.pos };
+  }
+
+  let from = range.from;
+  let to = range.to;
+  for (const map of tr.mapping.maps) {
+    let touched = false;
+    map.forEach((oldStart, oldEnd) => {
+      const insertionInsideRange =
+        oldStart === oldEnd && oldStart > from && oldStart < to;
+      const replacementOverlapsRange = oldStart < to && oldEnd > from;
+      if (insertionInsideRange || replacementOverlapsRange) {
+        touched = true;
+      }
+    });
+    if (touched) {
+      return undefined;
+    }
+
+    const mappedFrom = map.mapResult(from, 1);
+    const mappedTo = map.mapResult(to, -1);
+    if (mappedFrom.deletedAcross || mappedTo.deletedAcross) {
+      return undefined;
+    }
+    from = mappedFrom.pos;
+    to = mappedTo.pos;
+    if (from > to) {
+      return undefined;
+    }
+  }
+
+  return { from, to };
+}
+
+function insertPlainTextAtRange(
   view: EditorView,
-  position: number,
+  range: { from: number; to: number },
   text: string,
 ): { from: number; to: number } | undefined {
   const textNode = view.state.schema.text(text);
   const slice = new Slice(Fragment.from(textNode), 0, 0);
-  const insertPosition = dropPoint(view.state.doc, position, slice) ?? position;
+  const insertPosition =
+    range.from === range.to
+      ? (dropPoint(view.state.doc, range.from, slice) ?? range.from)
+      : range.from;
   const tr = view.state.tr;
   const mappedPosition = tr.mapping.map(insertPosition);
   const docBeforeInsert = tr.doc;
 
-  tr.replaceRange(mappedPosition, mappedPosition, slice);
+  tr.replaceRange(mappedPosition, tr.mapping.map(range.to), slice);
 
   if (tr.doc.eq(docBeforeInsert)) {
     return undefined;
@@ -291,22 +347,22 @@ async function storeAndInsertFiles({
       return;
     }
 
-    const position = ASSET_FILE_PLUGIN_KEY.getState(view.state)?.insertions.get(
+    const range = ASSET_FILE_PLUGIN_KEY.getState(view.state)?.insertions.get(
       insertionId,
     );
-    if (position === undefined) {
+    if (!range) {
       pendingInsertions.delete(insertionId);
       config.cleanupStoredFiles?.(assets);
       return;
     }
 
     pendingInsertions.delete(insertionId);
-    const tr = insertAssetNodes(
+    const tr = insertOrReplaceRangeWithAssetNodes(
       view.state.tr.setMeta(ASSET_FILE_PLUGIN_KEY, {
         type: 'remove',
         id: insertionId,
       } satisfies AssetFilePluginMeta),
-      position,
+      range,
       createAssetNodes(view, assets),
     );
     view.dispatch(tr);
@@ -332,7 +388,10 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
     return !view.isDestroyed && !destroyedViews.has(view);
   }
 
-  function startPendingInsertion(view: EditorView, position: number): number {
+  function startPendingInsertion(
+    view: EditorView,
+    range: { from: number; to: number },
+  ): number {
     const insertionId = nextInsertionId;
     nextInsertionId += 1;
     pendingInsertions.set(insertionId, {
@@ -343,7 +402,7 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
       view.state.tr.setMeta(ASSET_FILE_PLUGIN_KEY, {
         type: 'add',
         id: insertionId,
-        position,
+        range,
       } satisfies AssetFilePluginMeta),
     );
     return insertionId;
@@ -373,16 +432,16 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
     }
   }
 
-  function handleFilesAtPosition(
+  function handleFilesAtRange(
     view: EditorView,
     files: readonly File[],
-    position: number,
+    range: { from: number; to: number },
   ): boolean {
     if (files.length === 0) {
       return false;
     }
 
-    const insertionId = startPendingInsertion(view, position);
+    const insertionId = startPendingInsertion(view, range);
     void storeAndInsertFiles({
       view,
       files,
@@ -397,7 +456,7 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
   function handleAssetReferenceAtPosition(
     view: EditorView,
     target: string | undefined,
-    position: number,
+    range: { from: number; to: number },
   ): boolean {
     if (!target) {
       return false;
@@ -408,7 +467,7 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
       return false;
     }
 
-    const inserted = insertPlainTextAtPosition(view, position, target);
+    const inserted = insertPlainTextAtRange(view, range, target);
     if (!inserted) {
       return false;
     }
@@ -435,11 +494,14 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
                 insertions: new Map(),
               }),
               apply(tr, value): AssetFilePluginState {
-                const insertions = new Map<number, number>();
-                for (const [id, position] of value.insertions) {
-                  const mapped = tr.mapping.mapResult(position, 1);
-                  if (!mapped.deletedAcross) {
-                    insertions.set(id, mapped.pos);
+                const insertions = new Map<
+                  number,
+                  { from: number; to: number }
+                >();
+                for (const [id, range] of value.insertions) {
+                  const mapped = mapPendingRange(tr, range);
+                  if (mapped) {
+                    insertions.set(id, mapped);
                   }
                 }
 
@@ -447,7 +509,7 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
                   | AssetFilePluginMeta
                   | undefined;
                 if (meta?.type === 'add') {
-                  insertions.set(meta.id, meta.position);
+                  insertions.set(meta.id, meta.range);
                 }
                 if (meta?.type === 'remove') {
                   insertions.delete(meta.id);
@@ -488,7 +550,10 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
                     const handled = handleAssetReferenceAtPosition(
                       view,
                       getPlainText(dataTransfer),
-                      coordinates?.pos ?? view.state.selection.from,
+                      {
+                        from: coordinates?.pos ?? view.state.selection.from,
+                        to: coordinates?.pos ?? view.state.selection.from,
+                      },
                     );
                     if (handled) {
                       claimFileEvent(event);
@@ -501,11 +566,12 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
                     left: event.clientX,
                     top: event.clientY,
                   });
-                  handleFilesAtPosition(
-                    view,
-                    files,
-                    coordinates?.pos ?? view.state.selection.from,
-                  );
+                  const position =
+                    coordinates?.pos ?? view.state.selection.from;
+                  handleFilesAtRange(view, files, {
+                    from: position,
+                    to: position,
+                  });
                   return true;
                 },
               },
@@ -521,7 +587,10 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
                   const handled = handleAssetReferenceAtPosition(
                     view,
                     getPlainText(clipboardData),
-                    view.state.selection.from,
+                    {
+                      from: view.state.selection.from,
+                      to: view.state.selection.to,
+                    },
                   );
                   if (handled) {
                     claimFileEvent(event);
@@ -530,7 +599,10 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
                 }
 
                 claimFileEvent(event);
-                handleFilesAtPosition(view, files, view.state.selection.from);
+                handleFilesAtRange(view, files, {
+                  from: view.state.selection.from,
+                  to: view.state.selection.to,
+                });
                 return true;
               },
             },

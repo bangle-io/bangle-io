@@ -23,7 +23,7 @@ import type {
   BaseFileStorageProvider,
   FileStorageChangeEvent,
 } from '@bangle.io/types';
-import { WsPath } from '@bangle.io/ws-path';
+import { isVisibleWorkspaceDirectoryName, WsPath } from '@bangle.io/ws-path';
 
 type Config = {
   getRootDirHandle: (
@@ -240,7 +240,13 @@ export class FileStorageNativeFs
     abortSignal: AbortSignal,
   ): Promise<string[]> {
     await this.mountPromise;
-    const fs = await this.getFs({ wsName });
+    const { handle: rootDirHandle } =
+      await this.config.getRootDirHandle(wsName);
+    const fs = new NativeBrowserFileSystem({
+      rootDirHandle,
+      allowedDir: (entry) => isVisibleWorkspaceDirectoryName(entry.name),
+      allowedFile: () => true,
+    });
     let rawPaths: string[];
     try {
       rawPaths = await fs.opendirRecursive(wsName);
