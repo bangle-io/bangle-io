@@ -103,6 +103,10 @@ export function isWorkspaceImplementationImport(
   return Boolean(packageName && packageNames.has(packageName));
 }
 
+export function isWorkspaceImportContractFile(filePath: string): boolean {
+  return /\.(?:cjs|jsx?|mjs|tsx?)$/.test(filePath);
+}
+
 async function testWorkspacePackageImportContracts(
   packageMap: Map<string, Package>,
 ) {
@@ -129,7 +133,7 @@ async function testWorkspacePackageImportContracts(
           }
         }
       },
-      (file) => file.isTSFile || file.isJSFile,
+      (file) => isWorkspaceImportContractFile(file.filePath),
     );
   }
 

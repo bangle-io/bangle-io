@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { isWorkspaceImplementationImport } from '../validate-all';
+import {
+  isWorkspaceImplementationImport,
+  isWorkspaceImportContractFile,
+} from '../validate-all';
 
 describe('isWorkspaceImplementationImport', () => {
   const packageNames = new Set([
@@ -33,5 +36,29 @@ describe('isWorkspaceImplementationImport', () => {
     expect(
       isWorkspaceImplementationImport('@external/pkg/src/index', packageNames),
     ).toBe(false);
+  });
+});
+
+describe('isWorkspaceImportContractFile', () => {
+  it('includes TypeScript, JavaScript, and Node module variants', () => {
+    expect(isWorkspaceImportContractFile('package/src/index.ts')).toBe(true);
+    expect(isWorkspaceImportContractFile('package/src/index.tsx')).toBe(true);
+    expect(isWorkspaceImportContractFile('package/scripts/setup.js')).toBe(
+      true,
+    );
+    expect(isWorkspaceImportContractFile('package/scripts/setup.jsx')).toBe(
+      true,
+    );
+    expect(isWorkspaceImportContractFile('package/scripts/setup.mjs')).toBe(
+      true,
+    );
+    expect(isWorkspaceImportContractFile('package/scripts/setup.cjs')).toBe(
+      true,
+    );
+  });
+
+  it('ignores non-source text files', () => {
+    expect(isWorkspaceImportContractFile('package/README.md')).toBe(false);
+    expect(isWorkspaceImportContractFile('package/styles.css')).toBe(false);
   });
 });

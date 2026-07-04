@@ -56,7 +56,6 @@
     "packages/tooling/mobile-entry": {
       "entry": ["babel.config.js"],
       "ignoreBinaries": ["eas"],
-      "ignoreDependencies": ["expo-system-ui", "expo-updates"],
       "project": ["*.{js,ts}", "src/**/*.tsx"],
       "expo": {
         "config": ["app.config.ts"]

@@ -478,7 +478,7 @@ class FileHelper {
   }
 
   get isJSFile() {
-    return this.filePath.endsWith('.js') || this.filePath.endsWith('.jsx');
+    return /\.(?:cjs|js|jsx|mjs)$/.test(this.filePath);
   }
 
   get isJSONFile() {
