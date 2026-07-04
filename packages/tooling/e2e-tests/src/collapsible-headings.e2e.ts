@@ -316,3 +316,38 @@ test('the fold toggle trails the last line of a wrapped heading', async ({
   await heading.getByRole('button', { name: 'Expand section' }).click();
   await expect(editor.getByText('content below')).toBeVisible();
 });
+
+test('a heading with nothing beneath it shows a disabled toggle', async ({
+  page,
+}) => {
+  const workspaceName = 'collapsible-headings-empty';
+  const noteName = 'Home';
+  const source = ['# Empty', '', '# Full', '', 'content below'].join('\n');
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(page, workspaceName, noteName, source);
+  await page.reload();
+
+  const editor = getEditorLocator(page, {});
+  await expect(editor.getByText('content below')).toBeVisible();
+
+  const emptyToggle = editor
+    .locator('h1', { hasText: 'Empty' })
+    .getByRole('button', { name: 'Collapse section' });
+  const fullToggle = editor
+    .locator('h1', { hasText: 'Full' })
+    .getByRole('button', { name: 'Collapse section' });
+
+  await expect(emptyToggle).toBeDisabled();
+  await expect(fullToggle).toBeEnabled();
+
+  // Clicking the inert toggle folds nothing and touches nothing.
+  await emptyToggle.click({ force: true });
+  await expect(editor.getByText('content below')).toBeVisible();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(source);
+
+  // The enabled sibling still folds normally.
+  await fullToggle.click();
+  await expect(editor.getByText('content below')).toBeHidden();
+});

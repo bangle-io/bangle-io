@@ -217,12 +217,25 @@ describe('toggle and unfold commands', () => {
 });
 
 describe('toggle affordance', () => {
-  it('renders a toggle button only for foldable headings', () => {
+  it('renders a toggle for every heading, disabled when there is nothing to fold', () => {
     const editor = editorTest.createEditor(
       doc(h1('One'), p('a'), h1('Empty'), h1('Last'), p('b')),
     );
-    // "One" and "Last" are foldable; "Empty" has no content beneath it.
-    expect(toggleButtons(editor.view)).toHaveLength(2);
+    const buttons = toggleButtons(editor.view);
+    expect(buttons).toHaveLength(3);
+    // "Empty" has no content beneath it: its toggle renders for visual
+    // consistency but is inert.
+    expect(buttons.map((button) => button.disabled)).toEqual([
+      false,
+      true,
+      false,
+    ]);
+
+    buttons[1]?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(hiddenTexts(editor.view)).toEqual([]);
+    expect(collapsible.query.listCollapsedHeadings(editor.view.state)).toEqual(
+      [],
+    );
   });
 
   it('renders the toggle in a trailing slot after the heading text', () => {

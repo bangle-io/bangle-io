@@ -456,26 +456,31 @@ function buildPluginState(
     }
 
     const range = getHeadingFoldRange(doc, pos, config.headingName);
-    if (!range) {
-      return false;
-    }
-
-    const isFolded = foldedSet.has(pos);
+    const foldable = range != null;
+    const isFolded = foldable && foldedSet.has(pos);
     // The toggle renders in the block's trailing slot — inline at the end
     // of the heading text — keeping the left gutter free for the block
     // drag handle. Other features can add their own trailing widgets
-    // alongside it.
+    // alongside it. Headings with nothing beneath them still show the
+    // toggle for visual consistency, but disabled.
     decorations.push(
       createTrailingWidget({
         node,
         pos,
-        key: `collapsible-heading:${pos}:${isFolded}`,
+        key: `collapsible-heading:${pos}:${isFolded}:${foldable}`,
         render: (view: EditorView) =>
-          createToggleButton(view, pos, isFolded, config, toggleAtPos),
+          createToggleButton(
+            view,
+            pos,
+            isFolded,
+            foldable,
+            config,
+            toggleAtPos,
+          ),
       }),
     );
 
-    if (!isFolded) {
+    if (!range || !isFolded) {
       return false;
     }
 
@@ -581,6 +586,7 @@ function createToggleButton(
   view: EditorView,
   headingPos: number,
   folded: boolean,
+  foldable: boolean,
   config: RequiredConfig,
   toggleAtPos: (pos: number) => Command,
 ): HTMLElement {
@@ -588,6 +594,7 @@ function createToggleButton(
   button.type = 'button';
   button.className = 'B-collapsible-heading-toggle';
   button.tabIndex = -1;
+  button.disabled = !foldable;
   button.setAttribute('aria-expanded', String(!folded));
   button.setAttribute('data-folded', String(folded));
   button.setAttribute(
@@ -604,15 +611,17 @@ function createToggleButton(
   svg.appendChild(path);
   button.appendChild(svg);
 
-  // Keep the editor selection/focus untouched while interacting with the
-  // toggle; the click is handled entirely through the fold command.
-  button.addEventListener('mousedown', (event) => {
-    event.preventDefault();
-  });
-  button.addEventListener('click', (event) => {
-    event.preventDefault();
-    toggleAtPos(headingPos)(view.state, view.dispatch);
-  });
+  if (foldable) {
+    // Keep the editor selection/focus untouched while interacting with the
+    // toggle; the click is handled entirely through the fold command.
+    button.addEventListener('mousedown', (event) => {
+      event.preventDefault();
+    });
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      toggleAtPos(headingPos)(view.state, view.dispatch);
+    });
+  }
 
   return button;
 }

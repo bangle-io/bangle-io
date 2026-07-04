@@ -70,12 +70,15 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
 
     await editorHandle.pressSequentially('# Merry Christmas', { delay: 30 });
     const text = await getEditorText(page, {});
-    expect(text).toBe('Merry Christmas');
+    // The heading's trailing fold-toggle widget makes ProseMirror keep an
+    // invisible trailing break, which innerText reports as trailing
+    // newlines; the rendered text is unchanged.
+    expect(text.trimEnd()).toBe('Merry Christmas');
   });
 
   await test.step('verify persistence after reload', async () => {
     await page.reload({ waitUntil: 'networkidle' });
     const textAfterReload = await getEditorText(page, {});
-    expect(textAfterReload).toBe('Merry Christmas');
+    expect(textAfterReload.trimEnd()).toBe('Merry Christmas');
   });
 });

@@ -560,9 +560,16 @@ div.ProseMirror {
     opacity: 1;
   }
 
-  & .B-collapsible-heading-toggle:hover {
+  & .B-collapsible-heading-toggle:not(:disabled):hover {
     background-color: hsl(var(--BV-accent));
     color: hsl(var(--BV-foreground));
+  }
+
+  /* A heading with nothing beneath it keeps the toggle for visual
+     consistency, but dimmed and inert. */
+  & :is(h1, h2, h3, h4, h5, h6):hover .B-collapsible-heading-toggle:disabled {
+    opacity: 0.35;
+    cursor: default;
   }
 
   & .B-collapsible-heading-toggle[data-folded="true"] svg {
@@ -587,6 +594,10 @@ div.ProseMirror {
 @media (hover: none) {
   div.ProseMirror .B-collapsible-heading-toggle {
     opacity: 0.6;
+  }
+
+  div.ProseMirror .B-collapsible-heading-toggle:disabled {
+    opacity: 0.25;
   }
 }
 
