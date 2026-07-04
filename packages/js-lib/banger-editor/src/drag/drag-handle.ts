@@ -14,7 +14,7 @@ import {
   ORDERED_LIST_TAG,
 } from './helpers';
 
-export const dragHandleEventsPluginKey = new PluginKey('drag-handle-events');
+const dragHandleEventsPluginKey = new PluginKey('drag-handle-events');
 
 export function createDragHandleEventsPlugin(
   options: Required<GlobalDragHandlePluginOptions>,

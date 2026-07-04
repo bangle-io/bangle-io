@@ -143,11 +143,18 @@ pn biome check --fix --unsafe && pn local-ci-check
 
 The `local-ci-check` script runs all CI validation scripts defined in package.json (scripts ending with `:ci`):
 
+- `test:ci` - Unit tests with Vitest
 - `lint:ci` - Custom validation, typecheck, and biome linting
-- `test:ci` - Unit tests with vitest
+- `knip:ci` - Full workspace Knip plus production reachability from runtime/tooling entries
 - `e2e:ci` - End-to-end and component tests
+- `desktop:ci` - Electron desktop tests, build, and smoke test
 
 This ensures your changes will pass CI before pushing to the repository.
+
+`knip:ci` runs two passes:
+
+- `pnpm knip` checks the full repo graph, including tests and tooling, for dependency hygiene and stale files/exports.
+- `pnpm knip:production` checks production reachability from the browser Vite entry, Electron main/preload entries, React Native mobile entry, and executable tooling entries. Test-only helpers and specs are excluded from this production graph so tests cannot keep otherwise-dead runtime code alive.
 
 **Typecheck**
 
@@ -243,6 +250,8 @@ bun packages/tooling/custom-scripts/scripts/maintenance-all.ts
 2. Removes unused dependencies
 3. Formats all package.json files
 4. Validates workspace structure and dependencies
+
+This command mutates dependency metadata. Review its diff before committing the result.
 
 ### Dependency Management
 

@@ -27,7 +27,7 @@ export async function pressAppShortcut(page: Page, key: string) {
   await page.keyboard.press(`${isRuntimeDarwin ? 'Meta' : 'Control'}+${key}`);
 }
 
-export function sleep(t = DEFAULT_SLEEP_TIME) {
+function sleep(t = DEFAULT_SLEEP_TIME) {
   return new Promise((res) => setTimeout(res, t));
 }
 

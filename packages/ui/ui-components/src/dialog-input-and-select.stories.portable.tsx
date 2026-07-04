@@ -8,11 +8,8 @@ import meta, {
 
 type PortableStory = React.ComponentType;
 
-export const CreateNoteInput: PortableStory = composeStory(
-  CreateNoteInputStory,
-  meta,
-);
-export const LongSingleSelect: PortableStory = composeStory(
+const CreateNoteInput: PortableStory = composeStory(CreateNoteInputStory, meta);
+const LongSingleSelect: PortableStory = composeStory(
   LongSingleSelectStory,
   meta,
 );

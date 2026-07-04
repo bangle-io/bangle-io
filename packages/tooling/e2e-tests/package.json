@@ -26,6 +26,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "ci": "tsx scripts/run-e2e-ci.ts",
     "test": "playwright test -c ./playwright.config.ts",
     "test-ct": "rm -rf playwright/.cache && playwright test -c playwright-ct.config.ts",
     "test-ui-mode": "playwright test --ui -c ./playwright.config.ts"
@@ -34,7 +35,6 @@
     "@bangle.io/browser-entry": "workspace:*",
     "@bangle.io/env-vars": "workspace:*",
     "@bangle.io/storybook": "workspace:*",
-    "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@playwright/experimental-ct-react": "^1.61.1",
     "@playwright/test": "^1.61.1",
@@ -42,13 +42,8 @@
     "@tailwindcss/vite": "^4.3.2",
     "@types/node": "^26.1.0",
     "@types/react": "^19.2.17",
-    "autoprefixer": "^10.5.2",
-    "postcss": "^8.5.16",
     "react": "19.2.7",
     "react-dom": "19.2.7",
-    "tailwindcss": "^4.3.2",
-    "tailwindcss-animate": "^1.0.7",
-    "tailwindcss-react-aria-components": "^2.2.0",
     "tsx": "^4.22.5"
   },
   "devDependencies": {}

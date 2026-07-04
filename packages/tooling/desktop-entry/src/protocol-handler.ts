@@ -65,7 +65,7 @@ export function registerAppProtocol(input: {
   return true;
 }
 
-export function createAppProtocolRequestHandler(input: {
+function createAppProtocolRequestHandler(input: {
   readonly browserDistDir: string;
   readonly net: NetFetch;
   readonly logger?: Logger;

@@ -6,7 +6,7 @@ export const RELEASE_CHANNELS = ['latest', 'nightly'] as const;
 
 export type ReleaseChannel = (typeof RELEASE_CHANNELS)[number];
 
-export interface DesktopReleaseMetadata {
+interface DesktopReleaseMetadata {
   readonly version: string;
   readonly channel: ReleaseChannel;
   readonly productName: string;
@@ -41,7 +41,7 @@ export function isStableVersion(version: string): boolean {
   return STABLE_VERSION_PATTERN.test(version);
 }
 
-export function isNightlyVersion(version: string): boolean {
+function isNightlyVersion(version: string): boolean {
   return NIGHTLY_VERSION_PATTERN.test(version);
 }
 

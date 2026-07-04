@@ -2,7 +2,7 @@ import type { EditorState, EditorView, PMNode, Schema } from '../pm';
 
 export const ORDERED_LIST_TAG = 'OL';
 
-export type ListType = 'ordered' | 'unordered' | 'todo' | null;
+type ListType = 'ordered' | 'unordered' | 'todo' | null;
 
 export interface NodeOffsetCalculationArgs {
   node: Element;

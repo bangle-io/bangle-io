@@ -7,7 +7,7 @@ import {
   type CoreConfigOverrides,
   createServiceSetup,
 } from '@bangle.io/initialize-services/setup';
-import { slot } from '@bangle.io/poor-mans-di';
+import { type ContainerDescription, slot } from '@bangle.io/poor-mans-di';
 import {
   FileStorageMemory,
   MemoryDatabaseService,
@@ -44,8 +44,21 @@ const PLATFORM_SLOT_IDS = [
   'router',
 ] as const;
 
-type TestSetup = ReturnType<typeof createTestServiceSetup>;
-type TestServices = ReturnType<TestSetup['instantiate']>;
+type TestServices = CoreServices & {
+  errorService: TestErrorHandlerService;
+  database: MemoryDatabaseService;
+  syncDatabase: MemorySyncDatabaseService;
+  fileStorageMemory: FileStorageMemory;
+  router: MemoryRouterService;
+};
+
+type TestServiceSetup = {
+  instantiate: (focus?: Array<keyof TestServices & string>) => TestServices;
+  getServices: () => TestServices;
+  coreServices: () => CoreServices;
+  mountAll: () => Promise<void>;
+  describe: () => ContainerDescription;
+};
 
 function createTestServiceSetup(
   commonOpts: BaseServiceCommonOptions,
@@ -53,7 +66,7 @@ function createTestServiceSetup(
   commands: ReturnType<typeof getEnabledCommands>,
   commandHandlers: Array<{ id: string; handler: CommandHandler }>,
   coreConfigOverrides: CoreConfigOverrides | undefined,
-) {
+): TestServiceSetup {
   return createServiceSetup({
     commonOpts,
     rootEmitter,

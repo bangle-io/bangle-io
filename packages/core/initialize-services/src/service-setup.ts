@@ -110,10 +110,7 @@ type CoreDependencyContracts = UnionToIntersection<
  * these slots, or registers an implementation that does not satisfy the
  * contract, fails to type-check at the composition root.
  */
-export type PlatformRequirements = Omit<
-  CoreDependencyContracts,
-  CoreServiceSlotId
->;
+type PlatformRequirements = Omit<CoreDependencyContracts, CoreServiceSlotId>;
 
 /**
  * When the platform map does not provide every contract core services need,
@@ -156,7 +153,7 @@ type CoreGraphCheckMap = {
 };
 
 type AssertTrue<T extends true> = T;
-export type _AssertValidCoreGraph = AssertTrue<
+type _AssertValidCoreGraph = AssertTrue<
   CoreGraphCheckMap extends ValidateServiceMap<
     BaseServiceCommonOptions,
     CoreGraphCheckMap

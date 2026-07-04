@@ -1,4 +1,3 @@
-import { join } from 'node:path';
 import type { BrowserWindowConstructorOptions, WebContents } from 'electron';
 import { DESKTOP_PLATFORM_ATTRIBUTE } from './desktop-document';
 
@@ -6,7 +5,7 @@ const DESKTOP_TITLEBAR_HEIGHT = 40;
 const MACOS_TRAFFIC_LIGHT_SIZE = 14;
 const MACOS_TRAFFIC_LIGHT_X = 14;
 
-export interface ExternalLinkDecision {
+interface ExternalLinkDecision {
   readonly action: 'allow-app-navigation' | 'open-external' | 'deny';
   readonly url: string;
 }
@@ -48,10 +47,6 @@ export function getBrowserWindowOptions(
       webSecurity: true,
     },
   };
-}
-
-export function getPreloadPath(mainDir: string): string {
-  return join(mainDir, 'preload.cjs');
 }
 
 export function decideNavigation(rawUrl: string): ExternalLinkDecision {

@@ -10,7 +10,7 @@ type ValidationResult =
   | { isValid: true; wsName: string; filePath: string }
   | { isValid: false; reason: string; invalidPath: string };
 
-export function breakPathIntoParts(path: string): string[] {
+function breakPathIntoParts(path: string): string[] {
   return path.split(PATH_SEPARATOR);
 }
 
@@ -31,7 +31,7 @@ export function pathJoin(...args: string[]): string {
     .join(PATH_SEPARATOR);
 }
 
-export function getExtension(strInput: string): string | undefined {
+function getExtension(strInput: string): string | undefined {
   let str = strInput;
   // if it is a wsPath remove the wsName
   if (str.includes(':')) {
@@ -45,7 +45,7 @@ export function getExtension(strInput: string): string | undefined {
   return dotIndex === -1 ? undefined : str.slice(dotIndex);
 }
 
-export function validateWsName(wsName: string): ValidationResult {
+function validateWsName(wsName: string): ValidationResult {
   if (typeof wsName !== 'string' || !wsName) {
     return {
       isValid: false,
@@ -74,7 +74,7 @@ export function validateWsName(wsName: string): ValidationResult {
 }
 
 // TODO get rid of fsPath
-export function fromFsPath(fsPath: string): string | undefined {
+function fromFsPath(fsPath: string): string | undefined {
   const [_wsName, ...f] = fsPath.split('/');
   const validationResult = validateWsName(_wsName || '');
   if (!validationResult.isValid) {
@@ -86,14 +86,14 @@ export function fromFsPath(fsPath: string): string | undefined {
   return filePathToWsPath({ wsName: _wsName, inputPath: pathJoin(...f) });
 }
 
-export function toFSPath(wsPath: string): string | undefined {
+function toFSPath(wsPath: string): string | undefined {
   const resolved = resolvePath(wsPath);
   if (!resolved) return undefined;
   return [resolved.wsName, resolved.filePath].join('/');
 }
 
 // should work for dirPath as well
-export function filePathToWsPath({
+function filePathToWsPath({
   wsName,
   inputPath,
 }: {
@@ -113,7 +113,7 @@ export function filePathToWsPath({
   return `${wsName}:${filePath}`;
 }
 
-export function validateWsPath(wsPath: string): ValidationResult {
+function validateWsPath(wsPath: string): ValidationResult {
   if (typeof wsPath !== 'string' || !wsPath) {
     return {
       isValid: false,
@@ -167,7 +167,7 @@ export function validateWsPath(wsPath: string): ValidationResult {
   return { isValid: true, wsName, filePath };
 }
 
-export function assertSplitWsPath(wsPath: string): {
+function assertSplitWsPath(wsPath: string): {
   wsName: string;
   filePath: string;
 } {
@@ -184,7 +184,7 @@ export function assertSplitWsPath(wsPath: string): {
 }
 
 // TODO resolveFileWsPath
-export function assertedResolvePath(wsPath: string) {
+function assertedResolvePath(wsPath: string) {
   const resolved = resolvePath(wsPath);
   if (!resolved) {
     throwAppError('error::ws-path:invalid-ws-path', 'Invalid file wsPath', {
@@ -194,7 +194,7 @@ export function assertedResolvePath(wsPath: string) {
   return resolved;
 }
 
-export function resolveDirWsPath(dirWsPath: string) {
+function resolveDirWsPath(dirWsPath: string) {
   if (!isDirWsPath(dirWsPath)) {
     return undefined;
   }
@@ -207,7 +207,7 @@ export function resolveDirWsPath(dirWsPath: string) {
 }
 
 // TODO call it resolveFileWsPath
-export function resolvePath(wsPath: string):
+function resolvePath(wsPath: string):
   | {
       wsPath: string;
       wsName: string;
@@ -242,7 +242,7 @@ export function resolvePath(wsPath: string):
   };
 }
 
-export function splitWsPath(wsPathOrWsName: string): [string, string] {
+function splitWsPath(wsPathOrWsName: string): [string, string] {
   const index = wsPathOrWsName.indexOf(':');
 
   if (wsPathOrWsName === '') {
@@ -273,7 +273,7 @@ function _getWsName(wsPathOrWsName: string) {
   return wsName;
 }
 
-export function getWsName(wsPathOrWsName: string): string | undefined {
+function getWsName(wsPathOrWsName: string): string | undefined {
   const result = _getWsName(wsPathOrWsName);
   if (typeof result !== 'string') {
     return undefined;
@@ -281,7 +281,7 @@ export function getWsName(wsPathOrWsName: string): string | undefined {
   return result;
 }
 
-export function assertedGetWsName(wsPathOrWsName: string): string {
+function assertedGetWsName(wsPathOrWsName: string): string {
   const result = _getWsName(wsPathOrWsName);
   if (typeof result !== 'string') {
     throwAppError('error::ws-path:invalid-ws-name', result.reason, {
@@ -291,7 +291,7 @@ export function assertedGetWsName(wsPathOrWsName: string): string {
   return result;
 }
 
-export function removeExtension(str: string): string {
+function removeExtension(str: string): string {
   const ext = getExtension(str);
   if (!ext) return str;
 
@@ -304,7 +304,7 @@ function getLast<T>(arr: T[]): T | undefined {
 }
 
 // only append if there is no extension
-export function appendNoteExtension(str: string): string {
+function appendNoteExtension(str: string): string {
   const ext = getExtension(str);
 
   if (ext) {
@@ -314,18 +314,18 @@ export function appendNoteExtension(str: string): string {
   return removeExtension(str) + DEFAULT_NOTE_EXTENSION;
 }
 
-export function hasValidNoteExtension(str: string): boolean {
+function hasValidNoteExtension(str: string): boolean {
   return VALID_NOTE_EXTENSIONS.some((ext) => str.endsWith(ext));
 }
 
-export function isValidNoteWsPath(wsPath: string | undefined): boolean {
+function isValidNoteWsPath(wsPath: string | undefined): boolean {
   if (!wsPath) return false;
   const resolved = resolvePath(wsPath);
   if (!resolved) return false;
   return hasValidNoteExtension(resolved.fileName);
 }
 
-export function isValidMarkdownWsPath(wsPath: string | undefined): boolean {
+function isValidMarkdownWsPath(wsPath: string | undefined): boolean {
   if (!wsPath) return false;
   const ext = getExtension(wsPath);
   if (!ext) return false;
@@ -333,7 +333,7 @@ export function isValidMarkdownWsPath(wsPath: string | undefined): boolean {
   return VALID_MARKDOWN_EXTENSIONS_SET.has(ext);
 }
 
-export function assertValidMarkdownWsPath(wsPath: string): void {
+function assertValidMarkdownWsPath(wsPath: string): void {
   if (!isValidMarkdownWsPath(wsPath)) {
     throwAppError(
       'error::ws-path:invalid-markdown-path',
@@ -345,7 +345,7 @@ export function assertValidMarkdownWsPath(wsPath: string): void {
   }
 }
 
-export function assertValidNoteWsPath(wsPath: string): void {
+function assertValidNoteWsPath(wsPath: string): void {
   if (!isValidNoteWsPath(wsPath)) {
     throwAppError(
       'error::ws-path:invalid-note-path',
@@ -357,14 +357,14 @@ export function assertValidNoteWsPath(wsPath: string): void {
   }
 }
 
-export function isRootLevelFile(wsPath: string): boolean {
+function isRootLevelFile(wsPath: string): boolean {
   if (!isValidNoteWsPath(wsPath)) return false;
   const resolved = resolvePath(wsPath);
   if (!resolved) return false;
   return resolved.dirPath === '/' || resolved.dirPath === '';
 }
 
-export function isFileWsPath(wsPath: string): boolean {
+function isFileWsPath(wsPath: string): boolean {
   const validationResult = validateWsPath(wsPath);
   if (!validationResult.isValid) {
     return false;
@@ -373,7 +373,7 @@ export function isFileWsPath(wsPath: string): boolean {
   return Boolean(getExtension(wsPath));
 }
 
-export function isDirWsPath(wsPath: string): boolean {
+function isDirWsPath(wsPath: string): boolean {
   const validationResult = validateWsPath(wsPath);
   if (!validationResult.isValid) {
     return false;
@@ -382,7 +382,7 @@ export function isDirWsPath(wsPath: string): boolean {
   return !getExtension(wsPath);
 }
 
-export function getParentWsPath(wsPath: string): string | undefined {
+function getParentWsPath(wsPath: string): string | undefined {
   const validationResult = validateWsPath(wsPath);
   if (!validationResult.isValid) {
     return undefined;

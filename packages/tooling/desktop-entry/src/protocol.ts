@@ -1,8 +1,8 @@
 import { extname, resolve, sep } from 'node:path';
 
 export const APP_PROTOCOL = 'bangle';
-export const APP_HOST = 'app';
-export const APP_ORIGIN = `${APP_PROTOCOL}://${APP_HOST}`;
+const APP_HOST = 'app';
+const APP_ORIGIN = `${APP_PROTOCOL}://${APP_HOST}`;
 export const APP_URL = `${APP_ORIGIN}/`;
 
 const CONTENT_TYPES = new Map<string, string>([

@@ -11,8 +11,8 @@ import {
 } from '../pm';
 import { getGlobalConfig } from './global-config';
 
-export type CommandType = Command | ((...args: any[]) => Command);
-export type QueryType = (state: EditorState, ...args: any[]) => any;
+type CommandType = Command | ((...args: any[]) => Command);
+type QueryType = (state: EditorState, ...args: any[]) => any;
 
 export type CollectionType = {
   id: string;
@@ -24,7 +24,7 @@ export type CollectionType = {
   markdown?: MarkdownConfig;
 };
 
-export const BANGLE_METADATA = Symbol('BANGLE_METADATA');
+const BANGLE_METADATA = Symbol('BANGLE_METADATA');
 
 type Metadata = {
   priority?: number;
