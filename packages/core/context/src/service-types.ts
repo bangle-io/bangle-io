@@ -16,6 +16,7 @@ import type {
 import type { CommandExcludedServiceSlotId } from '@bangle.io/types';
 
 export type PmEditorServiceContract = BaseService & {
+  collapseAllHeadings: (level: number) => boolean;
   focusEditor: () => void;
   hasPendingOrFailedSave: (wsPath?: string) => boolean;
   mountEditor: (params: {
@@ -26,6 +27,8 @@ export type PmEditorServiceContract = BaseService & {
   }) => () => void;
   retryFailedSave: (wsPath: string) => boolean;
   subscribeToSaveStatus: (listener: () => void) => () => void;
+  toggleHeadingCollapse: () => boolean;
+  uncollapseAllHeadings: () => boolean;
 };
 
 export type CoreServices<
