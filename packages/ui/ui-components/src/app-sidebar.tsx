@@ -57,7 +57,10 @@ export type AppSidebarProps = {
   navItems: NavItem[];
   onSearchClick?: () => void;
   activeFilePaths?: string[];
-  getActionsForEntry: (entry: FileTreeEntry) => readonly FileTreeEntryAction[];
+  getActionsForEntry: (
+    entry: FileTreeEntry,
+    selectedEntries: readonly FileTreeEntry[],
+  ) => readonly FileTreeEntryAction[];
   onCreateDirectory: (pathPrefix: string | undefined) => void;
   onCreateNote: (pathPrefix: string | undefined) => void;
   onMoveFile: (

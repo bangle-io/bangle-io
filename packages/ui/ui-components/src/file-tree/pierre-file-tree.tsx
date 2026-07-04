@@ -167,9 +167,14 @@ function resetModelPathsPreservingExpansion(
 function getDropDestinationDirectory(
   event: FileTreeDropContext | FileTreeDropResult,
 ): string | undefined {
-  return event.target.kind === 'root' || !event.target.directoryPath
-    ? undefined
-    : normalizePierreDirectoryPath(event.target.directoryPath);
+  if (event.target.kind === 'root' || !event.target.directoryPath) {
+    return undefined;
+  }
+
+  const normalizedPath = normalizeInputPath(event.target.directoryPath);
+  return normalizedPath
+    ? normalizePierreDirectoryPath(normalizedPath)
+    : undefined;
 }
 
 function toEntry(item: ContextMenuItem): FileTreeEntry {
@@ -180,6 +185,76 @@ function toEntry(item: ContextMenuItem): FileTreeEntry {
         ? normalizePierreDirectoryPath(item.path)
         : normalizePierreFilePath(item.path),
   };
+}
+
+function toEntryFromPath(
+  path: string,
+  filePathSet: ReadonlySet<string>,
+): FileTreeEntry | undefined {
+  const normalizedPath = normalizeInputPath(path);
+
+  if (!normalizedPath) {
+    return undefined;
+  }
+
+  return filePathSet.has(normalizedPath)
+    ? { kind: 'file', path: normalizePierreFilePath(normalizedPath) }
+    : { kind: 'directory', path: normalizePierreDirectoryPath(normalizedPath) };
+}
+
+function getSelectedEntriesFromMountedTree(
+  model: PierreFileTreeModel,
+  filePathSet: ReadonlySet<string>,
+): readonly FileTreeEntry[] {
+  const selectedItems =
+    model
+      .getFileTreeContainer()
+      ?.shadowRoot?.querySelectorAll<HTMLElement>(
+        "button[data-type='item'][data-item-selected][data-item-path]",
+      ) ?? [];
+
+  return Array.from(selectedItems)
+    .map((element) => {
+      const path = element.dataset.itemPath;
+      if (!path) {
+        return undefined;
+      }
+
+      if (element.dataset.itemType === 'file') {
+        return {
+          kind: 'file' as const,
+          path: normalizePierreFilePath(path),
+        };
+      }
+
+      return toEntryFromPath(path, filePathSet);
+    })
+    .filter((entry): entry is FileTreeEntry => entry !== undefined);
+}
+
+function getSelectedEntriesFromModel(
+  model: PierreFileTreeModel,
+  filePathSet: ReadonlySet<string>,
+): readonly FileTreeEntry[] {
+  return model
+    .getSelectedPaths()
+    .map((path) => toEntryFromPath(path, filePathSet))
+    .filter((entry): entry is FileTreeEntry => entry !== undefined);
+}
+
+function getCurrentSelectedEntries(
+  model: PierreFileTreeModel,
+  filePathSet: ReadonlySet<string>,
+): readonly FileTreeEntry[] {
+  const modelSelectedEntries = getSelectedEntriesFromModel(model, filePathSet);
+  const mountedSelectedEntries = getSelectedEntriesFromMountedTree(
+    model,
+    filePathSet,
+  );
+
+  return mountedSelectedEntries.length > modelSelectedEntries.length
+    ? mountedSelectedEntries
+    : modelSelectedEntries;
 }
 
 export interface PierreFileTreeProps {
@@ -195,7 +270,10 @@ export interface PierreFileTreeProps {
   onOpenFile: (relativePath: string) => void;
   showNoteFilesOnly: boolean;
   onShowNoteFilesOnlyChange: (showNoteFilesOnly: boolean) => void;
-  getActionsForEntry: (entry: FileTreeEntry) => readonly FileTreeEntryAction[];
+  getActionsForEntry: (
+    entry: FileTreeEntry,
+    selectedEntries: readonly FileTreeEntry[],
+  ) => readonly FileTreeEntryAction[];
 }
 
 export function PierreFileTree({
@@ -239,6 +317,7 @@ export function PierreFileTree({
   );
   const filePathSetRef = useRef<ReadonlySet<string>>(filePathSet);
   const modelRef = useRef<PierreFileTreeModel | null>(null);
+  const contextMenuSelectedEntriesRef = useRef<readonly FileTreeEntry[]>([]);
   const onOpenFileRef = useRef(onOpenFile);
   const onMoveFileRef = useRef(onMoveFile);
   const pendingUserOpenPathRef = useRef<string | null>(null);
@@ -337,6 +416,17 @@ export function PierreFileTree({
       contextMenu: {
         buttonVisibility: 'when-needed',
         enabled: true,
+        onOpen: () => {
+          if (!modelRef.current) {
+            contextMenuSelectedEntriesRef.current = [];
+            return;
+          }
+
+          contextMenuSelectedEntriesRef.current = getCurrentSelectedEntries(
+            modelRef.current,
+            filePathSetRef.current,
+          );
+        },
         triggerMode: 'both',
       },
     },
@@ -368,6 +458,7 @@ export function PierreFileTree({
         if (suppressSelectionOpenRef.current) {
           return;
         }
+        selectedPathRef.current = normalizedPath;
         pendingUserOpenPathRef.current = normalizedPath;
         onOpenFileRef.current(normalizedPath);
       }
@@ -476,7 +567,20 @@ export function PierreFileTree({
           model={model}
           renderContextMenu={(item, context) => {
             const entry = toEntry(item);
-            const actions = getActionsForEntry(entry);
+            const selectedEntries =
+              contextMenuSelectedEntriesRef.current.length > 0
+                ? contextMenuSelectedEntriesRef.current
+                : getCurrentSelectedEntries(model, filePathSetRef.current);
+            const entryIsSelected = selectedEntries.some(
+              (selectedEntry) =>
+                selectedEntry.kind === entry.kind &&
+                selectedEntry.path === entry.path,
+            );
+            const menuSelectedEntries =
+              selectedEntries.length > 1 && entryIsSelected
+                ? selectedEntries
+                : [entry];
+            const actions = getActionsForEntry(entry, menuSelectedEntries);
 
             if (actions.length === 0) {
               return null;
@@ -503,7 +607,10 @@ export function PierreFileTree({
                       disabled={disabled}
                       onClick={() => {
                         context.close({ restoreFocus: false });
-                        onClick(entry);
+                        onClick({
+                          entry,
+                          selectedEntries: menuSelectedEntries,
+                        });
                       }}
                     >
                       {Icon && <Icon className="size-4" />}

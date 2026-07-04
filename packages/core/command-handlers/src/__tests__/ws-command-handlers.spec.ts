@@ -83,6 +83,40 @@ describe('WS command handlers', () => {
     });
   });
 
+  describe('command::ws:delete-ws-paths', () => {
+    test('deletes selected files in one durable batch', async () => {
+      const FIRST_WS_PATH = 'test-ws:first.md';
+      const SECOND_WS_PATH = 'test-ws:nested/second.md';
+      const KEEP_WS_PATH = 'test-ws:keep.md';
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ws:delete-ws-paths',
+        workspaces: [
+          {
+            name: 'test-ws',
+            notes: [FIRST_WS_PATH, SECOND_WS_PATH, KEEP_WS_PATH],
+          },
+        ],
+        autoNavigate: 'workspace',
+      });
+
+      dispatch('command::ws:delete-ws-paths', {
+        wsPaths: [FIRST_WS_PATH, SECOND_WS_PATH],
+      });
+
+      await vi.waitFor(async () => {
+        await expect(
+          services.fileSystem.readFile(FIRST_WS_PATH),
+        ).resolves.toBeUndefined();
+        await expect(
+          services.fileSystem.readFile(SECOND_WS_PATH),
+        ).resolves.toBeUndefined();
+        await expect(
+          services.fileSystem.readFile(KEEP_WS_PATH),
+        ).resolves.toBeDefined();
+      });
+    });
+  });
+
   describe('command::ws:rename-ws-path', () => {
     test('reports storage rename failures before navigating to the destination', async () => {
       const SOURCE_WS_PATH = 'test-ws:source.md';
@@ -121,6 +155,30 @@ describe('WS command handlers', () => {
   });
 
   describe('command::ws:move-ws-path', () => {
+    test('normalizes slash root destination when moving a nested file to workspace root', async () => {
+      const SOURCE_WS_PATH = 'test-ws:folder/source.md';
+      const DESTINATION_WS_PATH = 'test-ws:source.md';
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ws:move-ws-path',
+        workspaces: [{ name: 'test-ws', notes: [SOURCE_WS_PATH] }],
+        autoNavigate: 'workspace',
+      });
+
+      dispatch('command::ws:move-ws-path', {
+        destDirWsPath: 'test-ws:/',
+        wsPath: SOURCE_WS_PATH,
+      });
+
+      await vi.waitFor(async () => {
+        await expect(
+          services.fileSystem.readFile(SOURCE_WS_PATH),
+        ).resolves.toBeUndefined();
+        await expect(
+          services.fileSystem.readFile(DESTINATION_WS_PATH),
+        ).resolves.toBeDefined();
+      });
+    });
+
     test('reports storage move failures before navigating to the destination', async () => {
       const SOURCE_WS_PATH = 'test-ws:source.md';
       const DESTINATION_DIR_WS_PATH = 'test-ws:archive/';

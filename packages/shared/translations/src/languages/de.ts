@@ -196,6 +196,20 @@ export const t = {
           `Sind Sie sicher, dass Sie "${fileName}" löschen möchten?`,
         continueText: 'Löschen',
       },
+      confirmDeleteFiles: {
+        title: 'Löschen bestätigen',
+        description: ({
+          count,
+          fileNames,
+        }: {
+          count: number;
+          fileNames: string[];
+        }) =>
+          `${count} Dateien löschen? ${fileNames.slice(0, 5).join(', ')}${
+            fileNames.length > 5 ? ', ...' : ''
+          } werden entfernt.`,
+        continueText: 'Dateien löschen',
+      },
       renameNote: {
         title: 'Notiz umbenennen',
         description: ({
@@ -434,6 +448,27 @@ export const t = {
         maxFileSize: string;
       }) =>
         `${fileName} ist zu gross. Maximale Dateigroesse ist ${maxFileSize}.`,
+      fileCreated: ({ fileName }: { fileName: string }) =>
+        `${fileName} erstellt`,
+      fileCreateFailed: 'Datei konnte nicht erstellt werden',
+      fileDeleted: ({ fileName }: { fileName: string }) =>
+        `${fileName} geloescht`,
+      fileDeleteFailed: 'Datei konnte nicht geloescht werden',
+      filesDeleted: ({ count }: { count: number }) =>
+        count === 1 ? '1 Datei geloescht' : `${count} Dateien geloescht`,
+      filesDeleteFailed: 'Dateien konnten nicht geloescht werden',
+      fileMoved: ({ fileName }: { fileName: string }) =>
+        `${fileName} verschoben`,
+      fileMoveFailed: 'Datei konnte nicht verschoben werden',
+      fileRenamed: ({ fileName }: { fileName: string }) =>
+        `Umbenannt zu ${fileName}`,
+      fileRenameFailed: 'Datei konnte nicht umbenannt werden',
+      folderDeleted: ({ folderName }: { folderName: string }) =>
+        `${folderName} geloescht`,
+      folderDeleteFailed: 'Ordner konnte nicht geloescht werden',
+      folderRenamed: ({ folderName }: { folderName: string }) =>
+        `Umbenannt zu ${folderName}`,
+      folderRenameFailed: 'Ordner konnte nicht umbenannt werden',
       openAsset: 'Öffnen',
       pathCopied: 'Pfad kopiert',
       pathCopyFailed: 'Pfad konnte nicht kopiert werden',
@@ -532,6 +567,8 @@ export const t = {
         renameActionTitle: 'Umbenennen',
         moveActionTitle: 'Verschieben',
         deleteActionTitle: 'Löschen',
+        deleteSelectedFilesActionTitle: ({ count }: { count: number }) =>
+          `${count} Dateien löschen`,
         workspacesLabel: 'Arbeitsbereiche',
         noWorkspaceSelectedTitle: 'Kein Arbeitsbereich ausgewählt',
         noWorkspaceSelectedSubtitle:

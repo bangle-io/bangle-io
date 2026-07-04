@@ -31,6 +31,43 @@ function sleep(t = DEFAULT_SLEEP_TIME) {
   return new Promise((res) => setTimeout(res, t));
 }
 
+// Pierre's file tree uses a pointer-based drag that only engages once it sees
+// pointer moves separated across animation frames; a synchronous
+// `locator.dragTo` (or a single stepped move) collapses into a click that just
+// selects the row. Drive the gesture with real mouse events and let a frame
+// elapse between phases so the durable move actually fires.
+export async function dragTreeItemOnto(
+  page: Page,
+  source: Locator,
+  target: Locator,
+) {
+  const sourceBox = await source.boundingBox();
+  const targetBox = await target.boundingBox();
+
+  if (!sourceBox || !targetBox) {
+    throw new Error('Expected drag source and target to be visible');
+  }
+
+  const sourceX = sourceBox.x + sourceBox.width / 2;
+  const sourceY = sourceBox.y + sourceBox.height / 2;
+  const targetX = targetBox.x + targetBox.width / 2;
+  const targetY = targetBox.y + targetBox.height / 2;
+  const settleFrame = () => page.waitForTimeout(60);
+
+  await page.mouse.move(sourceX, sourceY);
+  await page.mouse.down();
+  await settleFrame();
+  await page.mouse.move(sourceX, sourceY - 8);
+  await settleFrame();
+  await page.mouse.move((sourceX + targetX) / 2, (sourceY + targetY) / 2);
+  await settleFrame();
+  await page.mouse.move(targetX, targetY);
+  await settleFrame();
+  await page.mouse.move(targetX, targetY);
+  await settleFrame();
+  await page.mouse.up();
+}
+
 export function getEditorLocator(page: Page, _options: { editorId?: string }) {
   return page.locator(EDITOR_SELECTOR);
 }

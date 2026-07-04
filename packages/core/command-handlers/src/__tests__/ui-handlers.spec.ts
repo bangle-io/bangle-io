@@ -244,6 +244,45 @@ describe('UI command handlers', () => {
     });
   });
 
+  describe('command::ui:delete-files-dialog', () => {
+    it('confirms selected file deletion and dispatches a batch delete', async () => {
+      const { dispatch, testEnv, services, getCommandResults } =
+        await setupTest({
+          targetId: 'command::ui:delete-files-dialog',
+          workspaces: [
+            {
+              name: 'test-ws',
+              notes: ['test-ws:first.md', 'test-ws:second.md'],
+            },
+          ],
+          autoNavigate: 'workspace',
+        });
+
+      dispatch('command::ui:delete-files-dialog', {
+        wsPaths: ['test-ws:first.md', 'test-ws:second.md'],
+      });
+
+      const alertDialog = testEnv.store.get(
+        services.workbenchState.$alertDialog,
+      );
+      expect(alertDialog).toBeDefined();
+      expect(alertDialog?.dialogId).toBe('dialog::delete-files-alert');
+      expect(alertDialog?.title).toBe(t.app.dialogs.confirmDeleteFiles.title);
+      expect(alertDialog?.description).toContain('first.md');
+      expect(alertDialog?.description).toContain('second.md');
+
+      alertDialog?.onContinue?.();
+
+      await vi.waitFor(() => {
+        expect(
+          getCommandResults()
+            .filter((result) => result.type === 'success')
+            .map((result) => result.command.id),
+        ).toContain('command::ws:delete-ws-paths');
+      });
+    });
+  });
+
   describe('command::ui:rename-note-dialog', () => {
     it('should open the rename note dialog and dispatch command::ws:rename-ws-path on new name', async () => {
       const { dispatch, testEnv, services, getCommandResults } =

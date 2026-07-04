@@ -48,7 +48,10 @@ export const AppSidebar = ({ children }: SidebarProps) => {
 
   const getActionsForEntry = useMemo(
     () =>
-      (entry: FileTreeEntry): FileTreeEntryAction[] => {
+      (
+        entry: FileTreeEntry,
+        selectedEntries: readonly FileTreeEntry[],
+      ): FileTreeEntryAction[] => {
         const actions: FileTreeEntryAction[] = [];
         const getFileWsPath = (relativePath: string) =>
           activeWsName
@@ -66,7 +69,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             id: 'new-note-here',
             label: t.app.components.appSidebar.newNoteHereActionTitle,
             Icon: PlusIcon,
-            onClick: (entry) => {
+            onClick: ({ entry }) => {
               commandDispatcher.dispatch(
                 'command::ws:quick-new-note',
                 {
@@ -81,7 +84,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             id: 'new-folder-here',
             label: t.app.components.appSidebar.newFolderHereActionTitle,
             Icon: FolderPlus,
-            onClick: (entry) => {
+            onClick: ({ entry }) => {
               commandDispatcher.dispatch(
                 'command::ui:create-directory-dialog',
                 {
@@ -126,13 +129,40 @@ export const AppSidebar = ({ children }: SidebarProps) => {
 
         const wsPath = getFileWsPath(entry.path);
         const filePath = wsPath ? WsPath.safeParseFile(wsPath).data : undefined;
+        const selectedFileWsPaths = [
+          ...new Set(
+            selectedEntries
+              .filter((selectedEntry) => selectedEntry.kind === 'file')
+              .map((selectedEntry) => getFileWsPath(selectedEntry.path))
+              .filter((selectedWsPath): selectedWsPath is string =>
+                Boolean(selectedWsPath),
+              ),
+          ),
+        ];
+        const pushDeleteSelectedFilesAction = () => {
+          actions.push({
+            id: 'delete-selected-files',
+            label: t.app.components.appSidebar.deleteSelectedFilesActionTitle({
+              count: selectedFileWsPaths.length,
+            }),
+            Icon: Trash2,
+            variant: 'destructive' as const,
+            onClick: () => {
+              commandDispatcher.dispatch(
+                'command::ui:delete-files-dialog',
+                { wsPaths: selectedFileWsPaths },
+                'ui',
+              );
+            },
+          });
+        };
 
         if (filePath) {
           actions.push({
             id: 'copy-path',
             label: t.app.components.appSidebar.copyPathActionTitle,
             Icon: Copy,
-            onClick: (entry) => {
+            onClick: ({ entry }) => {
               const wsPath = getFileWsPath(entry.path);
               if (!wsPath) {
                 return;
@@ -151,7 +181,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             id: 'open',
             label: t.app.components.appSidebar.openActionTitle,
             Icon: ExternalLink,
-            onClick: (entry) => {
+            onClick: ({ entry }) => {
               const wsPath = getFileWsPath(entry.path);
               if (!wsPath) {
                 return;
@@ -168,7 +198,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             id: 'rename-file',
             label: t.app.components.appSidebar.renameActionTitle,
             Icon: Pencil,
-            onClick: (entry) => {
+            onClick: ({ entry }) => {
               const wsPath = getFileWsPath(entry.path);
               if (!wsPath) {
                 return;
@@ -181,12 +211,18 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             },
           });
 
+          if (selectedFileWsPaths.length > 1) {
+            pushDeleteSelectedFilesAction();
+
+            return actions;
+          }
+
           actions.push({
             id: 'delete-file',
             label: t.app.components.appSidebar.deleteActionTitle,
             Icon: Trash2,
             variant: 'destructive' as const,
-            onClick: (entry) => {
+            onClick: ({ entry }) => {
               const wsPath = getFileWsPath(entry.path);
               if (!wsPath) {
                 return;
@@ -203,11 +239,17 @@ export const AppSidebar = ({ children }: SidebarProps) => {
         }
 
         if (filePath?.isNote()) {
+          if (selectedFileWsPaths.length > 1) {
+            pushDeleteSelectedFilesAction();
+
+            return actions;
+          }
+
           actions.push({
             id: 'rename',
             label: t.app.components.appSidebar.renameActionTitle,
             Icon: Pencil,
-            onClick: (entry) => {
+            onClick: ({ entry }) => {
               const wsPath = getFileWsPath(entry.path);
               if (!wsPath) {
                 return;
@@ -224,7 +266,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             id: 'move',
             label: t.app.components.appSidebar.moveActionTitle,
             Icon: Move,
-            onClick: (entry) => {
+            onClick: ({ entry }) => {
               const wsPath = getFileWsPath(entry.path);
               if (!wsPath) {
                 return;
@@ -242,7 +284,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             label: t.app.components.appSidebar.deleteActionTitle,
             Icon: Trash2,
             variant: 'destructive' as const,
-            onClick: (entry) => {
+            onClick: ({ entry }) => {
               const wsPath = getFileWsPath(entry.path);
               if (!wsPath) {
                 return;
@@ -312,10 +354,9 @@ export const AppSidebar = ({ children }: SidebarProps) => {
           commandDispatcher.dispatch(
             'command::ws:move-ws-path',
             {
-              destDirWsPath: WsDirPath.fromParts(
-                activeWsName,
-                destinationDirectory ?? '',
-              ).wsPath,
+              destDirWsPath: destinationDirectory
+                ? WsDirPath.fromParts(activeWsName, destinationDirectory).wsPath
+                : `${activeWsName}:`,
               wsPath: WsPath.fromParts(activeWsName, sourceRelativePath).wsPath,
             },
             'ui',

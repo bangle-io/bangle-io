@@ -1,5 +1,6 @@
 // packages/core/command-handlers/src/ws-command-handlers.ts
 import { throwAppError } from '@bangle.io/base-utils';
+import { toast } from '@bangle.io/ui-components';
 import { WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { c, getCtx } from './helper';
 
@@ -25,6 +26,21 @@ function isUnderDirectory(filePath: WsPath, dirPath: WsDirPath): boolean {
   return (
     filePath.wsName === dirPath.wsName && filePath.path.startsWith(dirPath.path)
   );
+}
+
+function basename(path: string): string {
+  return path.replace(/\/+$/, '').split('/').at(-1) || path;
+}
+
+function normalizeDestinationDirWsPath(destDirWsPath: string): string {
+  const separatorIndex = destDirWsPath.indexOf(':');
+  if (separatorIndex < 0) {
+    return destDirWsPath;
+  }
+
+  const wsName = destDirWsPath.slice(0, separatorIndex);
+  const path = destDirWsPath.slice(separatorIndex + 1).replace(/^\/+/, '');
+  return path ? WsDirPath.fromParts(wsName, path).wsPath : `${wsName}:`;
 }
 
 export const wsCommandHandlers = [
@@ -72,12 +88,20 @@ export const wsCommandHandlers = [
       const filePath = WsPath.assertFile(wsPath);
       const fileNameWithoutExt = filePath.fileNameWithoutExtension;
 
-      await fileSystem.createFile(
-        wsPath,
-        new File([''], fileNameWithoutExt, {
-          type: 'text/plain',
-        }),
-      );
+      try {
+        await fileSystem.createFile(
+          wsPath,
+          new File([''], fileNameWithoutExt, {
+            type: 'text/plain',
+          }),
+        );
+        toast.success(
+          t.app.toasts.fileCreated({ fileName: filePath.fileName }),
+        );
+      } catch (error) {
+        toast.error(t.app.toasts.fileCreateFailed);
+        throw error;
+      }
 
       if (navigate) {
         navigation.goWsPath(wsPath);
@@ -104,7 +128,37 @@ export const wsCommandHandlers = [
   ),
 
   c('command::ws:delete-ws-path', async ({ fileSystem }, { wsPath }) => {
-    await fileSystem.deleteFile(wsPath);
+    const filePath = WsPath.assertFile(wsPath);
+
+    try {
+      await fileSystem.deleteFile(wsPath);
+      toast.success(t.app.toasts.fileDeleted({ fileName: filePath.fileName }));
+    } catch (error) {
+      toast.error(t.app.toasts.fileDeleteFailed);
+      throw error;
+    }
+  }),
+
+  c('command::ws:delete-ws-paths', async ({ fileSystem }, { wsPaths }) => {
+    const uniqueWsPaths = [...new Set(wsPaths)];
+
+    if (uniqueWsPaths.length === 0) {
+      throwAppError(
+        'error::file:invalid-note-path',
+        t.app.errors.file.invalidNotePath,
+        {
+          invalidWsPath: '',
+        },
+      );
+    }
+
+    try {
+      await fileSystem.deleteFiles(uniqueWsPaths);
+      toast.success(t.app.toasts.filesDeleted({ count: uniqueWsPaths.length }));
+    } catch (error) {
+      toast.error(t.app.toasts.filesDeleteFailed);
+      throw error;
+    }
   }),
 
   c(
@@ -135,16 +189,25 @@ export const wsCommandHandlers = [
         );
       }
 
+      const newFilePath = WsPath.assertFile(newWsPath);
       const needsRedirect =
         navigation.resolveAtoms().activeWsFilePath?.wsPath === wsPath;
 
       // Keep the open note visible during the rename instead of navigating to
       // ws-home first (which paints an intermediate screen for the duration of
       // the async write). Redirect straight to the renamed path once it lands.
-      await fileSystem.renameFile({
-        oldWsPath: wsPath,
-        newWsPath,
-      });
+      try {
+        await fileSystem.renameFile({
+          oldWsPath: wsPath,
+          newWsPath,
+        });
+        toast.success(
+          t.app.toasts.fileRenamed({ fileName: newFilePath.fileName }),
+        );
+      } catch (error) {
+        toast.error(t.app.toasts.fileRenameFailed);
+        throw error;
+      }
       if (needsRedirect) {
         navigation.goWsPath(newWsPath);
       }
@@ -161,7 +224,9 @@ export const wsCommandHandlers = [
       const { store } = getCtx(key);
 
       const filePath = WsPath.assertFile(wsPath);
-      const destDir = WsPath.fromString(destDirWsPath).asDir();
+      const destDir = WsPath.fromString(
+        normalizeDestinationDirWsPath(destDirWsPath),
+      ).asDir();
       if (!destDir) {
         throwAppError(
           'error::workspace:not-opened',
@@ -172,7 +237,10 @@ export const wsCommandHandlers = [
         );
       }
 
-      const newWsPath = destDir.createFilePath(filePath.fileName).wsPath;
+      const newWsPath = WsPath.fromParts(
+        destDir.wsName,
+        WsPath.pathJoin(destDir.isRoot ? '' : destDir.path, filePath.fileName),
+      ).wsPath;
 
       if (wsPath === newWsPath) {
         return;
@@ -200,10 +268,16 @@ export const wsCommandHandlers = [
       // the current note until the durable rename lands, then redirect straight
       // to the new path. The wsPaths update and this redirect settle in the same
       // microtask, so the moved note never flashes an intermediate screen.
-      await fileSystem.renameFile({
-        oldWsPath: wsPath,
-        newWsPath,
-      });
+      try {
+        await fileSystem.renameFile({
+          oldWsPath: wsPath,
+          newWsPath,
+        });
+        toast.success(t.app.toasts.fileMoved({ fileName: filePath.fileName }));
+      } catch (error) {
+        toast.error(t.app.toasts.fileMoveFailed);
+        throw error;
+      }
       if (needsRedirect) {
         navigation.goWsPath(newWsPath);
       }
@@ -334,7 +408,15 @@ export const wsCommandHandlers = [
         (pair) => pair.oldWsPath === currentWsPath,
       )?.newWsPath;
 
-      await fileSystem.renameFiles(pairs);
+      try {
+        await fileSystem.renameFiles(pairs);
+        toast.success(
+          t.app.toasts.folderRenamed({ folderName: basename(newDir.path) }),
+        );
+      } catch (error) {
+        toast.error(t.app.toasts.folderRenameFailed);
+        throw error;
+      }
 
       if (redirectTarget) {
         navigation.goWsPath(redirectTarget);
@@ -360,7 +442,15 @@ export const wsCommandHandlers = [
       // Delete first, then leave the route stable. The editor and asset pages
       // derive existence from workspace-state atoms and render not-found states
       // when the routed file disappears.
-      await fileSystem.deleteFiles(descendants.map((path) => path.wsPath));
+      try {
+        await fileSystem.deleteFiles(descendants.map((path) => path.wsPath));
+        toast.success(
+          t.app.toasts.folderDeleted({ folderName: basename(dirPath.path) }),
+        );
+      } catch (error) {
+        toast.error(t.app.toasts.folderDeleteFailed);
+        throw error;
+      }
     },
   ),
   c('command::ws:go-ws-home', ({ navigation }) => {
