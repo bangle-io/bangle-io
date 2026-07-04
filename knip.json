@@ -1,6 +1,7 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "treatConfigHintsAsErrors": true,
+  "treatTagHintsAsErrors": true,
   "workspaces": {
     ".": {
       "entry": [".github/scripts/**/*.cjs"],
@@ -71,6 +72,10 @@
       "storybook": {
         "entry": ["src/**/*.stories.{ts,tsx}"]
       }
+    },
+    "packages/ui/ui-components": {
+      "entry": ["testing.ts"],
+      "project": ["src/**/*.{ts,tsx}"]
     }
   },
   "rules": {

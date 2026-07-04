@@ -1,0 +1,60 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "treatConfigHintsAsErrors": true,
+  "treatTagHintsAsErrors": true,
+  "include": ["dependencies", "unlisted", "binaries"],
+  "workspaces": {
+    "packages/tooling/browser-entry": {
+      "entry": ["index.html"],
+      "project": ["src/**/*.{css,ts,tsx}", "translations-plugin.ts"],
+      "ignoreDependencies": [
+        "@bangle.io/browser-utils",
+        "@bangle.io/config",
+        "@bangle.io/env-vars",
+        "@bangle.io/mini-js-utils",
+        "@bangle.io/root-emitter",
+        "@bangle.io/translations",
+        "@sentry/browser",
+        "@sentry/vite-plugin",
+        "@tailwindcss/vite",
+        "@vitejs/plugin-react",
+        "vite",
+        "vite-plugin-html"
+      ],
+      "vite": {
+        "config": ["vite.config.ts"]
+      }
+    },
+    "packages/tooling/desktop-entry": {
+      "entry": [
+        "electron-builder.config.cjs",
+        "scripts/*.{mjs,ts}",
+        "src/main.ts",
+        "src/preload.ts"
+      ],
+      "project": ["scripts/*.{mjs,ts}", "src/**/*.ts"],
+      "ignoreDependencies": ["electron", "electron-updater", "vite"],
+      "vite": {
+        "config": ["vite.config.ts"]
+      }
+    },
+    "packages/tooling/mobile-entry": {
+      "entry": ["babel.config.js", "index.ts", "src/**/*.tsx"],
+      "project": ["*.{js,ts}", "src/**/*.tsx"],
+      "ignoreDependencies": [
+        "expo-constants",
+        "expo-linking",
+        "expo-system-ui",
+        "expo-updates"
+      ],
+      "expo": {
+        "config": ["app.config.ts"]
+      }
+    }
+  },
+  "rules": {
+    "dependencies": "error",
+    "unlisted": "error",
+    "binaries": "error"
+  }
+}

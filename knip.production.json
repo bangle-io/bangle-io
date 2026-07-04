@@ -1,6 +1,7 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "treatConfigHintsAsErrors": true,
+  "treatTagHintsAsErrors": true,
   "include": [
     "files",
     "exports",
@@ -16,6 +17,7 @@
     "**/__tests__/**",
     "**/*.spec.{ts,tsx}",
     "**/*.stories.portable.tsx",
+    "packages/ui/ui-components/testing.ts",
     "**/test-helpers/**"
   ],
   "workspaces": {
