@@ -143,9 +143,11 @@ pn biome check --fix --unsafe && pn local-ci-check
 
 The `local-ci-check` script runs all CI validation scripts defined in package.json (scripts ending with `:ci`):
 
+- `test:ci` - Unit tests with Vitest
 - `lint:ci` - Custom validation, typecheck, and biome linting
-- `test:ci` - Unit tests with vitest
+- `knip:ci` - Workspace reachability, dependency, and public export checks
 - `e2e:ci` - End-to-end and component tests
+- `desktop:ci` - Electron desktop tests, build, and smoke test
 
 This ensures your changes will pass CI before pushing to the repository.
 
@@ -243,6 +245,8 @@ bun packages/tooling/custom-scripts/scripts/maintenance-all.ts
 2. Removes unused dependencies
 3. Formats all package.json files
 4. Validates workspace structure and dependencies
+
+This command mutates dependency metadata. Review its diff before committing the result.
 
 ### Dependency Management
 
