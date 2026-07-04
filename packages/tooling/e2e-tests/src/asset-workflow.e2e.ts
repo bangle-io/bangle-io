@@ -374,3 +374,122 @@ test('copies workspace paths and smart-links pasted or dropped existing assets',
     /^blob:/,
   );
 });
+
+test('copied nested workspace paths paste and drop from another note', async ({
+  context,
+  page,
+}, testInfo) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  const workspaceName = `asset-nested-path-${testInfo.workerIndex}-${Date.now()}`;
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'AGENTS',
+  });
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'docs/getting-started/codex-prerequisites',
+    'Codex prerequisites',
+  );
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'docs/getting-started/quick-start',
+    '',
+  );
+  await writeStoredMarkdown(page, workspaceName, 'docs/README', 'Docs');
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const explorer = page.getByTestId('bangle-file-explorer');
+  const docsFolder = explorer.getByRole('treeitem', { name: /^docs$/ });
+  await expect(docsFolder).toBeVisible();
+  await docsFolder.focus();
+  await page.keyboard.press('ArrowRight');
+  const gettingStartedFolder = explorer.getByRole('treeitem', {
+    name: /^getting-started$/,
+  });
+  await expect(gettingStartedFolder).toBeVisible();
+  await gettingStartedFolder.focus();
+  await page.keyboard.press('ArrowRight');
+
+  const prerequisiteRow = explorer.getByRole('treeitem', {
+    name: /codex-prerequisites\.md/,
+  });
+  await expect(prerequisiteRow).toBeVisible();
+  await prerequisiteRow.click({ button: 'right' });
+  await page.getByRole('button', { name: 'Copy path' }).click();
+  await expect
+    .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+    .toBe('docs/getting-started/codex-prerequisites.md');
+
+  await page.goto(
+    `/ws#route=editor&wsPath=${encodeURIComponent(
+      `${workspaceName}:docs/getting-started/quick-start.md`,
+    )}`,
+  );
+  const editor = getEditorLocator(page, {});
+  await expect(editor).toBeVisible();
+  await editor.click();
+  await page
+    .locator(EDITOR_SELECTOR)
+    .evaluate(
+      dispatchTextPasteEvent,
+      'docs/getting-started/codex-prerequisites.md',
+    );
+  await expect
+    .poll(() =>
+      readStoredMarkdown(
+        page,
+        workspaceName,
+        'docs/getting-started/quick-start',
+      ),
+    )
+    .toContain('[codex-prerequisites.md](codex-prerequisites.md)');
+
+  await editor.press(`${ctrlKey}+Z`);
+  await expect
+    .poll(() =>
+      readStoredMarkdown(
+        page,
+        workspaceName,
+        'docs/getting-started/quick-start',
+      ),
+    )
+    .toBe('docs/getting-started/codex-prerequisites.md');
+
+  await editor.press(`${ctrlKey}+A`);
+  await editor.press('Backspace');
+  await expect
+    .poll(() =>
+      readStoredMarkdown(
+        page,
+        workspaceName,
+        'docs/getting-started/quick-start',
+      ),
+    )
+    .toBe('');
+
+  const editorBox = await editor.boundingBox();
+  if (!editorBox) {
+    throw new Error('Expected editor to have a visible bounding box');
+  }
+  const dataTransfer = await createTextDataTransferHandle(
+    page,
+    'docs/getting-started/codex-prerequisites.md',
+  );
+  await page.locator(EDITOR_SELECTOR).dispatchEvent('drop', {
+    clientX: editorBox.x + 4,
+    clientY: editorBox.y + 4,
+    dataTransfer,
+  });
+  await dataTransfer.dispose();
+  await expect
+    .poll(() =>
+      readStoredMarkdown(
+        page,
+        workspaceName,
+        'docs/getting-started/quick-start',
+      ),
+    )
+    .toContain('[codex-prerequisites.md](codex-prerequisites.md)');
+});

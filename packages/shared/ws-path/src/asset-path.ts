@@ -76,18 +76,37 @@ export function resolveWorkspaceMarkdownAssetReference(
   currentWsPath: string | WsFilePath,
   target: string,
 ): WsFilePath | undefined {
+  return resolveWorkspaceMarkdownAssetReferenceCandidates(
+    currentWsPath,
+    target,
+  )[0];
+}
+
+export function resolveWorkspaceMarkdownAssetReferenceCandidates(
+  currentWsPath: string | WsFilePath,
+  target: string,
+): WsFilePath[] {
   const current = WsPath.safeParse(currentWsPath).data?.asFile();
   if (!current) {
-    return undefined;
+    return [];
   }
 
   const input = target.trim();
   const direct = WsPath.safeParse(input).data?.asFile();
   if (direct) {
-    return direct.wsName === current.wsName ? direct : undefined;
+    return direct.wsName === current.wsName ? [direct] : [];
   }
 
-  return resolveLocalMarkdownAsset(current, input);
+  const candidates = [
+    resolveLocalMarkdownAsset(current, input),
+    input.startsWith('/')
+      ? undefined
+      : resolveLocalMarkdownAsset(current, `/${input}`),
+  ].filter((candidate): candidate is WsFilePath => Boolean(candidate));
+
+  return Array.from(
+    new Map(candidates.map((candidate) => [candidate.wsPath, candidate])),
+  ).map(([, candidate]) => candidate);
 }
 
 /**

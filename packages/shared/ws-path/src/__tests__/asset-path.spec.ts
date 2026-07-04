@@ -5,6 +5,7 @@ import {
   relativeMarkdownAssetHref,
   resolveLocalMarkdownAsset,
   resolveWorkspaceMarkdownAssetReference,
+  resolveWorkspaceMarkdownAssetReferenceCandidates,
   workspaceRootMarkdownAssetHref,
 } from '../asset-path';
 
@@ -103,6 +104,27 @@ describe('embeddable workspace assets', () => {
         target,
       )?.wsPath,
     ).toBe(expected);
+  });
+
+  it('includes a workspace-root fallback for copied file-tree paths', () => {
+    expect(
+      resolveWorkspaceMarkdownAssetReferenceCandidates(
+        'workspace:docs/getting-started/quick-start.md',
+        'docs/getting-started/codex-prerequisites.md',
+      ).map((candidate) => candidate.wsPath),
+    ).toEqual([
+      'workspace:docs/getting-started/docs/getting-started/codex-prerequisites.md',
+      'workspace:docs/getting-started/codex-prerequisites.md',
+    ]);
+  });
+
+  it('deduplicates references that resolve to the same local and root path', () => {
+    expect(
+      resolveWorkspaceMarkdownAssetReferenceCandidates(
+        'workspace:source.md',
+        'assets/photo.png',
+      ).map((candidate) => candidate.wsPath),
+    ).toEqual(['workspace:assets/photo.png']);
   });
 
   it('rejects copied wsPaths from another workspace', () => {

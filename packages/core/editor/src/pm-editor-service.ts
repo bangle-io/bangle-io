@@ -22,7 +22,7 @@ import {
   relativeMarkdownAssetHref,
   resolveLocalMarkdownAsset,
   resolveWikiLinkTarget,
-  resolveWorkspaceMarkdownAssetReference,
+  resolveWorkspaceMarkdownAssetReferenceCandidates,
   type WikiLinkIndex,
   WsPath,
   workspaceRootMarkdownAssetHref,
@@ -547,10 +547,7 @@ export class PmEditorService extends BaseService {
     }
 
     const currentWsPath = WsPath.safeParse(editor.wsPath).data?.asFile();
-    const assetWsPath = currentWsPath
-      ? resolveWorkspaceMarkdownAssetReference(currentWsPath, target)
-      : undefined;
-    if (!currentWsPath || !assetWsPath) {
+    if (!currentWsPath) {
       return undefined;
     }
 
@@ -559,7 +556,11 @@ export class PmEditorService extends BaseService {
         .get(this.dependencies.workspaceState.$wsPaths)
         .map((path) => path.wsPath),
     );
-    if (!existingWsPaths.has(assetWsPath.wsPath)) {
+    const assetWsPath = resolveWorkspaceMarkdownAssetReferenceCandidates(
+      currentWsPath,
+      target,
+    ).find((candidate) => existingWsPaths.has(candidate.wsPath));
+    if (!assetWsPath) {
       return undefined;
     }
 

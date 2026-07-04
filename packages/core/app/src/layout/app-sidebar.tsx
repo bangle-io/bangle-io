@@ -10,12 +10,7 @@ import {
   AppSidebar as UIAppSidebar,
 } from '@bangle.io/ui-components';
 import bangleIcon from '@bangle.io/ui-components/src/bangle-transparent_x512.png';
-import {
-  relativeMarkdownAssetHref,
-  WsDirPath,
-  WsPath,
-  workspaceRootMarkdownAssetHref,
-} from '@bangle.io/ws-path';
+import { WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
   BugPlay,
@@ -71,7 +66,6 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   );
   const activeWsName = useAtomValue(navigation.$wsName);
   const activeWsPaths = useAtomValue(workspaceState.$activeWsPaths);
-  const currentWsPath = useAtomValue(workspaceState.$currentWsPath);
   const wsPaths = useAtomValue(workspaceState.$wsPaths);
   const noteWsPaths = useAtomValue(workspaceState.$noteWsPaths);
 
@@ -166,18 +160,14 @@ export const AppSidebar = ({ children }: SidebarProps) => {
               const target = wsPath
                 ? WsPath.safeParseFile(wsPath).data
                 : undefined;
-              const href = target
-                ? ((currentWsPath
-                    ? relativeMarkdownAssetHref(currentWsPath, target)
-                    : undefined) ?? workspaceRootMarkdownAssetHref(target))
-                : undefined;
+              const copiedPath = target?.path;
 
-              if (!href) {
+              if (!copiedPath) {
                 toast.error(t.app.toasts.pathCopyFailed);
                 return;
               }
 
-              void writeTextToClipboard(href)
+              void writeTextToClipboard(copiedPath)
                 .then(() => {
                   toast.success(t.app.toasts.pathCopied);
                 })
@@ -300,7 +290,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
 
         return actions;
       },
-    [activeWsName, commandDispatcher, currentWsPath],
+    [activeWsName, commandDispatcher],
   );
 
   return (
