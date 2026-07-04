@@ -9,6 +9,7 @@ import {
 import { SERVICE_NAME } from '@bangle.io/constants';
 import {
   createWikiLinkIndex,
+  isVisibleWorkspaceFilePath,
   type WikiLinkIndex,
   type WsFilePath,
   WsPath,
@@ -274,7 +275,7 @@ export class WorkspaceStateService extends BaseService {
           }
           this.handledFileCreateSequence = createEvent.sequence;
 
-          const filePath = this.getSupportedFilePath(createEvent.wsPath);
+          const filePath = this.getVisibleWorkspaceFilePath(createEvent.wsPath);
           const wsName = get(this.$currentWsName);
           if (!wsName || !filePath || filePath.wsName !== wsName) {
             return;
@@ -306,13 +307,9 @@ export class WorkspaceStateService extends BaseService {
     return this.dep.workspaceOps;
   }
 
-  private getSupportedFilePath(wsPath: string): WsFilePath | undefined {
+  private getVisibleWorkspaceFilePath(wsPath: string): WsFilePath | undefined {
     const filePath = WsPath.safeParse(wsPath).data?.asFile();
-    if (!filePath) {
-      return undefined;
-    }
-
-    return this.fileSystem.isWorkspaceFileVisible(filePath.wsPath)
+    return filePath && isVisibleWorkspaceFilePath(filePath)
       ? filePath
       : undefined;
   }
@@ -332,7 +329,7 @@ export class WorkspaceStateService extends BaseService {
       if (createSequence <= sequence) {
         continue;
       }
-      const filePath = this.getSupportedFilePath(createdWsPath);
+      const filePath = this.getVisibleWorkspaceFilePath(createdWsPath);
       if (filePath?.wsName === wsName) {
         nextPaths = appendSortedUniqueWsPath(nextPaths, filePath.wsPath);
       }

@@ -1,4 +1,6 @@
 import {
+  ASSET_LOCATION_PREFERENCES,
+  isAssetLocationPreference,
   isSettingsRouteInfo,
   SETTINGS_PAGE_DEFINITIONS,
   type SettingsPageId,
@@ -51,24 +53,18 @@ const THEME_OPTIONS: Array<{ value: ThemePreference; label: string }> = [
   { value: 'dark', label: t.app.dialogs.changeTheme.options.dark },
 ];
 
-const ASSET_LOCATION_VALUES = [
-  'assets-folder',
-  'adjacent',
-] as const satisfies readonly AssetLocationPreference[];
+const ASSET_LOCATION_LABELS: Record<AssetLocationPreference, string> = {
+  'assets-folder': t.app.settings.general.assetsFolder,
+  adjacent: t.app.settings.general.adjacentToNote,
+};
 
 const ASSET_LOCATION_OPTIONS: Array<{
   value: AssetLocationPreference;
   label: string;
-}> = [
-  {
-    value: 'assets-folder',
-    label: t.app.settings.general.assetsFolder,
-  },
-  {
-    value: 'adjacent',
-    label: t.app.settings.general.adjacentToNote,
-  },
-];
+}> = ASSET_LOCATION_PREFERENCES.map((value) => ({
+  value,
+  label: ASSET_LOCATION_LABELS[value],
+}));
 
 // Presentation for each settings page. Keyed by SettingsPageId so adding a page
 // to SETTINGS_PAGE_DEFINITIONS (in @bangle.io/constants) forces a matching entry
@@ -91,12 +87,6 @@ const SETTINGS_PAGE_META: Record<
 
 function isThemePreference(value: string): value is ThemePreference {
   return THEME_VALUES.some((theme) => theme === value);
-}
-
-function isAssetLocationPreference(
-  value: string,
-): value is AssetLocationPreference {
-  return ASSET_LOCATION_VALUES.some((preference) => preference === value);
 }
 
 function getSettingsReturnTo(routeInfo: AppRouteInfo) {

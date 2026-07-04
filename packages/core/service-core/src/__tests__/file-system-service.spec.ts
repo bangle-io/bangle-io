@@ -250,7 +250,7 @@ describe('FileSystemService', () => {
       }),
     );
 
-    await expect(fileSystem.listFiles(TEST_WS_NAME)).resolves.toEqual([
+    await expect(fileSystem.listNoteFiles(TEST_WS_NAME)).resolves.toEqual([
       `${TEST_WS_NAME}:.archive/old.md`,
       `${TEST_WS_NAME}:.hidden.md`,
       EXISTING_FILE,

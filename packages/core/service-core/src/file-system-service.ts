@@ -146,24 +146,31 @@ export class FileSystemService extends BaseService {
     );
   }
 
-  public isWorkspaceFileVisible(wsPath: string) {
+  private isWorkspaceFileVisible(wsPath: string) {
     return isVisibleWorkspaceFilePath(wsPath);
   }
 
+  /**
+   * Lists supported visible workspace files, including notes, assets, and other
+   * files that the workspace UI can show.
+   */
   public async listWorkspaceFiles(
     wsName: string,
     abortSignal: AbortSignal = new AbortController().signal,
   ): Promise<string[]> {
-    return this.listFilesWithFilter(wsName, abortSignal, (filePath) =>
+    return this.listWorkspaceFilesWithFilter(wsName, abortSignal, (filePath) =>
       this.isWorkspaceFileVisible(filePath.wsPath),
     );
   }
 
-  public async listFiles(
+  /**
+   * Lists supported visible Markdown notes only.
+   */
+  public async listNoteFiles(
     wsName: string,
     abortSignal: AbortSignal = new AbortController().signal,
   ): Promise<string[]> {
-    return this.listFilesWithFilter(
+    return this.listWorkspaceFilesWithFilter(
       wsName,
       abortSignal,
       (filePath) =>
@@ -171,7 +178,7 @@ export class FileSystemService extends BaseService {
     );
   }
 
-  private async listFilesWithFilter(
+  private async listWorkspaceFilesWithFilter(
     wsName: string,
     abortSignal: AbortSignal,
     predicate: (filePath: ReturnType<typeof WsPath.assertFile>) => boolean,
@@ -188,7 +195,7 @@ export class FileSystemService extends BaseService {
       const result = WsPath.safeParse(r);
       if (!result.ok) {
         this.logger.warn(
-          `listFiles: Ignoring file "${r}" as it is not a valid wsPath`,
+          `listWorkspaceFiles: Ignoring file "${r}" as it is not a valid wsPath`,
         );
         return false;
       }
@@ -196,7 +203,7 @@ export class FileSystemService extends BaseService {
       const filePath = wsPath?.asFile();
       if (!filePath) {
         this.logger.warn(
-          `listFiles: Ignoring file "${r}" as it is not a file path`,
+          `listWorkspaceFiles: Ignoring file "${r}" as it is not a file path`,
         );
         return false;
       }
@@ -204,7 +211,7 @@ export class FileSystemService extends BaseService {
 
       if (!isSupported) {
         this.logger.warn(
-          `listFiles: Ignoring file "${r}" as it is not supported`,
+          `listWorkspaceFiles: Ignoring file "${r}" as it is not supported`,
         );
       }
       return isSupported;

@@ -8,7 +8,7 @@ import type {
   ThemeConfig,
   ThemeManager,
 } from '@bangle.io/color-scheme-manager';
-import { SERVICE_NAME } from '@bangle.io/constants';
+import { isAssetLocationPreference, SERVICE_NAME } from '@bangle.io/constants';
 import { T } from '@bangle.io/mini-js-utils';
 import type {
   AssetLocationPreference,
@@ -26,15 +26,8 @@ import { atomEffect } from 'jotai-effect';
 
 type Route = 'omni-home' | 'omni-command' | 'omni-filtered';
 
-const ASSET_LOCATION_VALUES = new Set<AssetLocationPreference>([
-  'assets-folder',
-  'adjacent',
-]);
-
 const AssetLocationPreferenceValidator = {
-  validate: (value: unknown): value is AssetLocationPreference =>
-    typeof value === 'string' &&
-    ASSET_LOCATION_VALUES.has(value as AssetLocationPreference),
+  validate: isAssetLocationPreference,
   typeName: 'asset-location-preference',
 };
 

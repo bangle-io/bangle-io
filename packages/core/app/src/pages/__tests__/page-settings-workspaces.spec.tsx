@@ -69,7 +69,7 @@ describe('WorkspacesSettingsPage', () => {
 
     // A read/permission failure must never be presented as an empty ("0 notes")
     // workspace — it must surface as unavailable.
-    vi.spyOn(services.fileSystem, 'listFiles').mockRejectedValue(
+    vi.spyOn(services.fileSystem, 'listNoteFiles').mockRejectedValue(
       new Error('listing failed'),
     );
 

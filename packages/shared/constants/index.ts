@@ -50,6 +50,23 @@ export function isSettingsRouteInfo<RouteInfo extends { route: string }>(
   return isSettingsRoute(routeInfo.route);
 }
 
+export const ASSET_LOCATION_PREFERENCES = [
+  'assets-folder',
+  'adjacent',
+] as const;
+
+export type AssetLocationPreference =
+  (typeof ASSET_LOCATION_PREFERENCES)[number];
+
+export function isAssetLocationPreference(
+  value: unknown,
+): value is AssetLocationPreference {
+  return (
+    typeof value === 'string' &&
+    ASSET_LOCATION_PREFERENCES.includes(value as AssetLocationPreference)
+  );
+}
+
 export const WORKSPACE_STORAGE_TYPE = {
   Help: 'helpfs',
   NativeFS: 'nativefs',
