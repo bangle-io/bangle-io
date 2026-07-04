@@ -2,17 +2,80 @@ import { isPlainObject } from '@bangle.io/mini-js-utils';
 import type { EventSenderMetadata } from '@bangle.io/types';
 import { BaseService } from './base-service';
 
-export * from '@bangle.io/logger';
-export * from '@bangle.io/mini-js-utils';
-export * from './base-error-service';
-export * from './base-service';
-export * from './cx';
-export * from './github-bug-url';
-export * from './jotai';
-export * from './misc';
-export * from './safe-js';
-export * from './throw-app-error';
-
+export type { ErrorReporter } from '@bangle.io/logger';
+export { Logger, setErrorReporter, setGlobalLogLevel } from '@bangle.io/logger';
+export type {
+  AllEventListener,
+  Brand,
+  EventListener,
+  EventMessage,
+  IfEquals,
+  InferType,
+  Validator,
+} from '@bangle.io/mini-js-utils';
+export {
+  assertIsDefined,
+  BaseError,
+  browserInfo,
+  createEmptyArray,
+  DuoWeakMap,
+  deepMerge,
+  difference,
+  Emitter,
+  expectType,
+  getLast,
+  intersect,
+  isAbortError,
+  isChrome,
+  isDarwin,
+  isFirefox,
+  isMac,
+  isMobile,
+  isPlainObject,
+  isSafari,
+  isUndefined,
+  isUndefinedOrNull,
+  T,
+  weakCache,
+  weakCacheDuo,
+} from '@bangle.io/mini-js-utils';
+export { BaseErrorService } from './base-error-service';
+export type { BaseServiceContext } from './base-service';
+export { BaseService } from './base-service';
+export { cx } from './cx';
+export { getGithubUrl } from './github-bug-url';
+export {
+  arrayEqual,
+  atomStorage,
+  atomWithCompare,
+  createAsyncAtom,
+} from './jotai';
+export {
+  changeColorScheme,
+  checkWidescreen,
+  listenToResize,
+  setRootWidescreenClass,
+} from './misc';
+export {
+  acquireLockIfAvailable,
+  rafSchedule,
+  safeCancelAnimationFrame,
+  safeCancelIdleCallback,
+  safeIdleRefCallback,
+  safeNavigatorStorageGetDirectory,
+  safeRequestAnimationFrame,
+  safeRequestIdleCallback,
+  safeScrollIntoViewIfNeeded,
+} from './safe-js';
+export type { AppErrorName } from './throw-app-error';
+export {
+  createAppError,
+  getAppErrorCause,
+  handleAppError,
+  isAppError,
+  throwAppError,
+  wrapPromiseInAppErrorHandler,
+} from './throw-app-error';
 // TODO this is stub
 export function getEventSenderMetadata({
   tag,

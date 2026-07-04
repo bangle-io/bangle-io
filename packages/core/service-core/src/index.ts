@@ -1,13 +1,34 @@
-export * from './command-dispatch-service';
-export * from './command-registry-service';
-export * from './editor-service';
-export * from './file-system-service';
-export * from './navigation-service';
-export * from './shortcut-service';
-export * from './user-activity-service';
-export * from './workbench-service';
-export * from './workbench-state-service';
-export * from './workspace-asset-storage';
-export * from './workspace-ops-service';
-export * from './workspace-service';
-export * from './workspace-state-service';
+export { CommandDispatchService } from './command-dispatch-service';
+export type { CommandHandlerConfig } from './command-registry-service';
+export { CommandRegistryService } from './command-registry-service';
+export { EditorService } from './editor-service';
+export type {
+  FileContentUpdateEvent,
+  FileCreateEvent,
+} from './file-system-service';
+export { FileSystemService } from './file-system-service';
+export { NavigationService } from './navigation-service';
+export type { ShortcutServiceConfig } from './shortcut-service';
+export { ShortcutService } from './shortcut-service';
+export { UserActivityService } from './user-activity-service';
+export { WorkbenchService } from './workbench-service';
+export { WorkbenchStateService } from './workbench-state-service';
+export type {
+  AssetDestinationInput,
+  AssetStorageFileSystem,
+  StoredMarkdownAsset,
+  StoredWorkspaceAsset,
+  StoreWorkspaceAssetFilesInput,
+} from './workspace-asset-storage';
+export {
+  createAssetFileName,
+  displayNameForAsset,
+  getAssetDestination,
+  isImageFile,
+  storeWorkspaceAssetFiles,
+  writeAssetFile,
+} from './workspace-asset-storage';
+export { WorkspaceOpsService } from './workspace-ops-service';
+export { WorkspaceService } from './workspace-service';
+export type { BacklinkIndexState } from './workspace-state-service';
+export { WorkspaceStateService } from './workspace-state-service';

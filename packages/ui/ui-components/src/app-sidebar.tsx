@@ -36,8 +36,6 @@ import {
   useSidebar,
 } from './sidebar';
 
-export type { FileTreeEntry, FileTreeEntryAction };
-
 export type NavItem = {
   title: string;
   wsPath: string;

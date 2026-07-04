@@ -3,4 +3,6 @@
  * the package root) from test setup so browser-only platform modules are not
  * loaded.
  */
-export * from './src/service-setup';
+
+export type { CoreConfigOverrides } from './src/service-setup';
+export { createServiceSetup } from './src/service-setup';

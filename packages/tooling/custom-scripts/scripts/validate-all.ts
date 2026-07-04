@@ -1,3 +1,4 @@
+import fsProm from 'node:fs/promises';
 import path from 'node:path';
 
 import {
@@ -92,6 +93,12 @@ async function testServiceArchitectureBoundaries(
 
 const workspaceImplementationImportPattern =
   /^(@bangle\.io\/[^/]+)\/src(?:\/|$)/;
+const publicRootSubpathEntryNames = new Set([
+  'setup.ts',
+  'testing.ts',
+  'testing-styles.ts',
+]);
+const starExportPattern = /^\s*export\s+\*\s+from\s+['"][^'"]+['"];?\s*$/;
 
 export function isWorkspaceImplementationImport(
   importPath: string,
@@ -107,6 +114,42 @@ export function isWorkspaceImportContractFile(filePath: string): boolean {
   return /\.(?:cjs|jsx?|mjs|tsx?)$/.test(filePath);
 }
 
+export function findStarExportLines(sourceCode: string): number[] {
+  const lines: number[] = [];
+
+  for (const [index, line] of sourceCode.split('\n').entries()) {
+    if (starExportPattern.test(line)) {
+      lines.push(index + 1);
+    }
+  }
+
+  return lines;
+}
+
+function getPublicBarrelEntryPaths(pkg: Package): string[] {
+  const entryPaths = new Set<string>();
+
+  for (const entry of [pkg.packageJSON.main, pkg.packageJSON.module]) {
+    if (!entry || !isWorkspaceImportContractFile(entry)) {
+      continue;
+    }
+
+    const filePath = path.resolve(pkg.packagePath, entry);
+    if (pkg.getFileHelper(filePath)) {
+      entryPaths.add(filePath);
+    }
+  }
+
+  for (const entryName of publicRootSubpathEntryNames) {
+    const filePath = path.resolve(pkg.packagePath, entryName);
+    if (pkg.getFileHelper(filePath)) {
+      entryPaths.add(filePath);
+    }
+  }
+
+  return [...entryPaths];
+}
+
 async function testWorkspacePackageImportContracts(
   packageMap: Map<string, Package>,
 ) {
@@ -117,6 +160,19 @@ async function testWorkspacePackageImportContracts(
   const errors: string[] = [];
 
   for (const [, pkg] of packageMap.entries()) {
+    for (const filePath of getPublicBarrelEntryPaths(pkg)) {
+      const relativeFilePath = path.relative(rootPath, filePath);
+      const starExportLines = findStarExportLines(
+        await fsProm.readFile(filePath, 'utf-8'),
+      );
+
+      for (const line of starExportLines) {
+        errors.push(
+          `${relativeFilePath}:${line} uses export * from a public package barrel. Use explicit named exports so package APIs and unused exports stay visible.`,
+        );
+      }
+    }
+
     await pkg.forEachFile(
       async ({ content, filePath }) => {
         const relativeFilePath = path.relative(rootPath, filePath);

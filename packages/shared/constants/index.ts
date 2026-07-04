@@ -101,11 +101,10 @@ export const SERVICE_NAME = {
 } as const;
 export const APP_MAIN_CONTENT_PADDING = 'px-4 py-4 pt-0 md:px-6';
 export type ServiceName = (typeof SERVICE_NAME)[keyof typeof SERVICE_NAME];
-export * from './browser-history-events';
-export * from './command';
-export * from './routes';
-export * from './theme';
-
+export { browserHistoryStateEvents } from './browser-history-events';
+export { commandExcludedServices, commandKeyToContext } from './command';
+export { ROUTES } from './routes';
+export { THEME_MANAGER_CONFIG } from './theme';
 // Note we are stuck with these names because of the indexeddb
 export const DATABASE_TABLE_NAME = {
   // table for workspace related information like name, last modified, etc (dont contain actual Files)

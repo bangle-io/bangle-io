@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  findStarExportLines,
   isWorkspaceImplementationImport,
   isWorkspaceImportContractFile,
 } from '../validate-all';
@@ -60,5 +61,28 @@ describe('isWorkspaceImportContractFile', () => {
   it('ignores non-source text files', () => {
     expect(isWorkspaceImportContractFile('package/README.md')).toBe(false);
     expect(isWorkspaceImportContractFile('package/styles.css')).toBe(false);
+  });
+});
+
+describe('findStarExportLines', () => {
+  it('finds star re-exports with line numbers', () => {
+    expect(
+      findStarExportLines(`
+export { named } from './named';
+export * from './private-module';
+  export * from "./other-private-module";
+export type { PublicType } from './types';
+`),
+    ).toEqual([3, 4]);
+  });
+
+  it('ignores non-star exports', () => {
+    expect(
+      findStarExportLines(`
+export { A, B } from './named';
+export type { C } from './types';
+export * as namespace from './namespace';
+`),
+    ).toEqual([]);
   });
 });
