@@ -62,7 +62,7 @@ function createView({
   return { view, mount };
 }
 
-function dispatchPaste(view: EditorView, file: File) {
+function dispatchPaste(view: EditorView, file: File, text?: string) {
   const event = {
     preventDefault: vi.fn(),
     clipboardData: {
@@ -73,6 +73,8 @@ function dispatchPaste(view: EditorView, file: File) {
         },
       ],
       files: [file],
+      types: text ? ['Files', 'text/plain'] : ['Files'],
+      getData: (type: string) => (type === 'text/plain' ? text : ''),
     },
   } as unknown as ClipboardEvent;
 
@@ -97,7 +99,12 @@ function dispatchPasteText(view: EditorView, text: string) {
   );
 }
 
-function dispatchDrop(view: EditorView, file: File, position: number) {
+function dispatchDrop(
+  view: EditorView,
+  file: File,
+  position: number,
+  text?: string,
+) {
   view.posAtCoords = vi.fn(() => ({ pos: position, inside: -1 }));
   const event = {
     clientX: 10,
@@ -113,7 +120,8 @@ function dispatchDrop(view: EditorView, file: File, position: number) {
         },
       ],
       files: [file],
-      types: ['Files'],
+      types: text ? ['Files', 'text/plain'] : ['Files'],
+      getData: (type: string) => (type === 'text/plain' ? text : ''),
     },
   } as unknown as DragEvent;
 
@@ -274,6 +282,93 @@ describe('setupAssetFilePlugin', () => {
       expect(firstNode?.text).toBe('Doc.pdf');
       expect(firstNode?.marks[0]?.type.name).toBe('link');
       expect(firstNode?.marks[0]?.attrs.href).toBe('assets/doc.pdf');
+    });
+    view.destroy();
+  });
+
+  it('stores pasted files before considering plain-text asset references', async () => {
+    const stored = deferred<StoredMarkdownAsset[]>();
+    const storeFiles = vi.fn(() => stored.promise);
+    const resolveAssetReference = vi.fn(
+      (): MarkdownAssetReference | undefined => ({
+        href: 'assets/existing.png',
+        label: 'existing.png',
+        isImage: true,
+      }),
+    );
+    const { view } = createView({ resolveAssetReference, storeFiles });
+
+    expect(
+      dispatchPaste(
+        view,
+        new File(['image'], 'External.png', { type: 'image/png' }),
+        'assets/existing.png',
+      ),
+    ).toBe(true);
+    expect(resolveAssetReference).not.toHaveBeenCalled();
+
+    stored.resolve([
+      {
+        file: new File(['image'], 'External.png', { type: 'image/png' }),
+        wsPath: WsFilePath.fromString('workspace:notes/assets/external.png'),
+        href: 'assets/external.png',
+        label: 'External.png',
+        isImage: true,
+      },
+    ]);
+
+    await vi.waitFor(() => {
+      const imageNode = view.state.doc.firstChild?.child(1);
+      expect(imageNode?.type.name).toBe('image');
+      expect(imageNode?.attrs).toMatchObject({
+        src: 'assets/external.png',
+        alt: 'External.png',
+      });
+    });
+    view.destroy();
+  });
+
+  it('stores dropped files before considering plain-text asset references', async () => {
+    const stored = deferred<StoredMarkdownAsset[]>();
+    const storeFiles = vi.fn(() => stored.promise);
+    const resolveAssetReference = vi.fn(
+      (): MarkdownAssetReference | undefined => ({
+        href: 'assets/existing.png',
+        label: 'existing.png',
+        isImage: true,
+      }),
+    );
+    const { view } = createView({ resolveAssetReference, storeFiles });
+
+    expect(
+      dispatchDrop(
+        view,
+        new File(['%PDF-1.4\n'], 'External.pdf', {
+          type: 'application/pdf',
+        }),
+        0,
+        'assets/existing.png',
+      ),
+    ).toBe(true);
+    expect(resolveAssetReference).not.toHaveBeenCalled();
+
+    stored.resolve([
+      {
+        file: new File(['%PDF-1.4\n'], 'External.pdf', {
+          type: 'application/pdf',
+        }),
+        wsPath: WsFilePath.fromString('workspace:notes/assets/external.pdf'),
+        href: 'assets/external.pdf',
+        label: 'External.pdf',
+        isImage: false,
+      },
+    ]);
+
+    await vi.waitFor(() => {
+      const linkedText = view.state.doc.firstChild?.firstChild;
+      expect(linkedText?.text).toBe('External.pdf');
+      expect(linkedText?.marks[0]?.type.name).toBe('link');
+      expect(linkedText?.marks[0]?.attrs.href).toBe('assets/external.pdf');
     });
     view.destroy();
   });
