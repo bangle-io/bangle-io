@@ -6,7 +6,6 @@ import {
   type FileTreeEntryAction,
   KbdShortcut,
   Sidebar,
-  toast,
   AppSidebar as UIAppSidebar,
 } from '@bangle.io/ui-components';
 import bangleIcon from '@bangle.io/ui-components/src/bangle-transparent_x512.png';
@@ -31,28 +30,6 @@ import React, { useMemo } from 'react';
 
 interface SidebarProps {
   children: React.ReactNode;
-}
-
-async function writeTextToClipboard(value: string): Promise<void> {
-  if (navigator.clipboard?.writeText) {
-    await navigator.clipboard.writeText(value);
-    return;
-  }
-
-  const textArea = document.createElement('textarea');
-  textArea.value = value;
-  textArea.setAttribute('readonly', 'true');
-  textArea.style.position = 'fixed';
-  textArea.style.left = '-9999px';
-  document.body.append(textArea);
-  textArea.select();
-  try {
-    if (!document.execCommand('copy')) {
-      throw new Error('Clipboard copy command failed');
-    }
-  } finally {
-    textArea.remove();
-  }
 }
 
 export const AppSidebar = ({ children }: SidebarProps) => {
@@ -157,23 +134,14 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             Icon: Copy,
             onClick: (entry) => {
               const wsPath = getFileWsPath(entry.path);
-              const target = wsPath
-                ? WsPath.safeParseFile(wsPath).data
-                : undefined;
-              const copiedPath = target?.path;
-
-              if (!copiedPath) {
-                toast.error(t.app.toasts.pathCopyFailed);
+              if (!wsPath) {
                 return;
               }
-
-              void writeTextToClipboard(copiedPath)
-                .then(() => {
-                  toast.success(t.app.toasts.pathCopied);
-                })
-                .catch(() => {
-                  toast.error(t.app.toasts.pathCopyFailed);
-                });
+              commandDispatcher.dispatch(
+                'command::ui:copy-workspace-path',
+                { wsPath },
+                'ui',
+              );
             },
           });
         }

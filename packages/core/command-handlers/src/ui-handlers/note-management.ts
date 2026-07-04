@@ -1,8 +1,31 @@
 import { throwAppError } from '@bangle.io/base-utils';
+import { toast } from '@bangle.io/ui-components';
 import { WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { FilePlus } from 'lucide-react';
 import { c, getCtx } from '../helper';
 import { validateInputPath } from '../utils';
+
+async function writeTextToClipboard(value: string): Promise<void> {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(value);
+    return;
+  }
+
+  const textArea = document.createElement('textarea');
+  textArea.value = value;
+  textArea.setAttribute('readonly', 'true');
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-9999px';
+  document.body.append(textArea);
+  textArea.select();
+  try {
+    if (!document.execCommand('copy')) {
+      throw new Error('Clipboard copy command failed');
+    }
+  } finally {
+    textArea.remove();
+  }
+}
 
 export const noteManagementHandlers = [
   c(
@@ -277,6 +300,23 @@ export const noteManagementHandlers = [
         },
       };
     });
+  }),
+
+  c('command::ui:copy-workspace-path', async (_, { wsPath }) => {
+    const target = WsPath.safeParseFile(wsPath).data;
+    const copiedPath = target?.path;
+
+    if (!copiedPath) {
+      toast.error(t.app.toasts.pathCopyFailed);
+      return;
+    }
+
+    try {
+      await writeTextToClipboard(copiedPath);
+      toast.success(t.app.toasts.pathCopied);
+    } catch {
+      toast.error(t.app.toasts.pathCopyFailed);
+    }
   }),
 
   c(

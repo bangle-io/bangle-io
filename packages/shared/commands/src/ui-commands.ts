@@ -181,6 +181,18 @@ export const uiCommands = narrow([
     },
   },
   {
+    id: 'command::ui:copy-workspace-path',
+    title: 'Copy Path',
+    keywords: ['copy', 'path', 'file'],
+    dependencies: {
+      services: [],
+    },
+    autoFocusEditor: false,
+    args: {
+      wsPath: T.String,
+    },
+  },
+  {
     id: 'command::ui:move-note-dialog',
     title: 'Move Note',
     keywords: ['move', 'note', 'relocate'],
