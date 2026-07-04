@@ -39,7 +39,7 @@ export async function validate(item: SetupResult) {
     testUniversalPackagesToRelyOnlyOnUniversal(item.packagesMap),
     testServicePackagesDependencies(item.packagesMap),
     testServiceArchitectureBoundaries(item.packagesMap),
-    testWorkspacePackagePublicContracts(item.packagesMap),
+    testWorkspacePackageImportContracts(item.packagesMap),
     validateSameDependencyVersions(item.packagesMap),
   ];
 
@@ -103,72 +103,11 @@ export function isWorkspaceImplementationImport(
   return Boolean(packageName && packageNames.has(packageName));
 }
 
-export function findUnmarkedPublicEntryExports(sourceCode: string): number[] {
-  const lines = sourceCode.split(/\r?\n/);
-  const violations: number[] = [];
-  let jsdocHasPublic = false;
-  let inJSDoc = false;
-  let pendingPublic = false;
-
-  for (const [index, line] of lines.entries()) {
-    const trimmed = line.trim();
-
-    if (inJSDoc) {
-      jsdocHasPublic ||= trimmed.includes('@public');
-      if (trimmed.endsWith('*/') || trimmed.includes('*/')) {
-        inJSDoc = false;
-        pendingPublic = jsdocHasPublic;
-        jsdocHasPublic = false;
-      }
-      continue;
-    }
-
-    if (trimmed.startsWith('/**')) {
-      jsdocHasPublic = trimmed.includes('@public');
-      if (trimmed.includes('*/')) {
-        pendingPublic = jsdocHasPublic;
-        jsdocHasPublic = false;
-      } else {
-        inJSDoc = true;
-      }
-      continue;
-    }
-
-    if (trimmed === '') {
-      continue;
-    }
-
-    if (trimmed.startsWith('export ')) {
-      if (!pendingPublic) {
-        violations.push(index + 1);
-      }
-    }
-
-    pendingPublic = false;
-  }
-
-  return violations;
-}
-
-function getPackageEntryPaths(pkg: Package): string[] {
-  const entryFields = [pkg.packageJSON.main, pkg.packageJSON.module].filter(
-    (entry): entry is string => typeof entry === 'string' && entry.length > 0,
-  );
-
-  return [
-    ...new Set(
-      entryFields
-        .filter((entry) => /\.(?:[cm]?[jt]sx?)$/.test(entry))
-        .map((entry) => path.resolve(pkg.packagePath, entry)),
-    ),
-  ];
-}
-
-async function testWorkspacePackagePublicContracts(
+async function testWorkspacePackageImportContracts(
   packageMap: Map<string, Package>,
 ) {
   const throwValidationError = makeThrowValidationError(
-    'testWorkspacePackagePublicContracts',
+    'testWorkspacePackageImportContracts',
   );
   const packageNames = new Set(packageMap.keys());
   const errors: string[] = [];
@@ -191,20 +130,6 @@ async function testWorkspacePackagePublicContracts(
         }
       },
       (file) => file.isTSFile || file.isJSFile,
-    );
-
-    const entryPaths = new Set(getPackageEntryPaths(pkg));
-    await pkg.forEachFile(
-      async ({ content, filePath }) => {
-        const violations = findUnmarkedPublicEntryExports(content);
-
-        for (const line of violations) {
-          errors.push(
-            `${path.relative(rootPath, filePath)}:${line} exports from a package entry file without a /** @public */ contract marker.`,
-          );
-        }
-      },
-      (file) => entryPaths.has(file.filePath),
     );
   }
 

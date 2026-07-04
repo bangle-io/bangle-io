@@ -3,16 +3,9 @@ import type { Validator } from '@bangle.io/mini-js-utils';
 import type { Command } from '@bangle.io/types';
 import { uiCommands } from './ui-commands';
 import { wsCommands } from './ws-commands';
-
-/** @public */
 export const bangleAppCommands = [...uiCommands, ...wsCommands];
-
-/** @public */
 export type BangleAppCommand = (typeof bangleAppCommands)[number];
-/** @public */
 export type EnabledBangleAppCommand = BangleAppCommand & Command;
-
-/** @public */
 export function getEnabledCommands(): EnabledBangleAppCommand[] {
   const commands: EnabledBangleAppCommand[] = bangleAppCommands;
   return commands.filter((command) => !command.disabled);
@@ -68,8 +61,6 @@ function validate(commands: Command[]) {
 }
 
 validate(bangleAppCommands);
-
-/** @public */
 export function areAllValuesOptional(args: {
   [key: string]: Validator<any>;
 }): boolean {

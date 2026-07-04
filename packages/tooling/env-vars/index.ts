@@ -105,8 +105,6 @@ interface EnvVarsResult {
   htmlInjections: HtmlInjections;
   globalIdentifiers: GlobalIdentifiers;
 }
-
-/** @public */
 export default ({
   isProduction = false,
   isStorybook = false,

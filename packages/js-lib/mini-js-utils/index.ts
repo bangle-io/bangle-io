@@ -1,28 +1,15 @@
 // WARNING !! Should not import any other env oriented library
 // should only focus on Javascript and NO BROWSER or NODEJS specific apis
-
-/** @public */
 export * from './base-error';
-/** @public */
 export * from './browser';
-/** @public */
 export { createEmptyArray } from './create-empty-array';
-/** @public */
 export { DuoWeakMap } from './duo-weak-map';
-/** @public */
 export * from './emitter';
-/** @public */
 export { getLast } from './get-last';
-/** @public */
 export * from './is-abort-error';
-/** @public */
 export * from './mini-zod';
-/** @public */
 export { weakCache } from './weak-cache';
-/** @public */
 export { weakCacheDuo } from './weak-cache-duo';
-
-/** @public */
 export function isPlainObject(value: any) {
   if (typeof value !== 'object' || value === null) {
     return false;
@@ -69,7 +56,6 @@ const _deepMerge = (
  * @param ...source will traverse this object and merge into target
  * @returns
  */
-/** @public */
 export function deepMerge(
   target: Record<string, any>,
   ...source: Record<string, any>[]
@@ -82,15 +68,12 @@ export function deepMerge(
 
   return result;
 }
-/** @public */
 export function difference<T>(main: T[] | Set<T>, sub: T[] | Set<T>): T[] {
   const a = new Set(main);
   const b = new Set(sub);
 
   return [...a].filter((x) => !b.has(x));
 }
-
-/** @public */
 export function intersect<T>(main: T[] | Set<T>, sub: T[] | Set<T>): T[] {
   const a = new Set(main);
   const b = new Set(sub);
@@ -103,14 +86,9 @@ export function intersect<T>(main: T[] | Set<T>, sub: T[] | Set<T>): T[] {
  * https://basarat.gitbook.io/typescript/main-1/nominaltyping
  */
 declare const __brand: unique symbol;
-/** @public */
 export type Brand<T, K> = T & { [__brand]: K };
-
-/** @public */
 export type IfEquals<T, U, Y = unknown, N = never> =
   (<G>() => G extends T ? 1 : 2) extends <G>() => G extends U ? 1 : 2 ? Y : N;
-
-/** @public */
 export const expectType = <Expected, Actual>(
   _actual: IfEquals<Actual, Expected, Actual>,
 ) => void 0;
@@ -118,7 +96,6 @@ export const expectType = <Expected, Actual>(
 /**
  * from: https://github.com/microsoft/vscode/blob/6697193a79694d59c8e4f586330ee7a95c42b1b1/src/vs/base/common/types.ts#L97
  */
-/** @public */
 export function assertIsDefined<T>(
   arg: T | null | undefined,
   hint?: string,
@@ -127,13 +104,9 @@ export function assertIsDefined<T>(
     throw new Error(`Assertion Failed: argument is undefined or null. ${hint}`);
   }
 }
-
-/** @public */
 export function isUndefinedOrNull(obj: unknown): obj is undefined | null {
   return isUndefined(obj) || obj === null;
 }
-
-/** @public */
 export function isUndefined(obj: unknown): obj is undefined {
   return typeof obj === 'undefined';
 }

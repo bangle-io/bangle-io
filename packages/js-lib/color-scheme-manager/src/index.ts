@@ -5,29 +5,22 @@
 type ThemePreference = 'light' | 'dark' | 'system';
 
 // Avoid changing the default config, as it is implicitly in rest of the app.
-/** @public */
 export const THEME_MANAGER_DEFAULT_CONFIG = {
   darkThemeClass: 'BU_dark-scheme',
   lightThemeClass: 'BU_light-scheme',
   defaultPreference: 'system',
   storageKey: 'color-scheme',
 } as const;
-
-/** @public */
 export interface ThemeConfig {
   readonly lightThemeClass: string;
   readonly darkThemeClass: string;
   readonly storageKey: string;
   readonly defaultPreference: ThemePreference;
 }
-
-/** @public */
 export type ThemeCallback = (config: {
   theme: string;
   preference: ThemePreference;
 }) => void;
-
-/** @public */
 export class ThemeManager {
   public currentTheme: string;
   public currentPreference: ThemePreference;

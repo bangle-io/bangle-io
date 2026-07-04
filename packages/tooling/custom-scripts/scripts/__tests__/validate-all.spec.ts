@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  findUnmarkedPublicEntryExports,
-  isWorkspaceImplementationImport,
-} from '../validate-all';
+import { isWorkspaceImplementationImport } from '../validate-all';
 
 describe('isWorkspaceImplementationImport', () => {
   const packageNames = new Set([
@@ -36,35 +33,5 @@ describe('isWorkspaceImplementationImport', () => {
     expect(
       isWorkspaceImplementationImport('@external/pkg/src/index', packageNames),
     ).toBe(false);
-  });
-});
-
-describe('findUnmarkedPublicEntryExports', () => {
-  it('accepts public-marked entry exports', () => {
-    expect(
-      findUnmarkedPublicEntryExports(`
-        /** @public */
-        export * from './ws-path';
-
-        /**
-         * Root package contract.
-         * @public
-         */
-        export type { WsPath } from './ws-path';
-      `),
-    ).toEqual([]);
-  });
-
-  it('reports entry exports without public markers', () => {
-    expect(
-      findUnmarkedPublicEntryExports(`
-        export * from './ws-path';
-
-        /** @public */
-        export { WsPath } from './ws-path';
-
-        export const testOnlyHelper = true;
-      `),
-    ).toEqual([2, 7]);
   });
 });

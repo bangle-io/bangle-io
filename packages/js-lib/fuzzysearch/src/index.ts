@@ -3,19 +3,16 @@
 /**
  * A function type for fuzzy search algorithms.
  */
-/** @public */
 export type FuzzySearchFunction = (needle: string, haystack: string) => boolean;
 
 /**
  * A function type for scoring functions.
  */
-/** @public */
 export type ScoringFunction = (needle: string, haystack: string) => number;
 
 /**
  * Options for the rankedFuzzySearch function.
  */
-/** @public */
 export interface FuzzySearchOptions {
   /**
    * Fuzzy search function to use. Defaults to defaultFuzzySearch.
@@ -44,8 +41,6 @@ export interface FuzzySearchOptions {
 function normalizeString(str: string): string {
   return str.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
 }
-
-/** @public */
 export function defaultFuzzySearch(needle: string, haystack: string): boolean {
   const needleNorm = normalizeString(needle);
   const haystackNorm = normalizeString(haystack);
@@ -84,7 +79,6 @@ export function defaultFuzzySearch(needle: string, haystack: string): boolean {
  * @param haystack - The string to search within.
  * @returns True if the needle is a substring of the haystack.
  */
-/** @public */
 export function substringFuzzySearch(
   needle: string,
   haystack: string,
@@ -100,7 +94,6 @@ export function substringFuzzySearch(
  * @param haystack - The string to search within.
  * @returns True if the Levenshtein distance is within the threshold.
  */
-/** @public */
 export function levenshteinFuzzySearch(
   needle: string,
   haystack: string,
@@ -122,7 +115,6 @@ export function levenshteinFuzzySearch(
  * @param options - Optional parameters to configure the search.
  * @returns An array of matched items with their scores, sorted by score.
  */
-/** @public */
 export function rankedFuzzySearch(
   needle: string,
   haystacks: string[],
@@ -182,7 +174,6 @@ export function rankedFuzzySearch(
  * @param haystack - The string to score.
  * @returns A score between 0 and 1.
  */
-/** @public */
 export function defaultScoringFunction(
   needle: string,
   haystack: string,
@@ -220,7 +211,6 @@ export function defaultScoringFunction(
  * @param haystack - The string to score.
  * @returns A score between 0 and 1.
  */
-/** @public */
 export function levenshteinScoringFunction(
   needle: string,
   haystack: string,
@@ -240,7 +230,6 @@ export function levenshteinScoringFunction(
  * @param b - The second string.
  * @returns The Levenshtein distance.
  */
-/** @public */
 export function levenshteinDistance(a: string, b: string): number {
   const aNorm = normalizeString(a);
   const bNorm = normalizeString(b);

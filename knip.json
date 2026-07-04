@@ -1,7 +1,6 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "treatConfigHintsAsErrors": true,
-  "treatTagHintsAsErrors": true,
   "workspaces": {
     ".": {
       "entry": [".github/scripts/**/*.cjs"],
