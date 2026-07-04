@@ -9,13 +9,13 @@ import {
   TextSelection,
   undo,
 } from '@bangle.io/prosemirror-plugins';
+import type { StoredMarkdownAsset } from '@bangle.io/service-core';
 import { WsFilePath } from '@bangle.io/ws-path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   type MarkdownAssetReference,
   setupAssetFilePlugin,
 } from '../asset-file-plugin';
-import type { StoredMarkdownAsset } from '../asset-storage';
 
 function deferred<T>() {
   let resolve: (value: T) => void = () => {};

@@ -5,7 +5,7 @@ import {
   getAssetDestination,
   storeWorkspaceAssetFiles,
   writeAssetFile,
-} from '../asset-storage';
+} from '../workspace-asset-storage';
 
 const now = new Date(2026, 0, 2, 3, 4, 5, 6);
 

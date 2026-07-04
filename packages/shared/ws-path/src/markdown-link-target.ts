@@ -1,4 +1,4 @@
-import { resolveInternalWsPath } from '@bangle.io/ws-path';
+import { resolveInternalWsPath } from './internal-link';
 
 const HTTP_PROTOCOLS = new Set(['http:', 'https:']);
 

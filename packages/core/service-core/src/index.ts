@@ -7,6 +7,7 @@ export * from './shortcut-service';
 export * from './user-activity-service';
 export * from './workbench-service';
 export * from './workbench-state-service';
+export * from './workspace-asset-storage';
 export * from './workspace-ops-service';
 export * from './workspace-service';
 export * from './workspace-state-service';

@@ -7,11 +7,14 @@ import {
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
 import { type EditorView, TextSelection } from '@bangle.io/prosemirror-plugins';
-import type {
-  FileSystemService,
-  NavigationService,
-  WorkbenchStateService,
-  WorkspaceStateService,
+import {
+  displayNameForAsset,
+  type FileSystemService,
+  type NavigationService,
+  type StoredMarkdownAsset,
+  storeWorkspaceAssetFiles,
+  type WorkbenchStateService,
+  type WorkspaceStateService,
 } from '@bangle.io/service-core';
 import type { Store } from '@bangle.io/types';
 import { toast } from '@bangle.io/ui-components';
@@ -19,7 +22,10 @@ import {
   createMissingWikiLinkTarget,
   createWikiLinkIndex,
   getEmbeddableWorkspaceAssetKind,
+  getInternalLinkHeading,
+  normalizeStoredMarkdownLinkTarget,
   relativeMarkdownAssetHref,
+  resolveInternalLink,
   resolveLocalMarkdownAsset,
   resolveWikiLinkTarget,
   resolveWorkspaceMarkdownAssetReferenceCandidates,
@@ -30,22 +36,12 @@ import {
 
 import type { MarkdownAssetReference } from './asset-file-plugin';
 import {
-  displayNameForAsset,
-  type StoredMarkdownAsset,
-  storeWorkspaceAssetFiles,
-} from './asset-storage';
-import {
   createEditorSaveQueueStore,
   EditorSaveQueue,
   type EditorSaveStatus,
 } from './editor-save-queue';
 import { setupExtensions } from './extensions';
 import { findHeadingIndexBySlug } from './heading-slug';
-import {
-  getInternalLinkHeading,
-  normalizeStoredMarkdownLinkTarget,
-  resolveInternalLink,
-} from './link-target';
 import { createLocalImageNodeView } from './local-image-node-view';
 import { createEditor } from './pm-setup';
 

@@ -12,8 +12,7 @@ import {
   TextSelection,
   type Transaction,
 } from '@bangle.io/prosemirror-plugins';
-
-import type { StoredMarkdownAsset } from './asset-storage';
+import type { StoredMarkdownAsset } from '@bangle.io/service-core';
 
 export type MarkdownAssetReference = {
   href: string;

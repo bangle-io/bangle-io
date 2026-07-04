@@ -7,9 +7,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@bangle.io/ui-components';
+import { normalizeLinkTarget } from '@bangle.io/ws-path';
 import { Check, CircleAlert, Copy, ExternalLink, Unlink } from 'lucide-react';
 import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
-import { normalizeLinkTarget } from '../link-target';
 import type { PmEditorService } from '../pm-editor-service';
 import {
   FLOATING_INITIAL_STYLE,

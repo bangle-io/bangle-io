@@ -4,7 +4,7 @@ import {
   normalizeLinkTarget,
   normalizeStoredMarkdownLinkTarget,
   resolveInternalLink,
-} from '../link-target';
+} from '../markdown-link-target';
 
 describe('normalizeLinkTarget', () => {
   it('normalizes web links and preserves relative Markdown paths', () => {
