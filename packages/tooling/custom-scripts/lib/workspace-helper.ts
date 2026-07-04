@@ -85,6 +85,8 @@ interface PackageState {
 interface PackageJSON {
   name: string;
   version: string;
+  main?: string;
+  module?: string;
   scripts?: Record<string, string>;
   repository?: Record<string, any>;
   author?: string;
