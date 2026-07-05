@@ -112,22 +112,19 @@ export const basicOperationsHandlers = [
     },
   ),
 
-  c(
-    'command::ui:focus-editor',
-    ({ workspaceState, pmEditorService }, _, key) => {
-      const { store } = getCtx(key);
-      const currentWsPath = store.get(workspaceState.$currentWsPath);
+  c('command::ui:focus-editor', ({ workspaceState, editorEngine }, _, key) => {
+    const { store } = getCtx(key);
+    const currentWsPath = store.get(workspaceState.$currentWsPath);
 
-      if (!currentWsPath) {
-        return;
-      }
+    if (!currentWsPath) {
+      return;
+    }
 
-      pmEditorService.focusEditor();
-    },
-  ),
+    editorEngine.focusEditor();
+  }),
 
-  c('command::ui:copy-selection-as-markdown', async ({ pmEditorService }) => {
-    const markdown = pmEditorService.getSelectionMarkdown();
+  c('command::ui:copy-selection-as-markdown', async ({ editorEngine }) => {
+    const markdown = editorEngine.getSelectionMarkdown();
     if (!markdown) {
       toast.error(t.app.toasts.selectionCopyEmpty);
       return;
@@ -140,7 +137,7 @@ export const basicOperationsHandlers = [
     }
   }),
 
-  c('command::ui:paste-from-markdown', async ({ pmEditorService }) => {
+  c('command::ui:paste-from-markdown', async ({ editorEngine }) => {
     let text: string;
     try {
       text = await readTextFromClipboard();
@@ -152,28 +149,28 @@ export const basicOperationsHandlers = [
       toast.error(t.app.toasts.pasteMarkdownEmpty);
       return;
     }
-    if (!pmEditorService.insertMarkdownAtSelection(text)) {
+    if (!editorEngine.insertMarkdownAtSelection(text)) {
       toast.error(t.app.toasts.pasteMarkdownFailed);
     }
   }),
 
-  c('command::ui:toggle-heading-collapse', ({ pmEditorService }) => {
-    pmEditorService.toggleHeadingCollapse();
+  c('command::ui:toggle-heading-collapse', ({ editorEngine }) => {
+    editorEngine.toggleHeadingCollapse();
   }),
 
-  c('command::ui:uncollapse-all-headings', ({ pmEditorService }) => {
-    pmEditorService.uncollapseAllHeadings();
+  c('command::ui:uncollapse-all-headings', ({ editorEngine }) => {
+    editorEngine.uncollapseAllHeadings();
   }),
 
-  c('command::ui:collapse-all-headings-1', ({ pmEditorService }) => {
-    pmEditorService.collapseAllHeadings(1);
+  c('command::ui:collapse-all-headings-1', ({ editorEngine }) => {
+    editorEngine.collapseAllHeadings(1);
   }),
 
-  c('command::ui:collapse-all-headings-2', ({ pmEditorService }) => {
-    pmEditorService.collapseAllHeadings(2);
+  c('command::ui:collapse-all-headings-2', ({ editorEngine }) => {
+    editorEngine.collapseAllHeadings(2);
   }),
 
-  c('command::ui:collapse-all-headings-3', ({ pmEditorService }) => {
-    pmEditorService.collapseAllHeadings(3);
+  c('command::ui:collapse-all-headings-3', ({ editorEngine }) => {
+    editorEngine.collapseAllHeadings(3);
   }),
 ];

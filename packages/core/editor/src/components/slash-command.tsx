@@ -46,8 +46,8 @@ export function SlashCommand({
   const suggestions = useAtomValue($suggestions);
   const commandRef = useRef<HTMLDivElement>(null);
   const prevSelectedIndexRef = useRef<number>(0);
-  const { pmEditorService } = useEditorCoreServices();
-  const editorView = pmEditorService.getEditor(editorName);
+  const { editorEngine } = useEditorCoreServices();
+  const editorView = editorEngine.getEditor(editorName);
   const suggestion = editorView ? suggestions.get(editorView) : undefined;
   const active =
     suggestion?.markName === 'slash_command' ? suggestion : undefined;
@@ -101,7 +101,7 @@ export function SlashCommand({
     boundarySelector: '.ProseMirror:not([contenteditable="false"])',
   });
 
-  const ext = pmEditorService.extensions;
+  const ext = editorEngine.extensions;
 
   const dismissCommandUi = useCallback(() => {
     if (!editorView || !active) {

@@ -1,9 +1,9 @@
 import { APP_MAIN_CONTENT_PADDING } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
-import { Editor } from '@bangle.io/editor';
 import { useAtomValue } from 'jotai';
 import React, { useMemo } from 'react';
 import { LinkedMentions } from '../components/backlinks/linked-mentions';
+import { EditorSurface } from '../components/editor-surface';
 import { NoteNotFoundView } from '../components/feedback/note-not-found-view';
 import { WorkspaceNotFoundView } from '../components/feedback/workspace-not-found-view';
 import { AppHeader } from '../layout/app-header';
@@ -35,7 +35,7 @@ export function PageEditor() {
       <PageContentContainer applyPadding={false}>
         {currentWsPath && currentWsName ? (
           <>
-            <Editor
+            <EditorSurface
               key={editorKey}
               name={editorKey}
               wsPath={currentWsPath.wsPath}

@@ -24,7 +24,7 @@ export function Editor({
   className?: string;
   name: string;
 }) {
-  const { pmEditorService } = useEditorCoreServices();
+  const { editorEngine } = useEditorCoreServices();
 
   return (
     <div className="box-border flex h-full min-h-36 w-full min-w-0 flex-col">
@@ -36,7 +36,7 @@ export function Editor({
             (node: HTMLElement | null) => {
               const cleanup =
                 node &&
-                pmEditorService.mountEditor({
+                editorEngine.mountEditor({
                   domNode: node,
                   wsPath,
                   name,
@@ -46,9 +46,10 @@ export function Editor({
                 cleanup?.();
               };
             },
-            [name, wsPath, pmEditorService],
+            [name, wsPath, editorEngine],
           )}
           data-editor-name={name}
+          data-editor-engine={editorEngine.engineId}
           className={cx(
             'ProseMirror box-border min-h-full min-w-0 max-w-full py-8 outline-0 outline-hidden',
             '[&_:not(pre)_code]:rounded-md [&_:not(pre)_code]:bg-muted/40 [&_:not(pre)_code]:px-1.5 [&_:not(pre)_code]:py-0.5 [&_:not(pre)_code]:font-mono',

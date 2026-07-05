@@ -38,9 +38,9 @@ export function DatePickerMenu({
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const selectedDateRef = useRef(selectedDate);
   selectedDateRef.current = selectedDate;
-  const { pmEditorService } = useEditorCoreServices();
-  const editorView = pmEditorService.getEditor(editorName);
-  const ext = pmEditorService.extensions;
+  const { editorEngine } = useEditorCoreServices();
+  const editorView = editorEngine.getEditor(editorName);
+  const ext = editorEngine.extensions;
   const suggestion = editorView ? suggestions.get(editorView) : undefined;
   const active =
     suggestion?.markName === DATE_SUGGESTION.markName ? suggestion : undefined;

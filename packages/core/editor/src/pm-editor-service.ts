@@ -6,6 +6,7 @@ import {
   isAppError,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
+import type { EditorEngineContract } from '@bangle.io/context';
 import {
   type EditorView,
   markdownLoader,
@@ -101,15 +102,22 @@ type EditorEntry =
 type ReadyEditorEntry = Extract<EditorEntry, { editorView: unknown }>;
 
 /**
- * Manages ProseMirror editor instances and state
+ * Manages ProseMirror editor instances and state. This is the ProseMirror
+ * implementation of the `editorEngine` slot; everything outside this package
+ * consumes it through `EditorEngineContract`.
  */
-export class PmEditorService extends BaseService {
+export class PmEditorService
+  extends BaseService
+  implements EditorEngineContract
+{
   static deps = [
     'fileSystem',
     'navigation',
     'workbenchState',
     'workspaceState',
   ] as const;
+
+  public readonly engineId = 'prosemirror';
 
   public readonly extensions: ReturnType<typeof setupExtensions>;
 

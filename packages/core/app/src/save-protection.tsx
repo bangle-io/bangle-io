@@ -28,11 +28,11 @@ export function connectSaveProtection(
 }
 
 export function SaveProtection() {
-  const { navigation, pmEditorService } = useCoreServices();
+  const { navigation, editorEngine } = useCoreServices();
 
   useEffect(
-    () => connectSaveProtection(pmEditorService, navigation),
-    [navigation, pmEditorService],
+    () => connectSaveProtection(editorEngine, navigation),
+    [navigation, editorEngine],
   );
 
   return null;

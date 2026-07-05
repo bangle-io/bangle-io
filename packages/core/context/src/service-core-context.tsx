@@ -1,14 +1,14 @@
 import React, { createContext } from 'react';
-import type { CoreServices, PmEditorServiceContract } from './service-types';
+import type { CoreServices, EditorEngineContract } from './service-types';
 
 export const CoreServiceContext = createContext<CoreServices>(
   {} as CoreServices,
 );
 
 export function useCoreServices<
-  TPmEditorService extends PmEditorServiceContract = PmEditorServiceContract,
+  TEditorEngine extends EditorEngineContract = EditorEngineContract,
 >() {
-  return React.useContext(CoreServiceContext) as CoreServices<TPmEditorService>;
+  return React.useContext(CoreServiceContext) as CoreServices<TEditorEngine>;
 }
 
 export function CoreServiceProvider({

@@ -68,15 +68,15 @@ export function buildWikiLinkOptions({
 
 export function WikiLinkMenu({ editorName }: { editorName: string }) {
   const suggestions = useAtomValue($suggestions);
-  const { pmEditorService, workspaceState } = useEditorCoreServices();
+  const { editorEngine, workspaceState } = useEditorCoreServices();
   const index = useAtomValue(workspaceState.$wikiLinkIndex);
   const listRef = useRef<HTMLDivElement>(null);
-  const editorView = pmEditorService.getEditor(editorName);
+  const editorView = editorEngine.getEditor(editorName);
   const suggestion = editorView ? suggestions.get(editorView) : undefined;
   const active =
     suggestion?.markName === 'wiki_link_suggestion' ? suggestion : undefined;
   const query = active?.text.slice(2) ?? '';
-  const editorStatus = pmEditorService.getEditorLoadStatus(editorName);
+  const editorStatus = editorEngine.getEditorLoadStatus(editorName);
   const excludeWsPath =
     editorStatus.status === 'ready' ? editorStatus.wsPath : undefined;
 
@@ -101,13 +101,11 @@ export function WikiLinkMenu({ editorName }: { editorName: string }) {
         option.attrs,
       );
       if (!node) return;
-      pmEditorService.extensions.wikiSuggestions.command.replaceSuggestMarkWith(
-        {
-          content: Fragment.from(node),
-        },
-      )(editorView.state, editorView.dispatch, editorView);
+      editorEngine.extensions.wikiSuggestions.command.replaceSuggestMarkWith({
+        content: Fragment.from(node),
+      })(editorView.state, editorView.dispatch, editorView);
     },
-    [editorView, pmEditorService],
+    [editorView, editorEngine],
   );
 
   const selectedOption = options[selectedIndex];

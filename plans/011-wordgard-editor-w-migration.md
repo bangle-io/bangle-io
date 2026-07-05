@@ -1,6 +1,6 @@
 ---
 title: Wordgard migration (editor-w) — second editor engine behind an engine-agnostic seam
-status: planned
+status: active
 type: plan
 archived: false
 archived_on:
@@ -46,8 +46,34 @@ Key upstream facts (as of 2026-07-05):
 
 ## Current status
 
-Planned. This PR lands the plan, the vendored Wordgard docs, and the
-`wordgard` skill. No runtime code yet.
+Active. Landed so far (PR #609):
+
+- The plan, vendored Wordgard docs, and the `wordgard` skill.
+- **M0 seam hardening**: `PmEditorServiceContract` → `EditorEngineContract`
+  (with documented engine semantics and an `engineId` field), the
+  `pmEditorService` slot → `editorEngine` across commands, handlers, app,
+  context, and the composition root; `PmEditorService` now formally
+  `implements EditorEngineContract`; the mounted editor carries
+  `data-editor-engine`; the app layer's only engine-package import is the
+  documented `EditorSurface` leak point
+  (`packages/core/app/src/components/editor-surface.tsx`).
+
+Deliberate M0 exceptions (KISS — no dead switches before a second engine
+exists):
+
+- Engine selection stays a one-line assignment in
+  `initialize-services/src/service-setup.ts` (`editorEngine: PmEditorService`)
+  rather than a parameterized option; it becomes conditional when editor-w
+  scaffolds.
+- The persisted engine preference and the omni-search switch command are
+  deferred to the editor-w stub (start of M1/M2) — a switch with one engine
+  is untestable dead code.
+- `service-core/backlink-markdown-extractor.ts` still imports
+  `@bangle.io/prosemirror-plugins` for the markdown tokenizer + wiki-link
+  syntax; that moves to the shared markdown-syntax layer in M1 as planned.
+- The engine's own React overlays (slash/link/table/selection menus) remain
+  package-private to `core/editor`, consumed via the concrete service — this
+  is engine-internal by design, not a seam violation.
 
 ## Guiding principles
 
@@ -299,14 +325,20 @@ Each milestone is a stream of small PRs, merged continuously, full CI green.
 Milestones can overlap where dependencies allow; the ordering below is the
 dependency spine, not a calendar.
 
-**M0 — Seam hardening + switch plumbing (no Wordgard code)**
+**M0 — Seam hardening (no Wordgard code) — DONE**
 Rename contract/slot (`EditorEngineContract` / `editorEngine`), move any
-stragglers onto the contract, add the persisted engine preference, the
-omni-search switch command, composition-root selection with dynamic import,
-the boot guard, and `data-editor-engine`. editor-w exists as a stub package
-whose "editor" renders the note read-only (no Wordgard yet). Exit: switching
-engines round-trips through reload on a real workspace; e2e covers the
-switch + fallback; zero behavior change for PM users.
+stragglers onto the contract, `implements` check on `PmEditorService`,
+`data-editor-engine` on the mount, and the single `EditorSurface` leak point
+in the app layer. Exit (met): everything outside `core/editor` compiles
+against the contract only; zero behavior change for PM users.
+
+**M0b — Switch plumbing (lands with the editor-w stub)**
+The persisted engine preference, the omni-search switch command,
+composition-root selection with dynamic import, and the boot guard — landed
+together with a stub editor-w package whose "editor" renders the note
+read-only (no Wordgard yet), so the switch is real and e2e-testable the day
+it exists. Exit: switching engines round-trips through reload on a real
+workspace; e2e covers the switch + fallback.
 
 **M1 — `wordgard-markdown` + shared syntax + golden corpus**
 The codec for the full current schema (CommonMark + GFM tables/strikethrough
@@ -437,9 +469,11 @@ None. M0 can start immediately.
 
 ## Next steps
 
-1. Review/adjust naming decisions: `EditorEngineContract`, `editorEngine`
-   slot, `editor-w` package name, `EditorWService`.
-2. M0 PR series (seam rename → preference + command → root selection + boot
-   guard → stub editor-w + e2e switch coverage).
-3. Add `wordgard` (exact version) as a dependency when `wordgard-utils`
-   scaffolds at the start of M1.
+1. Scaffold `@bangle.io/wordgard-utils` + `@bangle.io/wordgard-markdown`
+   (js-lib) with `wordgard` pinned to an exact version, and start M1: the
+   markdown codec, shared syntax layer, and golden corpus.
+2. M0b alongside it: stub `@bangle.io/editor-w` package + persisted engine
+   preference + omni-search switch command + composition-root selection +
+   boot guard + e2e switch coverage.
+3. Extract `editor-common` (save queue, load-status, `<Editor>` shell) when
+   editor-w first needs it (M2).

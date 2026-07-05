@@ -63,7 +63,11 @@ export const coreServiceMap = {
   workspaceOps: WorkspaceOpsService,
   workspaceState: WorkspaceStateService,
   userActivityService: UserActivityService,
-  pmEditorService: PmEditorService,
+  // The active editor engine. This is the single line that decides which
+  // engine implementation powers the app; consumers only ever see the
+  // `EditorEngineContract` slot. When a second engine lands (plans/011),
+  // selection becomes conditional here, at the composition root.
+  editorEngine: PmEditorService,
 } satisfies Record<CoreServiceSlotId, AnyAppServiceConstructor>;
 
 type CoreServiceClassMap = typeof coreServiceMap;
@@ -257,7 +261,7 @@ function toCoreServices(s: CoreInstances): CoreServices {
     workspaceOps: s.workspaceOps,
     workspaceState: s.workspaceState,
     userActivityService: s.userActivityService,
-    pmEditorService: s.pmEditorService,
+    editorEngine: s.editorEngine,
   } satisfies CoreServices;
 }
 
@@ -305,7 +309,7 @@ export function createServiceSetup<
           rootEmitter.emit('event::command:result', result);
         },
         focusEditor: () => {
-          getCoreInstances().pmEditorService.focusEditor();
+          getCoreInstances().editorEngine.focusEditor();
         },
         // Hand the dispatcher only the command-exposed core slots; platform
         // services must stay unreachable from command handlers even at runtime.
@@ -406,7 +410,7 @@ export function createServiceSetup<
         ),
       })),
     ),
-    pmEditorService: slot(PmEditorService),
+    editorEngine: slot(PmEditorService),
   } satisfies Record<CoreServiceSlotId, AppServiceMapEntry>;
 
   // Core slots always win the join; the annotation drops any phantom core
@@ -442,7 +446,7 @@ export function createServiceSetup<
       workspaceOps: s.workspaceOps,
       workspaceState: s.workspaceState,
       userActivityService: s.userActivityService,
-      pmEditorService: s.pmEditorService,
+      editorEngine: s.editorEngine,
     };
   };
 

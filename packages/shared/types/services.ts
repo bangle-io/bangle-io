@@ -31,10 +31,10 @@ export type BaseRouterService = BaseRouter<RouterState> & BaseService;
 export type CoreServiceSlotId =
   | 'commandDispatcher'
   | 'commandRegistry'
+  | 'editorEngine'
   | 'editorService'
   | 'fileSystem'
   | 'navigation'
-  | 'pmEditorService'
   | 'shortcut'
   | 'userActivityService'
   | 'workbench'

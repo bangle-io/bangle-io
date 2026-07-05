@@ -14,8 +14,8 @@ export { isValidHttpUrl, normalizeHttpUrl };
 /** Floating link editor for an existing link under a collapsed cursor. */
 export function LinkMenu({ editorName }: { editorName: string }) {
   const linkMenus = useAtomValue($linkMenu);
-  const { pmEditorService } = useEditorCoreServices();
-  const editorView = pmEditorService.getEditor(editorName);
+  const { editorEngine } = useEditorCoreServices();
+  const editorView = editorEngine.getEditor(editorName);
   const linkMenu = editorView ? linkMenus.get(editorView) : undefined;
 
   if (!editorView || !linkMenu?.show) {
@@ -25,9 +25,9 @@ export function LinkMenu({ editorName }: { editorName: string }) {
   return (
     <CursorLinkMenu
       editorView={editorView}
-      ext={pmEditorService.extensions}
+      ext={editorEngine.extensions}
       href={linkMenu.href}
-      onOpen={(href) => pmEditorService.openLink(editorView, href)}
+      onOpen={(href) => editorEngine.openLink(editorView, href)}
       anchorEl={linkMenu.anchorEl}
       key={`${linkMenu.position}:${linkMenu.href}`}
     />
