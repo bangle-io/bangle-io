@@ -317,6 +317,65 @@ test('the fold toggle trails the last line of a wrapped heading', async ({
   await expect(editor.getByText('content below')).toBeVisible();
 });
 
+test('dragging left from heading whitespace selects heading text', async ({
+  page,
+}) => {
+  const workspaceName = 'collapsible-heading-whitespace-selection';
+  const noteName = 'Home';
+  const source = [
+    '# Select Me Heading',
+    '',
+    'content below',
+    '',
+    '# Next',
+    '',
+    'tail',
+  ].join('\n');
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(page, workspaceName, noteName, source);
+  await page.reload();
+
+  const editor = getEditorLocator(page, {});
+  const heading = editor.locator('h1', { hasText: 'Select Me Heading' });
+  await expect(heading).toBeVisible();
+
+  const dragMetrics = await heading.evaluate((element) => {
+    const textNode = [...element.childNodes].find(
+      (node): node is Text =>
+        node.nodeType === Node.TEXT_NODE &&
+        node.textContent?.includes('Select Me Heading') === true,
+    );
+    if (!textNode) {
+      throw new Error('Expected heading text node');
+    }
+
+    const range = document.createRange();
+    range.selectNodeContents(textNode);
+    const textRect = range.getBoundingClientRect();
+    const headingRect = element.getBoundingClientRect();
+    range.detach();
+
+    if (headingRect.right - textRect.right < 48) {
+      throw new Error('Expected empty whitespace to the right of the heading');
+    }
+
+    return {
+      endX: textRect.left + 1,
+      startX: headingRect.right - 8,
+      y: textRect.top + textRect.height / 2,
+    };
+  });
+
+  await page.mouse.move(dragMetrics.startX, dragMetrics.y);
+  await page.mouse.down();
+  await page.mouse.move(dragMetrics.endX, dragMetrics.y, { steps: 12 });
+  await page.mouse.up();
+
+  await expect
+    .poll(() => page.evaluate(() => window.getSelection()?.toString() ?? ''))
+    .toContain('Select Me Heading');
+});
+
 test('a heading with nothing beneath it shows a disabled toggle', async ({
   page,
 }) => {

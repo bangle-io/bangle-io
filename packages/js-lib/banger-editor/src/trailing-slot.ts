@@ -46,6 +46,17 @@ export function createTrailingWidget({
       key,
       side: 1,
       ignoreSelection: true,
+      relaxedSide: true,
+      stopEvent: isTrailingSlotEvent,
     },
+  );
+}
+
+function isTrailingSlotEvent(event: Event): boolean {
+  return (
+    event.type === 'mousedown' ||
+    event.type === 'pointerdown' ||
+    event.type === 'touchstart' ||
+    event.type === 'click'
   );
 }
