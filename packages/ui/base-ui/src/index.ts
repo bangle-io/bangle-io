@@ -1,6 +1,17 @@
 export { cn, useIsMobile } from '@bangle.io/ui-misc';
+export {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from './accordion';
 export type { ButtonProps } from './button';
 export { Button, buttonVariants } from './button';
+export {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from './collapsible';
 export type { InputProps } from './input';
 export { Input } from './input';
 export type { LabelProps } from './label';

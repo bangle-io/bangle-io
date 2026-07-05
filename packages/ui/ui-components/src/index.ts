@@ -1,6 +1,13 @@
 export type { InputProps } from '@bangle.io/base-ui';
 // Migrated primitives now come from the Base UI-backed package.
 export {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
   Input,
   Label,
   Separator,
@@ -12,12 +19,8 @@ export {
 } from '@bangle.io/base-ui';
 export type { ButtonProps } from '@bangle.io/shadcn';
 export * as DropdownMenu from '@bangle.io/shadcn';
-export * as Accordion from '@bangle.io/shadcn';
 export * as Menubar from '@bangle.io/shadcn';
 export {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -33,9 +36,6 @@ export {
   buttonVariants,
   Calendar,
   CalendarDayButton,
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
   Command,
   CommandBadge,
   CommandDialog,
