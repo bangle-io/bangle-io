@@ -58,20 +58,45 @@ function _readFileLegacy(file: File | Blob): Promise<string> {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.addEventListener('loadend', (e) => {
-      const text = (e.srcElement as any)?.result;
-      resolve(text);
+      const result = (e.target as FileReader | null)?.result;
+      resolve(typeof result === 'string' ? result : '');
     });
     reader.readAsText(file);
   });
 }
 
+/**
+ * Options accepted by `FileSystemHandle.queryPermission`. `mode` is the
+ * standardized field (Chrome 86+); `writable` is a legacy pre-standard flag
+ * kept for compatibility with older implementations that still expect it.
+ */
+interface QueryPermissionOptions extends FileSystemHandlePermissionDescriptor {
+  writable?: boolean;
+}
+
+// Workspace metadata is stored as `Record<string, unknown>`, so the
+// `rootDirHandle` entry needs a runtime check before it can be treated as a
+// `FileSystemDirectoryHandle`.
+export function isFileSystemDirectoryHandle(
+  value: unknown,
+): value is FileSystemDirectoryHandle {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'requestPermission' in value &&
+    typeof (value as { requestPermission: unknown }).requestPermission ===
+      'function'
+  );
+}
+
 export async function hasPermission(
   dirHandle: FileSystemDirectoryHandle,
 ): Promise<boolean> {
-  const opts: any = {};
-  opts.writable = true;
-  // For Chrome 86 and later...
-  opts.mode = 'readwrite';
+  const opts: QueryPermissionOptions = {
+    writable: true,
+    // For Chrome 86 and later...
+    mode: 'readwrite',
+  };
 
   // In Safari's origin private file system `queryPermission` is not available.
   if (!dirHandle.queryPermission) {
@@ -101,13 +126,23 @@ export async function recurseDirHandle(
   {
     allowedFile = (_fileHandle: FileSystemFileHandle): boolean => true,
     allowedDir = (_dirHandle: FileSystemDirectoryHandle): boolean => true,
+    abortSignal,
+  }: {
+    allowedFile?: (fileHandle: FileSystemFileHandle) => boolean;
+    allowedDir?: (dirHandle: FileSystemDirectoryHandle) => boolean;
+    abortSignal?: AbortSignal;
   } = {},
 ) {
   const _recurse = async (
     dirHandle: FileSystemDirectoryHandle,
   ): Promise<RecurseDirResult> => {
+    abortSignal?.throwIfAborted();
     let result: RecurseDirResult = [];
     for await (const entry of dirHandle.values()) {
+      // Checked per-entry (not just per-directory) so an abort can
+      // interrupt a walk part-way through a single large directory,
+      // not only between directories.
+      abortSignal?.throwIfAborted();
       if (entry.kind === 'file' && allowedFile(entry)) {
         result.push([dirHandle, entry]);
       }
@@ -115,6 +150,7 @@ export async function recurseDirHandle(
         let children: RecurseDirResult = await recurseDirHandle(entry, {
           allowedDir,
           allowedFile,
+          abortSignal,
         });
         // attach the parent first
         children = children.map((r) => [dirHandle, ...r]);

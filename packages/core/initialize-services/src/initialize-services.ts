@@ -1,3 +1,4 @@
+import { isFileSystemDirectoryHandle } from '@bangle.io/baby-fs';
 import {
   assertIsDefined,
   getEventSenderMetadata,
@@ -60,7 +61,7 @@ export function initializeServices(
         const { rootDirHandle } =
           await getWorkspaceOps().getWorkspaceMetadata(wsName);
 
-        if (!rootDirHandle) {
+        if (!isFileSystemDirectoryHandle(rootDirHandle)) {
           throwAppError(
             'error::workspace:invalid-metadata',
             `Invalid workspace metadata for ${wsName}`,

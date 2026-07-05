@@ -1,3 +1,4 @@
+import { isAbortError } from '@bangle.io/mini-js-utils';
 import { expect, test } from 'vitest';
 import { IndexedDBFileSystem } from '../indexed-db-fs';
 
@@ -151,4 +152,18 @@ test('opendirRecursive subdir', async () => {
       "holamagic/bye",
     ]
   `);
+});
+
+test('opendirRecursive rejects with a recognizable abort error when already aborted', async () => {
+  const fs = new IndexedDBFileSystem();
+  await fs.writeFile('hola/hi', toFile('my-data'));
+
+  const abortController = new AbortController();
+  abortController.abort();
+
+  const error = await fs
+    .opendirRecursive('hola', abortController.signal)
+    .catch((e: unknown) => e);
+
+  expect(isAbortError(error)).toBe(true);
 });

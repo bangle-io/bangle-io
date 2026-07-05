@@ -82,6 +82,14 @@ function toggleButtons(view: { dom: HTMLElement }): HTMLButtonElement[] {
   ];
 }
 
+function trailingSlot(view: { dom: HTMLElement }): HTMLElement {
+  const slot = view.dom.querySelector<HTMLElement>('.B-block-trailing-slot');
+  if (!slot) {
+    throw new Error('Expected trailing slot to render');
+  }
+  return slot;
+}
+
 describe('getHeadingFoldRange', () => {
   it('spans everything up to the next heading of the same level', () => {
     const d = doc(h1('One'), p('a'), p('b'), h1('Two'), p('c'));
@@ -253,10 +261,36 @@ describe('toggle affordance', () => {
     const text = headingDom?.firstChild;
     expect(text?.textContent).toBe('One');
     expect(
-      text &&
-        slot &&
-        slot.compareDocumentPosition(text) & Node.DOCUMENT_POSITION_PRECEDING,
+      text != null &&
+        slot != null &&
+        (slot.compareDocumentPosition(text) &
+          Node.DOCUMENT_POSITION_PRECEDING) !==
+          0,
     ).toBeTruthy();
+  });
+
+  it('keeps the trailing widget transparent to native drag selections', () => {
+    const editor = editorTest.createEditor(doc(h1('One'), p('a')));
+    const slot = trailingSlot(editor.view);
+    const widgetDesc = (
+      slot as HTMLElement & {
+        pmViewDesc?: {
+          ignoreForSelection?: boolean;
+          stopEvent?: (event: Event) => boolean;
+        };
+      }
+    ).pmViewDesc;
+
+    // ProseMirror otherwise normalizes DOM selections back to the widget's
+    // declared side, which breaks native horizontal text selection when a drag
+    // starts from the whitespace after a heading.
+    expect(widgetDesc?.ignoreForSelection).toBe(true);
+
+    const event = new MouseEvent('mousedown', {
+      bubbles: true,
+      cancelable: true,
+    });
+    expect(widgetDesc?.stopEvent?.(event)).toBe(true);
   });
 
   it('clicking the toggle folds and unfolds the section', () => {

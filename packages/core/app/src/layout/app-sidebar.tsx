@@ -382,6 +382,13 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             'ui',
           );
         }}
+        onManageWorkspacesClick={() => {
+          commandDispatcher.dispatch(
+            'command::ui:open-settings-workspaces',
+            null,
+            'ui',
+          );
+        }}
         activeFilePaths={activeWsPaths.map((wsPath) => wsPath.path)}
         commandButtonClassName="desktop-titlebar-no-drag"
         showNoteFilesOnly={showNoteFilesOnly}

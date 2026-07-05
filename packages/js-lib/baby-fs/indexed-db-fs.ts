@@ -136,10 +136,14 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     this._fileMetadata = new FileMetadata();
   }
 
-  async opendirRecursive(dirPath: string) {
+  async opendirRecursive(dirPath: string, abortSignal?: AbortSignal) {
     if (!dirPath) {
       throw new Error('dirPath must be defined');
     }
+    // Listing is a single atomic IndexedDB request that can't be
+    // interrupted mid-flight, so the best we can do is skip issuing it at
+    // all if the caller has already given up.
+    abortSignal?.throwIfAborted();
     let keys = await catchUpstream(
       this._db().then((db) => db.getAllKeys(indexedDBFileSystemTableName)),
       'Error listing files',

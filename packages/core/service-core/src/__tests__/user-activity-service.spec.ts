@@ -98,6 +98,7 @@ async function setupUserActivityService({
     },
     store,
     workspaceState: services.workspaceState,
+    workspaceOps,
   };
 }
 
@@ -175,6 +176,37 @@ describe('UserActivityService', () => {
     // reverse order
     expect(activities?.[0]?.data.wsPath).toBe(TEST_WS_PATH4);
     expect(activities?.[1]?.data.wsPath).toBe(TEST_WS_PATH3);
+  });
+
+  it('should cap the in-memory cache when persisted metadata already exceeds maxRecentEntries', async () => {
+    const { userActivityService, workspaceOps } =
+      await setupUserActivityService({ controller, maxEntries: 3 });
+
+    // Simulate metadata written under a previous (larger) limit, or by
+    // another mechanism, bypassing the service's own write-path cap.
+    const oversizedLog = Array.from({ length: 10 }, (_, i) => ({
+      entityType: 'ws-path' as const,
+      data: { wsPath: `${TEST_WS_NAME}:oversized-${i}.md` },
+      timestamp: 10_000 - i,
+    }));
+
+    await workspaceOps.updateWorkspaceMetadata(TEST_WS_NAME, (metadata) => ({
+      ...metadata,
+      'ws-activity': oversizedLog,
+    }));
+
+    // First read for this workspace is a cache miss, exercising the load path.
+    const activities = await userActivityService.getRecent(
+      TEST_WS_NAME,
+      'ws-path',
+    );
+
+    expect(activities).toHaveLength(3);
+    expect(activities.map((a) => a.data.wsPath)).toEqual([
+      `${TEST_WS_NAME}:oversized-0.md`,
+      `${TEST_WS_NAME}:oversized-1.md`,
+      `${TEST_WS_NAME}:oversized-2.md`,
+    ]);
   });
 
   it('should record command activity', async () => {

@@ -3,7 +3,7 @@ export type WorkspaceInfo = {
   type: string;
   deleted?: boolean;
   lastModified: number;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 };
 
 export type WorkspaceDatabaseQueryOptions = {

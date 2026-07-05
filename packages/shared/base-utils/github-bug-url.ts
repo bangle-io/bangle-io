@@ -60,7 +60,10 @@ ${navigator.userAgent}
     `.trim();
 }
 
-function formatAppError(appErrorCause: { name: string; payload: any }): string {
+function formatAppError(appErrorCause: {
+  name: string;
+  payload: unknown;
+}): string {
   return `
 **App Error**
 \`\`\`

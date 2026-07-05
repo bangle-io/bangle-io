@@ -9,7 +9,13 @@ import {
   Label,
 } from '@bangle.io/base-ui';
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
-import { ChevronsUpDown, GalleryVerticalEnd, Plus, Search } from 'lucide-react';
+import {
+  ChevronsUpDown,
+  GalleryVerticalEnd,
+  Plus,
+  Search,
+  Settings,
+} from 'lucide-react';
 import React, { useId } from 'react';
 import bangleIcon from './bangle-transparent_x512.png';
 import {
@@ -52,6 +58,7 @@ type Workspace = {
 
 export type AppSidebarProps = {
   onNewWorkspaceClick: () => void;
+  onManageWorkspacesClick: () => void;
   workspaces: Workspace[];
   filePaths: string[];
   navItems: NavItem[];
@@ -177,6 +184,7 @@ function DropdownButton({
 
 export function AppSidebar({
   onNewWorkspaceClick,
+  onManageWorkspacesClick,
   workspaces,
   filePaths,
   navItems,
@@ -205,6 +213,7 @@ export function AppSidebar({
           <WorkspaceSwitcher
             workspaces={workspaces}
             onNewWorkspaceClick={onNewWorkspaceClick}
+            onManageWorkspacesClick={onManageWorkspacesClick}
             wsNameToHref={wsNameToHref}
           />
         </div>
@@ -377,10 +386,12 @@ function CommandButton({
 function WorkspaceSwitcher({
   workspaces,
   onNewWorkspaceClick,
+  onManageWorkspacesClick,
   wsNameToHref,
 }: {
   workspaces: Workspace[];
   onNewWorkspaceClick: () => void;
+  onManageWorkspacesClick: () => void;
   wsNameToHref: (wsName: string) => string;
 }) {
   const { isMobile } = useSidebar();
@@ -465,6 +476,19 @@ function WorkspaceSwitcher({
                 </DropdownMenuItem>
               );
             })}
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel className="text-muted-foreground text-xs">
+              {t.app.components.appSidebar.manageLabel}
+            </DropdownMenuLabel>
+            <DropdownMenuItem
+              className="gap-2 p-2"
+              onClick={onManageWorkspacesClick}
+            >
+              <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+                <Settings className="size-4" />
+              </div>
+              <span>{t.app.components.appSidebar.manageWorkspaces}</span>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

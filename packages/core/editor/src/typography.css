@@ -25,6 +25,12 @@ div.ProseMirror {
     margin-bottom: 0;
   }
 
+  /* The first heading is typically the page title; give it breathing room
+     from the top of the editor. */
+  & h1:first-child {
+    padding-top: 1.5rem;
+  }
+
   & h1,
   & h2,
   & h3,
@@ -149,6 +155,15 @@ div.ProseMirror {
 
   & h6 {
     opacity: 0.8;
+  }
+
+  /* Margins don't collapse in the flex column layout (see the `display: flex`
+     above), so a heading placed directly after another heading would stack
+     both margins into a large, jarring gap. Tighten the top margin in that
+     case while preserving the normal spacing when a heading follows body
+     text. */
+  & :is(h1, h2, h3, h4, h5, h6) + :is(h2, h3, h4, h5, h6) {
+    margin-top: 0.5em;
   }
 
   & img,

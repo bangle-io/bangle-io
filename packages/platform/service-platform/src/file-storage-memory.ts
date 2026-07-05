@@ -13,7 +13,7 @@ import type {
   BaseFileStorageProvider,
   FileStorageChangeEvent,
 } from '@bangle.io/types';
-import { WsPath } from '@bangle.io/ws-path';
+import { toFSPathOrThrow, WsPath } from '@bangle.io/ws-path';
 
 interface FileEntry {
   file: File;
@@ -52,23 +52,9 @@ export class FileStorageMemory
     this.onChange(event);
   }
 
-  private getFileEntryPath(wsPath: string) {
-    const path = WsPath.fromString(wsPath).toFSPath();
-    if (!path) {
-      throwAppError(
-        'error::ws-path:invalid-ws-path',
-        'Invalid workspace path',
-        {
-          invalidPath: wsPath,
-        },
-      );
-    }
-    return path;
-  }
-
   async createFile(wsPath: string, file: File): Promise<void> {
     await this.mountPromise;
-    const fileEntryPath = this.getFileEntryPath(wsPath);
+    const fileEntryPath = toFSPathOrThrow(wsPath);
     if (this.fileEntries.has(fileEntryPath)) {
       throwAppError('error::file:already-existing', 'File already exists', {
         wsPath,
@@ -91,7 +77,15 @@ export class FileStorageMemory
 
   async deleteFile(wsPath: string): Promise<void> {
     await this.mountPromise;
-    const fileEntryPath = this.getFileEntryPath(wsPath);
+    const fileEntryPath = toFSPathOrThrow(wsPath);
+
+    if (!this.fileEntries.has(fileEntryPath)) {
+      throw new BaseFileSystemError({
+        message: 'File not found',
+        code: FILE_NOT_FOUND_ERROR,
+      });
+    }
+
     this.fileEntries.delete(fileEntryPath);
 
     this.emitChange({
@@ -102,12 +96,12 @@ export class FileStorageMemory
 
   async fileExists(wsPath: string): Promise<boolean> {
     await this.mountPromise;
-    return this.fileEntries.has(this.getFileEntryPath(wsPath));
+    return this.fileEntries.has(toFSPathOrThrow(wsPath));
   }
 
   async fileStat(wsPath: string) {
     await this.mountPromise;
-    const fileEntryPath = this.getFileEntryPath(wsPath);
+    const fileEntryPath = toFSPathOrThrow(wsPath);
     const entry = this.fileEntries.get(fileEntryPath);
 
     if (!entry) {
@@ -147,7 +141,7 @@ export class FileStorageMemory
 
   async readFile(wsPath: string): Promise<File | undefined> {
     await this.mountPromise;
-    const entry = this.fileEntries.get(this.getFileEntryPath(wsPath));
+    const entry = this.fileEntries.get(toFSPathOrThrow(wsPath));
 
     return entry?.file;
   }
@@ -157,14 +151,19 @@ export class FileStorageMemory
     { newWsPath }: { newWsPath: string },
   ): Promise<void> {
     await this.mountPromise;
-    const oldPath = this.getFileEntryPath(wsPath);
-    const newPath = this.getFileEntryPath(newWsPath);
+    const oldPath = toFSPathOrThrow(wsPath);
+    const newPath = toFSPathOrThrow(newWsPath);
     const entry = this.fileEntries.get(oldPath);
 
-    if (entry) {
-      this.fileEntries.set(newPath, entry);
-      this.fileEntries.delete(oldPath);
+    if (!entry) {
+      throw new BaseFileSystemError({
+        message: 'File not found',
+        code: FILE_NOT_FOUND_ERROR,
+      });
     }
+
+    this.fileEntries.set(newPath, entry);
+    this.fileEntries.delete(oldPath);
 
     this.emitChange({
       type: 'rename',
@@ -175,7 +174,7 @@ export class FileStorageMemory
 
   async writeFile(wsPath: string, file: File): Promise<void> {
     await this.mountPromise;
-    const fileEntryPath = this.getFileEntryPath(wsPath);
+    const fileEntryPath = toFSPathOrThrow(wsPath);
     const entry = this.fileEntries.get(fileEntryPath);
 
     if (!entry) {

@@ -43,11 +43,11 @@ export type Command = {
 
 export type CommandHandlerContext = {
   store: Store;
-  dispatch: (commandId: string, args: any) => void;
+  dispatch: (commandId: string, args: unknown) => void;
 };
 export type CommandHandler = (
   services: Record<string, BaseService>,
-  args: any,
+  args: unknown,
   key: CommandKey<string>,
 ) => void | Promise<void>;
 

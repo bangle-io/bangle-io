@@ -20,6 +20,32 @@ import type { setupExtensions } from './extensions';
 
 setGlobalConfig({ debug: true });
 
+/**
+ * These globals are only ever set for interactive debugging in the browser
+ * console (see `createEditor` below) and are never read by app code.
+ *
+ * Declared as `Window` interface members (not `declare global { var ... }`)
+ * because this file also declares top-level functions with the same names;
+ * a `var` declaration of the same name would collide with those.
+ */
+declare global {
+  interface Window {
+    schema: Schema;
+    editorView: EditorView;
+    debugPositions: (doc: PMNode) => void;
+    nodeToXML: (
+      node: PMNode,
+      offset?: number,
+    ) => { xml: string; positionsLine: string; endOffset: number };
+    debugDocumentStructure: (doc: PMNode) => void;
+    printContentBetweenPositions: (
+      doc: PMNode,
+      from?: number,
+      to?: number,
+    ) => void;
+  }
+}
+
 export function createEditor({
   domNode,
   defaultContent = '',
@@ -91,19 +117,13 @@ export function createEditor({
     },
   );
 
-  // @ts-expect-error
-  globalThis.schema = schema;
-  // @ts-expect-error
-  globalThis.editorView = view;
+  window.schema = schema;
+  window.editorView = view;
 
-  // @ts-expect-error
-  globalThis.debugPositions = debugPositions;
-  // @ts-expect-error
-  globalThis.nodeToXML = nodeToXML;
-  // @ts-expect-error
-  globalThis.debugDocumentStructure = debugDocumentStructure;
-  // @ts-expect-error
-  globalThis.printContentBetweenPositions = printContentBetweenPositions;
+  window.debugPositions = debugPositions;
+  window.nodeToXML = nodeToXML;
+  window.debugDocumentStructure = debugDocumentStructure;
+  window.printContentBetweenPositions = printContentBetweenPositions;
 
   return view;
 }

@@ -3,6 +3,7 @@
  */
 
 import { FILE_STORAGE_MAX_FILE_SIZE_BYTES } from '@bangle.io/constants';
+import { isAbortError } from '@bangle.io/mini-js-utils';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { FileStorageNativeFs } from '../file-storage-nativefs';
@@ -38,7 +39,13 @@ class FakeDirectoryHandle {
   shouldThrowNotFoundOnRead = false;
   valuesCalls = 0;
 
-  constructor(readonly name: string) {}
+  constructor(
+    readonly name: string,
+    // Called every time an entry is yielded from `values()`, at any depth.
+    // Test-only hook used to observe (and interrupt, via an
+    // AbortController) a recursive traversal while it's in progress.
+    private onEntryVisited?: () => void,
+  ) {}
 
   async *values(): AsyncIterableIterator<FileSystemHandle> {
     this.valuesCalls += 1;
@@ -47,6 +54,7 @@ class FakeDirectoryHandle {
     }
 
     for (const entry of this.entries.values()) {
+      this.onEntryVisited?.();
       yield entry as unknown as FileSystemHandle;
     }
   }
@@ -86,7 +94,7 @@ class FakeDirectoryHandle {
       throw new DOMException('Directory not found', 'NotFoundError');
     }
 
-    const directoryHandle = new FakeDirectoryHandle(name);
+    const directoryHandle = new FakeDirectoryHandle(name, this.onEntryVisited);
     this.entries.set(name, directoryHandle);
     return directoryHandle;
   }
@@ -96,11 +104,12 @@ class FakeDirectoryHandle {
   }
 }
 
-async function setup() {
+async function setup(onEntryVisited?: () => void) {
   const { commonOpts } = createTestEnvironment();
   const onChange = vi.fn();
   const rootDirHandle = new FakeDirectoryHandle(
     'myWorkspace',
+    onEntryVisited,
   ) as unknown as FileSystemDirectoryHandle;
   const service = new FileStorageNativeFs(
     {
@@ -189,5 +198,51 @@ describe('FileStorageNativeFs', () => {
     expect(docs.valuesCalls).toBe(1);
     expect(nodeModules.valuesCalls).toBe(0);
     expect(git.valuesCalls).toBe(0);
+  });
+
+  it('rejects immediately with an abort error when the signal is already aborted, without reading any directory', async () => {
+    const { service, rootDirHandle } = await setup();
+    const abortController = new AbortController();
+    abortController.abort();
+
+    const error = await service
+      .listAllFiles('myWorkspace', abortController.signal)
+      .catch((e: unknown) => e);
+
+    expect(isAbortError(error)).toBe(true);
+    expect((rootDirHandle as unknown as FakeDirectoryHandle).valuesCalls).toBe(
+      0,
+    );
+  });
+
+  it('interrupts an in-progress recursive listing instead of walking the whole tree', async () => {
+    const abortController = new AbortController();
+    let entriesVisited = 0;
+    const { service, rootDirHandle } = await setup(() => {
+      entriesVisited += 1;
+      // Abort partway through the walk, well before every directory in
+      // the tree would have been visited.
+      if (entriesVisited === 2) {
+        abortController.abort();
+      }
+    });
+    const root = rootDirHandle as unknown as FakeDirectoryHandle;
+    const dirA = await root.getDirectoryHandle('dirA', { create: true });
+    await dirA.getFileHandle('a1.md', { create: true });
+    await dirA.getFileHandle('a2.md', { create: true });
+    const dirB = await root.getDirectoryHandle('dirB', { create: true });
+    await dirB.getFileHandle('b1.md', { create: true });
+    await dirB.getFileHandle('b2.md', { create: true });
+
+    const error = await service
+      .listAllFiles('myWorkspace', abortController.signal)
+      .catch((e: unknown) => e);
+
+    expect(isAbortError(error)).toBe(true);
+    // The walk was interrupted while still inside dirA — dirB must never
+    // have been reached at all. This proves the traversal actually halted
+    // early instead of completing and only discarding the result afterward.
+    expect(dirB.valuesCalls).toBe(0);
+    expect(dirA.valuesCalls).toBe(1);
   });
 });
