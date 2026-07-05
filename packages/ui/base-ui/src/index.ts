@@ -1,4 +1,5 @@
 export { cn, useIsMobile } from '@bangle.io/ui-misc';
+export { useRender } from '@base-ui/react/use-render';
 export {
   Accordion,
   AccordionContent,

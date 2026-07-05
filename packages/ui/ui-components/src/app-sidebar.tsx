@@ -102,7 +102,7 @@ function DropdownButton({
   const isCompact = density === 'compact';
   const getButtonClass = (isFancy: boolean) =>
     cn(
-      'data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground',
+      'data-[popup-open]:bg-sidebar-accent data-[popup-open]:text-sidebar-accent-foreground',
       isCompact && 'h-10 rounded-md px-2',
       isFancy &&
         'shadow-[0_0_20px_rgba(0,0,0,0.15)] dark:shadow-[0_2px_25px_rgba(255,255,255,0.25)]' +
@@ -222,16 +222,18 @@ export function AppSidebar({
             <SidebarMenu className="gap-2">
               {navItems.map((item) => (
                 <SidebarMenuItem key={item.title} className="min-w-0">
-                  <SidebarMenuButton asChild>
-                    <a
-                      href={wsPathToHref ? wsPathToHref(item.wsPath) : '#dead'}
-                      title={item.title}
-                      className="min-w-0 font-medium"
-                    >
-                      <span className="block min-w-0 truncate">
-                        {item.title}
-                      </span>
-                    </a>
+                  <SidebarMenuButton
+                    render={
+                      <a
+                        href={
+                          wsPathToHref ? wsPathToHref(item.wsPath) : '#dead'
+                        }
+                        title={item.title}
+                        className="min-w-0 font-medium"
+                      />
+                    }
+                  >
+                    <span className="block min-w-0 truncate">{item.title}</span>
                   </SidebarMenuButton>
                   {item.items?.length ? (
                     <SidebarMenuSub className="ml-0 border-l-0 px-1.5">
@@ -240,20 +242,22 @@ export function AppSidebar({
                           key={item.title}
                           className="min-w-0"
                         >
-                          <SidebarMenuSubButton asChild>
-                            <a
-                              href={
-                                wsPathToHref
-                                  ? wsPathToHref(item.wsPath)
-                                  : '#dead'
-                              }
-                              title={item.title}
-                              className="min-w-0"
-                            >
-                              <span className="block min-w-0 truncate">
-                                {item.title}
-                              </span>
-                            </a>
+                          <SidebarMenuSubButton
+                            render={
+                              <a
+                                href={
+                                  wsPathToHref
+                                    ? wsPathToHref(item.wsPath)
+                                    : '#dead'
+                                }
+                                title={item.title}
+                                className="min-w-0"
+                              />
+                            }
+                          >
+                            <span className="block min-w-0 truncate">
+                              {item.title}
+                            </span>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       ))}
@@ -404,7 +408,7 @@ function WorkspaceSwitcher({
             }
             className={
               !activeWs
-                ? 'bg-sidebar-accent/70 hover:bg-sidebar-accent data-[state=open]:bg-sidebar-accent'
+                ? 'bg-sidebar-accent/70 hover:bg-sidebar-accent data-[popup-open]:bg-sidebar-accent'
                 : undefined
             }
           />
