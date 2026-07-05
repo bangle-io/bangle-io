@@ -1,0 +1,444 @@
+---
+title: Wordgard migration (editor-w) — second editor engine behind an engine-agnostic seam
+status: planned
+type: plan
+archived: false
+archived_on:
+created: 2026-07-05
+updated: 2026-07-05
+owner: mixed
+related_prs: []
+related_issues: []
+---
+
+# Wordgard Migration (`editor-w`)
+
+## Summary
+
+Introduce [Wordgard](https://wordgard.net) (Marijn Haverbeke's new semantic
+rich text editor system, spiritually ProseMirror v2 with CodeMirror 6's
+extension architecture) as a second editor engine in Bangle.io, named
+**editor-w**. The two engines live side by side behind an engine-agnostic
+service contract, switchable at runtime via an omni-search command. Parity is
+built iteratively — every increment merges to `main` behind the switch — and
+the default flips only when editor-w earns it. ProseMirror/banger-editor stays
+fully working and default throughout.
+
+This is a **code-side migration only**. Bangle.io's durable format is
+Markdown; there are no stored ProseMirror documents to convert. That removes
+the entire "document corpus migration" problem that generic
+ProseMirror→Wordgard advice centers on. What we must build instead is the
+missing Markdown bridge (Wordgard has HTML in/out but no Markdown story) and
+a Wordgard-native re-implementation of our editor features.
+
+Key upstream facts (as of 2026-07-05):
+
+- `wordgard@0.1.1` on npm, first numbered release 2026-07-02. Single package,
+  subpath modules: `wordgard/{doc,types,schema,table,state,editor,command,history,collab,phrases}`.
+- Pre-1.0 for "one or two years" per the FAQ; breaking changes expected.
+- Upstream accepts **no PRs**. Custom functionality must live in our own
+  modules — which is exactly the package structure below.
+- We have reserved the `wordgard-utils` npm name.
+- Docs are vendored in this repo at `.claude/skills/wordgard/references/`
+  (guide, ProseMirror-migration doc, FAQ, examples, changelog), backing the
+  `wordgard` skill that teaches agents to write idiomatic Wordgard code.
+
+## Current status
+
+Planned. This PR lands the plan, the vendored Wordgard docs, and the
+`wordgard` skill. No runtime code yet.
+
+## Guiding principles
+
+1. **Markdown is the only durable format.** Engine choice must never change
+   bytes on disk except through explicit user edits. No Wordgard JSON is ever
+   persisted; there is no storage migration, ever.
+2. **The contract is the editor.** Everything above the service seam —
+   pages, commands, save protection, navigation — interacts with a typed
+   editor contract and must not know which engine powers it.
+3. **Embrace Wordgard's design.** Facets, state fields, corrections, command
+   handlers, tag/point/range decorations, `Elt` shapes, compartments. Do not
+   port ProseMirror idioms (NodeViews, appendTransaction patterns, schema
+   content expressions) one-to-one. When a feature's PM implementation fights
+   Wordgard's grain, redesign it.
+4. **Trunk-based, continuously merged.** No long-lived branch. Every
+   milestone is a series of small PRs that pass full CI and merge behind the
+   engine switch. editor-w may be half-featured on `main` for months; that is
+   the intended state.
+5. **Fork first, share when stable.** editor-w starts as a fork of
+   `core/editor`. Engine-agnostic pieces (save queue, load-status machine,
+   editor React shell) get extracted into a shared package *when the fork
+   demonstrates they are identical*, not speculatively up front.
+6. **Data-safety gates over vibes.** editor-w may not write a file unless it
+   has proven, for that exact file, that parse→serialize is lossless (see
+   round-trip gate).
+
+## Architecture
+
+### Two parallel stacks, one seam
+
+The current stack and the target stack, mapped onto workspace layers:
+
+```
+                    ProseMirror stack (today)          Wordgard stack (new)
+                    ─────────────────────────          ────────────────────────
+core (app)          core/app pages — engine-agnostic, unchanged
+seam                EditorEngineContract (core/context) — one slot, one contract
+core (service)      core/editor                        core/editor-w
+                    (PmEditorService)                  (EditorWService)
+core (shared)              core/editor-common (extracted at M2):
+                           save queue · load-status · <Editor> shell
+js-lib              js-lib/prosemirror-plugins         js-lib/wordgard-utils
+                                                       js-lib/wordgard-markdown
+external            banger-editor + prosemirror-*      wordgard (pinned exact)
+```
+
+The seam already 90% exists: `PmEditorServiceContract` in
+`packages/core/context/src/service-types.ts:18` is markdown-centric
+(`mountEditor`, `getSelectionMarkdown`, `insertMarkdownAtSelection`, save
+status, heading collapse) and leaks no ProseMirror types. Consumers outside
+`core/editor` (command handlers, `app/save-protection.tsx`,
+`app/app-error-handler.tsx`, `initialize-services`) already go through it.
+The migration formalizes that seam rather than inventing one.
+
+### New packages
+
+**1. `@bangle.io/wordgard-utils`** (`packages/js-lib/wordgard-utils`,
+bangle-agnostic, the `banger-editor` analog)
+
+- The **single import chokepoint** for `wordgard/*`. Nothing else in the repo
+  imports `wordgard` directly (mirrors how `banger-editor/pm` re-exports all
+  `prosemirror-*`). This makes the 0.x upgrade churn a one-package problem
+  and gives us a place to patch over upstream breaking changes.
+- Our reusable, app-agnostic Wordgard extensions, written Wordgard-style:
+  each feature is one extension bundle combining schema elements, key
+  bindings, input rules, commands, corrections, menu items, and styles.
+  Initial roster (built across milestones): task lists, wiki-link node +
+  syntax, trigger/suggestion machinery (the `/`, `[[`, `$date` engine),
+  placeholder, trailing block, drag handle, active-node highlight,
+  collapsible headings, shiki code-highlight bridge.
+- Carries zero Bangle imports. Long term this is publishable as
+  `wordgard-utils` (name reserved); publishing itself is out of scope here.
+
+**2. `@bangle.io/wordgard-markdown`** (`packages/js-lib/wordgard-markdown`,
+bangle-agnostic — the missing `prosemirror-markdown` equivalent)
+
+- A pure, editor-free codec: `markdown string ⇄ Wordgard Plot.Doc`.
+  Parser: markdown-it token stream → Wordgard tokens/nodes. Serializer: node
+  walk → markdown writer (fenced code, list indentation, escaping — the same
+  hard-won rules `pm-markdown` encodes today).
+- Extensible the Wordgard way, not the string-name way: a `MarkdownSpec`
+  entry is keyed by the node/mark **type object** (`Heading`, `Link`,
+  `TaskItem`…) and declares `parse` (token → tag/leaf/plot-open) and
+  `serialize` (node → writer calls). A codec is assembled from a list of
+  specs; `wordgard-utils` extension bundles export their spec alongside
+  their schema element so schema and markdown support travel together.
+- Must work **without an editor or GardState** — the save path, the backlink
+  indexer, and future workers serialize/parse headlessly. (Optionally also
+  expose a facet so a codec can be derived from an editor config; that is a
+  convenience, not the foundation.)
+- **Shared syntax layer:** the markdown-it configuration (GFM strikethrough,
+  task lists, tables, wiki-link `[[…]]` syntax plugin) must be *identical*
+  between engines, or the two editors would disagree about what a note
+  means. Extract the tokenizer setup into a small engine-neutral module —
+  either inside `wordgard-markdown` with the PM loader consuming it, or as
+  `@bangle.io/markdown-syntax` if extraction from `pm-markdown`'s tokenizer
+  proves clean. This also fixes an existing altitude problem:
+  `service-core/backlink-markdown-extractor.ts` imports
+  `@bangle.io/prosemirror-plugins` only for the tokenizer + wiki-link syntax;
+  after extraction it depends on the markdown layer and no editor engine at
+  all. Keep this proportional — do the extraction as part of M1, not as a
+  speculative framework before it.
+
+**3. `@bangle.io/editor-w`** (`packages/core/editor-w`)
+
+- `EditorWService`: a fork of `core/editor`'s `PmEditorService` implementing
+  the same contract with the same `static deps` (`fileSystem`, `navigation`,
+  `workbenchState`, `workspaceState`) and the same save-queue semantics.
+- Its React surface (slash menu, link menu, table menu, selection menu, date
+  picker) is **rebuilt on Wordgard primitives**, not ported: Wordgard's
+  panel/tooltip/dialog/menu facets replace the hand-rolled PM plugin + jotai
+  atom plumbing where they fit; where we want our ShadCN look, the service
+  bridges Wordgard state fields/facets into jotai atoms that the existing
+  presentational components consume. Decide per feature; do not force either
+  direction.
+- Bridges Bangle's `t` translations into Wordgard `PhraseSet`s so built-in UI
+  (menus, dialogs, table controls) is localized consistently.
+
+**4. `@bangle.io/editor-common`** (`packages/core/editor-common`, extracted
+at M2 — not before)
+
+- The engine-agnostic editor kernel, pulled out of `core/editor` once
+  editor-w proves the code is shared verbatim: `EditorSaveQueue`
+  (write-coalescing, retry, ordering — this is user-data-critical code and
+  must exist exactly once), the load-status state machine, the `<Editor>`
+  React shell that calls `mountEditor`, and save-status subscription glue.
+- `core/editor` and `core/editor-w` both depend on it; neither depends on
+  the other.
+
+### The seam, precisely
+
+- Rename `PmEditorServiceContract` → **`EditorEngineContract`** and the
+  `pmEditorService` slot → **`editorEngine`**. ("editorService" is taken by
+  service-core's small reload-signal service; "engine" also says the right
+  thing: this slot is *whatever powers the editing surface*.) This is a
+  mechanical, behavior-free rename PR done first (M0), while there is still
+  only one implementation.
+- Audit the contract for engine leaks as editor-w grows. Anything editor-w
+  cannot reasonably implement is a contract smell to fix at the contract
+  level. Internal-only APIs (e.g. `getEditor(name)` returning `EditorView`)
+  stay off the contract, as they already are.
+- Contract semantics that must hold for any engine (document these on the
+  type): mount is idempotent per `name` and returns a cleanup; saves are
+  coalesced so an older completion can never clobber a newer edit; a failed
+  load never writes anything; `hasPendingOrFailedSave` is the source of
+  truth for dirty-state UI and save protection.
+
+### Engine selection and switching
+
+**Selection happens at the composition root, before container instantiation**
+(per the repo's DI invariant: configure services before the container is
+built):
+
+1. A persisted preference — `editorEngine: 'prosemirror' | 'wordgard'`
+   (default `'prosemirror'`) — stored via the existing `atomStorage`
+   pattern on `WorkbenchStateService` (same mechanism as `wide-editor`),
+   readable synchronously-enough during bootstrap from the sync database.
+2. `initialize-services` reads the flag and registers **one** implementation
+   under the `editorEngine` slot. The other engine's code is behind a
+   dynamic `import()` so the inactive stack is not parsed/executed (and Vite
+   code-splits it). Only one engine is ever live in a tab.
+3. **Boot guard:** if the wordgard path throws during service setup or first
+   mount, reset the flag to `'prosemirror'` and reload. An experimental
+   engine must never be able to brick the app; the escape hatch cannot live
+   inside the thing that is broken.
+
+**Switching is a reload, not a hot swap.** The omni-search command
+(`command::ui:switch-editor-engine`, `omniSearch: true`) opens the standard
+single-select dialog — "ProseMirror (stable)" / "Wordgard (experimental)" —
+then:
+
+1. Refuses (with a toast pointing at the failed save) if
+   `hasPendingOrFailedSave()` reports failed writes; otherwise awaits the
+   save queue draining.
+2. Writes the preference.
+3. Triggers the existing `event::app:reload-ui` machinery (already
+   cross-tab, so all tabs converge on the same engine).
+
+Reload-based switching is deliberate: it matches the DI model, avoids
+double-mounted editors and stale plugin state, reuses existing reload +
+save-protection infrastructure, and keeps the switch **boring** — which is
+what a data-carrying switch should be. If per-note or side-by-side engine
+comparison is ever wanted, that is a later, additive feature.
+
+**Observability:** the editor root element carries
+`data-editor-engine="prosemirror" | "wordgard"`, both engines get a shared
+stable test hook (so e2e helpers stop keying on `.ProseMirror`), and
+editor-w shows a small persistent "experimental editor" badge with a
+one-click way back.
+
+### Data-safety gates (non-negotiable)
+
+- **Round-trip gate:** when editor-w opens a note, it parses the markdown and
+  immediately serializes it back. If the result differs from the source
+  (modulo a single trailing newline), the note opens **read-only** with a
+  banner ("this note uses constructs the experimental editor can't yet
+  preserve") and a one-click switch to the stable engine. A failed gate also
+  logs *which construct* diverged, which doubles as the parity worklist.
+  editor-w never writes to a file whose gate failed.
+- Parse failures, permission loss, quota errors, and aborts remain distinct
+  failure paths exactly as in the PM service; a failed load never writes
+  fallback content (existing invariant, restated because a new engine is
+  where it would silently regress).
+- The save queue's ordering/coalescing semantics are reused, not
+  re-implemented (hence `editor-common`).
+
+## Feature parity matrix
+
+From the current extension inventory (`core/editor/src/extensions.ts`).
+"Built-in" means Wordgard ships it; "build" means it goes in
+`wordgard-utils` (agnostic) or `editor-w` (bangle-specific).
+
+| Feature (PM stack today) | Wordgard path | Milestone |
+| --- | --- | --- |
+| doc/paragraph/text, heading, blockquote, hr, hard break | Built-in (`wordgard/types`, `wordgard/schema`) | M2 |
+| bold, italic, strike, inline code, underline | Built-in marks | M2 |
+| bullet/ordered lists | Built-in list extensions | M2 |
+| code block + language | Built-in (`CodeBlock` + `CodeBlockLanguage` mark) | M2 |
+| undo/redo history | Built-in (`wordgard/history`) | M2 |
+| link mark + link menu | Built-in link + dialog; restyle/bridge to our UI | M3–M4 |
+| image node, local-image node view, resize | Built-in image/figure/`imageResizing`; asset resolution is ours | M5 |
+| tables + table menu | Built-in `wordgard/table` (cell selection, commands, rectangularity corrections) + our markdown | M3 |
+| task lists (flat-list `kind: task`, checked, collapsed) | Build: `TaskItem` plot (param = checked) in wordgard-utils | M3 |
+| wiki link node + `[[` suggestions | Build in wordgard-utils (syntax + node) / editor-w (target resolution) | M3 |
+| markdown parse/serialize (pm-markdown) | **Build: `wordgard-markdown`** — the critical path | M1 |
+| slash commands, date picker suggestions | Build: trigger machinery in wordgard-utils; UI in editor-w | M4 |
+| selection menu (floating toolbar) | Build on Wordgard tooltip/menu facets | M4 |
+| placeholder, trailing node | Build (small decorations/corrections) | M4 |
+| drag handle, drop gap cursor | Build; note Wordgard owns selection/cursor drawing — verify native DnD behavior first | M4 |
+| active-node highlight | Build (decorations + state field) | M4 |
+| collapsible headings | Build (state field + point/range decorations); collapse state stays out of the document | M5 |
+| code syntax highlight (shiki) | Build (range decorations from a state field) | M5 |
+| asset file paste/drop → asset storage, asset links | Build in editor-w (input handling + leaf shapes) | M5 |
+| heading navigation (scroll-to-heading on route) | editor-w service, same contract behavior | M3 |
+| save queue, save status, retry | Shared via editor-common | M2 |
+
+Design deltas to embrace rather than emulate (see the `wordgard` skill for
+the full treatment): attributes become *param + marks* (heading level is a
+number param; image src is the leaf param, alt is a mark); content
+expressions become *corrections*; NodeViews become *tag/point decorations
+with `Elt` shapes*; plugin props become *facets*; transaction meta becomes
+*annotations/effects*; feature flags inside the editor become
+*compartments*; DOM work batches on RAF, so bulk operations dispatch one
+coherent transaction.
+
+## Milestones
+
+Each milestone is a stream of small PRs, merged continuously, full CI green.
+Milestones can overlap where dependencies allow; the ordering below is the
+dependency spine, not a calendar.
+
+**M0 — Seam hardening + switch plumbing (no Wordgard code)**
+Rename contract/slot (`EditorEngineContract` / `editorEngine`), move any
+stragglers onto the contract, add the persisted engine preference, the
+omni-search switch command, composition-root selection with dynamic import,
+the boot guard, and `data-editor-engine`. editor-w exists as a stub package
+whose "editor" renders the note read-only (no Wordgard yet). Exit: switching
+engines round-trips through reload on a real workspace; e2e covers the
+switch + fallback; zero behavior change for PM users.
+
+**M1 — `wordgard-markdown` + shared syntax + golden corpus**
+The codec for the full current schema (CommonMark + GFM tables/strikethrough
+/task lists + wiki links), the shared markdown-it syntax layer (backlink
+extractor moves onto it), and the **golden corpus**: a fixture set of
+markdown documents (whitespace edge cases, nested/task lists, links, images,
+code, tables, wiki links, raw/unsupported constructs) with two contract
+tests — PM stack round-trips corpus unchanged; Wordgard stack round-trips
+corpus unchanged. The corpus lives in `@bangle.io/test-utils` so both
+engines consume it as a dev dependency. Exit: corpus green on both engines
+headlessly. This milestone is the schwerpunkt; nothing writable ships
+before it.
+
+**M2 — Writable core editing**
+Wordgard editor wired in editor-w: schema assembly from wordgard-utils
+bundles, history, keymaps, input rules, styles/theme (dark/light via
+Wordgard's `&dark`/`&light`), `t`→PhraseSet bridge; save pipeline through
+the extracted `editor-common` save queue; round-trip gate live. Exit: you
+can live in editor-w for plain notes (paragraphs/headings/lists/marks/code)
+with durable, gate-protected saves; persistence smoke (create → edit →
+reload → verify) passes on editor-w.
+
+**M3 — Bangle constructs**
+Task lists, wiki links + `[[` suggestions, tables + markdown, heading
+navigation. Exit: a typical existing Bangle note passes the round-trip gate
+and is fully editable.
+
+**M4 — Interaction chrome**
+Slash commands, date picker, selection/link/table menus, placeholder,
+trailing block, drag handle, active-node highlight. Exit: muscle-memory
+parity — a PM user switching engines loses no workflow.
+
+**M5 — Assets and long-tail**
+Image/asset paste-drop, asset links, shiki highlighting, collapsible
+headings, image resize UX; perf pass (large-doc typing latency, decoration
+recompute, load time) against the PM baseline on the same corpus.
+
+**M6 — Confidence and flip**
+Full e2e suite runs against both engines (engine-parameterized fixture);
+maintainer dogfoods editor-w as personal default; then flip stages: default
+for new users → default for all (PM reachable via the same switch command)
+→ finally, as a **separate decision**, retire the PM stack (delete
+`core/editor`, `prosemirror-plugins`, banger dependency) once editor-w has
+soaked. The switch machinery itself is cheap and can outlive the flip as a
+safety valve.
+
+## Testing strategy
+
+- **Golden corpus is the parity contract** (M1). Every new wordgard-utils
+  extension lands with corpus fixtures covering its constructs, per the
+  repo's markdown-fidelity invariant. Any gate failure seen in the wild
+  becomes a corpus fixture first, then a fix.
+- Unit (vitest): wordgard-markdown and wordgard-utils logic tests are
+  headless (doc/state modules don't need a browser). Editor-behavior tests
+  that need real DOM use Playwright component tests, as today.
+- E2E: helpers gain an engine parameter (set the preference via the switch
+  command in a fixture, assert on `data-editor-engine`). The full suite
+  stays PM-default; an editor-w smoke set grows per milestone and runs in
+  `pnpm e2e:ci`. At M6 the full suite runs on both.
+- Failure paths per repo rules: every data-path change covers failure and
+  abort behavior; round-trip-gate behavior (mismatch → read-only, no write)
+  gets explicit e2e coverage.
+
+## The `wordgard` skill
+
+Because Wordgard is brand-new (released this week), no model knows it from
+training. `.claude/skills/wordgard/` ships in this PR:
+
+- `SKILL.md` — how to write idiomatic Wordgard in this repo: the concept
+  model (plot/leaf/tag/mark/param), the facet/state-field/correction/command
+  decision tree, repo-specific recipes (adding a feature = extension bundle
+  + markdown spec + corpus fixtures + tests), and explicit anti-patterns
+  (don't port PM idioms).
+- `references/` — verbatim vendored upstream docs (system guide,
+  ProseMirror-migration doc, FAQ, examples, README, CHANGELOG; MIT, with
+  attribution file). Refresh these on every `wordgard` version bump, and
+  read the vendored CHANGELOG diff as part of the upgrade ritual. The full
+  API surface is always available in `node_modules/wordgard/dist/*.d.ts`
+  once the dependency lands.
+
+## Risks
+
+- **Wordgard is 0.x and days old.** Breaking changes are promised; selection
+  /IME/mobile robustness is unproven at scale. Mitigations: exact-pin the
+  version; single import chokepoint; PM stays default until M6; round-trip
+  gate bounds the blast radius to "experimental editor annoyed me", never
+  data loss.
+- **No upstream PRs.** Anything we need that upstream lacks is ours to build
+  and maintain in wordgard-utils (upstream explicitly endorses third-party
+  modules). Budget for that; report genuine bugs via the upstream forum.
+- **Markdown serialization fidelity is the hard 20%.** That is why M1
+  precedes any writable editor, why the tokenizer is shared, and why the
+  gate exists at all.
+- **Two engines on main for months** — bundle and maintenance overhead.
+  Dynamic import keeps the inactive engine out of the hot path; the parity
+  matrix keeps the tail visible instead of open-ended; feature work during
+  the transition may need dual implementation (accepted cost, weighed per
+  feature).
+- **Fork drift** between editor-w and core/editor before M2 extraction.
+  Mitigation: extract `editor-common` as soon as the save queue is needed
+  (M2), keep the fork window short.
+
+## Out of scope
+
+- Collaborative editing (`wordgard/collab` exists; nothing here precludes
+  it, nothing here builds it).
+- Any storage/format change, ever.
+- Publishing `wordgard-utils` to npm (name reserved; publishing comes after
+  the flip, if at all).
+- Mobile/desktop shells, PM removal mechanics (M6 flags the decision point
+  only).
+
+## Verification
+
+For this plan PR (docs-only): documented paths verified —
+`packages/core/context/src/service-types.ts` (contract),
+`packages/core/initialize-services/src/service-setup.ts` (slot wiring),
+`packages/core/editor/src/extensions.ts` (feature inventory),
+`packages/js-lib/prosemirror-plugins/src/markdown-loader.ts` +
+`packages/core/service-core/src/backlink-markdown-extractor.ts` (markdown
+path), vendored docs against wordgard.net sources. Code milestones carry the
+standard bar: `pnpm lint:ci`, `pnpm test:ci`, relevant Playwright suites,
+and committed e2e coverage for every released behavior.
+
+## Known blockers
+
+None. M0 can start immediately.
+
+## Next steps
+
+1. Review/adjust naming decisions: `EditorEngineContract`, `editorEngine`
+   slot, `editor-w` package name, `EditorWService`.
+2. M0 PR series (seam rename → preference + command → root selection + boot
+   guard → stub editor-w + e2e switch coverage).
+3. Add `wordgard` (exact version) as a dependency when `wordgard-utils`
+   scaffolds at the start of M1.
