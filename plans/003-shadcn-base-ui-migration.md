@@ -7,7 +7,8 @@ archived_on:
 created: 2026-07-05
 updated: 2026-07-05
 owner: mixed
-related_prs: []
+related_prs:
+  - https://github.com/bangle-io/bangle-io/pull/603
 related_issues: []
 ---
 
