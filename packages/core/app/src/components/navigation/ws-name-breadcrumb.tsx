@@ -1,5 +1,11 @@
 import { useCoreServices } from '@bangle.io/context';
-import { Breadcrumb, Button, DropdownMenu } from '@bangle.io/ui-components';
+import {
+  Breadcrumb,
+  Button,
+  buttonVariants,
+  cn,
+  DropdownMenu,
+} from '@bangle.io/ui-components';
 import { useAtomValue } from 'jotai';
 import { Home, PlusIcon } from 'lucide-react';
 import React from 'react';
@@ -24,17 +30,19 @@ export function WsNameBreadcrumb({ wsName }: WsNameBreadcrumbProps) {
     <Breadcrumb.Breadcrumb>
       <Breadcrumb.BreadcrumbList>
         <Breadcrumb.BreadcrumbItem>
-          <Button variant="ghost" size="icon" className="h-7 w-7" asChild>
-            <Breadcrumb.BreadcrumbLink
-              href={coreServices.navigation.toUri({
-                route: 'welcome',
-                payload: {},
-              })}
-              title={t.app.common.home}
-            >
-              <Home size={16} />
-            </Breadcrumb.BreadcrumbLink>
-          </Button>
+          <Breadcrumb.BreadcrumbLink
+            className={cn(
+              buttonVariants({ variant: 'ghost', size: 'icon' }),
+              'h-7 w-7',
+            )}
+            href={coreServices.navigation.toUri({
+              route: 'welcome',
+              payload: {},
+            })}
+            title={t.app.common.home}
+          >
+            <Home size={16} />
+          </Breadcrumb.BreadcrumbLink>
         </Breadcrumb.BreadcrumbItem>
         <Breadcrumb.BreadcrumbSeparator />
         <Breadcrumb.BreadcrumbItem>

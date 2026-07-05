@@ -1,4 +1,5 @@
 import {
+  Button,
   cn,
   Input,
   Separator,
@@ -12,7 +13,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@bangle.io/base-ui';
-import { Button } from '@bangle.io/shadcn';
 import { useIsMobile } from '@bangle.io/ui-misc';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';

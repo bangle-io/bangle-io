@@ -1,4 +1,4 @@
-import type { buttonVariants } from '@bangle.io/shadcn';
+import type { buttonVariants } from '@bangle.io/base-ui';
 import type { VariantProps } from 'class-variance-authority';
 
 // Extract the variant prop from Button but only include the subset we commonly use

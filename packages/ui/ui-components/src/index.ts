@@ -1,4 +1,4 @@
-export type { InputProps } from '@bangle.io/base-ui';
+export type { ButtonProps, InputProps } from '@bangle.io/base-ui';
 export * as DropdownMenu from '@bangle.io/base-ui';
 // Migrated primitives now come from the Base UI-backed package.
 export {
@@ -17,6 +17,8 @@ export {
   AlertDialogPortal,
   AlertDialogTitle,
   AlertDialogTrigger,
+  Button,
+  buttonVariants,
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
@@ -73,10 +75,7 @@ export {
   TooltipTrigger,
   toggleVariants,
 } from '@bangle.io/base-ui';
-export type { ButtonProps } from '@bangle.io/shadcn';
 export {
-  Button,
-  buttonVariants,
   Calendar,
   CalendarDayButton,
   Command,

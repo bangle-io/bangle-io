@@ -1,4 +1,4 @@
-import { Button } from '@bangle.io/ui-components';
+import { Button, buttonVariants, cn } from '@bangle.io/ui-components';
 import React from 'react';
 
 interface Item {
@@ -35,19 +35,19 @@ export function ItemList({
           </h3>
           <div className="flex w-full flex-col gap-1">
             {items.map(({ label, href, rightElement }) => (
-              <Button
+              <a
                 key={label + href}
-                variant="ghost"
-                asChild
-                className="h-auto w-full justify-between px-3 py-1.5 text-left"
+                href={href}
+                className={cn(
+                  buttonVariants({ variant: 'ghost' }),
+                  'h-auto w-full justify-between px-3 py-1.5 text-left',
+                )}
               >
-                <a href={href} className="flex items-center justify-between">
-                  <span className="truncate font-medium">{label}</span>
-                  {rightElement && (
-                    <span className="ml-2 shrink-0">{rightElement}</span>
-                  )}
-                </a>
-              </Button>
+                <span className="truncate font-medium">{label}</span>
+                {rightElement && (
+                  <span className="ml-2 shrink-0">{rightElement}</span>
+                )}
+              </a>
             ))}
             {showViewMore && onClickViewMore && (
               <Button

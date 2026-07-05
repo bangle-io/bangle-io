@@ -1,4 +1,4 @@
-import { cn } from '@bangle.io/shadcn';
+import { cn } from '@bangle.io/ui-misc';
 import type { ComponentType, ReactNode } from 'react';
 import * as React from 'react';
 

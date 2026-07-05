@@ -3,6 +3,8 @@ import { useCoreServices } from '@bangle.io/context';
 import {
   Breadcrumb,
   Button,
+  buttonVariants,
+  cn,
   Separator,
   Sidebar,
   StarButton,
@@ -119,17 +121,19 @@ function HomeBreadcrumb({
     <Breadcrumb.Breadcrumb>
       <Breadcrumb.BreadcrumbList>
         <Breadcrumb.BreadcrumbItem>
-          <Button variant="ghost" size="icon" className="h-7 w-7" asChild>
-            <Breadcrumb.BreadcrumbLink
-              href={coreServices.navigation.toUri({
-                route: 'welcome',
-                payload: {},
-              })}
-              title={t.app.common.home}
-            >
-              <Home size={16} />
-            </Breadcrumb.BreadcrumbLink>
-          </Button>
+          <Breadcrumb.BreadcrumbLink
+            className={cn(
+              buttonVariants({ variant: 'ghost', size: 'icon' }),
+              'h-7 w-7',
+            )}
+            href={coreServices.navigation.toUri({
+              route: 'welcome',
+              payload: {},
+            })}
+            title={t.app.common.home}
+          >
+            <Home size={16} />
+          </Breadcrumb.BreadcrumbLink>
         </Breadcrumb.BreadcrumbItem>
       </Breadcrumb.BreadcrumbList>
     </Breadcrumb.Breadcrumb>

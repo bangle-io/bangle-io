@@ -1,4 +1,6 @@
 import {
+  Button,
+  buttonVariants,
   cn,
   Dialog,
   DialogContent,
@@ -9,7 +11,6 @@ import {
   Input,
   Label,
 } from '@bangle.io/base-ui';
-import { Button } from '@bangle.io/shadcn';
 import type { WorkspaceStorageType } from '@bangle.io/types';
 import { Check, FolderOpen } from 'lucide-react';
 import React, { useEffect, useId, useReducer, useRef } from 'react';
@@ -282,19 +283,17 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
       <ErrorMessage error={error} />
       <WorkspaceDialogFooter
         leadingAction={
-          <Button
-            variant="ghost"
-            className="justify-start px-0 text-primary text-sm hover:underline"
-            asChild
+          <a
+            className={cn(
+              buttonVariants({ variant: 'ghost' }),
+              'justify-start px-0 text-primary text-sm hover:underline',
+            )}
+            href="https://bangle.io/privacy"
+            target="_blank"
+            rel="noreferrer"
           >
-            <a
-              href="https://bangle.io/privacy"
-              target="_blank"
-              rel="noreferrer"
-            >
-              {t.app.dialogs.createWorkspace.dataPrivacyLink}
-            </a>
-          </Button>
+            {t.app.dialogs.createWorkspace.dataPrivacyLink}
+          </a>
         }
       >
         <Button variant="outline" onClick={onCancel}>
