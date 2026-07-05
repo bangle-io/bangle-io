@@ -1,4 +1,3 @@
-export type { ButtonProps, InputProps } from '@bangle.io/base-ui';
 export * as DropdownMenu from '@bangle.io/base-ui';
 // Migrated primitives now come from the Base UI-backed package.
 export {
@@ -74,8 +73,6 @@ export {
   SheetDescription,
   SheetFooter,
   SheetHeader,
-  SheetOverlay,
-  SheetPortal,
   SheetTitle,
   SheetTrigger,
   Skeleton,

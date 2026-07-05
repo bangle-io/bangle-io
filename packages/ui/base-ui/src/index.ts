@@ -14,12 +14,12 @@ export {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogMedia,
   AlertDialogOverlay,
   AlertDialogPortal,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from './alert-dialog';
-export type { ButtonProps } from './button';
 export { Button, buttonVariants } from './button';
 export { Calendar, CalendarDayButton } from './calendar';
 export {
@@ -54,6 +54,7 @@ export {
 } from './dialog';
 export {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
@@ -63,11 +64,12 @@ export {
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from './dropdown-menu';
-export type { InputProps } from './input';
 export { Input } from './input';
-export type { LabelProps } from './label';
 export { Label } from './label';
 export {
   Select,
@@ -81,7 +83,6 @@ export {
   SelectTrigger,
   SelectValue,
 } from './select';
-export type { SeparatorProps } from './separator';
 export { Separator } from './separator';
 export {
   Sheet,
@@ -90,15 +91,11 @@ export {
   SheetDescription,
   SheetFooter,
   SheetHeader,
-  SheetOverlay,
-  SheetPortal,
   SheetTitle,
   SheetTrigger,
 } from './sheet';
 export { Skeleton } from './skeleton';
-export type { ToggleProps } from './toggle';
 export { Toggle, toggleVariants } from './toggle';
-export type { ToggleGroupItemProps, ToggleGroupProps } from './toggle-group';
 export { ToggleGroup, ToggleGroupItem } from './toggle-group';
 export {
   Tooltip,

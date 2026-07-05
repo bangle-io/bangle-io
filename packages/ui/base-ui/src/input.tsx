@@ -1,10 +1,8 @@
 import { cn } from '@bangle.io/ui-misc';
 import { Input as InputPrimitive } from '@base-ui/react/input';
-import React from 'react';
+import * as React from 'react';
 
-type InputProps = React.ComponentProps<typeof InputPrimitive>;
-
-function Input({ className, type, ...props }: InputProps) {
+function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
   return (
     <InputPrimitive
       type={type}
@@ -18,5 +16,4 @@ function Input({ className, type, ...props }: InputProps) {
   );
 }
 
-export type { InputProps };
 export { Input };

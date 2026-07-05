@@ -35,14 +35,17 @@ export function AppAlertDialog({
   onContinue,
   tone = 'default',
 }: AppAlertDialogProps) {
-  const handledActionRef = React.useRef(false);
-
+  // In the Base UI alert dialog, `AlertDialogCancel` is a `Close` (it closes the
+  // dialog, routing through `onOpenChange`), while `AlertDialogAction` is a plain
+  // button that does not close on its own. So any Base UI-initiated close (cancel
+  // button, escape) is treated as a cancel, and the action button explicitly
+  // confirms and closes via the controlled `open` prop (which does not re-enter
+  // `onOpenChange`, so it never double-fires `onCancel`).
   const handleOpenChange = React.useCallback(
     (nextOpen: boolean) => {
-      if (!nextOpen && !handledActionRef.current) {
+      if (!nextOpen) {
         onCancel();
       }
-      handledActionRef.current = false;
       setOpen(nextOpen);
     },
     [onCancel, setOpen],
@@ -50,26 +53,20 @@ export function AppAlertDialog({
 
   return (
     <AlertDialog key={dialogId} open={open} onOpenChange={handleOpenChange}>
-      <AlertDialogContent autoFocus>
+      <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel
-            autoFocus={tone === 'destructive'}
-            onClick={() => {
-              handledActionRef.current = true;
-              onCancel();
-            }}
-          >
+          <AlertDialogCancel autoFocus={tone === 'destructive'}>
             {cancelText}
           </AlertDialogCancel>
           <AlertDialogAction
             autoFocus={tone !== 'destructive'}
             onClick={() => {
-              handledActionRef.current = true;
               onContinue();
+              setOpen(false);
             }}
             variant={tone}
           >
