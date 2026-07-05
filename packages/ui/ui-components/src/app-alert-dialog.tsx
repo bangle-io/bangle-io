@@ -7,7 +7,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@bangle.io/shadcn';
+} from '@bangle.io/base-ui';
 import * as React from 'react';
 
 export interface AppAlertDialogProps {

@@ -1,5 +1,4 @@
 import {
-  Button,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -8,7 +7,8 @@ import {
   DialogTitle,
   Input,
   Label,
-} from '@bangle.io/shadcn';
+} from '@bangle.io/base-ui';
+import { Button } from '@bangle.io/shadcn';
 import React from 'react';
 
 export type DialogSingleInputProps = {

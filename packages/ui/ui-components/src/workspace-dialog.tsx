@@ -1,5 +1,4 @@
 import {
-  Button,
   cn,
   Dialog,
   DialogContent,
@@ -9,7 +8,8 @@ import {
   DialogTitle,
   Input,
   Label,
-} from '@bangle.io/shadcn';
+} from '@bangle.io/base-ui';
+import { Button } from '@bangle.io/shadcn';
 import type { WorkspaceStorageType } from '@bangle.io/types';
 import { Check, FolderOpen } from 'lucide-react';
 import React, { useEffect, useId, useReducer, useRef } from 'react';

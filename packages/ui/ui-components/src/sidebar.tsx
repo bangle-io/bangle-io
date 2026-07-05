@@ -1,5 +1,4 @@
 import {
-  Button,
   cn,
   Input,
   Separator,
@@ -12,7 +11,8 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@bangle.io/shadcn';
+} from '@bangle.io/base-ui';
+import { Button } from '@bangle.io/shadcn';
 import { useIsMobile } from '@bangle.io/ui-misc';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
@@ -74,7 +74,7 @@ const SidebarProvider = React.forwardRef<
 
   return (
     <SidebarContext.Provider value={contextValue}>
-      <TooltipProvider delayDuration={0}>
+      <TooltipProvider delay={0}>
         <div
           style={
             {
@@ -532,7 +532,7 @@ const SidebarMenuButton = React.forwardRef<
 
     return (
       <Tooltip>
-        <TooltipTrigger asChild>{button}</TooltipTrigger>
+        <TooltipTrigger render={button} />
         <TooltipContent
           side="right"
           align="center"

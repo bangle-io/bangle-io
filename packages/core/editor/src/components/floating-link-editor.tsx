@@ -160,7 +160,7 @@ function LinkEditor({
           placeholder={t.app.editor.linkEditor.placeholder}
         />
 
-        <TooltipProvider delayDuration={300}>
+        <TooltipProvider delay={300}>
           <div className="flex gap-0">
             {onCopy ? (
               <LinkEditorButton
@@ -232,17 +232,19 @@ function LinkEditorButton({
 }: React.ComponentProps<typeof Button> & { label: string }) {
   return (
     <Tooltip>
-      <TooltipTrigger asChild>
-        <Button
-          {...props}
-          aria-label={label}
-          className={cx('h-8 w-8 p-0', props.className)}
-          size="icon"
-          variant="ghost"
-        >
-          {children}
-        </Button>
-      </TooltipTrigger>
+      <TooltipTrigger
+        render={
+          <Button
+            {...props}
+            aria-label={label}
+            className={cx('h-8 w-8 p-0', props.className)}
+            size="icon"
+            variant="ghost"
+          >
+            {children}
+          </Button>
+        }
+      />
       <TooltipContent side="bottom" className="text-xs">
         {label}
       </TooltipContent>
