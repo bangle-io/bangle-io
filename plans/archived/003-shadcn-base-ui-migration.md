@@ -1,9 +1,9 @@
 ---
 title: Shadcn Base UI Migration
-status: active
+status: completed
 type: plan
-archived: false
-archived_on:
+archived: true
+archived_on: 2026-07-05
 created: 2026-07-05
 updated: 2026-07-05
 owner: mixed
@@ -11,6 +11,24 @@ related_prs:
   - https://github.com/bangle-io/bangle-io/pull/603
 related_issues: []
 ---
+
+> DONE Completed on 2026-07-05. Every UI consumer moved from the Radix-backed
+> `@bangle.io/shadcn` to `@bangle.io/base-ui`; the shadcn package and all
+> `@radix-ui/*` runtime dependencies were removed. All Base UI primitives were
+> regenerated from the genuine `shadcn@latest -b base` registry (shadcn CLI
+> 4.13, `@base-ui/react` 1.6) rather than hand-adapted, and the sidebar +
+> breadcrumb blocks were refreshed the same way. Radix `Slot` was replaced with
+> Base UI `useRender`. Held components (`command` on cmdk, `calendar` on
+> react-day-picker) stayed as-is. Theming kept Bangle's `--BV-*` /
+> `.BU_dark-scheme` convention and `@theme inline` bridge; only `--font-heading`
+> was added. Final verification: `pnpm local-ci-check` passed in full
+> (custom-validation, tsgo typecheck, Biome, knip:ci, test:ci 1376 unit tests,
+> e2e:ci 107 Playwright tests + component tests, production build, and the
+> Electron persistence smoke). Regressions caught and fixed during the refresh:
+> DropdownMenuLabel used standalone (now a plain div), the settings width
+> control's radio role (rebuilt on a Base UI radio-group), AppAlertDialog
+> action/cancel close semantics, and Base UI Select label resolution via an
+> `items` map.
 
 # Shadcn Base UI Migration
 
