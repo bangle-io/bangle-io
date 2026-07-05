@@ -227,15 +227,15 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
                       <SegmentedControl
                         aria-label={t.app.settings.general.wideEditorToggle}
                         onValueChange={(value) => {
-                          if (value === 'default') {
+                          const next = value[0];
+                          if (next === 'default') {
                             setWideEditor(false);
                           }
-                          if (value === 'wide') {
+                          if (next === 'wide') {
                             setWideEditor(true);
                           }
                         }}
-                        type="single"
-                        value={wideEditor ? 'wide' : 'default'}
+                        value={[wideEditor ? 'wide' : 'default']}
                       >
                         <ToggleGroupItem
                           className={SEGMENTED_ITEM_CLASS}
@@ -346,7 +346,7 @@ function ThemePreferenceSelect({
 }
 
 const SEGMENTED_ITEM_CLASS =
-  'h-8 min-w-16 rounded-md px-3 text-xs data-[state=on]:bg-background data-[state=on]:shadow-xs';
+  'h-8 min-w-16 rounded-md px-3 text-xs data-pressed:bg-background data-pressed:shadow-xs';
 
 function SegmentedControl({
   children,

@@ -1,4 +1,16 @@
-export type { ButtonProps, InputProps } from '@bangle.io/shadcn';
+export type { InputProps } from '@bangle.io/base-ui';
+// Migrated primitives now come from the Base UI-backed package.
+export {
+  Input,
+  Label,
+  Separator,
+  Skeleton,
+  Toggle,
+  ToggleGroup,
+  ToggleGroupItem,
+  toggleVariants,
+} from '@bangle.io/base-ui';
+export type { ButtonProps } from '@bangle.io/shadcn';
 export * as DropdownMenu from '@bangle.io/shadcn';
 export * as Accordion from '@bangle.io/shadcn';
 export * as Menubar from '@bangle.io/shadcn';
@@ -59,8 +71,6 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-  Input,
-  Label,
   MenubarCheckboxItem,
   MenubarContent,
   MenubarGroup,
@@ -87,7 +97,6 @@ export {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
-  Separator,
   Sheet,
   SheetClose,
   SheetContent,
@@ -98,15 +107,10 @@ export {
   SheetPortal,
   SheetTitle,
   SheetTrigger,
-  Skeleton,
-  Toggle,
-  ToggleGroup,
-  ToggleGroupItem,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-  toggleVariants,
 } from '@bangle.io/shadcn';
 export { cn, useIsMobile } from '@bangle.io/ui-misc';
 export type { AppAlertDialogProps } from './app-alert-dialog';

@@ -1065,6 +1065,9 @@ importers:
 
   packages/ui/ui-components:
     dependencies:
+      '@bangle.io/base-ui':
+        specifier: workspace:*
+        version: link:../base-ui
       '@bangle.io/base-utils':
         specifier: workspace:*
         version: link:../../shared/base-utils
