@@ -15,6 +15,7 @@ import {
   type FileTreeEntryAction,
   normalizePierreDirectoryPath,
   normalizePierreFilePath,
+  shouldOpenSelectedFile,
 } from './types';
 
 // Tune the Pierre tree to read like the rest of the sidebar (the previous file
@@ -323,6 +324,7 @@ export function PierreFileTree({
   const onMoveFileRef = useRef(onMoveFile);
   const pendingUserOpenPathRef = useRef<string | null>(null);
   const selectedPathRef = useRef<string | null>(null);
+  const activeSelectedPathRef = useRef<string | null>(null);
   const suppressSelectionOpenRef = useRef(false);
   const suppressSelectionOpenTimerRef = useRef<number | undefined>(undefined);
   const treePathsRef = useRef<readonly string[]>(treePaths);
@@ -331,6 +333,10 @@ export function PierreFileTree({
   onOpenFileRef.current = onOpenFile;
   onMoveFileRef.current = onMoveFile;
   treePathsRef.current = treePaths;
+  // The file the active route points at. Kept current on every render so
+  // `onSelectionChange` can tell a genuine user open from a route-driven
+  // re-select (see `shouldOpenSelectedFile`).
+  activeSelectedPathRef.current = activeTreePaths.at(-1) ?? null;
 
   // Single source of truth for "is this drop a real move?": exactly one dragged
   // file we know about, landing in a directory other than its current parent.
@@ -466,14 +472,36 @@ export function PierreFileTree({
         ? normalizePierreFilePath(selectedPath)
         : undefined;
 
-      if (normalizedPath && filePathSetRef.current.has(normalizedPath)) {
-        if (suppressSelectionOpenRef.current) {
-          return;
-        }
-        selectedPathRef.current = normalizedPath;
-        pendingUserOpenPathRef.current = normalizedPath;
-        onOpenFileRef.current(normalizedPath);
+      const isKnownFilePath = Boolean(
+        normalizedPath && filePathSetRef.current.has(normalizedPath),
+      );
+      if (!normalizedPath || !isKnownFilePath) {
+        return;
       }
+
+      if (suppressSelectionOpenRef.current) {
+        return;
+      }
+
+      // Track the tree's live selection even when we choose not to open, so a
+      // later user selection of a different file is still recognised.
+      selectedPathRef.current = normalizedPath;
+
+      if (
+        !shouldOpenSelectedFile({
+          selectedPath: normalizedPath,
+          activeRoutePath: activeSelectedPathRef.current,
+          isKnownFilePath,
+        })
+      ) {
+        // Route-driven re-select (browser back/forward, links, command
+        // navigation). Re-opening here would push a duplicate history entry and
+        // wipe the forward stack.
+        return;
+      }
+
+      pendingUserOpenPathRef.current = normalizedPath;
+      onOpenFileRef.current(normalizedPath);
     },
     paths: treePaths,
     search: false,
