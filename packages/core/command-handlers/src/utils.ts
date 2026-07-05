@@ -63,3 +63,40 @@ export function validateInputPath(inputPath: unknown): void {
     );
   }
 }
+
+/**
+ * Writes text to the clipboard, falling back to a hidden textarea and
+ * `execCommand('copy')` when the async Clipboard API is unavailable.
+ */
+export async function writeTextToClipboard(value: string): Promise<void> {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(value);
+    return;
+  }
+
+  const textArea = document.createElement('textarea');
+  textArea.value = value;
+  textArea.setAttribute('readonly', 'true');
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-9999px';
+  document.body.append(textArea);
+  textArea.select();
+  try {
+    if (!document.execCommand('copy')) {
+      throw new Error('Clipboard copy command failed');
+    }
+  } finally {
+    textArea.remove();
+  }
+}
+
+/**
+ * Reads text from the clipboard. Throws when the async Clipboard read API is
+ * unavailable (there is no reliable synchronous fallback for reads).
+ */
+export async function readTextFromClipboard(): Promise<string> {
+  if (!navigator.clipboard?.readText) {
+    throw new Error('Clipboard read is not supported');
+  }
+  return navigator.clipboard.readText();
+}

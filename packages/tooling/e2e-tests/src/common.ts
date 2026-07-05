@@ -9,6 +9,22 @@ export const EDITOR_SELECTOR = '.ProseMirror';
 export const EDITOR_FOCUSED_SELECTOR = `${EDITOR_SELECTOR}.ProseMirror-focused`;
 const DEFAULT_SLEEP_TIME = 20;
 
+/**
+ * Presses an *app-level* keyboard shortcut (e.g. Cmd/Ctrl+K for omni-search).
+ *
+ * The modifier is resolved with the same `navigator.userAgentData?.platform ||
+ * navigator.platform` check the app itself uses (see `isMac`/`isDarwin` in
+ * @bangle.io/mini-js-utils), so the key we send always matches the modifier the
+ * app bound its shortcut to. This matters because headless Chromium reports
+ * `userAgentData.platform === 'Windows'` even on macOS: the app then treats
+ * itself as non-Mac and binds Control, and this helper agrees.
+ *
+ * Do NOT use this for ProseMirror/editor shortcuts such as `Mod-a` (select
+ * all). prosemirror-keymap resolves `Mod` from `navigator.platform` only
+ * (→ Meta on a real Mac), which disagrees with the app's userAgentData-based
+ * detection under headless Chromium. For editor selection, drive a real DOM
+ * selection via `selectEditorText`/`clearEditor` instead of a keychord.
+ */
 export async function pressAppShortcut(page: Page, key: string) {
   const isRuntimeDarwin = await page.evaluate(() => {
     const userAgentData = (

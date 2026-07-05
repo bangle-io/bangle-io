@@ -6,7 +6,12 @@ import {
   isAppError,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
-import { type EditorView, TextSelection } from '@bangle.io/prosemirror-plugins';
+import {
+  type EditorView,
+  markdownLoader,
+  type Schema,
+  TextSelection,
+} from '@bangle.io/prosemirror-plugins';
 import {
   displayNameForAsset,
   type FileSystemService,
@@ -112,6 +117,8 @@ export class PmEditorService extends BaseService {
   private pendingHeading: { fragment: string; wsPath: string } | undefined;
 
   private editors = new Map<HTMLElement, EditorEntry>();
+
+  private markdown: ReturnType<typeof markdownLoader> | undefined;
 
   constructor(
     context: BaseServiceContext,
@@ -802,6 +809,67 @@ export class PmEditorService extends BaseService {
       view.state,
       view.dispatch,
     );
+  }
+
+  /**
+   * Serializes the current selection in the active editor to Markdown.
+   *
+   * Reuses the same serializer configuration as the save path so copied
+   * content matches what would be written to disk. Returns null when there is
+   * no active editor or the selection is empty.
+   */
+  getSelectionMarkdown(): string | null {
+    const view = this.getActiveEditorView();
+    if (!view) {
+      return null;
+    }
+    const { from, to, empty } = view.state.selection;
+    if (empty) {
+      return null;
+    }
+    return this.getMarkdown(view.state.schema).serializer.serialize(
+      view.state.doc.cut(from, to),
+    );
+  }
+
+  /**
+   * Parses `markdownText` and inserts the resulting rich content at the current
+   * selection in the active editor, replacing any selected content. This is the
+   * inverse of {@link getSelectionMarkdown} and uses the same loader as the save
+   * path so round-tripping preserves Markdown fidelity.
+   *
+   * A single parsed paragraph is inserted inline so it merges into the current
+   * paragraph; headings and other block content are inserted as blocks. Returns
+   * false when there is no active editor or the text produces no insertable
+   * content (so a selection is never silently deleted).
+   */
+  insertMarkdownAtSelection(markdownText: string): boolean {
+    const view = this.getActiveEditorView();
+    if (!view) {
+      return false;
+    }
+    const parsed = this.getMarkdown(view.state.schema).parser.parse(
+      markdownText,
+    );
+    const inline =
+      parsed.childCount === 1 && parsed.firstChild?.type.name === 'paragraph';
+    const slice = inline
+      ? parsed.slice(1, Math.max(1, parsed.content.size - 1))
+      : parsed.slice(0, parsed.content.size);
+    if (slice.size === 0) {
+      return false;
+    }
+    view.dispatch(view.state.tr.replaceSelection(slice).scrollIntoView());
+    view.focus();
+    return true;
+  }
+
+  private getMarkdown(schema: Schema) {
+    this.markdown ??= markdownLoader(
+      [...Object.values(this.extensions)],
+      schema,
+    );
+    return this.markdown;
   }
 
   private getActiveEditorView() {

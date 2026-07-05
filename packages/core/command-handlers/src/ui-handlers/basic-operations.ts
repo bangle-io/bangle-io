@@ -1,6 +1,8 @@
 import { throwAppError } from '@bangle.io/base-utils';
+import { toast } from '@bangle.io/ui-components';
 import { Sun } from 'lucide-react';
 import { c, getCtx } from '../helper';
+import { readTextFromClipboard, writeTextToClipboard } from '../utils';
 
 export const basicOperationsHandlers = [
   c('command::ui:toggle-sidebar', ({ workbenchState }, _, key) => {
@@ -123,6 +125,37 @@ export const basicOperationsHandlers = [
       pmEditorService.focusEditor();
     },
   ),
+
+  c('command::ui:copy-selection-as-markdown', async ({ pmEditorService }) => {
+    const markdown = pmEditorService.getSelectionMarkdown();
+    if (!markdown) {
+      toast.error(t.app.toasts.selectionCopyEmpty);
+      return;
+    }
+    try {
+      await writeTextToClipboard(markdown);
+      toast.success(t.app.toasts.selectionCopied);
+    } catch {
+      toast.error(t.app.toasts.selectionCopyFailed);
+    }
+  }),
+
+  c('command::ui:paste-from-markdown', async ({ pmEditorService }) => {
+    let text: string;
+    try {
+      text = await readTextFromClipboard();
+    } catch {
+      toast.error(t.app.toasts.pasteMarkdownFailed);
+      return;
+    }
+    if (!text.trim()) {
+      toast.error(t.app.toasts.pasteMarkdownEmpty);
+      return;
+    }
+    if (!pmEditorService.insertMarkdownAtSelection(text)) {
+      toast.error(t.app.toasts.pasteMarkdownFailed);
+    }
+  }),
 
   c('command::ui:toggle-heading-collapse', ({ pmEditorService }) => {
     pmEditorService.toggleHeadingCollapse();
