@@ -85,6 +85,8 @@ interface PackageState {
 interface PackageJSON {
   name: string;
   version: string;
+  main?: string;
+  module?: string;
   scripts?: Record<string, string>;
   repository?: Record<string, any>;
   author?: string;
@@ -478,7 +480,7 @@ class FileHelper {
   }
 
   get isJSFile() {
-    return this.filePath.endsWith('.js') || this.filePath.endsWith('.jsx');
+    return /\.(?:cjs|js|jsx|mjs)$/.test(this.filePath);
   }
 
   get isJSONFile() {

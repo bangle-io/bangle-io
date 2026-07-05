@@ -1,3 +1,4 @@
+import fsProm from 'node:fs/promises';
 import path from 'node:path';
 
 import {
@@ -39,6 +40,7 @@ export async function validate(item: SetupResult) {
     testUniversalPackagesToRelyOnlyOnUniversal(item.packagesMap),
     testServicePackagesDependencies(item.packagesMap),
     testServiceArchitectureBoundaries(item.packagesMap),
+    testWorkspacePackageImportContracts(item.packagesMap),
     validateSameDependencyVersions(item.packagesMap),
   ];
 
@@ -53,8 +55,6 @@ async function testServiceArchitectureBoundaries(
     'testServiceArchitectureBoundaries',
   );
   const errors: string[] = [];
-  const privateServiceImportPattern =
-    /^@bangle\.io\/(?:service-core|service-platform|initialize-services)\/src(?:\/|$)/;
   const poorMansDiAllowedPackages = new Set([
     '@bangle.io/base-utils',
     '@bangle.io/initialize-services',
@@ -72,12 +72,6 @@ async function testServiceArchitectureBoundaries(
         ];
 
         for (const importPath of importPaths) {
-          if (privateServiceImportPattern.test(importPath)) {
-            errors.push(
-              `${relativeFilePath} imports private service implementation path "${importPath}". Import through the package root or an explicit public subpath instead.`,
-            );
-          }
-
           if (
             importPath === '@bangle.io/poor-mans-di' &&
             !poorMansDiAllowedPackages.has(name)
@@ -89,6 +83,113 @@ async function testServiceArchitectureBoundaries(
         }
       },
       (file) => file.isTSFile,
+    );
+  }
+
+  if (errors.length > 0) {
+    throwValidationError(errors.join('\n'));
+  }
+}
+
+const workspaceImplementationImportPattern =
+  /^(@bangle\.io\/[^/]+)\/src(?:\/|$)/;
+const publicRootSubpathEntryNames = new Set([
+  'setup.ts',
+  'testing.ts',
+  'testing-styles.ts',
+]);
+const starExportPattern = /^\s*export\s+\*\s+from\s+['"][^'"]+['"];?\s*$/;
+
+export function isWorkspaceImplementationImport(
+  importPath: string,
+  packageNames: ReadonlySet<string>,
+): boolean {
+  const match = workspaceImplementationImportPattern.exec(importPath);
+  const packageName = match?.[1];
+
+  return Boolean(packageName && packageNames.has(packageName));
+}
+
+export function isWorkspaceImportContractFile(filePath: string): boolean {
+  return /\.(?:cjs|jsx?|mjs|tsx?)$/.test(filePath);
+}
+
+export function findStarExportLines(sourceCode: string): number[] {
+  const lines: number[] = [];
+
+  for (const [index, line] of sourceCode.split('\n').entries()) {
+    if (starExportPattern.test(line)) {
+      lines.push(index + 1);
+    }
+  }
+
+  return lines;
+}
+
+function getPublicBarrelEntryPaths(pkg: Package): string[] {
+  const entryPaths = new Set<string>();
+
+  for (const entry of [pkg.packageJSON.main, pkg.packageJSON.module]) {
+    if (!entry || !isWorkspaceImportContractFile(entry)) {
+      continue;
+    }
+
+    const filePath = path.resolve(pkg.packagePath, entry);
+    if (pkg.getFileHelper(filePath)) {
+      entryPaths.add(filePath);
+    }
+  }
+
+  for (const entryName of publicRootSubpathEntryNames) {
+    const filePath = path.resolve(pkg.packagePath, entryName);
+    if (pkg.getFileHelper(filePath)) {
+      entryPaths.add(filePath);
+    }
+  }
+
+  return [...entryPaths];
+}
+
+async function testWorkspacePackageImportContracts(
+  packageMap: Map<string, Package>,
+) {
+  const throwValidationError = makeThrowValidationError(
+    'testWorkspacePackageImportContracts',
+  );
+  const packageNames = new Set(packageMap.keys());
+  const errors: string[] = [];
+
+  for (const [, pkg] of packageMap.entries()) {
+    for (const filePath of getPublicBarrelEntryPaths(pkg)) {
+      const relativeFilePath = path.relative(rootPath, filePath);
+      const starExportLines = findStarExportLines(
+        await fsProm.readFile(filePath, 'utf-8'),
+      );
+
+      for (const line of starExportLines) {
+        errors.push(
+          `${relativeFilePath}:${line} uses export * from a public package barrel. Use explicit named exports so package APIs and unused exports stay visible.`,
+        );
+      }
+    }
+
+    await pkg.forEachFile(
+      async ({ content, filePath }) => {
+        const relativeFilePath = path.relative(rootPath, filePath);
+        const importPaths = [
+          ...findAllImportedPackages(content),
+          ...findAllExportedPaths(content),
+        ];
+
+        for (const importPath of importPaths) {
+          if (isWorkspaceImplementationImport(importPath, packageNames)) {
+            errors.push(
+              `${relativeFilePath} imports private workspace implementation path "${importPath}". Import through the package root or an explicit public subpath instead.`,
+            );
+          }
+        }
+      },
+      (file) => isWorkspaceImportContractFile(file.filePath),
     );
   }
 

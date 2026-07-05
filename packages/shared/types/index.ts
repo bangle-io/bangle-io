@@ -1,15 +1,13 @@
 import type { ThemeConfig } from '@bangle.io/color-scheme-manager';
-
 export type ColorScheme = 'light' | 'dark';
 export type ThemePreference = ThemeConfig['defaultPreference'];
-
 export type {
   AssetLocationPreference,
   WorkspaceStorageType,
 } from '@bangle.io/constants';
 export type * from '@bangle.io/mini-js-utils';
 export type * from '@bangle.io/root-emitter';
-export * from './app-errors';
+export type { AppError } from './app-errors';
 export type * from './base-database';
 export type * from './base-file-storage';
 export type * from './base-router';

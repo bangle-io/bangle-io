@@ -1,15 +1,12 @@
 import { type DependencyDefinition, recursiveInstantiate } from './recurse';
 
 const STATIC_FIELD = 'deps';
-
 export type Constructor<T, Arguments extends unknown[] = any[]> = new (
   ...arguments_: Arguments
 ) => T;
-
 export type ServiceContext = {
   abortSignal: AbortSignal;
 };
-
 export interface Service<_TContext> {
   mountPromise?: Promise<void>;
   mount?: () => Promise<void>;
@@ -17,9 +14,7 @@ export interface Service<_TContext> {
   mounted?: boolean;
   postInstantiate?(): void;
 }
-
 export type ServiceStartupPhase = 'instantiate' | 'postInstantiate' | 'mount';
-
 export class ServiceStartupError extends Error {
   name = 'ServiceStartupError';
 
@@ -35,7 +30,6 @@ export class ServiceStartupError extends Error {
     );
   }
 }
-
 export type ServiceConstructor<
   TContext,
   TDeps extends Record<string, Service<any>> | null = Record<
@@ -51,7 +45,6 @@ export type ServiceConstructor<
 };
 
 type AnyServiceConstructor<TContext> = ServiceConstructor<TContext, any, any>;
-
 export type ConstructorConfig<TClass extends Constructor<any, any[]>> =
   TClass extends Constructor<any, [any, any, infer TConfig, ...any[]]>
     ? TConfig
@@ -92,7 +85,6 @@ export function slot<TClass extends AnyServiceConstructor<any>>(
     ? { kind: 'service-slot', service, config }
     : { kind: 'service-slot', service };
 }
-
 export type ServiceMapEntry<TContext> =
   | AnyServiceConstructor<TContext>
   | ServiceSlot<AnyServiceConstructor<TContext>>;
@@ -104,7 +96,6 @@ export type SlotClass<TEntry> =
     : TEntry extends AnyServiceConstructor<any>
       ? TEntry
       : never;
-
 export type ServiceDependencies<
   TServices extends Record<string, Service<any>>,
   TDeps extends readonly (keyof TServices & string)[],
@@ -224,13 +215,11 @@ export type ValidateServiceMap<
 > = {
   [K in keyof TMap]: ValidateServiceMapEntry<TMap, K>;
 };
-
 export function defineServiceMap<TContext>() {
   return <const TMap extends Record<string, ServiceMapEntry<TContext>>>(
     serviceMap: TMap & ValidateServiceMap<TContext, TMap>,
   ): TMap => serviceMap;
 }
-
 export type ServiceToConstructor<T extends Service<any>> = new (
   param: T extends Service<infer C>
     ? { ctx: C; serviceContext: ServiceContext }
@@ -238,13 +227,11 @@ export type ServiceToConstructor<T extends Service<any>> = new (
   dependencies: Record<string, Service<unknown>>,
   config: any,
 ) => T;
-
 export type ConstructorToInstance<
   T extends Record<string, Constructor<any> | ServiceSlot<any>>,
 > = {
   [K in keyof T]: InstanceType<SlotClass<T[K]>>;
 };
-
 export type ContainerDescription = {
   dependencyOrder: string[];
   failedSlot?: {

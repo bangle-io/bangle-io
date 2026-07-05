@@ -275,7 +275,6 @@ function FilteredRoute({
     </CommandGroup>
   );
 }
-
 export function OmniSearch() {
   const {
     workspaceState,

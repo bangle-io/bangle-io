@@ -10,7 +10,6 @@ import type {
   Store,
 } from '@bangle.io/types';
 import { initializeServices as initializeServices2 } from './initialize-services';
-
 export function initializeServices(
   logger: Logger,
   rootEmitter: RootEmitter,

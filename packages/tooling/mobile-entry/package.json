@@ -45,6 +45,8 @@
     "expo": "^57.0.1",
     "expo-constants": "~57.0.2",
     "expo-linking": "~57.0.1",
+    "expo-system-ui": "~57.0.0",
+    "expo-updates": "~57.0.6",
     "react": "19.2.7",
     "react-native": "0.86.0",
     "react-native-webview": "^14.0.1"

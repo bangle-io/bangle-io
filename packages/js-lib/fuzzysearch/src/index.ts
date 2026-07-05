@@ -41,7 +41,6 @@ export interface FuzzySearchOptions {
 function normalizeString(str: string): string {
   return str.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
 }
-
 export function defaultFuzzySearch(needle: string, haystack: string): boolean {
   const needleNorm = normalizeString(needle);
   const haystackNorm = normalizeString(haystack);

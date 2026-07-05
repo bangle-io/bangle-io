@@ -1,11 +1,9 @@
 import { Emitter, type EventListener } from '@bangle.io/mini-js-utils';
 import type { Command } from '@bangle.io/types';
-
 export type EventSenderMetadata = {
   id: string;
   tag?: string;
 };
-
 export type RootEvents =
   | {
       event: 'event::error:uncaught-error';
@@ -70,9 +68,7 @@ export const CROSS_TAB_EVENTS = [
   'event::file:force-update',
   'event::app:reload-ui',
 ] as const satisfies RootEvents['event'][];
-
 export type CrossTabEvent = (typeof CROSS_TAB_EVENTS)[number];
-
 export class RootEmitter {
   private publisher: Emitter;
   private subscriber: Emitter;
@@ -171,7 +167,6 @@ export class RootEmitter {
     });
   }
 }
-
 export class ScopedEmitter<TScope extends RootEvents['event']> {
   constructor(
     private config: {

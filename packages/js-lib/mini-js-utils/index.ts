@@ -1,17 +1,25 @@
 // WARNING !! Should not import any other env oriented library
 // should only focus on Javascript and NO BROWSER or NODEJS specific apis
-
-export * from './base-error';
-export * from './browser';
+export { BaseError } from './base-error';
+export {
+  browserInfo,
+  isChrome,
+  isDarwin,
+  isFirefox,
+  isMac,
+  isMobile,
+  isSafari,
+} from './browser';
 export { createEmptyArray } from './create-empty-array';
 export { DuoWeakMap } from './duo-weak-map';
-export * from './emitter';
+export type { AllEventListener, EventListener, EventMessage } from './emitter';
+export { Emitter } from './emitter';
 export { getLast } from './get-last';
-export * from './is-abort-error';
-export * from './mini-zod';
+export { isAbortError } from './is-abort-error';
+export type { InferType, Validator } from './mini-zod';
+export { T } from './mini-zod';
 export { weakCache } from './weak-cache';
 export { weakCacheDuo } from './weak-cache-duo';
-
 export function isPlainObject(value: any) {
   if (typeof value !== 'object' || value === null) {
     return false;
@@ -76,7 +84,6 @@ export function difference<T>(main: T[] | Set<T>, sub: T[] | Set<T>): T[] {
 
   return [...a].filter((x) => !b.has(x));
 }
-
 export function intersect<T>(main: T[] | Set<T>, sub: T[] | Set<T>): T[] {
   const a = new Set(main);
   const b = new Set(sub);
@@ -90,10 +97,8 @@ export function intersect<T>(main: T[] | Set<T>, sub: T[] | Set<T>): T[] {
  */
 declare const __brand: unique symbol;
 export type Brand<T, K> = T & { [__brand]: K };
-
 export type IfEquals<T, U, Y = unknown, N = never> =
   (<G>() => G extends T ? 1 : 2) extends <G>() => G extends U ? 1 : 2 ? Y : N;
-
 export const expectType = <Expected, Actual>(
   _actual: IfEquals<Actual, Expected, Actual>,
 ) => void 0;
@@ -109,11 +114,9 @@ export function assertIsDefined<T>(
     throw new Error(`Assertion Failed: argument is undefined or null. ${hint}`);
   }
 }
-
 export function isUndefinedOrNull(obj: unknown): obj is undefined | null {
   return isUndefined(obj) || obj === null;
 }
-
 export function isUndefined(obj: unknown): obj is undefined {
   return typeof obj === 'undefined';
 }

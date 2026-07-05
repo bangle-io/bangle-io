@@ -33,7 +33,6 @@ import {
   PageWsPathNotFound,
 } from './pages';
 import { SaveProtection } from './save-protection';
-
 export function App({
   logger,
   store,

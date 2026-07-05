@@ -1,4 +1,4 @@
-import stories from '@bangle.io/ui-components/src/workspace-dialog.stories.portable';
+import { workspaceDialogStories as stories } from '@bangle.io/ui-components/testing';
 import { test as base, expect } from '@playwright/experimental-ct-react';
 import { createTest } from '@storybook/react/experimental-playwright';
 import React from 'react';

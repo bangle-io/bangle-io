@@ -1,0 +1,37 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "treatConfigHintsAsErrors": true,
+  "include": ["unlisted", "binaries"],
+  "workspaces": {
+    "packages/tooling/browser-entry": {
+      "entry": ["index.html"],
+      "project": ["src/**/*.{css,ts,tsx}", "translations-plugin.ts"],
+      "vite": {
+        "config": ["vite.config.ts"]
+      }
+    },
+    "packages/tooling/desktop-entry": {
+      "entry": [
+        "electron-builder.config.cjs",
+        "scripts/*.{mjs,ts}",
+        "src/main.ts",
+        "src/preload.ts"
+      ],
+      "project": ["scripts/*.{mjs,ts}", "src/**/*.ts"],
+      "vite": {
+        "config": ["vite.config.ts"]
+      }
+    },
+    "packages/tooling/mobile-entry": {
+      "entry": ["babel.config.js", "index.ts", "src/**/*.tsx"],
+      "project": ["*.{js,ts}", "src/**/*.tsx"],
+      "expo": {
+        "config": ["app.config.ts"]
+      }
+    }
+  },
+  "rules": {
+    "unlisted": "error",
+    "binaries": "error"
+  }
+}

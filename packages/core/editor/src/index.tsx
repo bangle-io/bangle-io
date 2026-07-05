@@ -15,7 +15,6 @@ import { useEditorCoreServices } from './use-editor-core-services';
 
 export { PmEditorService } from './pm-editor-service';
 export { useEditorCoreServices } from './use-editor-core-services';
-
 export function Editor({
   wsPath,
   className,

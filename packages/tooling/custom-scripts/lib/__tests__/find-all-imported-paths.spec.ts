@@ -73,6 +73,17 @@ describe('findAllImportedPackages', () => {
     expect(findAllImportedPackages(sourceCode)).toEqual(['module-name']);
   });
 
+  it('should handle CommonJS requires', () => {
+    const sourceCode = `
+      const path = require('node:path');
+      const config = require("@scope/config");
+    `;
+    expect(findAllImportedPackages(sourceCode)).toEqual([
+      'node:path',
+      '@scope/config',
+    ]);
+  });
+
   it('should return an empty array for no imports', () => {
     const sourceCode = 'const a = 10;';
     expect(findAllImportedPackages(sourceCode)).toEqual([]);

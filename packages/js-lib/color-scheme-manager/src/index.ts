@@ -11,19 +11,16 @@ export const THEME_MANAGER_DEFAULT_CONFIG = {
   defaultPreference: 'system',
   storageKey: 'color-scheme',
 } as const;
-
 export interface ThemeConfig {
   readonly lightThemeClass: string;
   readonly darkThemeClass: string;
   readonly storageKey: string;
   readonly defaultPreference: ThemePreference;
 }
-
 export type ThemeCallback = (config: {
   theme: string;
   preference: ThemePreference;
 }) => void;
-
 export class ThemeManager {
   public currentTheme: string;
   public currentPreference: ThemePreference;
