@@ -33,13 +33,29 @@ or accessibility regressions are not acceptable.
 
 ## Current Status
 
-- `@bangle.io/shadcn` remains the current production Radix-backed package.
-- `@bangle.io/base-ui` is the new Base UI-backed target package.
-- The root `components.json` records the intended shadcn Base UI target package.
-  Direct root CLI generation is not enabled until shadcn can resolve the
-  monorepo aliases through `tsconfig.json` paths or package import aliases.
-- Tailwind v4 and React 19 foundations already exist in
-  `packages/tooling/browser-entry/src/index.css`.
+Migration complete (pending final CI + merge). `@bangle.io/shadcn` has been
+deleted and every consumer now uses `@bangle.io/base-ui`.
+
+- All primitives regenerated from the genuine `shadcn@latest -b base` registry
+  (shadcn CLI 4.13, `@base-ui/react` 1.6) rather than hand-adapted wrappers:
+  button, input, separator, skeleton, label, toggle, toggle-group, collapsible,
+  accordion, tooltip, dialog, alert-dialog, sheet, dropdown-menu, select, plus a
+  new radio-group. Adapted to Bangle conventions: `cn` from `@bangle.io/ui-misc`,
+  global `t` for close labels, explicit barrels, classic-JSX React imports.
+- Held components stay as Bangle's (not Base UI primitive swaps): `command`
+  (cmdk, with Bangle's CommandBadge/CommandHints/CommandInput extras) and
+  `calendar` (react-day-picker). `sidebar` and `breadcrumb` are app-customized
+  compositions now built on Base UI `useRender` instead of Radix `Slot`.
+- No `@radix-ui/*` runtime dependency remains anywhere in the repo.
+- Theming: Bangle keeps its `--BV-*` (values) / `.BU_dark-scheme` (scheme class)
+  convention and the `@theme inline` `var()` bridge, which matches the modern
+  shadcn Tailwind v4 pattern. Only addition required was
+  `--font-heading: var(--font-sans)` in `browser-entry/src/index.css`.
+- Deliberate deviations from the generated source (documented in code):
+  `DropdownMenuLabel` renders a plain `<div>` (the shadcn `Menu.GroupLabel`
+  throws when used standalone, which Bangle does); the settings width control
+  uses the radio-group (Base UI `ToggleGroup` is not a radiogroup like Radix's
+  was, so `role="radio"` a11y is preserved via `RadioGroup`).
 
 ## Scope
 

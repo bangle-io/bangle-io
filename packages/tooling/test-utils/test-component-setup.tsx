@@ -48,7 +48,7 @@ export function renderWithServices({
           <LoggerProvider logger={testEnv.logger}>
             <Provider store={testEnv.commonOpts.store}>
               <CoreServiceProvider services={coreServices}>
-                <Sidebar.SidebarProvider open={false} setOpen={() => {}}>
+                <Sidebar.SidebarProvider open={false} onOpenChange={() => {}}>
                   {children}
                 </Sidebar.SidebarProvider>
               </CoreServiceProvider>

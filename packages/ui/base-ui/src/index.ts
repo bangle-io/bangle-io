@@ -1,4 +1,5 @@
 export { cn, useIsMobile } from '@bangle.io/ui-misc';
+export { mergeProps } from '@base-ui/react/merge-props';
 export { useRender } from '@base-ui/react/use-render';
 export {
   Accordion,
