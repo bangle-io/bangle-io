@@ -9,7 +9,7 @@ import {
   CommandItem,
   CommandList,
   cn,
-} from '@bangle.io/shadcn';
+} from '@bangle.io/base-ui';
 import { Check } from 'lucide-react';
 import React from 'react';
 

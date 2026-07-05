@@ -20,11 +20,25 @@ export {
 } from './alert-dialog';
 export type { ButtonProps } from './button';
 export { Button, buttonVariants } from './button';
+export { Calendar, CalendarDayButton } from './calendar';
 export {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from './collapsible';
+export {
+  Command,
+  CommandBadge,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandHints,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from './command';
 export {
   Dialog,
   DialogClose,

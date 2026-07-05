@@ -290,7 +290,6 @@ export function OmniSearch() {
   const [open, setOpen] = useAtom(workbenchState.$openOmniSearch);
 
   const commandInputRef = React.useRef<HTMLInputElement>(null);
-  const previouslyFocusedElementRef = React.useRef<HTMLElement | null>(null);
 
   const wsPaths = useAtomValue(workspaceState.$wsPaths);
   const [search, updateSearch] = useAtom(workbenchState.$omniSearchInput);
@@ -370,21 +369,6 @@ export function OmniSearch() {
       }}
       shouldFilter={false}
       screenReaderTitle="omni command bar"
-      onOpenAutoFocus={() => {
-        previouslyFocusedElementRef.current =
-          document.activeElement instanceof HTMLElement
-            ? document.activeElement
-            : null;
-      }}
-      onCloseAutoFocus={(event) => {
-        const previouslyFocusedElement = previouslyFocusedElementRef.current;
-        previouslyFocusedElementRef.current = null;
-
-        if (previouslyFocusedElement?.isConnected) {
-          event.preventDefault();
-          previouslyFocusedElement.focus();
-        }
-      }}
     >
       <CommandInput
         ref={commandInputRef}
