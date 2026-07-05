@@ -111,13 +111,23 @@ export async function recurseDirHandle(
   {
     allowedFile = (_fileHandle: FileSystemFileHandle): boolean => true,
     allowedDir = (_dirHandle: FileSystemDirectoryHandle): boolean => true,
+    abortSignal,
+  }: {
+    allowedFile?: (fileHandle: FileSystemFileHandle) => boolean;
+    allowedDir?: (dirHandle: FileSystemDirectoryHandle) => boolean;
+    abortSignal?: AbortSignal;
   } = {},
 ) {
   const _recurse = async (
     dirHandle: FileSystemDirectoryHandle,
   ): Promise<RecurseDirResult> => {
+    abortSignal?.throwIfAborted();
     let result: RecurseDirResult = [];
     for await (const entry of dirHandle.values()) {
+      // Checked per-entry (not just per-directory) so an abort can
+      // interrupt a walk part-way through a single large directory,
+      // not only between directories.
+      abortSignal?.throwIfAborted();
       if (entry.kind === 'file' && allowedFile(entry)) {
         result.push([dirHandle, entry]);
       }
@@ -125,6 +135,7 @@ export async function recurseDirHandle(
         let children: RecurseDirResult = await recurseDirHandle(entry, {
           allowedDir,
           allowedFile,
+          abortSignal,
         });
         // attach the parent first
         children = children.map((r) => [dirHandle, ...r]);

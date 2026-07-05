@@ -34,10 +34,18 @@ class FakeDirectoryHandle {
   readonly kind = 'directory';
   private entries = new Map<string, FakeDirectoryHandle | FakeFileHandle>();
 
-  constructor(readonly name: string) {}
+  constructor(
+    readonly name: string,
+    // Called every time an entry is yielded from `values()`, at any depth.
+    // Test-only hook used to observe (and interrupt, via an AbortController)
+    // a recursive traversal while it's in progress, rather than only after
+    // it has fully completed.
+    private onVisit?: () => void,
+  ) {}
 
   async *values(): AsyncIterableIterator<FileSystemHandle> {
     for (const entry of this.entries.values()) {
+      this.onVisit?.();
       yield entry as unknown as FileSystemHandle;
     }
   }
@@ -77,7 +85,7 @@ class FakeDirectoryHandle {
       throw new DOMException('Directory not found', 'NotFoundError');
     }
 
-    const directoryHandle = new FakeDirectoryHandle(name);
+    const directoryHandle = new FakeDirectoryHandle(name, this.onVisit);
     this.entries.set(name, directoryHandle);
     return directoryHandle;
   }

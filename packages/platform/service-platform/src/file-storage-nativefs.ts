@@ -240,7 +240,7 @@ export class FileStorageNativeFs
     });
     let rawPaths: string[];
     try {
-      rawPaths = await fs.opendirRecursive(wsName);
+      rawPaths = await fs.opendirRecursive(wsName, abortSignal);
     } catch (error) {
       if (
         error instanceof BaseFileSystemError &&

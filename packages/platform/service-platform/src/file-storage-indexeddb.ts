@@ -119,7 +119,10 @@ export class FileStorageIndexedDB
   ): Promise<string[]> {
     await this.mountPromise;
 
-    const rawPaths: string[] = await this.idb.opendirRecursive(wsName);
+    const rawPaths: string[] = await this.idb.opendirRecursive(
+      wsName,
+      abortSignal,
+    );
     abortSignal.throwIfAborted();
 
     return rawPaths
