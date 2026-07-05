@@ -38,6 +38,7 @@ const APP_DOCUMENT_SUBTITLE = 'Notes';
 const WINDOW_CONTROLS_OVERLAY_ATTRIBUTE = 'data-bangle-window-controls-overlay';
 const WINDOW_CONTROLS_OVERLAY_CONTROLS_ATTRIBUTE =
   'data-bangle-window-controls-overlay-controls';
+const TITLEBAR_EDGE_OCCLUSION_EPSILON = 0.5;
 
 let initializedWindow: Window | undefined;
 let trackingAbortController: AbortController | undefined;
@@ -71,6 +72,31 @@ function isStandaloneDisplay(windowRef: Window) {
     windowRef.matchMedia?.('(display-mode: standalone)').matches === true ||
     navigatorWithStandalone.standalone === true
   );
+}
+
+function getWindowControlsOverlayControls(
+  rect: TitlebarAreaRect,
+  viewportWidth: number,
+) {
+  const hasLeftControls = rect.x > TITLEBAR_EDGE_OCCLUSION_EPSILON;
+  const hasRightControls =
+    viewportWidth > 0
+      ? viewportWidth - rect.x - rect.width > TITLEBAR_EDGE_OCCLUSION_EPSILON
+      : rect.x <= TITLEBAR_EDGE_OCCLUSION_EPSILON;
+
+  if (hasLeftControls && hasRightControls) {
+    return 'both';
+  }
+
+  if (hasLeftControls) {
+    return 'left';
+  }
+
+  if (hasRightControls) {
+    return 'right';
+  }
+
+  return 'none';
 }
 
 export function syncAppDocumentTitle(documentRef: Document | undefined) {
@@ -126,7 +152,7 @@ export function syncWindowControlsOverlayState(input: {
     );
     documentElement.setAttribute(
       WINDOW_CONTROLS_OVERLAY_CONTROLS_ATTRIBUTE,
-      rect.x === 0 ? 'right' : 'left',
+      getWindowControlsOverlayControls(rect, documentElement.clientWidth),
     );
   };
 

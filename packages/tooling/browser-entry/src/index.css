@@ -139,24 +139,26 @@ html[data-bangle-window-controls-overlay="visible"]
   user-select: auto;
 }
 
-html[data-bangle-window-controls-overlay="visible"][data-bangle-window-controls-overlay-controls="right"]
+html[data-bangle-window-controls-overlay="visible"]
   .desktop-titlebar-surface {
   padding-right: max(
     0.75rem,
-    calc(
-      100vw - var(--bangle-titlebar-area-x, env(titlebar-area-x, 0px)) -
-        var(--bangle-titlebar-area-width, env(titlebar-area-width, 100vw))
-    )
+    calc(var(--bangle-titlebar-right-inset) + 0.5rem)
   );
+  background: hsl(var(--BV-background));
+  backdrop-filter: none;
 }
 
-html[data-bangle-window-controls-overlay="visible"][data-bangle-window-controls-overlay-controls="left"]
+html[data-bangle-window-controls-overlay="visible"]:is(
+    [data-bangle-window-controls-overlay-controls="left"],
+    [data-bangle-window-controls-overlay-controls="both"]
+  )
   .peer[data-state="collapsed"][data-side="left"]
   ~ *
   .desktop-titlebar-main-spacer {
   width: max(
     4.75rem,
-    calc(var(--bangle-titlebar-area-x, env(titlebar-area-x, 0px)) + 0.5rem)
+    calc(var(--bangle-titlebar-left-inset) + 0.5rem)
   );
 }
 
@@ -171,13 +173,14 @@ html[data-bangle-desktop-platform="darwin"] .desktop-sidebar-titlebar-header {
   padding-top: 2rem;
 }
 
-html[data-bangle-window-controls-overlay="visible"][data-bangle-window-controls-overlay-controls="left"]
+html[data-bangle-window-controls-overlay="visible"]:is(
+    [data-bangle-window-controls-overlay-controls="left"],
+    [data-bangle-window-controls-overlay-controls="both"]
+  )
   .desktop-sidebar-titlebar-header {
   padding-top: max(
     0.5rem,
-    calc(
-      var(--bangle-titlebar-area-height, env(titlebar-area-height, 0px)) + 0.25rem
-    )
+    calc(var(--bangle-titlebar-area-height) + 0.25rem)
   );
 }
 
@@ -278,6 +281,14 @@ html[data-bangle-window-controls-overlay="visible"][data-bangle-window-controls-
 
 :root {
   --bangle-app-titlebar-height: 40px;
+  --bangle-titlebar-area-x: 0px;
+  --bangle-titlebar-area-y: 0px;
+  --bangle-titlebar-area-width: 100vw;
+  --bangle-titlebar-area-height: var(--bangle-app-titlebar-height);
+  --bangle-titlebar-left-inset: var(--bangle-titlebar-area-x);
+  --bangle-titlebar-right-inset: calc(
+    100vw - var(--bangle-titlebar-area-x) - var(--bangle-titlebar-area-width)
+  );
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
