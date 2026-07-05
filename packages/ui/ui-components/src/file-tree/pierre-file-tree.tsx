@@ -8,7 +8,7 @@ import type {
 } from '@pierre/trees';
 import { FileTree, useFileTree } from '@pierre/trees/react';
 import { FilePlus2, FileText, FolderPlus } from 'lucide-react';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { BANGLE_PIERRE_FILE_TREE_ICONS } from './pierre-file-tree-icons';
 import {
   type FileTreeEntry,
@@ -318,6 +318,7 @@ export function PierreFileTree({
   const filePathSetRef = useRef<ReadonlySet<string>>(filePathSet);
   const modelRef = useRef<PierreFileTreeModel | null>(null);
   const contextMenuSelectedEntriesRef = useRef<readonly FileTreeEntry[]>([]);
+  const dragSourcePathRef = useRef<string | null>(null);
   const onOpenFileRef = useRef(onOpenFile);
   const onMoveFileRef = useRef(onMoveFile);
   const pendingUserOpenPathRef = useRef<string | null>(null);
@@ -325,6 +326,7 @@ export function PierreFileTree({
   const suppressSelectionOpenRef = useRef(false);
   const suppressSelectionOpenTimerRef = useRef<number | undefined>(undefined);
   const treePathsRef = useRef<readonly string[]>(treePaths);
+  const rootElementRef = useRef<HTMLDivElement | null>(null);
   filePathSetRef.current = filePathSet;
   onOpenFileRef.current = onOpenFile;
   onMoveFileRef.current = onMoveFile;
@@ -369,6 +371,11 @@ export function PierreFileTree({
     }
   };
 
+  const resetDragAffordance = useCallback((): void => {
+    dragSourcePathRef.current = null;
+    rootElementRef.current?.removeAttribute('data-root-drop-active');
+  }, []);
+
   const suppressSelectionOpenForDrag = (): void => {
     resetSelectionOpenSuppression();
     suppressSelectionOpenRef.current = true;
@@ -379,10 +386,14 @@ export function PierreFileTree({
   };
 
   const canDragFile = (paths: readonly string[]): boolean => {
+    const sourcePath = normalizePierreFilePath(paths[0] || '');
     const canDrag =
-      paths.length === 1 &&
-      filePathSetRef.current.has(normalizePierreFilePath(paths[0] || ''));
+      paths.length === 1 && filePathSetRef.current.has(sourcePath);
     if (canDrag) {
+      dragSourcePathRef.current = sourcePath;
+      if (getParentDirectory(sourcePath) !== undefined) {
+        rootElementRef.current?.setAttribute('data-root-drop-active', 'true');
+      }
       suppressSelectionOpenForDrag();
     }
     return canDrag;
@@ -438,6 +449,7 @@ export function PierreFileTree({
       onDropComplete: handleDropComplete,
       onDropError: () => {
         resetSelectionOpenSuppression();
+        resetDragAffordance();
         if (modelRef.current) {
           resetModelPathsPreservingExpansion(
             modelRef.current,
@@ -516,9 +528,43 @@ export function PierreFileTree({
     [],
   );
 
+  useEffect(() => {
+    const handleDragEnd = () => {
+      resetDragAffordance();
+    };
+
+    window.addEventListener('dragend', handleDragEnd);
+    return () => {
+      window.removeEventListener('dragend', handleDragEnd);
+    };
+  }, [resetDragAffordance]);
+
+  const handleRootDrop = (event: React.DragEvent<HTMLButtonElement>): void => {
+    const sourcePath = dragSourcePathRef.current;
+    if (
+      !rootElementRef.current?.hasAttribute('data-root-drop-active') ||
+      !sourcePath
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    resetSelectionOpenSuppression();
+    resetDragAffordance();
+
+    if (getParentDirectory(sourcePath) !== undefined) {
+      onMoveFileRef.current(sourcePath, undefined);
+    }
+  };
+
   return (
     <div
-      className={cn('flex min-h-0 flex-1 flex-col', className)}
+      ref={rootElementRef}
+      className={cn(
+        'group/root-drop relative flex min-h-0 flex-1 flex-col',
+        className,
+      )}
       data-testid="bangle-file-explorer"
     >
       <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
@@ -561,6 +607,21 @@ export function PierreFileTree({
             <FolderPlus className="size-3.5" />
           </button>
         </div>
+        <button
+          aria-label={t.app.components.appSidebar.moveToWorkspaceRootLabel}
+          className="absolute top-1 right-2 left-2 z-30 hidden h-7 shrink-0 items-center justify-center rounded-sm border border-sidebar-border border-dashed bg-sidebar-accent/95 text-[11px] text-sidebar-accent-foreground shadow-xs transition-colors hover:border-sidebar-accent-foreground/60 hover:bg-sidebar-accent group-data-[root-drop-active=true]/root-drop:flex"
+          type="button"
+          onDragEnter={(event) => {
+            event.preventDefault();
+          }}
+          onDragOver={(event) => {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'move';
+          }}
+          onDrop={handleRootDrop}
+        >
+          {t.app.components.appSidebar.moveToWorkspaceRootLabel}
+        </button>
         <FileTree
           aria-label={t.app.components.appSidebar.fileTreeLabel}
           className="min-h-0 flex-1 overflow-hidden"

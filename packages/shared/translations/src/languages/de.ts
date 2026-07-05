@@ -569,6 +569,7 @@ export const t = {
         deleteActionTitle: 'Löschen',
         deleteSelectedFilesActionTitle: ({ count }: { count: number }) =>
           `${count} Dateien löschen`,
+        moveToWorkspaceRootLabel: 'In Arbeitsbereichsstamm verschieben',
         workspacesLabel: 'Arbeitsbereiche',
         noWorkspaceSelectedTitle: 'Kein Arbeitsbereich ausgewählt',
         noWorkspaceSelectedSubtitle:

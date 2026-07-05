@@ -1,10 +1,45 @@
-import { expect, test } from '@playwright/test';
+import { expect, type Locator, type Page, test } from '@playwright/test';
 import {
   createBrowserWorkspace,
-  dragTreeItemOnto,
   readStoredMarkdown,
   writeStoredMarkdown,
 } from './common';
+
+async function dragTreeItemOntoRevealedTarget(
+  page: Page,
+  source: Locator,
+  target: Locator,
+) {
+  const sourceBox = await source.boundingBox();
+  if (!sourceBox) {
+    throw new Error('Expected drag source to be visible');
+  }
+
+  const sourceX = sourceBox.x + sourceBox.width / 2;
+  const sourceY = sourceBox.y + sourceBox.height / 2;
+  const settleFrame = () => page.waitForTimeout(60);
+
+  await page.mouse.move(sourceX, sourceY);
+  await page.mouse.down();
+  await settleFrame();
+  await page.mouse.move(sourceX, sourceY - 8);
+  await settleFrame();
+  await expect(target).toBeVisible();
+
+  const targetBox = await target.boundingBox();
+  if (!targetBox) {
+    throw new Error('Expected revealed drop target to be visible');
+  }
+
+  const targetX = targetBox.x + targetBox.width / 2;
+  const targetY = targetBox.y + targetBox.height / 2;
+
+  await page.mouse.move((sourceX + targetX) / 2, (sourceY + targetY) / 2);
+  await settleFrame();
+  await page.mouse.move(targetX, targetY);
+  await settleFrame();
+  await page.mouse.up();
+}
 
 test('file explorer deletes multiple selected files from one confirmation', async ({
   page,
@@ -153,12 +188,14 @@ test('file explorer can drag a nested note back to the workspace root', async ({
   await docsFolder.focus();
   await page.keyboard.press('ArrowRight');
   const nestedNote = explorer.getByRole('treeitem', { name: /^nested\.md$/ });
-  const keepNote = explorer.getByRole('treeitem', { name: /^keep\.md$/ });
   await expect(nestedNote).toBeVisible();
-  await expect(keepNote).toBeVisible();
 
   await nestedNote.click();
-  await dragTreeItemOnto(page, nestedNote, keepNote);
+  await dragTreeItemOntoRevealedTarget(
+    page,
+    nestedNote,
+    explorer.getByRole('button', { name: 'Move to workspace root' }),
+  );
 
   await expect(page.getByText('Moved nested.md')).toBeVisible();
   await expect

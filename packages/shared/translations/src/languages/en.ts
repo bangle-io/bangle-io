@@ -571,6 +571,7 @@ export const t = {
         deleteActionTitle: 'Delete',
         deleteSelectedFilesActionTitle: ({ count }: { count: number }) =>
           `Delete ${count} files`,
+        moveToWorkspaceRootLabel: 'Move to workspace root',
         workspacesLabel: 'Workspaces',
         noWorkspaceSelectedTitle: 'No workspace selected',
         noWorkspaceSelectedSubtitle: 'Click to select a workspace',
