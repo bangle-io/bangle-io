@@ -6,7 +6,12 @@ import {
   isAppError,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
-import { type EditorView, TextSelection } from '@bangle.io/prosemirror-plugins';
+import {
+  type EditorView,
+  markdownLoader,
+  type Schema,
+  TextSelection,
+} from '@bangle.io/prosemirror-plugins';
 import {
   displayNameForAsset,
   type FileSystemService,
@@ -112,6 +117,10 @@ export class PmEditorService extends BaseService {
   private pendingHeading: { fragment: string; wsPath: string } | undefined;
 
   private editors = new Map<HTMLElement, EditorEntry>();
+
+  private markdownSerializer:
+    | ReturnType<typeof markdownLoader>['serializer']
+    | undefined;
 
   constructor(
     context: BaseServiceContext,
@@ -802,6 +811,35 @@ export class PmEditorService extends BaseService {
       view.state,
       view.dispatch,
     );
+  }
+
+  /**
+   * Serializes the current selection in the active editor to Markdown.
+   *
+   * Reuses the same serializer configuration as the save path so copied
+   * content matches what would be written to disk. Returns null when there is
+   * no active editor or the selection is empty.
+   */
+  getSelectionMarkdown(): string | null {
+    const view = this.getActiveEditorView();
+    if (!view) {
+      return null;
+    }
+    const { from, to, empty } = view.state.selection;
+    if (empty) {
+      return null;
+    }
+    return this.getMarkdownSerializer(view.state.schema).serialize(
+      view.state.doc.cut(from, to),
+    );
+  }
+
+  private getMarkdownSerializer(schema: Schema) {
+    this.markdownSerializer ??= markdownLoader(
+      [...Object.values(this.extensions)],
+      schema,
+    ).serializer;
+    return this.markdownSerializer;
   }
 
   private getActiveEditorView() {

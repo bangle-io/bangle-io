@@ -18,6 +18,7 @@ import type { CommandExcludedServiceSlotId } from '@bangle.io/types';
 export type PmEditorServiceContract = BaseService & {
   collapseAllHeadings: (level: number) => boolean;
   focusEditor: () => void;
+  getSelectionMarkdown: () => string | null;
   hasPendingOrFailedSave: (wsPath?: string) => boolean;
   mountEditor: (params: {
     domNode: HTMLElement;
