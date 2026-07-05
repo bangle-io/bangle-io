@@ -1,4 +1,5 @@
 import {
+  EditorState,
   markdownLoader,
   resolve,
   Schema,
@@ -7,6 +8,7 @@ import {
   setupHeading,
   setupList,
   setupParagraph,
+  TextSelection,
 } from '@bangle.io/prosemirror-plugins';
 import { describe, expect, it } from 'vitest';
 
@@ -30,6 +32,27 @@ function setup() {
   const markdown = markdownLoader(extensions, schema);
   return {
     parse: (source: string) => markdown.parser.parse(source),
+    insertMarkdownAtEnd: (initialSource: string, markdownText: string) => {
+      const initialDoc = markdown.parser.parse(initialSource);
+      const state = EditorState.create({
+        doc: initialDoc,
+        schema,
+        selection: TextSelection.create(
+          initialDoc,
+          initialDoc.content.size - 1,
+        ),
+      });
+      const parsed = markdown.parser.parse(markdownText);
+      const inline =
+        parsed.childCount === 1 && parsed.firstChild?.type.name === 'paragraph';
+      const slice = inline
+        ? parsed.slice(1, Math.max(1, parsed.content.size - 1))
+        : parsed.slice(0, parsed.content.size);
+
+      return markdown.serializer.serialize(
+        state.apply(state.tr.replaceSelection(slice)).doc,
+      );
+    },
     serializeSelection: (source: string, from: number, to: number) =>
       markdown.serializer.serialize(
         markdown.parser.parse(source).cut(from, to),
@@ -83,5 +106,17 @@ describe('paste from Markdown round trips', () => {
     const doc = parse(source);
     // Serializing the whole parsed document must reproduce the source.
     expect(serializeSelection(source, 0, doc.content.size)).toBe(source);
+  });
+
+  it('keeps a single pasted heading as a heading block', () => {
+    const { insertMarkdownAtEnd } = setup();
+
+    expect(insertMarkdownAtEnd('', '# Title')).toBe('# Title');
+  });
+
+  it('still inserts a single pasted paragraph inline', () => {
+    const { insertMarkdownAtEnd } = setup();
+
+    expect(insertMarkdownAtEnd('Hello', '**world**')).toBe('Hello**world**');
   });
 });

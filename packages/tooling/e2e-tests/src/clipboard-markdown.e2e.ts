@@ -65,6 +65,18 @@ test('pastes Markdown from the clipboard into the editor', async ({
   await editor.click();
   await clearEditor(page, {});
 
+  await page.evaluate(() => navigator.clipboard.writeText('# Solo Heading'));
+
+  await test.step('paste a single heading block from Markdown', async () => {
+    await runCommand(page, 'Paste from Markdown');
+    await expect(
+      page.getByRole('heading', { name: 'Solo Heading' }),
+    ).toBeVisible();
+    await expect(editor).not.toContainText('# Solo Heading');
+  });
+
+  await editor.click();
+  await clearEditor(page, {});
   await page.evaluate(() =>
     navigator.clipboard.writeText('# Pasted Heading\n\nPasted body text'),
   );
