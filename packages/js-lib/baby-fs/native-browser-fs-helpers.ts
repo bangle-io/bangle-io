@@ -74,6 +74,21 @@ interface QueryPermissionOptions extends FileSystemHandlePermissionDescriptor {
   writable?: boolean;
 }
 
+// Workspace metadata is stored as `Record<string, unknown>`, so the
+// `rootDirHandle` entry needs a runtime check before it can be treated as a
+// `FileSystemDirectoryHandle`.
+export function isFileSystemDirectoryHandle(
+  value: unknown,
+): value is FileSystemDirectoryHandle {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'requestPermission' in value &&
+    typeof (value as { requestPermission: unknown }).requestPermission ===
+      'function'
+  );
+}
+
 export async function hasPermission(
   dirHandle: FileSystemDirectoryHandle,
 ): Promise<boolean> {

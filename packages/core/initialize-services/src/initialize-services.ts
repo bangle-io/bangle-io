@@ -1,7 +1,7 @@
+import { isFileSystemDirectoryHandle } from '@bangle.io/baby-fs';
 import {
   assertIsDefined,
   getEventSenderMetadata,
-  isFileSystemDirectoryHandle,
   throwAppError,
 } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';

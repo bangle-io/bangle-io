@@ -1,5 +1,18 @@
+import { WsPath } from '@bangle.io/ws-path';
 import { describe, expect, it } from 'vitest';
 import { validateInputPath } from '../utils';
+
+// The reason a `WsPath.validation.validatePath` failure is rejected is
+// ws-path's own (untranslated) message; deriving the expectation from the
+// same validator here (rather than hardcoding its wording) keeps this test
+// from breaking if that wording changes for unrelated reasons.
+const wsPathReason = (path: string): string => {
+  const result = WsPath.validation.validatePath(path);
+  if (result.ok) {
+    throw new Error(`expected "${path}" to be an invalid path`);
+  }
+  return result.validationError.reason;
+};
 
 const catchError = (fn: () => void): Error | undefined => {
   try {
@@ -42,14 +55,15 @@ describe('validateInputPath', () => {
   });
 
   it('should throw error for absolute paths', () => {
-    const error = catchError(() => validateInputPath('/absolute/path'));
+    const path = '/absolute/path';
+    const error = catchError(() => validateInputPath(path));
     expect(error).toMatchObject({
-      message: t.app.errors.wsPath.absolutePathNotAllowed,
+      message: wsPathReason(path),
     });
     expect(error?.cause).toMatchObject({
       isBangleAppError: true,
       name: 'error::ws-path:create-new-note',
-      payload: { invalidWsPath: '/absolute/path' },
+      payload: { invalidWsPath: path },
     });
   });
 
@@ -60,7 +74,7 @@ describe('validateInputPath', () => {
     const path = 'C:\\absolute\\path';
     const error = catchError(() => validateInputPath(path));
     expect(error).toMatchObject({
-      message: t.app.errors.wsPath.invalidCharsInPath,
+      message: wsPathReason(path),
     });
     expect(error?.cause).toMatchObject({
       isBangleAppError: true,
@@ -70,14 +84,15 @@ describe('validateInputPath', () => {
   });
 
   it('should throw error for directory traversal', () => {
-    const error = catchError(() => validateInputPath('../path'));
+    const path = '../path';
+    const error = catchError(() => validateInputPath(path));
     expect(error).toMatchObject({
-      message: t.app.errors.wsPath.directoryTraversalNotAllowed,
+      message: wsPathReason(path),
     });
     expect(error?.cause).toMatchObject({
       isBangleAppError: true,
       name: 'error::ws-path:create-new-note',
-      payload: { invalidWsPath: '../path' },
+      payload: { invalidWsPath: path },
     });
   });
 
@@ -87,7 +102,7 @@ describe('validateInputPath', () => {
     const path = '..\\path';
     const error = catchError(() => validateInputPath(path));
     expect(error).toMatchObject({
-      message: t.app.errors.wsPath.invalidCharsInPath,
+      message: wsPathReason(path),
     });
     expect(error?.cause).toMatchObject({
       isBangleAppError: true,
@@ -100,7 +115,7 @@ describe('validateInputPath', () => {
     const path = 'path//to/note';
     const error = catchError(() => validateInputPath(path));
     expect(error).toMatchObject({
-      message: t.app.errors.wsPath.invalidNotePath,
+      message: wsPathReason(path),
     });
     expect(error?.cause).toMatchObject({
       isBangleAppError: true,
@@ -113,7 +128,7 @@ describe('validateInputPath', () => {
     const path = 'path/./note';
     const error = catchError(() => validateInputPath(path));
     expect(error).toMatchObject({
-      message: t.app.errors.wsPath.directoryTraversalNotAllowed,
+      message: wsPathReason(path),
     });
     expect(error?.cause).toMatchObject({
       isBangleAppError: true,
@@ -136,7 +151,7 @@ describe('validateInputPath', () => {
     invalidCharPaths.forEach((path) => {
       const error = catchError(() => validateInputPath(path));
       expect(error).toMatchObject({
-        message: t.app.errors.wsPath.invalidCharsInPath,
+        message: wsPathReason(path),
       });
       expect(error?.cause).toMatchObject({
         isBangleAppError: true,
@@ -150,7 +165,7 @@ describe('validateInputPath', () => {
     const path = 'path/note.';
     const error = catchError(() => validateInputPath(path));
     expect(error).toMatchObject({
-      message: t.app.errors.wsPath.invalidNotePath,
+      message: wsPathReason(path),
     });
     expect(error?.cause).toMatchObject({
       isBangleAppError: true,

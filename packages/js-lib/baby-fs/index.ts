@@ -31,6 +31,7 @@ export type {
 export {
   createFile,
   hasPermission,
+  isFileSystemDirectoryHandle,
   readFileAsText,
   recurseDirHandle,
 } from './native-browser-fs-helpers';

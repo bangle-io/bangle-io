@@ -282,6 +282,9 @@ importers:
 
   packages/core/initialize-services:
     dependencies:
+      '@bangle.io/baby-fs':
+        specifier: workspace:*
+        version: link:../../js-lib/baby-fs
       '@bangle.io/base-utils':
         specifier: workspace:*
         version: link:../../shared/base-utils
