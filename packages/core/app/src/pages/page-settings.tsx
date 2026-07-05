@@ -66,6 +66,15 @@ const ASSET_LOCATION_OPTIONS: Array<{
   label: ASSET_LOCATION_LABELS[value],
 }));
 
+// Base UI's `Select.Value` renders the raw value while the popup is closed
+// unless the Root is given an `items` value→label map to resolve the label.
+const ASSET_LOCATION_ITEMS: Record<string, string> = Object.fromEntries(
+  ASSET_LOCATION_OPTIONS.map((option) => [option.value, option.label]),
+);
+const THEME_ITEMS: Record<string, string> = Object.fromEntries(
+  THEME_OPTIONS.map((option) => [option.value, option.label]),
+);
+
 // Presentation for each settings page. Keyed by SettingsPageId so adding a page
 // to SETTINGS_PAGE_DEFINITIONS (in @bangle.io/constants) forces a matching entry
 // here at compile time.
@@ -282,6 +291,7 @@ function AssetLocationSelect({
 }) {
   return (
     <Select
+      items={ASSET_LOCATION_ITEMS}
       onValueChange={(nextValue) => {
         if (isAssetLocationPreference(nextValue)) {
           onValueChange(nextValue);
@@ -315,6 +325,7 @@ function ThemePreferenceSelect({
 }) {
   return (
     <Select
+      items={THEME_ITEMS}
       onValueChange={(nextValue) => {
         if (isThemePreference(nextValue)) {
           onValueChange(nextValue);
