@@ -22,6 +22,8 @@
 - Before opening or updating a PR, and before any release,
   `pnpm local-ci-check` must pass. It runs every root script ending in `:ci`,
   including Playwright.
+- When working on a non-main branch, end every turn by committing completed
+  changes and creating or updating the PR for that branch.
 - Documentation-only changes do not require the code suites. Verify the
   documented paths and commands instead.
 - Never hide a failing check. Distinguish failures introduced by the change

@@ -27,6 +27,17 @@ function makeInstallPromptEvent(
 
 beforeEach(async () => {
   vi.resetModules();
+  document.documentElement.removeAttribute(
+    'data-bangle-window-controls-overlay',
+  );
+  document.documentElement.removeAttribute(
+    'data-bangle-window-controls-overlay-controls',
+  );
+  document.documentElement.removeAttribute('style');
+  Object.defineProperty(document.documentElement, 'clientWidth', {
+    configurable: true,
+    value: 0,
+  });
   pwaInstall = await import('../pwa-install');
 });
 
@@ -191,5 +202,44 @@ describe('window controls overlay', () => {
         '--bangle-titlebar-area-height',
       ),
     ).toBe('40px');
+  });
+
+  it('marks both control edges when the titlebar area leaves left and right regions unavailable', () => {
+    Object.defineProperty(document.documentElement, 'clientWidth', {
+      configurable: true,
+      value: 1000,
+    });
+    const windowControlsOverlay = new EventTarget() as EventTarget & {
+      getTitlebarAreaRect: () => Pick<
+        DOMRectReadOnly,
+        'height' | 'width' | 'x' | 'y'
+      >;
+      visible: boolean;
+    };
+    windowControlsOverlay.visible = true;
+    windowControlsOverlay.getTitlebarAreaRect = () => ({
+      height: 40,
+      width: 760,
+      x: 88,
+      y: 0,
+    });
+
+    pwaInstall.syncWindowControlsOverlayState({
+      documentRef: document,
+      navigatorRef: {
+        windowControlsOverlay,
+      },
+    });
+
+    expect(
+      document.documentElement.getAttribute(
+        'data-bangle-window-controls-overlay-controls',
+      ),
+    ).toBe('both');
+    expect(
+      document.documentElement.style.getPropertyValue(
+        '--bangle-titlebar-area-width',
+      ),
+    ).toBe('760px');
   });
 });

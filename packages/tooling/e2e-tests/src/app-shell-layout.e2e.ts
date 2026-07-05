@@ -1,5 +1,8 @@
 import { expect, test } from '@playwright/test';
-import { createBrowserWorkspace } from './common';
+import {
+  createBrowserWorkspace,
+  createBrowserWorkspaceAndNote,
+} from './common';
 
 // Guards the app-shell macro layout: a full-height, edge-to-edge sidebar (the
 // flush "sidebar" variant, not the old rounded floating card), a thin titlebar,
@@ -52,4 +55,50 @@ test('app shell: full-height flush sidebar, thin titlebar, collapse/expand', asy
   await expect
     .poll(async () => (await sidebarPanel.boundingBox())?.x ?? -1)
     .toBeGreaterThanOrEqual(0);
+});
+
+test('app shell: PWA window controls overlay keeps titlebar actions outside reserved chrome geometry', async ({
+  page,
+}) => {
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName: 'overlay-layout-ws',
+    noteName: 'Overlay Note',
+  });
+
+  await page.evaluate(() => {
+    const titlebarLeftInset = 80;
+    const titlebarRightInset = 96;
+    const root = document.documentElement;
+
+    root.setAttribute('data-bangle-window-controls-overlay', 'visible');
+    root.setAttribute('data-bangle-window-controls-overlay-controls', 'both');
+    root.style.setProperty(
+      '--bangle-titlebar-area-x',
+      `${titlebarLeftInset}px`,
+    );
+    root.style.setProperty(
+      '--bangle-titlebar-area-width',
+      `calc(100vw - ${titlebarLeftInset + titlebarRightInset}px)`,
+    );
+    root.style.setProperty('--bangle-titlebar-area-height', '40px');
+  });
+
+  const titlebar = page.locator('header.desktop-titlebar-surface').first();
+  const toggleMaxWidthButton = page.getByRole('button', {
+    name: 'Toggle Max Width',
+  });
+  await expect(toggleMaxWidthButton).toBeVisible();
+
+  await expect
+    .poll(async () =>
+      titlebar.evaluate((element) => getComputedStyle(element).paddingRight),
+    )
+    .toBe('104px');
+  await expect
+    .poll(async () =>
+      toggleMaxWidthButton.evaluate(
+        (element) => window.innerWidth - element.getBoundingClientRect().right,
+      ),
+    )
+    .toBeGreaterThanOrEqual(96);
 });
