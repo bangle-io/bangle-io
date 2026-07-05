@@ -33,6 +33,7 @@ export {
 export {
   ensureEndsWith,
   removeStartsWith,
+  toFSPathOrThrow,
   WsDirPath,
   WsFilePath,
   WsPath,

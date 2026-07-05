@@ -759,6 +759,27 @@ export class WsDirPath extends WsPath {
   }
 }
 
+/**
+ * Resolves a wsPath string to its filesystem path representation.
+ *
+ * This is the shared implementation for file-storage adapters that need a
+ * flat filesystem-style path (e.g. IndexedDB, Native FS, and in-memory
+ * storage), so they stay behaviorally aligned instead of each keeping a
+ * private copy of this validation.
+ *
+ * @throws AppError 'error::ws-path:invalid-ws-path' if wsPath cannot be
+ * resolved to a filesystem path.
+ */
+export function toFSPathOrThrow(wsPath: string): string {
+  const path = WsPath.fromString(wsPath).toFSPath();
+  if (!path) {
+    throwAppError('error::ws-path:invalid-ws-path', 'Invalid workspace path', {
+      invalidPath: wsPath,
+    });
+  }
+  return path;
+}
+
 export function ensureEndsWith(str: string, suffix: string): string {
   return str.endsWith(suffix) ? str : str + suffix;
 }

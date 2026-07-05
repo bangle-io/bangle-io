@@ -62,10 +62,6 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
           }
         }
 
-        if (oldVersion < 2) {
-          // Version 2 upgrade: Additional setup for version 2
-          // ... (add any version 2 specific upgrades here)
-        }
         logger.info('IndexedDB upgrade completed', { oldVersion });
       },
     });
@@ -84,7 +80,7 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
     });
   }
 
-  private throwError(error: any): never {
+  private throwError(error: unknown): never {
     if (isAppError(error)) {
       this.logger.error('App error:', error);
       throw error;
