@@ -15,8 +15,9 @@ type ErrorInfo = {
 
 export class NodeErrorHandlerService extends BaseErrorService {
   static deps = [] as const;
-  private pendingEvents: Array<Error | { reason: any; promise: Promise<any> }> =
-    [];
+  private pendingEvents: Array<
+    Error | { reason: unknown; promise: Promise<unknown> }
+  > = [];
 
   constructor(
     context: BaseServiceContext,
@@ -89,7 +90,10 @@ export class NodeErrorHandlerService extends BaseErrorService {
     });
   }
 
-  private handleUnhandledRejection = (reason: any, promise: Promise<any>) => {
+  private handleUnhandledRejection = (
+    reason: unknown,
+    promise: Promise<unknown>,
+  ) => {
     if (!this.mounted) {
       this.pendingEvents.push({ reason, promise });
       return;
@@ -98,7 +102,7 @@ export class NodeErrorHandlerService extends BaseErrorService {
     this.processUnhandledRejection(reason);
   };
 
-  private processUnhandledRejection(reason: any) {
+  private processUnhandledRejection(reason: unknown) {
     const error = reason instanceof Error ? reason : new Error(String(reason));
 
     if (isAbortError(error)) {

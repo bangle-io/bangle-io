@@ -31,8 +31,7 @@ export function CreateWorkspaceDialog() {
             t.app.dialogs.createWorkspace.invalidName,
         };
       }}
-      onDone={({ name: wsName, type, dirHandle }) => {
-        setOpenWsDialog(false);
+      onDone={async ({ name: wsName, type, dirHandle }) => {
         if (type === WORKSPACE_STORAGE_TYPE.NativeFS) {
           if (!dirHandle) {
             throwAppError(
@@ -44,30 +43,26 @@ export function CreateWorkspaceDialog() {
             );
           }
 
-          coreServices.workspaceOps
-            .createWorkspaceInfo({
-              name: wsName,
-              type,
-              metadata: {
-                rootDirHandle: dirHandle,
-              },
-            })
-            .then(() => {
-              coreServices.navigation.goWorkspace(wsName);
-            });
+          await coreServices.workspaceOps.createWorkspaceInfo({
+            name: wsName,
+            type,
+            metadata: {
+              rootDirHandle: dirHandle,
+            },
+          });
+          setOpenWsDialog(false);
+          coreServices.navigation.goWorkspace(wsName);
           return;
         }
 
         if (type === WORKSPACE_STORAGE_TYPE.Browser) {
-          coreServices.workspaceOps
-            .createWorkspaceInfo({
-              metadata: {},
-              name: wsName,
-              type: WORKSPACE_STORAGE_TYPE.Browser,
-            })
-            .then(() => {
-              coreServices.navigation.goWorkspace(wsName);
-            });
+          await coreServices.workspaceOps.createWorkspaceInfo({
+            metadata: {},
+            name: wsName,
+            type: WORKSPACE_STORAGE_TYPE.Browser,
+          });
+          setOpenWsDialog(false);
+          coreServices.navigation.goWorkspace(wsName);
           return;
         }
 

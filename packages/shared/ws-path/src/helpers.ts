@@ -5,6 +5,7 @@ import {
   VALID_MARKDOWN_EXTENSIONS_SET,
   VALID_NOTE_EXTENSIONS,
 } from './constants';
+import { validateWsName as validateWsNameShared } from './validation';
 
 type ValidationResult =
   | { isValid: true; wsName: string; filePath: string }
@@ -45,72 +46,20 @@ function getExtension(strInput: string): string | undefined {
   return dotIndex === -1 ? undefined : str.slice(dotIndex);
 }
 
+// Delegates to the single source of truth in ./validation, adapting its
+// { ok, data | validationError } shape to the local ValidationResult shape
+// used by callers in this file.
 function validateWsName(wsName: string): ValidationResult {
-  if (typeof wsName !== 'string' || !wsName) {
+  const result = validateWsNameShared(wsName);
+  if (!result.ok) {
     return {
       isValid: false,
-      reason: 'wsName is not a string or is empty',
-      invalidPath: wsName,
+      reason: result.validationError.reason,
+      invalidPath: result.validationError.invalidPath,
     };
   }
 
-  if (wsName.includes(':')) {
-    return {
-      isValid: false,
-      reason: 'wsName contains invalid character ":"',
-      invalidPath: wsName,
-    };
-  }
-
-  if (wsName === '.') {
-    return {
-      isValid: false,
-      reason: 'wsName cannot be "."',
-      invalidPath: wsName,
-    };
-  }
-
-  return { isValid: true, wsName, filePath: '' };
-}
-
-// TODO get rid of fsPath
-function fromFsPath(fsPath: string): string | undefined {
-  const [_wsName, ...f] = fsPath.split('/');
-  const validationResult = validateWsName(_wsName || '');
-  if (!validationResult.isValid) {
-    return undefined;
-  }
-  if (!_wsName || _wsName.includes(':')) {
-    return undefined;
-  }
-  return filePathToWsPath({ wsName: _wsName, inputPath: pathJoin(...f) });
-}
-
-function toFSPath(wsPath: string): string | undefined {
-  const resolved = resolvePath(wsPath);
-  if (!resolved) return undefined;
-  return [resolved.wsName, resolved.filePath].join('/');
-}
-
-// should work for dirPath as well
-function filePathToWsPath({
-  wsName,
-  inputPath,
-}: {
-  wsName: string;
-  inputPath: string;
-}): string {
-  const validationResult = validateWsName(wsName);
-  if (!validationResult.isValid) {
-    throwAppError('error::ws-path:invalid-ws-name', validationResult.reason, {
-      invalidPath: wsName,
-    });
-  }
-  let filePath = inputPath;
-  if (filePath.startsWith('/')) {
-    filePath = filePath.slice(1);
-  }
-  return `${wsName}:${filePath}`;
+  return { isValid: true, wsName: result.data, filePath: '' };
 }
 
 function validateWsPath(wsPath: string): ValidationResult {

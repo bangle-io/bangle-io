@@ -189,8 +189,9 @@ export function defaultScoringFunction(
   let haystackIndex = 0;
 
   for (let i = 0; i < needleNorm.length; i++) {
-    // biome-ignore lint/style/noNonNullAssertion: ignore
-    const char = needleNorm[i]!;
+    // `charAt` always returns a `string` (never `undefined`), unlike indexed
+    // access, so no non-null assertion is needed here.
+    const char = needleNorm.charAt(i);
     haystackIndex = haystackNorm.indexOf(char, haystackIndex);
     if (haystackIndex === -1) {
       return 0;
@@ -240,7 +241,7 @@ export function levenshteinDistance(a: string, b: string): number {
   if (aLen === 0) return bLen;
   if (bLen === 0) return aLen;
 
-  const matrix = [];
+  const matrix: number[][] = [];
 
   // Initialize matrix
   for (let i = 0; i <= bLen; i++) {
@@ -256,25 +257,21 @@ export function levenshteinDistance(a: string, b: string): number {
   // Compute distances
   for (let i = 1; i <= bLen; i++) {
     for (let j = 1; j <= aLen; j++) {
+      const row = matrix[i];
+      const prevRow = matrix[i - 1];
+      if (!row || !prevRow) {
+        continue;
+      }
       if (bNorm.charAt(i - 1) === aNorm.charAt(j - 1)) {
-        // @ts-expect-error
-        matrix[i][j] = matrix[i - 1][j - 1];
+        row[j] = prevRow[j - 1] ?? 0;
       } else {
-        // @ts-expect-error
-
-        matrix[i][j] = Math.min(
-          // @ts-expect-error
-
-          matrix[i - 1][j - 1] + 1, // substitution
-          // @ts-expect-error
-          matrix[i][j - 1] + 1, // insertion
-          // @ts-expect-error
-
-          matrix[i - 1][j] + 1, // deletion
+        row[j] = Math.min(
+          (prevRow[j - 1] ?? 0) + 1, // substitution
+          (row[j - 1] ?? 0) + 1, // insertion
+          (prevRow[j] ?? 0) + 1, // deletion
         );
       }
     }
   }
-  // @ts-expect-error
-  return matrix[bLen][aLen];
+  return matrix[bLen]?.[aLen] ?? 0;
 }

@@ -89,12 +89,5 @@ async function addWorkspaceDep({
     },
   );
 
-  // await execa('pnpm', ['-w', 'install', '--offline'], {
-  //   cwd: rootPath,
-  //   stdio: 'inherit',
-  // }).then(() => {
-  //   return 'runPnpmInstall done';
-  // });
-
   logger('Done');
 }

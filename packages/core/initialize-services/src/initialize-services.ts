@@ -1,6 +1,7 @@
 import {
   assertIsDefined,
   getEventSenderMetadata,
+  isFileSystemDirectoryHandle,
   throwAppError,
 } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
@@ -60,7 +61,7 @@ export function initializeServices(
         const { rootDirHandle } =
           await getWorkspaceOps().getWorkspaceMetadata(wsName);
 
-        if (!rootDirHandle) {
+        if (!isFileSystemDirectoryHandle(rootDirHandle)) {
           throwAppError(
             'error::workspace:invalid-metadata',
             `Invalid workspace metadata for ${wsName}`,

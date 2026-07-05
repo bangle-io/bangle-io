@@ -213,7 +213,7 @@ export class WorkspaceOpsService extends BaseService {
 
   public async getWorkspaceMetadata(
     name: string,
-  ): Promise<Record<string, any>> {
+  ): Promise<Record<string, unknown>> {
     await this.mountPromise;
     const result = (await this.getWorkspaceInfo(name))?.metadata;
 

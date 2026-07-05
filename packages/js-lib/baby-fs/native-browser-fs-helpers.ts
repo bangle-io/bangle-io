@@ -58,20 +58,30 @@ function _readFileLegacy(file: File | Blob): Promise<string> {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.addEventListener('loadend', (e) => {
-      const text = (e.srcElement as any)?.result;
-      resolve(text);
+      const result = (e.target as FileReader | null)?.result;
+      resolve(typeof result === 'string' ? result : '');
     });
     reader.readAsText(file);
   });
 }
 
+/**
+ * Options accepted by `FileSystemHandle.queryPermission`. `mode` is the
+ * standardized field (Chrome 86+); `writable` is a legacy pre-standard flag
+ * kept for compatibility with older implementations that still expect it.
+ */
+interface QueryPermissionOptions extends FileSystemHandlePermissionDescriptor {
+  writable?: boolean;
+}
+
 export async function hasPermission(
   dirHandle: FileSystemDirectoryHandle,
 ): Promise<boolean> {
-  const opts: any = {};
-  opts.writable = true;
-  // For Chrome 86 and later...
-  opts.mode = 'readwrite';
+  const opts: QueryPermissionOptions = {
+    writable: true,
+    // For Chrome 86 and later...
+    mode: 'readwrite',
+  };
 
   // In Safari's origin private file system `queryPermission` is not available.
   if (!dirHandle.queryPermission) {

@@ -76,7 +76,6 @@ export {
   throwAppError,
   wrapPromiseInAppErrorHandler,
 } from './throw-app-error';
-// TODO this is stub
 export function getEventSenderMetadata({
   tag,
 }: {
@@ -92,6 +91,20 @@ export function isWorkerGlobalScope() {
     typeof WorkerGlobalScope !== 'undefined' &&
     // eslint-disable-next-line no-restricted-globals, no-undef
     self instanceof WorkerGlobalScope
+  );
+}
+// Workspace metadata is stored as `Record<string, unknown>`, so the
+// `rootDirHandle` entry needs a runtime check before it can be treated as a
+// `FileSystemDirectoryHandle`.
+export function isFileSystemDirectoryHandle(
+  value: unknown,
+): value is FileSystemDirectoryHandle {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'requestPermission' in value &&
+    typeof (value as { requestPermission: unknown }).requestPermission ===
+      'function'
   );
 }
 export function flatServices(services: Record<string, unknown>): BaseService[] {

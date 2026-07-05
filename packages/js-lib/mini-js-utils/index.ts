@@ -20,7 +20,9 @@ export type { InferType, Validator } from './mini-zod';
 export { T } from './mini-zod';
 export { weakCache } from './weak-cache';
 export { weakCacheDuo } from './weak-cache-duo';
-export function isPlainObject(value: any) {
+export function isPlainObject(
+  value: unknown,
+): value is Record<string, unknown> {
   if (typeof value !== 'object' || value === null) {
     return false;
   }
@@ -37,8 +39,8 @@ export function isPlainObject(value: any) {
 }
 
 const _deepMerge = (
-  target0: Record<string, any>,
-  source: Record<string, any>,
+  target0: Record<string, unknown>,
+  source: Record<string, unknown>,
   rootPath = '',
 ) => {
   const target = { ...target0 };
@@ -47,7 +49,10 @@ const _deepMerge = (
     if (isPlainObject(target[key])) {
       target[key] = _deepMerge(
         target[key],
-        source[key],
+        // `source[key]` isn't itself checked to be a plain object: mirroring
+        // the pre-existing runtime behavior, we recurse regardless of its
+        // shape and let `_deepMerge`/`Object.keys` handle whatever it is.
+        source[key] as Record<string, unknown>,
         rootPath ? `${rootPath}.${key}` : key,
       );
     } else if (Array.isArray(target[key]) && Array.isArray(source[key])) {
@@ -67,8 +72,8 @@ const _deepMerge = (
  * @returns
  */
 export function deepMerge(
-  target: Record<string, any>,
-  ...source: Record<string, any>[]
+  target: Record<string, unknown>,
+  ...source: Record<string, unknown>[]
 ) {
   let result = { ...target };
 

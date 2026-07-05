@@ -1,5 +1,8 @@
 import { requestNativeBrowserFSPermission } from '@bangle.io/baby-fs';
-import { throwAppError } from '@bangle.io/base-utils';
+import {
+  isFileSystemDirectoryHandle,
+  throwAppError,
+} from '@bangle.io/base-utils';
 import { toast } from '@bangle.io/ui-components';
 import { Briefcase, Trash2 } from 'lucide-react';
 import { c, getCtx } from '../helper';
@@ -111,7 +114,7 @@ export const workspaceManagementHandlers = [
       const { store } = getCtx(key);
 
       workspaceOps.getWorkspaceMetadata(wsName).then(({ rootDirHandle }) => {
-        if (!rootDirHandle) {
+        if (!isFileSystemDirectoryHandle(rootDirHandle)) {
           throwAppError(
             'error::workspace:invalid-metadata',
             t.app.errors.workspace.invalidMetadata({ wsName }),

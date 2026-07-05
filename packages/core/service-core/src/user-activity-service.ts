@@ -420,13 +420,15 @@ class StarredItemManager {
 
     await this.workspaceOps.updateWorkspaceMetadata(wsName, (metadata) => {
       const wsPathsSet = new Set(noteWsPaths.map((path) => path.wsPath));
-      let existingRawStarredItems = metadata[STARRED_ITEMS_KEY] ?? [];
-      if (!Array.isArray(existingRawStarredItems)) {
+      const rawStarredItems = metadata[STARRED_ITEMS_KEY] ?? [];
+      if (!Array.isArray(rawStarredItems)) {
         this.logger.error(
-          `Invalid starred items metadata for ${wsName}. Expected array, got ${typeof existingRawStarredItems}.`,
+          `Invalid starred items metadata for ${wsName}. Expected array, got ${typeof rawStarredItems}.`,
         );
-        existingRawStarredItems = [];
       }
+      const existingRawStarredItems: string[] = Array.isArray(rawStarredItems)
+        ? rawStarredItems
+        : [];
       const newRawStarredItems = updateFn(existingRawStarredItems).filter(
         (item) => wsPathsSet.has(item),
       );
