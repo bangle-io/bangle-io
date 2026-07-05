@@ -215,6 +215,20 @@ export const t = {
           `Are you sure you want to delete "${fileName}"?`,
         continueText: 'Delete',
       },
+      confirmDeleteFiles: {
+        title: 'Confirm Delete',
+        description: ({
+          count,
+          fileNames,
+        }: {
+          count: number;
+          fileNames: string[];
+        }) =>
+          `Delete ${count} files? ${fileNames.slice(0, 5).join(', ')}${
+            fileNames.length > 5 ? ', ...' : ''
+          } will be removed.`,
+        continueText: 'Delete Files',
+      },
       renameNote: {
         title: 'Rename Note',
         description: ({
@@ -439,6 +453,26 @@ export const t = {
         fileName: string;
         maxFileSize: string;
       }) => `${fileName} is too large. Maximum file size is ${maxFileSize}.`,
+      fileCreated: ({ fileName }: { fileName: string }) =>
+        `Created ${fileName}`,
+      fileCreateFailed: 'Could not create file',
+      fileDeleted: ({ fileName }: { fileName: string }) =>
+        `Deleted ${fileName}`,
+      fileDeleteFailed: 'Could not delete file',
+      filesDeleted: ({ count }: { count: number }) =>
+        count === 1 ? 'Deleted 1 file' : `Deleted ${count} files`,
+      filesDeleteFailed: 'Could not delete files',
+      fileMoved: ({ fileName }: { fileName: string }) => `Moved ${fileName}`,
+      fileMoveFailed: 'Could not move file',
+      fileRenamed: ({ fileName }: { fileName: string }) =>
+        `Renamed to ${fileName}`,
+      fileRenameFailed: 'Could not rename file',
+      folderDeleted: ({ folderName }: { folderName: string }) =>
+        `Deleted ${folderName}`,
+      folderDeleteFailed: 'Could not delete folder',
+      folderRenamed: ({ folderName }: { folderName: string }) =>
+        `Renamed to ${folderName}`,
+      folderRenameFailed: 'Could not rename folder',
       openAsset: 'Open',
       pathCopied: 'Path copied',
       pathCopyFailed: 'Could not copy path',
@@ -535,6 +569,9 @@ export const t = {
         renameActionTitle: 'Rename',
         moveActionTitle: 'Move',
         deleteActionTitle: 'Delete',
+        deleteSelectedFilesActionTitle: ({ count }: { count: number }) =>
+          `Delete ${count} files`,
+        moveToWorkspaceRootLabel: 'Move to workspace root',
         workspacesLabel: 'Workspaces',
         noWorkspaceSelectedTitle: 'No workspace selected',
         noWorkspaceSelectedSubtitle: 'Click to select a workspace',

@@ -115,6 +115,15 @@ export const wsCommands = narrow([
     },
   },
   {
+    id: 'command::ws:delete-ws-paths',
+    title: 'Delete Files',
+    omniSearch: false,
+    dependencies: { services: ['fileSystem', 'navigation'] },
+    args: {
+      wsPaths: T.Array(T.String),
+    },
+  },
+  {
     id: 'command::ws:rename-ws-path',
     title: 'Rename Note',
     omniSearch: false,

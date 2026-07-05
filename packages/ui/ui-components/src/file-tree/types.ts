@@ -7,7 +7,12 @@ export interface FileTreeEntry {
   path: string;
 }
 
-export type FileTreeEntryAction = Action<FileTreeEntry>;
+interface FileTreeEntryActionContext {
+  entry: FileTreeEntry;
+  selectedEntries: readonly FileTreeEntry[];
+}
+
+export type FileTreeEntryAction = Action<FileTreeEntryActionContext>;
 
 export function normalizePierreDirectoryPath(path: string): string {
   return path.replace(/\/+$/, '');

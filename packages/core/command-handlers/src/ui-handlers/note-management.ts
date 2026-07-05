@@ -134,6 +134,52 @@ export const noteManagementHandlers = [
   }),
 
   c(
+    'command::ui:delete-files-dialog',
+    ({ workbenchState }, { wsPaths }, key) => {
+      const { store, dispatch } = getCtx(key);
+      const filePaths = [...new Set(wsPaths)].map(
+        (selectedWsPath) =>
+          WsPath.safeParse(selectedWsPath).data?.asFile() ?? null,
+      );
+
+      if (filePaths.length === 0 || filePaths.some((path) => path === null)) {
+        throwAppError(
+          'error::file:invalid-note-path',
+          t.app.errors.file.invalidNotePath,
+          {
+            invalidWsPath: wsPaths.join(', '),
+          },
+        );
+      }
+
+      const validFilePaths = filePaths.filter(
+        (path): path is NonNullable<(typeof filePaths)[number]> =>
+          path !== null,
+      );
+
+      store.set(workbenchState.$alertDialog, () => {
+        return {
+          dialogId: 'dialog::delete-files-alert',
+          title: t.app.dialogs.confirmDeleteFiles.title,
+          tone: 'destructive',
+          description: t.app.dialogs.confirmDeleteFiles.description({
+            count: validFilePaths.length,
+            fileNames: validFilePaths.map((path) => path.fileName),
+          }),
+          continueText: t.app.dialogs.confirmDeleteFiles.continueText,
+          onContinue: () => {
+            dispatch('command::ws:delete-ws-paths', {
+              wsPaths: validFilePaths.map((path) => path.wsPath),
+            });
+            dispatch('command::ui:focus-editor', null);
+          },
+          onCancel: () => {},
+        };
+      });
+    },
+  ),
+
+  c(
     'command::ui:rename-note-dialog',
     ({ workspaceState, workbenchState }, { wsPath }, key) => {
       const { store, dispatch } = getCtx(key);
