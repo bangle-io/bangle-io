@@ -14,14 +14,14 @@ import type {
 import {
   Button,
   cn,
+  RadioGroup,
+  RadioGroupItem,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
   SettingsPage,
-  ToggleGroup,
-  ToggleGroupItem,
 } from '@bangle.io/ui-components';
 import { useAtom, useAtomValue } from 'jotai';
 import {
@@ -227,28 +227,22 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
                       <SegmentedControl
                         aria-label={t.app.settings.general.wideEditorToggle}
                         onValueChange={(value) => {
-                          const next = value[0];
-                          if (next === 'default') {
-                            setWideEditor(false);
-                          }
-                          if (next === 'wide') {
-                            setWideEditor(true);
-                          }
+                          setWideEditor(value === 'wide');
                         }}
-                        value={[wideEditor ? 'wide' : 'default']}
+                        value={wideEditor ? 'wide' : 'default'}
                       >
-                        <ToggleGroupItem
+                        <RadioGroupItem
                           className={SEGMENTED_ITEM_CLASS}
                           value="default"
                         >
                           {t.app.settings.general.defaultWidth}
-                        </ToggleGroupItem>
-                        <ToggleGroupItem
+                        </RadioGroupItem>
+                        <RadioGroupItem
                           className={SEGMENTED_ITEM_CLASS}
                           value="wide"
                         >
                           {t.app.settings.general.wideWidth}
-                        </ToggleGroupItem>
+                        </RadioGroupItem>
                       </SegmentedControl>
                     }
                     description={t.app.settings.general.wideEditorDescription}
@@ -346,23 +340,22 @@ function ThemePreferenceSelect({
 }
 
 const SEGMENTED_ITEM_CLASS =
-  'h-8 min-w-16 rounded-md px-3 text-xs data-pressed:bg-background data-pressed:shadow-xs';
+  'h-8 min-w-16 rounded-md px-3 text-xs data-[checked]:bg-background data-[checked]:shadow-xs';
 
 function SegmentedControl({
   children,
   className,
   ...props
-}: React.ComponentProps<typeof ToggleGroup>) {
+}: React.ComponentProps<typeof RadioGroup>) {
   return (
-    <ToggleGroup
+    <RadioGroup
       className={cn(
         'inline-flex rounded-lg bg-muted/60 p-1 shadow-inner',
         className,
       )}
-      variant="default"
       {...props}
     >
       {children}
-    </ToggleGroup>
+    </RadioGroup>
   );
 }

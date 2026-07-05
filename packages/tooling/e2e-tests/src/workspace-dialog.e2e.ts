@@ -8,10 +8,7 @@ test('creates a browser workspace from the workspace selector dialog', async ({
   await page.goto('/');
 
   await page.getByRole('button', { name: 'No workspace selected' }).click();
-  await page
-    .locator('[data-radix-popper-content-wrapper]')
-    .getByText('New Workspace')
-    .click();
+  await page.getByRole('menuitem', { name: 'New Workspace' }).click();
   await expect(
     page.getByRole('dialog', { name: 'Select a workspace type' }),
   ).toBeVisible();
@@ -25,10 +22,7 @@ test('creates a browser workspace from the workspace selector dialog', async ({
   ).toBeHidden();
 
   await page.getByRole('button', { name: 'No workspace selected' }).click();
-  await page
-    .locator('[data-radix-popper-content-wrapper]')
-    .getByText('New Workspace')
-    .click();
+  await page.getByRole('menuitem', { name: 'New Workspace' }).click();
 
   await page
     .getByRole('radio', { name: 'Browser Save workspace data' })
