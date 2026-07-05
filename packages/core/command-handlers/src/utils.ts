@@ -89,3 +89,14 @@ export async function writeTextToClipboard(value: string): Promise<void> {
     textArea.remove();
   }
 }
+
+/**
+ * Reads text from the clipboard. Throws when the async Clipboard read API is
+ * unavailable (there is no reliable synchronous fallback for reads).
+ */
+export async function readTextFromClipboard(): Promise<string> {
+  if (!navigator.clipboard?.readText) {
+    throw new Error('Clipboard read is not supported');
+  }
+  return navigator.clipboard.readText();
+}

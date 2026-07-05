@@ -479,6 +479,8 @@ export const t = {
       selectionCopied: 'Copied as Markdown',
       selectionCopyFailed: 'Could not copy selection',
       selectionCopyEmpty: 'Select some text to copy',
+      pasteMarkdownFailed: 'Could not paste Markdown',
+      pasteMarkdownEmpty: 'Clipboard has no text to paste',
       permissionNotGranted: 'Permission not granted',
       retrySave: 'Retry save',
       saveFailed: 'Changes could not be saved. Retry to keep your latest edit.',

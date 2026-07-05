@@ -31,7 +31,9 @@ function setup() {
   return {
     parse: (source: string) => markdown.parser.parse(source),
     serializeSelection: (source: string, from: number, to: number) =>
-      markdown.serializer.serialize(markdown.parser.parse(source).cut(from, to)),
+      markdown.serializer.serialize(
+        markdown.parser.parse(source).cut(from, to),
+      ),
   };
 }
 
@@ -64,5 +66,22 @@ describe('copy selection as Markdown', () => {
     const to = doc.child(0).nodeSize + doc.child(1).nodeSize;
 
     expect(serializeSelection(source, 0, to)).toBe('# Title\n\nBody');
+  });
+});
+
+// The "paste from Markdown" command parses clipboard text and inserts it, then
+// the save path re-serializes it. These round trips guard that parsing pasted
+// Markdown does not silently reinterpret or drop content.
+describe('paste from Markdown round trips', () => {
+  it.each([
+    ['inline bold', '**world**'],
+    ['heading', '# Title'],
+    ['unordered list', '- one\n\n- two'],
+    ['multiple paragraphs', 'First paragraph\n\nSecond paragraph'],
+  ])('preserves %s', (_label, source) => {
+    const { parse, serializeSelection } = setup();
+    const doc = parse(source);
+    // Serializing the whole parsed document must reproduce the source.
+    expect(serializeSelection(source, 0, doc.content.size)).toBe(source);
   });
 });

@@ -118,9 +118,7 @@ export class PmEditorService extends BaseService {
 
   private editors = new Map<HTMLElement, EditorEntry>();
 
-  private markdownSerializer:
-    | ReturnType<typeof markdownLoader>['serializer']
-    | undefined;
+  private markdown: ReturnType<typeof markdownLoader> | undefined;
 
   constructor(
     context: BaseServiceContext,
@@ -829,17 +827,48 @@ export class PmEditorService extends BaseService {
     if (empty) {
       return null;
     }
-    return this.getMarkdownSerializer(view.state.schema).serialize(
+    return this.getMarkdown(view.state.schema).serializer.serialize(
       view.state.doc.cut(from, to),
     );
   }
 
-  private getMarkdownSerializer(schema: Schema) {
-    this.markdownSerializer ??= markdownLoader(
+  /**
+   * Parses `markdownText` and inserts the resulting rich content at the current
+   * selection in the active editor, replacing any selected content. This is the
+   * inverse of {@link getSelectionMarkdown} and uses the same loader as the save
+   * path so round-tripping preserves Markdown fidelity.
+   *
+   * A single parsed textblock is inserted inline so it merges into the current
+   * paragraph; multi-block content is inserted as blocks. Returns false when
+   * there is no active editor or the text produces no insertable content (so a
+   * selection is never silently deleted).
+   */
+  insertMarkdownAtSelection(markdownText: string): boolean {
+    const view = this.getActiveEditorView();
+    if (!view) {
+      return false;
+    }
+    const parsed = this.getMarkdown(view.state.schema).parser.parse(
+      markdownText,
+    );
+    const inline = parsed.childCount === 1 && !!parsed.firstChild?.isTextblock;
+    const slice = inline
+      ? parsed.slice(1, Math.max(1, parsed.content.size - 1))
+      : parsed.slice(0, parsed.content.size);
+    if (slice.size === 0) {
+      return false;
+    }
+    view.dispatch(view.state.tr.replaceSelection(slice).scrollIntoView());
+    view.focus();
+    return true;
+  }
+
+  private getMarkdown(schema: Schema) {
+    this.markdown ??= markdownLoader(
       [...Object.values(this.extensions)],
       schema,
-    ).serializer;
-    return this.markdownSerializer;
+    );
+    return this.markdown;
   }
 
   private getActiveEditorView() {

@@ -20,6 +20,7 @@ export type PmEditorServiceContract = BaseService & {
   focusEditor: () => void;
   getSelectionMarkdown: () => string | null;
   hasPendingOrFailedSave: (wsPath?: string) => boolean;
+  insertMarkdownAtSelection: (markdownText: string) => boolean;
   mountEditor: (params: {
     domNode: HTMLElement;
     wsPath: string;

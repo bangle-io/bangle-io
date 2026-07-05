@@ -360,6 +360,18 @@ export const uiCommands = narrow([
   },
 
   {
+    id: 'command::ui:paste-from-markdown',
+    title: 'Paste from Markdown',
+    keywords: ['paste', 'markdown', 'insert', 'clipboard'],
+    dependencies: {
+      services: ['pmEditorService'],
+    },
+    omniSearch: true,
+    autoFocusEditor: false,
+    args: null,
+  },
+
+  {
     id: 'command::ui:toggle-heading-collapse',
     title: 'Toggle Collapse Heading Section',
     keywords: ['collapse', 'expand', 'fold', 'heading', 'section'],

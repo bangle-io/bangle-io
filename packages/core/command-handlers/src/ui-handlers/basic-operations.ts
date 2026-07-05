@@ -2,7 +2,7 @@ import { throwAppError } from '@bangle.io/base-utils';
 import { toast } from '@bangle.io/ui-components';
 import { Sun } from 'lucide-react';
 import { c, getCtx } from '../helper';
-import { writeTextToClipboard } from '../utils';
+import { readTextFromClipboard, writeTextToClipboard } from '../utils';
 
 export const basicOperationsHandlers = [
   c('command::ui:toggle-sidebar', ({ workbenchState }, _, key) => {
@@ -137,6 +137,23 @@ export const basicOperationsHandlers = [
       toast.success(t.app.toasts.selectionCopied);
     } catch {
       toast.error(t.app.toasts.selectionCopyFailed);
+    }
+  }),
+
+  c('command::ui:paste-from-markdown', async ({ pmEditorService }) => {
+    let text: string;
+    try {
+      text = await readTextFromClipboard();
+    } catch {
+      toast.error(t.app.toasts.pasteMarkdownFailed);
+      return;
+    }
+    if (!text.trim()) {
+      toast.error(t.app.toasts.pasteMarkdownEmpty);
+      return;
+    }
+    if (!pmEditorService.insertMarkdownAtSelection(text)) {
+      toast.error(t.app.toasts.pasteMarkdownFailed);
     }
   }),
 
