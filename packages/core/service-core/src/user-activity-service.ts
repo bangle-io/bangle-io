@@ -44,7 +44,9 @@ const STARRED_ITEMS_KEY = 'starred-items';
 export class UserActivityService extends BaseService {
   static deps = ['workspaceState', 'workspaceOps', 'syncDatabase'] as const;
 
-  // TODO: activityLogCache need to have size limit
+  // Cached entries are capped to `maxRecentEntries` (the same limit used when
+  // recording/displaying activity) so a workspace's log can't grow unbounded
+  // in memory, even if the persisted metadata ever holds more than that.
   private activityLogCache: Map<string, ActivityLogEntry[]> = new Map();
   private maxRecentEntries!: number;
   private activityCooldownMs!: number;
@@ -349,8 +351,12 @@ export class UserActivityService extends BaseService {
     const result = metadata[ACTIVITY_LOG_KEY];
 
     const logs: ActivityLogEntry[] = Array.isArray(result) ? result : [];
-    this.activityLogCache.set(wsName, logs);
-    return logs;
+    // Cap on load too: persisted metadata may hold more entries than the
+    // current limit (e.g. written under a previous, larger config), and we
+    // never want the cache to hold more than the most recent entries.
+    const cappedLogs = logs.slice(0, this.maxRecentEntries);
+    this.activityLogCache.set(wsName, cappedLogs);
+    return cappedLogs;
   }
 
   private async setActivityLog(
@@ -367,7 +373,7 @@ export class UserActivityService extends BaseService {
       const result = metadata[ACTIVITY_LOG_KEY];
       const logs: ActivityLogEntry[] = Array.isArray(result) ? result : [];
 
-      const updatedLogs = updateCallback(logs);
+      const updatedLogs = updateCallback(logs).slice(0, this.maxRecentEntries);
       this.activityLogCache.set(wsName, updatedLogs);
 
       return {

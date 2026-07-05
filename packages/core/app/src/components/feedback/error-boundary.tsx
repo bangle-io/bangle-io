@@ -52,11 +52,6 @@ export function ErrorBoundary({ children }: ErrorBoundaryProps) {
                   window.open(getGithubUrl(reportError, logger), '_blank');
                 },
               },
-              // Optional: Add a reload button
-              // {
-              //   label: t.app.common.reloadPage,
-              //   onClick: () => window.location.reload(),
-              // },
             ]}
           />
         );

@@ -19,7 +19,7 @@ import { useEffect } from 'react';
 type CommandArgs<C extends Command> = C['args'] extends null
   ? null
   : {
-      [K in keyof C['args']]: C['args'][K] extends Validator<any>
+      [K in keyof C['args']]: C['args'][K] extends Validator<unknown>
         ? InferType<C['args'][K]>
         : never;
     };
