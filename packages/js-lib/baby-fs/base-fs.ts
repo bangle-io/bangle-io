@@ -31,7 +31,13 @@ export abstract class BaseFileSystem {
   // fs.extra https://github.com/jprichardson/node-fs-extra/blob/master/docs/move.md
   async move(_src: string, _dest: string) {}
   // for a dirPath= `foo/bar`, internally will filter all paths starting with `foo/bar/`
-  abstract opendirRecursive(dirPath: string): Promise<string[]>;
+  // abortSignal (when provided) lets a long-running recursive traversal be
+  // interrupted early instead of running to completion after the caller has
+  // stopped caring about the result.
+  abstract opendirRecursive(
+    dirPath: string,
+    abortSignal?: AbortSignal,
+  ): Promise<string[]>;
   // should return a string
   abstract readFileAsText(filePath: string): Promise<string>;
   // Rename a file or directory

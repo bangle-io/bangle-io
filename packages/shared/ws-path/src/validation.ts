@@ -7,8 +7,12 @@ export type ValidationResult<T> =
   | { ok: true; data: T }
   | { ok: false; validationError: ValidationError };
 
+// Deliberately not global (`/g`): this regex is only ever used with `.test()`
+// for a boolean existence check, and a shared global regex's `lastIndex`
+// state would corrupt results across the repeated calls in `validateWsName`
+// and `validatePath`'s segment loop.
 // biome-ignore lint/suspicious/noControlCharactersInRegex: Need to match control characters
-const INVALID_CHARS_REGEX = /[<>:"\\|?*\x00-\x1F]/g;
+const INVALID_CHARS_REGEX = /[<>:"\\|?*\x00-\x1F]/;
 
 export function validateWsName(wsName: string): ValidationResult<string> {
   if (!wsName) {

@@ -118,12 +118,12 @@ export const wsCommandHandlers = [
 
   c(
     'command::ws:delete-workspace',
-    ({ workspaceOps, navigation }, { wsName }) => {
-      workspaceOps.deleteWorkspaceInfo(wsName).then(() => {
-        if (navigation.resolveAtoms().wsName === wsName) {
-          navigation.goHome();
-        }
-      });
+    async ({ workspaceOps, navigation }, { wsName }) => {
+      await workspaceOps.deleteWorkspaceInfo(wsName);
+
+      if (navigation.resolveAtoms().wsName === wsName) {
+        navigation.goHome();
+      }
     },
   ),
 

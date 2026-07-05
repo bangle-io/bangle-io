@@ -76,7 +76,6 @@ export {
   throwAppError,
   wrapPromiseInAppErrorHandler,
 } from './throw-app-error';
-// TODO this is stub
 export function getEventSenderMetadata({
   tag,
 }: {

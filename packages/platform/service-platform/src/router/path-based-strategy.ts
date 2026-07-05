@@ -4,6 +4,7 @@ import {
   handleRouteInfo,
   joinPaths,
   parseBrowserSearch,
+  payloadToSearch,
   stripBasePath,
   toSearchString,
 } from './common';
@@ -24,18 +25,9 @@ export class PathBasedStrategy implements RouteStrategy {
 
   encodeRouteInfo(routeInfo: AppRouteInfo, basePath: string): EncodedRoute {
     const { route, payload } = routeInfo;
-    // Convert payload to search params without including route
-    const search: Record<string, string | null> = {};
-    for (const [key, val] of Object.entries(payload)) {
-      if (val == null) {
-        continue;
-      }
-      if (key === 'error' && val instanceof Error) {
-        search[key] = val.message || 'Unknown error';
-      } else {
-        search[key] = String(val);
-      }
-    }
+    // Convert payload to search params without including route, since this
+    // strategy encodes the route in the pathname, not the search string.
+    const { route: _route, ...search } = payloadToSearch(route, payload);
     const searchStr = toSearchString(search);
     const pathname = joinPaths(basePath || '', route);
 

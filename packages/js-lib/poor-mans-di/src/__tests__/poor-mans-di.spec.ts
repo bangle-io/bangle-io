@@ -19,8 +19,7 @@ describe('Container', () => {
   class ServiceA implements Service<TestContext> {
     constructor(
       _: { ctx: TestContext; serviceContext: ServiceContext },
-      // biome-ignore lint/complexity/noBannedTypes: <explanation>
-      _deps: {},
+      _deps: Record<string, never>,
       public config: { name: string },
     ) {}
   }

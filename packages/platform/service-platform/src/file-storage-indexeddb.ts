@@ -18,7 +18,7 @@ import type {
   BaseFileStorageProvider,
   FileStorageChangeEvent,
 } from '@bangle.io/types';
-import { WsPath } from '@bangle.io/ws-path';
+import { toFSPathOrThrow, WsPath } from '@bangle.io/ws-path';
 
 type Config = {
   onChange: (event: FileStorageChangeEvent) => void;
@@ -47,23 +47,9 @@ export class FileStorageIndexedDB
     this.onChange(event);
   }
 
-  private getFsPath(wsPath: string): string {
-    const path = WsPath.fromString(wsPath).toFSPath();
-    if (!path) {
-      throwAppError(
-        'error::ws-path:invalid-ws-path',
-        'Invalid workspace path',
-        {
-          invalidPath: wsPath,
-        },
-      );
-    }
-    return path;
-  }
-
   async createFile(wsPath: string, file: File): Promise<void> {
     await this.mountPromise;
-    const fsPath = this.getFsPath(wsPath);
+    const fsPath = toFSPathOrThrow(wsPath);
     try {
       await this.idb.createFile(fsPath, file);
     } catch (error) {
@@ -86,7 +72,7 @@ export class FileStorageIndexedDB
 
   async deleteFile(wsPath: string): Promise<void> {
     await this.mountPromise;
-    const fsPath = this.getFsPath(wsPath);
+    const fsPath = toFSPathOrThrow(wsPath);
     await this.idb.unlink(fsPath);
 
     this.emitChange({
@@ -97,7 +83,7 @@ export class FileStorageIndexedDB
 
   async fileExists(wsPath: string): Promise<boolean> {
     await this.mountPromise;
-    const fsPath = this.getFsPath(wsPath);
+    const fsPath = toFSPathOrThrow(wsPath);
 
     try {
       await this.idb.stat(fsPath);
@@ -114,7 +100,7 @@ export class FileStorageIndexedDB
 
   async fileStat(wsPath: string) {
     await this.mountPromise;
-    const fsPath = this.getFsPath(wsPath);
+    const fsPath = toFSPathOrThrow(wsPath);
     const stat = await this.idb.stat(fsPath);
 
     return {
@@ -133,7 +119,10 @@ export class FileStorageIndexedDB
   ): Promise<string[]> {
     await this.mountPromise;
 
-    const rawPaths: string[] = await this.idb.opendirRecursive(wsName);
+    const rawPaths: string[] = await this.idb.opendirRecursive(
+      wsName,
+      abortSignal,
+    );
     abortSignal.throwIfAborted();
 
     return rawPaths
@@ -149,7 +138,7 @@ export class FileStorageIndexedDB
     if (!(await this.fileExists(wsPath))) {
       return undefined;
     }
-    const fsPath = this.getFsPath(wsPath);
+    const fsPath = toFSPathOrThrow(wsPath);
     return this.idb.readFile(fsPath);
   }
 
@@ -158,8 +147,8 @@ export class FileStorageIndexedDB
     { newWsPath }: { newWsPath: string },
   ): Promise<void> {
     await this.mountPromise;
-    const oldFsPath = this.getFsPath(wsPath);
-    const newFsPath = this.getFsPath(newWsPath);
+    const oldFsPath = toFSPathOrThrow(wsPath);
+    const newFsPath = toFSPathOrThrow(newWsPath);
 
     await this.idb.rename(oldFsPath, newFsPath);
 
@@ -183,7 +172,7 @@ export class FileStorageIndexedDB
         },
       );
     }
-    const fsPath = this.getFsPath(wsPath);
+    const fsPath = toFSPathOrThrow(wsPath);
     await this.idb.writeFile(fsPath, file);
 
     this.emitChange({

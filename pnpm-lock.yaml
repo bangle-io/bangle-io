@@ -217,8 +217,6 @@ importers:
         specifier: 19.2.7
         version: 19.2.7
 
-  packages/core/database: {}
-
   packages/core/editor:
     dependencies:
       '@bangle.io/base-utils':
@@ -284,6 +282,9 @@ importers:
 
   packages/core/initialize-services:
     dependencies:
+      '@bangle.io/baby-fs':
+        specifier: workspace:*
+        version: link:../../js-lib/baby-fs
       '@bangle.io/base-utils':
         specifier: workspace:*
         version: link:../../shared/base-utils

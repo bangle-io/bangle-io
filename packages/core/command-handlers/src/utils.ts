@@ -1,15 +1,19 @@
 import { throwAppError } from '@bangle.io/base-utils';
+import { WsPath } from '@bangle.io/ws-path';
+
+const MAX_PATH_LENGTH = 255;
 
 export function validateInputPath(inputPath: unknown): void {
   if (typeof inputPath !== 'string') {
     throwAppError(
       'error::ws-path:create-new-note',
       t.app.errors.wsPath.invalidNotePath,
-      {
-        invalidWsPath: `${inputPath}`,
-      },
+      { invalidWsPath: `${inputPath}` },
     );
   }
+
+  // Note-path specific rules: these have no equivalent in the generic
+  // `ws-path` path validation and are not duplicated logic.
   if (
     inputPath.endsWith('/') ||
     inputPath.endsWith('/.md') ||
@@ -18,48 +22,29 @@ export function validateInputPath(inputPath: unknown): void {
     throwAppError(
       'error::ws-path:create-new-note',
       t.app.errors.wsPath.invalidNotePath,
-      {
-        invalidWsPath: inputPath,
-      },
+      { invalidWsPath: inputPath },
     );
   }
-  if (inputPath.startsWith('/') || /^[A-Za-z]:[\\/]/.test(inputPath)) {
+
+  const result = WsPath.validation.validatePath(inputPath);
+  if (!result.ok) {
+    // The reason is ws-path's own (untranslated) validation message —
+    // simpler and less brittle than mapping its wording onto a translated
+    // message category here.
     throwAppError(
       'error::ws-path:create-new-note',
-      t.app.errors.wsPath.absolutePathNotAllowed,
+      result.validationError.reason,
       {
         invalidWsPath: inputPath,
       },
     );
   }
-  if (inputPath.includes('../') || inputPath.includes('..\\')) {
-    throwAppError(
-      'error::ws-path:create-new-note',
-      t.app.errors.wsPath.directoryTraversalNotAllowed,
-      {
-        invalidWsPath: inputPath,
-      },
-    );
-  }
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: <explanation>
-  const invalidChars = /[<>:"\\|?*\x00-\x1F]/g;
-  if (invalidChars.test(inputPath)) {
-    throwAppError(
-      'error::ws-path:create-new-note',
-      t.app.errors.wsPath.invalidCharsInPath,
-      {
-        invalidWsPath: inputPath,
-      },
-    );
-  }
-  const maxPathLength = 255;
-  if (inputPath.length > maxPathLength) {
+
+  if (inputPath.length > MAX_PATH_LENGTH) {
     throwAppError(
       'error::ws-path:create-new-note',
       t.app.errors.wsPath.pathTooLong,
-      {
-        invalidWsPath: inputPath,
-      },
+      { invalidWsPath: inputPath },
     );
   }
 }

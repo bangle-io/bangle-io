@@ -89,7 +89,7 @@ export class CommandDispatchService extends BaseService {
       throw new BaseError({ message: `Command "${id}" not found.` });
     }
 
-    const result: Record<string, any> = {};
+    const result: Record<string, BaseService> = {};
     const services = this.config.getExposedServices();
 
     this.logger.debug(
@@ -191,7 +191,7 @@ export class CommandDispatchService extends BaseService {
   private setCommandContext(command: Command, key: CommandKey<string>): void {
     const context: CommandHandlerContext = {
       store: this.store,
-      dispatch: (childId: string, args: any) => {
+      dispatch: (childId: string, args: unknown) => {
         if (childId === command.id) {
           throw new BaseError({
             message: `Command "${command.id}" is trying to dispatch itself.`,
@@ -204,7 +204,11 @@ export class CommandDispatchService extends BaseService {
           });
         }
 
-        this.dispatch(childId as BangleAppCommand['id'], args, command.id);
+        this.dispatch(
+          childId as BangleAppCommand['id'],
+          args as CommandArgs<BangleAppCommand>,
+          command.id,
+        );
       },
     };
     commandKeyToContext.set(key, { context });

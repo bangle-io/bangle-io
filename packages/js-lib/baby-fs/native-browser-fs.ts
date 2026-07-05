@@ -34,6 +34,13 @@ function catchUpstreamError<T>(promise: Promise<T>, errorMessage: string) {
     if (error instanceof NativeBrowserFileSystemError) {
       throw error;
     }
+    // An aborted operation (e.g. a cancelled recursive directory listing)
+    // is an expected, benign outcome, not an upstream filesystem failure —
+    // rewrapping it as UPSTREAM_ERROR would make callers treat a routine
+    // cancellation as a real error.
+    if (isAbortError(error)) {
+      throw error;
+    }
     if (isNotFoundDOMException(error)) {
       throw new NativeBrowserFileSystemError({
         message: 'The requested file was not found',
@@ -105,7 +112,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
       catchUpstreamError(opendirRecursive(...args), 'Unable to open dir');
   }
 
-  async opendirRecursive(dirPath: string) {
+  async opendirRecursive(dirPath: string, abortSignal?: AbortSignal) {
     if (!dirPath) {
       throw new Error('dirPath must be defined');
     }
@@ -115,6 +122,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
     const data = await recurseDirHandle(this._rootDirHandle, {
       allowedFile: this._allowedFile,
       allowedDir: this._allowedDir,
+      abortSignal,
     });
 
     if (!dirPath.endsWith('/')) {

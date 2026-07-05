@@ -1,10 +1,16 @@
+interface ElementWithScrollIntoViewIfNeeded extends HTMLElement {
+  scrollIntoViewIfNeeded?(centerIfNeeded?: boolean): void;
+}
+
 export const safeScrollIntoViewIfNeeded = (
   element: HTMLElement,
   centerIfNeeded?: boolean,
 ) => {
   if (typeof window !== 'undefined') {
     return 'scrollIntoViewIfNeeded' in document.body
-      ? (element as any).scrollIntoViewIfNeeded(centerIfNeeded)
+      ? (element as ElementWithScrollIntoViewIfNeeded).scrollIntoViewIfNeeded?.(
+          centerIfNeeded,
+        )
       : scrollIntoViewIfNeededPolyfill(element, centerIfNeeded);
   }
 
@@ -47,7 +53,7 @@ export const safeRequestIdleCallback: typeof requestIdleCallback =
             didTimeout: false,
             timeRemaining: () => Math.max(0, 50 - (Date.now() - start)),
           });
-        }, 1) as any;
+        }, 1) as unknown as number;
       };
 
 export const safeCancelIdleCallback: typeof cancelIdleCallback =

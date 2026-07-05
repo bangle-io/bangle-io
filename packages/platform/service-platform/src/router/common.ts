@@ -180,7 +180,7 @@ export function handleRouteInfo(
  */
 export function payloadToSearch(
   route: string,
-  payload: Record<string, any>,
+  payload: Record<string, unknown>,
 ): SearchRecord {
   const search: SearchRecord = { route };
 
