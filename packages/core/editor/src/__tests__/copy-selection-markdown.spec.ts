@@ -1,35 +1,42 @@
+import { Logger } from '@bangle.io/logger';
 import {
   EditorState,
   markdownLoader,
   resolve,
   Schema,
-  setupBase,
-  setupBold,
-  setupHeading,
-  setupList,
-  setupParagraph,
   TextSelection,
 } from '@bangle.io/prosemirror-plugins';
 import { describe, expect, it } from 'vitest';
+import { setupExtensions } from '../extensions';
 
-// Mirrors the serialization performed by
-// `PmEditorService.getSelectionMarkdown`: cut the selected range out of the
-// document and serialize it with the same loader used for saving, so a copied
-// selection round-trips to faithful Markdown.
+// Mirrors the app editor setup: build the full extension set, derive the schema
+// from it, and pass the same extensions to markdownLoader that the load/save
+// and paste paths use.
 function setup() {
-  const extensions = [
-    setupBase(),
-    setupParagraph(),
-    setupHeading(),
-    setupBold(),
-    setupList(),
-  ];
-  const resolved = resolve(extensions);
+  const extensions = setupExtensions(
+    new Logger('test', 'error'),
+    () => {},
+    {
+      onActivate: () => {},
+      resolveTarget: () => false,
+      unresolvedAriaLabel: ({ displayText }) => displayText,
+    },
+    {
+      storeFiles: async () => [],
+      cleanupStoredFiles: () => {},
+      resolveAssetReference: () => undefined,
+    },
+    {
+      openAssetLink: () => false,
+    },
+  );
+  const resolved = resolve(extensions, false, true);
   const schema = new Schema({
+    topNode: 'doc',
     nodes: resolved.nodes,
     marks: resolved.marks,
   });
-  const markdown = markdownLoader(extensions, schema);
+  const markdown = markdownLoader([...Object.values(extensions)], schema);
   return {
     parse: (source: string) => markdown.parser.parse(source),
     insertMarkdownAtEnd: (initialSource: string, markdownText: string) => {
