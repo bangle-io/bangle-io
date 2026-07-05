@@ -1,4 +1,3 @@
-import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
 import {
   cn,
   DropdownMenu,
@@ -8,7 +7,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Label,
-} from '@bangle.io/shadcn';
+} from '@bangle.io/base-ui';
+import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
 import { ChevronsUpDown, GalleryVerticalEnd, Plus, Search } from 'lucide-react';
 import React, { useId } from 'react';
 import bangleIcon from './bangle-transparent_x512.png';
@@ -122,54 +122,56 @@ function DropdownButton({
   );
 
   return (
-    <DropdownMenuTrigger asChild>
-      <SidebarMenuButton
-        size={isCompact ? 'default' : 'lg'}
-        className={cn(getButtonClass(fancy))}
-      >
-        {imageSrc ? (
-          <div
-            className={cn(
-              'flex aspect-square items-center justify-center overflow-hidden rounded-lg text-sidebar-primary-foreground',
-              isCompact ? 'size-7' : 'size-10',
-            )}
-          >
-            <img
-              src={imageSrc}
-              alt={title}
-              className={cn(
-                'select-none object-contain',
-                isCompact ? 'size-5.5' : 'size-8',
-              )}
-            />
-          </div>
-        ) : (
-          IconComponent && (
+    <DropdownMenuTrigger
+      render={
+        <SidebarMenuButton
+          size={isCompact ? 'default' : 'lg'}
+          className={cn(getButtonClass(fancy))}
+        >
+          {imageSrc ? (
             <div
               className={cn(
-                'flex aspect-square items-center justify-center rounded-lg',
-                isCompact ? 'size-7' : 'size-8',
+                'flex aspect-square items-center justify-center overflow-hidden rounded-lg text-sidebar-primary-foreground',
+                isCompact ? 'size-7' : 'size-10',
               )}
             >
-              <IconComponent className={isCompact ? 'size-3.5' : 'size-4'} />
+              <img
+                src={imageSrc}
+                alt={title}
+                className={cn(
+                  'select-none object-contain',
+                  isCompact ? 'size-5.5' : 'size-8',
+                )}
+              />
             </div>
-          )
-        )}
-        <div className={textClass}>
-          <span
-            className={cn(
-              'font-semibold',
-              isCompact && 'leading-4',
-              fancy && 'text-base leading-snug',
-            )}
-          >
-            {title}
-          </span>
-          <span className={subtitleClass}>{subtitle}</span>
-        </div>
-        <ChevronsUpDown className="!size-3.5 ml-auto text-sidebar-foreground/55" />
-      </SidebarMenuButton>
-    </DropdownMenuTrigger>
+          ) : (
+            IconComponent && (
+              <div
+                className={cn(
+                  'flex aspect-square items-center justify-center rounded-lg',
+                  isCompact ? 'size-7' : 'size-8',
+                )}
+              >
+                <IconComponent className={isCompact ? 'size-3.5' : 'size-4'} />
+              </div>
+            )
+          )}
+          <div className={textClass}>
+            <span
+              className={cn(
+                'font-semibold',
+                isCompact && 'leading-4',
+                fancy && 'text-base leading-snug',
+              )}
+            >
+              {title}
+            </span>
+            <span className={subtitleClass}>{subtitle}</span>
+          </div>
+          <ChevronsUpDown className="!size-3.5 ml-auto text-sidebar-foreground/55" />
+        </SidebarMenuButton>
+      }
+    />
   );
 }
 
@@ -317,11 +319,11 @@ function AppSidebarFooter({
           fancy={true}
         />
         <DropdownMenuContent
-          className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+          className="w-(--anchor-width) min-w-56 rounded-lg"
           align="start"
           side={isMobile ? 'top' : dropdownPosition}
           sideOffset={4}
-          onCloseAutoFocus={(e) => e.preventDefault()}
+          finalFocus={false}
         >
           {children}
         </DropdownMenuContent>
@@ -408,11 +410,11 @@ function WorkspaceSwitcher({
           />
 
           <DropdownMenuContent
-            className="max-h-[400px] w-(--radix-dropdown-menu-trigger-width) min-w-56 overflow-y-auto rounded-lg"
+            className="max-h-[400px] w-(--anchor-width) min-w-56 overflow-y-auto rounded-lg"
             align="start"
             side={isMobile ? 'bottom' : 'right'}
             sideOffset={4}
-            onCloseAutoFocus={(e) => e.preventDefault()}
+            finalFocus={false}
           >
             <DropdownMenuLabel className="text-muted-foreground text-xs">
               {t.app.components.appSidebar.workspacesLabel}
@@ -440,22 +442,22 @@ function WorkspaceSwitcher({
                     'gap-2 p-2',
                     workspace.isActive && 'font-medium text-foreground',
                   )}
-                  asChild
+                  render={
+                    <a
+                      href={wsNameToHref(workspace.name)}
+                      className="flex items-center"
+                    />
+                  }
                 >
-                  <a
-                    href={wsNameToHref(workspace.name)}
-                    className="flex items-center"
-                  >
-                    <div className="flex size-6 items-center justify-center rounded-sm border">
-                      <LogoComponent className="size-4 shrink-0" />
-                    </div>
-                    <span className={workspace.isActive ? 'underline' : ''}>
-                      {workspace.name}
-                    </span>
-                    {workspace.isActive && (
-                      <span className="ml-2 inline-block h-2 w-2 rounded-full bg-pop" />
-                    )}
-                  </a>
+                  <div className="flex size-6 items-center justify-center rounded-sm border">
+                    <LogoComponent className="size-4 shrink-0" />
+                  </div>
+                  <span className={workspace.isActive ? 'underline' : ''}>
+                    {workspace.name}
+                  </span>
+                  {workspace.isActive && (
+                    <span className="ml-2 inline-block h-2 w-2 rounded-full bg-pop" />
+                  )}
                 </DropdownMenuItem>
               );
             })}

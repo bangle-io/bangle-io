@@ -135,14 +135,16 @@ function DirectoryDropdown({
 
   return (
     <DropdownMenu.DropdownMenu>
-      <DropdownMenu.DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="h-auto cursor-pointer px-1 py-0 text-sm hover:underline"
-        >
-          {segment.label}
-        </Button>
-      </DropdownMenu.DropdownMenuTrigger>
+      <DropdownMenu.DropdownMenuTrigger
+        render={
+          <Button
+            variant="ghost"
+            className="h-auto cursor-pointer px-1 py-0 text-sm hover:underline"
+          >
+            {segment.label}
+          </Button>
+        }
+      />
       <DropdownMenu.DropdownMenuContent
         align="start"
         className="max-h-[400px] max-w-[300px] overflow-y-auto"
@@ -186,20 +188,20 @@ function SiblingFileMenuItem({ file }: SiblingFileMenuItemProps) {
   return (
     <DropdownMenu.DropdownMenuItem
       className={file.isCurrent ? 'font-medium text-foreground' : ''}
-      asChild
+      render={
+        <Breadcrumb.BreadcrumbLink
+          href={coreServices.navigation.toUri({
+            route: 'editor',
+            payload: { wsPath: file.wsPath },
+          })}
+          className="flex w-full items-center justify-between"
+        />
+      }
     >
-      <Breadcrumb.BreadcrumbLink
-        href={coreServices.navigation.toUri({
-          route: 'editor',
-          payload: { wsPath: file.wsPath },
-        })}
-        className="flex w-full items-center justify-between"
-      >
-        <span className="truncate">{file.label}</span>
-        {file.isCurrent && (
-          <span className="ml-2 inline-block h-2 w-2 shrink-0 rounded-full bg-primary" /> // Use primary color
-        )}
-      </Breadcrumb.BreadcrumbLink>
+      <span className="truncate">{file.label}</span>
+      {file.isCurrent && (
+        <span className="ml-2 inline-block h-2 w-2 shrink-0 rounded-full bg-primary" /> // Use primary color
+      )}
     </DropdownMenu.DropdownMenuItem>
   );
 }

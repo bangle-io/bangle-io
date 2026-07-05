@@ -194,27 +194,27 @@ function WorkspaceActionsMenu({
 }) {
   return (
     <DropdownMenu.DropdownMenu>
-      <DropdownMenu.DropdownMenuTrigger asChild>
-        <Button
-          aria-label={t.app.settings.workspaces.actionsLabel({ wsName })}
-          className="h-8 w-8 justify-self-start p-0 sm:justify-self-end"
-          size="icon"
-          variant="ghost"
-        >
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </DropdownMenu.DropdownMenuTrigger>
+      <DropdownMenu.DropdownMenuTrigger
+        render={
+          <Button
+            aria-label={t.app.settings.workspaces.actionsLabel({ wsName })}
+            className="h-8 w-8 justify-self-start p-0 sm:justify-self-end"
+            size="icon"
+            variant="ghost"
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        }
+      />
       <DropdownMenu.DropdownMenuContent align="end" className="min-w-44">
-        <DropdownMenu.DropdownMenuItem asChild>
-          <a href={openHref}>
-            <ExternalLink className="mr-2 h-4 w-4" />
-            <span>{t.app.settings.workspaces.openWorkspace}</span>
-          </a>
+        <DropdownMenu.DropdownMenuItem render={<a href={openHref} />}>
+          <ExternalLink className="mr-2 h-4 w-4" />
+          <span>{t.app.settings.workspaces.openWorkspace}</span>
         </DropdownMenu.DropdownMenuItem>
         <DropdownMenu.DropdownMenuSeparator />
         <DropdownMenu.DropdownMenuItem
           className="text-destructive focus:text-destructive"
-          onSelect={onDelete}
+          onClick={onDelete}
         >
           <Trash2 className="mr-2 h-4 w-4" />
           <span>{t.app.settings.workspaces.deleteWorkspace}</span>

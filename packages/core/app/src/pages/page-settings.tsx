@@ -85,7 +85,7 @@ const SETTINGS_PAGE_META: Record<
   },
 };
 
-function isThemePreference(value: string): value is ThemePreference {
+function isThemePreference(value: unknown): value is ThemePreference {
   return THEME_VALUES.some((theme) => theme === value);
 }
 

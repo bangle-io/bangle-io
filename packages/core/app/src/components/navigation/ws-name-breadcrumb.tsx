@@ -39,14 +39,16 @@ export function WsNameBreadcrumb({ wsName }: WsNameBreadcrumbProps) {
         <Breadcrumb.BreadcrumbSeparator />
         <Breadcrumb.BreadcrumbItem>
           <DropdownMenu.DropdownMenu>
-            <DropdownMenu.DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="h-auto cursor-pointer px-1 py-0 font-medium text-sm hover:underline"
-              >
-                {wsName}
-              </Button>
-            </DropdownMenu.DropdownMenuTrigger>
+            <DropdownMenu.DropdownMenuTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  className="h-auto cursor-pointer px-1 py-0 font-medium text-sm hover:underline"
+                >
+                  {wsName}
+                </Button>
+              }
+            />
             <DropdownMenu.DropdownMenuContent align="start">
               <DropdownMenu.DropdownMenuItem
                 onClick={() => {

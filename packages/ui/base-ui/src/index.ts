@@ -37,10 +37,35 @@ export {
   DialogTitle,
   DialogTrigger,
 } from './dialog';
+export {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from './dropdown-menu';
 export type { InputProps } from './input';
 export { Input } from './input';
 export type { LabelProps } from './label';
 export { Label } from './label';
+export {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectScrollDownButton,
+  SelectScrollUpButton,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from './select';
 export type { SeparatorProps } from './separator';
 export { Separator } from './separator';
 export {
