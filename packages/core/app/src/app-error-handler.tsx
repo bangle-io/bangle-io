@@ -80,7 +80,7 @@ export function AppErrorHandler({ rootEmitter }: { rootEmitter: RootEmitter }) {
                 label: t.app.toasts.retrySave,
                 onClick: () => {
                   if (
-                    coreServices.pmEditorService.retryFailedSave(
+                    coreServices.editorEngine.retryFailedSave(
                       appError.payload.wsPath,
                     )
                   ) {

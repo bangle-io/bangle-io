@@ -41,8 +41,8 @@ type LinkSession = {
 
 export function InlineSelectionMenu({ editorName }: { editorName: string }) {
   const selectionMenus = useAtomValue($selectionMenu);
-  const { pmEditorService } = useEditorCoreServices();
-  const editorView = pmEditorService.getEditor(editorName);
+  const { editorEngine } = useEditorCoreServices();
+  const editorView = editorEngine.getEditor(editorName);
   const selectionMenu = editorView ? selectionMenus.get(editorView) : undefined;
 
   if (!selectionMenu || !editorView) {
@@ -53,8 +53,8 @@ export function InlineSelectionMenu({ editorName }: { editorName: string }) {
     <InlineSelectionMenuContent
       anchorEl={selectionMenu.anchorEl}
       editorView={editorView}
-      ext={pmEditorService.extensions}
-      onOpen={(href) => pmEditorService.openLink(editorView, href)}
+      ext={editorEngine.extensions}
+      onOpen={(href) => editorEngine.openLink(editorView, href)}
     />
   );
 }

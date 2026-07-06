@@ -341,7 +341,7 @@ export const uiCommands = narrow([
     title: 'Focus Editor',
     keywords: ['focus', 'editor', 'cursor'],
     dependencies: {
-      services: ['workbenchState', 'workspaceState', 'pmEditorService'],
+      services: ['workbenchState', 'workspaceState', 'editorEngine'],
     },
     omniSearch: true,
     args: null,
@@ -352,7 +352,7 @@ export const uiCommands = narrow([
     title: 'Copy Selection as Markdown',
     keywords: ['copy', 'markdown', 'selection', 'text'],
     dependencies: {
-      services: ['pmEditorService'],
+      services: ['editorEngine'],
     },
     omniSearch: true,
     autoFocusEditor: false,
@@ -364,7 +364,7 @@ export const uiCommands = narrow([
     title: 'Paste from Markdown',
     keywords: ['paste', 'markdown', 'insert', 'clipboard'],
     dependencies: {
-      services: ['pmEditorService'],
+      services: ['editorEngine'],
     },
     omniSearch: true,
     autoFocusEditor: false,
@@ -376,7 +376,7 @@ export const uiCommands = narrow([
     title: 'Toggle Collapse Heading Section',
     keywords: ['collapse', 'expand', 'fold', 'heading', 'section'],
     dependencies: {
-      services: ['pmEditorService'],
+      services: ['editorEngine'],
     },
     omniSearch: true,
     args: null,
@@ -387,7 +387,7 @@ export const uiCommands = narrow([
     title: 'Expand All Heading Sections',
     keywords: ['expand', 'uncollapse', 'unfold', 'heading', 'all', 'section'],
     dependencies: {
-      services: ['pmEditorService'],
+      services: ['editorEngine'],
     },
     omniSearch: true,
     args: null,
@@ -398,7 +398,7 @@ export const uiCommands = narrow([
     title: 'Collapse All Heading 1 Sections',
     keywords: ['collapse', 'fold', 'heading', 'h1', 'all', 'section'],
     dependencies: {
-      services: ['pmEditorService'],
+      services: ['editorEngine'],
     },
     omniSearch: true,
     args: null,
@@ -409,7 +409,7 @@ export const uiCommands = narrow([
     title: 'Collapse All Heading 2 Sections',
     keywords: ['collapse', 'fold', 'heading', 'h2', 'all', 'section'],
     dependencies: {
-      services: ['pmEditorService'],
+      services: ['editorEngine'],
     },
     omniSearch: true,
     args: null,
@@ -420,7 +420,7 @@ export const uiCommands = narrow([
     title: 'Collapse All Heading 3 Sections',
     keywords: ['collapse', 'fold', 'heading', 'h3', 'all', 'section'],
     dependencies: {
-      services: ['pmEditorService'],
+      services: ['editorEngine'],
     },
     omniSearch: true,
     args: null,

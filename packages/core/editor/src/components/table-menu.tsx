@@ -25,8 +25,8 @@ type Extensions = PmEditorService['extensions'];
  */
 export function TableMenu({ editorName }: { editorName: string }) {
   const tableMenus = useAtomValue($tableMenu);
-  const { pmEditorService } = useEditorCoreServices();
-  const editorView = pmEditorService.getEditor(editorName);
+  const { editorEngine } = useEditorCoreServices();
+  const editorView = editorEngine.getEditor(editorName);
   const tableMenu = editorView ? tableMenus.get(editorView) : undefined;
 
   if (!editorView || !tableMenu?.show) {
@@ -37,7 +37,7 @@ export function TableMenu({ editorName }: { editorName: string }) {
     <TableMenuContent
       anchorEl={tableMenu.anchorEl}
       editorView={editorView}
-      ext={pmEditorService.extensions}
+      ext={editorEngine.extensions}
       key={tableMenu.tablePos}
     />
   );
