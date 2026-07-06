@@ -22,6 +22,7 @@ jobs:
   preflight:
     name: Preflight
     runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.60.0-noble
     outputs:
       channel: ${{ steps.metadata.outputs.channel }}
       make_latest: ${{ steps.metadata.outputs.make_latest }}
