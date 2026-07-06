@@ -370,7 +370,7 @@ test('renders resolved and unresolved wiki links with distinct dark-mode afforda
   expect(missingStyle.borderWidth).toBe('0px');
 });
 
-test('keeps escape, code, malformed, and ambiguous wiki text non-destructive', async ({
+test('keeps escape, code, and malformed wiki text non-destructive and resolves duplicate names', async ({
   page,
 }) => {
   const workspaceName = 'wiki-link-literals';
@@ -437,9 +437,20 @@ test('keeps escape, code, malformed, and ambiguous wiki text non-destructive', a
   await expect(editor.locator('code').first()).toHaveText('[[inline]]');
   await expect(editor.locator('pre')).toContainText('[[fenced]]');
   await expect(editor).toContainText('[[nested [[bad]]]]');
+
+  const sameLink = editor.getByRole('link', { name: 'Same', exact: true });
+  await expect(sameLink).toBeVisible();
   await expect(
     editor.getByRole('link', { name: 'Same (note not found)' }),
-  ).toBeVisible();
+  ).toHaveCount(0);
+  await sameLink.click();
+  await expect(page).toHaveURL(
+    /ws#route=editor&wsPath=wiki-link-literals%3Aone%2FSame\.md$/,
+  );
+  await expect(getEditorLocator(page, {})).toContainText('one');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Same'))
+    .toBeUndefined();
 });
 
 test('does not trigger wiki-link suggestions while typing inside a Markdown link', async ({

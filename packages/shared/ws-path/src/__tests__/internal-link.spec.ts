@@ -81,17 +81,44 @@ describe('resolveWikiLinkTarget', () => {
     expect(resolveWikiLinkTarget(home, 'hello', caseIndex)?.wsPath).toBe(
       'notes:hello.md',
     );
-    expect(resolveWikiLinkTarget(home, 'HELLO', caseIndex)).toBeUndefined();
+    expect(resolveWikiLinkTarget(home, 'HELLO', caseIndex)?.wsPath).toBe(
+      'notes:Hello.md',
+    );
   });
 
-  it('keeps duplicate basenames unresolved unless a path disambiguates them', () => {
-    expect(resolveWikiLinkTarget(home, 'name', index)).toBeUndefined();
+  it('resolves duplicate basenames to the closest note, path still disambiguates', () => {
+    expect(resolveWikiLinkTarget(home, 'name', index)?.wsPath).toBe(
+      'notes:folder/name.md',
+    );
     expect(resolveWikiLinkTarget(home, 'folder/name', index)?.wsPath).toBe(
       'notes:folder/name.md',
     );
     expect(resolveWikiLinkTarget(home, '/other/name', index)?.wsPath).toBe(
       'notes:other/name.markdown',
     );
+  });
+
+  it('prefers a duplicate in the current note directory, then the shallowest path', () => {
+    const sameDirIndex = createWikiLinkIndex(
+      [
+        WsFilePath.fromString('notes:todo.md'),
+        WsFilePath.fromString('notes:projects/todo.md'),
+        WsFilePath.fromString('notes:projects/deep/todo.md'),
+      ],
+      'notes',
+    );
+    expect(
+      resolveWikiLinkTarget('notes:projects/plan.md', 'todo', sameDirIndex)
+        ?.wsPath,
+    ).toBe('notes:projects/todo.md');
+    expect(
+      resolveWikiLinkTarget('notes:elsewhere/plan.md', 'todo', sameDirIndex)
+        ?.wsPath,
+    ).toBe('notes:todo.md');
+    expect(
+      resolveWikiLinkTarget('notes:projects/deep/plan.md', 'todo', sameDirIndex)
+        ?.wsPath,
+    ).toBe('notes:projects/deep/todo.md');
   });
 
   it('supports current-note-relative targets and rejects unsafe targets', () => {
@@ -132,7 +159,9 @@ describe('resolveWikiLinkTarget', () => {
     expect(resolveWikiLinkTarget(home, 'home', index)?.wsPath).toBe(
       'notes:home.md',
     );
-    expect(resolveWikiLinkTarget(home, 'name', index)).toBeUndefined();
+    expect(resolveWikiLinkTarget(home, 'name', index)?.wsPath).toBe(
+      'notes:folder/name.md',
+    );
     expect(searchTargetFor(index, folderName)).toBe('/folder/name');
     expect(index.notes.map((path) => path.wsPath)).not.toContain(
       'elsewhere:name.md',

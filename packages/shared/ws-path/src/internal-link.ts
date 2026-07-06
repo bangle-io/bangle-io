@@ -153,6 +153,30 @@ export function createWikiLinkIndex(
   };
 }
 
+function dirPrefix(path: WsFilePath): string {
+  return path.filePath.slice(0, path.filePath.lastIndexOf('/') + 1);
+}
+
+/**
+ * Picks the closest note when a bare wiki target matches several files:
+ * same directory as the current note, then fewest path segments, then
+ * lexicographic file path so resolution stays deterministic.
+ */
+function pickClosestWikiLinkMatch(
+  current: WsFilePath,
+  matches: readonly WsFilePath[],
+): WsFilePath | undefined {
+  const currentDir = dirPrefix(current);
+  const compare = (a: WsFilePath, b: WsFilePath): number =>
+    Number(dirPrefix(a) !== currentDir) - Number(dirPrefix(b) !== currentDir) ||
+    a.filePath.split('/').length - b.filePath.split('/').length ||
+    (a.filePath < b.filePath ? -1 : a.filePath > b.filePath ? 1 : 0);
+  return matches.reduce<WsFilePath | undefined>(
+    (best, match) => (!best || compare(match, best) < 0 ? match : best),
+    undefined,
+  );
+}
+
 /** Resolves legacy and relative wiki targets against the known notes in one workspace. */
 export function resolveWikiLinkTarget(
   currentWsPath: string | WsFilePath,
@@ -189,10 +213,10 @@ export function resolveWikiLinkTarget(
 
   const stem = withoutMarkdownExtension(target);
   const exact = index.byStem.get(stem) ?? [];
-  if (exact.length === 1) return exact[0];
-  if (exact.length > 1) return undefined;
-  const insensitive = index.byLowerStem.get(stem.toLocaleLowerCase()) ?? [];
-  return insensitive.length === 1 ? insensitive[0] : undefined;
+  const matches = exact.length
+    ? exact
+    : (index.byLowerStem.get(stem.toLocaleLowerCase()) ?? []);
+  return pickClosestWikiLinkMatch(current, matches);
 }
 
 /** Resolves where an unresolved wiki target should be created. */
