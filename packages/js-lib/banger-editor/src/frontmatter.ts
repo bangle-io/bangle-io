@@ -4,9 +4,10 @@ import {
   collection,
   keybinding,
   PRIORITY,
+  setPluginPriority,
 } from './common';
 import type { Command, EditorState, NodeSpec } from './pm';
-import { TextSelection } from './pm';
+import { InputRule, inputRules, TextSelection } from './pm';
 import { findParentNodeOfType, getNodeType } from './pm-utils';
 
 export type FrontmatterConfig = {
@@ -71,6 +72,7 @@ export function setupFrontmatter(userConfig?: FrontmatterConfig) {
 
   const plugin = {
     keybindings: pluginKeybindings(config),
+    inputRules: pluginInputRules(config),
   };
 
   return collection({
@@ -98,6 +100,42 @@ function pluginKeybindings(config: RequiredConfig) {
     ],
     'frontmatter',
     PRIORITY.high,
+  );
+}
+
+/**
+ * Typing `---` at the very start of an empty leading paragraph converts it
+ * into a frontmatter block, matching what note apps with frontmatter support
+ * do. Registered above the horizontal rule's identical input rule; anywhere
+ * else in the document the rule declines so `---` keeps producing an hr.
+ */
+function pluginInputRules(config: RequiredConfig) {
+  return setPluginPriority(
+    inputRules({
+      rules: [
+        new InputRule(/^---$/, (state, _match, start, end) => {
+          const type = getNodeType(state.schema, config.name);
+          const $start = state.doc.resolve(start);
+          if (
+            // only a top-level paragraph that is the doc's first child
+            $start.depth !== 1 ||
+            $start.index(0) !== 0 ||
+            // and contains nothing besides the typed dashes
+            $start.parent.content.size !== end - start ||
+            state.doc.firstChild?.type === type ||
+            !state.doc.type.contentMatch.matchType(type)
+          ) {
+            return null;
+          }
+
+          const tr = state.tr.delete(start, end);
+          tr.insert(0, type.create());
+          return tr.setSelection(TextSelection.create(tr.doc, 1));
+        }),
+      ],
+    }),
+    PRIORITY.high,
+    'frontmatter-input-rule',
   );
 }
 

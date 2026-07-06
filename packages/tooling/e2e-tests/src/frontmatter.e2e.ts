@@ -108,3 +108,37 @@ test('backspace removes an empty frontmatter block', async ({ page }) => {
     .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
     .toBe('body');
 });
+
+test('typing --- at the top of a note creates frontmatter', async ({
+  page,
+}) => {
+  const workspaceName = 'fm-type-dashes';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+
+  await page.keyboard.type('---');
+  const frontmatterBlock = editor.locator('pre[data-frontmatter]');
+  await expect(frontmatterBlock).toBeVisible();
+
+  await page.keyboard.type('title: typed');
+  await expect(frontmatterBlock).toContainText('title: typed');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe('---\ntitle: typed\n---');
+
+  // Typing --- again below yields a horizontal rule, never a second
+  // frontmatter.
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.type('---');
+  await expect(editor.locator('hr')).toHaveCount(1);
+  await expect(frontmatterBlock).toHaveCount(1);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe('---\ntitle: typed\n---\n\n---');
+});

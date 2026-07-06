@@ -77,4 +77,57 @@ describe('frontmatterTokenizer', () => {
     expect(types.filter((type) => type === 'frontmatter')).toHaveLength(1);
     expect(types).toContain('hr');
   });
+
+  it("closes on YAML's document-end marker ...", () => {
+    const tokens = frontmatterTokens('---\nx: 1\n...\n# Head\n');
+    expect(tokens).toHaveLength(1);
+    expect(tokens[0]?.content).toBe('x: 1');
+  });
+
+  it('closes on the first fence, so a ... line ends the block early', () => {
+    const tokens = frontmatterTokens('---\na: 1\n...\nb: 2\n---\n');
+    expect(tokens).toHaveLength(1);
+    expect(tokens[0]?.content).toBe('a: 1');
+  });
+
+  it('tolerates trailing spaces on the fence lines', () => {
+    const tokens = frontmatterTokens('---   \nx: 1\n---  \n# Head\n');
+    expect(tokens).toHaveLength(1);
+    expect(tokens[0]?.content).toBe('x: 1');
+  });
+
+  it('declines fewer than three dashes', () => {
+    expect(frontmatterTokens('--\nx: 1\n---\n')).toHaveLength(0);
+  });
+
+  it('keeps a setext heading a heading when there is no opening fence', () => {
+    const types = parse('title: x\n---\n').map((token) => token.type);
+    expect(types).not.toContain('frontmatter');
+    expect(types).toContain('heading_open');
+  });
+
+  it('handles CRLF line endings', () => {
+    const tokens = frontmatterTokens('---\r\ntitle: x\r\n---\r\nbody\r\n');
+    expect(tokens).toHaveLength(1);
+    expect(tokens[0]?.content).toBe('title: x');
+  });
+
+  it('parses when a block starts directly after the closing fence', () => {
+    const types = parse('---\nx: 1\n---\n# Head\n').map((token) => token.type);
+    expect(types[0]).toBe('frontmatter');
+    expect(types).toContain('heading_open');
+  });
+
+  it('preserves nested YAML indentation verbatim', () => {
+    const yaml = [
+      'title: Associative arrays',
+      'people:',
+      '    name: John Smith',
+      '    age: 33',
+      'morePeople: { name: Grace Jones, age: 21 }',
+    ].join('\n');
+    const tokens = frontmatterTokens(`---\n${yaml}\n---\n# Head\n`);
+    expect(tokens).toHaveLength(1);
+    expect(tokens[0]?.content).toBe(yaml);
+  });
 });

@@ -66,6 +66,37 @@ describe('frontmatter Markdown', () => {
     expect(findNodes(document, 'frontmatter')[0]?.textContent).toBe('');
   });
 
+  it('round trips a bare empty frontmatter document', () => {
+    const { serialized } = expectEquivalentAfterSerialize('---\n---');
+    expect(serialized).toBe('---\n---');
+  });
+
+  it('round trips realistic nested YAML exactly', () => {
+    const source = [
+      '---',
+      'title: Associative arrays',
+      'people:',
+      '    name: John Smith',
+      '    age: 33',
+      'morePeople: { name: Grace Jones, age: 21 }',
+      '---',
+      '',
+      '# Head',
+    ].join('\n');
+    const { serialized } = expectEquivalentAfterSerialize(source);
+    expect(serialized).toBe(source);
+  });
+
+  it('normalizes a YAML ... document-end close to a --- fence', () => {
+    // `...` is accepted on parse for Jekyll/Pandoc compatibility; the next
+    // save intentionally writes the canonical `---` close.
+    const { document, serialized } = expectEquivalentAfterSerialize(
+      '---\ntitle: x\n...\n\nbody',
+    );
+    expect(findNodes(document, 'frontmatter')[0]?.textContent).toBe('title: x');
+    expect(serialized).toBe('---\ntitle: x\n---\n\nbody');
+  });
+
   it('parses a frontmatter-only document into frontmatter plus an empty paragraph', () => {
     const markdown = createMarkdown();
     const document = markdown.parser.parse('---\ntitle: x\n---');

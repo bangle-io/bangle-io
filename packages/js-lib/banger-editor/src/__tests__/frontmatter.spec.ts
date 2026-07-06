@@ -4,7 +4,10 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { setupBase } from '../base';
 import { setupCodeBlock } from '../code-block';
 import { setupFrontmatter } from '../frontmatter';
+import { setupHorizontalRule } from '../horizontal-rule';
 import { setupParagraph } from '../paragraph';
+import type { EditorView } from '../pm';
+import { DOMParser as PMDOMParser } from '../pm';
 import { createBangerEditorTestSetup } from '../test-helpers';
 
 const frontmatterExt = setupFrontmatter();
@@ -19,9 +22,40 @@ const editorTest = createBangerEditorTestSetup({
 const { doc, p } = editorTest.builders;
 const frontmatter = editorTest.nodeBuilder('frontmatter');
 
+// A separate setup with the horizontal rule registered, to prove the `---`
+// input rules coexist: frontmatter wins at the doc start, hr everywhere else.
+const inputRuleEditorTest = createBangerEditorTestSetup({
+  extensions: [
+    setupBase({ docContent: 'frontmatter? block+' }),
+    setupParagraph(),
+    setupCodeBlock(),
+    setupHorizontalRule(),
+    setupFrontmatter(),
+  ],
+});
+
 afterEach(() => {
   editorTest.cleanup();
+  inputRuleEditorTest.cleanup();
 });
+
+function typeText(view: EditorView, text: string) {
+  for (const char of text) {
+    const insertChar = () => view.state.tr.insertText(char);
+    const handled = view.someProp('handleTextInput', (handler) =>
+      handler(
+        view,
+        view.state.selection.from,
+        view.state.selection.to,
+        char,
+        insertChar,
+      ),
+    );
+    if (!handled) {
+      view.dispatch(insertChar());
+    }
+  }
+}
 
 describe('frontmatter schema', () => {
   it('only allows a single frontmatter as the first child of the doc', () => {
@@ -41,6 +75,24 @@ describe('frontmatter schema', () => {
         p('body'),
       ]),
     ).toThrow();
+  });
+});
+
+describe('frontmatter DOM parsing', () => {
+  it('parses pre[data-frontmatter] as frontmatter and plain pre as code block', () => {
+    const container = document.createElement('div');
+    container.innerHTML =
+      '<pre data-frontmatter=""><code>a: 1</code></pre>' +
+      '<pre><code>plain code</code></pre>';
+
+    const parsed = PMDOMParser.fromSchema(editorTest.schema).parse(container, {
+      preserveWhitespace: 'full',
+    });
+
+    expect(parsed.firstChild?.type.name).toBe('frontmatter');
+    expect(parsed.firstChild?.textContent).toBe('a: 1');
+    expect(parsed.child(1).type.name).toBe('code_block');
+    expect(parsed.child(1).textContent).toBe('plain code');
   });
 });
 
@@ -170,5 +222,50 @@ describe('frontmatter keymap', () => {
     editor.pressKey('ArrowDown');
 
     expect(editor.selectionParentType()).toBe('frontmatter');
+  });
+});
+
+describe('frontmatter input rule', () => {
+  const { doc: docB, p: pB } = inputRuleEditorTest.builders;
+  const frontmatterB = inputRuleEditorTest.nodeBuilder('frontmatter');
+  const hr = inputRuleEditorTest.nodeBuilder('horizontalRule');
+
+  it('typing --- at the start of an empty document creates frontmatter', () => {
+    const editor = inputRuleEditorTest.createEditor(docB(pB('<cursor>')));
+
+    typeText(editor.view, '---');
+
+    editor.expectDoc(docB(frontmatterB(), pB()));
+    expect(editor.selectionParentType()).toBe('frontmatter');
+  });
+
+  it('typing --- in a later paragraph still creates a horizontal rule', () => {
+    const editor = inputRuleEditorTest.createEditor(
+      docB(pB('intro'), pB('<cursor>')),
+    );
+
+    typeText(editor.view, '---');
+
+    editor.expectDoc(docB(pB('intro'), hr(), pB()));
+  });
+
+  it('typing --- below an existing frontmatter creates a horizontal rule', () => {
+    const editor = inputRuleEditorTest.createEditor(
+      docB(frontmatterB('a: 1'), pB('<cursor>')),
+    );
+
+    typeText(editor.view, '---');
+
+    editor.expectDoc(docB(frontmatterB('a: 1'), hr(), pB()));
+  });
+
+  it('typing --- before other text yields an hr (existing behavior), not frontmatter', () => {
+    const editor = inputRuleEditorTest.createEditor(
+      docB(pB('<cursor>keep me')),
+    );
+
+    typeText(editor.view, '---');
+
+    editor.expectDoc(docB(hr(), pB('keep me')));
   });
 });

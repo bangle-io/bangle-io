@@ -1,11 +1,19 @@
 import type MarkdownIt from 'markdown-it';
 
 /**
- * The fence line that opens and closes a frontmatter block. Only an exact,
- * unindented `---` counts — trailing characters, extra dashes, or indentation
- * mean the line is ordinary Markdown (thematic break, setext underline, …).
+ * The fence that opens and closes a frontmatter block. Only an unindented
+ * `---` counts (trailing whitespace is tolerated, as in Jekyll) — extra
+ * dashes, other characters, or indentation mean the line is ordinary
+ * Markdown (thematic break, setext underline, …).
  */
 const FRONTMATTER_FENCE = '---';
+const OPENING_FENCES: readonly string[] = [FRONTMATTER_FENCE];
+/**
+ * YAML's document-end marker `...` also closes frontmatter (Jekyll and
+ * Pandoc accept it). Serialization always writes `---`, so a `...` close is
+ * an intentional, visible normalization on the next save.
+ */
+const CLOSING_FENCES: readonly string[] = [FRONTMATTER_FENCE, '...'];
 
 /**
  * markdown-it block plugin that tokenizes a YAML frontmatter block into a
@@ -13,7 +21,8 @@ const FRONTMATTER_FENCE = '---';
  * fences.
  *
  * Frontmatter is only recognized when the document literally starts with a
- * `---` line and a closing `---` line exists somewhere below it. Anything
+ * `---` line and a closing `---` (or YAML document-end `...`) line exists
+ * somewhere below it. Anything
  * else — a missing closing fence, an indented fence, a `---` later in the
  * document, or inside a blockquote/list — declines so the source keeps its
  * ordinary CommonMark meaning (thematic break or setext heading). Declining
@@ -34,13 +43,13 @@ export function frontmatterTokenizer(md: MarkdownIt): void {
       ) {
         return false;
       }
-      if (!isFenceLine(state, startLine)) {
+      if (!isFenceLine(state, startLine, OPENING_FENCES)) {
         return false;
       }
 
       let closingLine = -1;
       for (let line = startLine + 1; line < endLine; line++) {
-        if (isFenceLine(state, line)) {
+        if (isFenceLine(state, line, CLOSING_FENCES)) {
           closingLine = line;
           break;
         }
@@ -66,11 +75,15 @@ type StateBlock = Parameters<
   Parameters<MarkdownIt['block']['ruler']['before']>[2]
 >[0];
 
-function isFenceLine(state: StateBlock, line: number): boolean {
+function isFenceLine(
+  state: StateBlock,
+  line: number,
+  fences: readonly string[],
+): boolean {
   if (state.tShift[line] !== 0) {
     return false;
   }
   const start = state.bMarks[line] ?? 0;
   const end = state.eMarks[line] ?? 0;
-  return state.src.slice(start, end) === FRONTMATTER_FENCE;
+  return fences.includes(state.src.slice(start, end).trimEnd());
 }
