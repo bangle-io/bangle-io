@@ -235,6 +235,18 @@ div.ProseMirror {
     padding: 0;
   }
 
+  /* Frontmatter reuses the code-block chrome; its header band carries a
+     fixed label instead of the language/copy widgets. */
+  & pre[data-frontmatter]::before {
+    content: "frontmatter";
+    padding: 0.54rem 0 0 0.75rem;
+    font-size: 0.68rem;
+    line-height: 1.25;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: hsl(var(--BV-muted-foreground));
+  }
+
   & .prosemirror-code-copy-widget {
     position: absolute;
     top: 0.42rem;

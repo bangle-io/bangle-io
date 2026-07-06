@@ -10,6 +10,7 @@ import {
   setupCollapsibleHeading,
   setupDragNode,
   setupDropGapCursor,
+  setupFrontmatter,
   setupHardBreak,
   setupHeading,
   setupHistory,
@@ -71,9 +72,18 @@ export function setupExtensions(
     activeNode: setupActiveNode({
       // 'table': the flash animation re-triggers on every cell move and makes
       // rows appear to blink while navigating with arrow keys.
-      excludedNodes: ['horizontal_rule', 'code_block', 'blockquote', 'table'],
+      excludedNodes: [
+        'horizontal_rule',
+        'code_block',
+        'frontmatter',
+        'blockquote',
+        'table',
+      ],
     }),
-    base: setupBase(),
+    // A single YAML frontmatter block may sit above the body; the doc content
+    // expression is what enforces "at most one, only at the top".
+    base: setupBase({ docContent: 'frontmatter? block+' }),
+    frontmatter: setupFrontmatter(),
     blockquote: setupBlockquote(),
     bold: setupBold(),
     list: setupList(),

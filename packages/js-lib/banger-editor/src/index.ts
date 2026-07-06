@@ -36,6 +36,8 @@ export {
 export { setupDragNode } from './drag';
 export type { DropCursorOptions, DropGapCursorConfig } from './drop-gap-cursor';
 export { setupDropGapCursor } from './drop-gap-cursor';
+export type { FrontmatterConfig } from './frontmatter';
+export { setupFrontmatter } from './frontmatter';
 export type { HardBreakConfig } from './hard-break';
 export { setupHardBreak } from './hard-break';
 export type { HeadingConfig } from './heading';

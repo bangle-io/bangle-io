@@ -1,5 +1,6 @@
 import {
   createBaseMarkdownTokenizer,
+  frontmatterTokenizer,
   wikiLinkTokenizer,
 } from '@bangle.io/markdown-syntax';
 import {
@@ -12,9 +13,12 @@ import {
 
 // Headless backlink indexing only needs the shared base syntax plus wiki links;
 // it must not pull in an editor engine. Keep this tokenizer aligned with the
-// editors' configuration so all agree on what a note links to.
-const backlinkMarkdownTokenizer =
-  createBaseMarkdownTokenizer().use(wikiLinkTokenizer);
+// editors' configuration so all agree on what a note links to. Frontmatter is
+// included so `[[…]]` text inside YAML metadata is plain text here too, not a
+// backlink.
+const backlinkMarkdownTokenizer = createBaseMarkdownTokenizer()
+  .use(wikiLinkTokenizer)
+  .use(frontmatterTokenizer);
 
 type MarkdownToken = ReturnType<typeof backlinkMarkdownTokenizer.parse>[number];
 

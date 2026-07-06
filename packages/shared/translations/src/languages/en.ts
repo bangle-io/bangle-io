@@ -89,6 +89,7 @@ export const t = {
       slashCommand: {
         table: 'Table',
         date: 'Date',
+        frontmatter: 'Frontmatter',
       },
       datePicker: {
         hintSelect: 'Click a day to insert',
