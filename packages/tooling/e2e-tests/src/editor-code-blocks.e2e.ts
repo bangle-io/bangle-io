@@ -112,6 +112,35 @@ test('copies code-block text from the visible code action', async ({
     .toBe(code);
 });
 
+test('deletes a code block from the visible code action', async ({ page }) => {
+  const workspaceName = 'code-block-delete';
+  const noteName = 'delete-code';
+  const code = 'const removeMe = true;';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    noteName,
+    `before\n\n\`\`\`ts\n${code}\n\`\`\`\n\nafter`,
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  const codeBlock = editor.locator('pre').filter({ hasText: code });
+  await expect(codeBlock.locator('code')).toContainText(code);
+
+  await codeBlock
+    .getByRole('button', { exact: true, name: 'Delete code block' })
+    .click();
+
+  await expect(editor.locator('pre')).toHaveCount(0);
+  await expect(editor).toContainText('before');
+  await expect(editor).toContainText('after');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('before\n\nafter');
+});
+
 test('keeps code action feedback after refocusing a code block', async ({
   context,
   page,

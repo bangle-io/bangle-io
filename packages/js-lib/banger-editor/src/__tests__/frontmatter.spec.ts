@@ -126,6 +126,32 @@ describe('insertFrontmatter command', () => {
     expect(editor.selectionParentOffset()).toBe('title: x'.length);
   });
 
+  it('deleteFrontmatter removes the block with all of its content', () => {
+    const editor = editorTest.createEditor(
+      doc(frontmatter('title: x\ntags: [a]'), p('body<cursor>')),
+    );
+
+    const handled = frontmatterExt.command.deleteFrontmatter(
+      editor.view.state,
+      editor.view.dispatch,
+    );
+
+    expect(handled).toBe(true);
+    editor.expectDoc(doc(p('body')));
+  });
+
+  it('deleteFrontmatter is a no-op without a frontmatter block', () => {
+    const editor = editorTest.createEditor(doc(p('body<cursor>')));
+
+    const handled = frontmatterExt.command.deleteFrontmatter(
+      editor.view.state,
+      editor.view.dispatch,
+    );
+
+    expect(handled).toBe(false);
+    editor.expectDoc(doc(p('body')));
+  });
+
   it('reports frontmatter presence through the query', () => {
     const withFrontmatter = editorTest.createEditor(
       doc(frontmatter('a: 1'), p('body<cursor>')),

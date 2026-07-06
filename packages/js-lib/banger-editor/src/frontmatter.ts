@@ -80,6 +80,7 @@ export function setupFrontmatter(userConfig?: FrontmatterConfig) {
     nodes,
     plugin,
     command: {
+      deleteFrontmatter: deleteFrontmatter(config),
       insertFrontmatter: insertFrontmatter(config),
     },
     query: {
@@ -174,6 +175,25 @@ function insertFrontmatter(config: RequiredConfig): Command {
       dispatch(
         tr.setSelection(TextSelection.create(tr.doc, 1)).scrollIntoView(),
       );
+    }
+    return true;
+  };
+}
+
+/**
+ * Deletes the document's frontmatter block, content and all. The selection
+ * maps to the start of the remaining body.
+ */
+function deleteFrontmatter(config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    const type = getNodeType(state.schema, config.name);
+    const first = state.doc.firstChild;
+    if (first?.type !== type) {
+      return false;
+    }
+
+    if (dispatch) {
+      dispatch(state.tr.delete(0, first.nodeSize).scrollIntoView());
     }
     return true;
   };

@@ -169,6 +169,8 @@ describe('setupCodeHighlight', () => {
           codeBlock: {
             copy: 'Copy',
             copied: 'Copied',
+            delete: 'Delete',
+            deleteLabel: 'Delete code block',
             editLanguage: 'Edit language',
           },
         },

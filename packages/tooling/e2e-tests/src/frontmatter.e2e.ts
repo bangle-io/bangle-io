@@ -47,6 +47,16 @@ test('inserts frontmatter at the top via the slash menu and persists it', async 
     'title: Hello',
   );
   await expect(reloadedEditor).toContainText('body text');
+
+  // The header-band Delete button removes the whole block, content and all.
+  await reloadedEditor
+    .getByRole('button', { name: 'Delete frontmatter' })
+    .click();
+  await expect(reloadedEditor.locator('pre[data-frontmatter]')).toHaveCount(0);
+  await expect(reloadedEditor).toContainText('body text');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe('body text');
 });
 
 test('does not offer a second frontmatter once one exists', async ({

@@ -41,6 +41,7 @@ import {
   setupAssetLinkPlugin,
 } from './asset-link-plugin';
 import { setupCodeHighlight } from './code-highlight';
+import { setupFrontmatterActions } from './frontmatter-actions';
 import { funPlaceholder } from './utils';
 
 /**
@@ -61,6 +62,7 @@ export function setupExtensions(
   assetLinkConfig?: AssetLinkPluginConfig,
 ) {
   const link = setupLink({ onOpenLink });
+  const frontmatter = setupFrontmatter();
   return {
     image: setupImage(),
     ...(assetFileConfig
@@ -83,7 +85,10 @@ export function setupExtensions(
     // A single YAML frontmatter block may sit above the body; the doc content
     // expression is what enforces "at most one, only at the top".
     base: setupBase({ docContent: 'frontmatter? block+' }),
-    frontmatter: setupFrontmatter(),
+    frontmatter,
+    frontmatterActions: setupFrontmatterActions({
+      deleteFrontmatter: frontmatter.command.deleteFrontmatter,
+    }),
     blockquote: setupBlockquote(),
     bold: setupBold(),
     list: setupList(),
