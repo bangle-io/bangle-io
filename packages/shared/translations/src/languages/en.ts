@@ -361,8 +361,8 @@ export const t = {
           'Cannot move file during rename operation. Use move command.',
         cannotRenameToDifferentWorkspace:
           'Cannot rename note to a different workspace',
-        alreadyExistsInDest:
-          'A note with the same name already exists in the destination directory',
+        alreadyExistsInDest: ({ fileName }: { fileName: string }) =>
+          `A note named "${fileName}" already exists in the destination folder`,
         originalNoteNotFound: 'Original note not found',
       },
       wsPath: {

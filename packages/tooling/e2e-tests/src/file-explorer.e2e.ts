@@ -524,6 +524,49 @@ test('file explorer keeps folders expanded when a note is moved', async ({
   });
 });
 
+test('file explorer surfaces a conflict when a drag-drop move collides with an existing note', async ({
+  page,
+}) => {
+  const workspaceName = `explorer-move-conflict-${Date.now()}`;
+  await createBrowserWorkspace(page, { workspaceName });
+
+  // `dest` already contains a note called `mover`, so dragging the root `mover`
+  // into it is a name collision. The tree's drag layer rejects the drop
+  // internally; without feedback the gesture used to vanish silently.
+  await writeStoredMarkdown(page, workspaceName, 'dest/mover', 'Existing body');
+  await writeStoredMarkdown(page, workspaceName, 'mover', 'Move me');
+
+  await page.goto(
+    `/ws#route=ws-home&wsName=${encodeURIComponent(workspaceName)}`,
+  );
+  await page.reload();
+
+  const explorer = page.getByTestId('bangle-file-explorer');
+  await expect(explorer).toBeVisible();
+
+  // Both notes are called `mover.md`, so disambiguate the root note (the drag
+  // source) from the colliding child by their exact tree path.
+  const mover = explorer.locator('[data-item-path="mover.md"]');
+  const dest = explorer.getByRole('treeitem', { name: /^dest$/ });
+  // Pierre only begins a drag from an already-selected row, so select first.
+  await mover.click();
+  await dragTreeItemOnto(page, mover, dest);
+
+  // The conflict is reported to the user by name instead of failing silently.
+  await expect(
+    page.getByText('A note named "mover.md" already exists in the destination'),
+  ).toBeVisible();
+
+  // Neither note is moved or overwritten: the source stays at the root and the
+  // colliding note keeps its own content.
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'mover'))
+    .toBe('Move me');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'dest/mover'))
+    .toBe('Existing body');
+});
+
 test('file explorer shows common workspace files and opens non-notes as assets', async ({
   page,
 }) => {

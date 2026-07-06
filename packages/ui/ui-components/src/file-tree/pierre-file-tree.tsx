@@ -453,8 +453,14 @@ export function PierreFileTree({
       canDrag: canDragFile,
       canDrop: canDropFile,
       onDropComplete: handleDropComplete,
-      onDropError: () => {
+      onDropError: (_error, event) => {
         resetSelectionOpenSuppression();
+        // Pierre rejects a colliding drop inside its own optimistic store and
+        // would otherwise drop the gesture with no feedback. Re-drive the
+        // intended move through the durable move command so the owning service
+        // reports the conflict (or performs the move) instead of the drop
+        // silently vanishing.
+        commitDurableDrop(event);
         resetDragAffordance();
         if (modelRef.current) {
           resetModelPathsPreservingExpansion(

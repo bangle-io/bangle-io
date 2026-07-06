@@ -179,6 +179,66 @@ describe('WS command handlers', () => {
       });
     });
 
+    test('reports a conflict without overwriting when the destination name is taken', async () => {
+      const SOURCE_WS_PATH = 'test-ws:a.md';
+      const DEST_DIR_WS_PATH = 'test-ws:folder/';
+      const EXISTING_WS_PATH = 'test-ws:folder/a.md';
+      const { dispatch, services, getCommandResults, testEnv } =
+        await setupTest({
+          targetId: 'command::ws:move-ws-path',
+          workspaces: [
+            { name: 'test-ws', notes: [SOURCE_WS_PATH, EXISTING_WS_PATH] },
+          ],
+          autoNavigate: 'workspace',
+        });
+
+      await services.fileSystem.writeFile(
+        SOURCE_WS_PATH,
+        new File(['source body'], 'a.md', { type: 'text/plain' }),
+      );
+      await services.fileSystem.writeFile(
+        EXISTING_WS_PATH,
+        new File(['destination body'], 'a.md', { type: 'text/plain' }),
+      );
+
+      const renameSpy = vi.spyOn(services.fileSystem, 'renameFile');
+
+      dispatch('command::ws:move-ws-path', {
+        destDirWsPath: DEST_DIR_WS_PATH,
+        wsPath: SOURCE_WS_PATH,
+      });
+
+      await vi.waitFor(() => {
+        expect(
+          getCommandResults().filter((result) => result.type === 'failure'),
+        ).toEqual([
+          expect.objectContaining({
+            command: expect.objectContaining({
+              id: 'command::ws:move-ws-path',
+            }),
+          }),
+        ]);
+        expect(testEnv.commonOpts.emitAppError).toHaveBeenCalledWith(
+          expect.objectContaining({
+            cause: expect.objectContaining({
+              name: 'error::file:already-existing',
+              payload: { wsPath: EXISTING_WS_PATH },
+            }),
+          }),
+        );
+      });
+
+      // The conflict must never fall through to a destructive rename: both the
+      // dragged note and the note it collides with keep their original content.
+      expect(renameSpy).not.toHaveBeenCalled();
+      await expect(
+        services.fileSystem.readFileAsText(SOURCE_WS_PATH),
+      ).resolves.toBe('source body');
+      await expect(
+        services.fileSystem.readFileAsText(EXISTING_WS_PATH),
+      ).resolves.toBe('destination body');
+    });
+
     test('reports storage move failures before navigating to the destination', async () => {
       const SOURCE_WS_PATH = 'test-ws:source.md';
       const DESTINATION_DIR_WS_PATH = 'test-ws:archive/';

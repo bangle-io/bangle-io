@@ -252,7 +252,9 @@ export const wsCommandHandlers = [
       if (existingWsPaths.includes(newWsPath)) {
         throwAppError(
           'error::file:already-existing',
-          t.app.errors.file.alreadyExistsInDest,
+          t.app.errors.file.alreadyExistsInDest({
+            fileName: filePath.fileName,
+          }),
           {
             wsPath: newWsPath,
           },
@@ -396,7 +398,9 @@ export const wsCommandHandlers = [
         ) {
           throwAppError(
             'error::file:already-existing',
-            t.app.errors.file.alreadyExistsInDest,
+            t.app.errors.file.alreadyExistsInDest({
+              fileName: WsPath.assertFile(pair.newWsPath).fileName,
+            }),
             {
               wsPath: pair.newWsPath,
             },
