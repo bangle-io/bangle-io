@@ -24,6 +24,9 @@ function parseArgs(argv: readonly string[]): ResolveArgs {
 
   for (let index = 0; index < argv.length; index++) {
     const arg = argv[index];
+    if (arg === '--') {
+      continue;
+    }
     if (arg === '--github-output') {
       args.set('github-output', true);
       continue;
