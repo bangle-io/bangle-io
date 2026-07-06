@@ -370,7 +370,7 @@ test('renders resolved and unresolved wiki links with distinct dark-mode afforda
   expect(missingStyle.borderWidth).toBe('0px');
 });
 
-test('keeps escape, code, malformed, and ambiguous wiki text non-destructive', async ({
+test('keeps escape, code, and malformed wiki text non-destructive and resolves duplicate names', async ({
   page,
 }) => {
   const workspaceName = 'wiki-link-literals';
@@ -437,9 +437,89 @@ test('keeps escape, code, malformed, and ambiguous wiki text non-destructive', a
   await expect(editor.locator('code').first()).toHaveText('[[inline]]');
   await expect(editor.locator('pre')).toContainText('[[fenced]]');
   await expect(editor).toContainText('[[nested [[bad]]]]');
+
+  const sameLink = editor.getByRole('link', { name: 'Same', exact: true });
+  await expect(sameLink).toBeVisible();
   await expect(
     editor.getByRole('link', { name: 'Same (note not found)' }),
+  ).toHaveCount(0);
+  await sameLink.click();
+  await expect(page).toHaveURL(
+    /ws#route=editor&wsPath=wiki-link-literals%3Aone%2FSame\.md$/,
+  );
+  await expect(getEditorLocator(page, {})).toContainText('one');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Same'))
+    .toBeUndefined();
+});
+
+test('resolves duplicate wiki-link names to the note closest to the current note', async ({
+  page,
+}) => {
+  const workspaceName = 'wiki-link-closest';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+  await writeStoredMarkdown(page, workspaceName, 'todo', 'root todo');
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'projects/todo',
+    'projects todo',
+  );
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'projects/plan',
+    'Plan [[todo]]',
+  );
+  await writeStoredMarkdown(page, workspaceName, 'Home', 'Home [[todo]]');
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  const todoLink = editor.getByRole('link', { name: 'todo', exact: true });
+
+  // From a root note, [[todo]] prefers the shallowest match: the root todo.md.
+  await expect(todoLink).toBeVisible();
+  await todoLink.click();
+  await expect(page).toHaveURL(
+    /ws#route=editor&wsPath=wiki-link-closest%3Atodo\.md$/,
+  );
+  await expect(editor).toContainText('root todo');
+
+  const linkedMentions = page.getByRole('region', { name: 'Linked mentions' });
+  await expect(
+    linkedMentions.getByRole('link', { name: 'Home.md' }),
   ).toBeVisible();
+  await expect(
+    linkedMentions.getByRole('link', { name: 'projects/plan.md' }),
+  ).toHaveCount(0);
+
+  // From projects/plan.md, the same [[todo]] prefers its sibling projects/todo.md.
+  await page.goto(
+    `/ws#route=editor&wsPath=${encodeURIComponent(`${workspaceName}:projects/plan.md`)}`,
+  );
+  await expect(todoLink).toBeVisible();
+  await todoLink.click();
+  await expect(page).toHaveURL(
+    /ws#route=editor&wsPath=wiki-link-closest%3Aprojects%2Ftodo\.md$/,
+  );
+  await expect(editor).toContainText('projects todo');
+  await expect(
+    linkedMentions.getByRole('link', { name: 'projects/plan.md' }),
+  ).toBeVisible();
+  await expect(
+    linkedMentions.getByRole('link', { name: 'Home.md' }),
+  ).toHaveCount(0);
+
+  // Navigation resolved to existing notes; nothing new was created.
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'todo'))
+    .toBe('root todo');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'projects/todo'))
+    .toBe('projects todo');
 });
 
 test('does not trigger wiki-link suggestions while typing inside a Markdown link', async ({
