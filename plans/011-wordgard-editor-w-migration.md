@@ -95,12 +95,40 @@ exists):
   green, and the new package ships headless tokenizer + wiki-link syntax
   tests. Verified with `lint:ci`, `typecheck`, `knip:ci`, and `test:ci`
   (1416 passed).
-- Still open in M1: the `wordgard-markdown` codec (parse + serialize for the
-  full schema) built on this shared tokenizer; moving the table markdown-it
-  plugin (`banger-editor/table/table-markdown.ts`) down into the shared layer
-  when the second engine needs table parity (M3); and the golden corpus in
-  `@bangle.io/test-utils` with both-engine round-trip contract tests. The
-  codec lands once `wordgard` / `wordgard-utils` scaffold.
+### M1 essentially complete — codec, packages, and golden corpus landed
+
+- **`@bangle.io/wordgard-utils`** (js-lib, universal) scaffolded with
+  `wordgard` exact-pinned at `0.1.1`: the single `wordgard/*` import
+  chokepoint (currently re-exporting `wordgard/doc` + `wordgard/types`;
+  grows per milestone), plus the first custom schema elements — `TaskItem`
+  (`Plot.Type<boolean>`, param = checked, with a `Schema.Override` slotting
+  it into the built-in `BulletList`), `WikiLink` (`Leaf.Type<string>`,
+  param = target) + `WikiLinkLabel` mark, and `LinkTitle`/`ImageTitle` marks
+  preserving Markdown title fidelity.
+- **`@bangle.io/wordgard-markdown`** (js-lib, universal) — the headless
+  codec. `MarkdownSpec`s keyed by node/mark type objects; parser and
+  serializer state are faithful ports of prosemirror-markdown's
+  `MarkdownParseState`/`MarkdownSerializerState` (MIT, attributed) onto
+  Wordgard's plot/leaf/mark model, consuming the shared
+  `@bangle.io/markdown-syntax` tokenizer. `createNoteMarkdownCodec()` is the
+  batteries-included bangle-note assembly. Byte-parity subtleties ported
+  deliberately: loose (blank-line-separated) list items, fixed `1.` ordered
+  markers, 2-space nesting indent, banger's heading start-of-line escaping,
+  autolink heuristic, adaptive code fences/backticks, hard-break lookahead.
+- **Golden corpus** in `@bangle.io/test-utils` (`markdown-corpus.ts`,
+  ~69 canonical-form fixtures) with both-engine contract tests:
+  `core/editor/src/__tests__/markdown-golden-corpus.spec.ts` (ProseMirror)
+  and `wordgard-markdown/src/__tests__/markdown-golden-corpus.spec.ts`
+  (Wordgard). Table fixtures are `engines: ['prosemirror']` until M3.
+  Constructs with no byte-stable fixed point in the PM engine are documented
+  in the corpus file instead of included (lists nested under ordered items,
+  indented code blocks, mid-word escaped underscores, and similar).
+- **M1 exit met for the non-table schema:** the corpus round-trips
+  byte-identically through both engines headlessly. Verified with `lint:ci`
+  and `test:ci` (1611 passed).
+- Still open in M1 scope: moving the table markdown-it plugin
+  (`banger-editor/table/table-markdown.ts`) into the shared layer and adding
+  Wordgard table specs when the second engine needs table parity (M3).
 
 ## Guiding principles
 
@@ -597,13 +625,15 @@ None. M0 can start immediately.
 
 ## Next steps
 
-1. Shared syntax layer: **done** (`@bangle.io/markdown-syntax`). Next, scaffold
-   `@bangle.io/wordgard-utils` + `@bangle.io/wordgard-markdown` (js-lib) with
-   `wordgard` pinned to an exact version, then build the `wordgard-markdown`
-   codec on top of the shared `@bangle.io/markdown-syntax` tokenizer and add
-   the golden corpus.
-2. M0b alongside it: stub `@bangle.io/editor-w` package + persisted engine
+1. Shared syntax layer: **done** (`@bangle.io/markdown-syntax`).
+2. Scaffold `wordgard-utils` + `wordgard-markdown`, build the codec, add the
+   golden corpus with both-engine contract tests: **done** (see "M1
+   essentially complete" above).
+3. M0b next: stub `@bangle.io/editor-w` package + persisted engine
    preference + omni-search switch command + composition-root selection +
    boot guard + e2e switch coverage.
-3. Extract `editor-common` (save queue, load-status, `<Editor>` shell) when
+4. Extract `editor-common` (save queue, load-status, `<Editor>` shell) when
    editor-w first needs it (M2).
+5. Table parity (M3): move `banger-editor/table/table-markdown.ts` into the
+   shared layer, add Wordgard table specs, and flip the corpus table
+   fixtures to both engines.

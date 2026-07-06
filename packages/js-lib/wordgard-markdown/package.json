@@ -1,0 +1,39 @@
+{
+  "name": "@bangle.io/wordgard-markdown",
+  "description": "Editor-free Markdown codec for Wordgard documents: markdown-it token stream to Wordgard doc and back, extensible via type-keyed MarkdownSpec entries.",
+  "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/js-lib/wordgard-markdown"
+  },
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "homepage": "https://bangle.io",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "env": "universal",
+    "kind": "library"
+  },
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {},
+  "dependencies": {
+    "@bangle.io/markdown-syntax": "workspace:*",
+    "@bangle.io/wordgard-utils": "workspace:*",
+    "markdown-it": "14.3.0"
+  },
+  "devDependencies": {
+    "@bangle.io/test-utils": "workspace:*",
+    "@types/markdown-it": "^14.1.2"
+  }
+}
