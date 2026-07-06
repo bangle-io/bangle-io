@@ -1,8 +1,7 @@
 import { cn } from '@bangle.io/ui-misc';
-import type { DialogProps } from '@radix-ui/react-dialog';
 import { Command as CommandPrimitive } from 'cmdk';
 import { Search } from 'lucide-react';
-import * as React from 'react';
+import React from 'react';
 import {
   Dialog,
   DialogContent,
@@ -30,27 +29,16 @@ const CommandDialog = ({
   shouldFilter = true,
   loop = true,
   screenReaderTitle,
-  onOpenAutoFocus,
-  onCloseAutoFocus,
   ...props
-}: DialogProps & {
+}: Omit<React.ComponentProps<typeof Dialog>, 'children'> & {
+  children?: React.ReactNode;
   shouldFilter?: boolean;
   loop?: boolean;
   screenReaderTitle: string;
-  onOpenAutoFocus?: React.ComponentPropsWithoutRef<
-    typeof DialogContent
-  >['onOpenAutoFocus'];
-  onCloseAutoFocus?: React.ComponentPropsWithoutRef<
-    typeof DialogContent
-  >['onCloseAutoFocus'];
 }) => {
   return (
     <Dialog {...props}>
-      <DialogContent
-        className="overflow-hidden p-0 shadow-lg"
-        onOpenAutoFocus={onOpenAutoFocus}
-        onCloseAutoFocus={onCloseAutoFocus}
-      >
+      <DialogContent className="overflow-hidden p-0 shadow-lg">
         <DialogTitle className="sr-only">{screenReaderTitle}</DialogTitle>
         <DialogDescription className="sr-only">
           {t.app.components.dialog.commandDescriptionSr}

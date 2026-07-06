@@ -1,5 +1,5 @@
 import { useCoreServices } from '@bangle.io/context';
-import { Button } from '@bangle.io/ui-components';
+import { Button, buttonVariants, cn } from '@bangle.io/ui-components';
 import type { WsFilePath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue } from 'jotai';
 import { ChevronDown, ChevronRight } from 'lucide-react';
@@ -91,16 +91,16 @@ export function LinkedMentions({
             ) : (
               <div className="flex flex-col gap-1">
                 {items.map((item) => (
-                  <Button
+                  <a
                     key={item.wsPath}
-                    variant="ghost"
-                    asChild
-                    className="h-auto justify-start px-2 py-1.5"
+                    href={item.href}
+                    className={cn(
+                      buttonVariants({ variant: 'ghost' }),
+                      'h-auto justify-start truncate px-2 py-1.5',
+                    )}
                   >
-                    <a href={item.href} className="truncate">
-                      {item.label}
-                    </a>
-                  </Button>
+                    {item.label}
+                  </a>
                 ))}
               </div>
             )}

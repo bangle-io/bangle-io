@@ -306,7 +306,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   return (
     <Sidebar.SidebarProvider
       open={sidebarOpen}
-      setOpen={(open) => setSidebarOpen(open)}
+      onOpenChange={(open) => setSidebarOpen(open)}
     >
       <UIAppSidebar
         workspaces={workspaces.map((ws, _i) => ({

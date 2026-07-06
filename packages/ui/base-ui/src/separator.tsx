@@ -1,14 +1,12 @@
 import { cn } from '@bangle.io/ui-misc';
 import { Separator as SeparatorPrimitive } from '@base-ui/react/separator';
-import React from 'react';
-
-type SeparatorProps = SeparatorPrimitive.Props;
+import * as React from 'react';
 
 function Separator({
   className,
   orientation = 'horizontal',
   ...props
-}: SeparatorProps) {
+}: SeparatorPrimitive.Props) {
   return (
     <SeparatorPrimitive
       data-slot="separator"
@@ -22,5 +20,4 @@ function Separator({
   );
 }
 
-export type { SeparatorProps };
 export { Separator };

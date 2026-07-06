@@ -143,7 +143,7 @@ function InlineSelectionMenuContent({
         }}
         role="toolbar"
       >
-        <TooltipProvider delayDuration={300}>
+        <TooltipProvider delay={300}>
           <MarkToggle
             active={ext.bold.query.isBoldActive(editorView.state)}
             disabled={!ext.bold.command.toggleBold(editorView.state)}
@@ -234,20 +234,22 @@ function MarkToggle({
 }) {
   return (
     <Tooltip>
-      <TooltipTrigger asChild>
-        <Toggle
-          aria-label={label}
-          aria-pressed={active}
-          className="h-8 w-8 p-0"
-          disabled={disabled}
-          onPointerDown={(event) => event.preventDefault()}
-          onPressedChange={onToggle}
-          pressed={active}
-          size="sm"
-        >
-          {children}
-        </Toggle>
-      </TooltipTrigger>
+      <TooltipTrigger
+        render={
+          <Toggle
+            aria-label={label}
+            aria-pressed={active}
+            className="h-8 w-8 p-0"
+            disabled={disabled}
+            onPointerDown={(event) => event.preventDefault()}
+            onPressedChange={onToggle}
+            pressed={active}
+            size="sm"
+          >
+            {children}
+          </Toggle>
+        }
+      />
       <TooltipContent side="bottom" className="text-xs">
         {label}
       </TooltipContent>
@@ -262,22 +264,24 @@ function ToolbarButton({
 }: React.ComponentProps<typeof Button> & { label: string }) {
   return (
     <Tooltip>
-      <TooltipTrigger asChild>
-        <Button
-          {...props}
-          aria-label={label}
-          className="h-8 w-8 p-0"
-          onPointerDown={(event) => {
-            event.preventDefault();
-            props.onPointerDown?.(event);
-          }}
-          size="icon"
-          type="button"
-          variant="ghost"
-        >
-          {children}
-        </Button>
-      </TooltipTrigger>
+      <TooltipTrigger
+        render={
+          <Button
+            {...props}
+            aria-label={label}
+            className="h-8 w-8 p-0"
+            onPointerDown={(event) => {
+              event.preventDefault();
+              props.onPointerDown?.(event);
+            }}
+            size="icon"
+            type="button"
+            variant="ghost"
+          >
+            {children}
+          </Button>
+        }
+      />
       <TooltipContent side="bottom" className="text-xs">
         {label}
       </TooltipContent>

@@ -70,43 +70,45 @@ function TableMenuContent({
   return (
     <div ref={triggerRef} style={FLOATING_INITIAL_STYLE}>
       <DropdownMenu.DropdownMenu>
-        <DropdownMenu.DropdownMenuTrigger asChild>
-          <Button
-            aria-label={t.app.editor.tableMenu.label}
-            className="h-7 gap-1 border bg-popover px-2 text-muted-foreground shadow-xs hover:text-foreground"
-            size="sm"
-            type="button"
-            variant="ghost"
-          >
-            <Table className="h-4 w-4" />
-            <ChevronDown className="h-3 w-3" />
-          </Button>
-        </DropdownMenu.DropdownMenuTrigger>
+        <DropdownMenu.DropdownMenuTrigger
+          render={
+            <Button
+              aria-label={t.app.editor.tableMenu.label}
+              className="h-7 gap-1 border bg-popover px-2 text-muted-foreground shadow-xs hover:text-foreground"
+              size="sm"
+              type="button"
+              variant="ghost"
+            >
+              <Table className="h-4 w-4" />
+              <ChevronDown className="h-3 w-3" />
+            </Button>
+          }
+        />
         <DropdownMenu.DropdownMenuContent
           align="end"
-          onCloseAutoFocus={(event) => {
-            event.preventDefault();
+          finalFocus={() => {
             editorView.focus();
+            return false;
           }}
         >
           <DropdownMenu.DropdownMenuItem
             disabled={!ext.table.command.addRowAbove(editorView.state)}
-            onSelect={() => run(ext.table.command.addRowAbove)}
+            onClick={() => run(ext.table.command.addRowAbove)}
           >
             {t.app.editor.tableMenu.addRowAbove}
           </DropdownMenu.DropdownMenuItem>
           <DropdownMenu.DropdownMenuItem
-            onSelect={() => run(ext.table.command.addRowBelow)}
+            onClick={() => run(ext.table.command.addRowBelow)}
           >
             {t.app.editor.tableMenu.addRowBelow}
           </DropdownMenu.DropdownMenuItem>
           <DropdownMenu.DropdownMenuItem
-            onSelect={() => run(ext.table.command.addColumnLeft)}
+            onClick={() => run(ext.table.command.addColumnLeft)}
           >
             {t.app.editor.tableMenu.addColumnLeft}
           </DropdownMenu.DropdownMenuItem>
           <DropdownMenu.DropdownMenuItem
-            onSelect={() => run(ext.table.command.addColumnRight)}
+            onClick={() => run(ext.table.command.addColumnRight)}
           >
             {t.app.editor.tableMenu.addColumnRight}
           </DropdownMenu.DropdownMenuItem>
@@ -141,18 +143,18 @@ function TableMenuContent({
           </DropdownMenu.DropdownMenuRadioGroup>
           <DropdownMenu.DropdownMenuSeparator />
           <DropdownMenu.DropdownMenuItem
-            onSelect={() => run(ext.table.command.deleteRow)}
+            onClick={() => run(ext.table.command.deleteRow)}
           >
             {t.app.editor.tableMenu.deleteRow}
           </DropdownMenu.DropdownMenuItem>
           <DropdownMenu.DropdownMenuItem
-            onSelect={() => run(ext.table.command.deleteColumn)}
+            onClick={() => run(ext.table.command.deleteColumn)}
           >
             {t.app.editor.tableMenu.deleteColumn}
           </DropdownMenu.DropdownMenuItem>
           <DropdownMenu.DropdownMenuItem
             className="text-destructive focus:text-destructive"
-            onSelect={() => run(ext.table.command.deleteTable)}
+            onClick={() => run(ext.table.command.deleteTable)}
           >
             {t.app.editor.tableMenu.deleteTable}
           </DropdownMenu.DropdownMenuItem>

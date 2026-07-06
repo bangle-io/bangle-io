@@ -14,14 +14,14 @@ import type {
 import {
   Button,
   cn,
+  RadioGroup,
+  RadioGroupItem,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
   SettingsPage,
-  ToggleGroup,
-  ToggleGroupItem,
 } from '@bangle.io/ui-components';
 import { useAtom, useAtomValue } from 'jotai';
 import {
@@ -66,6 +66,15 @@ const ASSET_LOCATION_OPTIONS: Array<{
   label: ASSET_LOCATION_LABELS[value],
 }));
 
+// Base UI's `Select.Value` renders the raw value while the popup is closed
+// unless the Root is given an `items` value→label map to resolve the label.
+const ASSET_LOCATION_ITEMS: Record<string, string> = Object.fromEntries(
+  ASSET_LOCATION_OPTIONS.map((option) => [option.value, option.label]),
+);
+const THEME_ITEMS: Record<string, string> = Object.fromEntries(
+  THEME_OPTIONS.map((option) => [option.value, option.label]),
+);
+
 // Presentation for each settings page. Keyed by SettingsPageId so adding a page
 // to SETTINGS_PAGE_DEFINITIONS (in @bangle.io/constants) forces a matching entry
 // here at compile time.
@@ -85,7 +94,7 @@ const SETTINGS_PAGE_META: Record<
   },
 };
 
-function isThemePreference(value: string): value is ThemePreference {
+function isThemePreference(value: unknown): value is ThemePreference {
   return THEME_VALUES.some((theme) => theme === value);
 }
 
@@ -227,28 +236,22 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
                       <SegmentedControl
                         aria-label={t.app.settings.general.wideEditorToggle}
                         onValueChange={(value) => {
-                          if (value === 'default') {
-                            setWideEditor(false);
-                          }
-                          if (value === 'wide') {
-                            setWideEditor(true);
-                          }
+                          setWideEditor(value === 'wide');
                         }}
-                        type="single"
                         value={wideEditor ? 'wide' : 'default'}
                       >
-                        <ToggleGroupItem
+                        <RadioGroupItem
                           className={SEGMENTED_ITEM_CLASS}
                           value="default"
                         >
                           {t.app.settings.general.defaultWidth}
-                        </ToggleGroupItem>
-                        <ToggleGroupItem
+                        </RadioGroupItem>
+                        <RadioGroupItem
                           className={SEGMENTED_ITEM_CLASS}
                           value="wide"
                         >
                           {t.app.settings.general.wideWidth}
-                        </ToggleGroupItem>
+                        </RadioGroupItem>
                       </SegmentedControl>
                     }
                     description={t.app.settings.general.wideEditorDescription}
@@ -288,6 +291,7 @@ function AssetLocationSelect({
 }) {
   return (
     <Select
+      items={ASSET_LOCATION_ITEMS}
       onValueChange={(nextValue) => {
         if (isAssetLocationPreference(nextValue)) {
           onValueChange(nextValue);
@@ -321,6 +325,7 @@ function ThemePreferenceSelect({
 }) {
   return (
     <Select
+      items={THEME_ITEMS}
       onValueChange={(nextValue) => {
         if (isThemePreference(nextValue)) {
           onValueChange(nextValue);
@@ -346,23 +351,22 @@ function ThemePreferenceSelect({
 }
 
 const SEGMENTED_ITEM_CLASS =
-  'h-8 min-w-16 rounded-md px-3 text-xs data-[state=on]:bg-background data-[state=on]:shadow-xs';
+  'h-8 min-w-16 rounded-md px-3 text-xs data-[checked]:bg-background data-[checked]:shadow-xs';
 
 function SegmentedControl({
   children,
   className,
   ...props
-}: React.ComponentProps<typeof ToggleGroup>) {
+}: React.ComponentProps<typeof RadioGroup>) {
   return (
-    <ToggleGroup
+    <RadioGroup
       className={cn(
         'inline-flex rounded-lg bg-muted/60 p-1 shadow-inner',
         className,
       )}
-      variant="default"
       {...props}
     >
       {children}
-    </ToggleGroup>
+    </RadioGroup>
   );
 }

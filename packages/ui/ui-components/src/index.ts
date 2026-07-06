@@ -1,8 +1,7 @@
-export type { ButtonProps, InputProps } from '@bangle.io/shadcn';
-export * as DropdownMenu from '@bangle.io/shadcn';
-export * as Accordion from '@bangle.io/shadcn';
-export * as Menubar from '@bangle.io/shadcn';
+export * as DropdownMenu from '@bangle.io/base-ui';
+// Migrated primitives now come from the Base UI-backed package.
 export {
+  Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
@@ -45,7 +44,6 @@ export {
   DialogPortal,
   DialogTitle,
   DialogTrigger,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
@@ -55,28 +53,11 @@ export {
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
   Input,
   Label,
-  MenubarCheckboxItem,
-  MenubarContent,
-  MenubarGroup,
-  MenubarItem,
-  MenubarLabel,
-  MenubarMenu,
-  MenubarPortal,
-  MenubarRadioGroup,
-  MenubarRadioItem,
-  MenubarRoot,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarSub,
-  MenubarSubContent,
-  MenubarSubTrigger,
-  MenubarTrigger,
+  RadioGroup,
+  RadioGroupItem,
   Select,
   SelectContent,
   SelectGroup,
@@ -94,20 +75,15 @@ export {
   SheetDescription,
   SheetFooter,
   SheetHeader,
-  SheetOverlay,
-  SheetPortal,
   SheetTitle,
   SheetTrigger,
   Skeleton,
   Toggle,
-  ToggleGroup,
-  ToggleGroupItem,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-  toggleVariants,
-} from '@bangle.io/shadcn';
+} from '@bangle.io/base-ui';
 export { cn, useIsMobile } from '@bangle.io/ui-misc';
 export type { AppAlertDialogProps } from './app-alert-dialog';
 // App-specific components

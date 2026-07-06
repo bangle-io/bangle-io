@@ -119,8 +119,8 @@ order is `service-platform` -> `service-core` -> `service-ui`.
   workspace paths.
 - `packages/shared/root-emitter`: typed app events and the explicit cross-tab
   event allowlist.
-- `packages/ui/shadcn`, `ui-components`, and `ui-misc`: reusable UI without
-  core business behavior.
+- `packages/ui/base-ui`, `ui-components`, and `ui-misc`: reusable UI without
+  core business behavior. `base-ui` holds the Base UI-backed shadcn primitives.
 - `packages/tooling/test-utils`: real service/container test setup shared across
   packages.
 

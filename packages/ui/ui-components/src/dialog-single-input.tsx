@@ -8,7 +8,7 @@ import {
   DialogTitle,
   Input,
   Label,
-} from '@bangle.io/shadcn';
+} from '@bangle.io/base-ui';
 import React from 'react';
 
 export type DialogSingleInputProps = {

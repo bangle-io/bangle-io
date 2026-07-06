@@ -1,5 +1,5 @@
 import { useCoreServices } from '@bangle.io/context';
-import { Button } from '@bangle.io/ui-components';
+import { buttonVariants } from '@bangle.io/ui-components';
 import { WsPath } from '@bangle.io/ws-path';
 import { useAtomValue } from 'jotai';
 import { Download } from 'lucide-react';
@@ -103,12 +103,14 @@ export function PageAsset() {
         <ContentSection hasPadding>
           <PageHeader title={fileName} />
           {state.status === 'ready' ? (
-            <Button asChild>
-              <a download={state.fileName} href={state.objectUrl}>
-                <Download className="h-4 w-4" />
-                {t.app.pageAsset.downloadButton}
-              </a>
-            </Button>
+            <a
+              className={buttonVariants()}
+              download={state.fileName}
+              href={state.objectUrl}
+            >
+              <Download className="h-4 w-4" />
+              {t.app.pageAsset.downloadButton}
+            </a>
           ) : (
             <p className="max-w-md text-muted-foreground text-sm">
               {state.status === 'loading'

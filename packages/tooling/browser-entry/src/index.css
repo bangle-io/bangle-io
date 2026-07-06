@@ -190,6 +190,9 @@ html[data-bangle-window-controls-overlay="visible"][data-bangle-window-controls-
 }
 
 @theme inline {
+  /* Base UI shadcn dialog/sheet/alert-dialog titles use `font-heading`; map it
+     to Bangle's sans stack so headings do not fall back to a browser default. */
+  --font-heading: var(--font-sans);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

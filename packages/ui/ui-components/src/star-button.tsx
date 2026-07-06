@@ -1,4 +1,4 @@
-import { Button, cn } from '@bangle.io/shadcn';
+import { Button, cn } from '@bangle.io/base-ui';
 import { t } from '@bangle.io/translations';
 import { Star as StarIcon } from 'lucide-react';
 import type { ComponentPropsWithoutRef } from 'react';
