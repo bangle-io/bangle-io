@@ -353,8 +353,8 @@ export const t = {
           'Datei kann während des Umbenennens nicht verschoben werden. Verwenden Sie den Verschiebebefehl.',
         cannotRenameToDifferentWorkspace:
           'Notiz kann nicht in einen anderen Arbeitsbereich umbenannt werden',
-        alreadyExistsInDest:
-          'Eine Notiz mit demselben Namen existiert bereits im Zielverzeichnis',
+        alreadyExistsInDest: ({ fileName }: { fileName: string }) =>
+          `Eine Notiz mit dem Namen „${fileName}“ existiert bereits im Zielordner`,
         originalNoteNotFound: 'Originalnotiz nicht gefunden',
       },
       wsPath: {
