@@ -178,6 +178,8 @@ test('pastes workspace-backed image and PDF assets, reloads, and opens asset pag
   expect(markdown).toContain('[Spec Sheet.PDF](assets/spec-sheet-');
   expect(markdown).toContain('.pdf)');
 
+  // A single pasted image must yield exactly one image node, never a duplicate.
+  await expect(editor.locator('img')).toHaveCount(1);
   await expect(editor.locator('img')).toHaveAttribute('src', /^blob:/);
 
   await page.reload({ waitUntil: 'networkidle' });

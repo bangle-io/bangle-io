@@ -444,6 +444,118 @@ describe('setupAssetFilePlugin', () => {
     view.destroy();
   });
 
+  it('does not duplicate a pasted image surfaced through items and files with mismatched lastModified', async () => {
+    const stored = deferred<StoredMarkdownAsset[]>();
+    const storeFiles = vi.fn(() => stored.promise);
+    const { view } = createView({ storeFiles });
+
+    // Real browsers hand back a *distinct* File object for the `items` view and
+    // the `files` view of the same pasted image, and those objects can carry
+    // different `lastModified` timestamps. The previous implementation keyed
+    // de-duplication on lastModified, so the same image slipped through twice
+    // and produced a second image node. jsdom leaves File.lastModified
+    // undefined, so the mismatch is forced explicitly to mirror the browser.
+    const fileFromItem = new File(['image'], 'Photo.png', {
+      type: 'image/png',
+    });
+    Object.defineProperty(fileFromItem, 'lastModified', { value: 1000 });
+    const fileFromFiles = new File(['image'], 'Photo.png', {
+      type: 'image/png',
+    });
+    Object.defineProperty(fileFromFiles, 'lastModified', { value: 2000 });
+    const event = {
+      preventDefault: vi.fn(),
+      clipboardData: {
+        items: [
+          {
+            kind: 'file',
+            getAsFile: () => fileFromItem,
+          },
+        ],
+        files: [fileFromFiles],
+        types: ['Files'],
+        getData: () => '',
+      },
+    } as unknown as ClipboardEvent;
+
+    expect(
+      view.someProp('handlePaste', (handler) =>
+        handler(view, event, Slice.empty),
+      ),
+    ).toBe(true);
+
+    // Exactly one file is stored — never both views of the same image.
+    expect(storeFiles).toHaveBeenCalledTimes(1);
+    expect(storeFiles).toHaveBeenCalledWith(
+      view,
+      [fileFromItem],
+      expect.any(AbortSignal),
+    );
+
+    stored.resolve([
+      {
+        file: fileFromItem,
+        wsPath: WsFilePath.fromString('workspace:notes/assets/photo.png'),
+        href: 'assets/photo.png',
+        label: 'Photo.png',
+        isImage: true,
+      },
+    ]);
+
+    await vi.waitFor(() => {
+      const imageSources: string[] = [];
+      view.state.doc.descendants((node) => {
+        if (node.type.name === 'image') {
+          imageSources.push(node.attrs.src);
+        }
+      });
+      expect(imageSources).toEqual(['assets/photo.png']);
+    });
+    view.destroy();
+  });
+
+  it('reads pasted files from clipboardData.files when items exposes no file entries', async () => {
+    const stored = deferred<StoredMarkdownAsset[]>();
+    const storeFiles = vi.fn(() => stored.promise);
+    const { view } = createView({ storeFiles });
+
+    const file = new File(['image'], 'Photo.png', { type: 'image/png' });
+    const event = {
+      preventDefault: vi.fn(),
+      clipboardData: {
+        // Only a non-file item is present (e.g. accompanying text/html); the
+        // file is reachable solely through `files`.
+        items: [
+          {
+            kind: 'string',
+            type: 'text/html',
+            getAsFile: () => null,
+          },
+        ],
+        files: [file],
+        types: ['text/html', 'Files'],
+        getData: () => '',
+      },
+    } as unknown as ClipboardEvent;
+
+    expect(
+      view.someProp('handlePaste', (handler) =>
+        handler(view, event, Slice.empty),
+      ),
+    ).toBe(true);
+    expect(storeFiles).toHaveBeenCalledWith(
+      view,
+      [file],
+      expect.any(AbortSignal),
+    );
+
+    stored.resolve([]);
+    await vi.waitFor(() => {
+      expect(view.state.doc.textContent).toBe('Hello ');
+    });
+    view.destroy();
+  });
+
   it('inserts a dropped image at a document-boundary drop position', async () => {
     const stored = deferred<StoredMarkdownAsset[]>();
     const storeFiles = vi.fn(() => stored.promise);
