@@ -9,6 +9,7 @@ updated: 2026-07-05
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/609
+  - https://github.com/bangle-io/bangle-io/pull/613
 related_issues: []
 ---
 
