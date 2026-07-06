@@ -1,3 +1,8 @@
+export type { WikiLinkAttrs } from '@bangle.io/markdown-syntax';
+export {
+  parseWikiLinkContent,
+  serializeWikiLinkAttrs,
+} from '@bangle.io/markdown-syntax';
 export type { ActiveNodeConfig } from './active-node';
 export { setupActiveNode } from './active-node';
 export type { BaseConfig } from './base';
@@ -351,9 +356,5 @@ export {
 } from './trailing-slot';
 export type { UnderlineConfig } from './underline';
 export { setupUnderline } from './underline';
-export type { WikiLinkAttrs, WikiLinkConfig } from './wiki-link';
-export {
-  parseWikiLinkContent,
-  serializeWikiLinkAttrs,
-  setupWikiLink,
-} from './wiki-link';
+export type { WikiLinkConfig } from './wiki-link';
+export { setupWikiLink } from './wiki-link';

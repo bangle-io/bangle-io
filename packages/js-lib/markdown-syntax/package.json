@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/prosemirror-plugins",
-  "description": "",
+  "name": "@bangle.io/markdown-syntax",
+  "description": "Engine-neutral Markdown tokenizer configuration and custom syntax (wiki links) shared across editor engines.",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/js-lib/prosemirror-plugins"
+    "directory": "packages/js-lib/markdown-syntax"
   },
   "authors": [
     {
@@ -29,9 +29,9 @@
   "scripts": {},
   "dependencies": {
     "@bangle.dev/pm-markdown": "2.0.0-alpha.18",
-    "@bangle.io/banger-editor": "workspace:*",
-    "@bangle.io/markdown-syntax": "workspace:*",
-    "prosemirror-model": "^1.25.9"
+    "markdown-it": "14.3.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2"
+  }
 }

@@ -1,7 +1,7 @@
 import {
-  createMarkdownTokenizer,
-  setupWikiLink,
-} from '@bangle.io/prosemirror-plugins';
+  createBaseMarkdownTokenizer,
+  wikiLinkTokenizer,
+} from '@bangle.io/markdown-syntax';
 import {
   resolveInternalWsPath,
   resolveWikiLinkTarget,
@@ -10,7 +10,11 @@ import {
   WsPath,
 } from '@bangle.io/ws-path';
 
-const backlinkMarkdownTokenizer = createMarkdownTokenizer([setupWikiLink()]);
+// Headless backlink indexing only needs the shared base syntax plus wiki links;
+// it must not pull in an editor engine. Keep this tokenizer aligned with the
+// editors' configuration so all agree on what a note links to.
+const backlinkMarkdownTokenizer =
+  createBaseMarkdownTokenizer().use(wikiLinkTokenizer);
 
 type MarkdownToken = ReturnType<typeof backlinkMarkdownTokenizer.parse>[number];
 

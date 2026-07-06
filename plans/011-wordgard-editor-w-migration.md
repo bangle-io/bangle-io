@@ -75,6 +75,32 @@ exists):
   package-private to `core/editor`, consumed via the concrete service — this
   is engine-internal by design, not a seam violation.
 
+### M1 in progress — shared markdown-syntax layer landed
+
+- **`@bangle.io/markdown-syntax`** (js-lib, universal) now owns the
+  engine-neutral markdown-it configuration: the base tokenizer (CommonMark +
+  GFM strikethrough + task lists via `listMarkdownPlugin`) and the
+  `[[wiki link]]` inline syntax plugin with its `parseWikiLinkContent` /
+  `serializeWikiLinkAttrs` helpers and `WikiLinkAttrs` type. It carries no
+  editor dependency (banger-editor now depends on it, not the reverse).
+- Both the ProseMirror markdown loader
+  (`prosemirror-plugins/markdown-loader.ts`) and the headless backlink
+  indexer (`service-core/backlink-markdown-extractor.ts`) consume the shared
+  base. As a result `service-core` and the neutral tokenizer no longer depend
+  on the PM editor package `@bangle.io/prosemirror-plugins` at all — closing
+  the altitude smell M1 called out. `prosemirror-plugins` drops its direct
+  `markdown-it` dependency (it now sources the base from markdown-syntax).
+- Behavior is unchanged: the PM wiki-link markdown round-trip suite stays
+  green, and the new package ships headless tokenizer + wiki-link syntax
+  tests. Verified with `lint:ci`, `typecheck`, `knip:ci`, and `test:ci`
+  (1416 passed).
+- Still open in M1: the `wordgard-markdown` codec (parse + serialize for the
+  full schema) built on this shared tokenizer; moving the table markdown-it
+  plugin (`banger-editor/table/table-markdown.ts`) down into the shared layer
+  when the second engine needs table parity (M3); and the golden corpus in
+  `@bangle.io/test-utils` with both-engine round-trip contract tests. The
+  codec lands once `wordgard` / `wordgard-utils` scaffold.
+
 ## Guiding principles
 
 1. **Markdown is the only durable format.** Engine choice must never change
@@ -341,9 +367,11 @@ it exists. Exit: switching engines round-trips through reload on a real
 workspace; e2e covers the switch + fallback.
 
 **M1 — `wordgard-markdown` + shared syntax + golden corpus**
-The codec for the full current schema (CommonMark + GFM tables/strikethrough
-/task lists + wiki links), the shared markdown-it syntax layer (backlink
-extractor moves onto it), and the **golden corpus**: a fixture set of
+The shared markdown-it syntax layer is **done** — extracted as
+`@bangle.io/markdown-syntax`, with the ProseMirror loader and the backlink
+extractor moved onto it (see "M1 in progress" above). Remaining: the codec
+for the full current schema (CommonMark + GFM tables/strikethrough/task lists
++ wiki links) and the **golden corpus**: a fixture set of
 markdown documents (whitespace edge cases, nested/task lists, links, images,
 code, tables, wiki links, raw/unsupported constructs) with two contract
 tests — PM stack round-trips corpus unchanged; Wordgard stack round-trips
@@ -469,9 +497,11 @@ None. M0 can start immediately.
 
 ## Next steps
 
-1. Scaffold `@bangle.io/wordgard-utils` + `@bangle.io/wordgard-markdown`
-   (js-lib) with `wordgard` pinned to an exact version, and start M1: the
-   markdown codec, shared syntax layer, and golden corpus.
+1. Shared syntax layer: **done** (`@bangle.io/markdown-syntax`). Next, scaffold
+   `@bangle.io/wordgard-utils` + `@bangle.io/wordgard-markdown` (js-lib) with
+   `wordgard` pinned to an exact version, then build the `wordgard-markdown`
+   codec on top of the shared `@bangle.io/markdown-syntax` tokenizer and add
+   the golden corpus.
 2. M0b alongside it: stub `@bangle.io/editor-w` package + persisted engine
    preference + omni-search switch command + composition-root selection +
    boot guard + e2e switch coverage.

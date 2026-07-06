@@ -1,4 +1,10 @@
-import type MarkdownIt from 'markdown-it';
+import {
+  parseWikiLinkContent,
+  serializeWikiLinkAttrs,
+  type WikiLinkAttrs,
+  wikiLinkTokenizer,
+} from '@bangle.io/markdown-syntax';
+import type { PluginSimple } from 'markdown-it';
 import { collection } from './common';
 import type {
   Command,
@@ -18,14 +24,6 @@ import {
   TextSelection,
 } from './pm';
 
-export type WikiLinkAttrs = {
-  target: string;
-  label: string | null;
-};
-
-const INVALID_WIKI_LINK_TARGET_CHARS = /[[\]\n|]/;
-const INVALID_WIKI_LINK_LABEL_CHARS = /[[\]\n]/;
-
 export type WikiLinkConfig = {
   name?: string;
   onActivate?: (view: EditorView, attrs: WikiLinkAttrs) => void;
@@ -35,28 +33,6 @@ export type WikiLinkConfig = {
     displayText: string;
   }) => string;
 };
-
-export function parseWikiLinkContent(content: string): WikiLinkAttrs | null {
-  const separator = content.indexOf('|');
-  const target = separator < 0 ? content : content.slice(0, separator);
-  const label = separator < 0 ? null : content.slice(separator + 1);
-  if (
-    !target ||
-    INVALID_WIKI_LINK_TARGET_CHARS.test(target) ||
-    (label !== null && INVALID_WIKI_LINK_LABEL_CHARS.test(label))
-  ) {
-    return null;
-  }
-  return { target, label };
-}
-
-export function serializeWikiLinkAttrs(attrs: WikiLinkAttrs): string | null {
-  return parseWikiLinkContent(
-    `${attrs.target}${attrs.label === null ? '' : `|${attrs.label}`}`,
-  )
-    ? `[[${attrs.target}${attrs.label === null ? '' : `|${attrs.label}`}]]`
-    : null;
-}
 
 function displayText(attrs: WikiLinkAttrs): string {
   if (attrs.label !== null) {
@@ -80,44 +56,6 @@ function attrsFromDomTarget(target: EventTarget | null): WikiLinkAttrs | null {
     label: element.dataset.wikiLabel ?? null,
   };
   return serializeWikiLinkAttrs(attrs) ? attrs : null;
-}
-
-function wikiLinkTokenizer(md: MarkdownIt): void {
-  md.inline.ruler.before('escape', 'wiki_link', (state, silent) => {
-    const start = state.pos;
-    if (state.src.slice(start, start + 2) !== '[[') {
-      return false;
-    }
-    if ((state as { linkLevel?: number }).linkLevel) {
-      return false;
-    }
-    const prefix = state.src.slice(0, start);
-    if (prefix.lastIndexOf('[') > prefix.lastIndexOf(']')) {
-      return false;
-    }
-    if (prefix.lastIndexOf('[[') > prefix.lastIndexOf(']]')) {
-      return false;
-    }
-    const end = state.src.indexOf(']]', start + 2);
-    if (end < 0) {
-      return false;
-    }
-    const content = state.src.slice(start + 2, end);
-    if (content.includes('[[')) {
-      return false;
-    }
-    const attrs = parseWikiLinkContent(content);
-    if (!attrs) {
-      return false;
-    }
-
-    if (!silent) {
-      const token = state.push('wiki_link', '', 0);
-      token.meta = attrs;
-    }
-    state.pos = end + 2;
-    return true;
-  });
 }
 
 function getAttrsFromDom(dom: HTMLElement): WikiLinkAttrs | false {
@@ -205,6 +143,12 @@ export function setupWikiLink(userConfig: WikiLinkConfig = {}) {
       },
     } satisfies NodeSpec,
   };
+
+  // Widen to the declared plugin type so this collection's inferred type never
+  // names the concrete `wikiLinkTokenizer` binding — which lives in
+  // `@bangle.io/markdown-syntax` and would otherwise leak into consumers'
+  // inferred types (TS "cannot be named" portability error).
+  const tokenizerPlugins: PluginSimple[] = [wikiLinkTokenizer];
 
   return collection({
     id: `wiki-link-${name}`,
@@ -304,7 +248,7 @@ export function setupWikiLink(userConfig: WikiLinkConfig = {}) {
         },
     },
     markdown: {
-      tokenizerPlugins: [wikiLinkTokenizer],
+      tokenizerPlugins,
       nodes: {
         [name]: {
           parseMarkdown: {
