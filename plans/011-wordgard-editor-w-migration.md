@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-05
-updated: 2026-07-05
+updated: 2026-07-06
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/609
@@ -109,7 +109,11 @@ exists):
    persisted; there is no storage migration, ever.
 2. **The contract is the editor.** Everything above the service seam —
    pages, commands, save protection, navigation — interacts with a typed
-   editor contract and must not know which engine powers it.
+   editor contract and must not know which engine powers it. The contract is
+   markdown-in / markdown-out, so it must fit *any* editing surface, not only
+   WYSIWYG: a future raw/source editor (see "Designing for a raw source
+   editor") is just another implementation of the same seam, and that litmus
+   test keeps WYSIWYG-only assumptions out of the shared contract and kernel.
 3. **Embrace Wordgard's design.** Facets, state fields, corrections, command
    handlers, tag/point/range decorations, `Elt` shapes, compartments. Do not
    port ProseMirror idioms (NodeViews, appendTransaction patterns, schema
@@ -229,6 +233,12 @@ at M2 — not before)
   React shell that calls `mountEditor`, and save-status subscription glue.
 - `core/editor` and `core/editor-w` both depend on it; neither depends on
   the other.
+- Keep it **surface-category-agnostic**: the kernel may know only
+  `EditorEngineContract`, never a rich document model. Validate the extraction
+  against the future raw/source editor — a CodeMirror surface must be able to
+  ride this same save queue, load-status machine, and `<Editor>` shell (see
+  "Designing for a raw source editor"). Anything that cannot belongs in an
+  engine, not the kernel.
 
 ### The seam, precisely
 
@@ -247,6 +257,84 @@ at M2 — not before)
   coalesced so an older completion can never clobber a newer edit; a failed
   load never writes anything; `hasPendingOrFailedSave` is the source of
   truth for dirty-state UI and save protection.
+
+### Designing for a raw (source) editor (and other future surfaces)
+
+A near-certain future surface is an **Obsidian-style raw Markdown editor**
+powered by **CodeMirror 6**: a toggle that switches a note from the WYSIWYG
+view to editing its Markdown source directly. It is **not built in this plan** —
+the goal here is only to keep the seam and kernel flexible enough that it (and
+surfaces like it) slot in without a redesign. Placed right, that flexibility is
+nearly free, and it sharpens the Wordgard work rather than competing with it.
+
+**The realization:** the `editorEngine` slot is not "which WYSIWYG library" — it
+is *whatever powers the editing surface* (as the name already intends). Editing
+surfaces span a spectrum:
+
+- **Rich / WYSIWYG surfaces** (ProseMirror, Wordgard) parse Markdown ⇄ a rich
+  document model. They own schema, decorations, and the round-trip gate.
+- **Raw / source surfaces** (CodeMirror) edit the Markdown text directly. There
+  is no document model to parse into and no serialization step, so a raw editor
+  is *inherently lossless* — the trivial implementation of
+  `EditorEngineContract`. That it fits so cleanly is the strongest evidence the
+  seam sits at the right altitude.
+
+Because the contract is **markdown-in / markdown-out**, the Markdown *is* the
+interchange format between surfaces. Switching surfaces — even instantly — is
+"serialize from the outgoing surface, mount the incoming surface with that
+string." No shared rich-document representation is ever needed.
+
+**Where the flexibility must live (the right places):**
+
+- **`EditorEngineContract`** — keep it free of WYSIWYG-only assumptions. Litmus
+  test for every method: *could a source editor implement this sensibly?*
+  Selection, `getSelectionMarkdown`, `insertMarkdownAtSelection`, save status,
+  and `hasPendingOrFailedSave` all pass. Anything that cannot belongs off the
+  shared contract or must be expressed generically — e.g. "heading collapse" is
+  document folding for a rich engine and code folding for a source editor, so
+  model it as a capability, not a PM/Wordgard detail.
+- **`engineId`** — already anticipates enumeration; the mental model is
+  `'prosemirror' | 'wordgard' | 'codemirror-source'`, so the contract admits
+  more than two WYSIWYG engines from the start, and `data-editor-engine` carries
+  the source id too.
+- **`editor-common` (M2 kernel)** — the save queue, load-status machine, and
+  `<Editor>` shell must be **surface-category-agnostic**: they may know only the
+  contract, never a rich document. Use the raw editor as the check when
+  extracting it — *would a CodeMirror surface fit through this shell unchanged?*
+  If a piece cannot, it belongs in the engine, not the kernel.
+- **`EditorSurface`** (`core/app/.../editor-surface.tsx`, the one documented
+  app-layer leak point) — already the per-engine component switch; it
+  generalizes to a per-**surface** switch (WYSIWYG engines + the source editor)
+  with no new seam.
+
+**Two levels of switching.** The engine-switch design below (persisted
+preference, reload-based) is right for *heavy* WYSIWYG engines — it avoids
+double-mounted editors and stale plugin state. A raw source editor is
+lightweight and stateless enough that a **per-note rich ⇄ raw toggle** can be an
+*instant* swap rather than a reload, feasible precisely because of the
+markdown-as-interchange property above. Shape the switch command/dialog and the
+persisted preference so that adding a third option, or a per-note mode toggle,
+is *additive* — do not hardcode "exactly one engine per tab, changeable only by
+reload" so deeply that an in-place surface swap becomes impossible.
+
+**The gate and the fallback fit together.** The round-trip gate is a
+**rich-engine** concern (raw editing has nothing to round-trip). A raw editor is
+also the natural *editable* fallback when a WYSIWYG engine's gate fails: instead
+of only opening read-only, a note the rich engine cannot preserve can open in
+source mode — fully editable and inherently safe. The gate additionally guards
+the rich → raw handoff: if a note's parse→serialize is proven lossless, the
+rich ⇄ raw toggle is lossless too.
+
+**Cost noted, not paid here.** CodeMirror is a real future dependency (bundle
+weight; dynamic-import it like an inactive engine). Convenient coincidence:
+Wordgard's extension architecture is modeled on CodeMirror 6, so the mental
+models (facets, state fields, extensions) transfer — the Wordgard stack warms us
+up for the source editor.
+
+**Directive for the Wordgard milestones (M1–M6):** never bake WYSIWYG-only
+assumptions into `EditorEngineContract` or `editor-common`. Each time the
+contract or kernel grows, ask the source-editor litmus question. Nothing else
+about the raw editor is in scope for this plan.
 
 ### Engine selection and switching
 
@@ -282,8 +370,11 @@ then:
 Reload-based switching is deliberate: it matches the DI model, avoids
 double-mounted editors and stale plugin state, reuses existing reload +
 save-protection infrastructure, and keeps the switch **boring** — which is
-what a data-carrying switch should be. If per-note or side-by-side engine
-comparison is ever wanted, that is a later, additive feature.
+what a data-carrying switch should be. Additive futures this must not preclude:
+per-note or side-by-side comparison, and — the concrete near-term one — a
+per-note rich ⇄ raw (source) toggle that can swap in place without a reload
+(see "Designing for a raw source editor"). Keep the preference enum and this
+command shaped so a third value or a mode toggle is additive, not a redesign.
 
 **Observability:** the editor root element carries
 `data-editor-engine="prosemirror" | "wordgard"`, both engines get a shared
@@ -299,7 +390,11 @@ one-click way back.
   banner ("this note uses constructs the experimental editor can't yet
   preserve") and a one-click switch to the stable engine. A failed gate also
   logs *which construct* diverged, which doubles as the parity worklist.
-  editor-w never writes to a file whose gate failed.
+  editor-w never writes to a file whose gate failed. The gate is a
+  **rich-engine** concern only — raw/source editing has nothing to round-trip,
+  which is why a future raw editor is the natural *editable* fallback for a
+  failed gate (superseding read-only-only), and why the gate also certifies a
+  rich ⇄ raw toggle as lossless.
 - Parse failures, permission loss, quota errors, and aborts remain distinct
   failure paths exactly as in the PM service; a failed load never writes
   fallback content (existing invariant, restated because a new engine is
@@ -479,6 +574,10 @@ training. `.claude/skills/wordgard/` ships in this PR:
   the flip, if at all).
 - Mobile/desktop shells, PM removal mechanics (M6 flags the decision point
   only).
+- The raw/source (CodeMirror) editor itself. This plan only keeps the seam and
+  `editor-common` kernel able to admit it (see "Designing for a raw source
+  editor"); building the surface, its toggle, and syntax highlighting is a
+  separate future plan.
 
 ## Verification
 
