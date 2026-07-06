@@ -367,12 +367,12 @@ importers:
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
+      '@bangle.io/markdown-syntax':
+        specifier: workspace:*
+        version: link:../../js-lib/markdown-syntax
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
-      '@bangle.io/prosemirror-plugins':
-        specifier: workspace:*
-        version: link:../../js-lib/prosemirror-plugins
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -404,6 +404,9 @@ importers:
 
   packages/js-lib/banger-editor:
     dependencies:
+      '@bangle.io/markdown-syntax':
+        specifier: workspace:*
+        version: link:../markdown-syntax
       jotai:
         specifier: ^2.20.1
         version: 2.20.1(@babel/core@7.29.7)(@babel/template@7.29.7)(@types/react@19.2.17)(react@19.2.7)
@@ -481,6 +484,19 @@ importers:
 
   packages/js-lib/logger: {}
 
+  packages/js-lib/markdown-syntax:
+    dependencies:
+      '@bangle.dev/pm-markdown':
+        specifier: 2.0.0-alpha.18
+        version: 2.0.0-alpha.18(prosemirror-markdown@1.13.4)
+      markdown-it:
+        specifier: 14.3.0
+        version: 14.3.0
+    devDependencies:
+      '@types/markdown-it':
+        specifier: ^14.1.2
+        version: 14.1.2
+
   packages/js-lib/mini-js-utils: {}
 
   packages/js-lib/poor-mans-di:
@@ -497,16 +513,12 @@ importers:
       '@bangle.io/banger-editor':
         specifier: workspace:*
         version: link:../banger-editor
-      markdown-it:
-        specifier: 14.3.0
-        version: 14.3.0
+      '@bangle.io/markdown-syntax':
+        specifier: workspace:*
+        version: link:../markdown-syntax
       prosemirror-model:
         specifier: ^1.25.9
         version: 1.25.9
-    devDependencies:
-      '@types/markdown-it':
-        specifier: ^14.1.2
-        version: 14.1.2
 
   packages/platform/service-platform:
     dependencies:

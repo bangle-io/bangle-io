@@ -342,4 +342,4 @@ export {
   wrappingInputRule,
   wrappingListInputRule,
 } from '@bangle.io/banger-editor';
-export { createMarkdownTokenizer, markdownLoader } from './markdown-loader';
+export { markdownLoader } from './markdown-loader';
