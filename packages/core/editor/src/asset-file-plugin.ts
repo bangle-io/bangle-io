@@ -60,33 +60,33 @@ type AssetFilePluginMeta =
     };
 
 function collectFiles(dataTransfer: DataTransfer): File[] {
-  const files: File[] = [];
-  const seen = new Set<string>();
-
-  const addFile = (file: File) => {
-    const key = `${file.name}\0${file.size}\0${file.type}\0${file.lastModified}`;
-    if (seen.has(key)) {
-      return;
-    }
-    files.push(file);
-    seen.add(key);
-  };
-
+  // `dataTransfer.items` (file entries) and `dataTransfer.files` are two
+  // overlapping views of the *same* pasted/dropped payload, not two disjoint
+  // sets. Merging them duplicated content: browsers materialize a distinct
+  // `File` object for each view, and those objects can carry different
+  // `lastModified` timestamps (stamped at slightly different sub-millisecond
+  // moments), so any name/size/type/lastModified de-duplication is unreliable
+  // and intermittently let the same image through twice — producing a second
+  // image node. Read a single authoritative source instead, never a union.
+  //
+  // Prefer the typed `items` list; fall back to `files` when `items` yields no
+  // file entries (older browsers and some clipboard paths only populate one).
+  // Both should enumerate the same files, so pick whichever is more complete
+  // rather than combining them.
+  const fromItems: File[] = [];
   for (const item of Array.from(dataTransfer.items ?? [])) {
     if (item.kind !== 'file') {
       continue;
     }
     const file = item.getAsFile();
     if (file) {
-      addFile(file);
+      fromItems.push(file);
     }
   }
 
-  for (const file of Array.from(dataTransfer.files ?? [])) {
-    addFile(file);
-  }
+  const fromFiles = Array.from(dataTransfer.files ?? []);
 
-  return files;
+  return fromItems.length >= fromFiles.length ? fromItems : fromFiles;
 }
 
 function isInternalProseMirrorDrag(
