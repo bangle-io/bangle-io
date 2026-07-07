@@ -40,6 +40,7 @@ import {
   workspaceRootMarkdownAssetHref,
 } from '@bangle.io/ws-path';
 
+import { atom } from 'jotai';
 import type { MarkdownAssetReference } from './asset-file-plugin';
 import {
   createEditorSaveQueueStore,
@@ -50,9 +51,11 @@ import { setupExtensions } from './extensions';
 import { findHeadingIndexBySlug } from './heading-slug';
 import { createLocalImageNodeView } from './local-image-node-view';
 import { createEditor } from './pm-setup';
+import { isMarkdownRoundTripPreserved } from './round-trip-check';
 
 const editorSaveQueueStore = createEditorSaveQueueStore();
 const ASSET_TOAST_FILE_NAME_MAX_LENGTH = 44;
+const EMPTY_WS_PATH_SET: ReadonlySet<string> = new Set();
 
 function formatFileSize(bytes: number): string {
   const units = ['B', 'KB', 'MB', 'GB'];
@@ -120,6 +123,15 @@ export class PmEditorService
   public readonly engineId = 'prosemirror';
 
   public readonly extensions: ReturnType<typeof setupExtensions>;
+
+  /**
+   * wsPaths whose stored Markdown does not survive a parse/serialize round
+   * trip. Saving an edit to such a note reformats content the user never
+   * touched, so the editor surface shows a fidelity notice while one of
+   * these notes is open. Checked once per editor load and cleared on
+   * unmount.
+   */
+  $roundTripWarnings = atom<ReadonlySet<string>>(EMPTY_WS_PATH_SET);
 
   private saveQueue: EditorSaveQueue;
   private pendingHeading: { fragment: string; wsPath: string } | undefined;
@@ -295,6 +307,11 @@ export class PmEditorService
       });
 
       this.editors.set(domNode, { name, editorView, wsPath });
+      this.checkRoundTripFidelity({
+        content: content ?? '',
+        editorView,
+        wsPath,
+      });
       editorView.dispatch(
         editorView.state.tr.setMeta('wiki-link-targets-changed', true),
       );
@@ -336,6 +353,60 @@ export class PmEditorService
       editor.editorView.destroy();
     }
     this.editors.delete(domNode);
+    if (editor) {
+      this.setRoundTripWarning(editor.wsPath, false);
+    }
+  }
+
+  /**
+   * Verifies the freshly loaded document serializes back to the exact
+   * source it was parsed from. A failure here never blocks the editor —
+   * the user can still read and edit — but it flips the fidelity warning
+   * so the reformat-on-save behavior is visible instead of silent.
+   */
+  private checkRoundTripFidelity({
+    content,
+    editorView,
+    wsPath,
+  }: {
+    content: string;
+    editorView: EditorView;
+    wsPath: string;
+  }): void {
+    try {
+      const serialized = this.getMarkdown(
+        editorView.state.schema,
+      ).serializer.serialize(editorView.state.doc);
+      const preserved = isMarkdownRoundTripPreserved(content, serialized);
+      if (!preserved) {
+        this.logger.warn(
+          `Markdown round-trip mismatch for ${wsPath}: saving an edit will reformat parts of this note`,
+        );
+      }
+      this.setRoundTripWarning(wsPath, !preserved);
+    } catch (error) {
+      // If the serializer itself fails we cannot prove fidelity, which is
+      // exactly what the warning communicates.
+      this.logger.warn(
+        `Unable to verify Markdown round-trip for ${wsPath}`,
+        error,
+      );
+      this.setRoundTripWarning(wsPath, true);
+    }
+  }
+
+  private setRoundTripWarning(wsPath: string, hasWarning: boolean): void {
+    const current = this.store.get(this.$roundTripWarnings);
+    if (current.has(wsPath) === hasWarning) {
+      return;
+    }
+    const next = new Set(current);
+    if (hasWarning) {
+      next.add(wsPath);
+    } else {
+      next.delete(wsPath);
+    }
+    this.store.set(this.$roundTripWarnings, next);
   }
 
   retryLoadEditor(domNode: HTMLElement, focus = true): boolean {

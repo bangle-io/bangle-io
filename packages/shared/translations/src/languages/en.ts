@@ -40,6 +40,8 @@ export const t = {
       toggleMaxWidth: 'Toggle Max Width',
     },
     editor: {
+      fidelityNotice:
+        'This note contains Markdown this editor cannot fully preserve. Saving an edit will reformat those parts.',
       selectionMenu: {
         label: 'Text formatting',
         bold: 'Bold',
