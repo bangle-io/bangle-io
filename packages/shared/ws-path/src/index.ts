@@ -1,6 +1,11 @@
-export type { EmbeddableWorkspaceAssetKind } from './asset-path';
+export type {
+  AssetPreviewKind,
+  EmbeddableWorkspaceAssetKind,
+} from './asset-path';
 export {
+  assetPreviewKindForExtension,
   EMBEDDABLE_IMAGE_EXTENSIONS,
+  getAssetPreviewKind,
   getEmbeddableWorkspaceAssetKind,
   isEmbeddableImageExtension,
   isEmbeddableWorkspaceAsset,
