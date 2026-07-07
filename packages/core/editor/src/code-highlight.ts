@@ -9,6 +9,11 @@ import {
 import { createHighlightPlugin, type Parser } from 'prosemirror-highlight';
 import type { EditorView } from 'prosemirror-view';
 import {
+  createBlockActionButton,
+  deleteBlockAt,
+  isBlockActionEvent,
+} from './block-action-button';
+import {
   DEFAULT_CODE_BLOCK_LANGUAGE,
   getRawCodeBlockLanguage,
   normalizeCodeBlockLanguage,
@@ -217,14 +222,7 @@ function codeBlockPosFromWidget(getWidgetPos: CodeBlockPosResolver) {
   };
 }
 
-function isCodeActionEvent(event: Event): boolean {
-  return (
-    event.type === 'mousedown' ||
-    event.type === 'pointerdown' ||
-    event.type === 'touchstart' ||
-    event.type === 'click'
-  );
-}
+const isCodeActionEvent = isBlockActionEvent;
 
 function createCopyButtonWidget(
   getCodeBlockPos: CodeBlockPosResolver,
@@ -272,7 +270,14 @@ function createCopyButtonWidget(
     editorView.focus();
   });
 
-  wrapper.append(button);
+  const deleteButton = createBlockActionButton({
+    className: 'prosemirror-block-delete-button',
+    text: t.app.editor.codeBlock.delete,
+    label: t.app.editor.codeBlock.deleteLabel,
+    onClick: () => deleteBlockAt(editorView, getCodeBlockPos(), 'code_block'),
+  });
+
+  wrapper.append(button, deleteButton);
   return wrapper;
 }
 

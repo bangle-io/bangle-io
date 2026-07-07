@@ -62,11 +62,17 @@ export const t = {
       codeBlock: {
         copy: 'Copy',
         copied: 'Copied',
+        delete: 'Delete',
+        deleteLabel: 'Delete code block',
         editLanguage: 'Edit language',
       },
       collapsibleHeading: {
         collapse: 'Collapse section',
         expand: 'Expand section',
+      },
+      frontmatter: {
+        delete: 'Delete',
+        deleteLabel: 'Delete frontmatter',
       },
       wikiLinkMenu: {
         label: 'Link to a note',
@@ -89,6 +95,7 @@ export const t = {
       slashCommand: {
         table: 'Table',
         date: 'Date',
+        frontmatter: 'Frontmatter',
       },
       datePicker: {
         hintSelect: 'Click a day to insert',

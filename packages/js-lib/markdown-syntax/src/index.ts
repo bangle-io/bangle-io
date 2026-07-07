@@ -1,3 +1,4 @@
+export { frontmatterTokenizer } from './frontmatter-syntax';
 export { createBaseMarkdownTokenizer } from './tokenizer';
 export {
   parseWikiLinkContent,

@@ -235,11 +235,27 @@ div.ProseMirror {
     padding: 0;
   }
 
-  & .prosemirror-code-copy-widget {
+  /* Frontmatter reuses the code-block chrome; its header band carries a
+     fixed label instead of the language/copy widgets. */
+  & pre[data-frontmatter]::before {
+    content: "frontmatter";
+    padding: 0.54rem 0 0 0.75rem;
+    font-size: 0.68rem;
+    line-height: 1.25;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: hsl(var(--BV-muted-foreground));
+  }
+
+  & .prosemirror-code-copy-widget,
+  & .prosemirror-frontmatter-actions-widget {
     position: absolute;
     top: 0.42rem;
     right: 0.65rem;
     z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
   }
 
   & .prosemirror-code-language-widget {
@@ -281,7 +297,8 @@ div.ProseMirror {
     text-transform: lowercase;
   }
 
-  & .prosemirror-code-copy-button {
+  & .prosemirror-code-copy-button,
+  & .prosemirror-block-delete-button {
     border: 1px solid transparent;
     border-radius: 0.25rem;
     padding: 0.12rem 0.35rem;
@@ -296,6 +313,11 @@ div.ProseMirror {
 
   & .prosemirror-code-copy-button:hover {
     color: hsl(var(--BV-foreground));
+    background-color: hsl(var(--BV-background) / 0.5);
+  }
+
+  & .prosemirror-block-delete-button:hover {
+    color: hsl(var(--BV-destructive));
     background-color: hsl(var(--BV-background) / 0.5);
   }
 

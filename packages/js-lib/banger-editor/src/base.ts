@@ -14,6 +14,13 @@ export type BaseConfig = {
   nameDoc?: string;
   nameText?: string;
   /**
+   * Content expression for the top-level doc node. Override it to allow
+   * nodes that live outside the `block` group, e.g.
+   * `'frontmatter? block+'` to permit a single leading frontmatter block.
+   * @default 'block+'
+   */
+  docContent?: string;
+  /**
    * Let user undo input rule by pressing backspace.
    * @default true
    */
@@ -37,6 +44,7 @@ type RequiredConfig = Required<BaseConfig>;
 const DEFAULT_CONFIG: RequiredConfig = {
   nameDoc: 'doc',
   nameText: 'text',
+  docContent: 'block+',
   backspaceToUndoInputRule: true,
   keyUndoInputRule: 'Mod-z',
   trapTabKey: true,
@@ -51,7 +59,10 @@ export function setupBase(userConfig?: BaseConfig) {
   const { nameDoc, nameText } = config;
 
   const nodes = {
-    [nameDoc]: setPriority(schemaBasicNodes.doc, PRIORITY.baseSpec),
+    [nameDoc]: setPriority(
+      { ...schemaBasicNodes.doc, content: config.docContent },
+      PRIORITY.baseSpec,
+    ),
     [nameText]: setPriority(schemaBasicNodes.text, PRIORITY.baseSpec),
   } satisfies Record<string, NodeSpec>;
 

@@ -76,6 +76,22 @@ describe('extractLinkedWsPathsFromMarkdown', () => {
     ).toEqual([]);
   });
 
+  it('ignores wiki links inside frontmatter but indexes ones in the body', () => {
+    expect(
+      extractLinkedWsPathsFromMarkdown({
+        currentWsPath: source,
+        index,
+        markdown: [
+          '---',
+          'related: [[target]]',
+          '---',
+          '',
+          'Body links to [[folder/nested]].',
+        ].join('\n'),
+      }),
+    ).toEqual(['notes:folder/nested.md']);
+  });
+
   it('ignores links that resolve back to the current note', () => {
     expect(
       extractLinkedWsPathsFromMarkdown({

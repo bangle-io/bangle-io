@@ -142,8 +142,14 @@ function markdown(config: RequiredConfig): CollectionType['markdown'] {
   return {
     nodes: {
       [name]: {
-        toMarkdown: (state, node) => {
-          state.write(node.attrs.markup || '---');
+        toMarkdown: (state, node, parent, index) => {
+          const markup = node.attrs.markup || '---';
+          // A `---` on the first line of a document is a frontmatter fence,
+          // so a doc-leading rule must use a different thematic-break marker
+          // to survive a parse round trip.
+          const isDocStart =
+            parent.type === parent.type.schema.topNodeType && index === 0;
+          state.write(isDocStart && markup === '---' ? '***' : markup);
           state.closeBlock(node);
         },
         parseMarkdown: {

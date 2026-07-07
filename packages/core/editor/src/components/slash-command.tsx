@@ -215,6 +215,24 @@ export function SlashCommand({
             >
               Code block
             </CommandItem>
+            {!ext.frontmatter.query.hasFrontmatter(editorView.state) && (
+              <CommandItem
+                value="frontmatter yaml properties metadata"
+                onSelect={() => {
+                  dismissCommandUi();
+                  ext.frontmatter.command.insertFrontmatter(
+                    editorView.state,
+                    editorView.dispatch,
+                    editorView,
+                  );
+                  // Inserting at the doc top moves focus away from the typed
+                  // position; restore it so typing lands in the block.
+                  editorView.focus();
+                }}
+              >
+                {t.app.editor.slashCommand.frontmatter}
+              </CommandItem>
+            )}
             <CommandItem
               value="table grid"
               onSelect={() => {
