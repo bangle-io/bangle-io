@@ -252,9 +252,13 @@ bangle-agnostic, the `banger-editor` analog)
   each feature is one extension bundle combining schema elements, key
   bindings, input rules, commands, corrections, menu items, and styles.
   Initial roster (built across milestones): task lists, wiki-link node +
-  syntax, trigger/suggestion machinery (the `/`, `[[`, `$date` engine),
-  placeholder, trailing block, drag handle, active-node highlight,
-  collapsible headings, shiki code-highlight bridge.
+  syntax, placeholder, trailing block, active-node highlight, collapsible
+  headings, shiki code-highlight bridge. Strictly **headless** — anything
+  that renders React or positions floating DOM lives in `wordgard-plus`
+  (see "Floating UI" and the wordgard-plus section); the trigger/suggestion
+  machinery is split accordingly (minimal trigger core here or in
+  wordgard-plus behind a thin seam, UI in wordgard-plus — pending upstream
+  autocompletion, issue #13).
 - Carries zero Bangle imports. Long term this is publishable as
   `wordgard-utils` (name reserved); publishing itself is out of scope here.
 
@@ -294,16 +298,29 @@ bangle-agnostic — the missing `prosemirror-markdown` equivalent)
   the same contract with the same `static deps` (`fileSystem`, `navigation`,
   `workbenchState`, `workspaceState`) and the same save-queue semantics.
 - Its React surface (slash menu, link menu, table menu, selection menu, date
-  picker) is **rebuilt on Wordgard primitives**, not ported: Wordgard's
-  panel/tooltip/dialog/menu facets replace the hand-rolled PM plugin + jotai
-  atom plumbing where they fit; where we want our ShadCN look, the service
-  bridges Wordgard state fields/facets into jotai atoms that the existing
-  presentational components consume. Decide per feature; do not force either
-  direction.
+  picker) is **rebuilt on Wordgard primitives**, not ported — composed from
+  `@bangle.io/wordgard-plus` components (which own the tooltip-portal, menu
+  resolution, and Jotai bridge; see the wordgard-plus section) plus
+  editor-w-local wiring for app concerns (wiki-link target resolution,
+  commands, workspace state). `@floating-ui/dom` and the hand-rolled
+  plugin→jotai plumbing do not carry over.
 - Bridges Bangle's `t` translations into Wordgard `PhraseSet`s so built-in UI
   (menus, dialogs, table controls) is localized consistently.
 
-**4. `@bangle.io/editor-common`** (`packages/core/editor-common`, extracted
+**4. `@bangle.io/wordgard-plus`** (`packages/js-lib/wordgard-plus`,
+bangle-agnostic — opinionated plug-and-play Wordgard surfaces)
+
+- The shadcn-posture component layer: React chrome (selection toolbar,
+  link popover, suggest listbox, dialog helpers) + the Jotai/tooltip/menu
+  bridge, complementing a consumer's own Wordgard setup — never wrapping
+  or owning the editor instance. Full philosophy, invariants, module
+  roster, and upstream-coordination policy in the "Floating UI" and
+  "`@bangle.io/wordgard-plus`" sections (after the feature parity
+  matrix).
+- First consumer is editor-w; carries zero Bangle imports so later
+  extraction is mechanical (an explicit non-goal for now).
+
+**5. `@bangle.io/editor-common`** (`packages/core/editor-common`, extracted
 at M2 — not before)
 
 - The engine-agnostic editor kernel, pulled out of `core/editor` once
@@ -495,16 +512,16 @@ From the current extension inventory (`core/editor/src/extensions.ts`).
 | bullet/ordered lists | Built-in list extensions; build indent/dedent commands (M2-L1/M2-L2, see Lists section) | M2 |
 | code block + language | Built-in (`CodeBlock` + `CodeBlockLanguage` mark) | M2 |
 | undo/redo history | Built-in (`wordgard/history`) | M2 |
-| link mark + link menu | Built-in link + dialog; restyle/bridge to our UI | M3–M4 |
+| link mark + link menu | Built-in link mark; popover is wordgard-plus `link-popover` (M4-P2) | M3–M4 |
 | image node, local-image node view, resize | Built-in image/figure/`imageResizing`; asset resolution is ours | M5 |
 | tables + table menu | Built-in `wordgard/table` (cell selection, commands, rectangularity corrections) + our markdown | M3 |
 | task lists (flat-list `kind: task`, checked; toggle/collapsed dropped) | `TaskItem` plot landed in M1; commands/input rule/checkbox are M3-T1..T3 (see Lists section) | M3 |
 | wiki link node + `[[` suggestions | Build in wordgard-utils (syntax + node) / editor-w (target resolution) | M3 |
 | markdown parse/serialize (pm-markdown) | **Build: `wordgard-markdown`** — the critical path | M1 |
-| slash commands, date picker suggestions | Build: trigger machinery in wordgard-utils; UI in editor-w | M4 |
-| selection menu (floating toolbar) | Build on Wordgard tooltip/menu facets | M4 |
+| slash commands, date picker suggestions | wordgard-plus `suggest` UI over a thin trigger seam (upstream #13); consumers in editor-w (M4-P3) | M4 |
+| selection menu (floating toolbar) | wordgard-plus `selection-toolbar`: Tooltip facet + resolved 1p menu items in React (M4-P1) | M4 |
 | placeholder, trailing node | Build (small decorations/corrections) | M4 |
-| drag handle, drop gap cursor | Build; note Wordgard owns selection/cursor drawing — verify native DnD behavior first | M4 |
+| drag handle, drop gap cursor | Build (UI in wordgard-plus); Wordgard owns selection/cursor drawing — verify native DnD behavior first (M4-P4) | M4 |
 | active-node highlight | Build (decorations + state field) | M4 |
 | collapsible headings | Build (state field + point/range decorations); collapse state stays out of the document | M5 |
 | code syntax highlight (shiki) | Build (range decorations from a state field) | M5 |
@@ -624,6 +641,138 @@ output is itself a fixed point AND the PM engine produces identical bytes"
 — which may open editable behind an explicit "this note will be
 normalized on first save" notice. Never silently widen the gate.
 
+### Floating UI: Wordgard positions, React renders, Jotai holds UI state
+
+Today's PM chrome hand-rolls the hard part: `core/editor` positions React
+menus with `@floating-ui/dom`, and `banger-editor` smuggles a Jotai store
+through a PM plugin (`store/store.ts`) to expose plugin state to React.
+Wordgard makes that middle layer first-party, and we should stop owning
+it. Division of labor for every floating surface in editor-w:
+
+- **Wordgard owns geometry and lifecycle.** `Tooltip.show` (a facet) and
+  `Tooltip.hover` anchor DOM to *document positions* — mapped through
+  changes, flipped/clipped/overlap-managed, repositioned on RAF, with
+  `Tooltip.View`'s `connect`/`disconnect`/`positioned` hooks. `Panel` owns
+  docked top/bottom chrome; `Dialog.show` gives promise-based form prompts
+  on top of panels. `@floating-ui/dom` does not come along to editor-w:
+  anything anchored to editor content rides the Tooltip facet.
+- **React owns content.** A tooltip/panel's `dom` is a plain element; we
+  portal React into it (`createPortal` into `View.dom`, mounted on
+  `connect`, released on `disconnect`). Wordgard never knows React exists.
+- **Jotai owns UI state.** Chrome state (which surface is open, active
+  item, query text) lives in per-editor Jotai atoms — the repo's one state
+  mechanism — fed by a single `updateListener`-driven bridge (below). The
+  document and selection are never mirrored into atoms; atoms hold derived
+  read models and UI-local state only, and the write path is always
+  "React → dispatch a command/transaction", never atom→editor sync.
+- **The menu MODEL stays first-party even where the menu UI is ours.**
+  Wordgard menu items (`Menu.Button.define`, submenus, groups, ranks,
+  `select`/`enable`/`active` predicates) are extension values that feature
+  bundles already declare — `bulletList.toggleButton` et al. — and the
+  guide explicitly blesses custom renderers: resolve the `Menu.Item.source`
+  facet with `Menu.resolve` and display the result "maybe as a React
+  component". So our toolbars consume resolved 1p menu items rendered with
+  our components; we never fork a parallel menu-item registry. The stock
+  `menuBar` remains available for barebones/dev setups.
+
+### `@bangle.io/wordgard-plus` — components that complement, never wrap
+
+A new package of opinionated, plug-and-play Wordgard surfaces — the
+shadcn posture, not the tiptap posture. Tiptap wraps the engine: it owns
+the editor instance, re-exports the API, and you live inside its
+abstraction. wordgard-plus does the opposite and holds these invariants:
+
+- **Never owns the editor.** No `<WordgardPlusEditor>`, no config factory,
+  no lifecycle management. Every deliverable is (a) an extension bundle
+  you add to *your* Wordgard config, or (b) a React component you render
+  in *your* tree, connected to an existing `Wordgard` instance you pass
+  in. Deleting wordgard-plus from an app must leave a working editor.
+- **Never re-exports Wordgard.** Consumers import wordgard themselves;
+  wordgard-plus types accept wordgard values at the boundary.
+- **Opinionated by Bangle's priorities** (markdown-serializable behavior,
+  local-first, keyboard-first, a11y non-negotiable — icon buttons carry
+  `description` for screen readers per the Wordgard menu guide). It is
+  fine for v0 to say "this is how Bangle does it".
+- **Bangle-free.** First consumer is editor-w, but the package carries
+  zero `@bangle.io` app imports so extraction later is mechanical.
+  User-visible strings arrive via props/PhraseSets, never the global `t`.
+
+**Placement and boundaries.** `packages/js-lib/wordgard-plus`, following
+the `banger-editor` precedent (js-lib already hosts React+Jotai editor
+chrome). It depends on `@bangle.io/wordgard-utils` (the wordgard import
+chokepoint, which grows `editor`/`command`/`menu`/`view` re-exports in
+M2/M4), `jotai`, and `react` — and NOT on `packages/ui/*` (js-lib cannot;
+this is also what keeps it extractable). Components ship working default
+markup styled with theme-variable-driven CSS (dark/light via Wordgard's
+`&dark`/`&light` for editor-internal styles) plus `className`/slot
+overrides; editor-w composes them with our base-ui look. The dividing
+line against its sibling: **wordgard-utils = headless** (schema elements,
+commands, corrections, input rules, markdown specs — e.g. the TaskItem
+checkbox decoration from M3-T3), **wordgard-plus = chrome** (anything
+that renders React or positions floating DOM). In-repo module first;
+extraction is a later, separate decision.
+
+**v0 module roster (bangle-priority order):**
+
+1. `bridge` — the foundation everything else uses:
+   - `createEditorAtoms(wg)`: one `updateListener` subscription feeding a
+     per-editor Jotai store scope; exposes read atoms (selection summary,
+     active marks/blocks via `listIsActive`-style predicates, canUndo/
+     canRedo, focus state) with equality guards so a keystroke doesn't
+     re-render every consumer. Per-editor scoping is mandatory — split
+     view / side-by-side must never share chrome state.
+   - `useResolvedMenu(wg, template?)`: resolves `Menu.Item.source` items
+     through `Menu.resolve` into plain data (label/icon/run/active/
+     enabled/description), re-evaluated per the items' `updateFor`
+     predicates, exposed as an atom.
+   - `reactTooltip(...)` / `<TooltipHost>`: the portal glue that lets a
+     `Tooltip.View` render a React subtree (mount on `connect`, unmount
+     on `disconnect`).
+2. `selection-toolbar` — floating toolbar over non-empty selections
+   (extension: state field + `Tooltip.show` value; component: toolbar
+   rendering the resolved inline menu group). Parity target:
+   `core/editor`'s `inline-selection-menu`.
+3. `link-popover` — hover + cursor-in-link popover (`Tooltip.hover`
+   source + edit form component). Parity target: `link-menu`.
+4. `suggest` — trigger-based autocomplete UI (`[[`, `/`, `$date`):
+   listbox component + keyboard navigation over a minimal trigger-state
+   extension. **Upstream-sensitive — see coordination note below**: the
+   trigger-detection/matching core is deliberately a thin, replaceable
+   seam because upstream is considering 1p autocompletion.
+5. `dialogs` — thin styled helpers over 1p `Dialog.show` for
+   editor-scoped prompts. App-level dialogs stay in Bangle's dialog
+   service; the boundary is "does it prompt about editor content at the
+   cursor, or about the workspace".
+6. Later candidates as their milestones arrive: table menu (M3), drag
+   handle (M4), code-block language picker (M5 — upstream-sensitive,
+   #11).
+
+**Upstream coordination — build, wait, or thin-seam.** Marijn's tracker
+(`code.haverbeke.berlin/wordgard/wordgard/issues`) already lists several
+of these as candidate first-party features. Policy: where upstream has
+*stated intent*, we either wait or build behind a deliberately thin seam
+we can re-base; we never build a rival core.
+
+- **#13 autocompletion in core** — the big one; overlaps our `suggest`
+  module. M3 needs wiki-link `[[` suggestions regardless, so build the
+  *UI* (listbox, keyboard model, Jotai atoms) now, keep the
+  trigger/matching core minimal and private, and re-base it on 1p
+  autocomplete when it ships. Do not polish or generalize our core.
+- **#11 CodeBlockLanguage UI** — defer ours (language picker is M5
+  anyway); adopt or restyle upstream's.
+- **#14 menu bar top container** — watch; affects `Panel` placement
+  options wordgard-plus relies on.
+- **#12 collaborative editing** — out of scope for this migration either
+  way; note only that wordgard-plus components must not assume
+  single-client state shapes that would fight `wordgard/collab` later.
+- **#10/#9 (CodeMirror-in-code-block, footnote examples)** — upstream
+  examples to crib from when M5 reaches code blocks; not blockers.
+- **#8 iOS autocorrect / #4 Android voice-typing cursor bugs** — not
+  wordgard-plus items, but they gate the M6 flip: add "mobile IME
+  behavior acceptable on real devices" to the M6 exit checklist and
+  track both issues there. Do not flip defaults while either reproduces
+  on a supported device.
+
 ## Milestones
 
 Each milestone is a stream of small PRs, merged continuously, full CI green.
@@ -679,10 +828,35 @@ checkbox rendering + click — specified in the Lists section), wiki links +
 existing Bangle note passes the round-trip gate and is fully editable,
 including checking a task with the mouse.
 
-**M4 — Interaction chrome**
-Slash commands, date picker, selection/link/table menus, placeholder,
-trailing block, drag handle, active-node highlight. Exit: muscle-memory
-parity — a PM user switching engines loses no workflow.
+**M4 — Interaction chrome (built as `wordgard-plus`)**
+The floating/menu surfaces land as wordgard-plus modules composed by
+editor-w (see the "Floating UI" and wordgard-plus architecture sections):
+
+- *M4-P0 — package scaffold + bridge:* `createEditorAtoms(wg)` (one
+  updateListener → per-editor Jotai atoms with equality guards),
+  `useResolvedMenu` (`Menu.resolve` over the `Menu.Item.source` facet),
+  and the `<TooltipHost>` React-portal glue for `Tooltip.View`s. Exit:
+  a story/demo page shows a toolbar of resolved 1p menu items rendered
+  in React, updating live, on a plain Wordgard setup with zero Bangle
+  imports.
+- *M4-P1 — selection toolbar* (parity: `inline-selection-menu`): state
+  field + `Tooltip.show` extension, React toolbar over the resolved
+  inline menu group. Keyboard accessible; e2e-covered.
+- *M4-P2 — link popover* (parity: `link-menu`): `Tooltip.hover` source +
+  cursor-in-link tracking, edit form, open/copy/remove actions.
+- *M4-P3 — suggest UI + consumers:* generic listbox/keyboard model in
+  wordgard-plus over a deliberately thin trigger core (upstream #13
+  seam); slash menu and date picker in editor-w composed from it. (The
+  wiki `[[` consumer lands earlier, in M3, on the same seam — build the
+  seam with M3, polish the generic UI here.)
+- *M4-P4 — remaining chrome:* placeholder, trailing block, active-node
+  highlight (headless → wordgard-utils); drag handle (UI portion in
+  wordgard-plus; verify against Wordgard's native DnD/selection drawing
+  first).
+
+Exit: muscle-memory parity — a PM user switching engines loses no
+workflow — and `@floating-ui/dom` is absent from the editor-w dependency
+graph.
 
 **M5 — Assets and long-tail**
 Image/asset paste-drop, asset links, shiki highlighting, collapsible
@@ -691,12 +865,15 @@ recompute, load time) against the PM baseline on the same corpus.
 
 **M6 — Confidence and flip**
 Full e2e suite runs against both engines (engine-parameterized fixture);
-maintainer dogfoods editor-w as personal default; then flip stages: default
-for new users → default for all (PM reachable via the same switch command)
-→ finally, as a **separate decision**, retire the PM stack (delete
-`core/editor`, `prosemirror-plugins`, banger dependency) once editor-w has
-soaked. The switch machinery itself is cheap and can outlive the flip as a
-safety valve.
+maintainer dogfoods editor-w as personal default; **mobile IME check**:
+upstream wordgard issues #8 (iOS autocorrect removes words) and #4
+(Android voice-typing cursor mismatch) must be fixed or verified
+non-reproducing on real devices before any default flips. Then flip
+stages: default for new users → default for all (PM reachable via the
+same switch command) → finally, as a **separate decision**, retire the PM
+stack (delete `core/editor`, `prosemirror-plugins`, banger dependency)
+once editor-w has soaked. The switch machinery itself is cheap and can
+outlive the flip as a safety valve.
 
 ## Testing strategy
 
