@@ -20,6 +20,7 @@ import {
   CodeBlock,
   CodeBlockLanguage,
   Emphasis,
+  Frontmatter,
   Heading,
   HorizontalRule,
   Image,
@@ -125,7 +126,34 @@ const horizontalRuleSpec: NodeMarkdownSpec = {
   parse: {
     hr: { node: () => HorizontalRule },
   },
+  serialize(state, node, parent, index) {
+    // A `---` on the first line of a document is a frontmatter fence, so a
+    // doc-leading rule must use a different thematic-break marker to
+    // survive a parse round trip — mirroring the ProseMirror engine's
+    // horizontal-rule serializer byte for byte.
+    const isDocStart = parent.isDoc && index === 0;
+    state.write(isDocStart ? '***' : '---');
+    state.closeBlock(node);
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Frontmatter
+// ---------------------------------------------------------------------------
+
+const frontmatterSpec: NodeMarkdownSpec = {
+  node: Frontmatter,
+  parse: {
+    frontmatter: { block: Frontmatter, noCloseToken: true },
+  },
   serialize(state, node) {
+    assertPlot(node, 'frontmatter');
+    const text = node.textContent();
+    state.write('---\n');
+    if (text) {
+      state.write(text);
+      state.write('\n');
+    }
     state.write('---');
     state.closeBlock(node);
   },
@@ -653,6 +681,7 @@ export const defaultMarkdownSpecs: readonly MarkdownSpec[] = [
   headingSpec,
   blockquoteSpec,
   horizontalRuleSpec,
+  frontmatterSpec,
   hardBreakSpec,
   codeBlockSpec,
   imageSpec,

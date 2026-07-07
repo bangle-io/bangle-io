@@ -1,5 +1,6 @@
 import {
   createBaseMarkdownTokenizer,
+  frontmatterTokenizer,
   wikiLinkTokenizer,
 } from '@bangle.io/markdown-syntax';
 import {
@@ -10,6 +11,8 @@ import {
   CodeBlockLanguage,
   Doc,
   Emphasis,
+  Frontmatter,
+  frontmatterDocContentOverride,
   Heading,
   HorizontalRule,
   Image,
@@ -162,6 +165,8 @@ export function createNoteMarkdownCodec(): MarkdownCodec {
     Paragraph,
     Heading,
     Blockquote,
+    Frontmatter,
+    frontmatterDocContentOverride,
     CodeBlock,
     CodeBlockLanguage,
     BulletList,
@@ -184,7 +189,9 @@ export function createNoteMarkdownCodec(): MarkdownCodec {
     WikiLinkLabel,
   ]);
 
-  const tokenizer = createBaseMarkdownTokenizer().use(wikiLinkTokenizer);
+  const tokenizer = createBaseMarkdownTokenizer()
+    .use(wikiLinkTokenizer)
+    .use(frontmatterTokenizer);
 
   return createMarkdownCodec({
     schema,

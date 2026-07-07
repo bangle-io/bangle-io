@@ -7,6 +7,7 @@ import {
   setupBold,
   setupCode,
   setupCodeBlock,
+  setupFrontmatter,
   setupHardBreak,
   setupHeading,
   setupHorizontalRule,
@@ -35,7 +36,8 @@ import { describe, expect, it } from 'vitest';
 // real app serializes differently (`~~_x_~~`).
 function createMarkdown() {
   const extensions = [
-    setupBase(),
+    setupBase({ docContent: 'frontmatter? block+' }),
+    setupFrontmatter(),
     setupBlockquote(),
     setupBold(),
     setupList(),

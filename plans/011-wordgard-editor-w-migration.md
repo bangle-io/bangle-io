@@ -188,6 +188,32 @@ exists):
   that invariant). The PM table extension consumes it; the Wordgard codec
   adopts it with table specs in M3. That closes M1 entirely except for
   the M3-scheduled Wordgard table specs themselves.
+- **Frontmatter parity (integrated after PR #615 landed on main):** the
+  Wordgard codec now supports YAML frontmatter — `Frontmatter` plot in
+  wordgard-utils (inline text content, `Node.Role.Code`, admitted into
+  `Doc` via `frontmatterDocContentOverride`; the shared tokenizer only
+  produces the token at line 0, so position/single-instance invariants
+  are editor-milestone corrections, not schema rules), a `MarkdownSpec`
+  byte-matching the PM serializer, and `frontmatterTokenizer` wired into
+  `createNoteMarkdownCodec`. The PM engine's new doc-leading
+  thematic-break rule (`---` at document start serializes as `***` so it
+  cannot re-parse as a frontmatter fence) is mirrored in the Wordgard hr
+  spec. Corpus: frontmatter fixtures (with body, alone, empty, `...`
+  closing-fence normalization, unclosed-fence stays a thematic break,
+  mid-document `---` untouched) plus the reworked thematic-break
+  fixtures are all BOTH_ENGINES.
+- **Coordination rule with plan 012 (markdown feature parity):** every
+  012 construct changes what a note's bytes mean, so each 012 milestone
+  must either land the Wordgard `MarkdownSpec` + BOTH_ENGINES corpus
+  fixtures in the same stream, or explicitly add its fixtures as
+  `engines: ['prosemirror']` so the parity worklist stays visible. Two
+  012 items are load-bearing here: enabling `linkify` in the BASE
+  tokenizer (012-M2) changes the shared token stream and would make the
+  Wordgard parser throw on every bare URL unless its handler ships
+  simultaneously; and 012-M5/M6 normalization decisions (reference
+  links, entities) are already pinned as cross-engine `canonical` corpus
+  fixtures — changing them means updating the corpus contract, not just
+  PM specs.
 
 ## Guiding principles
 
@@ -518,6 +544,7 @@ From the current extension inventory (`core/editor/src/extensions.ts`).
 | bold, italic, strike, inline code, underline | Built-in marks | M2 |
 | bullet/ordered lists | Built-in list extensions; build indent/dedent commands (M2-L1/M2-L2, see Lists section) | M2 |
 | code block + language | Built-in (`CodeBlock` + `CodeBlockLanguage` mark) | M2 |
+| YAML frontmatter | `Frontmatter` plot + codec spec landed (M1 hardening); editing chrome/corrections with M2 | done (codec) |
 | undo/redo history | Built-in (`wordgard/history`) | M2 |
 | link mark + link menu | Built-in link mark; popover is wordgard-plus `link-popover` (M4-P2) | M3–M4 |
 | image node, local-image node view, resize | Built-in image/figure/`imageResizing`; asset resolution is ours | M5 |

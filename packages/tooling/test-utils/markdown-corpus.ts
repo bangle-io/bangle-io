@@ -801,27 +801,72 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
   },
 
   // --- Horizontal rule ---------------------------------------------------
+  // A `---` on the FIRST line of a document is a frontmatter fence, so a
+  // doc-leading thematic break must serialize with a different marker
+  // (`***`) to survive re-parsing; anywhere else the canonical marker is
+  // `---`.
   {
-    name: 'horizontal rule',
-    markdown: '---',
+    name: 'thematic break after content keeps dashes',
+    markdown: 'before\n\n---\n\nafter',
     engines: BOTH_ENGINES,
   },
   {
-    name: 'star thematic break normalizes to dashes',
+    name: 'doc-leading thematic break uses stars',
     markdown: '***',
-    canonical: '---',
     engines: BOTH_ENGINES,
   },
   {
-    name: 'underscore thematic break normalizes to dashes',
+    name: 'doc-leading dash thematic break normalizes to stars',
+    markdown: '---',
+    canonical: '***',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'doc-leading underscore thematic break normalizes to stars',
     markdown: '___',
-    canonical: '---',
+    canonical: '***',
     engines: BOTH_ENGINES,
   },
   {
-    name: 'spaced thematic break normalizes to dashes',
+    name: 'doc-leading spaced thematic break normalizes to stars',
     markdown: '- - -',
-    canonical: '---',
+    canonical: '***',
+    engines: BOTH_ENGINES,
+  },
+
+  // --- Frontmatter ---------------------------------------------------------
+  {
+    name: 'frontmatter with body',
+    markdown: '---\ntitle: Hello\ntags:\n  - a\n---\n\n# Heading',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'frontmatter alone',
+    markdown: '---\ntitle: x\n---',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'empty frontmatter',
+    markdown: '---\n---',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'YAML document-end closing fence normalizes to dashes',
+    markdown: '---\ntitle: x\n...\n\nbody',
+    canonical: '---\ntitle: x\n---\n\nbody',
+    engines: BOTH_ENGINES,
+  },
+  {
+    // No closing fence means it is NOT frontmatter: the `---` keeps its
+    // thematic-break meaning (and, being doc-leading, normalizes to `***`).
+    name: 'unclosed frontmatter fence stays a thematic break',
+    markdown: '---\ntitle: x',
+    canonical: '***\n\ntitle: x',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'dashes fence later in the document is not frontmatter',
+    markdown: 'text\n\n---\n\nmore: text',
     engines: BOTH_ENGINES,
   },
 

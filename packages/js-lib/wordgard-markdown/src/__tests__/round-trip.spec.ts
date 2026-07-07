@@ -133,6 +133,19 @@ describe('createNoteMarkdownCodec parse shape', () => {
     expect(heading && !heading.isLeaf ? heading.tag.param : undefined).toBe(3);
   });
 
+  it('frontmatter parses to a leading Frontmatter plot with raw text', () => {
+    const doc = codec.parse('---\ntitle: Hello\ntags:\n  - a\n---\n\nbody');
+    const frontmatter = doc.content[0];
+    if (!frontmatter?.isPlot) throw new Error('expected a plot');
+    expect(frontmatter.name).toBe('Frontmatter');
+    expect(frontmatter.textContent()).toBe('title: Hello\ntags:\n  - a');
+    // Raw YAML text: `[[..]]`-like or emphasis-like content must stay text.
+    const withSyntax = codec.parse('---\nlink: [[not a link]]\n---');
+    const fm = withSyntax.content[0];
+    if (!fm?.isPlot) throw new Error('expected a plot');
+    expect(fm.content.every((n) => n.isText)).toBe(true);
+  });
+
   it('a task item inside an ordered list parses without failing', () => {
     // GFM allows `1. [ ] x`; the schema admits the transient
     // OrderedList > TaskItem shape (see `taskListContentOverrides`) so a
