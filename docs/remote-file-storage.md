@@ -75,13 +75,18 @@ dialog prefill the URL with the current origin — create a workspace and go.
 
 ## 3. Electron desktop
 
-The desktop app hosts the file store in its **main process** and exposes it to
-the renderer over IPC. Choosing **Remote Server** on desktop pre-fills the URL
-with the sentinel `bangle-desktop://local`; the renderer routes those requests
-through IPC (no socket, no token). Files live under the app's user-data
-directory (override with `BANGLE_DESKTOP_WORKSPACE_ROOT`). This reuses the exact
-same provider and protocol as the HTTP path — see
+The desktop app adds a dedicated **"This device"** storage type (workspace type
+`electron`). It hosts the file store in the **main process** and exposes it to
+the renderer over IPC, so notes are written to local disk without a socket or
+token. Files live under the app's user-data directory (override with
+`BANGLE_DESKTOP_WORKSPACE_ROOT`). It reuses the exact same transport-agnostic
+provider and protocol as the HTTP path — only the injected client differs (IPC
+instead of `fetch`); see
 [`remote-fs.ts`](../packages/tooling/desktop-entry/src/remote-fs.ts).
+
+Desktop users can still use **"Remote Server"** to sync with an external HTTP
+server — the two storage types coexist, so the same app talks to both a local
+disk and a remote backend.
 
 ---
 

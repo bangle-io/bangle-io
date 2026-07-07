@@ -36,7 +36,15 @@ async function setup(options?: {
       serviceContext: { abortSignal: commonOpts.rootAbortSignal },
     },
     null,
-    { onChange, getClient: () => client },
+    {
+      serviceName: 'file-storage-remote',
+      workspaceType: 'remote',
+      displayName: 'Remote Server',
+      description: 'Syncs notes with your own file server',
+      maxFileSizeBytes: FILE_STORAGE_MAX_FILE_SIZE_BYTES.remote,
+      onChange,
+      getClient: () => client,
+    },
   );
   await service.mount();
   return { service, onChange, store };

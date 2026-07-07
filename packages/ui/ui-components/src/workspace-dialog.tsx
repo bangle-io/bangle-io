@@ -11,7 +11,6 @@ import {
   Input,
   Label,
 } from '@bangle.io/base-ui';
-import { DESKTOP_REMOTE_FS_SERVER_URL } from '@bangle.io/constants';
 import type { WorkspaceStorageType } from '@bangle.io/types';
 import { Check, FolderOpen } from 'lucide-react';
 import React, { useEffect, useId, useReducer, useRef } from 'react';
@@ -70,8 +69,11 @@ type SelectTypeState = BaseState & {
   selected?: WorkspaceStorageType;
 };
 
-type BrowserState = BaseState & {
-  stage: 'selected-browser';
+// A name-only stage, shared by the `browser` and `electron` storage types
+// (both need just a workspace name).
+type NameEntryState = BaseState & {
+  stage: 'enter-name';
+  storageType: WorkspaceStorageType;
   name: string;
 };
 
@@ -87,14 +89,14 @@ type RemoteState = BaseState & {
   token: string;
 };
 
-type State = SelectTypeState | BrowserState | NativeFsState | RemoteState;
+type State = SelectTypeState | NameEntryState | NativeFsState | RemoteState;
 
 type RemoteField = 'name' | 'serverUrl' | 'token';
 
 type Action =
   | { type: 'RESET_TO_TYPE_SELECT'; defaultStorage: WorkspaceStorageType }
   | { type: 'NAVIGATE_TO_TYPE_SELECT' }
-  | { type: 'NAVIGATE_TO_BROWSER' }
+  | { type: 'NAVIGATE_TO_NAME'; storageType: WorkspaceStorageType }
   | { type: 'NAVIGATE_TO_NATIVEFS' }
   | { type: 'NAVIGATE_TO_REMOTE'; defaultServerUrl: string }
   | { type: 'UPDATE_SELECTED_STORAGE'; storage: WorkspaceStorageType }
@@ -111,8 +113,13 @@ function reducer(state: State, action: Action): State {
         selected: undefined,
         error: undefined,
       };
-    case 'NAVIGATE_TO_BROWSER':
-      return { stage: 'selected-browser', name: '', error: undefined };
+    case 'NAVIGATE_TO_NAME':
+      return {
+        stage: 'enter-name',
+        storageType: action.storageType,
+        name: '',
+        error: undefined,
+      };
     case 'NAVIGATE_TO_NATIVEFS':
       return { stage: 'selected-nativefs', error: undefined };
     case 'NAVIGATE_TO_REMOTE':
@@ -129,7 +136,7 @@ function reducer(state: State, action: Action): State {
       }
       return state;
     case 'UPDATE_WORKSPACE_NAME':
-      if (state.stage === 'selected-browser') {
+      if (state.stage === 'enter-name') {
         return { ...state, name: action.name, error: undefined };
       }
       return state;
@@ -219,7 +226,7 @@ export function CreateWorkspaceDialog({
             onCancel={() => onOpenChange(false)}
           />
         )}
-        {state.stage === 'selected-browser' && (
+        {state.stage === 'enter-name' && (
           <StageEnterWorkspaceName
             state={state}
             dispatch={dispatch}
@@ -292,8 +299,8 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
   };
 
   const handleNext = () => {
-    if (selected === 'browser') {
-      dispatch({ type: 'NAVIGATE_TO_BROWSER' });
+    if (selected === 'browser' || selected === 'electron') {
+      dispatch({ type: 'NAVIGATE_TO_NAME', storageType: selected });
     } else if (selected === 'remote') {
       dispatch({
         type: 'NAVIGATE_TO_REMOTE',
@@ -358,7 +365,7 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
 };
 
 interface StageEnterWorkspaceNameProps {
-  state: BrowserState;
+  state: NameEntryState;
   dispatch: React.Dispatch<Action>;
   validateWorkspace: CreateWorkspaceDialogProps['validateWorkspace'];
   onDone: CreateWorkspaceDialogProps['onDone'];
@@ -372,7 +379,7 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
   onDone,
   onCancel,
 }) => {
-  const { name, error } = state;
+  const { name, storageType, error } = state;
 
   const ref = useRef<HTMLInputElement>(null);
   const workspaceNameId = useId();
@@ -393,7 +400,7 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
 
   const handleSubmit = () => {
     const config: WorkspaceConfig = {
-      type: 'browser',
+      type: storageType,
       name,
     };
     const validation = validateWorkspace(config);
@@ -408,7 +415,7 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
       });
       return;
     }
-    onDone({ type: 'browser', name });
+    onDone(config);
   };
 
   const handleBack = () => {
@@ -595,10 +602,6 @@ interface StageEnterRemoteProps {
 
 function isValidServerUrl(value: string): boolean {
   const trimmed = value.trim();
-  // The desktop build uses an in-process (IPC) backend addressed by a sentinel.
-  if (trimmed === DESKTOP_REMOTE_FS_SERVER_URL) {
-    return true;
-  }
   if (!/^https?:\/\//i.test(trimmed)) {
     return false;
   }

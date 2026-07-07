@@ -1,9 +1,6 @@
 import { pickADirectory, supportsNativeBrowserFs } from '@bangle.io/baby-fs';
 import { throwAppError } from '@bangle.io/base-utils';
-import {
-  DESKTOP_REMOTE_FS_SERVER_URL,
-  WORKSPACE_STORAGE_TYPE,
-} from '@bangle.io/constants';
+import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import {
   createHttpRemoteClient,
@@ -18,17 +15,13 @@ import { nativeFsErrorParse } from '../common';
 /**
  * Confirm a remote server is reachable and the token is accepted before we
  * create the workspace, so a typo never yields a broken workspace whose empty
- * listing could be mistaken for "no notes". Skipped for the in-process desktop
- * backend (always available).
+ * listing could be mistaken for "no notes".
  */
 async function probeRemoteServer(
   wsName: string,
   serverUrl: string,
   token: string | undefined,
 ): Promise<void> {
-  if (serverUrl === DESKTOP_REMOTE_FS_SERVER_URL) {
-    return;
-  }
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 8000);
   try {
@@ -61,14 +54,14 @@ export function CreateWorkspaceDialog() {
   const [openWsDialog, setOpenWsDialog] = useAtom(
     coreServices.workbenchState.$openWsDialog,
   );
-  // Default the remote workspace URL to the most useful value for the current
-  // host: the desktop sentinel on Electron, this same origin when the app is
-  // served by a bundled file server, or empty for a hosted (BYO-server) app.
-  const desktopBridge =
-    typeof window !== 'undefined' ? window.bangleDesktop?.remoteFs : undefined;
-  const defaultRemoteServerUrl = desktopBridge
-    ? DESKTOP_REMOTE_FS_SERVER_URL
-    : typeof window !== 'undefined' && window.__BANGLE_REMOTE__?.bundled
+  // The desktop app exposes an IPC file backend; when present we offer the
+  // "This device" storage type.
+  const hasDesktopBackend =
+    typeof window !== 'undefined' && Boolean(window.bangleDesktop?.remoteFs);
+  // Default the "Remote Server" URL to this origin when the app is served by a
+  // bundled file server, otherwise empty (a hosted BYO-server app).
+  const defaultRemoteServerUrl =
+    typeof window !== 'undefined' && window.__BANGLE_REMOTE__?.bundled
       ? window.location.origin
       : '';
   return (
@@ -137,11 +130,16 @@ export function CreateWorkspaceDialog() {
           return;
         }
 
-        if (type === WORKSPACE_STORAGE_TYPE.Browser) {
+        if (
+          type === WORKSPACE_STORAGE_TYPE.Browser ||
+          type === WORKSPACE_STORAGE_TYPE.Electron
+        ) {
+          // Both are name-only: browser uses IndexedDB, electron uses the
+          // desktop's on-disk store (over IPC). No extra metadata is needed.
           await coreServices.workspaceOps.createWorkspaceInfo({
             metadata: {},
             name: wsName,
-            type: WORKSPACE_STORAGE_TYPE.Browser,
+            type,
           });
           setOpenWsDialog(false);
           coreServices.navigation.goWorkspace(wsName);
@@ -158,6 +156,16 @@ export function CreateWorkspaceDialog() {
         );
       }}
       storageTypes={[
+        // Offered only on the desktop app, where the IPC file backend exists.
+        ...(hasDesktopBackend
+          ? [
+              {
+                type: WORKSPACE_STORAGE_TYPE.Electron,
+                title: t.app.dialogs.createWorkspace.electronTitle,
+                description: t.app.dialogs.createWorkspace.electronDescription,
+              },
+            ]
+          : []),
         {
           type: WORKSPACE_STORAGE_TYPE.Browser,
           title: t.app.dialogs.createWorkspace.browserTitle,

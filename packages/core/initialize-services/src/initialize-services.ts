@@ -6,7 +6,11 @@ import {
 } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import type { EnabledBangleAppCommand } from '@bangle.io/commands';
-import { DESKTOP_REMOTE_FS_SERVER_URL } from '@bangle.io/constants';
+import {
+  FILE_STORAGE_MAX_FILE_SIZE_BYTES,
+  SERVICE_NAME,
+  WORKSPACE_STORAGE_TYPE,
+} from '@bangle.io/constants';
 import { slot } from '@bangle.io/poor-mans-di';
 import {
   createHttpRemoteClient,
@@ -86,12 +90,17 @@ export function initializeServices(
         return { handle: rootDirHandle };
       },
     })),
+    // "Remote Server" — HTTP transport, built from the workspace's stored URL +
+    // token. An empty URL targets the same origin (bundled/Docker mode).
     fileStorageRemote: slot(FileStorageRemote, () => ({
+      serviceName: SERVICE_NAME.fileStorageRemoteService,
+      workspaceType: WORKSPACE_STORAGE_TYPE.Remote,
+      displayName: 'Remote Server',
+      description: 'Syncs notes with your own file server',
+      maxFileSizeBytes: FILE_STORAGE_MAX_FILE_SIZE_BYTES.remote,
       onChange: (change) => {
         commonOpts.logger.info('File storage change:', change);
       },
-      // Build an HTTP client from the workspace's stored connection details.
-      // An empty `serverUrl` targets the same origin (bundled/Docker mode).
       getClient: async (wsName: string) => {
         assertIsDefined(getWorkspaceOps, 'getWorkspaceOps');
         const metadata = await getWorkspaceOps().getWorkspaceMetadata(wsName);
@@ -112,24 +121,34 @@ export function initializeServices(
           );
         }
 
-        // On Electron, a workspace pointed at the desktop sentinel talks to the
-        // main-process file store over IPC instead of HTTP.
-        if (serverUrl === DESKTOP_REMOTE_FS_SERVER_URL) {
-          const bridge =
-            typeof window !== 'undefined'
-              ? window.bangleDesktop?.remoteFs
-              : undefined;
-          if (!bridge) {
-            throwAppError(
-              'error::remote-storage:request-failed',
-              'Desktop file backend is unavailable',
-              { wsName, code: 'network', reason: 'desktop bridge missing' },
-            );
-          }
-          return createRemoteClientFromRouter((req) => bridge.request(req));
-        }
-
         return createHttpRemoteClient({ baseUrl: serverUrl, token });
+      },
+    })),
+    // "This device" — the Electron desktop's on-disk store, reached over IPC to
+    // the main process. Same provider, different transport. On the web the
+    // bridge is absent, so this type is never offered nor resolvable.
+    fileStorageElectron: slot(FileStorageRemote, () => ({
+      serviceName: SERVICE_NAME.fileStorageElectronService,
+      workspaceType: WORKSPACE_STORAGE_TYPE.Electron,
+      displayName: 'This device',
+      description: 'Saves notes on this computer',
+      maxFileSizeBytes: FILE_STORAGE_MAX_FILE_SIZE_BYTES.electron,
+      onChange: (change) => {
+        commonOpts.logger.info('File storage change:', change);
+      },
+      getClient: (wsName: string) => {
+        const bridge =
+          typeof window !== 'undefined'
+            ? window.bangleDesktop?.remoteFs
+            : undefined;
+        if (!bridge) {
+          throwAppError(
+            'error::remote-storage:request-failed',
+            'Desktop file backend is unavailable',
+            { wsName, code: 'network', reason: 'desktop bridge missing' },
+          );
+        }
+        return createRemoteClientFromRouter((req) => bridge.request(req));
       },
     })),
     router: slot(BrowserRouterService, () => ({
@@ -150,6 +169,7 @@ export function initializeServices(
       'fileStorageIdb',
       'fileStorageNativeFs',
       'fileStorageRemote',
+      'fileStorageElectron',
     ],
   });
 

@@ -5,11 +5,6 @@ import {
   throwAppError,
 } from '@bangle.io/base-utils';
 import {
-  FILE_STORAGE_MAX_FILE_SIZE_BYTES,
-  SERVICE_NAME,
-  WORKSPACE_STORAGE_TYPE,
-} from '@bangle.io/constants';
-import {
   isRemoteFileError,
   isRemoteFileErrorCode,
   type RemoteFileStorageClient,
@@ -21,11 +16,19 @@ import type {
 import { toFSPathOrThrow, WsPath } from '@bangle.io/ws-path';
 
 type Config = {
+  /** DI service name (distinct per registered slot). */
+  serviceName: string;
+  /** The workspace type this instance serves (`remote` or `electron`). */
+  workspaceType: string;
+  displayName: string;
+  description: string;
+  maxFileSizeBytes: number;
   onChange: (event: FileStorageChangeEvent) => void;
   /**
-   * Resolves the API client for a workspace. The composition root reads the
-   * workspace's stored server URL + token and returns an HTTP (or IPC) client
-   * bound to that endpoint — mirroring how NativeFS resolves a directory handle.
+   * Resolves the API client for a workspace. The composition root returns an
+   * HTTP client (built from the workspace's server URL + token) or the Electron
+   * IPC client — mirroring how NativeFS resolves a directory handle. The
+   * provider itself is transport-agnostic.
    */
   getClient: (
     wsName: string,
@@ -33,10 +36,11 @@ type Config = {
 };
 
 /**
- * A file-storage provider backed by a remote HTTP server that implements the
- * Bangle.io remote file API (see `@bangle.io/remote-file-sync`). This powers
- * bring-your-own-server workspaces, the bundled/Docker deployment, and the
- * Electron desktop backend (via an IPC client), all through one contract.
+ * A transport-agnostic file-storage provider that speaks the Bangle.io remote
+ * file API (see `@bangle.io/remote-file-sync`). The same class backs two
+ * workspace types via config: `remote` (HTTP — bring-your-own-server / bundled
+ * / Docker) and `electron` (IPC to the desktop main process). Only the injected
+ * client and identity differ.
  *
  * Failure handling is deliberate: a network/permission failure never resolves
  * to empty content or a false success. Reads of a missing file resolve to
@@ -46,17 +50,21 @@ export class FileStorageRemote
   extends BaseService
   implements BaseFileStorageProvider
 {
-  public readonly workspaceType = WORKSPACE_STORAGE_TYPE.Remote;
-  public readonly displayName = 'Remote Server';
-  public readonly description = 'Syncs notes with your own file server';
-  public readonly maxFileSizeBytes = FILE_STORAGE_MAX_FILE_SIZE_BYTES.remote;
+  public readonly workspaceType: string;
+  public readonly displayName: string;
+  public readonly description: string;
+  public readonly maxFileSizeBytes: number;
 
   constructor(
     context: BaseServiceContext,
     dependencies: null,
     private config: Config,
   ) {
-    super(SERVICE_NAME.fileStorageRemoteService, context, dependencies);
+    super(config.serviceName, context, dependencies);
+    this.workspaceType = config.workspaceType;
+    this.displayName = config.displayName;
+    this.description = config.description;
+    this.maxFileSizeBytes = config.maxFileSizeBytes;
   }
 
   async hookMount(): Promise<void> {}

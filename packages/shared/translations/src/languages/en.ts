@@ -312,6 +312,8 @@ export const t = {
         invalidName: 'Invalid workspace name',
         browserTitle: 'Browser',
         browserDescription: 'Save workspace data in browser storage',
+        electronTitle: 'This device',
+        electronDescription: 'Save notes on this computer (desktop app)',
         nativeFsTitle: 'Native File System',
         nativeFsDescription: 'Save workspace data in native file system',
         errorTitle: 'Error',
