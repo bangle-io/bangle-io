@@ -151,7 +151,12 @@ export class BrowserRouterService
 
     if (!this.mounted) {
       this.logger.warn('Cannot navigate because the service is not mounted.');
-      this.mountPromise.then(doNavigate);
+      this.mountPromise.then(doNavigate, (error) => {
+        this.logger.error(
+          'Dropped a navigation queued before mount because mounting failed',
+          error,
+        );
+      });
     } else {
       doNavigate();
     }

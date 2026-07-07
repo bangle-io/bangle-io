@@ -154,6 +154,14 @@ export const wsCommands = narrow([
     args: null,
   },
   {
+    id: 'command::ws:refresh-file-tree',
+    title: 'Refresh Files',
+    keywords: ['refresh', 'reload', 'rescan', 'files', 'file tree'],
+    omniSearch: true,
+    dependencies: { services: ['fileSystem'] },
+    args: null,
+  },
+  {
     id: 'command::ws:clone-note',
     title: 'Clone Note',
     omniSearch: true,

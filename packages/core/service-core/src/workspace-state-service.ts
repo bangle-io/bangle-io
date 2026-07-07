@@ -4,7 +4,8 @@ import {
   BaseService,
   type BaseServiceContext,
   createAsyncAtom,
-  wrapPromiseInAppErrorHandler,
+  isAbortError,
+  isAppError,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
 import {
@@ -30,6 +31,12 @@ const EMPTY_BACKLINK_INDEX_STATE: BacklinkIndexState = {
   status: 'idle',
   byTargetWsPath: EMPTY_BACKLINKS,
 };
+
+const FILE_TREE_LIST_OK: FileTreeListState = { status: 'ok' };
+
+export type FileTreeListState =
+  | { status: 'ok'; error?: undefined }
+  | { status: 'error'; error: unknown };
 
 export type BacklinkIndexState =
   | {
@@ -108,6 +115,14 @@ export class WorkspaceStateService extends BaseService {
     EMPTY_STRING_ARRAY,
     arrayEqual,
   );
+
+  /**
+   * Tracks whether the most recent workspace file listing succeeded. On
+   * failure the last known file tree is preserved (see hookMount), so
+   * consumers should use this atom to surface a recoverable error state
+   * instead of treating the preserved tree as fresh.
+   */
+  $fileTreeListState = atom<FileTreeListState>(FILE_TREE_LIST_OK);
 
   $wsPaths = atom<WsFilePath[]>((get) => {
     return get(this.$rawWsPaths)
@@ -225,6 +240,7 @@ export class WorkspaceStateService extends BaseService {
 
   private createdWsPathsBySequence = new Map<number, string>();
   private handledFileCreateSequence = 0;
+  private lastListedWsName: string | undefined;
 
   async hookMount(): Promise<void> {
     this.addCleanup(
@@ -235,26 +251,53 @@ export class WorkspaceStateService extends BaseService {
           const wsName = get(this.$currentWsName);
           const createSequenceAtScanStart = this.handledFileCreateSequence;
           if (!wsName) {
+            this.lastListedWsName = undefined;
             set(this.$rawWsPaths, EMPTY_STRING_ARRAY);
+            set(this.$fileTreeListState, FILE_TREE_LIST_OK);
             return;
           }
-          void wrapPromiseInAppErrorHandler(
-            this.fileSystem.listWorkspaceFiles(wsName, abortController.signal),
-            EMPTY_STRING_ARRAY,
-            this.emitAppError,
-          ).then((paths) => {
-            if (!abortController.signal.aborted) {
-              set(
-                this.$rawWsPaths,
-                this.mergeCreatedWsPathsAfterSequence({
-                  paths,
-                  sequence: createSequenceAtScanStart,
-                  wsName,
-                }),
-              );
-              this.pruneCreatedWsPathsThrough(createSequenceAtScanStart);
-            }
-          });
+          this.fileSystem
+            .listWorkspaceFiles(wsName, abortController.signal)
+            .then(
+              (paths) => {
+                if (abortController.signal.aborted) {
+                  return;
+                }
+                this.lastListedWsName = wsName;
+                set(
+                  this.$rawWsPaths,
+                  this.mergeCreatedWsPathsAfterSequence({
+                    paths,
+                    sequence: createSequenceAtScanStart,
+                    wsName,
+                  }),
+                );
+                this.pruneCreatedWsPathsThrough(createSequenceAtScanStart);
+                set(this.$fileTreeListState, FILE_TREE_LIST_OK);
+              },
+              (error: unknown) => {
+                if (abortController.signal.aborted || isAbortError(error)) {
+                  return;
+                }
+                // A transient list failure must not make existing notes appear
+                // deleted: keep the last known tree for the same workspace. If
+                // the failure happened while switching workspaces there is no
+                // trustworthy tree to preserve, so clear it instead of showing
+                // another workspace's files.
+                if (this.lastListedWsName !== wsName) {
+                  set(this.$rawWsPaths, EMPTY_STRING_ARRAY);
+                }
+                set(this.$fileTreeListState, { status: 'error', error });
+                if (error instanceof Error && isAppError(error)) {
+                  this.emitAppError(error);
+                } else {
+                  this.logger.error(
+                    `Failed to list files for workspace ${wsName}`,
+                    error,
+                  );
+                }
+              },
+            );
           return () => {
             abortController.abort();
           };

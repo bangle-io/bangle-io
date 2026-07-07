@@ -40,6 +40,8 @@ export const t = {
       toggleMaxWidth: 'Toggle Max Width',
     },
     editor: {
+      fidelityNotice:
+        'This note contains Markdown this editor cannot fully preserve. Saving an edit will reformat those parts.',
       selectionMenu: {
         label: 'Text formatting',
         bold: 'Bold',
@@ -595,6 +597,9 @@ export const t = {
         noWorkspaceSelectedSubtitle: 'Click to select a workspace',
         mobileTitle: 'Sidebar',
         mobileDescription: 'Navigate workspaces, notes, and app actions.',
+        fileTreeErrorMessage:
+          'Could not refresh the file list. Showing the last known files.',
+        fileTreeErrorRetry: 'Retry',
       },
       breadcrumb: {
         moreSr: 'More',

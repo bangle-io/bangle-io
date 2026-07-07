@@ -9,6 +9,7 @@ import {
 import {
   FILE_ALREADY_EXISTS_ERROR,
   FILE_NOT_FOUND_ERROR,
+  RENAME_VERIFICATION_FAILED_ERROR,
   UPSTREAM_ERROR,
 } from './error-codes';
 import { readFileAsText as readFileAsTextHelper } from './native-browser-fs-helpers';
@@ -217,6 +218,18 @@ export class IndexedDBFileSystem extends BaseFileSystem {
       });
     }
     await this.writeFile(newFilePath, file);
+    // Rename is copy-then-delete: never delete the source until the
+    // destination copy is confirmed readable and complete.
+    await this._verifyRenameDestination(
+      newFilePath,
+      file,
+      ({ message, cause }) =>
+        new IndexedDBFileSystemError({
+          message,
+          code: RENAME_VERIFICATION_FAILED_ERROR,
+          cause,
+        }),
+    );
     await this.unlink(oldFilePath);
   }
 

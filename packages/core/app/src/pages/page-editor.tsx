@@ -22,6 +22,7 @@ export function PageEditor() {
   const $forceReloadCounter = useAtomValue(
     coreServices.editorService.$forceReloadCounter,
   );
+  const routeWsName = useAtomValue(coreServices.navigation.$wsName);
 
   const editorKey = useMemo(() => {
     return currentWsPath
@@ -44,9 +45,7 @@ export function PageEditor() {
             <LinkedMentions currentWsPath={currentWsPath} />
           </>
         ) : !currentWsName ? (
-          <WorkspaceNotFoundView
-            wsName={coreServices.navigation.resolveAtoms().wsName}
-          />
+          <WorkspaceNotFoundView wsName={routeWsName} />
         ) : (
           // NOTE: It is intentional we are not redirecting to the error page so that we avoid bouncing user
           <NoteNotFoundView />

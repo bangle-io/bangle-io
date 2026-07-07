@@ -57,6 +57,24 @@ jobs:
         run: pnpm install
       - name: test
         run: pnpm run test:ci
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        id: pnpm-install
+        run: |
+          corepack enable
+          corepack prepare --activate
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Production build
+        run: pnpm run build
   e2e-tests:
     timeout-minutes: 10
     runs-on: ubuntu-latest

@@ -2,7 +2,7 @@
  * @vitest-environment happy-dom
  */
 
-import { expect, test } from 'vitest';
+import { expect, test, vi } from 'vitest';
 import { NativeBrowserFileSystem } from '../native-browser-fs';
 
 class FakeFileHandle {
@@ -113,5 +113,112 @@ test('createFile rejects existing files without overwriting', async () => {
 
   await expect(fs.readFileAsText('workspace/note.md')).resolves.toBe(
     'original',
+  );
+});
+
+test('rename moves content and removes the source', async () => {
+  const rootDirHandle = new FakeDirectoryHandle(
+    'workspace',
+  ) as unknown as FileSystemDirectoryHandle;
+  const fs = new NativeBrowserFileSystem({ rootDirHandle });
+
+  await fs.createFile('workspace/note.md', toFile('mydata'));
+  await fs.rename('workspace/note.md', 'workspace/renamed.md');
+
+  await expect(fs.readFileAsText('workspace/renamed.md')).resolves.toBe(
+    'mydata',
+  );
+  await expect(fs.readFile('workspace/note.md')).rejects.toThrow('not found');
+});
+
+test('rename keeps the source when the destination write fails', async () => {
+  const rootDirHandle = new FakeDirectoryHandle(
+    'workspace',
+  ) as unknown as FileSystemDirectoryHandle;
+  const fs = new NativeBrowserFileSystem({ rootDirHandle });
+  await fs.createFile('workspace/note.md', toFile('mydata'));
+
+  const writeSpy = vi
+    .spyOn(fs, 'writeFile')
+    .mockRejectedValueOnce(new Error('forced write failure'));
+
+  // The constructor wraps rename with catchUpstreamError, so the forced
+  // failure surfaces as the generic upstream rename error.
+  await expect(
+    fs.rename('workspace/note.md', 'workspace/renamed.md'),
+  ).rejects.toThrow('Unable to rename file');
+  writeSpy.mockRestore();
+
+  await expect(fs.readFileAsText('workspace/note.md')).resolves.toBe('mydata');
+});
+
+test('rename keeps the source when the destination copy is incomplete', async () => {
+  const rootDirHandle = new FakeDirectoryHandle(
+    'workspace',
+  ) as unknown as FileSystemDirectoryHandle;
+  const fs = new NativeBrowserFileSystem({ rootDirHandle });
+  await fs.createFile('workspace/note.md', toFile('mydata'));
+
+  const originalWriteFile = fs.writeFile.bind(fs);
+  const writeSpy = vi
+    .spyOn(fs, 'writeFile')
+    .mockImplementation(async (filePath) => {
+      // Simulate a partial write: the destination lands truncated.
+      await originalWriteFile(filePath, toFile('my'));
+    });
+
+  await expect(
+    fs.rename('workspace/note.md', 'workspace/renamed.md'),
+  ).rejects.toThrow('written incompletely');
+  writeSpy.mockRestore();
+
+  await expect(fs.readFileAsText('workspace/note.md')).resolves.toBe('mydata');
+});
+
+test('rename keeps the source when the destination has same-length corrupt content', async () => {
+  const rootDirHandle = new FakeDirectoryHandle(
+    'workspace',
+  ) as unknown as FileSystemDirectoryHandle;
+  const fs = new NativeBrowserFileSystem({ rootDirHandle });
+  await fs.createFile('workspace/note.md', toFile('mydata'));
+
+  const originalWriteFile = fs.writeFile.bind(fs);
+  const writeSpy = vi
+    .spyOn(fs, 'writeFile')
+    .mockImplementation(async (filePath) => {
+      // Simulate a corrupt write: same byte length, different content.
+      await originalWriteFile(filePath, toFile('MYDATA'));
+    });
+
+  await expect(
+    fs.rename('workspace/note.md', 'workspace/renamed.md'),
+  ).rejects.toThrow('does not match the source content');
+  writeSpy.mockRestore();
+
+  await expect(fs.readFileAsText('workspace/note.md')).resolves.toBe('mydata');
+});
+
+test('rename surfaces unlink failures while both copies exist', async () => {
+  const rootDirHandle = new FakeDirectoryHandle(
+    'workspace',
+  ) as unknown as FileSystemDirectoryHandle;
+  const fs = new NativeBrowserFileSystem({ rootDirHandle });
+  await fs.createFile('workspace/note.md', toFile('mydata'));
+
+  const unlinkSpy = vi
+    .spyOn(fs, 'unlink')
+    .mockRejectedValueOnce(new Error('forced unlink failure'));
+
+  // The constructor wraps rename with catchUpstreamError, so the forced
+  // failure surfaces as the generic upstream rename error.
+  await expect(
+    fs.rename('workspace/note.md', 'workspace/renamed.md'),
+  ).rejects.toThrow('Unable to rename file');
+  unlinkSpy.mockRestore();
+
+  // Duplicate copies are the recoverable outcome; no content may be lost.
+  await expect(fs.readFileAsText('workspace/note.md')).resolves.toBe('mydata');
+  await expect(fs.readFileAsText('workspace/renamed.md')).resolves.toBe(
+    'mydata',
   );
 });

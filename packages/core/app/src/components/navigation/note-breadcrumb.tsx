@@ -6,6 +6,7 @@ import {
   cn,
   DropdownMenu,
 } from '@bangle.io/ui-components';
+import { useAtomValue } from 'jotai';
 import { Folder, PlusIcon } from 'lucide-react';
 import React from 'react';
 import {
@@ -98,7 +99,7 @@ function BreadcrumbItem({
 
 function HomeFolderLink() {
   const { navigation } = useCoreServices();
-  const { wsName } = navigation.resolveAtoms();
+  const wsName = useAtomValue(navigation.$wsName);
   return (
     <Breadcrumb.BreadcrumbLink
       className={cn(

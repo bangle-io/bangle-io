@@ -151,6 +151,14 @@ export class FileSystemService extends BaseService {
   }
 
   /**
+   * Triggers a rescan of the workspace file listing without touching open
+   * editors. Used to recover after a failed file tree scan.
+   */
+  public refreshFileTree(): void {
+    this.store.set(this.$fileForceUpdateCount, (count) => count + 1);
+  }
+
+  /**
    * Lists supported visible workspace files, including notes, assets, and other
    * files that the workspace UI can show.
    */

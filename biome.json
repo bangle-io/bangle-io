@@ -76,7 +76,7 @@
       },
       "nursery": {
         "useSortedClasses": "error",
-        "noFloatingPromises": "warn"
+        "noFloatingPromises": "error"
       },
       "correctness": {
         "noUnusedVariables": "warn",
