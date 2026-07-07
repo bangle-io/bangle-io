@@ -492,13 +492,13 @@ From the current extension inventory (`core/editor/src/extensions.ts`).
 | --- | --- | --- |
 | doc/paragraph/text, heading, blockquote, hr, hard break | Built-in (`wordgard/types`, `wordgard/schema`) | M2 |
 | bold, italic, strike, inline code, underline | Built-in marks | M2 |
-| bullet/ordered lists | Built-in list extensions | M2 |
+| bullet/ordered lists | Built-in list extensions; build indent/dedent commands (M2-L1/M2-L2, see Lists section) | M2 |
 | code block + language | Built-in (`CodeBlock` + `CodeBlockLanguage` mark) | M2 |
 | undo/redo history | Built-in (`wordgard/history`) | M2 |
 | link mark + link menu | Built-in link + dialog; restyle/bridge to our UI | M3–M4 |
 | image node, local-image node view, resize | Built-in image/figure/`imageResizing`; asset resolution is ours | M5 |
 | tables + table menu | Built-in `wordgard/table` (cell selection, commands, rectangularity corrections) + our markdown | M3 |
-| task lists (flat-list `kind: task`, checked, collapsed) | Build: `TaskItem` plot (param = checked) in wordgard-utils | M3 |
+| task lists (flat-list `kind: task`, checked; toggle/collapsed dropped) | `TaskItem` plot landed in M1; commands/input rule/checkbox are M3-T1..T3 (see Lists section) | M3 |
 | wiki link node + `[[` suggestions | Build in wordgard-utils (syntax + node) / editor-w (target resolution) | M3 |
 | markdown parse/serialize (pm-markdown) | **Build: `wordgard-markdown`** — the critical path | M1 |
 | slash commands, date picker suggestions | Build: trigger machinery in wordgard-utils; UI in editor-w | M4 |
@@ -546,12 +546,83 @@ supporting it would fight the fidelity invariant). Documents are stored as
 markdown, so no `migrateDocJSON`-style model migration exists between the
 engines.
 
-Known 1p gaps to budget in M2/M3, all extension-level work (not model
-work): list indent/dedent commands (Wordgard core ships none; build on
-`wrapBlockRange`/`unwrapBlock` with flat-list's only-move-the-selected-range
-semantics as the behavior bar), the `[ ] ` task input rule, checkbox click
-handling via `TaskItem` tag decorations, and a toggle-checked command +
-keybinding.
+Known 1p gaps, all extension-level work (not model work), broken into
+sub-milestones below. Everything lands as one extension bundle per the
+`wordgard` skill (schema element + commands + keybindings + input rules +
+menu items + styles + MarkdownSpec + corpus fixtures), with the reusable
+parts in `@bangle.io/wordgard-utils` and app wiring in editor-w.
+
+**M2-L1 — list keymap baseline (1p commands only).** Wire what Wordgard
+already ships: `bulletList()`/`orderedList()` bundles (schema, `- `/`1. `
+input rules, menu buttons), `toggleList` on Mod-Shift-8/9 (PM key parity),
+`splitTextblock` on Enter (splits the item), `joinListItems`/`joinBackward`
+on Backspace at item start, `listIsActive` for menu state. No custom code
+beyond keybinding glue. Exit: create/edit/split/join bullet and ordered
+lists; every doc a command produces serializes to corpus-stable markdown.
+
+**M2-L2 — indent/dedent commands (the real gap; build in wordgard-utils).**
+Wordgard core ships no list indent/dedent. Build `indentListItem` /
+`dedentListItem` as spec-returning commands over the nested model, using
+`wrapBlockRange`/`unwrapBlock`/`findWrappable` and multi-change specs in
+original coordinates (no offset surgery). Behavior bar is flat-list's
+"accurate range" semantics — only the selected items move:
+
+- *Indent:* the selected item(s) move into a nested list (same kind as the
+  enclosing list) appended to the previous sibling item's content. No
+  previous sibling → no-op. Tab keybinding, list-scoped.
+- *Dedent:* the selected item(s) move out to the parent list after their
+  containing item; unselected trailing siblings of the dedented item become
+  a nested list inside it (they must not travel up — that is the exact
+  flat-list improvement over `liftListItem`). At top level, dedent unwraps
+  the item into its blocks. Shift-Tab keybinding.
+- Nested-list kind is preserved on both moves (an ordered sub-list stays
+  ordered when its parent chain changes).
+
+Tests: unit specs asserting the exact output document per selection shape
+(single item, range spanning siblings, range spanning nesting levels,
+first/last item, item with trailing siblings), plus a markdown round-trip
+assertion on every produced doc. Exit: Tab/Shift-Tab muscle-memory parity
+with the PM engine for bullet/ordered lists.
+
+**M3-T1 — task commands.** `toggleTaskList` (rewrites the selected items'
+tags between `ListItem` and `TaskItem.of(false)`; wraps unlisted blocks in
+a bullet list of task items first, mirroring PM's toggle) on Mod-Shift-7,
+and `toggleTaskChecked` (flips the containing `TaskItem`'s boolean param)
+on Mod-Enter. Both spec-returning, both keyed by tag objects, both unit
+tested with round-trip assertions.
+
+**M3-T2 — task input rule.** Typing `[ ] ` or `[x] ` at the start of a
+textblock converts it to an (un)checked task item — inside a list it
+retags the item; outside it wraps in a bullet list first (parity with PM's
+`wrappingListInputRule(/^\s*(\[([ |x])\])\s$/)`). Ships in the same
+extension bundle as M3-T1.
+
+**M3-T3 — checkbox rendering + click.** `TaskItem`'s shape already renders
+`li[data-task-checked]`; add the interactive checkbox as a tag decoration
+(never a NodeView — they don't exist) whose click dispatches one coherent
+transaction flipping that item's param by document offset, without moving
+the selection or requiring focus. Styling via `Wordgard.styles` with
+`&dark`/`&light`. E2E covers click-to-check on a real note (checked state
+must survive reload — it is document content).
+
+**Deliberately not built:** toggle/collapsible lists (no markdown
+serialization exists in the PM engine either; the input rule there is
+commented out — carrying them would add an unserializable construct) and a
+correction evicting `TaskItem` from `OrderedList` (the shape only arises
+from parsing `1. [ ] x`, and the serializer already normalizes it to
+`- [ ] x`; add a correction only if editing commands prove able to create
+the shape unintentionally).
+
+**Round-trip gate interaction (decide in M2):** the corpus now
+distinguishes byte-stable fixtures from `canonical` normalization fixtures
+(`1. [ ] x` → `- [ ] x`, `*em*` → `_em_`, ...). A byte-strict gate opens
+every normalizing note read-only, even though the PM engine silently
+rewrites the same notes on save today. Default to strict (read-only is the
+conservative, data-safe choice); if dogfooding shows it fires often,
+extend the gate with a second class — "output differs from source, but the
+output is itself a fixed point AND the PM engine produces identical bytes"
+— which may open editable behind an explicit "this note will be
+normalized on first save" notice. Never silently widen the gate.
 
 ## Milestones
 
@@ -592,15 +663,21 @@ before it.
 Wordgard editor wired in editor-w: schema assembly from wordgard-utils
 bundles, history, keymaps, input rules, styles/theme (dark/light via
 Wordgard's `&dark`/`&light`), `t`→PhraseSet bridge; save pipeline through
-the extracted `editor-common` save queue; round-trip gate live. Exit: you
-can live in editor-w for plain notes (paragraphs/headings/lists/marks/code)
-with durable, gate-protected saves; persistence smoke (create → edit →
-reload → verify) passes on editor-w.
+the extracted `editor-common` save queue; round-trip gate live (including
+the strict-vs-normalizing policy decision — see "Round-trip gate
+interaction" under the Lists section). List editing lands as sub-milestones
+M2-L1 (1p keymap baseline) and M2-L2 (indent/dedent commands — the one
+real 1p gap), specified in the Lists section. Exit: you can live in
+editor-w for plain notes (paragraphs/headings/lists/marks/code) with
+durable, gate-protected saves and Tab/Shift-Tab list parity; persistence
+smoke (create → edit → reload → verify) passes on editor-w.
 
 **M3 — Bangle constructs**
-Task lists, wiki links + `[[` suggestions, tables + markdown, heading
-navigation. Exit: a typical existing Bangle note passes the round-trip gate
-and is fully editable.
+Task lists (sub-milestones M3-T1 commands, M3-T2 input rule, M3-T3
+checkbox rendering + click — specified in the Lists section), wiki links +
+`[[` suggestions, tables + markdown, heading navigation. Exit: a typical
+existing Bangle note passes the round-trip gate and is fully editable,
+including checking a task with the mouse.
 
 **M4 — Interaction chrome**
 Slash commands, date picker, selection/link/table menus, placeholder,
