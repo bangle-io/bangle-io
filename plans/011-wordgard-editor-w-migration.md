@@ -5,13 +5,14 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-05
-updated: 2026-07-07
+updated: 2026-07-11
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/609
   - https://github.com/bangle-io/bangle-io/pull/613
   - https://github.com/bangle-io/bangle-io/pull/616
   - https://github.com/bangle-io/bangle-io/pull/620
+  - https://github.com/bangle-io/bangle-io/pull/623
 related_issues: []
 ---
 
