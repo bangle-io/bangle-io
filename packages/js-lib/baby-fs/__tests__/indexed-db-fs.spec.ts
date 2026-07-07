@@ -146,6 +146,26 @@ test('rename keeps the source when the destination copy is incomplete', async ()
   await expect((await fs.readFile('hola/hi')).text()).resolves.toBe('mydata');
 });
 
+test('rename keeps the source when the destination has same-length corrupt content', async () => {
+  const fs = new IndexedDBFileSystem();
+  await fs.writeFile('hola/hi', toFile('mydata'));
+
+  const originalWriteFile = fs.writeFile.bind(fs);
+  const writeSpy = vi
+    .spyOn(fs, 'writeFile')
+    .mockImplementation(async (filePath) => {
+      // Simulate a corrupt write: same byte length, different content.
+      await originalWriteFile(filePath, toFile('MYDATA'));
+    });
+
+  await expect(fs.rename('hola/hi', 'ebola/two')).rejects.toThrow(
+    'does not match the source content',
+  );
+  writeSpy.mockRestore();
+
+  await expect((await fs.readFile('hola/hi')).text()).resolves.toBe('mydata');
+});
+
 test('rename keeps the source when the destination cannot be read back', async () => {
   const fs = new IndexedDBFileSystem();
   await fs.writeFile('hola/hi', toFile('mydata'));

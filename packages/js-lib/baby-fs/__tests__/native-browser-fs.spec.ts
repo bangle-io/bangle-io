@@ -175,6 +175,29 @@ test('rename keeps the source when the destination copy is incomplete', async ()
   await expect(fs.readFileAsText('workspace/note.md')).resolves.toBe('mydata');
 });
 
+test('rename keeps the source when the destination has same-length corrupt content', async () => {
+  const rootDirHandle = new FakeDirectoryHandle(
+    'workspace',
+  ) as unknown as FileSystemDirectoryHandle;
+  const fs = new NativeBrowserFileSystem({ rootDirHandle });
+  await fs.createFile('workspace/note.md', toFile('mydata'));
+
+  const originalWriteFile = fs.writeFile.bind(fs);
+  const writeSpy = vi
+    .spyOn(fs, 'writeFile')
+    .mockImplementation(async (filePath) => {
+      // Simulate a corrupt write: same byte length, different content.
+      await originalWriteFile(filePath, toFile('MYDATA'));
+    });
+
+  await expect(
+    fs.rename('workspace/note.md', 'workspace/renamed.md'),
+  ).rejects.toThrow('does not match the source content');
+  writeSpy.mockRestore();
+
+  await expect(fs.readFileAsText('workspace/note.md')).resolves.toBe('mydata');
+});
+
 test('rename surfaces unlink failures while both copies exist', async () => {
   const rootDirHandle = new FakeDirectoryHandle(
     'workspace',

@@ -291,7 +291,7 @@ export class PmEditorService
       }
 
       const editorView = createEditor({
-        defaultContent: content || '',
+        defaultContent: content ?? '',
         store: this.store as Store,
         domNode,
         onDocChange: (doc) => {

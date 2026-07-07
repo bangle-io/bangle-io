@@ -83,8 +83,12 @@ export abstract class BaseFileSystem {
         cause,
       });
     }
-    // Compare actual bytes read, not File.size: storage backends can return
-    // reconstructed File objects whose size metadata is not trustworthy.
+    // Compare the actual bytes read back, not File.size: storage backends can
+    // return reconstructed File objects whose size metadata is not
+    // trustworthy, and a same-length corrupt write must also keep the source.
+    // Memory note: the source File is already fully in memory (rename reads
+    // it before copying), so this comparison does not change the peak beyond
+    // what copy-then-delete already requires.
     const [destinationBytes, sourceBytes] = await Promise.all([
       destination.arrayBuffer(),
       sourceFile.arrayBuffer(),
@@ -93,6 +97,15 @@ export abstract class BaseFileSystem {
       throw makeError({
         message: `Rename aborted: "${newFilePath}" was written incompletely (${destinationBytes.byteLength} of ${sourceBytes.byteLength} bytes). The original file was kept.`,
       });
+    }
+    const destinationView = new Uint8Array(destinationBytes);
+    const sourceView = new Uint8Array(sourceBytes);
+    for (let index = 0; index < sourceView.length; index++) {
+      if (destinationView[index] !== sourceView[index]) {
+        throw makeError({
+          message: `Rename aborted: "${newFilePath}" does not match the source content after writing. The original file was kept.`,
+        });
+      }
     }
   }
 
