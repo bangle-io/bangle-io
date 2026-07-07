@@ -10,17 +10,29 @@ type FileSystem = {
   readFile: (wsPath: string) => Promise<File | undefined>;
 };
 
+type ImageLoadLogger = {
+  warn: (...args: unknown[]) => void;
+};
+
 const DIRECT_IMAGE_SRC_RE = /^(?:https?:\/\/|blob:|data:image\/)/i;
 
 export function createLocalImageNodeView({
   currentWsPath,
   fileSystem,
+  logger,
 }: {
   currentWsPath: string;
   fileSystem: FileSystem;
+  logger?: ImageLoadLogger;
 }): NodeViewConstructor {
   return (node: PMNode, view: EditorView): NodeView => {
-    return new LocalImageNodeView(node, view, currentWsPath, fileSystem);
+    return new LocalImageNodeView(
+      node,
+      view,
+      currentWsPath,
+      fileSystem,
+      logger,
+    );
   };
 }
 
@@ -35,6 +47,7 @@ class LocalImageNodeView implements NodeView {
     private view: EditorView,
     private currentWsPath: string,
     private fileSystem: FileSystem,
+    private logger?: ImageLoadLogger,
   ) {
     this.dom = document.createElement('img');
     this.render(node);
@@ -112,7 +125,13 @@ class LocalImageNodeView implements NodeView {
         this.dom.src = this.objectUrl;
         this.dom.classList.remove('bangle-local-image-broken');
       })
-      .catch(() => {
+      .catch((error) => {
+        // The broken-image state tells the user *that* loading failed; the
+        // log preserves *why* (permission, storage offline, missing file).
+        this.logger?.warn(
+          `Unable to load local image asset "${assetWsPath.wsPath}"`,
+          error,
+        );
         if (version === this.readVersion) {
           this.markBroken();
         }

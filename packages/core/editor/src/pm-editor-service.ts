@@ -302,6 +302,7 @@ export class PmEditorService
           image: createLocalImageNodeView({
             currentWsPath: wsPath,
             fileSystem: this.dependencies.fileSystem,
+            logger: this.logger,
           }),
         },
       });
