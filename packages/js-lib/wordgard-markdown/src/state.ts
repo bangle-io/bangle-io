@@ -37,12 +37,23 @@ export class MarkdownSerializerState {
   out = '';
   /** @internal */
   closed: Node | null = null;
-  /** @internal */
+  /**
+   * Set by the link mark's serializer while emitting the `<url>` autolink
+   * form; the text serializer checks it to leave the URL unescaped (an
+   * escaped `<https://x/\_file>` would corrupt the URL).
+   */
   inAutolink: boolean | undefined = undefined;
   /** @internal */
   atBlockStart = false;
   /** @internal */
   inTightList = false;
+
+  /**
+   * Serialization nesting order per mark type (lower = outermost), taken
+   * from the registration order of the mark specs. See
+   * {@link serializationMarks} for why this exists.
+   */
+  private readonly markPrecedence: ReadonlyMap<Mark.Type, number>;
 
   constructor(
     private readonly marks: ReadonlyMap<
@@ -55,7 +66,11 @@ export class MarkdownSerializerState {
       parent: Plot,
       index: number,
     ) => void,
-  ) {}
+  ) {
+    this.markPrecedence = new Map(
+      [...marks.keys()].map((type, index) => [type, index]),
+    );
+  }
 
   /** @internal */
   flushClose(size = 2): void {
@@ -70,6 +85,32 @@ export class MarkdownSerializerState {
       }
       this.closed = null;
     }
+  }
+
+  /**
+   * The marks of `node` that serialize as delimiter pairs, in nesting order
+   * (outermost first).
+   *
+   * Two filters happen here. Non-spanning marks (`ImageAlt`, `LinkTitle`,
+   * `WikiLinkLabel`, `CodeBlockLanguage`) are Wordgard's "attribute" marks —
+   * metadata read directly by the owning node's own serializer (see
+   * `default-specs.ts`), not delimiter pairs to open/close, so they are
+   * dropped. The remaining spanning marks are then sorted by the mark specs'
+   * registration order rather than Wordgard's own mark-set order: Wordgard
+   * ranks its built-in marks `Link < Strikethrough < Emphasis < Strong <
+   * Code`, nearly the reverse of the ProseMirror engine's schema order, and
+   * serializing in that order emits broken Markdown for overlapping marks
+   * (`**bold [link](x)**` would become `[**link**](x)** ...**`). Sorting by
+   * spec registration order both fixes that and is what keeps this engine's
+   * canonical output byte-identical to the ProseMirror engine's for
+   * overlapping marks (e.g. `**_both_**`, never `_**both**_`).
+   */
+  serializationMarks(node: Node): Mark[] {
+    const precedence = (mark: Mark): number =>
+      this.markPrecedence.get(mark.type) ?? Number.MAX_SAFE_INTEGER;
+    return node.marks
+      .filter((mark) => mark.type.spanning)
+      .sort((a, b) => precedence(a) - precedence(b));
   }
 
   private getMark(type: Mark.Type): MarkMarkdownSpec['serialize'] {
@@ -163,15 +204,7 @@ export class MarkdownSerializerState {
 
     const progress = (nodeIn: Node | null, index: number): void => {
       let node = nodeIn;
-      // Non-spanning marks (e.g. `ImageAlt`, `LinkTitle`, `WikiLinkLabel`,
-      // `CodeBlockLanguage`) are Wordgard's "attribute" marks — metadata
-      // read directly by the owning node's own serializer (see
-      // `default-specs.ts`), not delimiter pairs to open/close here. Only
-      // spanning marks (`Strong`, `Emphasis`, `Strikethrough`, `Code`,
-      // `Link`) participate in this open/close walk.
-      let marks: Mark.Set = node
-        ? node.marks.filter((mark) => mark.type.spanning)
-        : [];
+      let marks: Mark[] = node ? this.serializationMarks(node) : [];
 
       // Marks are never left open across a hard break unless they also
       // cover the very next node (and that next node has non-whitespace
@@ -344,13 +377,6 @@ export class MarkdownSerializerState {
         .replace(/^(\s*\d+)\.\s/, '$1\\. ');
     }
     return out;
-  }
-
-  /** @internal */
-  quote(str: string): string {
-    const wrap =
-      str.indexOf('"') === -1 ? '""' : str.indexOf("'") === -1 ? "''" : '()';
-    return wrap[0] + str + wrap[1];
   }
 
   /** Repeat `str` `n` times. */

@@ -53,6 +53,11 @@ export interface MarkdownCodec {
 
 export interface MarkdownCodecOptions {
   readonly schema: Schema;
+  /**
+   * The node/mark markdown specs. The relative order of MARK specs defines
+   * the serialization nesting order for overlapping marks (earlier =
+   * outermost); see `MarkdownSerializerState.serializationMarks`.
+   */
   readonly specs: readonly MarkdownSpec[];
   readonly tokenizer?: MarkdownIt;
 }

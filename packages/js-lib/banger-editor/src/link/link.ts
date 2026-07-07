@@ -775,10 +775,24 @@ function markdown(config: RequiredConfig): CollectionType['markdown'] {
     marks: {
       [name]: {
         toMarkdown: {
-          open(_state, mark, parent, index) {
-            return isPlainURL(mark, parent, index, 1) ? '<' : '[';
+          open(state, mark, parent, index) {
+            // `inAutolink` tells the text serializer (see base.ts) not to
+            // escape the URL text between `<` and `>` — same protocol as
+            // prosemirror-markdown's default serializer. The field is
+            // @internal upstream and stripped from the published typings,
+            // hence the widening cast (same pattern as table-markdown.ts's
+            // SerializerInternals).
+            const internals = state as typeof state & {
+              inAutolink?: boolean;
+            };
+            internals.inAutolink = isPlainURL(mark, parent, index, 1);
+            return internals.inAutolink ? '<' : '[';
           },
           close(state, mark, parent, index) {
+            const internals = state as typeof state & {
+              inAutolink?: boolean;
+            };
+            internals.inAutolink = undefined;
             if (isPlainURL(mark, parent, index, -1)) {
               return '>';
             }

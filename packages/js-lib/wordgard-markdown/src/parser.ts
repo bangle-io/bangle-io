@@ -9,7 +9,7 @@
 // implementation.
 import {
   Leaf,
-  type Mark,
+  Mark,
   type Node,
   type Plot,
   type Schema,
@@ -31,16 +31,11 @@ function maybeMergeText(a: Node, b: Node): Node | undefined {
     b.isText &&
     typeof a.param === 'string' &&
     typeof b.param === 'string' &&
-    sameMarkSet(a.marks, b.marks)
+    Mark.sameSet(a.marks, b.marks)
   ) {
     return Leaf.text(a.param + b.param, a.marks);
   }
   return undefined;
-}
-
-function sameMarkSet(a: Mark.Set, b: Mark.Set): boolean {
-  if (a.length !== b.length) return false;
-  return a.every((mark, i) => mark.eq(b[i] as Mark));
 }
 
 /**

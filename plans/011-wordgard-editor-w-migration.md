@@ -117,16 +117,48 @@ exists):
   markers, 2-space nesting indent, banger's heading start-of-line escaping,
   autolink heuristic, adaptive code fences/backticks, hard-break lookahead.
 - **Golden corpus** in `@bangle.io/test-utils` (`markdown-corpus.ts`,
-  ~69 canonical-form fixtures) with both-engine contract tests:
+  ~140 fixtures) with both-engine contract tests:
   `core/editor/src/__tests__/markdown-golden-corpus.spec.ts` (ProseMirror)
   and `wordgard-markdown/src/__tests__/markdown-golden-corpus.spec.ts`
   (Wordgard). Table fixtures are `engines: ['prosemirror']` until M3.
-  Constructs with no byte-stable fixed point in the PM engine are documented
-  in the corpus file instead of included (lists nested under ordered items,
-  indented code blocks, mid-word escaped underscores, and similar).
-- **M1 exit met for the non-table schema:** the corpus round-trips
-  byte-identically through both engines headlessly. Verified with `lint:ci`
-  and `test:ci` (1611 passed).
+  Fixtures come in two contract shapes: canonical-form fixed points, and
+  `canonical`-carrying normalization fixtures (`*em*` -> `_em_`, setext ->
+  ATX, indented -> fenced code, reference -> inline links, ...) asserting
+  both engines normalize legal-but-non-canonical Markdown to the same bytes
+  AND that the canonical form is itself stable. Constructs with no shared
+  fixed point stay out, each documented in the corpus file (lists nested
+  under ordered items, task-item continuation paragraphs, code spans inside
+  other marks, link text carrying nested mark runs, empty-label links).
+- **M1 review hardening (post-scaffold):** empirical A/B probing of both
+  engines surfaced and fixed real divergences —
+  - Wordgard serializer now sorts spanning marks by mark-spec registration
+    order (`MarkdownSerializerState.serializationMarks`), because Wordgard's
+    built-in mark ranks (`Link 20 < Strike 42 < Em 50 < Strong 60 < Code
+    80`) are nearly the reverse of the PM schema's and produced broken
+    output for overlapping marks (`**[link](x) is bold**` serialized as
+    `[**link**](x)** is bold**`). The mark-spec order in
+    `defaultMarkdownSpecs` is therefore load-bearing (outermost first,
+    `Code` last since a non-escaping mark must be innermost).
+  - The PM corpus test's extension registration order now mirrors the app's
+    `setupExtensions` (bold, strike, code, italic, link) — PM mark rank
+    follows schema insertion order and decides delimiter nesting, so the
+    old test order blessed canonical forms the real app never emits.
+  - Autolink URL corruption fixed in BOTH engines (`<https://x/_f>` used to
+    serialize as `<https://x/\_f>`): banger-editor's link/text serializers
+    now implement prosemirror-markdown's `inAutolink` protocol, and the
+    Wordgard codec does the same.
+  - Image alt-text truncation fixed in BOTH engines (`![a\]b](x)` lost
+    everything after the escape): alt is now joined across all markdown-it
+    children instead of `children[0].content`.
+  - Deliberate divergences from the PM engine, kept because they preserve
+    data: the Wordgard link mark is `mixable` (PM's splits
+    `[link _foo **bar**_](x)` into three links, output that fails even PM's
+    own round trip), and Wordgard does not copy the PM `code` mark's
+    exclude-all-marks rule (PM silently unbolts `**bold `code`**`).
+- **M1 exit met for the non-table schema:** the corpus (round-trip +
+  normalization contracts) passes byte-identically through both engines
+  headlessly, plus serialize-only constructed-doc tests ported from
+  prosemirror-markdown's suite for shapes parsing cannot produce.
 - Still open in M1 scope: moving the table markdown-it plugin
   (`banger-editor/table/table-markdown.ts`) into the shared layer and adding
   Wordgard table specs when the second engine needs table parity (M3).

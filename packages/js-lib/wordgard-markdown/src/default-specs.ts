@@ -208,9 +208,15 @@ const codeBlockSpec: NodeMarkdownSpec = {
 // Image
 // ---------------------------------------------------------------------------
 
+/**
+ * The full alt text of an `image` token. markdown-it splits the alt into
+ * multiple child tokens when it contains escapes (`![a\]b](x)` becomes
+ * `text "a"`, `text_special "]"`, `text "b"`) or inline markup, so joining
+ * every child's content is required for fidelity. (prosemirror-markdown
+ * reads only `children[0].content` and silently truncates such alt text.)
+ */
 function imageAlt(tok: Token): string {
-  const first = tok.children?.[0];
-  return first?.content || '';
+  return (tok.children ?? []).map((child) => child.content).join('');
 }
 
 const imageSpec: NodeMarkdownSpec = {
@@ -256,7 +262,9 @@ const textSpec: NodeMarkdownSpec = {
   serialize(state, node) {
     assertLeaf(node, 'text');
     if (typeof node.param !== 'string') throw new Error('Expected a text leaf');
-    state.text(node.param);
+    // Inside an autolink the URL is written raw — see
+    // `MarkdownSerializerState.inAutolink`.
+    state.text(node.param, !state.inAutolink);
   },
 };
 
@@ -475,8 +483,17 @@ const codeSpec: MarkMarkdownSpec = {
  * mark serializes to the `<href>` autolink form only when it has no title,
  * its href looks like a URL, and it exactly and solely covers one
  * plain-text run adjacent to `index` on the given side.
+ *
+ * "Solely covers" is the innermost check: the link must be the innermost
+ * mark rendered around the text, otherwise another mark's delimiters would
+ * end up inside the `<...>`. The ProseMirror engine checks
+ * `content.marks[last] === link` (its schema ranks link innermost); the
+ * equivalent here is the last entry of the state's serialization-ordered
+ * spanning marks, since Wordgard's own mark-set order differs from the
+ * order marks are rendered in.
  */
 function isPlainUrl(
+  state: MarkdownSerializerState,
   link: Mark,
   parent: Plot,
   index: number,
@@ -498,13 +515,14 @@ function isPlainUrl(
   ) {
     return false;
   }
-  const lastMark = content.marks[content.marks.length - 1];
-  if (!lastMark?.eq(link)) return false;
+  const renderedMarks = state.serializationMarks(content);
+  const innermost = renderedMarks[renderedMarks.length - 1];
+  if (!innermost?.eq(link)) return false;
   if (index === (side < 0 ? 1 : parent.content.length - 1)) return true;
 
   if (nextIndex < 0 || nextIndex >= parent.content.length) return false;
   const next = parent.content[nextIndex];
-  return !next?.marks.some((m) => m.eq(lastMark));
+  return !next?.marks.some((m) => m.eq(link));
 }
 
 function titleOnNode(node: Node | undefined): string | undefined {
@@ -523,15 +541,25 @@ const linkSpec: MarkMarkdownSpec = {
     },
   },
   serialize: {
-    open: (_state, mark, parent, index) =>
-      isPlainUrl(mark, parent, index, 1) ? '<' : '[',
+    open: (state, mark, parent, index) => {
+      state.inAutolink = isPlainUrl(state, mark, parent, index, 1);
+      return state.inAutolink ? '<' : '[';
+    },
     close: (state, mark, parent, index) => {
-      if (isPlainUrl(mark, parent, index, -1)) return '>';
+      state.inAutolink = undefined;
+      if (isPlainUrl(state, mark, parent, index, -1)) return '>';
       const href = typeof mark.value === 'string' ? mark.value : '';
       const title = titleOnNode(parent.content[index - 1]);
       const titleAttr = title ? ` ${quote(title)}` : '';
       return `](${state.esc(href)}${titleAttr})`;
     },
+    // Deliberate divergence from the ProseMirror engine, whose link mark is
+    // not mixable: without `mixable`, a mark that opens inside a link
+    // (`[link _foo **bar**_](x)`) forces the serializer to close and reopen
+    // the link around it, splitting one link into several — output that is
+    // not even a fixed point of that engine's own round trip. Marking the
+    // link mixable keeps it intact; every shared golden-corpus fixture still
+    // serializes byte-identically in both engines.
     mixable: true,
   },
 };
@@ -599,6 +627,12 @@ function assertLeaf(node: Node, name: string): asserts node is Leaf {
   if (!node.isLeaf) throw new Error(`Expected a leaf for \`${name}\``);
 }
 
+// The relative order of MARK specs is load-bearing: it defines the
+// serialization nesting order for overlapping marks (outermost first — see
+// `MarkdownSerializerState.serializationMarks`). This order matches the
+// ProseMirror engine's schema mark order (bold, strike, italic, link), so
+// both engines emit the same bytes for text carrying several marks, with
+// `Code` last because a non-escaping mark must always be innermost.
 export const defaultMarkdownSpecs: readonly MarkdownSpec[] = [
   paragraphSpec,
   headingSpec,
@@ -614,8 +648,8 @@ export const defaultMarkdownSpecs: readonly MarkdownSpec[] = [
   taskItemSpec,
   wikiLinkSpec,
   strongSpec,
-  emphasisSpec,
   strikethroughSpec,
-  codeSpec,
+  emphasisSpec,
   linkSpec,
+  codeSpec,
 ];

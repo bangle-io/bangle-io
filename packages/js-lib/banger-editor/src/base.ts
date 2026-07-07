@@ -135,7 +135,17 @@ function markdown(_config: RequiredConfig): CollectionType['markdown'] {
     nodes: {
       text: {
         toMarkdown(state, node) {
-          state.text(node.text ?? '');
+          // Text inside an autolink (`<https://…>`) must be written raw:
+          // escaping would inject backslashes into the URL itself
+          // (`<https://x/\_file>`). The link mark's serializer sets
+          // `inAutolink` (same protocol as prosemirror-markdown's default
+          // serializer; the field is @internal and stripped from the
+          // published typings, hence the widening cast — same pattern as
+          // table-markdown.ts's SerializerInternals).
+          const { inAutolink } = state as typeof state & {
+            inAutolink?: boolean;
+          };
+          state.text(node.text ?? '', !inAutolink);
         },
       },
     },

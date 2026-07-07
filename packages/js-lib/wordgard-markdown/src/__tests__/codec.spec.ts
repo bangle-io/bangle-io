@@ -3,6 +3,7 @@ import {
   Emphasis,
   Heading,
   Leaf,
+  LineBreak,
   Link,
   LinkTitle,
   Paragraph,
@@ -106,5 +107,89 @@ describe('createNoteMarkdownCodec', () => {
       Paragraph.create([Leaf.text(' bold ', [Strong]), Leaf.text('after')]),
     ]);
     expect(codec.serialize(withSibling)).toBe(' **bold** after');
+  });
+});
+
+/**
+ * Serialize-only cases over directly constructed documents, ported from
+ * prosemirror-markdown's own test suite: these document shapes cannot be
+ * produced by parsing Markdown (the parser never yields them), only by
+ * editing commands, so the round-trip corpus cannot cover them.
+ */
+describe('serializing constructed documents', () => {
+  const codec = createNoteMarkdownCodec();
+  const { schema } = codec;
+
+  it('drops trailing hard breaks', () => {
+    const doc = schema.doc([
+      Paragraph.create([Leaf.text('a'), LineBreak, LineBreak]),
+    ]);
+    expect(codec.serialize(doc)).toBe('a');
+  });
+
+  it('does not crash when a block ends in a hard break', () => {
+    const doc = schema.doc([
+      Paragraph.create([
+        Leaf.text('foo', [Strong]),
+        LineBreak.withMarks([Strong]),
+      ]),
+    ]);
+    expect(codec.serialize(doc)).toBe('**foo**');
+  });
+
+  it('expels whitespace before a hard break outside the mark', () => {
+    const doc = schema.doc([
+      Paragraph.create([
+        Leaf.text('foo ', [Strong]),
+        LineBreak.withMarks([Strong]),
+        Leaf.text('bar'),
+      ]),
+    ]);
+    expect(codec.serialize(doc)).toBe('**foo** \\\nbar');
+  });
+
+  it('drops marks whose entire text is expelled whitespace', () => {
+    const doc = schema.doc([
+      Paragraph.create([
+        Leaf.text('Text with', []),
+        Leaf.text(' ', [Emphasis]),
+        Leaf.text('an emphasized space'),
+      ]),
+    ]);
+    expect(codec.serialize(doc)).toBe('Text with an emphasized space');
+  });
+
+  it('expels whitespace from emphasis around a nested link', () => {
+    const link = Link.of('https://x');
+    const doc = schema.doc([
+      Paragraph.create([
+        Leaf.text('One', []),
+        Leaf.text(' two ', [Emphasis]),
+        Leaf.text('three', [Emphasis, link]),
+        Leaf.text(' four ', [Emphasis]),
+        Leaf.text('five'),
+      ]),
+    ]);
+    expect(codec.serialize(doc)).toBe('One _two [three](https://x) four_ five');
+  });
+
+  it('keeps a newline inside an inline mark intact', () => {
+    // A text leaf containing a raw newline can only be constructed
+    // programmatically. prosemirror-markdown emits the newline as-is inside
+    // the delimiters; so does this serializer.
+    const doc = schema.doc([
+      Paragraph.create([Leaf.text('text1\ntext2', [Strong])]),
+    ]);
+    expect(codec.serialize(doc)).toBe('**text1\ntext2**');
+  });
+
+  it('orders overlapping mark delimiters by spec registration, not mark rank', () => {
+    // Wordgard's own mark-set order ranks Link (20) before Strong (60), but
+    // serialization must nest Strong outside Link to match the ProseMirror
+    // engine — `serializationMarks` re-sorts by the mark specs' order.
+    const doc = schema.doc([
+      Paragraph.create([Leaf.text('x', [Link.of('https://u'), Strong])]),
+    ]);
+    expect(codec.serialize(doc)).toBe('**[x](https://u)**');
   });
 });

@@ -27,23 +27,29 @@ import { describe, expect, it } from 'vitest';
 // Markdown parsing or serialization behavior, without the app-only UI
 // plugins (suggestions, menus, placeholder, drag/drop) that carry no
 // Markdown fidelity of their own.
+//
+// Registration order must match `setupExtensions`' relative order for marks
+// (bold, strike, code, italic, link): PM mark rank follows schema insertion
+// order, and rank decides delimiter nesting when marks overlap — a different
+// order here would make this test bless canonical forms (`_~~x~~_`) that the
+// real app serializes differently (`~~_x_~~`).
 function createMarkdown() {
   const extensions = [
     setupBase(),
-    setupParagraph(),
-    setupHeading(),
     setupBlockquote(),
-    setupList(),
     setupBold(),
-    setupItalic(),
+    setupList(),
+    setupHardBreak(),
+    setupHeading(),
+    setupParagraph(),
     setupStrike(),
+    setupWikiLink(),
+    setupHorizontalRule(),
     setupCode(),
     setupCodeBlock(),
+    setupItalic(),
     setupLink(),
     setupImage(),
-    setupHardBreak(),
-    setupHorizontalRule(),
-    setupWikiLink(),
     setupTable(),
   ];
   const resolved = resolve(extensions);
@@ -55,9 +61,11 @@ function createMarkdown() {
  * Cross-engine parity contract test (see
  * `plans/011-wordgard-editor-w-migration.md`, milestone M1): every fixture in
  * `@bangle.io/test-utils`'s `MARKDOWN_CORPUS` whose `engines` includes
- * `'prosemirror'` must round-trip byte-identically through this engine's
- * parse/serialize pipeline. A future `editor-w` test asserts the same
- * contract for the Wordgard engine against the same corpus.
+ * `'prosemirror'` must serialize to its expected bytes (`canonical` for
+ * normalization fixtures, the input itself otherwise), and that expected
+ * form must be a fixed point of this engine's parse/serialize round trip.
+ * The Wordgard engine asserts the same contract against the same corpus in
+ * `packages/js-lib/wordgard-markdown`.
  */
 describe('Markdown golden corpus (ProseMirror engine)', () => {
   const fixtures = MARKDOWN_CORPUS.filter((fixture) =>
@@ -68,8 +76,15 @@ describe('Markdown golden corpus (ProseMirror engine)', () => {
     fixtures.map((fixture) => [fixture.name, fixture] as const),
   )('round trips byte-identically: %s', (_name, fixture) => {
     const markdown = createMarkdown();
-    const document = markdown.parser.parse(fixture.markdown);
-    const serialized = markdown.serializer.serialize(document);
-    expect(serialized).toBe(fixture.markdown);
+    const roundTrip = (input: string) =>
+      markdown.serializer.serialize(markdown.parser.parse(input));
+
+    const expected = fixture.canonical ?? fixture.markdown;
+    expect(roundTrip(fixture.markdown)).toBe(expected);
+    if (fixture.canonical !== undefined) {
+      // The canonical form must itself be stable, or the "normalization"
+      // never converges and every save would rewrite the note.
+      expect(roundTrip(fixture.canonical)).toBe(fixture.canonical);
+    }
   });
 });
