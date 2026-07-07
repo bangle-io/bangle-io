@@ -152,3 +152,32 @@ test('typing --- at the top of a note creates frontmatter', async ({
     .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
     .toBe('---\ntitle: typed\n---\n\n---');
 });
+
+test('ArrowUp on the top row keeps the cursor inside the block', async ({
+  page,
+}) => {
+  const workspaceName = 'fm-arrow-up';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+
+  await page.keyboard.type('---');
+  await page.keyboard.type('title: x');
+
+  // The cursor must not escape above the first row into a dead gap cursor:
+  // typing after repeated ArrowUp still lands inside the block.
+  await page.keyboard.press('ArrowUp');
+  await page.keyboard.press('ArrowUp');
+  await page.keyboard.type('k: v');
+  await page.keyboard.press('Enter');
+
+  await expect(editor.locator('pre[data-frontmatter]')).toContainText('k: v');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe('---\nk: v\ntitle: x\n---');
+});

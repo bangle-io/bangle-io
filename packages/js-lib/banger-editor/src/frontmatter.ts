@@ -17,6 +17,8 @@ export type FrontmatterConfig = {
   keyExit?: string | false;
   keyIndent?: string | false;
   keyMoveToNextBlock?: string | false;
+  keyMoveToBlockStart?: string | false;
+  keyGuardBlockStart?: string | false;
   indentText?: string;
 };
 
@@ -28,6 +30,8 @@ const DEFAULT_CONFIG: RequiredConfig = {
   keyExit: 'Enter',
   keyIndent: 'Tab',
   keyMoveToNextBlock: 'ArrowDown',
+  keyMoveToBlockStart: 'ArrowUp',
+  keyGuardBlockStart: 'ArrowLeft',
   indentText: '  ',
 };
 
@@ -98,6 +102,8 @@ function pluginKeybindings(config: RequiredConfig) {
       [config.keyExit, exitFrontmatter(config)],
       [config.keyIndent, indentFrontmatter(config)],
       [config.keyMoveToNextBlock, moveToBlockBelow(config)],
+      [config.keyMoveToBlockStart, moveToBlockStart(config)],
+      [config.keyGuardBlockStart, guardBlockStart(config)],
     ],
     'frontmatter',
     PRIORITY.high,
@@ -297,6 +303,60 @@ function moveToBlockBelow(config: RequiredConfig): Command {
       );
     }
     return true;
+  };
+}
+
+/**
+ * ArrowUp on the first line clamps the cursor to the start of the block
+ * instead of letting the selection escape above it. Nothing exists above the
+ * frontmatter, and because the node is isolating, the escape would land in a
+ * gap cursor at position 0 — the schema forbids inserting anything there, so
+ * typing would silently do nothing.
+ */
+function moveToBlockStart(config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    const { selection } = state;
+    if (!selection.empty) {
+      return false;
+    }
+
+    const type = getNodeType(state.schema, config.name);
+    const node = findParentNodeOfType(type)(selection);
+    if (!node) {
+      return false;
+    }
+
+    const { $from } = selection;
+    const textBeforeCursor = $from.parent.textBetween(0, $from.parentOffset);
+    if (textBeforeCursor.includes('\n')) {
+      return false;
+    }
+
+    if (dispatch && selection.from !== node.start) {
+      dispatch(
+        state.tr
+          .setSelection(TextSelection.create(state.doc, node.start))
+          .scrollIntoView(),
+      );
+    }
+    return true;
+  };
+}
+
+/**
+ * ArrowLeft at the very start of the block is swallowed for the same reason:
+ * there is no valid cursor position before the document's first node.
+ */
+function guardBlockStart(config: RequiredConfig): Command {
+  return (state) => {
+    const { selection } = state;
+    if (!selection.empty) {
+      return false;
+    }
+
+    const type = getNodeType(state.schema, config.name);
+    const node = findParentNodeOfType(type)(selection);
+    return Boolean(node && selection.from === node.start);
   };
 }
 

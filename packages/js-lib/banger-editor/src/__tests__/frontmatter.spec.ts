@@ -249,6 +249,49 @@ describe('frontmatter keymap', () => {
 
     expect(editor.selectionParentType()).toBe('frontmatter');
   });
+
+  it('ArrowUp on the first line clamps the cursor to the block start', () => {
+    const editor = editorTest.createEditor(
+      doc(frontmatter('a: 1<cursor>\nb: 2'), p('body')),
+    );
+
+    expect(editor.pressKey('ArrowUp')).toBe(true);
+
+    expect(editor.selectionParentType()).toBe('frontmatter');
+    expect(editor.selectionParentOffset()).toBe(0);
+  });
+
+  it('ArrowUp at the very start never escapes above the block', () => {
+    const editor = editorTest.createEditor(
+      doc(frontmatter('<cursor>a: 1'), p('body')),
+    );
+
+    expect(editor.pressKey('ArrowUp')).toBe(true);
+
+    expect(editor.selectionParentType()).toBe('frontmatter');
+    expect(editor.selectionParentOffset()).toBe(0);
+  });
+
+  it('ArrowUp on a later line stays default so line navigation works', () => {
+    const editor = editorTest.createEditor(
+      doc(frontmatter('a: 1\nb: 2<cursor>'), p('body')),
+    );
+
+    editor.pressKey('ArrowUp');
+
+    expect(editor.selectionParentType()).toBe('frontmatter');
+  });
+
+  it('ArrowLeft at the very start is swallowed', () => {
+    const editor = editorTest.createEditor(
+      doc(frontmatter('<cursor>a: 1'), p('body')),
+    );
+
+    expect(editor.pressKey('ArrowLeft')).toBe(true);
+
+    expect(editor.selectionParentType()).toBe('frontmatter');
+    expect(editor.selectionParentOffset()).toBe(0);
+  });
 });
 
 describe('frontmatter input rule', () => {
