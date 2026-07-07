@@ -1,3 +1,4 @@
+import { LIST_KIND_ATTR, TASK_CHECKED_ATTR } from '@bangle.io/markdown-syntax';
 import type { MarkdownSerializerState } from 'prosemirror-markdown';
 import {
   type CollectionType,
@@ -348,10 +349,9 @@ function markdown(config: RequiredConfig): CollectionType['markdown'] {
           list_item: {
             block: listNodeName,
             getAttrs: (tok) => {
-              const kind = tok.attrGet('data-bangle-list-kind');
+              const kind = tok.attrGet(LIST_KIND_ATTR);
               if (kind === LIST_KIND.TASK) {
-                const isChecked =
-                  tok.attrGet('data-bangle-task-checked') === 'true';
+                const isChecked = tok.attrGet(TASK_CHECKED_ATTR) === 'true';
                 return { kind: LIST_KIND.TASK, checked: isChecked };
               }
               if (kind === 'ordered') {

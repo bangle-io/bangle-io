@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/markdown-syntax",
-  "description": "Engine-neutral Markdown tokenizer configuration and custom syntax (wiki links) shared across editor engines.",
+  "name": "@bangle.io/wordgard-markdown",
+  "description": "Editor-free Markdown codec for Wordgard documents: markdown-it token stream to Wordgard doc and back, extensible via type-keyed MarkdownSpec entries.",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/js-lib/markdown-syntax"
+    "directory": "packages/js-lib/wordgard-markdown"
   },
   "authors": [
     {
@@ -28,9 +28,12 @@
   },
   "scripts": {},
   "dependencies": {
+    "@bangle.io/markdown-syntax": "workspace:*",
+    "@bangle.io/wordgard-utils": "workspace:*",
     "markdown-it": "14.3.0"
   },
   "devDependencies": {
+    "@bangle.io/test-utils": "workspace:*",
     "@types/markdown-it": "^14.1.2"
   }
 }

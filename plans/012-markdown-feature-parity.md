@@ -115,6 +115,24 @@ reference links exactly like we do today.
    command/keymap specs; exact-string round-trip specs in
    `packages/core/editor/src/__tests__/`; one thin Playwright E2E per
    user-visible feature. Every intentional normalization asserted visibly.
+6. **Cross-engine parity (plan 011 coordination)** — every construct here
+   changes what a note's bytes mean, and two engines read those bytes.
+   Each milestone must either land the Wordgard side in the same stream
+   (`MarkdownSpec` in `wordgard-markdown`, schema element in
+   `wordgard-utils` if needed, BOTH_ENGINES fixtures in the shared golden
+   corpus `@bangle.io/test-utils/markdown-corpus.ts`) or explicitly add
+   its corpus fixtures as `engines: ['prosemirror']` so the parity
+   worklist stays visible. Two hard constraints:
+   - Anything added to the **base** tokenizer (M2 plans to enable
+     `linkify` there) reaches the Wordgard parser immediately, which
+     throws on unknown token types — the Wordgard handler must ship in
+     the same change, or the rule must stay opt-in until it does.
+     Keep new rules opt-in (like `frontmatterTokenizer`/`tableTokenizer`)
+     unless both engines are ready.
+   - The M5 (reference links) and entity normalizations are already
+     pinned as cross-engine `canonical` fixtures in the golden corpus;
+     changing that behavior means updating the shared corpus contract,
+     not just PM specs.
 
 ## Milestones (fidelity first)
 

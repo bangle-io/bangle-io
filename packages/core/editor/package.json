@@ -50,5 +50,7 @@
     "react": "19.2.7",
     "shiki": "^4.3.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@bangle.io/test-utils": "workspace:*"
+  }
 }

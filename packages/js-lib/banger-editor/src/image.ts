@@ -154,7 +154,11 @@ function markdown(config: RequiredConfig): CollectionType['markdown'] {
             getAttrs: (tok) => ({
               src: tok.attrGet('src'),
               title: tok.attrGet('title') || null,
-              alt: tok.children?.[0]?.content || null,
+              // markdown-it splits alt text containing escapes (`![a\]b](x)`)
+              // or inline markup into several child tokens; reading only
+              // `children[0]` (as prosemirror-markdown does) silently
+              // truncates the alt at the first escape.
+              alt: tok.children?.map((child) => child.content).join('') || null,
             }),
           },
         },
