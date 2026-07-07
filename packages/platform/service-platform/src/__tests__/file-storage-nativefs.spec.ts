@@ -117,6 +117,12 @@ async function setup(
   const { commonOpts } = createTestEnvironment();
   const onChange = vi.fn();
   const onExternalChange = vi.fn();
+  // Captures the page-return listener the service registers so tests can
+  // simulate the user coming back to the tab.
+  let pageReturnListener: (() => void) | undefined;
+  const triggerPageReturn = () => {
+    pageReturnListener?.();
+  };
   const rootDirHandle = new FakeDirectoryHandle(
     rootName,
     onEntryVisited,
@@ -132,11 +138,24 @@ async function setup(
     {
       getRootDirHandle: async () => ({ handle: rootDirHandle }),
       onChange,
-      ...(options.withExternalChange ? { onExternalChange } : {}),
+      ...(options.withExternalChange
+        ? {
+            onExternalChange,
+            subscribePageReturn: (listener: () => void) => {
+              pageReturnListener = listener;
+            },
+          }
+        : {}),
     },
   );
   await service.mount();
-  return { service, onChange, onExternalChange, rootDirHandle };
+  return {
+    service,
+    onChange,
+    onExternalChange,
+    rootDirHandle,
+    triggerPageReturn,
+  };
 }
 
 type ObservedRecord = {
@@ -514,9 +533,37 @@ describe('external change watching', () => {
     ]);
   });
 
-  it('falls back to throttled focus revalidation when the observer API is unavailable', async () => {
-    // No FileSystemObserver global installed.
-    const { service, onExternalChange } = await setup(
+  it('revalidates opened workspaces on page return, throttled', async () => {
+    // Works with or without the observer API; here it is absent, making
+    // page-return revalidation the only refresh path.
+    const { service, onExternalChange, triggerPageReturn } = await setup(
+      undefined,
+      'myWorkspace',
+      {
+        withExternalChange: true,
+      },
+    );
+
+    // Before any workspace is opened, a page return is a no-op.
+    triggerPageReturn();
+    expect(onExternalChange).not.toHaveBeenCalled();
+
+    await service.fileExists('myWorkspace:seed.md');
+    triggerPageReturn();
+    expect(onExternalChange).toHaveBeenCalledWith({
+      type: 'refresh',
+      wsName: 'myWorkspace',
+    });
+
+    // A second return within the throttle window does not refresh again.
+    onExternalChange.mockClear();
+    triggerPageReturn();
+    expect(onExternalChange).not.toHaveBeenCalled();
+  });
+
+  it('re-arms a dead watcher on page return after the observer errored', async () => {
+    const observer = stubFileSystemObserver();
+    const { service, onExternalChange, triggerPageReturn } = await setup(
       undefined,
       'myWorkspace',
       {
@@ -524,18 +571,22 @@ describe('external change watching', () => {
       },
     );
     await service.fileExists('myWorkspace:seed.md');
-
     await vi.waitFor(() => {
-      window.dispatchEvent(new Event('focus'));
-      expect(onExternalChange).toHaveBeenCalledWith({
-        type: 'refresh',
-        wsName: 'myWorkspace',
-      });
+      expect(observer.observe).toHaveBeenCalledTimes(1);
     });
 
-    // A second focus within the throttle window does not refresh again.
-    onExternalChange.mockClear();
-    window.dispatchEvent(new Event('focus'));
-    expect(onExternalChange).not.toHaveBeenCalled();
+    // Observation broke (e.g. permission loss): one coarse refresh goes out.
+    await observer.emitRecords([
+      { type: 'errored', relativePathComponents: [] },
+    ]);
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'refresh', wsName: 'myWorkspace' },
+    ]);
+
+    // Coming back to the page re-establishes the observer.
+    triggerPageReturn();
+    await vi.waitFor(() => {
+      expect(observer.observe).toHaveBeenCalledTimes(2);
+    });
   });
 });

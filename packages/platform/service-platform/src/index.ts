@@ -16,7 +16,9 @@ export { NodeErrorHandlerService } from './node-error-handler';
 export {
   BrowserRouterService,
   HashStrategy,
+  isPageReturnTransition,
   MemoryRouterService,
+  onPageReturn,
   PathBasedStrategy,
   QueryStringStrategy,
 } from './router';

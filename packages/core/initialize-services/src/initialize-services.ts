@@ -24,6 +24,7 @@ import {
   FileStorageNativeFs,
   HashStrategy,
   IdbDatabaseService,
+  onPageReturn,
 } from '@bangle.io/service-platform';
 import type {
   BaseServiceCommonOptions,
@@ -54,6 +55,9 @@ export function initializeServices(
   // a core service. The lookup is late-bound: it is wired right after the
   // setup is created and only runs after services are instantiated.
   let getWorkspaceOps: (() => WorkspaceOpsService) | undefined;
+  // Same late-binding for the router, whose page-lifecycle stream drives
+  // native FS page-return revalidation.
+  let getRouter: (() => BrowserRouterService) | undefined;
 
   const browserPlatformServices = {
     errorService: slot(BrowserErrorHandlerService, () => ({
@@ -133,6 +137,10 @@ export function initializeServices(
           }
         }
       },
+      subscribePageReturn: (listener, signal) => {
+        assertIsDefined(getRouter, 'getRouter');
+        onPageReturn(getRouter().emitter, listener, signal);
+      },
       getRootDirHandle: async (wsName: string) => {
         assertIsDefined(getWorkspaceOps, 'getWorkspaceOps');
         const { rootDirHandle } =
@@ -177,6 +185,7 @@ export function initializeServices(
   });
 
   getWorkspaceOps = () => setup.getServices().workspaceOps;
+  getRouter = () => setup.getServices().router;
 
   setup.instantiate();
 
