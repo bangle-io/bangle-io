@@ -51,8 +51,6 @@ export class FileStorageRemote
   public readonly description = 'Syncs notes with your own file server';
   public readonly maxFileSizeBytes = FILE_STORAGE_MAX_FILE_SIZE_BYTES.remote;
 
-  private clientCache = new Map<string, RemoteFileStorageClient>();
-
   constructor(
     context: BaseServiceContext,
     dependencies: null,
@@ -61,11 +59,7 @@ export class FileStorageRemote
     super(SERVICE_NAME.fileStorageRemoteService, context, dependencies);
   }
 
-  async hookMount(): Promise<void> {
-    this.addCleanup(() => {
-      this.clientCache.clear();
-    });
-  }
+  async hookMount(): Promise<void> {}
 
   isSupported() {
     return true;
@@ -79,14 +73,11 @@ export class FileStorageRemote
     return WsPath.fromString(wsPath).wsName;
   }
 
+  // Resolve the client on every call rather than caching it: the composition
+  // root builds it from workspace metadata (a cheap in-memory lookup), so a
+  // changed server URL/token takes effect immediately with no stale binding.
   private async getClientFor(wsName: string): Promise<RemoteFileStorageClient> {
-    const cached = this.clientCache.get(wsName);
-    if (cached) {
-      return cached;
-    }
-    const client = await this.config.getClient(wsName);
-    this.clientCache.set(wsName, client);
-    return client;
+    return this.config.getClient(wsName);
   }
 
   /** Wraps any transport-level failure into a typed, user-surfaceable error. */
@@ -193,9 +184,12 @@ export class FileStorageRemote
       }
       const fileName = fsPath.split('/').pop() ?? 'file';
       // Wrap the bytes in a Blob so the File carries a Blob part (portable
-      // across browsers and the test File shim).
+      // across browsers and the test File shim); derive the MIME type from the
+      // extension so image/asset consumers get a usable `type` (parity with the
+      // memory and native providers).
       return new File([new Blob([result.bytes as BlobPart])], fileName, {
         lastModified: result.stat.mtime,
+        type: mimeFromName(fileName),
       });
     } catch (error) {
       return this.failRequest(error, wsName);
@@ -247,10 +241,37 @@ export class FileStorageRemote
       return this.failRequest(error, wsName);
     }
     abortSignal.throwIfAborted();
-    return fsPaths
-      .map((fsPath) => WsPath.fromFSPath(fsPath))
-      .filter((r) => !!r)
-      .map((r) => r.wsPath)
-      .sort((a, b) => a.localeCompare(b));
+    return (
+      fsPaths
+        .map((fsPath) => WsPath.fromFSPath(fsPath))
+        .filter((r) => !!r)
+        // Never surface paths from another workspace, even if the server returns
+        // them — the listing must reflect only the requested workspace.
+        .filter((r) => r.wsName === wsName)
+        .map((r) => r.wsPath)
+        .sort((a, b) => a.localeCompare(b))
+    );
   }
+}
+
+const MIME_BY_EXT: Record<string, string> = {
+  md: 'text/markdown',
+  markdown: 'text/markdown',
+  txt: 'text/plain',
+  json: 'application/json',
+  png: 'image/png',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  gif: 'image/gif',
+  webp: 'image/webp',
+  svg: 'image/svg+xml',
+  avif: 'image/avif',
+  bmp: 'image/bmp',
+  ico: 'image/x-icon',
+  pdf: 'application/pdf',
+};
+
+function mimeFromName(name: string): string {
+  const ext = name.includes('.') ? name.split('.').pop()?.toLowerCase() : '';
+  return (ext && MIME_BY_EXT[ext]) || '';
 }

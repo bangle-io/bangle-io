@@ -41,11 +41,17 @@ your token is not sent in the clear. Then, in Bangle.io:
 
 1. **Create Workspace → Remote Server**
 2. **Server URL:** `https://notes.example.com`
-3. **Access token:** `my-secret-token` (omit if your server has none)
+3. **Access token:** `my-secret-token`
 
 The token is stored **locally in your browser only** (in the workspace metadata)
-and sent as `Authorization: Bearer <token>`. Your server must send permissive
-CORS headers so `app.bangle.io` can reach it — the reference server already does.
+and sent as `Authorization: Bearer <token>`.
+
+> **A token is required for this mode.** The reference server only sends
+> cross-origin (CORS) headers when a token is configured, so `app.bangle.io`
+> (a different origin) can reach it *only* with a token. A tokenless server also
+> binds loopback by default and is meant for same-origin/bundled use, not for
+> exposing on a network. Bangle.io checks the server is reachable and the token
+> is accepted before creating the workspace.
 
 ## 2. Self-hosted app + storage (Docker)
 

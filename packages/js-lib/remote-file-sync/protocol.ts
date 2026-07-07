@@ -16,7 +16,7 @@
  *   POST   {base}/file?path=<fsPath>        -> 201 | 409            (create)
  *   PUT    {base}/file?path=<fsPath>        -> 200 | 404            (write existing)
  *   DELETE {base}/file?path=<fsPath>        -> 200 | 404            (delete)
- *   POST   {base}/rename  {from,to}         -> 200 | 404 | 409      (rename/move)
+ *   POST   {base}/rename  {from,to}         -> 200 | 404            (rename/move; overwrites dest)
  *   GET    {base}/stat?path=<fsPath>        -> StatResponse         (stat)
  *
  * A `<fsPath>` is a POSIX-style, workspace-scoped path whose first segment is
@@ -46,6 +46,13 @@ export const REMOTE_HEADERS = {
   ctime: 'x-bangle-ctime',
   /** Identifies the calling client; informational only. */
   client: 'x-bangle-client',
+  /**
+   * Marks a response as coming from a genuine remote-file-storage endpoint
+   * (value = API version). Lets the client tell a real `404 not-found` from an
+   * infrastructure 404 (proxy misroute, wrong base path) so a transport error
+   * is never mistaken for "file absent".
+   */
+  api: 'x-bangle-api',
   contentType: 'content-type',
 } as const;
 

@@ -107,7 +107,35 @@ export function createHttpRemoteClient(
     return h;
   }
 
+  // A genuine remote-file-storage response carries the API marker header. Its
+  // absence means we reached something else (proxy, wrong URL, captive portal),
+  // so a 404 must never be read as "file absent".
+  function isApiResponse(res: RemoteFetchResponse): boolean {
+    return res.headers.get(REMOTE_HEADERS.api) != null;
+  }
+
+  function parseJson<T>(text: string): T {
+    try {
+      return JSON.parse(text) as T;
+    } catch (error) {
+      throw new RemoteFileError(
+        'server-error',
+        'Malformed response from server',
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+
   async function toError(res: RemoteFetchResponse): Promise<RemoteFileError> {
+    if (!isApiResponse(res)) {
+      return new RemoteFileError(
+        'server-error',
+        `Unexpected response (HTTP ${res.status}); not a Bangle file-storage endpoint`,
+        { status: res.status },
+      );
+    }
     let code: RemoteErrorCode = statusToErrorCode(res.status);
     let message: string | undefined;
     try {
@@ -175,10 +203,10 @@ export function createHttpRemoteClient(
         method: 'GET',
         signal,
       });
-      if (res.status !== 200) {
+      if (res.status !== 200 || !isApiResponse(res)) {
         throw await toError(res);
       }
-      return JSON.parse(await res.text()) as HealthResponse;
+      return parseJson<HealthResponse>(await res.text());
     },
 
     async list(wsName, signal) {
@@ -190,8 +218,8 @@ export function createHttpRemoteClient(
       if (res.status !== 200) {
         throw await toError(res);
       }
-      const body = JSON.parse(await res.text()) as ListResponse;
-      return body.paths;
+      const body = parseJson<ListResponse>(await res.text());
+      return Array.isArray(body.paths) ? body.paths : [];
     },
 
     async read(fsPath, signal) {
@@ -200,7 +228,8 @@ export function createHttpRemoteClient(
         query: { path: fsPath },
         signal,
       });
-      if (res.status === 404) {
+      // Only a genuine API 404 means the file is absent.
+      if (res.status === 404 && isApiResponse(res)) {
         return undefined;
       }
       if (res.status !== 200) {
@@ -218,13 +247,13 @@ export function createHttpRemoteClient(
         query: { path: fsPath },
         signal,
       });
-      if (res.status === 404) {
+      if (res.status === 404 && isApiResponse(res)) {
         return undefined;
       }
       if (res.status !== 200) {
         throw await toError(res);
       }
-      return JSON.parse(await res.text()) as StatResponse;
+      return parseJson<StatResponse>(await res.text());
     },
 
     async exists(fsPath, signal) {
@@ -236,7 +265,7 @@ export function createHttpRemoteClient(
       if (res.status === 200) {
         return true;
       }
-      if (res.status === 404) {
+      if (res.status === 404 && isApiResponse(res)) {
         return false;
       }
       throw await toError(res);

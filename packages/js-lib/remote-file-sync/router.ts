@@ -85,10 +85,21 @@ function isAuthorized(req: RemoteRequest, token: string): boolean {
   if (!header) {
     return false;
   }
-  const expected = `Bearer ${token}`;
-  // Constant-ish comparison; token secrecy here is best-effort, the real
-  // protection is TLS + a strong token chosen by the operator.
-  return header === expected;
+  return safeEqual(header, `Bearer ${token}`);
+}
+
+/**
+ * Length-independent comparison that does not short-circuit on the first
+ * mismatched byte, so response timing does not leak the token. TLS + a strong
+ * operator-chosen token remain the primary protection.
+ */
+function safeEqual(a: string, b: string): boolean {
+  let mismatch = a.length ^ b.length;
+  const len = Math.max(a.length, b.length);
+  for (let i = 0; i < len; i++) {
+    mismatch |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0);
+  }
+  return mismatch === 0;
 }
 
 /**
@@ -101,53 +112,77 @@ export function createRemoteRouter(
   options: RemoteRouterOptions = {},
 ): (req: RemoteRequest, signal?: AbortSignal) => Promise<RemoteResponse> {
   const serverName = options.name ?? 'bangle-remote-file-server';
+  const apiVersion = String(REMOTE_API_VERSION);
 
   return async function handle(
     req: RemoteRequest,
     signal?: AbortSignal,
   ): Promise<RemoteResponse> {
-    try {
-      // /health is always reachable so clients can probe connectivity.
-      if (req.path === REMOTE_ROUTES.health && req.method === 'GET') {
-        const workspaces = await store.listWorkspaces?.(signal);
-        const health: HealthResponse = {
-          name: serverName,
-          apiVersion: REMOTE_API_VERSION,
-          ...(workspaces ? { workspaces } : {}),
-        };
-        return jsonResponse(200, health);
-      }
-
-      if (options.token && !isAuthorized(req, options.token)) {
-        return errorResponse('unauthorized', 'Missing or invalid bearer token');
-      }
-
-      switch (req.path) {
-        case REMOTE_ROUTES.files:
-          return await handleFiles(store, req, signal);
-        case REMOTE_ROUTES.file:
-          return await handleFile(store, req, signal);
-        case REMOTE_ROUTES.stat:
-          return await handleStat(store, req, signal);
-        case REMOTE_ROUTES.rename:
-          return await handleRename(store, req, signal);
-        default:
-          return errorResponse('not-found', `Unknown route: ${req.path}`);
-      }
-    } catch (error) {
-      if (error instanceof RemoteFileError) {
-        return errorResponse(error.code, error.message);
-      }
-      // Propagate abort as-is so transports can surface cancellation.
-      if (isAbort(error, signal)) {
-        throw error;
-      }
-      return errorResponse(
-        'server-error',
-        error instanceof Error ? error.message : 'Unknown server error',
-      );
+    const res = await route(store, options, serverName, req, signal);
+    // Stamp every response so clients can distinguish a genuine API answer
+    // (including a real 404) from an infrastructure response.
+    if (!res.headers[REMOTE_HEADERS.api]) {
+      res.headers[REMOTE_HEADERS.api] = apiVersion;
     }
+    return res;
   };
+}
+
+async function route(
+  store: RemoteFileStore,
+  options: RemoteRouterOptions,
+  serverName: string,
+  req: RemoteRequest,
+  signal?: AbortSignal,
+): Promise<RemoteResponse> {
+  try {
+    const authorized = !options.token || isAuthorized(req, options.token);
+
+    // /health is always reachable so clients can probe connectivity, but it
+    // only lists workspace names to authorized callers.
+    if (req.path === REMOTE_ROUTES.health && req.method === 'GET') {
+      const workspaces = authorized
+        ? await store.listWorkspaces?.(signal)
+        : undefined;
+      const health: HealthResponse = {
+        name: serverName,
+        apiVersion: REMOTE_API_VERSION,
+        ...(workspaces ? { workspaces } : {}),
+      };
+      return jsonResponse(200, health);
+    }
+
+    if (!authorized) {
+      return errorResponse('unauthorized', 'Missing or invalid bearer token');
+    }
+
+    switch (req.path) {
+      case REMOTE_ROUTES.files:
+        return await handleFiles(store, req, signal);
+      case REMOTE_ROUTES.file:
+        return await handleFile(store, req, signal);
+      case REMOTE_ROUTES.stat:
+        return await handleStat(store, req, signal);
+      case REMOTE_ROUTES.rename:
+        return await handleRename(store, req, signal);
+      default:
+        // Not a `not-found` — a 404 from this router always means "file
+        // missing", so an unknown route is a client/bad-request error.
+        return errorResponse('bad-request', `Unknown route: ${req.path}`);
+    }
+  } catch (error) {
+    if (error instanceof RemoteFileError) {
+      return errorResponse(error.code, error.message);
+    }
+    // Propagate abort as-is so transports can surface cancellation.
+    if (isAbort(error, signal)) {
+      throw error;
+    }
+    return errorResponse(
+      'server-error',
+      error instanceof Error ? error.message : 'Unknown server error',
+    );
+  }
 }
 
 async function handleFiles(

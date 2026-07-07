@@ -9,9 +9,11 @@ import {
 import { expect, test } from '@playwright/test';
 import { clearEditor, getEditorLocator, getEditorText } from './common';
 
-// A remote file server runs alongside the test worker. Because it stays up
-// across page reloads, an in-memory store is enough to prove persistence — the
-// server (not the browser) is the source of truth.
+// A remote file server runs alongside the test worker. It stays up across page
+// reloads, so an in-memory store is enough to prove persistence — the server
+// (not the browser) is the source of truth. A token is set because cross-origin
+// access (test app origin -> server origin) requires one.
+const TOKEN = 'e2e-secret-token';
 let server: StartedRemoteFileServer | undefined;
 let store: RemoteFileStore & { list(ws: string): Promise<string[]> };
 
@@ -19,6 +21,7 @@ test.beforeAll(async () => {
   store = new MemoryRemoteFileStore();
   server = await startRemoteFileServer({
     store,
+    token: TOKEN,
     port: 0,
     host: '127.0.0.1',
   });
@@ -47,6 +50,7 @@ test('Remote server workspace stores notes on the backend', async ({
 
     await page.getByLabel('Workspace Name', { exact: true }).fill(wsName);
     await page.getByLabel('Server URL', { exact: true }).fill(serverUrl);
+    await page.getByLabel('Access token', { exact: false }).fill(TOKEN);
     await page.getByRole('button', { name: 'Create' }).click();
 
     await expect(page.getByRole('heading', { name: wsName })).toBeVisible();
@@ -95,4 +99,27 @@ test('Remote server workspace stores notes on the backend', async ({
       'Hello from the server',
     );
   });
+});
+
+test('An unreachable remote server surfaces an error and creates no workspace', async ({
+  page,
+}) => {
+  await page.goto('/');
+
+  await page.getByRole('button', { name: 'Create Workspace' }).click();
+  await page.getByRole('radio', { name: /Remote Server/ }).click();
+  await page.getByRole('button', { name: 'Next' }).click();
+
+  await page.getByLabel('Workspace Name', { exact: true }).fill('broken-ws');
+  // Port 1 is closed — the pre-flight probe fails fast.
+  await page
+    .getByLabel('Server URL', { exact: true })
+    .fill('http://127.0.0.1:1');
+  await page.getByRole('button', { name: 'Create' }).click();
+
+  // The error is surfaced and the dialog stays open (still showing the URL
+  // field); no workspace was created, so no workspace heading appears.
+  await expect(page.getByText(/Could not reach the server/i)).toBeVisible();
+  await expect(page.getByLabel('Server URL', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'broken-ws' })).toHaveCount(0);
 });

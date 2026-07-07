@@ -46,3 +46,17 @@ describe('isValidWsName', () => {
     expect(isValidWsName('a\\b')).toBe(false);
   });
 });
+
+describe('Windows-hostile paths', () => {
+  it('rejects reserved device names (any casing / extension) and ADS colons', () => {
+    expect(isValidFsPath('ws/nul.md')).toBe(false);
+    expect(isValidFsPath('ws/CON')).toBe(false);
+    expect(isValidFsPath('ws/com1.txt')).toBe(false);
+    expect(isValidFsPath('ws/lpt9.md')).toBe(false);
+    expect(isValidFsPath('ws/a:b.md')).toBe(false); // alternate data stream
+    expect(isValidWsName('nul')).toBe(false);
+    // Not reserved — only exact device names are.
+    expect(isValidFsPath('ws/console.md')).toBe(true);
+    expect(isValidFsPath('ws/companion.md')).toBe(true);
+  });
+});

@@ -118,6 +118,9 @@ importers:
       '@bangle.io/omni-search':
         specifier: workspace:*
         version: link:../omni-search
+      '@bangle.io/remote-file-sync':
+        specifier: workspace:*
+        version: link:../../js-lib/remote-file-sync
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types

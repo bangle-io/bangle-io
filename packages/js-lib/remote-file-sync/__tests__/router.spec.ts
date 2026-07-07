@@ -147,6 +147,43 @@ describe('createRemoteRouter', () => {
     expect(jsonOf(res).error).toBe('invalid-path');
   });
 
+  it('stamps the API marker and answers unknown routes with bad-request', async () => {
+    const router = createRemoteRouter(new MemoryRemoteFileStore());
+    const res = await router(req({ method: 'GET', path: '/nope' }));
+    // A 404 from this router always means "file missing"; an unknown route is a
+    // client error instead so infra 404s stay distinguishable.
+    expect(res.status).toBe(400);
+    expect(res.headers[REMOTE_HEADERS.api]).toBeDefined();
+
+    const missing = await router(
+      req({
+        method: 'GET',
+        path: REMOTE_ROUTES.file,
+        query: { path: 'ws/x.md' },
+      }),
+    );
+    expect(missing.status).toBe(404);
+    expect(missing.headers[REMOTE_HEADERS.api]).toBeDefined();
+  });
+
+  it('hides workspace names from an unauthorized health probe', async () => {
+    const store = new MemoryRemoteFileStore();
+    await store.create('ws/a.md', bytes('x'));
+    const router = createRemoteRouter(store, { token: 'secret' });
+
+    const anon = await router(req({ path: REMOTE_ROUTES.health }));
+    expect(anon.status).toBe(200);
+    expect(jsonOf(anon).workspaces).toBeUndefined();
+
+    const authed = await router(
+      req({
+        path: REMOTE_ROUTES.health,
+        headers: { [REMOTE_HEADERS.authorization]: 'Bearer secret' },
+      }),
+    );
+    expect(jsonOf(authed).workspaces).toEqual(['ws']);
+  });
+
   it('HEAD returns 200/404 for existence', async () => {
     const store = new MemoryRemoteFileStore();
     await store.create('ws/a.md', bytes('x'));

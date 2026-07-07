@@ -25,11 +25,17 @@ export function readConfigFromEnv(
     ? path.resolve(env.BANGLE_FILE_SERVER_STATIC_DIR)
     : undefined;
 
+  const token = env.BANGLE_FILE_SERVER_TOKEN || undefined;
+  // Without a token, bind loopback by default so the store is not exposed to
+  // the local network; a tokened server defaults to all interfaces. Either can
+  // be overridden explicitly (the Docker image sets 0.0.0.0).
+  const host = env.BANGLE_FILE_SERVER_HOST ?? (token ? '0.0.0.0' : '127.0.0.1');
+
   return {
     port,
-    host: env.BANGLE_FILE_SERVER_HOST ?? '0.0.0.0',
+    host,
     root,
-    token: env.BANGLE_FILE_SERVER_TOKEN || undefined,
+    token,
     staticDir,
     name: env.BANGLE_FILE_SERVER_NAME ?? 'bangle-remote-file-server',
   };

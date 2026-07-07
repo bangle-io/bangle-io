@@ -11,6 +11,30 @@ import { RemoteFileError } from './errors';
 
 const SEGMENT_DENYLIST = new Set(['', '.', '..']);
 
+// Windows device names map to hardware, not files — a write "succeeds" and the
+// bytes vanish. Reserved regardless of extension (`nul`, `nul.md`, ...). The
+// desktop disk store can run on Windows, so this guard is universal.
+const RESERVED_WINDOWS_NAMES = new Set([
+  'con',
+  'prn',
+  'aux',
+  'nul',
+  ...Array.from({ length: 9 }, (_, i) => `com${i + 1}`),
+  ...Array.from({ length: 9 }, (_, i) => `lpt${i + 1}`),
+]);
+
+function isSafeSegment(segment: string): boolean {
+  if (SEGMENT_DENYLIST.has(segment)) {
+    return false;
+  }
+  // `:` denotes an NTFS alternate data stream — reject it everywhere.
+  if (segment.includes(':')) {
+    return false;
+  }
+  const base = (segment.split('.')[0] ?? '').toLowerCase();
+  return !RESERVED_WINDOWS_NAMES.has(base);
+}
+
 export function isValidFsPath(fsPath: string): boolean {
   if (typeof fsPath !== 'string' || fsPath.length === 0) {
     return false;
@@ -31,12 +55,7 @@ export function isValidFsPath(fsPath: string): boolean {
   if (segments.length < 2) {
     return false;
   }
-  for (const segment of segments) {
-    if (SEGMENT_DENYLIST.has(segment)) {
-      return false;
-    }
-  }
-  return true;
+  return segments.every(isSafeSegment);
 }
 
 export function assertValidFsPath(fsPath: string): void {
@@ -61,10 +80,10 @@ export function isValidWsName(wsName: string): boolean {
   return (
     typeof wsName === 'string' &&
     wsName.length > 0 &&
-    !SEGMENT_DENYLIST.has(wsName) &&
     !wsName.includes('/') &&
     !wsName.includes('\\') &&
-    !wsName.includes('\0')
+    !wsName.includes('\0') &&
+    isSafeSegment(wsName)
   );
 }
 

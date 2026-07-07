@@ -3,11 +3,17 @@ import { createServer } from 'node:http';
 import {
   createRemoteRouter,
   REMOTE_API_BASE,
+  REMOTE_API_VERSION,
   REMOTE_HEADERS,
   type RemoteFileStore,
   type RemoteRequest,
 } from '@bangle.io/remote-file-sync';
 import { serveStatic } from './static-files';
+
+/** Upper bound on a request body. Above the client's 50MB file cap. */
+const DEFAULT_MAX_BODY_BYTES = 64 * 1024 * 1024;
+
+class PayloadTooLargeError extends Error {}
 
 export interface RemoteFileServerOptions {
   store: RemoteFileStore;
@@ -25,6 +31,8 @@ export interface RemoteFileServerOptions {
    * hint the front-end that it can default a remote workspace to this origin.
    */
   htmlInject?: string;
+  /** Max request body in bytes (default 64 MiB); larger requests get `413`. */
+  maxBodyBytes?: number;
   logger?: Pick<Console, 'log' | 'error'>;
 }
 
@@ -70,10 +78,14 @@ async function handle(
   const method = req.method ?? 'GET';
   const url = new URL(req.url ?? '/', 'http://localhost');
 
-  // CORS: the front-end at app.bangle.io must be able to call a user's server
-  // on another origin. Bearer-token auth (not cookies) keeps `*` origin safe.
-  for (const [key, value] of Object.entries(CORS_HEADERS)) {
-    res.setHeader(key, value);
+  // Cross-origin access (e.g. app.bangle.io → your server) is only allowed when
+  // a token is configured. Without CORS headers the browser blocks cross-origin
+  // reads, so a tokenless server can't be pillaged by a random website the user
+  // visits; same-origin (bundled/Docker) mode needs no CORS and is unaffected.
+  if (options.token) {
+    for (const [key, value] of Object.entries(CORS_HEADERS)) {
+      res.setHeader(key, value);
+    }
   }
   if (method === 'OPTIONS') {
     res.statusCode = 204;
@@ -82,7 +94,7 @@ async function handle(
   }
 
   if (url.pathname.startsWith(REMOTE_API_BASE)) {
-    await handleApi(req, res, router, method, url);
+    await handleApi(req, res, router, method, url, options);
     return;
   }
 
@@ -106,9 +118,32 @@ async function handleApi(
   router: ReturnType<typeof createRemoteRouter>,
   method: string,
   url: URL,
+  options: RemoteFileServerOptions,
 ): Promise<void> {
-  const body =
-    method === 'POST' || method === 'PUT' ? await readBody(req) : undefined;
+  const maxBytes = options.maxBodyBytes ?? DEFAULT_MAX_BODY_BYTES;
+  let body: Uint8Array | undefined;
+  if (method === 'POST' || method === 'PUT') {
+    try {
+      body = await readBody(req, maxBytes);
+    } catch (error) {
+      if (error instanceof PayloadTooLargeError) {
+        res.statusCode = 413;
+        // Close the connection: we stopped reading the body, so the socket
+        // can't be safely reused. The response still flushes to the client.
+        res.setHeader('connection', 'close');
+        res.setHeader(REMOTE_HEADERS.api, String(REMOTE_API_VERSION));
+        res.setHeader('content-type', 'application/json');
+        res.end(
+          JSON.stringify({
+            error: 'bad-request',
+            message: 'Payload too large',
+          }),
+        );
+        return;
+      }
+      throw error;
+    }
+  }
 
   const query: Record<string, string> = {};
   for (const [key, value] of url.searchParams) {
@@ -144,10 +179,26 @@ async function handleApi(
   }
 }
 
-function readBody(req: IncomingMessage): Promise<Uint8Array> {
+function readBody(req: IncomingMessage, maxBytes: number): Promise<Uint8Array> {
   return new Promise((resolve, reject) => {
+    const declared = Number(req.headers['content-length']);
+    if (Number.isFinite(declared) && declared > maxBytes) {
+      // Pause (don't destroy) so the caller can still flush a 413 response.
+      req.pause();
+      reject(new PayloadTooLargeError());
+      return;
+    }
     const chunks: Buffer[] = [];
-    req.on('data', (chunk: Buffer) => chunks.push(chunk));
+    let total = 0;
+    req.on('data', (chunk: Buffer) => {
+      total += chunk.length;
+      if (total > maxBytes) {
+        req.pause();
+        reject(new PayloadTooLargeError());
+        return;
+      }
+      chunks.push(chunk);
+    });
     req.on('end', () => resolve(new Uint8Array(Buffer.concat(chunks))));
     req.on('error', reject);
   });

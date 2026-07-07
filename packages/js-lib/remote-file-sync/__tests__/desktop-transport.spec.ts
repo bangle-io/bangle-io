@@ -13,15 +13,12 @@ const text = (b: Uint8Array) => new TextDecoder().decode(b);
  */
 function ipcBridge(router: RemoteRouter): RemoteRouter {
   return async (req) => {
-    const cloned = structuredCloneSafe(req);
+    // Real structured clone, exactly as Electron IPC serialises across the
+    // process boundary — this proves the Uint8Array bodies survive intact.
+    const cloned = structuredClone(req);
     const res = await router(cloned);
-    return structuredCloneSafe(res);
+    return structuredClone(res);
   };
-}
-
-function structuredCloneSafe<T>(value: T): T {
-  // Uint8Array survives structured clone; emulate that fidelity here.
-  return value;
 }
 
 describe('createRemoteClientFromRouter (desktop IPC shape)', () => {

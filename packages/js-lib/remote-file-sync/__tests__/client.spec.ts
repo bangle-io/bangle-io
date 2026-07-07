@@ -87,4 +87,36 @@ describe('createHttpRemoteClient over the in-process router', () => {
     });
     await expect(client.list('ws')).rejects.toMatchObject({ code: 'network' });
   });
+
+  it('treats a 404 WITHOUT the API marker as a transport error, not a missing file', async () => {
+    // e.g. a reverse proxy or wrong base path answering 404.
+    const client = createHttpRemoteClient({
+      baseUrl: 'https://proxy.test',
+      fetch: async () => ({
+        status: 404,
+        headers: { get: () => null },
+        async arrayBuffer() {
+          return new ArrayBuffer(0);
+        },
+        async text() {
+          return '<html>404 Not Found (nginx)</html>';
+        },
+      }),
+    });
+    // Must NOT be read as "file absent" — that would risk empty content.
+    await expect(client.read('ws/a.md')).rejects.toMatchObject({
+      code: 'server-error',
+    });
+    await expect(client.exists('ws/a.md')).rejects.toMatchObject({
+      code: 'server-error',
+    });
+  });
+
+  it('a genuine API 404 (marker present) still reads as a missing file', async () => {
+    // The router-backed setup() stamps the marker, so missing files resolve to
+    // undefined rather than throwing.
+    const { client } = setup();
+    expect(await client.read('ws/none.md')).toBeUndefined();
+    expect(await client.exists('ws/none.md')).toBe(false);
+  });
 });

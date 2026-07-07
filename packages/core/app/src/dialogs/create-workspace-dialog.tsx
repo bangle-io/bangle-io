@@ -5,11 +5,55 @@ import {
   WORKSPACE_STORAGE_TYPE,
 } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
+import {
+  createHttpRemoteClient,
+  isRemoteFileError,
+} from '@bangle.io/remote-file-sync';
 import { CreateWorkspaceDialog as UICreateWorkspaceDialog } from '@bangle.io/ui-components';
 import { WsPath } from '@bangle.io/ws-path';
 import { useAtom } from 'jotai';
 import React from 'react';
 import { nativeFsErrorParse } from '../common';
+
+/**
+ * Confirm a remote server is reachable and the token is accepted before we
+ * create the workspace, so a typo never yields a broken workspace whose empty
+ * listing could be mistaken for "no notes". Skipped for the in-process desktop
+ * backend (always available).
+ */
+async function probeRemoteServer(
+  wsName: string,
+  serverUrl: string,
+  token: string | undefined,
+): Promise<void> {
+  if (serverUrl === DESKTOP_REMOTE_FS_SERVER_URL) {
+    return;
+  }
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000);
+  try {
+    // `list` requires auth, so this catches an unreachable server, a wrong
+    // token (401), and a non-Bangle endpoint (missing API marker) alike.
+    const client = createHttpRemoteClient({ baseUrl: serverUrl, token });
+    await client.list(wsName, controller.signal);
+  } catch (error) {
+    const unauthorized =
+      isRemoteFileError(error) && error.code === 'unauthorized';
+    throwAppError(
+      'error::remote-storage:request-failed',
+      unauthorized
+        ? 'The server rejected the access token. Check the token and try again.'
+        : 'Could not reach the server. Check the URL (and token) and try again.',
+      {
+        wsName,
+        code: isRemoteFileError(error) ? error.code : 'network',
+        reason: error instanceof Error ? error.message : String(error),
+      },
+    );
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 
 /** A dialog component for creating a new workspace, allowing selection of storage type. */
 export function CreateWorkspaceDialog() {
@@ -54,6 +98,8 @@ export function CreateWorkspaceDialog() {
               { wsName },
             );
           }
+
+          await probeRemoteServer(wsName, serverUrl, token);
 
           await coreServices.workspaceOps.createWorkspaceInfo({
             name: wsName,

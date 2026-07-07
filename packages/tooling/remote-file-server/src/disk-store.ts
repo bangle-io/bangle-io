@@ -1,6 +1,7 @@
 import type { Dirent } from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import process from 'node:process';
 import {
   assertValidFsPath,
   assertValidWsName,
@@ -32,6 +33,7 @@ function isErrnoException(
  */
 export class DiskRemoteFileStore implements RemoteFileStore {
   private root: string;
+  private tmpCounter = 0;
 
   constructor(root: string) {
     this.root = path.resolve(root);
@@ -148,22 +150,35 @@ export class DiskRemoteFileStore implements RemoteFileStore {
 
   async write(fsPath: string, bytes: Uint8Array): Promise<void> {
     const full = this.resolve(fsPath);
-    // Preserve the "write requires existing file" contract without a TOCTOU
-    // hole: openn with `r+` proves existence, then truncate + write.
-    let handle: Awaited<ReturnType<typeof fs.open>>;
+
+    // Preserve the "write requires an existing file" contract.
+    let stat: Awaited<ReturnType<typeof fs.stat>>;
     try {
-      handle = await fs.open(full, 'r+');
+      stat = await fs.stat(full);
     } catch (error) {
       if (isErrnoException(error, 'ENOENT')) {
         throw new RemoteFileError('not-found', `File not found: ${fsPath}`);
       }
       throw error;
     }
+    if (!stat.isFile()) {
+      throw new RemoteFileError('not-found', `Not a file: ${fsPath}`);
+    }
+
+    // Durable write: fully write a sibling temp file, then atomically rename it
+    // over the target. A crash/power-loss can never leave the note truncated or
+    // empty — the reader sees either the old bytes or the new bytes. The temp is
+    // dot-prefixed so a leftover never surfaces in a listing.
+    const tmp = path.join(
+      path.dirname(full),
+      `.${path.basename(full)}.tmp-${process.pid}-${this.tmpCounter++}`,
+    );
     try {
-      await handle.truncate(0);
-      await handle.write(bytes, 0);
-    } finally {
-      await handle.close();
+      await fs.writeFile(tmp, bytes);
+      await fs.rename(tmp, full);
+    } catch (error) {
+      await fs.rm(tmp, { force: true });
+      throw error;
     }
   }
 

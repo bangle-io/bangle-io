@@ -70,21 +70,57 @@ describe('remote file server (real HTTP)', () => {
     });
   });
 
-  it('answers CORS preflight requests', async () => {
+  it('answers CORS preflight for a tokened server, and withholds CORS when open', async () => {
+    // Cross-origin access is only granted when a token is configured.
+    started = await startRemoteFileServer({
+      store: new MemoryRemoteFileStore(),
+      token: 'secret',
+      port: 0,
+      host: '127.0.0.1',
+    });
+    const withToken = await fetch(
+      `${started.url}${REMOTE_API_BASE}/file?path=ws/a.md`,
+      { method: 'OPTIONS' },
+    );
+    expect(withToken.status).toBe(204);
+    expect(withToken.headers.get('access-control-allow-origin')).toBe('*');
+    expect(withToken.headers.get('access-control-allow-methods')).toContain(
+      'PUT',
+    );
+    await started.close();
+
     started = await startRemoteFileServer({
       store: new MemoryRemoteFileStore(),
       port: 0,
       host: '127.0.0.1',
     });
-    const res = await fetch(
+    const open = await fetch(
       `${started.url}${REMOTE_API_BASE}/file?path=ws/a.md`,
       {
         method: 'OPTIONS',
       },
     );
-    expect(res.status).toBe(204);
-    expect(res.headers.get('access-control-allow-origin')).toBe('*');
-    expect(res.headers.get('access-control-allow-methods')).toContain('PUT');
+    // Still a valid preflight response, but no permissive CORS header, so a
+    // browser blocks cross-origin reads of a tokenless server.
+    expect(open.status).toBe(204);
+    expect(open.headers.get('access-control-allow-origin')).toBeNull();
+  });
+
+  it('rejects an over-sized request body with 413', async () => {
+    started = await startRemoteFileServer({
+      store: new MemoryRemoteFileStore(),
+      maxBodyBytes: 16,
+      port: 0,
+      host: '127.0.0.1',
+    });
+    const res = await fetch(
+      `${started.url}${REMOTE_API_BASE}/file?path=ws/big.md`,
+      {
+        method: 'POST',
+        body: new Uint8Array(64),
+      },
+    );
+    expect(res.status).toBe(413);
   });
 
   it('serves a bundled front-end and falls back to index.html for SPA routes', async () => {
