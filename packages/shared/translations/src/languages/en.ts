@@ -182,6 +182,10 @@ export const t = {
       downloadButton: 'Download',
       loading: 'Loading asset...',
       unavailable: 'Unable to load this asset.',
+      noPreview:
+        "This file can't be previewed here. Download it to view the contents.",
+      videoUnsupported: "Your browser can't play this video format.",
+      audioUnsupported: "Your browser can't play this audio format.",
     },
     dialogs: {
       changeTheme: {

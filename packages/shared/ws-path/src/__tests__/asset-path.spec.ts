@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  assetPreviewKindForExtension,
+  getAssetPreviewKind,
   getEmbeddableWorkspaceAssetKind,
   isEmbeddableImageExtension,
   isEmbeddableWorkspaceAsset,
@@ -161,5 +163,63 @@ describe('embeddable workspace assets', () => {
         'other:assets/image.png',
       ),
     ).toBeUndefined();
+  });
+});
+
+describe('assetPreviewKindForExtension', () => {
+  it.each([
+    ['.png', 'image'],
+    ['.svg', 'image'],
+    ['.bmp', 'image'],
+    ['.ico', 'image'],
+    ['.pdf', 'pdf'],
+    ['.mp4', 'video'],
+    ['.webm', 'video'],
+    ['.mp3', 'audio'],
+    ['.flac', 'audio'],
+    ['.txt', 'text'],
+    ['.json', 'text'],
+    ['.csv', 'text'],
+  ] as const)('maps %s to %s', (extension, kind) => {
+    expect(assetPreviewKindForExtension(extension)).toBe(kind);
+  });
+
+  it('is case-insensitive and tolerates a missing leading dot', () => {
+    expect(assetPreviewKindForExtension('.PNG')).toBe('image');
+    expect(assetPreviewKindForExtension('PDF')).toBe('pdf');
+    expect(assetPreviewKindForExtension('Json')).toBe('text');
+  });
+
+  it.each([
+    '',
+    '.zip',
+    '.exe',
+    '.bin',
+    '.unknown',
+    undefined,
+  ])('returns undefined for non-previewable extension %j', (extension) => {
+    expect(assetPreviewKindForExtension(extension)).toBeUndefined();
+  });
+});
+
+describe('getAssetPreviewKind', () => {
+  it.each([
+    ['workspace:assets/photo.png', 'image'],
+    ['workspace:notes/deep/diagram.SVG', 'image'],
+    ['workspace:report.pdf', 'pdf'],
+    ['workspace:clip.mp4', 'video'],
+    ['workspace:sound.mp3', 'audio'],
+    ['workspace:data/table.csv', 'text'],
+  ] as const)('classifies %s as %s', (wsPath, kind) => {
+    expect(getAssetPreviewKind(wsPath)).toBe(kind);
+  });
+
+  it.each([
+    'workspace:archive.zip',
+    'workspace:no-extension',
+    'workspace:notes/', // directory path
+    'not a wsPath',
+  ])('returns undefined for %s', (wsPath) => {
+    expect(getAssetPreviewKind(wsPath)).toBeUndefined();
   });
 });

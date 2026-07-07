@@ -43,6 +43,114 @@ export function isEmbeddableImageExtension(extension: string): boolean {
   return EMBEDDABLE_IMAGE_EXTENSION_SET.has(extension.toLowerCase());
 }
 
+/**
+ * Categories of workspace assets the app can preview inline on the asset page
+ * using only native browser elements (`<img>`, `<iframe>`, `<video>`,
+ * `<audio>`, `<pre>`). Anything outside these kinds falls back to a download
+ * affordance. Keep this list conservative: only formats browsers render without
+ * a third-party viewer belong here.
+ */
+export type AssetPreviewKind = 'image' | 'pdf' | 'video' | 'audio' | 'text';
+
+const ASSET_PREVIEW_EXTENSIONS: Record<AssetPreviewKind, readonly string[]> = {
+  // Reuse the embeddable image set and add a couple of formats browsers render
+  // in `<img>` even though they are not offered for Markdown embedding.
+  image: [...EMBEDDABLE_IMAGE_EXTENSIONS, '.bmp', '.ico'],
+  pdf: ['.pdf'],
+  video: ['.m4v', '.mov', '.mp4', '.ogv', '.webm'],
+  audio: [
+    '.aac',
+    '.flac',
+    '.m4a',
+    '.oga',
+    '.ogg',
+    '.opus',
+    '.mp3',
+    '.wav',
+    '.weba',
+  ],
+  // Plain-text formats rendered verbatim in a `<pre>`; no syntax highlighting.
+  text: [
+    '.bash',
+    '.c',
+    '.cfg',
+    '.conf',
+    '.cpp',
+    '.css',
+    '.csv',
+    '.env',
+    '.go',
+    '.h',
+    '.htm',
+    '.html',
+    '.ini',
+    '.java',
+    '.js',
+    '.json',
+    '.jsonc',
+    '.jsx',
+    '.less',
+    '.log',
+    '.mjs',
+    '.cjs',
+    '.py',
+    '.rb',
+    '.rs',
+    '.scss',
+    '.sh',
+    '.sql',
+    '.text',
+    '.toml',
+    '.ts',
+    '.tsx',
+    '.tsv',
+    '.txt',
+    '.xml',
+    '.yaml',
+    '.yml',
+    '.zsh',
+  ],
+};
+
+const ASSET_PREVIEW_KIND_BY_EXTENSION = new Map<string, AssetPreviewKind>();
+for (const [kind, extensions] of Object.entries(ASSET_PREVIEW_EXTENSIONS) as [
+  AssetPreviewKind,
+  readonly string[],
+][]) {
+  for (const extension of extensions) {
+    ASSET_PREVIEW_KIND_BY_EXTENSION.set(extension, kind);
+  }
+}
+
+/**
+ * Maps a file extension (with or without a leading dot, any case) to the way it
+ * can be previewed inline, or `undefined` when the app cannot render it.
+ */
+export function assetPreviewKindForExtension(
+  extension: string | undefined,
+): AssetPreviewKind | undefined {
+  if (!extension) {
+    return undefined;
+  }
+  const lower = extension.toLowerCase();
+  const normalized = lower.startsWith('.') ? lower : `.${lower}`;
+  return ASSET_PREVIEW_KIND_BY_EXTENSION.get(normalized);
+}
+
+/**
+ * Resolves how a workspace asset can be previewed inline based on its
+ * extension, or `undefined` when only a download fallback is possible.
+ */
+export function getAssetPreviewKind(
+  wsPath: string | WsFilePath,
+): AssetPreviewKind | undefined {
+  const filePath = WsPath.safeParseFile(wsPath).data;
+  if (!filePath) {
+    return undefined;
+  }
+  return assetPreviewKindForExtension(filePath.extension);
+}
+
 export function getEmbeddableWorkspaceAssetKind(
   wsPath: string | WsFilePath,
 ): EmbeddableWorkspaceAssetKind | undefined {

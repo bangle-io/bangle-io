@@ -152,6 +152,47 @@ async function dragTreeItemOntoEditor(
   await page.mouse.up();
 }
 
+// Stores a real (decodable) 1x1 PNG directly in the browser workspace so the
+// asset page can render an actual `<img>` rather than a broken-media fallback.
+async function writeStoredPng(
+  page: Page,
+  workspaceName: string,
+  relativePath: string,
+) {
+  await page.evaluate(
+    async ({ workspace, filePath }) => {
+      const pngBytes = Uint8Array.from([
+        137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0,
+        1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196, 137, 0, 0, 0, 13, 73, 68, 65,
+        84, 120, 156, 99, 248, 15, 4, 0, 9, 251, 3, 253, 167, 186, 48, 251, 0,
+        0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130,
+      ]);
+      const request = indexedDB.open('baby-idb-db-3');
+      const database = await new Promise<IDBDatabase>((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+      await new Promise<void>((resolve, reject) => {
+        const transaction = database.transaction(
+          'baby-idb-db-store-3',
+          'readwrite',
+        );
+        transaction.oncomplete = () => resolve();
+        transaction.onerror = () => reject(transaction.error);
+        transaction.onabort = () => reject(transaction.error);
+        transaction.objectStore('baby-idb-db-store-3').put(
+          new File([pngBytes], filePath.split('/').at(-1) ?? filePath, {
+            type: 'image/png',
+          }),
+          `${workspace}/${filePath}`,
+        );
+      });
+      database.close();
+    },
+    { workspace: workspaceName, filePath: relativePath },
+  );
+}
+
 test('pastes workspace-backed image and PDF assets, reloads, and opens asset page', async ({
   page,
 }, testInfo) => {
@@ -192,6 +233,9 @@ test('pastes workspace-backed image and PDF assets, reloads, and opens asset pag
   await expect(
     page.getByRole('heading', { name: /spec-sheet-.*\.pdf/i }),
   ).toBeVisible();
+  // The PDF renders inline in the browser's native viewer, and Download stays
+  // available as a fallback.
+  await expect(page.locator('iframe[title^="spec-sheet-"]')).toBeVisible();
   await expect(page.getByRole('link', { name: 'Download' })).toHaveAttribute(
     'download',
     /spec-sheet-.*\.pdf/,
@@ -616,4 +660,67 @@ test('copied nested workspace paths paste and drop from another note', async ({
       ),
     )
     .toContain('[codex-prerequisites.md](codex-prerequisites.md)');
+});
+
+test('renders an image asset inline when the asset URL is opened directly', async ({
+  page,
+}, testInfo) => {
+  const workspaceName = `asset-view-image-${testInfo.workerIndex}-${Date.now()}`;
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'source',
+  });
+  await writeStoredPng(page, workspaceName, 'assets/photo.png');
+
+  await page.goto(
+    `/ws#route=asset&wsPath=${encodeURIComponent(
+      `${workspaceName}:assets/photo.png`,
+    )}`,
+  );
+  // A hash-only navigation does not re-read storage, so force a real reload at
+  // the asset route to pick up the directly-written file, mirroring how a user
+  // arrives via a fresh page load / shared link.
+  await page.reload({ waitUntil: 'networkidle' });
+
+  await expect(page.getByRole('heading', { name: 'photo.png' })).toBeVisible();
+  const image = page.getByRole('img', { name: 'photo.png' });
+  await expect(image).toBeVisible();
+  await expect(image).toHaveAttribute('src', /^blob:/);
+  await expect(page.getByRole('link', { name: 'Download' })).toHaveAttribute(
+    'download',
+    'photo.png',
+  );
+});
+
+test('renders a text asset inline when the asset URL is opened directly', async ({
+  page,
+}, testInfo) => {
+  const workspaceName = `asset-view-text-${testInfo.workerIndex}-${Date.now()}`;
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'source',
+  });
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'data/config.json',
+    '{\n  "hello": "asset viewer"\n}',
+    'application/json',
+  );
+
+  await page.goto(
+    `/ws#route=asset&wsPath=${encodeURIComponent(
+      `${workspaceName}:data/config.json`,
+    )}`,
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  await expect(
+    page.getByRole('heading', { name: 'config.json' }),
+  ).toBeVisible();
+  await expect(page.getByText('"hello": "asset viewer"')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Download' })).toHaveAttribute(
+    'download',
+    'config.json',
+  );
 });
