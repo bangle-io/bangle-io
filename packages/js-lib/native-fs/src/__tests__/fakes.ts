@@ -19,7 +19,7 @@ export type FakePermissions = {
  * the File constructor; this class provides the pieces of the File contract
  * the library reads (`name`, `size`, `lastModified`, `text`, `arrayBuffer`).
  */
-export class FakeFile {
+class FakeFile {
   constructor(
     readonly name: string,
     private readonly data: Uint8Array,

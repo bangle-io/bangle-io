@@ -68,7 +68,7 @@ export interface FileSystemChangeRecordLike {
   changedHandle?: FileSystemHandle;
 }
 
-export interface FileSystemObserverLike {
+interface FileSystemObserverLike {
   observe(
     handle: FileSystemHandle,
     options?: { recursive?: boolean },
