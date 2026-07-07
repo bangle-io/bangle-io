@@ -4,6 +4,7 @@ export { CommandRegistryService } from './command-registry-service';
 export { waitForSaveQueueToDrain } from './editor-save-status';
 export { EditorService } from './editor-service';
 export type {
+  ExternalFileChangeEvent,
   FileContentUpdateEvent,
   FileCreateEvent,
 } from './file-system-service';

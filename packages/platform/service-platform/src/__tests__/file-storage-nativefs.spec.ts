@@ -5,7 +5,7 @@
 import { FILE_STORAGE_MAX_FILE_SIZE_BYTES } from '@bangle.io/constants';
 import { isAbortError } from '@bangle.io/mini-js-utils';
 import { createTestEnvironment } from '@bangle.io/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { FileStorageNativeFs } from '../file-storage-nativefs';
 import { testCrossWorkspaceRenameContract } from './file-storage-rename-contract';
 
@@ -105,9 +105,18 @@ class FakeDirectoryHandle {
   }
 }
 
-async function setup(onEntryVisited?: () => void, rootName = 'myWorkspace') {
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
+
+async function setup(
+  onEntryVisited?: () => void,
+  rootName = 'myWorkspace',
+  options: { withExternalChange?: boolean } = {},
+) {
   const { commonOpts } = createTestEnvironment();
   const onChange = vi.fn();
+  const onExternalChange = vi.fn();
   const rootDirHandle = new FakeDirectoryHandle(
     rootName,
     onEntryVisited,
@@ -123,10 +132,52 @@ async function setup(onEntryVisited?: () => void, rootName = 'myWorkspace') {
     {
       getRootDirHandle: async () => ({ handle: rootDirHandle }),
       onChange,
+      ...(options.withExternalChange ? { onExternalChange } : {}),
     },
   );
   await service.mount();
-  return { service, onChange, rootDirHandle };
+  return { service, onChange, onExternalChange, rootDirHandle };
+}
+
+type ObservedRecord = {
+  type?: string;
+  relativePathComponents?: readonly string[];
+  relativePathMovedFrom?: readonly string[] | null;
+  changedHandle?: { kind: string };
+};
+
+/**
+ * Installs a fake `FileSystemObserver` global and returns a trigger that
+ * feeds change records to whatever callback the adapter registered.
+ */
+function stubFileSystemObserver() {
+  let capturedCallback:
+    | ((records: readonly ObservedRecord[], observer: unknown) => void)
+    | undefined;
+  const observe = vi.fn(async () => undefined);
+  const disconnect = vi.fn();
+
+  class FakeFileSystemObserver {
+    constructor(
+      callback: (records: readonly ObservedRecord[], observer: unknown) => void,
+    ) {
+      capturedCallback = callback;
+    }
+    observe = observe;
+    disconnect = disconnect;
+  }
+  vi.stubGlobal('FileSystemObserver', FakeFileSystemObserver);
+
+  return {
+    observe,
+    disconnect,
+    async emitRecords(records: ObservedRecord[]) {
+      await vi.waitFor(() => {
+        expect(capturedCallback).toBeDefined();
+      });
+      capturedCallback?.(records, undefined);
+    },
+  };
 }
 
 describe('FileStorageNativeFs', () => {
@@ -335,5 +386,156 @@ describe('FileStorageNativeFs', () => {
       oldWsPath: 'myWorkspace:a.md',
       newWsPath: 'myWorkspace:sub/b.md',
     });
+  });
+});
+
+describe('external change watching', () => {
+  it('maps observer records for visible files to external change events', async () => {
+    const observer = stubFileSystemObserver();
+    const { service, onExternalChange } = await setup(
+      undefined,
+      'myWorkspace',
+      {
+        withExternalChange: true,
+      },
+    );
+
+    // First storage access boots the watcher for the workspace.
+    await service.fileExists('myWorkspace:seed.md');
+    await vi.waitFor(() => {
+      expect(observer.observe).toHaveBeenCalledTimes(1);
+    });
+
+    await observer.emitRecords([
+      {
+        type: 'appeared',
+        relativePathComponents: ['sub', 'new.md'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'modified',
+        relativePathComponents: ['existing.md'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'disappeared',
+        relativePathComponents: ['gone.md'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'moved',
+        relativePathComponents: ['renamed.md'],
+        relativePathMovedFrom: ['old-name.md'],
+        changedHandle: { kind: 'file' },
+      },
+    ]);
+
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'create', wsPath: 'myWorkspace:sub/new.md' },
+      { type: 'update', wsPath: 'myWorkspace:existing.md' },
+      { type: 'delete', wsPath: 'myWorkspace:gone.md' },
+      {
+        type: 'rename',
+        oldWsPath: 'myWorkspace:old-name.md',
+        newWsPath: 'myWorkspace:renamed.md',
+      },
+    ]);
+  });
+
+  it("suppresses the observer echo of the app's own writes", async () => {
+    const observer = stubFileSystemObserver();
+    const { service, onExternalChange } = await setup(
+      undefined,
+      'myWorkspace',
+      {
+        withExternalChange: true,
+      },
+    );
+
+    await service.createFile(
+      'myWorkspace:mine.md',
+      new File(['from the app'], 'mine.md'),
+    );
+    await vi.waitFor(() => {
+      expect(observer.observe).toHaveBeenCalledTimes(1);
+    });
+
+    // The OS-level record produced by our own write arrives shortly after.
+    await observer.emitRecords([
+      {
+        type: 'appeared',
+        relativePathComponents: ['mine.md'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'modified',
+        relativePathComponents: ['truly-external.md'],
+        changedHandle: { kind: 'file' },
+      },
+    ]);
+
+    // Only the genuinely external change comes through.
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'update', wsPath: 'myWorkspace:truly-external.md' },
+    ]);
+  });
+
+  it('ignores hidden paths and coalesces unmappable records into one refresh', async () => {
+    const observer = stubFileSystemObserver();
+    const { service, onExternalChange } = await setup(
+      undefined,
+      'myWorkspace',
+      {
+        withExternalChange: true,
+      },
+    );
+    await service.fileExists('myWorkspace:seed.md');
+
+    await observer.emitRecords([
+      // Hidden/system files are invisible to the app: ignored entirely.
+      {
+        type: 'modified',
+        relativePathComponents: ['.obsidian', 'config.json'],
+        changedHandle: { kind: 'file' },
+      },
+      // Directory records and unknown/errored records only say "something
+      // changed": they collapse into a single coarse refresh.
+      {
+        type: 'appeared',
+        relativePathComponents: ['new-dir'],
+        changedHandle: { kind: 'directory' },
+      },
+      { type: 'unknown', relativePathComponents: [] },
+      { type: 'errored', relativePathComponents: [] },
+    ]);
+
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'refresh', wsName: 'myWorkspace' },
+    ]);
+  });
+
+  it('falls back to throttled focus revalidation when the observer API is unavailable', async () => {
+    // No FileSystemObserver global installed.
+    const { service, onExternalChange } = await setup(
+      undefined,
+      'myWorkspace',
+      {
+        withExternalChange: true,
+      },
+    );
+    await service.fileExists('myWorkspace:seed.md');
+
+    await vi.waitFor(() => {
+      window.dispatchEvent(new Event('focus'));
+      expect(onExternalChange).toHaveBeenCalledWith({
+        type: 'refresh',
+        wsName: 'myWorkspace',
+      });
+    });
+
+    // A second focus within the throttle window does not refresh again.
+    onExternalChange.mockClear();
+    window.dispatchEvent(new Event('focus'));
+    expect(onExternalChange).not.toHaveBeenCalled();
   });
 });

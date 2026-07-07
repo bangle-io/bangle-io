@@ -6,6 +6,7 @@ import {
   throwAppError,
 } from '@bangle.io/base-utils';
 import {
+  EXTERNAL_FILE_CHANGE_SENDER_TAG,
   SERVICE_NAME,
   WORKSPACE_STORAGE_TYPE,
   type WorkspaceStorageType,
@@ -41,6 +42,23 @@ export type FileRenameEvent = {
   wsPath: string;
 };
 
+/**
+ * A file change that did NOT originate from this app's own writes — detected
+ * by a storage watcher (e.g. a sync tool editing a Native FS workspace) or
+ * broadcast from another tab's watcher. `refresh` means "something changed,
+ * re-read what you depend on" without a specific path.
+ */
+export type ExternalFileChangeEvent = {
+  sequence: number;
+  type:
+    | 'file-create'
+    | 'file-content-update'
+    | 'file-delete'
+    | 'file-rename'
+    | 'refresh';
+  wsPath?: string;
+};
+
 type FileReadOptions = {
   signal?: AbortSignal;
 };
@@ -70,10 +88,14 @@ export class FileSystemService extends BaseService {
   $fileCreateEvent = atom<FileCreateEvent | undefined>(undefined);
   $fileContentUpdateEvent = atom<FileContentUpdateEvent | undefined>(undefined);
   $fileRenameEvent = atom<FileRenameEvent | undefined>(undefined);
+  $externalFileChangeEvent = atom<ExternalFileChangeEvent | undefined>(
+    undefined,
+  );
 
   private fileCreateSequence = 0;
   private fileContentUpdateSequence = 0;
   private fileRenameSequence = 0;
+  private externalFileChangeSequence = 0;
 
   $fileTreeChangeCount = atom((get) => {
     return (
@@ -108,12 +130,15 @@ export class FileSystemService extends BaseService {
 
     this.config.emitter.on(
       'event::file:force-update',
-      () => {
+      (event) => {
         this.store.set(this.$fileCreateCount, (c) => c + 1);
         this.store.set(this.$fileContentUpdateCount, (c) => c + 1);
         this.store.set(this.$fileDeleteCount, (c) => c + 1);
         this.store.set(this.$fileRenameCount, (c) => c + 1);
         this.store.set(this.$fileForceUpdateCount, (c) => c + 1);
+        if (event.sender.tag === EXTERNAL_FILE_CHANGE_SENDER_TAG) {
+          this.setExternalFileChangeEvent({ type: 'refresh' });
+        }
       },
       this.abortSignal,
     );
@@ -121,6 +146,12 @@ export class FileSystemService extends BaseService {
     this.config.emitter.on(
       'event::file:update',
       (event) => {
+        if (event.sender.tag === EXTERNAL_FILE_CHANGE_SENDER_TAG) {
+          this.setExternalFileChangeEvent({
+            type: event.type,
+            wsPath: event.wsPath,
+          });
+        }
         switch (event.type) {
           case 'file-create': {
             this.store.set(this.$fileCreateCount, (c) => c + 1);
@@ -163,6 +194,20 @@ export class FileSystemService extends BaseService {
       },
       this.abortSignal,
     );
+  }
+
+  private setExternalFileChangeEvent(
+    event: Omit<ExternalFileChangeEvent, 'sequence'>,
+  ): void {
+    this.externalFileChangeSequence += 1;
+    this.store.set(this.$externalFileChangeEvent, {
+      sequence: this.externalFileChangeSequence,
+      ...event,
+    });
+  }
+
+  private isWorkspaceFileVisible(wsPath: string) {
+    return isVisibleWorkspaceFilePath(wsPath);
   }
 
   /**

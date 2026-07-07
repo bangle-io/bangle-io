@@ -16,6 +16,7 @@ import {
 } from '@bangle.io/prosemirror-plugins';
 import {
   displayNameForAsset,
+  type ExternalFileChangeEvent,
   type FileSystemService,
   type NavigationService,
   type StoredMarkdownAsset,
@@ -158,6 +159,20 @@ export class PmEditorService
     ReturnType<typeof markdownLoader>
   >();
 
+  private handledExternalChangeSequence = 0;
+  /**
+   * wsPaths with an external-sync pass in flight; the boolean marks whether
+   * another external event arrived meanwhile and the pass must run again.
+   */
+  private externalSyncRuns = new Map<string, boolean>();
+  /**
+   * One-shot markers telling `onDocChange` that the next doc change for this
+   * wsPath was produced by an external sync (not the user) and must not be
+   * re-saved — writing it back would bump the file's mtime and make sync
+   * tools churn on their own change.
+   */
+  private suppressSaveForExternalSync = new Set<string>();
+
   constructor(
     context: BaseServiceContext,
     private dependencies: {
@@ -272,6 +287,21 @@ export class PmEditorService
         }
       }),
     );
+    this.addCleanup(
+      this.store.sub(
+        this.dependencies.fileSystem.$externalFileChangeEvent,
+        () => {
+          const event = this.store.get(
+            this.dependencies.fileSystem.$externalFileChangeEvent,
+          );
+          if (!event || event.sequence <= this.handledExternalChangeSequence) {
+            return;
+          }
+          this.handledExternalChangeSequence = event.sequence;
+          this.onExternalFileChange(event);
+        },
+      ),
+    );
   }
 
   private handleFileRename(oldWsPath: string, newWsPath: string): void {
@@ -283,6 +313,136 @@ export class PmEditorService
       }
       this.editors.set(domNode, { ...editor, wsPath: newWsPath });
     }
+  }
+
+  /**
+   * Reacts to file changes made outside this app instance (sync tools, other
+   * editors) by refreshing mounted editors from disk — but only when doing so
+   * cannot lose user work; unsaved local edits always win over the external
+   * copy.
+   */
+  private onExternalFileChange(event: ExternalFileChangeEvent): void {
+    if (
+      event.type !== 'file-content-update' &&
+      event.type !== 'file-create' &&
+      event.type !== 'refresh'
+    ) {
+      return;
+    }
+    const targets = new Set<string>();
+    for (const editor of this.editors.values()) {
+      if (!('editorView' in editor)) {
+        continue;
+      }
+      if (event.type === 'refresh' || editor.wsPath === event.wsPath) {
+        targets.add(editor.wsPath);
+      }
+    }
+    for (const wsPath of targets) {
+      void this.syncEditorWithDisk(wsPath).catch((error) => {
+        this.logger.warn(
+          `Failed to refresh editor from external change: ${wsPath}`,
+          error,
+        );
+      });
+    }
+  }
+
+  private async syncEditorWithDisk(wsPath: string): Promise<void> {
+    const running = this.externalSyncRuns.get(wsPath);
+    if (running !== undefined) {
+      // A pass is already in flight — ask it to run once more so the final
+      // external state is not dropped.
+      this.externalSyncRuns.set(wsPath, true);
+      return;
+    }
+    this.externalSyncRuns.set(wsPath, false);
+    try {
+      do {
+        this.externalSyncRuns.set(wsPath, false);
+        await this.applyExternalContentIfClean(wsPath);
+      } while (this.externalSyncRuns.get(wsPath));
+    } finally {
+      this.externalSyncRuns.delete(wsPath);
+    }
+  }
+
+  private async applyExternalContentIfClean(wsPath: string): Promise<void> {
+    // Unsaved or failed-to-save local edits always win: replacing the doc
+    // would destroy content that exists nowhere else.
+    if (this.saveQueue.hasPendingOrFailed(wsPath)) {
+      return;
+    }
+    const views: EditorView[] = [];
+    for (const editor of this.editors.values()) {
+      if (
+        'editorView' in editor &&
+        editor.wsPath === wsPath &&
+        !editor.editorView.isDestroyed
+      ) {
+        views.push(editor.editorView);
+      }
+    }
+    if (views.length === 0) {
+      return;
+    }
+    const docsBefore = views.map((view) => view.state.doc);
+
+    const diskText = await this.dependencies.fileSystem.readFileAsText(wsPath);
+    if (diskText === undefined) {
+      return;
+    }
+    // The user may have typed while the read was in flight — re-check, and
+    // bail if any doc moved on. A newer watcher event re-triggers this pass.
+    if (this.saveQueue.hasPendingOrFailed(wsPath)) {
+      return;
+    }
+
+    views.forEach((view, index) => {
+      if (view.isDestroyed || view.state.doc !== docsBefore[index]) {
+        return;
+      }
+      const markdown = this.getMarkdown(view.state.schema);
+      let parsed: ReturnType<typeof markdown.parser.parse>;
+      try {
+        parsed = markdown.parser.parse(diskText);
+      } catch (error) {
+        // A parse failure must never touch the editor (or disk) — the user
+        // keeps their current view of the note.
+        this.logger.warn(
+          `Could not parse externally changed content for ${wsPath}`,
+          error,
+        );
+        return;
+      }
+      // Compare through the serializer so normalization differences (e.g.
+      // list markers) don't register as changes; equal content means this is
+      // our own echo or a no-op and the editor is left untouched.
+      const currentSerialized = markdown.serializer.serialize(view.state.doc);
+      const diskSerialized = markdown.serializer.serialize(parsed);
+      if (currentSerialized === diskSerialized) {
+        return;
+      }
+
+      const { state } = view;
+      const selectionHead = state.selection.head;
+      let tr = state.tr.replaceWith(0, state.doc.content.size, parsed.content);
+      tr = tr.setSelection(
+        TextSelection.near(
+          tr.doc.resolve(Math.min(selectionHead, tr.doc.content.size)),
+        ),
+      );
+      // External content is not a user edit: keep it out of the undo stack
+      // (undoing it locally would fight the sync tool).
+      tr = tr.setMeta('addToHistory', false);
+
+      this.suppressSaveForExternalSync.add(wsPath);
+      try {
+        view.dispatch(tr);
+      } finally {
+        this.suppressSaveForExternalSync.delete(wsPath);
+      }
+    });
   }
 
   mountEditor({
@@ -336,6 +496,12 @@ export class PmEditorService
         domNode,
         onDocChange: (doc) => {
           const currentWsPath = this.editors.get(domNode)?.wsPath ?? wsPath;
+          if (this.suppressSaveForExternalSync.has(currentWsPath)) {
+            // This doc change was produced by an external sync applying disk
+            // content to the editor — writing it back would be a no-op write
+            // that churns the file's mtime.
+            return;
+          }
           this.saveQueue.enqueue(currentWsPath, doc);
         },
         extensions: this.extensions,

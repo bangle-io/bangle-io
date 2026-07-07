@@ -1,4 +1,5 @@
 import {
+  EXTERNAL_FILE_CHANGE_SENDER_TAG,
   FILE_STORAGE_MAX_FILE_SIZE_BYTES,
   WORKSPACE_STORAGE_TYPE,
 } from '@bangle.io/constants';
@@ -409,5 +410,59 @@ describe('FileSystemService', () => {
     expect(deleteCountDuringWrites).toEqual([before, before, before]);
     // ...and all three land together afterwards.
     expect(store.get(fileSystem.$fileDeleteCount)).toBe(before + paths.length);
+  });
+});
+
+describe('external file change events', () => {
+  const EXTERNAL_SENDER = {
+    id: 'other-source',
+    tag: EXTERNAL_FILE_CHANGE_SENDER_TAG,
+  };
+
+  it('exposes externally tagged file events through $externalFileChangeEvent', async () => {
+    const controller = new AbortController();
+    const testEnv = createTestEnvironment({ controller });
+    const services = testEnv.instantiateAll();
+    await testEnv.mountAll();
+    const { store } = testEnv;
+    const fileSystem = services.fileSystem;
+
+    expect(store.get(fileSystem.$externalFileChangeEvent)).toBeUndefined();
+
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-content-update',
+      wsPath: 'some-ws:one.md',
+      sender: EXTERNAL_SENDER,
+    });
+    expect(store.get(fileSystem.$externalFileChangeEvent)).toEqual({
+      sequence: 1,
+      type: 'file-content-update',
+      wsPath: 'some-ws:one.md',
+    });
+    // External events also feed the regular counters so the file tree and
+    // indexes react to them like any other change.
+    expect(store.get(fileSystem.$fileContentUpdateCount)).toBe(1);
+
+    // Events from the app's own writes never mark the external atom.
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-content-update',
+      wsPath: 'some-ws:two.md',
+      sender: { id: 'bangle-app', tag: 'file-system' },
+    });
+    expect(store.get(fileSystem.$externalFileChangeEvent)).toMatchObject({
+      sequence: 1,
+      wsPath: 'some-ws:one.md',
+    });
+
+    // An externally tagged force-update maps to a coarse refresh.
+    testEnv.rootEmitter.emit('event::file:force-update', {
+      sender: EXTERNAL_SENDER,
+    });
+    expect(store.get(fileSystem.$externalFileChangeEvent)).toEqual({
+      sequence: 2,
+      type: 'refresh',
+    });
+
+    controller.abort();
   });
 });

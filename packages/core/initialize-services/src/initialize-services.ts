@@ -9,6 +9,7 @@ import {
   DEFAULT_EDITOR_ENGINE,
   EDITOR_ENGINE_QUERY_PARAM,
   type EditorEngineId,
+  EXTERNAL_FILE_CHANGE_SENDER_TAG,
   isEditorEngineId,
 } from '@bangle.io/constants';
 import type { EditorSaveCoordinator } from '@bangle.io/editor';
@@ -79,6 +80,58 @@ export function initializeServices(
     fileStorageNativeFs: slot(FileStorageNativeFs, () => ({
       onChange: (change) => {
         commonOpts.logger.info('File storage change:', change);
+      },
+      // External edits (sync tools, other editors) feed the same typed event
+      // pipeline as the app's own file mutations, so the file tree, indexes,
+      // and editors react to them identically — the sender tag is what lets
+      // consumers tell the two apart.
+      onExternalChange: (change) => {
+        commonOpts.logger.info('External file storage change:', change);
+        const sender = getEventSenderMetadata({
+          tag: EXTERNAL_FILE_CHANGE_SENDER_TAG,
+        });
+        switch (change.type) {
+          case 'create': {
+            rootEmitter.emit('event::file:update', {
+              type: 'file-create',
+              wsPath: change.wsPath,
+              sender,
+            });
+            break;
+          }
+          case 'update': {
+            rootEmitter.emit('event::file:update', {
+              type: 'file-content-update',
+              wsPath: change.wsPath,
+              sender,
+            });
+            break;
+          }
+          case 'delete': {
+            rootEmitter.emit('event::file:update', {
+              type: 'file-delete',
+              wsPath: change.wsPath,
+              sender,
+            });
+            break;
+          }
+          case 'rename': {
+            rootEmitter.emit('event::file:update', {
+              type: 'file-rename',
+              wsPath: change.newWsPath,
+              oldWsPath: change.oldWsPath,
+              sender,
+            });
+            break;
+          }
+          case 'refresh': {
+            rootEmitter.emit('event::file:force-update', { sender });
+            break;
+          }
+          default: {
+            const _exhaustiveCheck: never = change;
+          }
+        }
       },
       getRootDirHandle: async (wsName: string) => {
         assertIsDefined(getWorkspaceOps, 'getWorkspaceOps');
