@@ -1,5 +1,5 @@
 import { isAbortError } from '@bangle.io/mini-js-utils';
-import { expect, test } from 'vitest';
+import { expect, test, vi } from 'vitest';
 import { IndexedDBFileSystem } from '../indexed-db-fs';
 
 const toFile = (str: any) => {
@@ -107,6 +107,89 @@ test('rename throws error if new file already exists', async () => {
   ).rejects.toThrowErrorMatchingInlineSnapshot(
     `[IndexedDBFileSystemError: Cannot rename; File "ebola/two" already exists]`,
   );
+});
+
+test('rename keeps the source when the destination write fails', async () => {
+  const fs = new IndexedDBFileSystem();
+  await fs.writeFile('hola/hi', toFile('mydata'));
+
+  const writeSpy = vi
+    .spyOn(fs, 'writeFile')
+    .mockRejectedValueOnce(new Error('forced quota failure'));
+
+  await expect(fs.rename('hola/hi', 'ebola/two')).rejects.toThrow(
+    'forced quota failure',
+  );
+  writeSpy.mockRestore();
+
+  await expect((await fs.readFile('hola/hi')).text()).resolves.toBe('mydata');
+  await expect(fs.readFile('ebola/two')).rejects.toThrow('not found');
+});
+
+test('rename keeps the source when the destination copy is incomplete', async () => {
+  const fs = new IndexedDBFileSystem();
+  await fs.writeFile('hola/hi', toFile('mydata'));
+
+  const originalWriteFile = fs.writeFile.bind(fs);
+  const writeSpy = vi
+    .spyOn(fs, 'writeFile')
+    .mockImplementation(async (filePath) => {
+      // Simulate a partial write: the destination lands truncated.
+      await originalWriteFile(filePath, toFile('my'));
+    });
+
+  await expect(fs.rename('hola/hi', 'ebola/two')).rejects.toThrow(
+    'written incompletely',
+  );
+  writeSpy.mockRestore();
+
+  await expect((await fs.readFile('hola/hi')).text()).resolves.toBe('mydata');
+});
+
+test('rename keeps the source when the destination cannot be read back', async () => {
+  const fs = new IndexedDBFileSystem();
+  await fs.writeFile('hola/hi', toFile('mydata'));
+
+  const originalReadFile = fs.readFile.bind(fs);
+  let destinationReads = 0;
+  const readSpy = vi
+    .spyOn(fs, 'readFile')
+    .mockImplementation(async (filePath) => {
+      if (filePath === 'ebola/two') {
+        destinationReads += 1;
+        // First read is the pre-rename existence check (must report absent);
+        // second read is the post-write verification (forced failure).
+        if (destinationReads > 1) {
+          throw new Error('forced verification read failure');
+        }
+      }
+      return originalReadFile(filePath);
+    });
+
+  await expect(fs.rename('hola/hi', 'ebola/two')).rejects.toThrow(
+    'could not read back',
+  );
+  readSpy.mockRestore();
+
+  await expect((await fs.readFile('hola/hi')).text()).resolves.toBe('mydata');
+});
+
+test('rename surfaces unlink failures while both copies exist', async () => {
+  const fs = new IndexedDBFileSystem();
+  await fs.writeFile('hola/hi', toFile('mydata'));
+
+  const unlinkSpy = vi
+    .spyOn(fs, 'unlink')
+    .mockRejectedValueOnce(new Error('forced unlink failure'));
+
+  await expect(fs.rename('hola/hi', 'ebola/two')).rejects.toThrow(
+    'forced unlink failure',
+  );
+  unlinkSpy.mockRestore();
+
+  // Duplicate copies are the recoverable outcome; no content may be lost.
+  await expect((await fs.readFile('hola/hi')).text()).resolves.toBe('mydata');
+  await expect((await fs.readFile('ebola/two')).text()).resolves.toBe('mydata');
 });
 
 test('unlink', async () => {

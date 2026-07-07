@@ -38,6 +38,8 @@ export abstract class BaseFileSystem {
     dirPath: string,
     abortSignal?: AbortSignal,
   ): Promise<string[]>;
+  // should return a File
+  abstract readFile(filePath: string): Promise<File>;
   // should return a string
   abstract readFileAsText(filePath: string): Promise<string>;
   // Rename a file or directory
@@ -56,6 +58,41 @@ export abstract class BaseFileSystem {
   _verifyFilePath(filePath: string) {
     if (filePath.startsWith('/')) {
       throw Error('BabyFs: filePath must not start with /');
+    }
+  }
+
+  /**
+   * Rename is implemented as copy-then-delete in the browser backends. Before
+   * the source file is deleted, the destination must be read back and match
+   * the source, otherwise a partial or failed write would turn a rename into
+   * data loss. On verification failure the source file is kept and the caller
+   * receives the returned error; the destination may hold a partial copy that
+   * is safe to overwrite on retry.
+   */
+  protected async _verifyRenameDestination(
+    newFilePath: string,
+    sourceFile: File,
+    makeError: (opts: { message: string; cause?: unknown }) => Error,
+  ): Promise<void> {
+    let destination: File;
+    try {
+      destination = await this.readFile(newFilePath);
+    } catch (cause) {
+      throw makeError({
+        message: `Rename aborted: could not read back "${newFilePath}" after writing it. The original file was kept.`,
+        cause,
+      });
+    }
+    // Compare actual bytes read, not File.size: storage backends can return
+    // reconstructed File objects whose size metadata is not trustworthy.
+    const [destinationBytes, sourceBytes] = await Promise.all([
+      destination.arrayBuffer(),
+      sourceFile.arrayBuffer(),
+    ]);
+    if (destinationBytes.byteLength !== sourceBytes.byteLength) {
+      throw makeError({
+        message: `Rename aborted: "${newFilePath}" was written incompletely (${destinationBytes.byteLength} of ${sourceBytes.byteLength} bytes). The original file was kept.`,
+      });
     }
   }
 

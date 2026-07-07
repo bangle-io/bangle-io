@@ -11,6 +11,7 @@ import {
   FILE_NOT_FOUND_ERROR,
   NATIVE_BROWSER_PERMISSION_ERROR,
   NATIVE_BROWSER_USER_ABORTED_ERROR,
+  RENAME_VERIFICATION_FAILED_ERROR,
   UPSTREAM_ERROR,
 } from './error-codes';
 import {
@@ -184,6 +185,18 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
     }
 
     await this.writeFile(newFilePath, file);
+    // Rename is copy-then-delete: never delete the source until the
+    // destination copy is confirmed readable and complete.
+    await this._verifyRenameDestination(
+      newFilePath,
+      file,
+      ({ message, cause }) =>
+        new NativeBrowserFileSystemError({
+          message,
+          code: RENAME_VERIFICATION_FAILED_ERROR,
+          cause,
+        }),
+    );
     await this.unlink(oldFilePath);
   }
 
