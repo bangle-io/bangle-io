@@ -42,6 +42,8 @@
     "@bangle.io/browser-entry": "workspace:*",
     "@bangle.io/env-vars": "workspace:*",
     "@bangle.io/translations": "workspace:*",
+    "@bangle.io/wordgard-plus": "workspace:*",
+    "@bangle.io/wordgard-utils": "workspace:*",
     "@chromatic-com/storybook": "^5.2.1",
     "@storybook/addon-links": "^10.4.6",
     "@storybook/addon-onboarding": "^10.4.6",
@@ -51,6 +53,7 @@
     "@tailwindcss/postcss": "^4.3.2",
     "autoprefixer": "^10.5.2",
     "chromatic": "^18.0.1",
+    "jotai": "^2.20.1",
     "storybook": "^10.4.6",
     "vite": "^8.1.3"
   }

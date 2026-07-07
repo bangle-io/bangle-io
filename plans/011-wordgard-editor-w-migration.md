@@ -240,6 +240,49 @@ exists):
   editor-mount-time crashes (a React-render crash lands in the app error
   boundary as before).
 
+### M4-P0 complete — wordgard-plus scaffold + bridge
+
+- **`@bangle.io/wordgard-plus`** (js-lib, browser, bangle-free) scaffolded
+  with the bridge foundation, holding the "complement, never wrap"
+  invariants: every export is an extension for the consumer's own
+  `Wordgard.create` config or a React component for the consumer's tree;
+  wordgard is consumed only via the `wordgard-utils` chokepoint (which grew
+  `editor`/`state`/`command`/`history`/schema-bundle re-exports).
+- **API adaptation discovered against the real 0.1.1 surface** (the plan
+  sketched `createEditorAtoms(wg)` / `useResolvedMenu(wg)` before the API
+  was checked): update hooks are config-time facets/plugins, not post-hoc
+  subscriptions on a live instance, so both bridges return
+  `{ atoms, extension }` and are fed by a `Wordgard.Plugin` (create seeds,
+  `update` syncs, `disconnect` clears focus). This is the Wordgard-idiomatic
+  shape and keeps the no-wrapping invariant by construction.
+- `createEditorAtoms({store, queries?})`: per-editor Jotai read atoms
+  (focused, selection summary, canUndo/canRedo via history depths —
+  gracefully false without the history extension — plus arbitrary
+  `(state) => boolean` queries for `listIsActive`-style predicates), every
+  write equality-guarded.
+- `createMenuAtoms({store, template?})` + `useResolvedMenu`: `Menu.resolve`
+  over the editor's own `Menu.Item.source` facet, projected to plain data
+  (label/icon/description with PhraseSet refs resolved, active/enabled,
+  `run()` dispatching through `Command.dispatch`), re-projected on
+  doc/selection changes plus item `updateFor` transactions, with deep
+  equality so the atom only notifies on visible change. No parallel menu
+  registry — 1p items from feature bundles render in React.
+- `reactTooltip` + `createTooltipHost` + `<TooltipHost>`: `Tooltip.View`s
+  whose DOM hosts a React subtree portaled from the consumer's tree
+  (context keeps flowing), mounted on `connect`, released on `disconnect`;
+  Wordgard owns geometry, React owns content, `@floating-ui/dom` stays out.
+- **Exit criterion met and verified live**: a Storybook story
+  (`tooling/storybook`, so wordgard-plus itself carries no storybook deps)
+  renders a React toolbar of resolved 1p menu items on a plain Wordgard
+  editor — exercised via playwright-cli: typing enables undo, toolbar
+  toggles strong (active state + bold output), block-style submenu shows
+  its active child as label, and a selection bubble demos the tooltip glue.
+- Unit specs (12, vitest + happy-dom — Wordgard runs headless there) cover
+  atom seeding/updates, equality guards, per-editor isolation, menu
+  projection + `run()` dispatch + notification suppression, and the tooltip
+  portal lifecycle including a real editor rendering a `Tooltip.show`
+  tooltip.
+
 - **Coordination rule with plan 012 (markdown feature parity):** every
   012 construct changes what a note's bytes mean, so each 012 milestone
   must either land the Wordgard `MarkdownSpec` + BOTH_ENGINES corpus
@@ -898,13 +941,14 @@ including checking a task with the mouse.
 The floating/menu surfaces land as wordgard-plus modules composed by
 editor-w (see the "Floating UI" and wordgard-plus architecture sections):
 
-- *M4-P0 — package scaffold + bridge:* `createEditorAtoms(wg)` (one
-  updateListener → per-editor Jotai atoms with equality guards),
-  `useResolvedMenu` (`Menu.resolve` over the `Menu.Item.source` facet),
-  and the `<TooltipHost>` React-portal glue for `Tooltip.View`s. Exit:
-  a story/demo page shows a toolbar of resolved 1p menu items rendered
-  in React, updating live, on a plain Wordgard setup with zero Bangle
-  imports.
+- *M4-P0 — package scaffold + bridge — DONE:* `createEditorAtoms` (one
+  editor plugin → per-editor Jotai atoms with equality guards),
+  `createMenuAtoms`/`useResolvedMenu` (`Menu.resolve` over the
+  `Menu.Item.source` facet), and the `<TooltipHost>` React-portal glue
+  for `Tooltip.View`s. Exit (met): a story/demo page shows a toolbar of
+  resolved 1p menu items rendered in React, updating live, on a plain
+  Wordgard setup with zero Bangle imports (see "M4-P0 complete" above,
+  including the config-time-extension API adaptation).
 - *M4-P1 — selection toolbar* (parity: `inline-selection-menu`): state
   field + `Tooltip.show` extension, React toolbar over the resolved
   inline menu group. Keyboard accessible; e2e-covered.
