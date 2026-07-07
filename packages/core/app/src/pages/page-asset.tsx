@@ -34,6 +34,7 @@ type AssetState =
 export function PageAsset() {
   const { fileSystem, navigation, workspaceState } = useCoreServices();
   const routeInfo = useAtomValue(navigation.$routeInfo);
+  const routeWsName = useAtomValue(navigation.$wsName);
   const currentWsName = useAtomValue(workspaceState.$currentWsName);
   const currentWsFilePath = useAtomValue(workspaceState.$currentWsFilePath);
   const routeFilePath =
@@ -125,7 +126,7 @@ export function PageAsset() {
         <AppHeader />
         <PageContentContainer>
           <ContentSection hasPadding>
-            <WorkspaceNotFoundView wsName={navigation.resolveAtoms().wsName} />
+            <WorkspaceNotFoundView wsName={routeWsName} />
           </ContentSection>
         </PageContentContainer>
       </>
