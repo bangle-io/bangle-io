@@ -1,4 +1,5 @@
 import {
+  Button,
   cn,
   DropdownMenu,
   DropdownMenuContent,
@@ -77,6 +78,16 @@ export type AppSidebarProps = {
   onOpenFile: (relativePath: string) => void;
   showNoteFilesOnly: boolean;
   onShowNoteFilesOnlyChange: (showNoteFilesOnly: boolean) => void;
+  /**
+   * When set, renders a recoverable error notice above the file tree, e.g.
+   * after a failed workspace file scan. The tree below keeps showing the last
+   * known files.
+   */
+  fileTreeNotice?: {
+    message: string;
+    retryLabel: string;
+    onRetry: () => void;
+  };
   footerChildren?: React.ReactNode;
   footerTitle?: string;
   footerSubtitle?: string;
@@ -197,6 +208,7 @@ export function AppSidebar({
   onOpenFile,
   showNoteFilesOnly,
   onShowNoteFilesOnlyChange,
+  fileTreeNotice,
   footerChildren,
   footerTitle,
   footerSubtitle,
@@ -282,6 +294,22 @@ export function AppSidebar({
             {t.app.components.appSidebar.filesLabel}
           </SidebarGroupLabel>
           <SidebarGroupContent className="flex min-h-0 flex-1 flex-col overflow-hidden">
+            {fileTreeNotice && (
+              <div
+                role="alert"
+                className="mx-2 mb-1 flex flex-col gap-1.5 rounded-md border border-destructive/40 bg-destructive/10 px-2.5 py-2 text-destructive text-xs"
+              >
+                <span>{fileTreeNotice.message}</span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-6 w-fit px-2 text-xs"
+                  onClick={() => fileTreeNotice.onRetry()}
+                >
+                  {fileTreeNotice.retryLabel}
+                </Button>
+              </div>
+            )}
             <PierreFileTree
               activePaths={activeFilePaths}
               filePaths={filePaths}

@@ -595,6 +595,9 @@ export const t = {
         noWorkspaceSelectedSubtitle: 'Click to select a workspace',
         mobileTitle: 'Sidebar',
         mobileDescription: 'Navigate workspaces, notes, and app actions.',
+        fileTreeErrorMessage:
+          'Could not refresh the file list. Showing the last known files.',
+        fileTreeErrorRetry: 'Retry',
       },
       breadcrumb: {
         moreSr: 'More',

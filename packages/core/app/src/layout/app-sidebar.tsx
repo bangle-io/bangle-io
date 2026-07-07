@@ -45,6 +45,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   const activeWsPaths = useAtomValue(workspaceState.$activeWsPaths);
   const wsPaths = useAtomValue(workspaceState.$wsPaths);
   const noteWsPaths = useAtomValue(workspaceState.$noteWsPaths);
+  const fileTreeListState = useAtomValue(workspaceState.$fileTreeListState);
 
   const getActionsForEntry = useMemo(
     () =>
@@ -389,6 +390,21 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             'ui',
           );
         }}
+        fileTreeNotice={
+          fileTreeListState.status === 'error'
+            ? {
+                message: t.app.components.appSidebar.fileTreeErrorMessage,
+                retryLabel: t.app.components.appSidebar.fileTreeErrorRetry,
+                onRetry: () => {
+                  commandDispatcher.dispatch(
+                    'command::ws:refresh-file-tree',
+                    null,
+                    'ui',
+                  );
+                },
+              }
+            : undefined
+        }
         activeFilePaths={activeWsPaths.map((wsPath) => wsPath.path)}
         commandButtonClassName="desktop-titlebar-no-drag"
         showNoteFilesOnly={showNoteFilesOnly}

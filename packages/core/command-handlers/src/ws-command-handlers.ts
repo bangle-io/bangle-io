@@ -461,6 +461,10 @@ export const wsCommandHandlers = [
     navigation.goWorkspace();
   }),
 
+  c('command::ws:refresh-file-tree', ({ fileSystem }) => {
+    fileSystem.refreshFileTree();
+  }),
+
   c(
     'command::ws:clone-note',
     async ({ workspaceState, fileSystem, navigation }, _args, key) => {

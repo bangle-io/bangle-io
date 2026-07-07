@@ -517,6 +517,90 @@ describe('WorkspaceStateService file tree updates', () => {
     ).not.toContain(ignoredWsPath);
   });
 
+  it('preserves the last known file tree when a rescan fails', async () => {
+    const { services, store } = await setupWorkspaceStateService({
+      controller,
+    });
+    const pathsBeforeFailure = services.workspaceState
+      .resolveAtoms()
+      .wsPaths.map((path) => path.wsPath);
+    expect(pathsBeforeFailure.length).toBeGreaterThan(0);
+
+    let failListCalls = 0;
+    const originalListWorkspaceFiles =
+      services.fileSystem.listWorkspaceFiles.bind(services.fileSystem);
+    const listSpy = vi
+      .spyOn(services.fileSystem, 'listWorkspaceFiles')
+      .mockImplementation(async () => {
+        failListCalls += 1;
+        throw new Error('forced transient list failure');
+      });
+
+    store.set(services.fileSystem.$fileForceUpdateCount, (count) => count + 1);
+    await vi.waitUntil(() => failListCalls > 0);
+
+    await vi.waitUntil(() => {
+      return (
+        store.get(services.workspaceState.$fileTreeListState).status === 'error'
+      );
+    });
+
+    expect(
+      services.workspaceState.resolveAtoms().wsPaths.map((path) => path.wsPath),
+    ).toEqual(pathsBeforeFailure);
+    // The routed note must stay resolvable: a failed scan is not absence.
+    expect(services.workspaceState.resolveAtoms().currentWsPath?.wsPath).toBe(
+      TARGET,
+    );
+
+    // Retry through the recovery path and confirm the error state clears.
+    listSpy.mockImplementation(originalListWorkspaceFiles);
+    services.fileSystem.refreshFileTree();
+
+    await vi.waitUntil(() => {
+      return (
+        store.get(services.workspaceState.$fileTreeListState).status === 'ok'
+      );
+    });
+    expect(
+      services.workspaceState.resolveAtoms().wsPaths.map((path) => path.wsPath),
+    ).toEqual(pathsBeforeFailure);
+  });
+
+  it('does not leak a previous workspace tree when listing the next workspace fails', async () => {
+    const { services, store } = await setupWorkspaceStateService({
+      controller,
+    });
+    const otherWsName = 'other-ws';
+    await services.workspaceOps.createWorkspaceInfo({
+      name: otherWsName,
+      type: WORKSPACE_STORAGE_TYPE.Memory,
+      metadata: {},
+    });
+
+    const originalListWorkspaceFiles =
+      services.fileSystem.listWorkspaceFiles.bind(services.fileSystem);
+    vi.spyOn(services.fileSystem, 'listWorkspaceFiles').mockImplementation(
+      async (wsName, abortSignal) => {
+        if (wsName === otherWsName) {
+          throw new Error('forced list failure while switching workspaces');
+        }
+        return originalListWorkspaceFiles(wsName, abortSignal);
+      },
+    );
+
+    services.navigation.goWorkspace(otherWsName);
+
+    await vi.waitUntil(() => {
+      return (
+        store.get(services.workspaceState.$fileTreeListState).status === 'error'
+      );
+    });
+
+    // Never present workspace A's files as workspace B's tree.
+    expect(services.workspaceState.resolveAtoms().wsPaths).toEqual([]);
+  });
+
   it('does not expose ignored Markdown files returned by storage scans', async () => {
     const { services, store } = await setupWorkspaceStateService({
       controller,
