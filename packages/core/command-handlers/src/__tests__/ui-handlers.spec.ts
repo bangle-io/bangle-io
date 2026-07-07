@@ -633,6 +633,7 @@ describe('UI command handlers', () => {
       vi.spyOn(services.workspaceOps, 'getWorkspaceMetadata').mockResolvedValue(
         {
           rootDirHandle: {
+            kind: 'directory',
             requestPermission: vi.fn().mockResolvedValue('granted'),
           },
         } as any,

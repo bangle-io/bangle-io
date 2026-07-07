@@ -1,8 +1,8 @@
+import { throwAppError } from '@bangle.io/base-utils';
 import {
   isFileSystemDirectoryHandle,
-  requestNativeBrowserFSPermission,
-} from '@bangle.io/baby-fs';
-import { throwAppError } from '@bangle.io/base-utils';
+  requestPermission,
+} from '@bangle.io/native-fs';
 import { toast } from '@bangle.io/ui-components';
 import { Briefcase, Trash2 } from 'lucide-react';
 import { c, getCtx } from '../helper';
@@ -157,7 +157,7 @@ export const workspaceManagementHandlers = [
         };
 
         const onContinue = async () => {
-          const granted = await requestNativeBrowserFSPermission(rootDirHandle);
+          const granted = await requestPermission(rootDirHandle, 'readwrite');
 
           if (!granted) {
             onNotGranted();

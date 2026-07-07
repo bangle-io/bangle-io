@@ -1,7 +1,7 @@
-import { pickADirectory, supportsNativeBrowserFs } from '@bangle.io/baby-fs';
 import { throwAppError } from '@bangle.io/base-utils';
 import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
+import { pickDirectory, supportsNativeFs } from '@bangle.io/native-fs';
 import { CreateWorkspaceDialog as UICreateWorkspaceDialog } from '@bangle.io/ui-components';
 import { WsPath } from '@bangle.io/ws-path';
 import { useAtom } from 'jotai';
@@ -85,12 +85,12 @@ export function CreateWorkspaceDialog() {
           type: WORKSPACE_STORAGE_TYPE.NativeFS,
           title: t.app.dialogs.createWorkspace.nativeFsTitle,
           description: t.app.dialogs.createWorkspace.nativeFsDescription,
-          disabled: !supportsNativeBrowserFs(),
+          disabled: !supportsNativeFs(),
         },
       ]}
       onDirectoryPick={async () => {
         try {
-          const dirHandle = await pickADirectory();
+          const dirHandle = await pickDirectory({ id: 'bangle-workspace' });
           return { type: 'success', dirHandle };
         } catch (error) {
           if (!(error instanceof Error)) {

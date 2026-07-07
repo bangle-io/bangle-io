@@ -28,7 +28,6 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/base-utils": "workspace:*",
     "@bangle.io/browser-utils": "workspace:*",
     "@bangle.io/color-scheme-manager": "workspace:*",

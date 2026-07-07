@@ -94,9 +94,6 @@ importers:
 
   packages/core/app:
     dependencies:
-      '@bangle.io/baby-fs':
-        specifier: workspace:*
-        version: link:../../js-lib/baby-fs
       '@bangle.io/base-utils':
         specifier: workspace:*
         version: link:../../shared/base-utils
@@ -121,6 +118,9 @@ importers:
       '@bangle.io/logger':
         specifier: workspace:*
         version: link:../../js-lib/logger
+      '@bangle.io/native-fs':
+        specifier: workspace:*
+        version: link:../../js-lib/native-fs
       '@bangle.io/omni-search':
         specifier: workspace:*
         version: link:../omni-search
@@ -164,9 +164,6 @@ importers:
 
   packages/core/command-handlers:
     dependencies:
-      '@bangle.io/baby-fs':
-        specifier: workspace:*
-        version: link:../../js-lib/baby-fs
       '@bangle.io/base-utils':
         specifier: workspace:*
         version: link:../../shared/base-utils
@@ -182,6 +179,9 @@ importers:
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
+      '@bangle.io/native-fs':
+        specifier: workspace:*
+        version: link:../../js-lib/native-fs
       '@bangle.io/service-core':
         specifier: workspace:*
         version: link:../service-core
@@ -320,9 +320,6 @@ importers:
 
   packages/core/initialize-services:
     dependencies:
-      '@bangle.io/baby-fs':
-        specifier: workspace:*
-        version: link:../../js-lib/baby-fs
       '@bangle.io/base-utils':
         specifier: workspace:*
         version: link:../../shared/base-utils
@@ -347,6 +344,9 @@ importers:
       '@bangle.io/editor-w':
         specifier: workspace:*
         version: link:../editor-w
+      '@bangle.io/native-fs':
+        specifier: workspace:*
+        version: link:../../js-lib/native-fs
       '@bangle.io/poor-mans-di':
         specifier: workspace:*
         version: link:../../js-lib/poor-mans-di
@@ -393,9 +393,6 @@ importers:
 
   packages/core/service-core:
     dependencies:
-      '@bangle.io/baby-fs':
-        specifier: workspace:*
-        version: link:../../js-lib/baby-fs
       '@bangle.io/base-utils':
         specifier: workspace:*
         version: link:../../shared/base-utils
@@ -540,6 +537,12 @@ importers:
 
   packages/js-lib/mini-js-utils: {}
 
+  packages/js-lib/native-fs:
+    dependencies:
+      '@bangle.io/mini-js-utils':
+        specifier: workspace:*
+        version: link:../mini-js-utils
+
   packages/js-lib/poor-mans-di:
     devDependencies:
       '@bangle.io/mini-js-utils':
@@ -631,6 +634,9 @@ importers:
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
+      '@bangle.io/native-fs':
+        specifier: workspace:*
+        version: link:../../js-lib/native-fs
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types

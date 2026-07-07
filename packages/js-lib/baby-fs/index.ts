@@ -7,8 +7,6 @@ export {
   DIRECTORY_NOT_FOUND_ERROR,
   FILE_ALREADY_EXISTS_ERROR,
   FILE_NOT_FOUND_ERROR,
-  NATIVE_BROWSER_PERMISSION_ERROR,
-  NATIVE_BROWSER_USER_ABORTED_ERROR,
   NOT_ALLOWED_ERROR,
   UPSTREAM_ERROR,
 } from './error-codes';
@@ -17,21 +15,4 @@ export type {
   IndexedDBFileSystemSchema,
 } from './indexed-db-fs';
 export { IndexedDBFileSystem, IndexedDBFileSystemError } from './indexed-db-fs';
-export {
-  NativeBrowserFileSystem,
-  NativeBrowserFileSystemError,
-  pickADirectory,
-  requestNativeBrowserFSPermission,
-  supportsNativeBrowserFs,
-} from './native-browser-fs';
-export type {
-  FileSystemHandlePermissionDescriptor,
-  RecurseDirResult,
-} from './native-browser-fs-helpers';
-export {
-  createFile,
-  hasPermission,
-  isFileSystemDirectoryHandle,
-  readFileAsText,
-  recurseDirHandle,
-} from './native-browser-fs-helpers';
+export { readFileAsText } from './read-file-as-text';

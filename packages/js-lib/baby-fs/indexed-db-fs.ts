@@ -12,7 +12,7 @@ import {
   RENAME_VERIFICATION_FAILED_ERROR,
   UPSTREAM_ERROR,
 } from './error-codes';
-import { readFileAsText as readFileAsTextHelper } from './native-browser-fs-helpers';
+import { readFileAsText as readFileAsTextHelper } from './read-file-as-text';
 
 function catchUpstream<T>(idbPromise: Promise<T>, errorMessage: string) {
   return idbPromise.catch((_error) => {

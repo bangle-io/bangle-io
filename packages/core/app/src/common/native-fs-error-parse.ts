@@ -1,8 +1,4 @@
-import {
-  BaseFileSystemError,
-  NATIVE_BROWSER_PERMISSION_ERROR,
-  NATIVE_BROWSER_USER_ABORTED_ERROR,
-} from '@bangle.io/baby-fs';
+import { isNativeFsError, NATIVE_FS_ERROR_CODE } from '@bangle.io/native-fs';
 import type { DirectoryPickResult } from '@bangle.io/ui-components';
 
 const ERROR_TYPES = {
@@ -36,18 +32,14 @@ const ERROR_MESSAGES: Record<ErrorType, { title: string; message: string }> = {
 export function nativeFsErrorParse(error: Error): DirectoryPickResult {
   let errorType: ErrorType;
 
-  if (
-    error instanceof Error &&
-    error.message.toLowerCase().includes('user activation is required')
-  ) {
+  if (isNativeFsError(error, NATIVE_FS_ERROR_CODE.activationRequired)) {
     errorType = ERROR_TYPES.CLICKED_TOO_SOON;
   } else if (
-    error instanceof BaseFileSystemError &&
-    (error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
-      error.code === NATIVE_BROWSER_USER_ABORTED_ERROR)
+    isNativeFsError(error, NATIVE_FS_ERROR_CODE.permissionDenied) ||
+    isNativeFsError(error, NATIVE_FS_ERROR_CODE.userAborted)
   ) {
     errorType = ERROR_TYPES.WORKSPACE_AUTH_REJECTED;
-  } else if (error instanceof BaseFileSystemError) {
+  } else if (isNativeFsError(error)) {
     errorType = ERROR_TYPES.ERROR_PICKING_DIRECTORY;
   } else {
     errorType = ERROR_TYPES.UNKNOWN;
