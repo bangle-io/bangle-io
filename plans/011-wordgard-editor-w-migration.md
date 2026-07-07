@@ -178,9 +178,16 @@ exists):
   - The inline token's own `content` is kept in sync when the marker is
     sliced off (it used to go stale), and the emptied text child is
     removed.
-- Still open in M1 scope: moving the table markdown-it plugin
-  (`banger-editor/table/table-markdown.ts`) into the shared layer and adding
-  Wordgard table specs when the second engine needs table parity (M3).
+- **Table syntax now lives in the shared layer too:** the GFM table
+  markdown-it plugin (enable `table` + the `<br>`-in-cell → hardbreak
+  rule) moved from `banger-editor/table/table-markdown.ts` into
+  `@bangle.io/markdown-syntax` as the opt-in `tableTokenizer` (same
+  posture as `wikiLinkTokenizer` — deliberately NOT part of the base
+  tokenizer, because an engine without table handling must not receive
+  table tokens or table notes would fail to parse; a tokenizer test pins
+  that invariant). The PM table extension consumes it; the Wordgard codec
+  adopts it with table specs in M3. That closes M1 entirely except for
+  the M3-scheduled Wordgard table specs themselves.
 
 ## Guiding principles
 

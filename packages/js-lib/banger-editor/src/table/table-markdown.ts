@@ -1,3 +1,4 @@
+import { tableTokenizer } from '@bangle.io/markdown-syntax';
 import type { MarkdownSerializerState } from 'prosemirror-markdown';
 import type { CollectionType } from '../common';
 import type { PMNode } from '../pm';
@@ -49,69 +50,11 @@ export function tableMarkdown(): CollectionType['markdown'] {
         },
       },
     },
-    tokenizerPlugins: [
-      (md) => {
-        md.enable('table');
-        // GFM cells hold line breaks as literal <br>. The tokenizer runs
-        // with html disabled, so <br> arrives as plain text; convert it to
-        // hardbreak tokens, but only inside table cells so <br> text in
-        // normal paragraphs keeps round-tripping as text.
-        //
-        // This must run before 'text_join': at that point escaped (\<br>)
-        // and entity (&lt;br&gt;) forms are still separate 'text_special'
-        // tokens, so matching only 'text' tokens converts exactly the raw
-        // occurrences and leaves intentional literals alone.
-        md.core.ruler.before('text_join', 'table-cell-br', (state) => {
-          let cellDepth = 0;
-          for (const token of state.tokens) {
-            if (token.type === 'th_open' || token.type === 'td_open') {
-              cellDepth++;
-            } else if (token.type === 'th_close' || token.type === 'td_close') {
-              cellDepth--;
-            } else if (
-              cellDepth > 0 &&
-              token.type === 'inline' &&
-              token.children
-            ) {
-              token.children = splitBrIntoHardbreaks(
-                token.children,
-                state.Token,
-              );
-            }
-          }
-        });
-      },
-    ],
+    // The GFM table token semantics (including <br>-in-cell handling) are
+    // engine-neutral and live in the shared syntax layer; this extension
+    // only opts the tokenizer into them.
+    tokenizerPlugins: [tableTokenizer],
   };
-}
-
-const CELL_BR_RE = /<br\s*\/?>/i;
-
-function splitBrIntoHardbreaks<
-  T extends { type: string; content: string; level: number },
->(children: T[], TokenCtor: new (type: string, tag: string, nesting: 0) => T) {
-  const result: T[] = [];
-  for (const child of children) {
-    if (child.type !== 'text' || !CELL_BR_RE.test(child.content)) {
-      result.push(child);
-      continue;
-    }
-    const parts = child.content.split(new RegExp(CELL_BR_RE.source, 'gi'));
-    parts.forEach((part, index) => {
-      if (part) {
-        const text = new TokenCtor('text', '', 0);
-        text.content = part;
-        text.level = child.level;
-        result.push(text);
-      }
-      if (index < parts.length - 1) {
-        const br = new TokenCtor('hardbreak', 'br', 0);
-        br.level = child.level;
-        result.push(br);
-      }
-    });
-  }
-  return result;
 }
 
 function alignFromToken(style: string | null): TableCellAlign | null {
