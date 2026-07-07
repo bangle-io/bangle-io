@@ -159,6 +159,25 @@ exists):
   normalization contracts) passes byte-identically through both engines
   headlessly, plus serialize-only constructed-doc tests ported from
   prosemirror-markdown's suite for shapes parsing cannot produce.
+- **List/task syntax now lives in the shared layer:** the markdown-it list
+  plugin (kind stamping + GFM task detection) is vendored into
+  `@bangle.io/markdown-syntax` (`list-syntax.ts`, replacing the
+  `@bangle.dev/pm-markdown/list-markdown` import), with exported
+  `LIST_KIND_ATTR`/`TASK_CHECKED_ATTR` constants both codecs now use. The
+  rewrite dropped dead behavior no consumer read (a `tight` attr that was
+  always `"false"`, an ordered `order` attr both engines ignore, an HTML
+  renderer override) and fixed real gaps, each pinned by tokenizer tests
+  and corpus fixtures:
+  - Empty tasks (`- [ ]` / `- [x]`) are now recognized, matching GitHub;
+    canonical form `- [ ] `.
+  - `1. [ ] x` (task inside an ordered list — GFM-legal) used to CRASH the
+    Wordgard codec (`OrderedList cannot contain child TaskItem`), i.e. a
+    legal note would fail to load. `taskListContentOverrides` now admits
+    the transient shape and serialization normalizes to `- [ ] x`,
+    byte-identical with the PM engine.
+  - The inline token's own `content` is kept in sync when the marker is
+    sliced off (it used to go stale), and the emptied text child is
+    removed.
 - Still open in M1 scope: moving the table markdown-it plugin
   (`banger-editor/table/table-markdown.ts`) into the shared layer and adding
   Wordgard table specs when the second engine needs table parity (M3).
@@ -501,6 +520,38 @@ with `Elt` shapes*; plugin props become *facets*; transaction meta becomes
 *annotations/effects*; feature flags inside the editor become
 *compartments*; DOM work batches on RAF, so bulk operations dispatch one
 coherent transaction.
+
+### Lists: Wordgard's built-in nested model, NOT a flat-list port
+
+The PM engine uses `prosemirror-flat-list` (one flat `list` node with a
+`kind` attr) because PM's own nested `ul > li` stack made list manipulation
+genuinely painful — strict content expressions, lift/sink commands that
+drag unselected content along, and position surgery for every structural
+edit. Those are PM pains, and Wordgard was designed around them: loose
+content queries + corrections, multi-change specs addressed in original
+coordinates, and first-party `toggleList`/`splitTextblock`/`joinListItems`
+commands over the nested `BulletList`/`OrderedList`/`ListItem` model.
+
+Decision: editor-w stays on the built-in nested model. Porting a flat-list
+design would orphan us from Wordgard's 1p commands, menu buttons, input
+rules, and future upstream fixes — recreating on the Wordgard side the 3p
+coupling we're trying to leave behind on the PM side. The nested model is
+also what the markdown codec is built on: markdown-it's token nesting maps
+onto it 1:1 (the flat model is precisely why the PM engine needs the
+list_item-only parse with `ignore`d wrapper tokens and the
+`flatListToMarkdown` reconstruction). Flat-list features we consciously do
+NOT carry: toggle lists (never had markdown serialization; effectively
+unused) and arbitrary same-line indentation (unrepresentable in markdown —
+supporting it would fight the fidelity invariant). Documents are stored as
+markdown, so no `migrateDocJSON`-style model migration exists between the
+engines.
+
+Known 1p gaps to budget in M2/M3, all extension-level work (not model
+work): list indent/dedent commands (Wordgard core ships none; build on
+`wrapBlockRange`/`unwrapBlock` with flat-list's only-move-the-selected-range
+semantics as the behavior bar), the `[ ] ` task input rule, checkbox click
+handling via `TaskItem` tag decorations, and a toggle-checked command +
+keybinding.
 
 ## Milestones
 

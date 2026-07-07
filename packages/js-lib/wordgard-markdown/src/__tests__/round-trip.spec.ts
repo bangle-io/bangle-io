@@ -133,6 +133,20 @@ describe('createNoteMarkdownCodec parse shape', () => {
     expect(heading && !heading.isLeaf ? heading.tag.param : undefined).toBe(3);
   });
 
+  it('a task item inside an ordered list parses without failing', () => {
+    // GFM allows `1. [ ] x`; the schema admits the transient
+    // OrderedList > TaskItem shape (see `taskListContentOverrides`) so a
+    // legal note never turns into a load failure. Serialization normalizes
+    // the item back to a `- [ ]` bullet, matching the ProseMirror engine.
+    const doc = codec.parse('1. [ ] task');
+    const list = doc.content[0];
+    if (!list?.isPlot) throw new Error('expected a plot');
+    expect(list.tag.type.name).toBe('OrderedList');
+    const [item] = list.content;
+    expect(item?.isPlot && item.name).toBe('TaskItem');
+    expect(codec.serialize(doc)).toBe('- [ ] task');
+  });
+
   it('task item checked state is stored as the plot tag param', () => {
     const doc = codec.parse('- [x] done\n\n- [ ] not done');
     const list = doc.content[0];

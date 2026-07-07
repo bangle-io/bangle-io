@@ -28,7 +28,7 @@ import {
   Strikethrough,
   Strong,
   TaskItem,
-  taskListContentOverride,
+  taskListContentOverrides,
   WikiLink,
   WikiLinkLabel,
 } from '@bangle.io/wordgard-utils';
@@ -168,7 +168,7 @@ export function createNoteMarkdownCodec(): MarkdownCodec {
     OrderedList,
     ListItem,
     TaskItem,
-    taskListContentOverride,
+    ...taskListContentOverrides,
     HorizontalRule,
     LineBreak,
     Image,

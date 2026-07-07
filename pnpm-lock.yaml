@@ -490,9 +490,6 @@ importers:
 
   packages/js-lib/markdown-syntax:
     dependencies:
-      '@bangle.dev/pm-markdown':
-        specifier: 2.0.0-alpha.18
-        version: 2.0.0-alpha.18(prosemirror-markdown@1.13.4)
       markdown-it:
         specifier: 14.3.0
         version: 14.3.0

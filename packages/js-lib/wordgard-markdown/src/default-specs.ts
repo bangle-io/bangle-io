@@ -7,7 +7,10 @@
 // parity with the ProseMirror engine's output is the whole point of this
 // file — see the package-level round-trip corpus.
 import {
+  LIST_KIND_ATTR,
+  type ListKind,
   serializeWikiLinkAttrs,
+  TASK_CHECKED_ATTR,
   type WikiLinkAttrs,
 } from '@bangle.io/markdown-syntax';
 import {
@@ -44,10 +47,10 @@ import type { MarkdownSerializerState } from './state';
 
 /**
  * Quote helper for link/image titles, matching `banger-editor`'s local
- * `quote()` (not `MarkdownSerializerState.quote`, which uses PM's
- * `""`/`''`/`()` fallback chain) — this is the byte-parity target since the
- * ProseMirror engine's own markdown specs define and use this exact
- * function for titles.
+ * `quote()` (deliberately not prosemirror-markdown's `""`/`''`/`()`
+ * fallback chain) — this is the byte-parity target since the ProseMirror
+ * engine's own markdown specs define and use this exact function for
+ * titles.
  */
 function quote(str: string): string {
   const wrap = str.includes('"') ? "'" : '"';
@@ -278,11 +281,18 @@ const textSpec: NodeMarkdownSpec = {
 // gives us for free.
 // ---------------------------------------------------------------------------
 
-function listItemMarker(node: Plot): string {
+/**
+ * A task item's marker always wins over the enclosing list's own marker:
+ * GFM allows `1. [ ] x` (a task inside an ordered list), and both engines
+ * normalize that shape to a `- [ ]` bullet on serialize — the ProseMirror
+ * flat-list model does this implicitly (item kind beats wrapper kind), so
+ * byte parity requires the same here.
+ */
+function listItemMarker(node: Plot, parentIsOrdered: boolean): string {
   if (node.tag.is(TaskItem)) {
     return node.tag.param ? '- [x]' : '- [ ]';
   }
-  return '-';
+  return parentIsOrdered ? '1.' : '-';
 }
 
 function serializeListItem(
@@ -331,11 +341,16 @@ function serializeList(
   node: Plot,
   level: number,
 ): void {
+  const parentIsOrdered = node.tag.is(OrderedList);
   for (let i = 0; i < node.content.length; i++) {
     const child = node.content[i];
     if (!child?.isPlot) continue;
-    const marker = node.tag.is(OrderedList) ? '1.' : listItemMarker(child);
-    serializeListItem(state, child, level, marker);
+    serializeListItem(
+      state,
+      child,
+      level,
+      listItemMarker(child, parentIsOrdered),
+    );
   }
 }
 
@@ -365,8 +380,8 @@ const orderedListSpec: NodeMarkdownSpec = {
   },
 };
 
-function listItemKind(tok: Token): 'task' | 'ordered' | 'bullet' {
-  const kind = tok.attrGet('data-bangle-list-kind');
+function listItemKind(tok: Token): ListKind {
+  const kind = tok.attrGet(LIST_KIND_ATTR);
   return kind === 'task' || kind === 'ordered' ? kind : 'bullet';
 }
 
@@ -376,7 +391,7 @@ const listItemSpec: NodeMarkdownSpec = {
     list_item: {
       block: (tok) => {
         if (listItemKind(tok) === 'task') {
-          const checked = tok.attrGet('data-bangle-task-checked') === 'true';
+          const checked = tok.attrGet(TASK_CHECKED_ATTR) === 'true';
           return TaskItem.of(checked);
         }
         return ListItem;

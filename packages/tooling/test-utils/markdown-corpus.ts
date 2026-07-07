@@ -709,6 +709,57 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     markdown: '- [x] task **bold**',
     engines: BOTH_ENGINES,
   },
+  {
+    name: 'task item containing a link',
+    markdown: '- [ ] [a link](https://x)',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'empty unchecked task keeps its marker',
+    markdown: '- [ ]',
+    canonical: '- [ ] ',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'empty checked task keeps its marker',
+    markdown: '- [x]',
+    canonical: '- [x] ',
+    engines: BOTH_ENGINES,
+  },
+  {
+    // GFM recognizes task markers inside ordered lists; both engines
+    // normalize the item to a `- [ ]` bullet (the checkbox wins over the
+    // ordered marker). Before this was pinned, the Wordgard codec crashed
+    // on this input outright.
+    name: 'task marker inside an ordered list normalizes to a bullet task',
+    markdown: '1. [ ] task marker in ordered list',
+    canonical: '- [ ] task marker in ordered list',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'bracket without a following space is not a task marker',
+    markdown: '- [ ]no space after bracket',
+    canonical: '- \\[ \\]no space after bracket',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'bracket past the start of the item is not a task marker',
+    markdown: '- a [ ] mid-item marker',
+    canonical: '- a \\[ \\] mid-item marker',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'non-checkbox bracket content is not a task marker',
+    markdown: '- [y] not a checkbox',
+    canonical: '- \\[y\\] not a checkbox',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'escaped bracket is never a task marker',
+    markdown: '- \\[ ] escaped bracket',
+    canonical: '- \\[ \\] escaped bracket',
+    engines: BOTH_ENGINES,
+  },
   // A task item with a continuation paragraph has NO stable fixed point in
   // either engine: the `- [x] ` marker makes the continuation indent six
   // spaces, which CommonMark reads back as an indented code block. Both

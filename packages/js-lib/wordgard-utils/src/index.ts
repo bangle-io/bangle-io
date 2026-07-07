@@ -67,6 +67,6 @@ export {
   TableRow,
   Underline,
 } from 'wordgard/types';
-export { TaskItem, taskListContentOverride } from './task-item';
+export { TaskItem, taskListContentOverrides } from './task-item';
 export { ImageTitle, LinkTitle } from './title-marks';
 export { WikiLink, WikiLinkLabel } from './wiki-link';
