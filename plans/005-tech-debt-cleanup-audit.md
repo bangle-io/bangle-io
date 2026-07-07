@@ -4,7 +4,7 @@ status: active
 type: plan
 archived: false
 created: 2026-06-15
-updated: 2026-06-15
+updated: 2026-07-07
 owner: mixed
 related_prs: []
 related_issues: []
@@ -41,6 +41,38 @@ land before broader UI or tooling cleanup.
   error instead of leaving the mount promise silently pending. Failed load
   status and a same-node retry API are now exposed. Parse-failure isolation and
   the user-facing recovery view remain.
+- 2026-07-07 re-audit and cleanup pass:
+  - P0.3 verified complete on main: ws command handlers await storage
+    mutations before navigating, keep routes stable on failure, and
+    `ws-command-handlers.spec.ts` covers the ordering.
+  - P0.4 safe ordering landed: baby-fs rename now verifies the destination
+    bytes before deleting the source and throws
+    `RENAME_VERIFICATION_FAILED_ERROR` with cause; failure-point tests cover
+    both backends. Journaled pending-move records and startup recovery remain
+    follow-up.
+  - P0.5 done: `WorkspaceStateService` preserves the last known file tree on
+    same-workspace list failures, exposes `$fileTreeListState`, and the
+    sidebar shows a retry notice backed by `command::ws:refresh-file-tree`.
+  - P1.1 partially superseded: the shared golden corpus
+    (`test-utils/markdown-corpus.ts`) plus a load-time round-trip fidelity
+    gate in `PmEditorService` (warns when a note cannot round-trip; opening
+    never writes back) landed. Per-construct parity decisions live in plan
+    012.
+  - P2.1 and P2.2 verified already resolved on main: `@bangle.io/types` no
+    longer imports core services and no package-private `src` imports remain.
+  - P2.3 re-assessed: storage services now reach `FileSystemService` via a
+    config thunk resolved inside `instantiate()` and asserted before use;
+    full constructor DI conflicts with environment-configurable storage
+    slots, so the current shape is accepted.
+  - P3.1 verified already resolved: no duplicate component trees remain.
+  - P3.2 done for render paths: remaining render-time `resolveAtoms()` reads
+    replaced with `useAtomValue` subscriptions.
+  - P3.5 done: sidebar file-tree actions extracted to
+    `useSidebarFileActions`, footer menu to `SidebarFooterMenu`; AppSidebar
+    is a thin composition layer.
+  - P4.1 done: GitHub Actions runs `pnpm run build`.
+  - P4.5 partially done: `noFloatingPromises` is now a Biome error repo-wide;
+    `noExplicitAny` (163 sites) and `noUnusedVariables` remain warnings.
 - Findings are grouped by priority and theme below.
 
 ## Scope
