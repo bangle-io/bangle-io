@@ -152,44 +152,26 @@ async function dragTreeItemOntoEditor(
   await page.mouse.up();
 }
 
-// Stores a real (decodable) 1x1 PNG directly in the browser workspace so the
-// asset page can render an actual `<img>` rather than a broken-media fallback.
-async function writeStoredPng(
+// Bytes of a valid (decodable) 1x1 PNG, so the asset page renders an actual
+// `<img>` rather than a broken-media fallback.
+const PNG_1X1_BYTES = [
+  137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0, 1, 0,
+  0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196, 137, 0, 0, 0, 13, 73, 68, 65, 84, 120,
+  156, 99, 248, 15, 4, 0, 9, 251, 3, 253, 167, 186, 48, 251, 0, 0, 0, 0, 73, 69,
+  78, 68, 174, 66, 96, 130,
+];
+
+function writeStoredPng(
   page: Page,
   workspaceName: string,
   relativePath: string,
 ) {
-  await page.evaluate(
-    async ({ workspace, filePath }) => {
-      const pngBytes = Uint8Array.from([
-        137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0,
-        1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196, 137, 0, 0, 0, 13, 73, 68, 65,
-        84, 120, 156, 99, 248, 15, 4, 0, 9, 251, 3, 253, 167, 186, 48, 251, 0,
-        0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130,
-      ]);
-      const request = indexedDB.open('baby-idb-db-3');
-      const database = await new Promise<IDBDatabase>((resolve, reject) => {
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-      });
-      await new Promise<void>((resolve, reject) => {
-        const transaction = database.transaction(
-          'baby-idb-db-store-3',
-          'readwrite',
-        );
-        transaction.oncomplete = () => resolve();
-        transaction.onerror = () => reject(transaction.error);
-        transaction.onabort = () => reject(transaction.error);
-        transaction.objectStore('baby-idb-db-store-3').put(
-          new File([pngBytes], filePath.split('/').at(-1) ?? filePath, {
-            type: 'image/png',
-          }),
-          `${workspace}/${filePath}`,
-        );
-      });
-      database.close();
-    },
-    { workspace: workspaceName, filePath: relativePath },
+  return writeStoredFile(
+    page,
+    workspaceName,
+    relativePath,
+    PNG_1X1_BYTES,
+    'image/png',
   );
 }
 
@@ -722,5 +704,80 @@ test('renders a text asset inline when the asset URL is opened directly', async 
   await expect(page.getByRole('link', { name: 'Download' })).toHaveAttribute(
     'download',
     'config.json',
+  );
+});
+
+test('does not execute script from a PDF asset stored with a mismatched MIME type', async ({
+  page,
+}, testInfo) => {
+  const workspaceName = `asset-pdf-safety-${testInfo.workerIndex}-${Date.now()}`;
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'source',
+  });
+  // A file saved as .pdf but whose bytes/MIME are HTML with a script. A blob:
+  // URL inherits the app origin, so if the preview iframe honored the stored
+  // MIME type this would run as same-origin script with access to every
+  // workspace's IndexedDB.
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'assets/trap.pdf',
+    '<script>window.top.__assetPreviewXssRan = true;</script><h1>pwned</h1>',
+    'text/html',
+  );
+
+  await page.goto(
+    `/ws#route=asset&wsPath=${encodeURIComponent(
+      `${workspaceName}:assets/trap.pdf`,
+    )}`,
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  await expect(page.getByRole('heading', { name: 'trap.pdf' })).toBeVisible();
+  // The preview iframe is present (rendered as application/pdf), but the
+  // disguised HTML must never execute. Give any injected script ample time to
+  // run so a false-negative can't slip through, then assert it did not.
+  await expect(page.locator('iframe[title="trap.pdf"]')).toBeVisible();
+  await page.waitForTimeout(750);
+  const xssRan = await page.evaluate(
+    () =>
+      (window as unknown as { __assetPreviewXssRan?: boolean })
+        .__assetPreviewXssRan === true,
+  );
+  expect(xssRan).toBe(false);
+  await expect(page.getByRole('link', { name: 'Download' })).toBeVisible();
+});
+
+test('falls back to download for a binary file misnamed with a text extension', async ({
+  page,
+}, testInfo) => {
+  const workspaceName = `asset-binary-text-${testInfo.workerIndex}-${Date.now()}`;
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'source',
+  });
+  // A NUL byte marks these bytes as non-text; the viewer must not render them
+  // as mojibake in a <pre>.
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'data/blob.txt',
+    [0, 1, 2, 3, 255, 254, 0, 66, 67],
+    'application/octet-stream',
+  );
+
+  await page.goto(
+    `/ws#route=asset&wsPath=${encodeURIComponent(
+      `${workspaceName}:data/blob.txt`,
+    )}`,
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  await expect(page.getByRole('heading', { name: 'blob.txt' })).toBeVisible();
+  await expect(page.locator('pre')).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Download' })).toHaveAttribute(
+    'download',
+    'blob.txt',
   );
 });

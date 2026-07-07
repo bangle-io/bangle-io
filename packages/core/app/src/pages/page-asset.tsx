@@ -53,13 +53,16 @@ export function PageAsset() {
       return;
     }
 
+    const controller = new AbortController();
     let objectUrl: string | undefined;
     let disposed = false;
     setState({ status: 'loading' });
 
     void (async () => {
       try {
-        const file = await fileSystem.readFile(wsPath);
+        const file = await fileSystem.readFile(wsPath, {
+          signal: controller.signal,
+        });
         if (disposed) {
           return;
         }
@@ -72,9 +75,17 @@ export function PageAsset() {
         let textContent: string | undefined;
         if (kind === 'text') {
           if (file.size <= TEXT_PREVIEW_MAX_BYTES) {
-            textContent = await file.text();
+            const decoded = await file.text();
             if (disposed) {
               return;
+            }
+            if (decoded.includes('\u0000')) {
+              // A NUL byte means the bytes are not really text (a binary file
+              // misnamed with a text extension); fall back to download rather
+              // than render replacement-character mojibake.
+              kind = undefined;
+            } else {
+              textContent = decoded;
             }
           } else {
             // Too large to render as a single string; offer download instead.
@@ -82,7 +93,15 @@ export function PageAsset() {
           }
         }
 
-        objectUrl = URL.createObjectURL(file);
+        // Serve PDFs under an explicit application/pdf type. A stored file can
+        // carry an attacker-controlled MIME type (e.g. a text/html file dragged
+        // in from another page and saved as ".pdf"); since a blob: URL inherits
+        // the app origin, letting the iframe honor that type would execute
+        // same-origin script. The other kinds render in inert sinks
+        // (img/video/audio) or as escaped text, so their bytes are used as-is.
+        const previewSource =
+          kind === 'pdf' ? new Blob([file], { type: 'application/pdf' }) : file;
+        objectUrl = URL.createObjectURL(previewSource);
         setState({ status: 'ready', fileName, objectUrl, kind, textContent });
       } catch {
         if (!disposed) {
@@ -93,6 +112,7 @@ export function PageAsset() {
 
     return () => {
       disposed = true;
+      controller.abort();
       if (objectUrl) {
         URL.revokeObjectURL(objectUrl);
       }
