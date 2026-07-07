@@ -1,0 +1,12 @@
+# Keep the Docker build context small and reproducible. The image rebuilds
+# dependencies and the front-end from source, so local artifacts are excluded.
+**/node_modules
+**/dist
+**/build
+**/.turbo
+**/coverage
+**/playwright-report
+**/test-results
+.git
+.claude/worktrees
+*.log

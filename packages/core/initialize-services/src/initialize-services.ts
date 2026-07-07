@@ -6,7 +6,12 @@ import {
 } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import type { EnabledBangleAppCommand } from '@bangle.io/commands';
+import { DESKTOP_REMOTE_FS_SERVER_URL } from '@bangle.io/constants';
 import { slot } from '@bangle.io/poor-mans-di';
+import {
+  createHttpRemoteClient,
+  createRemoteClientFromRouter,
+} from '@bangle.io/remote-file-sync';
 import type { WorkspaceOpsService } from '@bangle.io/service-core';
 import {
   BrowserErrorHandlerService,
@@ -14,6 +19,7 @@ import {
   BrowserRouterService,
   FileStorageIndexedDB,
   FileStorageNativeFs,
+  FileStorageRemote,
   HashStrategy,
   IdbDatabaseService,
 } from '@bangle.io/service-platform';
@@ -80,6 +86,52 @@ export function initializeServices(
         return { handle: rootDirHandle };
       },
     })),
+    fileStorageRemote: slot(FileStorageRemote, () => ({
+      onChange: (change) => {
+        commonOpts.logger.info('File storage change:', change);
+      },
+      // Build an HTTP client from the workspace's stored connection details.
+      // An empty `serverUrl` targets the same origin (bundled/Docker mode).
+      getClient: async (wsName: string) => {
+        assertIsDefined(getWorkspaceOps, 'getWorkspaceOps');
+        const metadata = await getWorkspaceOps().getWorkspaceMetadata(wsName);
+        const serverUrl =
+          typeof metadata.serverUrl === 'string'
+            ? metadata.serverUrl
+            : undefined;
+        const token =
+          typeof metadata.token === 'string' && metadata.token.length > 0
+            ? metadata.token
+            : undefined;
+
+        if (serverUrl === undefined) {
+          throwAppError(
+            'error::workspace:invalid-metadata',
+            `Remote workspace ${wsName} is missing a server URL`,
+            { wsName },
+          );
+        }
+
+        // On Electron, a workspace pointed at the desktop sentinel talks to the
+        // main-process file store over IPC instead of HTTP.
+        if (serverUrl === DESKTOP_REMOTE_FS_SERVER_URL) {
+          const bridge =
+            typeof window !== 'undefined'
+              ? window.bangleDesktop?.remoteFs
+              : undefined;
+          if (!bridge) {
+            throwAppError(
+              'error::remote-storage:request-failed',
+              'Desktop file backend is unavailable',
+              { wsName, code: 'network', reason: 'desktop bridge missing' },
+            );
+          }
+          return createRemoteClientFromRouter((req) => bridge.request(req));
+        }
+
+        return createHttpRemoteClient({ baseUrl: serverUrl, token });
+      },
+    })),
     router: slot(BrowserRouterService, () => ({
       strategy: new HashStrategy(),
       basePath: '/ws',
@@ -94,7 +146,11 @@ export function initializeServices(
     themeManager: theme,
     shortcutTarget: document,
     platformServices: browserPlatformServices,
-    fileStorageSlots: ['fileStorageIdb', 'fileStorageNativeFs'],
+    fileStorageSlots: [
+      'fileStorageIdb',
+      'fileStorageNativeFs',
+      'fileStorageRemote',
+    ],
   });
 
   getWorkspaceOps = () => setup.getServices().workspaceOps;

@@ -1,6 +1,9 @@
 import { pickADirectory, supportsNativeBrowserFs } from '@bangle.io/baby-fs';
 import { throwAppError } from '@bangle.io/base-utils';
-import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
+import {
+  DESKTOP_REMOTE_FS_SERVER_URL,
+  WORKSPACE_STORAGE_TYPE,
+} from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import { CreateWorkspaceDialog as UICreateWorkspaceDialog } from '@bangle.io/ui-components';
 import { WsPath } from '@bangle.io/ws-path';
@@ -14,10 +17,21 @@ export function CreateWorkspaceDialog() {
   const [openWsDialog, setOpenWsDialog] = useAtom(
     coreServices.workbenchState.$openWsDialog,
   );
+  // Default the remote workspace URL to the most useful value for the current
+  // host: the desktop sentinel on Electron, this same origin when the app is
+  // served by a bundled file server, or empty for a hosted (BYO-server) app.
+  const desktopBridge =
+    typeof window !== 'undefined' ? window.bangleDesktop?.remoteFs : undefined;
+  const defaultRemoteServerUrl = desktopBridge
+    ? DESKTOP_REMOTE_FS_SERVER_URL
+    : typeof window !== 'undefined' && window.__BANGLE_REMOTE__?.bundled
+      ? window.location.origin
+      : '';
   return (
     <UICreateWorkspaceDialog
       open={openWsDialog}
       onOpenChange={setOpenWsDialog}
+      defaultRemoteServerUrl={defaultRemoteServerUrl}
       validateWorkspace={({ name: wsName }) => {
         const result = WsPath.safeFromParts(wsName, '');
         if (result.ok) {
@@ -31,7 +45,29 @@ export function CreateWorkspaceDialog() {
             t.app.dialogs.createWorkspace.invalidName,
         };
       }}
-      onDone={async ({ name: wsName, type, dirHandle }) => {
+      onDone={async ({ name: wsName, type, dirHandle, serverUrl, token }) => {
+        if (type === WORKSPACE_STORAGE_TYPE.Remote) {
+          if (!serverUrl) {
+            throwAppError(
+              'error::workspace:invalid-metadata',
+              `Server URL for ${wsName} is required`,
+              { wsName },
+            );
+          }
+
+          await coreServices.workspaceOps.createWorkspaceInfo({
+            name: wsName,
+            type,
+            metadata: {
+              serverUrl,
+              ...(token ? { token } : {}),
+            },
+          });
+          setOpenWsDialog(false);
+          coreServices.navigation.goWorkspace(wsName);
+          return;
+        }
+
         if (type === WORKSPACE_STORAGE_TYPE.NativeFS) {
           if (!dirHandle) {
             throwAppError(
@@ -86,6 +122,11 @@ export function CreateWorkspaceDialog() {
           title: t.app.dialogs.createWorkspace.nativeFsTitle,
           description: t.app.dialogs.createWorkspace.nativeFsDescription,
           disabled: !supportsNativeBrowserFs(),
+        },
+        {
+          type: WORKSPACE_STORAGE_TYPE.Remote,
+          title: t.app.dialogs.createWorkspace.remoteTitle,
+          description: t.app.dialogs.createWorkspace.remoteDescription,
         },
       ]}
       onDirectoryPick={async () => {

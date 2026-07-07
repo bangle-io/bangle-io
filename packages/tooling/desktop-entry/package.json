@@ -45,6 +45,9 @@
     "test": "vitest run src --configLoader runner"
   },
   "dependencies": {
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/remote-file-server": "workspace:*",
+    "@bangle.io/remote-file-sync": "workspace:*",
     "electron": "43.0.0",
     "electron-updater": "^6.8.9",
     "vite": "^8.1.3"

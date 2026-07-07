@@ -62,6 +62,9 @@ export const WORKSPACE_STORAGE_TYPE = {
   PrivateFS: 'privatefs',
   Github: 'github-storage',
   Memory: 'memory',
+  // A file store hosted on a user-provided HTTP server (bring-your-own-server)
+  // or a bundled/Electron backend that speaks the same API.
+  Remote: 'remote',
 } as const;
 export type WorkspaceStorageType =
   (typeof WORKSPACE_STORAGE_TYPE)[keyof typeof WORKSPACE_STORAGE_TYPE];
@@ -69,6 +72,7 @@ export const FILE_STORAGE_MAX_FILE_SIZE_BYTES = {
   browser: 25 * 1024 * 1024,
   memory: 25 * 1024 * 1024,
   nativeFs: 250 * 1024 * 1024,
+  remote: 50 * 1024 * 1024,
 } as const;
 
 // Add all service names here
@@ -82,6 +86,7 @@ export const SERVICE_NAME = {
   fileStorageIndexedDBService: 'file-storage-indexeddb',
   fileStorageMemoryService: 'file-storage-memory',
   fileStorageNativeFsService: 'file-storage-nativefs',
+  fileStorageRemoteService: 'file-storage-remote',
   fileSystemService: 'file-system-service',
   idbDatabaseService: 'idb-database',
   memoryDatabaseService: 'memory-database',
@@ -100,6 +105,12 @@ export const SERVICE_NAME = {
   pmEditorService: 'pmEditorService',
 } as const;
 export const APP_MAIN_CONTENT_PADDING = 'px-4 py-4 pt-0 md:px-6';
+
+// Electron desktop: the renderer talks to a file store hosted in the main
+// process over IPC. A `remote` workspace whose serverUrl is this sentinel uses
+// the IPC transport instead of HTTP.
+export const DESKTOP_REMOTE_FS_IPC_CHANNEL = 'bangle:remote-fs';
+export const DESKTOP_REMOTE_FS_SERVER_URL = 'bangle-desktop://local';
 export type ServiceName = (typeof SERVICE_NAME)[keyof typeof SERVICE_NAME];
 export { browserHistoryStateEvents } from './browser-history-events';
 export { commandExcludedServices, commandKeyToContext } from './command';

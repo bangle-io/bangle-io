@@ -34,6 +34,8 @@
   "dependencies": {
     "@bangle.io/browser-entry": "workspace:*",
     "@bangle.io/env-vars": "workspace:*",
+    "@bangle.io/remote-file-server": "workspace:*",
+    "@bangle.io/remote-file-sync": "workspace:*",
     "@bangle.io/storybook": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@playwright/experimental-ct-react": "^1.61.1",

@@ -1,0 +1,54 @@
+{
+  "name": "@bangle.io/remote-file-server",
+  "description": "Reference Node.js server implementing the Bangle.io remote file-storage HTTP API.",
+  "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/tooling/remote-file-server"
+  },
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "homepage": "https://bangle.io",
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "banglePackageConfig": {
+    "env": "nodejs",
+    "kind": "app",
+    "allowedRuntimeImports": [
+      "node:fs",
+      "node:fs/promises",
+      "node:http",
+      "node:path",
+      "node:url",
+      "node:process"
+    ]
+  },
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "bin": {
+    "bangle-remote-file-server": "src/cli.ts"
+  },
+  "scripts": {
+    "start": "tsx src/cli.ts",
+    "build": "esbuild src/cli.ts --bundle --platform=node --format=esm --target=node22 --outfile=dist/server.mjs",
+    "test": "vitest run src --configLoader runner"
+  },
+  "dependencies": {
+    "@bangle.io/remote-file-sync": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "esbuild": "0.28.1",
+    "tsx": "^4.22.5"
+  }
+}
