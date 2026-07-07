@@ -1,6 +1,7 @@
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { commandHandlers } from '@bangle.io/command-handlers';
 import { getEnabledCommands } from '@bangle.io/commands';
+import { PmEditorService } from '@bangle.io/editor';
 import { slot } from '@bangle.io/poor-mans-di';
 import {
   FileStorageMemory,
@@ -11,7 +12,9 @@ import {
 } from '@bangle.io/service-platform/testing';
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import { describe, expect, test, vi } from 'vitest';
-import { coreServiceMap, createServiceSetup } from '../service-setup';
+import { coreServiceClasses, createServiceSetup } from '../service-setup';
+
+const coreServiceSlotIds = [...Object.keys(coreServiceClasses), 'editorEngine'];
 
 const themeManager = {
   currentPreference: 'system',
@@ -46,6 +49,7 @@ function makeSetup({
       router: MemoryRouterService,
     },
     fileStorageSlots: ['fileStorageMemory'],
+    editorEngine: PmEditorService,
   });
 
   return { setup, controller };
@@ -86,6 +90,7 @@ describe('createServiceSetup', () => {
         })),
       },
       fileStorageSlots: [],
+      editorEngine: PmEditorService,
     });
 
     controller.abort();
@@ -115,6 +120,7 @@ describe('createServiceSetup', () => {
         router: MemoryRouterService,
       },
       fileStorageSlots: [],
+      editorEngine: PmEditorService,
     });
 
     controller.abort();
@@ -128,7 +134,7 @@ describe('createServiceSetup', () => {
 
     // The core aggregate exposes exactly the canonical core slots.
     expect(Object.keys(coreServices).sort()).toEqual(
-      Object.keys(coreServiceMap).sort(),
+      [...coreServiceSlotIds].sort(),
     );
 
     await setup.mountAll();
@@ -136,9 +142,7 @@ describe('createServiceSetup', () => {
     const description = setup.describe();
     expect(description.failedSlot).toBeUndefined();
     expect(description.mountedCount).toBe(description.services.length);
-    expect(description.services.length).toBe(
-      Object.keys(coreServiceMap).length + 5,
-    );
+    expect(description.services.length).toBe(coreServiceSlotIds.length + 5);
 
     // File storage slots are keyed by their workspace type for FileSystemService.
     expect(services.fileStorageMemory.mounted).toBe(true);
@@ -173,6 +177,7 @@ describe('createServiceSetup', () => {
         router: MemoryRouterService,
       },
       fileStorageSlots: ['fileStorageMemory', 'fileStorageMemoryDuplicate'],
+      editorEngine: PmEditorService,
     });
 
     expect(() => setup.instantiate()).toThrow(
@@ -229,6 +234,7 @@ describe('createServiceSetup', () => {
         router: MemoryRouterService,
       },
       fileStorageSlots: ['fileStorageMemory'],
+      editorEngine: PmEditorService,
       coreConfigOverrides: {
         commandRegistry: (base) => ({
           ...base,

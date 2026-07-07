@@ -34,6 +34,16 @@ export function arrayEqual<T>(a: T[], b: T[]) {
   return true;
 }
 
+/**
+ * The sync-database entry key `atomStorage` writes a persisted atom under.
+ * Exposed so bootstrap code can locate an atom's entry without a service
+ * instance (e.g. reading the editor-engine preference before the container
+ * exists).
+ */
+export function atomStorageKey(serviceName: string, key: string): string {
+  return `${serviceName}:${key}`;
+}
+
 // should be used for simple UI config that needs to be persisted
 export function atomStorage<TValue>({
   serviceName,
@@ -50,7 +60,7 @@ export function atomStorage<TValue>({
   validator: Validator<TValue>;
   logger: Logger;
 }) {
-  const storageKey = `${serviceName}:${inputKey}`;
+  const storageKey = atomStorageKey(serviceName, inputKey);
 
   const atom = atomWithStorage<TValue>(
     storageKey,

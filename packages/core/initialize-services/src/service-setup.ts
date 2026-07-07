@@ -1,8 +1,7 @@
 import { assertIsDefined } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import type { EnabledBangleAppCommand } from '@bangle.io/commands';
-import type { CoreServices } from '@bangle.io/context';
-import { PmEditorService } from '@bangle.io/editor';
+import type { CoreServices, EditorEngineContract } from '@bangle.io/context';
 import {
   type ConstructorConfig,
   type ConstructorToInstance,
@@ -46,11 +45,15 @@ type AnyAppServiceConstructor = ServiceConstructor<
 type AppServiceMapEntry = ServiceMapEntry<BaseServiceCommonOptions>;
 
 /**
- * The canonical core service classes. Every composition root (browser and
- * test) gets exactly these core services; `createServiceSetup` pairs each
- * class with its config, so callers only ever supply platform slots.
+ * The canonical core service classes, minus the editor engine. Every
+ * composition root (browser and test) gets exactly these core services;
+ * `createServiceSetup` pairs each class with its config, so callers supply
+ * only platform slots plus the `editorEngine` class. The engine is the one
+ * deliberately open slot: each composition root decides which implementation
+ * powers the editing surface (plans/011), and production dynamic-imports only
+ * the active engine so the inactive stack never loads.
  */
-export const coreServiceMap = {
+export const coreServiceClasses = {
   commandDispatcher: CommandDispatchService,
   commandRegistry: CommandRegistryService,
   fileSystem: FileSystemService,
@@ -63,14 +66,28 @@ export const coreServiceMap = {
   workspaceOps: WorkspaceOpsService,
   workspaceState: WorkspaceStateService,
   userActivityService: UserActivityService,
-  // The active editor engine. This is the single line that decides which
-  // engine implementation powers the app; consumers only ever see the
-  // `EditorEngineContract` slot. When a second engine lands (plans/011),
-  // selection becomes conditional here, at the composition root.
-  editorEngine: PmEditorService,
-} satisfies Record<CoreServiceSlotId, AnyAppServiceConstructor>;
+} satisfies Record<
+  Exclude<CoreServiceSlotId, 'editorEngine'>,
+  AnyAppServiceConstructor
+>;
 
-type CoreServiceClassMap = typeof coreServiceMap;
+type CoreServiceClassMap = typeof coreServiceClasses;
+
+/**
+ * A registrable editor engine: a config-less service class whose instances
+ * satisfy `EditorEngineContract` and whose dependencies resolve within the
+ * core slots — an engine talks to the platform through core services, never
+ * through platform slots directly (that also keeps the platform-requirements
+ * derivation below independent of the chosen engine).
+ */
+export type EditorEngineServiceConstructor = (new (
+  context: { ctx: BaseServiceCommonOptions; serviceContext: ServiceContext },
+  // The concrete dependency shape is the engine's own business; the DI
+  // container resolves it from the class's `static deps` slot ids.
+  dependencies: any,
+) => EditorEngineContract) & {
+  readonly deps: readonly CoreServiceSlotId[];
+};
 
 /**
  * A platform service map supplies environment-specific slots only; core slot
@@ -166,15 +183,19 @@ type _AssertValidCoreGraph = AssertTrue<
     : false
 >;
 
-/** Core slots that carry a config and therefore accept a config override. */
+/**
+ * Core slots that carry a config and therefore accept a config override.
+ * The editor engine is excluded by construction: engines are config-less
+ * classes (see `EditorEngineServiceConstructor`).
+ */
 type ConfiguredCoreSlotId = {
-  [K in CoreServiceSlotId]: CoreServiceClassMap[K] extends new (
+  [K in keyof CoreServiceClassMap]: CoreServiceClassMap[K] extends new (
     context: any,
     dependencies: any,
   ) => any
     ? never
     : K;
-}[CoreServiceSlotId];
+}[keyof CoreServiceClassMap];
 
 /**
  * Per-slot decorators over the canonical core configs, applied at the single
@@ -226,6 +247,14 @@ export type ServiceSetupOptions<TPlatformMap extends PlatformServiceMap> = {
    * keyed by their `workspaceType` and served to `FileSystemService`.
    */
   fileStorageSlots: ReadonlyArray<FileStorageSlot<TPlatformMap>>;
+  /**
+   * The editor engine powering the editing surface. Consumers only ever see
+   * the `EditorEngineContract` slot; the class registered here is the single
+   * point deciding which engine a tab runs (plans/011). The browser
+   * composition root resolves it from the persisted preference via dynamic
+   * import; tests pass an engine class directly.
+   */
+  editorEngine: EditorEngineServiceConstructor;
   /** Optional per-slot decorators over the canonical core configs. */
   coreConfigOverrides?: CoreConfigOverrides;
 };
@@ -243,9 +272,12 @@ function isFileStorageService(
 /**
  * The core service instances, independent of any platform map. Core config
  * factories are typed against this so their closures cannot create a type
- * cycle with the combined service map.
+ * cycle with the combined service map. The engine instance is only ever the
+ * contract — concrete engine types stay inside their own package.
  */
-type CoreInstances = ConstructorToInstance<CoreServiceClassMap>;
+type CoreInstances = ConstructorToInstance<CoreServiceClassMap> & {
+  editorEngine: EditorEngineContract;
+};
 
 function toCoreServices(s: CoreInstances): CoreServices {
   return {
@@ -284,6 +316,7 @@ export function createServiceSetup<
     themeManager,
     shortcutTarget,
     fileStorageSlots,
+    editorEngine,
     coreConfigOverrides,
   } = options;
   const platformServices: TPlatformMap = options.platformServices;
@@ -410,7 +443,7 @@ export function createServiceSetup<
         ),
       })),
     ),
-    editorEngine: slot(PmEditorService),
+    editorEngine,
   } satisfies Record<CoreServiceSlotId, AppServiceMapEntry>;
 
   // Core slots always win the join; the annotation drops any phantom core
@@ -422,7 +455,13 @@ export function createServiceSetup<
     platformServices,
     coreServiceSlots,
   );
-  type ServiceInstances = ConstructorToInstance<typeof serviceMap>;
+  // Instantiated per part (rather than over `typeof serviceMap`) so indexing
+  // a core slot resolves against the concrete core map instead of collapsing
+  // into a union with the generic platform map's entry type.
+  type ServiceInstances = ConstructorToInstance<
+    Omit<TPlatformMap, CoreServiceSlotId>
+  > &
+    ConstructorToInstance<typeof coreServiceSlots>;
 
   let services: ServiceInstances | undefined;
 

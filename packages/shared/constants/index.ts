@@ -58,6 +58,28 @@ export function isAssetLocationPreference(
     ASSET_LOCATION_PREFERENCES.includes(value as AssetLocationPreference)
   );
 }
+/**
+ * The editor engines that can power the note editing surface
+ * (see plans/011-wordgard-editor-w-migration.md). The persisted preference
+ * and every `EditorEngineContract.engineId` must be one of these.
+ */
+export const EDITOR_ENGINE_IDS = ['prosemirror', 'wordgard'] as const;
+export type EditorEngineId = (typeof EDITOR_ENGINE_IDS)[number];
+/** ProseMirror stays the default engine until the plans/011 M6 flip. */
+export const DEFAULT_EDITOR_ENGINE: EditorEngineId = 'prosemirror';
+export function isEditorEngineId(value: unknown): value is EditorEngineId {
+  return (
+    typeof value === 'string' &&
+    EDITOR_ENGINE_IDS.includes(value as EditorEngineId)
+  );
+}
+/**
+ * The `atomStorage` key under which `WorkbenchStateService` persists the
+ * engine preference. The composition root reads the same entry synchronously
+ * from the sync database before the service container exists.
+ */
+export const EDITOR_ENGINE_PREFERENCE_KEY = 'editor-engine';
+
 export const WORKSPACE_STORAGE_TYPE = {
   Help: 'helpfs',
   NativeFS: 'nativefs',
@@ -101,6 +123,7 @@ export const SERVICE_NAME = {
   workspaceService: 'workspace',
   workspaceStateService: 'workspace-state',
   pmEditorService: 'pmEditorService',
+  editorWService: 'editor-w',
 } as const;
 export const APP_MAIN_CONTENT_PADDING = 'px-4 py-4 pt-0 md:px-6';
 export type ServiceName = (typeof SERVICE_NAME)[keyof typeof SERVICE_NAME];

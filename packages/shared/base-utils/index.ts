@@ -47,6 +47,7 @@ export { getGithubUrl } from './github-bug-url';
 export {
   arrayEqual,
   atomStorage,
+  atomStorageKey,
   atomWithCompare,
   createAsyncAtom,
 } from './jotai';

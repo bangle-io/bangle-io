@@ -1,8 +1,20 @@
 import { throwAppError } from '@bangle.io/base-utils';
+import { EDITOR_ENGINE_IDS, isEditorEngineId } from '@bangle.io/constants';
 import { toast } from '@bangle.io/ui-components';
-import { Sun } from 'lucide-react';
+import { FlaskConical, Sun } from 'lucide-react';
 import { c, getCtx } from '../helper';
-import { readTextFromClipboard, writeTextToClipboard } from '../utils';
+import {
+  readTextFromClipboard,
+  waitForSaveQueueToDrain,
+  writeTextToClipboard,
+} from '../utils';
+
+/**
+ * How long the engine switch waits for in-flight saves before refusing.
+ * Healthy saves coalesce within milliseconds; anything still unsaved after
+ * this long is effectively a failed write that needs the user.
+ */
+const ENGINE_SWITCH_SAVE_DRAIN_TIMEOUT_MS = 5_000;
 
 export const basicOperationsHandlers = [
   c('command::ui:toggle-sidebar', ({ workbenchState }, _, key) => {
@@ -71,6 +83,51 @@ export const basicOperationsHandlers = [
   c('command::ui:reload-app', ({ workbenchState }) => {
     workbenchState.reloadUi();
   }),
+
+  c(
+    'command::ui:switch-editor-engine',
+    ({ workbenchState, editorEngine }, _, key) => {
+      const { store } = getCtx(key);
+      const currentEngine = store.get(workbenchState.$editorEngine);
+
+      store.set(workbenchState.$singleSelectDialog, () => {
+        return {
+          dialogId: 'dialog::switch-editor-engine-dialog',
+          title: t.app.dialogs.switchEditorEngine.title,
+          description: t.app.dialogs.switchEditorEngine.description,
+          searchPlaceholder: t.app.dialogs.switchEditorEngine.searchPlaceholder,
+          groupLabel: t.app.dialogs.switchEditorEngine.groupLabel,
+          emptyMessage: t.app.dialogs.switchEditorEngine.emptyMessage,
+          options: EDITOR_ENGINE_IDS.map((engineId) => ({
+            title: t.app.dialogs.switchEditorEngine.options[engineId],
+            id: engineId,
+            active: currentEngine === engineId,
+          })),
+          Icon: FlaskConical,
+          onSelect: (option) => {
+            if (!isEditorEngineId(option.id) || option.id === currentEngine) {
+              return;
+            }
+            const targetEngine = option.id;
+            // Switching is a reload; unsaved content must reach storage
+            // first, and a failed save must block the switch entirely.
+            void (async () => {
+              const drained = await waitForSaveQueueToDrain(
+                editorEngine,
+                ENGINE_SWITCH_SAVE_DRAIN_TIMEOUT_MS,
+              );
+              if (!drained) {
+                toast.error(t.app.toasts.editorEngineSwitchBlockedBySaves);
+                return;
+              }
+              store.set(workbenchState.$editorEngine, targetEngine);
+              workbenchState.reloadUi();
+            })();
+          },
+        };
+      });
+    },
+  ),
 
   c('command::ui:open-settings', ({ navigation }) => {
     navigation.goSettingsPage('settings-general');

@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-05
-updated: 2026-07-06
+updated: 2026-07-07
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/609
@@ -202,6 +202,52 @@ exists):
   closing-fence normalization, unclosed-fence stays a thematic break,
   mid-document `---` untouched) plus the reworked thematic-break
   fixtures are all BOTH_ENGINES.
+### M0b complete — the engine switch is live
+
+- **`@bangle.io/editor-w` stub** (`packages/core/editor-w`): `EditorWService`
+  implements `EditorEngineContract` with `engineId: 'wordgard'` and renders
+  the note's Markdown source **read-only** (no Wordgard code yet). The save
+  contract reports a permanently clean state, a missing note renders empty
+  without writing (mirrors PM), and a failed read shows an error state and
+  never writes. Its React surface carries a persistent "experimental
+  preview" notice with a one-click switch back.
+- **Persisted preference**: `WorkbenchStateService.$editorEngine`
+  (`atomStorage`, key from `EDITOR_ENGINE_PREFERENCE_KEY`, default
+  `prosemirror`, validated by `isEditorEngineId`). The composition root reads
+  the same sync-database localStorage entry synchronously before the
+  container exists (`initialize-services/editor-engine-preference.ts`,
+  composed from `atomStorageKey` + the sync-db's static `storageKeyFor` so
+  the read/write paths cannot drift — a spec pins the chain).
+- **Composition-root selection + code splitting**: `createServiceSetup` now
+  takes a required `editorEngine` class
+  (`EditorEngineServiceConstructor` — config-less, contract-implementing,
+  deps restricted to core slots); the browser root resolves the preference
+  and dynamic-imports only the chosen engine package, and
+  `EditorSurface` in `core/app` became the per-engine `React.lazy` switch,
+  so the inactive engine stack is neither downloaded nor parsed. Tests pass
+  `PmEditorService` statically.
+- **Switch command**: `command::ui:switch-editor-engine` (omni-search)
+  opens the standard single-select dialog ("ProseMirror (stable)" /
+  "Wordgard (experimental)"), waits for the save queue to drain
+  (`waitForSaveQueueToDrain`, 5s bound — a still-dirty queue means a failed
+  save), refuses with a toast in that case, else writes the preference and
+  triggers `event::app:reload-ui` (already cross-tab, so tabs converge).
+- **Boot guard** (`browser-entry`): if startup fails while a non-default
+  engine is selected, the preference is reset and the page reloads once;
+  after the reset a second failure falls through to the normal startup
+  error screen, so the guard cannot loop and the escape hatch lives outside
+  the failing engine.
+- **Coverage**: unit specs for the stub service (read-only, load-failure,
+  idempotent mount), the preference read/reset chain, the drain helper, and
+  the boot guard; `editor-engine-switch.e2e.ts` covers the full loop —
+  switch → wordgard renders raw markdown read-only → survives browser
+  reload → typing does nothing → switch back → note editable with no data
+  loss. The e2e keys on `data-editor-engine`.
+- Deferred (deliberately): migrating shared e2e helpers off `.ProseMirror`
+  onto a neutral hook (revisit when editor-w is writable in M2); a gate for
+  editor-mount-time crashes (the boot guard covers service setup + mount —
+  a React-render crash lands in the app error boundary as before).
+
 - **Coordination rule with plan 012 (markdown feature parity):** every
   012 construct changes what a note's bytes mean, so each 012 milestone
   must either land the Wordgard `MarkdownSpec` + BOTH_ENGINES corpus
@@ -820,13 +866,14 @@ stragglers onto the contract, `implements` check on `PmEditorService`,
 in the app layer. Exit (met): everything outside `core/editor` compiles
 against the contract only; zero behavior change for PM users.
 
-**M0b — Switch plumbing (lands with the editor-w stub)**
+**M0b — Switch plumbing (lands with the editor-w stub) — DONE**
 The persisted engine preference, the omni-search switch command,
 composition-root selection with dynamic import, and the boot guard — landed
 together with a stub editor-w package whose "editor" renders the note
 read-only (no Wordgard yet), so the switch is real and e2e-testable the day
-it exists. Exit: switching engines round-trips through reload on a real
-workspace; e2e covers the switch + fallback.
+it exists. Exit (met): switching engines round-trips through reload on a
+real workspace; e2e covers the switch + fallback (see "M0b complete"
+above).
 
 **M1 — `wordgard-markdown` + shared syntax + golden corpus**
 The shared markdown-it syntax layer is **done** — extracted as
@@ -1001,11 +1048,16 @@ None. M0 can start immediately.
 2. Scaffold `wordgard-utils` + `wordgard-markdown`, build the codec, add the
    golden corpus with both-engine contract tests: **done** (see "M1
    essentially complete" above).
-3. M0b next: stub `@bangle.io/editor-w` package + persisted engine
-   preference + omni-search switch command + composition-root selection +
-   boot guard + e2e switch coverage.
-4. Extract `editor-common` (save queue, load-status, `<Editor>` shell) when
-   editor-w first needs it (M2).
+3. M0b: **done** — stub `@bangle.io/editor-w`, persisted preference,
+   omni-search switch command, composition-root selection with dynamic
+   import, boot guard, and e2e switch coverage (see "M0b complete" above).
+4. M2 next: wire a real Wordgard editor into editor-w (schema assembly from
+   wordgard-utils bundles, history, keymaps, styles, `t`→PhraseSet bridge),
+   extract `editor-common` (save queue, load-status, `<Editor>` shell) when
+   editor-w first needs it, and bring the round-trip gate live (including
+   the strict-vs-normalizing policy decision). M4-P0 (wordgard-plus
+   scaffold + bridge) can proceed in parallel — it needs no editor-w
+   service.
 5. Table parity (M3): move `banger-editor/table/table-markdown.ts` into the
    shared layer, add Wordgard table specs, and flip the corpus table
    fixtures to both engines.

@@ -3,8 +3,15 @@ import './index.css';
 
 import { App } from '@bangle.io/app';
 import { ThemeManager } from '@bangle.io/color-scheme-manager';
-import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
-import { initializeServices } from '@bangle.io/initialize-services';
+import {
+  DEFAULT_EDITOR_ENGINE,
+  THEME_MANAGER_CONFIG,
+} from '@bangle.io/constants';
+import {
+  initializeServices,
+  readEditorEnginePreference,
+  resetEditorEnginePreference,
+} from '@bangle.io/initialize-services';
 import { Logger } from '@bangle.io/logger';
 import { createStore } from 'jotai';
 import React, { StrictMode } from 'react';
@@ -95,7 +102,37 @@ async function main(logger: Logger) {
 
 function handleStartupFailure(error: unknown, logger: Logger) {
   logger.error('Unable to start Bangle', error);
+  if (recoverFromExperimentalEngineFailure(logger)) {
+    return;
+  }
   renderStartupError(error);
+}
+
+/**
+ * Boot guard for the experimental editor engine (plans/011 M0b): if startup
+ * failed while a non-default engine was selected, reset the persisted
+ * preference and reload so the stable engine boots instead. An experimental
+ * engine must never be able to brick the app — and this escape hatch cannot
+ * live inside the thing that is broken. After the reset the preference reads
+ * as the default, so a second failure falls through to the error screen
+ * rather than looping.
+ */
+export function recoverFromExperimentalEngineFailure(
+  logger: Logger,
+  storage: Pick<Storage, 'getItem' | 'setItem'> = window.localStorage,
+  reload: () => void = () => window.location.reload(),
+): boolean {
+  if (readEditorEnginePreference(storage) === DEFAULT_EDITOR_ENGINE) {
+    return false;
+  }
+  if (!resetEditorEnginePreference(storage)) {
+    return false;
+  }
+  logger.error(
+    `Experimental editor engine failed to boot; falling back to "${DEFAULT_EDITOR_ENGINE}" and reloading`,
+  );
+  reload();
+  return true;
 }
 
 export function renderStartupError(error: unknown) {

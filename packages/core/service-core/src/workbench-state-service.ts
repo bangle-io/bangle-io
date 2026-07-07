@@ -9,7 +9,11 @@ import type {
   ThemeManager,
 } from '@bangle.io/color-scheme-manager';
 import {
+  DEFAULT_EDITOR_ENGINE,
+  EDITOR_ENGINE_PREFERENCE_KEY,
+  type EditorEngineId,
   isAssetLocationPreference,
+  isEditorEngineId,
   SERVICE_NAME,
   SIDEBAR_DEFAULT_WIDTH,
 } from '@bangle.io/constants';
@@ -33,6 +37,11 @@ type Route = 'omni-home' | 'omni-command' | 'omni-filtered';
 const AssetLocationPreferenceValidator = {
   validate: isAssetLocationPreference,
   typeName: 'asset-location-preference',
+};
+
+const EditorEngineIdValidator = {
+  validate: isEditorEngineId,
+  typeName: 'editor-engine-id',
 };
 
 function determineOmniSearchRoute(input: string, currentRoute: Route): Route {
@@ -78,6 +87,7 @@ export class WorkbenchStateService extends BaseService {
   private $_assetLocationPreference:
     | PrimitiveAtom<AssetLocationPreference>
     | undefined;
+  private $_editorEngine: PrimitiveAtom<EditorEngineId> | undefined;
 
   $openWsDialog = atom(false);
   $openOmniSearch = atom(false);
@@ -261,6 +271,26 @@ export class WorkbenchStateService extends BaseService {
       });
     }
     return this.$_showNoteFilesOnlyInSidebar;
+  }
+
+  /**
+   * The persisted editor-engine preference (plans/011). The composition root
+   * reads the same sync-database entry synchronously before the container is
+   * built, so a change only takes effect through a UI reload
+   * (`command::ui:switch-editor-engine` handles the full switch protocol).
+   */
+  get $editorEngine() {
+    if (!this.$_editorEngine) {
+      this.$_editorEngine = atomStorage({
+        serviceName: this.name,
+        key: EDITOR_ENGINE_PREFERENCE_KEY,
+        initValue: DEFAULT_EDITOR_ENGINE,
+        syncDb: this.dep.syncDatabase,
+        validator: EditorEngineIdValidator,
+        logger: this.logger,
+      });
+    }
+    return this.$_editorEngine;
   }
 
   get $assetLocationPreference() {

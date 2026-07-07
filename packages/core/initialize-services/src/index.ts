@@ -10,7 +10,13 @@ import type {
   Store,
 } from '@bangle.io/types';
 import { initializeServices as initializeServices2 } from './initialize-services';
-export function initializeServices(
+
+export {
+  readEditorEnginePreference,
+  resetEditorEnginePreference,
+} from './editor-engine-preference';
+
+export async function initializeServices(
   logger: Logger,
   rootEmitter: RootEmitter,
   store: Store,
@@ -32,7 +38,7 @@ export function initializeServices(
     },
   };
 
-  const services = initializeServices2(
+  const services = await initializeServices2(
     commonOpts,
     rootEmitter,
     getEnabledCommands(),

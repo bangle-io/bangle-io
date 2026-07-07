@@ -78,6 +78,24 @@ export const uiCommands = narrow([
     args: {},
   },
   {
+    id: 'command::ui:switch-editor-engine',
+    title: 'Switch Editor Engine',
+    omniSearch: true,
+    keywords: [
+      'editor',
+      'engine',
+      'switch',
+      'wordgard',
+      'prosemirror',
+      'experimental',
+    ],
+    dependencies: {
+      services: ['workbenchState', 'editorEngine'],
+    },
+    autoFocusEditor: false,
+    args: null,
+  },
+  {
     id: SETTINGS_DEFAULT_COMMAND.id,
     title: SETTINGS_DEFAULT_COMMAND.title,
     keywords: [...SETTINGS_DEFAULT_COMMAND.keywords],

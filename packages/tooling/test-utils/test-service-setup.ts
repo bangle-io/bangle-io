@@ -3,6 +3,7 @@ import { commandHandlers as defaultCommandHandlers } from '@bangle.io/command-ha
 import { getEnabledCommands } from '@bangle.io/commands';
 import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
 import type { CoreServices } from '@bangle.io/context';
+import { PmEditorService } from '@bangle.io/editor';
 import {
   type CoreConfigOverrides,
   createServiceSetup,
@@ -89,6 +90,8 @@ function createTestServiceSetup(
       router: MemoryRouterService,
     },
     fileStorageSlots: ['fileStorageMemory'],
+    // Tests run the ProseMirror engine, mirroring the production default.
+    editorEngine: PmEditorService,
     coreConfigOverrides,
   });
 }

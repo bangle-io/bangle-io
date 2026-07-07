@@ -119,6 +119,12 @@ export const t = {
         deleteTable: 'Delete table',
       },
     },
+    editorW: {
+      experimentalNotice:
+        'Wordgard editor (experimental preview) — this note is read-only.',
+      switchEditor: 'Switch editor',
+      loadFailed: 'Unable to load this note.',
+    },
     sidebar: {
       newLabel: 'New',
       appActionsLabel: 'App Actions',
@@ -208,6 +214,18 @@ export const t = {
           system: 'System',
           light: 'Light',
           dark: 'Dark',
+        },
+      },
+      switchEditorEngine: {
+        searchPlaceholder: 'Select an editor engine',
+        title: 'Switch Editor Engine',
+        description:
+          'Choose which engine powers the editor. Switching reloads the app in place.',
+        groupLabel: 'Editor engines',
+        emptyMessage: 'No editor engines available',
+        options: {
+          prosemirror: 'ProseMirror (stable)',
+          wordgard: 'Wordgard (experimental)',
         },
       },
       createNote: {
@@ -511,6 +529,8 @@ export const t = {
       permissionNotGranted: 'Permission not granted',
       retrySave: 'Retry save',
       saveFailed: 'Changes could not be saved. Retry to keep your latest edit.',
+      editorEngineSwitchBlockedBySaves:
+        'Cannot switch editors: a note has unsaved changes that could not be written. Retry the failed save first.',
     },
     pageWelcome: {
       newUser: 'Welcome to Bangle',
