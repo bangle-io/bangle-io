@@ -592,11 +592,15 @@ export async function writeStoredFile(
   page: Page,
   workspaceName: string,
   relativePath: string,
-  content: string,
+  // Text content, or raw bytes as a number[] for binary fixtures (e.g. an
+  // actual image). number[] survives Playwright's evaluate serialization.
+  content: string | number[],
   type = 'text/plain',
 ) {
   await page.evaluate(
     async ({ workspace, filePath, content, type }) => {
+      const part =
+        typeof content === 'string' ? content : new Uint8Array(content);
       const request = indexedDB.open('baby-idb-db-3');
       const database = await new Promise<IDBDatabase>((resolve, reject) => {
         request.onsuccess = () => resolve(request.result);
@@ -611,7 +615,7 @@ export async function writeStoredFile(
         transaction.onerror = () => reject(transaction.error);
         transaction.onabort = () => reject(transaction.error);
         transaction.objectStore('baby-idb-db-store-3').put(
-          new File([content], filePath.split('/').at(-1) ?? filePath, {
+          new File([part], filePath.split('/').at(-1) ?? filePath, {
             type,
           }),
           `${workspace}/${filePath}`,

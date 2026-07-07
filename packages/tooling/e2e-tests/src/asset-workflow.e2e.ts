@@ -152,44 +152,26 @@ async function dragTreeItemOntoEditor(
   await page.mouse.up();
 }
 
-// Stores a real (decodable) 1x1 PNG directly in the browser workspace so the
-// asset page can render an actual `<img>` rather than a broken-media fallback.
-async function writeStoredPng(
+// Bytes of a valid (decodable) 1x1 PNG, so the asset page renders an actual
+// `<img>` rather than a broken-media fallback.
+const PNG_1X1_BYTES = [
+  137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0, 1, 0,
+  0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196, 137, 0, 0, 0, 13, 73, 68, 65, 84, 120,
+  156, 99, 248, 15, 4, 0, 9, 251, 3, 253, 167, 186, 48, 251, 0, 0, 0, 0, 73, 69,
+  78, 68, 174, 66, 96, 130,
+];
+
+function writeStoredPng(
   page: Page,
   workspaceName: string,
   relativePath: string,
 ) {
-  await page.evaluate(
-    async ({ workspace, filePath }) => {
-      const pngBytes = Uint8Array.from([
-        137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0,
-        1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196, 137, 0, 0, 0, 13, 73, 68, 65,
-        84, 120, 156, 99, 248, 15, 4, 0, 9, 251, 3, 253, 167, 186, 48, 251, 0,
-        0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130,
-      ]);
-      const request = indexedDB.open('baby-idb-db-3');
-      const database = await new Promise<IDBDatabase>((resolve, reject) => {
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-      });
-      await new Promise<void>((resolve, reject) => {
-        const transaction = database.transaction(
-          'baby-idb-db-store-3',
-          'readwrite',
-        );
-        transaction.oncomplete = () => resolve();
-        transaction.onerror = () => reject(transaction.error);
-        transaction.onabort = () => reject(transaction.error);
-        transaction.objectStore('baby-idb-db-store-3').put(
-          new File([pngBytes], filePath.split('/').at(-1) ?? filePath, {
-            type: 'image/png',
-          }),
-          `${workspace}/${filePath}`,
-        );
-      });
-      database.close();
-    },
-    { workspace: workspaceName, filePath: relativePath },
+  return writeStoredFile(
+    page,
+    workspaceName,
+    relativePath,
+    PNG_1X1_BYTES,
+    'image/png',
   );
 }
 
@@ -723,4 +705,172 @@ test('renders a text asset inline when the asset URL is opened directly', async 
     'download',
     'config.json',
   );
+});
+
+test('does not execute script from a PDF asset stored with a mismatched MIME type', async ({
+  page,
+}, testInfo) => {
+  const workspaceName = `asset-pdf-safety-${testInfo.workerIndex}-${Date.now()}`;
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'source',
+  });
+  // A file saved as .pdf but whose bytes/MIME are HTML with a script. A blob:
+  // URL inherits the app origin, so if the preview iframe honored the stored
+  // MIME type this would run as same-origin script with access to every
+  // workspace's IndexedDB.
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'assets/trap.pdf',
+    '<script>window.top.__assetPreviewXssRan = true;</script><h1>pwned</h1>',
+    'text/html',
+  );
+
+  await page.goto(
+    `/ws#route=asset&wsPath=${encodeURIComponent(
+      `${workspaceName}:assets/trap.pdf`,
+    )}`,
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  await expect(page.getByRole('heading', { name: 'trap.pdf' })).toBeVisible();
+  // The preview iframe is present (rendered as application/pdf), but the
+  // disguised HTML must never execute. Give any injected script ample time to
+  // run so a false-negative can't slip through, then assert it did not.
+  await expect(page.locator('iframe[title="trap.pdf"]')).toBeVisible();
+  await page.waitForTimeout(750);
+  const xssRan = await page.evaluate(
+    () =>
+      (window as unknown as { __assetPreviewXssRan?: boolean })
+        .__assetPreviewXssRan === true,
+  );
+  expect(xssRan).toBe(false);
+  await expect(page.getByRole('link', { name: 'Download' })).toBeVisible();
+});
+
+test('falls back to download for a binary file misnamed with a text extension', async ({
+  page,
+}, testInfo) => {
+  const workspaceName = `asset-binary-text-${testInfo.workerIndex}-${Date.now()}`;
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'source',
+  });
+  // A NUL byte marks these bytes as non-text; the viewer must not render them
+  // as mojibake in a <pre>.
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'data/blob.txt',
+    [0, 1, 2, 3, 255, 254, 0, 66, 67],
+    'application/octet-stream',
+  );
+
+  await page.goto(
+    `/ws#route=asset&wsPath=${encodeURIComponent(
+      `${workspaceName}:data/blob.txt`,
+    )}`,
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  await expect(page.getByRole('heading', { name: 'blob.txt' })).toBeVisible();
+  await expect(page.locator('pre')).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Download' })).toHaveAttribute(
+    'download',
+    'blob.txt',
+  );
+});
+
+// A minimal but structurally valid single-page PDF ("Hello PDF"). Using real
+// PDF bytes (not a "%PDF" stub) lets the browser's native viewer receive genuine
+// content, so this exercises the actual render path rather than only the iframe.
+const VALID_PDF_BYTES = [
+  37, 80, 68, 70, 45, 49, 46, 52, 10, 49, 32, 48, 32, 111, 98, 106, 10, 60, 60,
+  32, 47, 84, 121, 112, 101, 32, 47, 67, 97, 116, 97, 108, 111, 103, 32, 47, 80,
+  97, 103, 101, 115, 32, 50, 32, 48, 32, 82, 32, 62, 62, 10, 101, 110, 100, 111,
+  98, 106, 10, 50, 32, 48, 32, 111, 98, 106, 10, 60, 60, 32, 47, 84, 121, 112,
+  101, 32, 47, 80, 97, 103, 101, 115, 32, 47, 75, 105, 100, 115, 32, 91, 51, 32,
+  48, 32, 82, 93, 32, 47, 67, 111, 117, 110, 116, 32, 49, 32, 62, 62, 10, 101,
+  110, 100, 111, 98, 106, 10, 51, 32, 48, 32, 111, 98, 106, 10, 60, 60, 32, 47,
+  84, 121, 112, 101, 32, 47, 80, 97, 103, 101, 32, 47, 80, 97, 114, 101, 110,
+  116, 32, 50, 32, 48, 32, 82, 32, 47, 77, 101, 100, 105, 97, 66, 111, 120, 32,
+  91, 48, 32, 48, 32, 50, 48, 48, 32, 50, 48, 48, 93, 32, 47, 67, 111, 110, 116,
+  101, 110, 116, 115, 32, 52, 32, 48, 32, 82, 32, 47, 82, 101, 115, 111, 117,
+  114, 99, 101, 115, 32, 60, 60, 32, 47, 70, 111, 110, 116, 32, 60, 60, 32, 47,
+  70, 49, 32, 53, 32, 48, 32, 82, 32, 62, 62, 32, 62, 62, 32, 62, 62, 10, 101,
+  110, 100, 111, 98, 106, 10, 52, 32, 48, 32, 111, 98, 106, 10, 60, 60, 32, 47,
+  76, 101, 110, 103, 116, 104, 32, 52, 48, 32, 62, 62, 10, 115, 116, 114, 101,
+  97, 109, 10, 66, 84, 32, 47, 70, 49, 32, 50, 52, 32, 84, 102, 32, 52, 48, 32,
+  49, 48, 48, 32, 84, 100, 32, 40, 72, 101, 108, 108, 111, 32, 80, 68, 70, 41,
+  32, 84, 106, 32, 69, 84, 10, 101, 110, 100, 115, 116, 114, 101, 97, 109, 10,
+  101, 110, 100, 111, 98, 106, 10, 53, 32, 48, 32, 111, 98, 106, 10, 60, 60, 32,
+  47, 84, 121, 112, 101, 32, 47, 70, 111, 110, 116, 32, 47, 83, 117, 98, 116,
+  121, 112, 101, 32, 47, 84, 121, 112, 101, 49, 32, 47, 66, 97, 115, 101, 70,
+  111, 110, 116, 32, 47, 72, 101, 108, 118, 101, 116, 105, 99, 97, 32, 62, 62,
+  10, 101, 110, 100, 111, 98, 106, 10, 120, 114, 101, 102, 10, 48, 32, 54, 10,
+  48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 32, 54, 53, 53, 51, 53, 32, 102, 32,
+  10, 48, 48, 48, 48, 48, 48, 48, 48, 48, 57, 32, 48, 48, 48, 48, 48, 32, 110,
+  32, 10, 48, 48, 48, 48, 48, 48, 48, 48, 53, 56, 32, 48, 48, 48, 48, 48, 32,
+  110, 32, 10, 48, 48, 48, 48, 48, 48, 48, 49, 49, 53, 32, 48, 48, 48, 48, 48,
+  32, 110, 32, 10, 48, 48, 48, 48, 48, 48, 48, 50, 52, 49, 32, 48, 48, 48, 48,
+  48, 32, 110, 32, 10, 48, 48, 48, 48, 48, 48, 48, 51, 51, 49, 32, 48, 48, 48,
+  48, 48, 32, 110, 32, 10, 116, 114, 97, 105, 108, 101, 114, 10, 60, 60, 32, 47,
+  83, 105, 122, 101, 32, 54, 32, 47, 82, 111, 111, 116, 32, 49, 32, 48, 32, 82,
+  32, 62, 62, 10, 115, 116, 97, 114, 116, 120, 114, 101, 102, 10, 52, 48, 49,
+  10, 37, 37, 69, 79, 70,
+];
+
+test('serves a real PDF to the native viewer as application/pdf even when stored with a mismatched MIME type', async ({
+  page,
+}, testInfo) => {
+  const workspaceName = `asset-pdf-render-${testInfo.workerIndex}-${Date.now()}`;
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'source',
+  });
+  // Stored with an empty/mismatched MIME type. A blob: URL would otherwise carry
+  // that type into the iframe; the preview must instead hand the browser
+  // application/pdf so it renders (and can never be coerced to text/html).
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'assets/real.pdf',
+    VALID_PDF_BYTES,
+    '',
+  );
+
+  await page.goto(
+    `/ws#route=asset&wsPath=${encodeURIComponent(
+      `${workspaceName}:assets/real.pdf`,
+    )}`,
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  await expect(page.getByRole('heading', { name: 'real.pdf' })).toBeVisible();
+  const frame = page.locator('iframe[title="real.pdf"]');
+  await expect(frame).toBeVisible();
+  await expect(frame).toHaveAttribute('src', /^blob:/);
+
+  // The exact bytes handed to the iframe are an intact PDF under an
+  // application/pdf content type -- which is what the native viewer renders.
+  const delivered = await page.evaluate(async () => {
+    const el = document.querySelector(
+      'iframe[title="real.pdf"]',
+    ) as HTMLIFrameElement | null;
+    if (!el) {
+      return null;
+    }
+    const res = await fetch(el.src);
+    const bytes = new Uint8Array(await res.arrayBuffer());
+    return {
+      contentType: res.headers.get('content-type'),
+      magic: String.fromCharCode(...bytes.slice(0, 5)),
+      size: bytes.length,
+    };
+  });
+  expect(delivered?.contentType).toBe('application/pdf');
+  expect(delivered?.magic).toBe('%PDF-');
+  expect(delivered?.size).toBe(VALID_PDF_BYTES.length);
+  await expect(page.getByRole('link', { name: 'Download' })).toBeVisible();
 });
