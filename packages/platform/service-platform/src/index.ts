@@ -3,6 +3,7 @@ export { BrowserLocalStorageSyncDatabaseService } from './browser-local-storage-
 export { FileStorageIndexedDB } from './file-storage-indexeddb';
 export { FileStorageMemory } from './file-storage-memory';
 export { FileStorageNativeFs } from './file-storage-nativefs';
+export { FileStorageRemote } from './file-storage-remote';
 export type { AppDatabase } from './idb-database';
 export {
   ALL_TABLES,

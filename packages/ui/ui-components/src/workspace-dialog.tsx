@@ -43,6 +43,10 @@ export interface WorkspaceConfig {
   name: string;
   type: WorkspaceStorageType;
   dirHandle?: FileSystemDirectoryHandle;
+  /** Base URL of the server for a `remote` workspace. */
+  serverUrl?: string;
+  /** Optional bearer token for a `remote` workspace. */
+  token?: string;
 }
 
 export interface CreateWorkspaceDialogProps {
@@ -52,6 +56,8 @@ export interface CreateWorkspaceDialogProps {
   storageTypes: StorageTypeConfig[];
   onDirectoryPick?: () => Promise<DirectoryPickResult>;
   validateWorkspace: (config: WorkspaceConfig) => WorkspaceValidation;
+  /** Prefill for the remote server URL field (e.g. same-origin in bundled mode). */
+  defaultRemoteServerUrl?: string;
 }
 
 type BaseState = {
@@ -63,8 +69,11 @@ type SelectTypeState = BaseState & {
   selected?: WorkspaceStorageType;
 };
 
-type BrowserState = BaseState & {
-  stage: 'selected-browser';
+// A name-only stage, shared by the `browser` and `electron` storage types
+// (both need just a workspace name).
+type NameEntryState = BaseState & {
+  stage: 'enter-name';
+  storageType: WorkspaceStorageType;
   name: string;
 };
 
@@ -73,16 +82,27 @@ type NativeFsState = BaseState & {
   dirHandle?: FileSystemDirectoryHandle;
 };
 
-type State = SelectTypeState | BrowserState | NativeFsState;
+type RemoteState = BaseState & {
+  stage: 'selected-remote';
+  name: string;
+  serverUrl: string;
+  token: string;
+};
+
+type State = SelectTypeState | NameEntryState | NativeFsState | RemoteState;
+
+type RemoteField = 'name' | 'serverUrl' | 'token';
 
 type Action =
   | { type: 'RESET_TO_TYPE_SELECT'; defaultStorage: WorkspaceStorageType }
   | { type: 'NAVIGATE_TO_TYPE_SELECT' }
-  | { type: 'NAVIGATE_TO_BROWSER' }
+  | { type: 'NAVIGATE_TO_NAME'; storageType: WorkspaceStorageType }
   | { type: 'NAVIGATE_TO_NATIVEFS' }
+  | { type: 'NAVIGATE_TO_REMOTE'; defaultServerUrl: string }
   | { type: 'UPDATE_SELECTED_STORAGE'; storage: WorkspaceStorageType }
   | { type: 'UPDATE_WORKSPACE_NAME'; name: string }
   | { type: 'UPDATE_DIRECTORY_HANDLE'; dirHandle?: FileSystemDirectoryHandle }
+  | { type: 'UPDATE_REMOTE_FIELD'; field: RemoteField; value: string }
   | { type: 'UPDATE_ERROR'; error?: ErrorInfo };
 
 function reducer(state: State, action: Action): State {
@@ -93,23 +113,41 @@ function reducer(state: State, action: Action): State {
         selected: undefined,
         error: undefined,
       };
-    case 'NAVIGATE_TO_BROWSER':
-      return { stage: 'selected-browser', name: '', error: undefined };
+    case 'NAVIGATE_TO_NAME':
+      return {
+        stage: 'enter-name',
+        storageType: action.storageType,
+        name: '',
+        error: undefined,
+      };
     case 'NAVIGATE_TO_NATIVEFS':
       return { stage: 'selected-nativefs', error: undefined };
+    case 'NAVIGATE_TO_REMOTE':
+      return {
+        stage: 'selected-remote',
+        name: '',
+        serverUrl: action.defaultServerUrl,
+        token: '',
+        error: undefined,
+      };
     case 'UPDATE_SELECTED_STORAGE':
       if (state.stage === 'select-type') {
         return { ...state, selected: action.storage, error: undefined };
       }
       return state;
     case 'UPDATE_WORKSPACE_NAME':
-      if (state.stage === 'selected-browser') {
+      if (state.stage === 'enter-name') {
         return { ...state, name: action.name, error: undefined };
       }
       return state;
     case 'UPDATE_DIRECTORY_HANDLE':
       if (state.stage === 'selected-nativefs') {
         return { ...state, dirHandle: action.dirHandle, error: undefined };
+      }
+      return state;
+    case 'UPDATE_REMOTE_FIELD':
+      if (state.stage === 'selected-remote') {
+        return { ...state, [action.field]: action.value, error: undefined };
       }
       return state;
     case 'UPDATE_ERROR':
@@ -132,6 +170,7 @@ export function CreateWorkspaceDialog({
   storageTypes,
   onDirectoryPick,
   validateWorkspace,
+  defaultRemoteServerUrl = '',
 }: CreateWorkspaceDialogProps) {
   const defaultStorage =
     storageTypes.find((t) => t.defaultSelected)?.type ||
@@ -183,10 +222,11 @@ export function CreateWorkspaceDialog({
             dispatch={dispatch}
             storageTypes={storageTypes}
             defaultStorage={defaultStorage}
+            defaultRemoteServerUrl={defaultRemoteServerUrl}
             onCancel={() => onOpenChange(false)}
           />
         )}
-        {state.stage === 'selected-browser' && (
+        {state.stage === 'enter-name' && (
           <StageEnterWorkspaceName
             state={state}
             dispatch={dispatch}
@@ -205,6 +245,15 @@ export function CreateWorkspaceDialog({
             onCancel={() => onOpenChange(false)}
           />
         )}
+        {state.stage === 'selected-remote' && (
+          <StageEnterRemote
+            state={state}
+            dispatch={dispatch}
+            validateWorkspace={validateWorkspace}
+            onDone={onDone}
+            onCancel={() => onOpenChange(false)}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );
@@ -215,6 +264,7 @@ interface StageSelectStorageProps {
   dispatch: React.Dispatch<Action>;
   storageTypes: StorageTypeConfig[];
   defaultStorage: WorkspaceStorageType;
+  defaultRemoteServerUrl: string;
   onCancel: () => void;
 }
 
@@ -240,6 +290,7 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
   dispatch,
   storageTypes,
   defaultStorage,
+  defaultRemoteServerUrl,
   onCancel,
 }) => {
   const { selected = defaultStorage, error } = state;
@@ -248,10 +299,16 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
   };
 
   const handleNext = () => {
-    dispatch({
-      type:
-        selected === 'browser' ? 'NAVIGATE_TO_BROWSER' : 'NAVIGATE_TO_NATIVEFS',
-    });
+    if (selected === 'browser' || selected === 'electron') {
+      dispatch({ type: 'NAVIGATE_TO_NAME', storageType: selected });
+    } else if (selected === 'remote') {
+      dispatch({
+        type: 'NAVIGATE_TO_REMOTE',
+        defaultServerUrl: defaultRemoteServerUrl,
+      });
+    } else {
+      dispatch({ type: 'NAVIGATE_TO_NATIVEFS' });
+    }
   };
 
   return (
@@ -308,7 +365,7 @@ const StageSelectStorage: React.FC<StageSelectStorageProps> = ({
 };
 
 interface StageEnterWorkspaceNameProps {
-  state: BrowserState;
+  state: NameEntryState;
   dispatch: React.Dispatch<Action>;
   validateWorkspace: CreateWorkspaceDialogProps['validateWorkspace'];
   onDone: CreateWorkspaceDialogProps['onDone'];
@@ -322,7 +379,7 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
   onDone,
   onCancel,
 }) => {
-  const { name, error } = state;
+  const { name, storageType, error } = state;
 
   const ref = useRef<HTMLInputElement>(null);
   const workspaceNameId = useId();
@@ -343,7 +400,7 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
 
   const handleSubmit = () => {
     const config: WorkspaceConfig = {
-      type: 'browser',
+      type: storageType,
       name,
     };
     const validation = validateWorkspace(config);
@@ -358,7 +415,7 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
       });
       return;
     }
-    onDone({ type: 'browser', name });
+    onDone(config);
   };
 
   const handleBack = () => {
@@ -528,6 +585,165 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
           {t.app.common.cancelButton}
         </Button>
         <Button onClick={handleSubmit} disabled={!dirHandle}>
+          {t.app.common.createButton}
+        </Button>
+      </WorkspaceDialogFooter>
+    </>
+  );
+};
+
+interface StageEnterRemoteProps {
+  state: RemoteState;
+  dispatch: React.Dispatch<Action>;
+  validateWorkspace: CreateWorkspaceDialogProps['validateWorkspace'];
+  onDone: CreateWorkspaceDialogProps['onDone'];
+  onCancel: () => void;
+}
+
+function isValidServerUrl(value: string): boolean {
+  const trimmed = value.trim();
+  if (!/^https?:\/\//i.test(trimmed)) {
+    return false;
+  }
+  try {
+    new URL(trimmed);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+const StageEnterRemote: React.FC<StageEnterRemoteProps> = ({
+  state,
+  dispatch,
+  validateWorkspace,
+  onDone,
+  onCancel,
+}) => {
+  const { name, serverUrl, token, error } = state;
+  const nameRef = useRef<HTMLInputElement>(null);
+  const nameId = useId();
+  const urlId = useId();
+  const tokenId = useId();
+
+  useEffect(() => {
+    nameRef.current?.focus();
+  }, []);
+
+  const updateField =
+    (field: RemoteField) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      dispatch({ type: 'UPDATE_REMOTE_FIELD', field, value: e.target.value });
+    };
+
+  const handleSubmit = () => {
+    const trimmedUrl = serverUrl.trim();
+    if (!isValidServerUrl(trimmedUrl)) {
+      dispatch({
+        type: 'UPDATE_ERROR',
+        error: {
+          message: t.app.dialogs.createWorkspace.remoteInvalidServerUrl,
+        },
+      });
+      return;
+    }
+    const config: WorkspaceConfig = {
+      type: 'remote',
+      name: name.trim(),
+      serverUrl: trimmedUrl,
+      token: token.trim() || undefined,
+    };
+    const validation = validateWorkspace(config);
+    if (!validation.isValid) {
+      dispatch({
+        type: 'UPDATE_ERROR',
+        error: {
+          message:
+            validation.message ||
+            t.app.dialogs.createWorkspace.invalidNameDefault,
+        },
+      });
+      return;
+    }
+    onDone(config);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSubmit();
+    }
+  };
+
+  return (
+    <>
+      <DialogHeader>
+        <DialogTitle>{t.app.dialogs.createWorkspace.remoteTitle}</DialogTitle>
+        <DialogDescription>
+          {t.app.dialogs.createWorkspace.remoteDescription}
+        </DialogDescription>
+      </DialogHeader>
+      <div className="grid gap-4 py-4">
+        <div className="grid gap-2">
+          <Label htmlFor={nameId}>
+            {t.app.dialogs.createWorkspace.nameLabel}
+          </Label>
+          <Input
+            id={nameId}
+            ref={nameRef}
+            value={name}
+            onChange={updateField('name')}
+            onKeyDown={handleKeyDown}
+            placeholder={t.app.dialogs.createWorkspace.remoteNamePlaceholder}
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor={urlId}>
+            {t.app.dialogs.createWorkspace.remoteServerUrlLabel}
+          </Label>
+          <Input
+            id={urlId}
+            value={serverUrl}
+            onChange={updateField('serverUrl')}
+            onKeyDown={handleKeyDown}
+            placeholder={
+              t.app.dialogs.createWorkspace.remoteServerUrlPlaceholder
+            }
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor={tokenId}>
+            {t.app.dialogs.createWorkspace.remoteTokenLabel}
+          </Label>
+          <Input
+            id={tokenId}
+            type="password"
+            value={token}
+            onChange={updateField('token')}
+            onKeyDown={handleKeyDown}
+            placeholder={t.app.dialogs.createWorkspace.remoteTokenPlaceholder}
+          />
+          <span className="text-foreground/70 text-xs">
+            {t.app.dialogs.createWorkspace.remoteTokenHelp}
+          </span>
+        </div>
+        <ErrorMessage error={error} />
+      </div>
+      <WorkspaceDialogFooter
+        leadingAction={
+          <Button
+            variant="outline"
+            onClick={() => dispatch({ type: 'NAVIGATE_TO_TYPE_SELECT' })}
+          >
+            {t.app.common.backButton}
+          </Button>
+        }
+      >
+        <Button variant="outline" onClick={onCancel}>
+          {t.app.common.cancelButton}
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          disabled={!name.trim() || !serverUrl.trim()}
+        >
           {t.app.common.createButton}
         </Button>
       </WorkspaceDialogFooter>

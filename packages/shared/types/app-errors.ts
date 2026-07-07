@@ -131,6 +131,17 @@ export type AppError =
       };
     }
 
+  // Remote (bring-your-own-server) file storage
+  | {
+      name: `error::remote-storage:request-failed`;
+      payload: {
+        wsName?: string;
+        /** Stable transport code, e.g. `unauthorized`, `network`. */
+        code: string;
+        reason: string;
+      };
+    }
+
   // Editor errors
   | {
       name: `error::editor:load-failed`;

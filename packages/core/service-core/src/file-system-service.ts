@@ -540,6 +540,12 @@ export class FileSystemService extends BaseService {
       case WORKSPACE_STORAGE_TYPE.Memory: {
         return getDep(WORKSPACE_STORAGE_TYPE.Memory);
       }
+      case WORKSPACE_STORAGE_TYPE.Remote: {
+        return getDep(WORKSPACE_STORAGE_TYPE.Remote);
+      }
+      case WORKSPACE_STORAGE_TYPE.Electron: {
+        return getDep(WORKSPACE_STORAGE_TYPE.Electron);
+      }
       case WORKSPACE_STORAGE_TYPE.Help:
       case WORKSPACE_STORAGE_TYPE.PrivateFS:
       case WORKSPACE_STORAGE_TYPE.Github: {

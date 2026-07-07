@@ -34,6 +34,7 @@
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
+    "@bangle.io/remote-file-sync": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "jotai": "^2.20.1",

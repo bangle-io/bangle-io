@@ -26,6 +26,18 @@
 
 Head to <https://bangle.io> to use the app.
 
+### Self-hosting / bring your own server
+
+Bangle.io can store a workspace on a server you control over a small HTTP API —
+use it with app.bangle.io, self-host the whole thing with Docker, or run it on
+the desktop. See [docs/remote-file-storage.md](docs/remote-file-storage.md).
+
+```bash
+# Self-host the app + your notes in one container
+docker build -f packages/tooling/remote-file-server/Dockerfile -t bangle-io .
+docker run -p 8000:8000 -v bangle-data:/data bangle-io   # http://localhost:8000
+```
+
 ### Development
 
 - `pnpm install` to install

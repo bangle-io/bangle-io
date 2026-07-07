@@ -1,10 +1,19 @@
-import { access } from 'node:fs/promises';
+import { access, mkdir } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { app, BrowserWindow, dialog, net, protocol, shell } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  dialog,
+  ipcMain,
+  net,
+  protocol,
+  shell,
+} from 'electron';
 import { autoUpdater } from 'electron-updater';
 import { APP_PROTOCOL, APP_URL } from './protocol';
 import { registerAppProtocol as registerDesktopAppProtocol } from './protocol-handler';
+import { createDesktopFileStore, registerRemoteFsIpc } from './remote-fs';
 import { configureAutoUpdater } from './updater';
 import {
   getBrowserWindowOptions,
@@ -53,6 +62,23 @@ function ensureAppProtocolRegistered(browserDistDir: string): void {
   });
 }
 
+function resolveWorkspaceRoot(): string {
+  const override = process.env.BANGLE_DESKTOP_WORKSPACE_ROOT?.trim();
+  if (override) {
+    return resolve(override);
+  }
+  return join(app.getPath('userData'), 'workspaces');
+}
+
+// Host the file store in the main process and expose it over IPC. The renderer
+// reads/writes local notes through the same protocol used for remote servers.
+async function setupRemoteFs(): Promise<void> {
+  const root = resolveWorkspaceRoot();
+  await mkdir(root, { recursive: true });
+  registerRemoteFsIpc({ ipcMain, store: createDesktopFileStore(root) });
+  console.log(`[desktop] remote-fs backend rooted at ${root}`);
+}
+
 async function createMainWindow(): Promise<BrowserWindow> {
   const browserDistDir = resolveBrowserDistDir();
   await assertBrowserDist(browserDistDir);
@@ -99,6 +125,7 @@ app.on('activate', () => {
 
 void app.whenReady().then(async () => {
   try {
+    await setupRemoteFs();
     await createMainWindow();
     configureAutoUpdater({
       app,

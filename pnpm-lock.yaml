@@ -118,6 +118,9 @@ importers:
       '@bangle.io/omni-search':
         specifier: workspace:*
         version: link:../omni-search
+      '@bangle.io/remote-file-sync':
+        specifier: workspace:*
+        version: link:../../js-lib/remote-file-sync
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -297,6 +300,9 @@ importers:
       '@bangle.io/commands':
         specifier: workspace:*
         version: link:../../shared/commands
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
       '@bangle.io/context':
         specifier: workspace:*
         version: link:../context
@@ -306,6 +312,9 @@ importers:
       '@bangle.io/poor-mans-di':
         specifier: workspace:*
         version: link:../../js-lib/poor-mans-di
+      '@bangle.io/remote-file-sync':
+        specifier: workspace:*
+        version: link:../../js-lib/remote-file-sync
       '@bangle.io/service-core':
         specifier: workspace:*
         version: link:../service-core
@@ -520,6 +529,8 @@ importers:
         specifier: ^1.25.9
         version: 1.25.9
 
+  packages/js-lib/remote-file-sync: {}
+
   packages/platform/service-platform:
     dependencies:
       '@bangle.io/baby-fs':
@@ -540,6 +551,9 @@ importers:
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
+      '@bangle.io/remote-file-sync':
+        specifier: workspace:*
+        version: link:../../js-lib/remote-file-sync
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -768,6 +782,15 @@ importers:
 
   packages/tooling/desktop-entry:
     dependencies:
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+      '@bangle.io/remote-file-server':
+        specifier: workspace:*
+        version: link:../remote-file-server
+      '@bangle.io/remote-file-sync':
+        specifier: workspace:*
+        version: link:../../js-lib/remote-file-sync
       electron:
         specifier: 43.0.0
         version: 43.0.0
@@ -799,6 +822,12 @@ importers:
       '@bangle.io/env-vars':
         specifier: workspace:*
         version: link:../env-vars
+      '@bangle.io/remote-file-server':
+        specifier: workspace:*
+        version: link:../remote-file-server
+      '@bangle.io/remote-file-sync':
+        specifier: workspace:*
+        version: link:../../js-lib/remote-file-sync
       '@bangle.io/storybook':
         specifier: workspace:*
         version: link:../storybook
@@ -881,6 +910,22 @@ importers:
       fs-extra:
         specifier: ^11.3.6
         version: 11.3.6
+
+  packages/tooling/remote-file-server:
+    dependencies:
+      '@bangle.io/remote-file-sync':
+        specifier: workspace:*
+        version: link:../../js-lib/remote-file-sync
+    devDependencies:
+      '@types/node':
+        specifier: ^26.1.0
+        version: 26.1.0
+      esbuild:
+        specifier: 0.28.1
+        version: 0.28.1
+      tsx:
+        specifier: ^4.22.5
+        version: 4.22.5
 
   packages/tooling/storybook:
     dependencies:

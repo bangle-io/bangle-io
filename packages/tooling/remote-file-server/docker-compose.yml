@@ -1,0 +1,25 @@
+# Run the bundled Bangle.io app + file server.
+#
+#   docker compose -f packages/tooling/remote-file-server/docker-compose.yml up --build
+#
+# Open http://localhost:8000. Notes are stored in the named `bangle-data`
+# volume, so they survive container restarts.
+
+services:
+  bangle:
+    build:
+      # Build context is the repository root so the whole monorepo is available.
+      context: ../../..
+      dockerfile: packages/tooling/remote-file-server/Dockerfile
+    image: bangle-io-remote
+    ports:
+      - '8000:8000'
+    environment:
+      BANGLE_FILE_SERVER_ROOT: /data
+      # Require a bearer token by uncommenting and choosing a strong value:
+      # BANGLE_FILE_SERVER_TOKEN: 'change-me'
+    volumes:
+      - bangle-data:/data
+
+volumes:
+  bangle-data:

@@ -25,6 +25,24 @@ interface Window {
   showDirectoryPicker(
     options?: DirectoryPickerOptions,
   ): Promise<FileSystemDirectoryHandle>;
+  /**
+   * Injected by `@bangle.io/remote-file-server` when the app is served in
+   * bundled mode, so the front-end can default a remote workspace to this
+   * same origin.
+   */
+  __BANGLE_REMOTE__?: { bundled?: boolean };
+  /**
+   * Exposed by the Electron preload. `remoteFs.request` forwards a remote
+   * file-storage request to the main-process router over IPC.
+   */
+  bangleDesktop?: {
+    platform: string;
+    remoteFs?: {
+      request(
+        req: import('@bangle.io/remote-file-sync').RemoteRequest,
+      ): Promise<import('@bangle.io/remote-file-sync').RemoteResponse>;
+    };
+  };
 }
 
 declare module '@storybook/react' {

@@ -316,6 +316,8 @@ export const t = {
         invalidName: 'Invalid workspace name',
         browserTitle: 'Browser',
         browserDescription: 'Save workspace data in browser storage',
+        electronTitle: 'This device',
+        electronDescription: 'Save notes on this computer (desktop app)',
         nativeFsTitle: 'Native File System',
         nativeFsDescription: 'Save workspace data in native file system',
         errorTitle: 'Error',
@@ -332,6 +334,18 @@ export const t = {
         directoryPickingUnsupported: 'Directory picking is not supported.',
         pickDirectoryButton: 'Pick Directory',
         invalidDirectoryDefault: 'Invalid directory selection',
+        remoteTitle: 'Remote Server',
+        remoteDescription:
+          'Sync notes with your own file server (bring your own backend).',
+        remoteNamePlaceholder: 'my-notes',
+        remoteServerUrlLabel: 'Server URL',
+        remoteServerUrlPlaceholder: 'https://notes.example.com',
+        remoteTokenLabel: 'Access token (optional)',
+        remoteTokenPlaceholder: 'Leave blank if your server has no token',
+        remoteTokenHelp:
+          'Sent as a Bearer token. Stored locally in this browser only.',
+        remoteInvalidServerUrl:
+          'Enter a valid server URL starting with http:// or https://',
       },
       allFiles: {
         title: 'All Files',

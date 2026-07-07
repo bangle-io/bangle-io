@@ -36,6 +36,7 @@
     "@bangle.io/fuzzysearch": "workspace:*",
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/omni-search": "workspace:*",
+    "@bangle.io/remote-file-sync": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
