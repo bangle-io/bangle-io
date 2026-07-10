@@ -180,7 +180,10 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
                 >
                   <SettingsPage.SettingsRow
                     control={
-                      <code className="rounded-md bg-muted px-2.5 py-1 font-mono text-muted-foreground text-sm">
+                      <code
+                        className="rounded-md bg-muted px-2.5 py-1 font-mono text-muted-foreground text-sm"
+                        data-testid="app-version"
+                      >
                         {FRIENDLY_ID}
                       </code>
                     }

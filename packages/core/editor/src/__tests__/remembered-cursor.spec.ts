@@ -4,9 +4,13 @@ import {
   Schema,
   setupBase,
   setupParagraph,
+  TextSelection,
 } from '@bangle.io/prosemirror-plugins';
 import { describe, expect, it } from 'vitest';
-import { resolveRememberedCursor } from '../pm-editor-service';
+import {
+  getRememberedCursorPosition,
+  resolveRememberedCursor,
+} from '../remembered-cursor';
 
 function parseParagraph(source: string) {
   const extensions = [setupBase(), setupParagraph()];
@@ -20,6 +24,13 @@ function parseParagraph(source: string) {
 }
 
 describe('resolveRememberedCursor', () => {
+  it('remembers the head of a text selection as its cursor position', () => {
+    const doc = parseParagraph('alpha beta');
+    const selection = TextSelection.create(doc, 2, 7);
+
+    expect(getRememberedCursorPosition(selection)).toBe(7);
+  });
+
   it('restores an unchanged text position', () => {
     const doc = parseParagraph('alpha beta');
 

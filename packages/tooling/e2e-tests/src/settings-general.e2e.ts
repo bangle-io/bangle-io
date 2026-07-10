@@ -17,9 +17,9 @@ test('general settings update and persist user preferences', async ({
   await expect(
     page.getByRole('heading', { exact: true, name: 'App' }),
   ).toBeVisible();
-  await expect(
-    page.getByText(/^\d+\.\d+\.\d+\+local$/, { exact: true }),
-  ).toBeVisible();
+  await expect(page.getByTestId('app-version')).toHaveText(
+    /^\d+\.\d+\.\d+(?:[-+].*)?$/,
+  );
   await expect(page.getByRole('button', { name: 'Install app' })).toHaveCount(
     0,
   );

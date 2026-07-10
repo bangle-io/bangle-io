@@ -51,24 +51,15 @@ import { setupExtensions } from './extensions';
 import { findHeadingIndexBySlug } from './heading-slug';
 import { createLocalImageNodeView } from './local-image-node-view';
 import { createEditor } from './pm-setup';
+import {
+  getRememberedCursorPosition,
+  resolveRememberedCursor,
+} from './remembered-cursor';
 import { isMarkdownRoundTripPreserved } from './round-trip-check';
 
 const editorSaveQueueStore = createEditorSaveQueueStore();
 const ASSET_TOAST_FILE_NAME_MAX_LENGTH = 44;
 const EMPTY_WS_PATH_SET: ReadonlySet<string> = new Set();
-
-/** @internal Resolves a remembered document position to a safe text cursor. */
-export function resolveRememberedCursor(
-  doc: EditorView['state']['doc'],
-  position: number,
-): TextSelection | undefined {
-  const clampedPosition = Math.max(
-    0,
-    Math.min(Math.trunc(position), doc.content.size),
-  );
-  const selection = TextSelection.near(doc.resolve(clampedPosition));
-  return selection instanceof TextSelection ? selection : undefined;
-}
 
 function formatFileSize(bytes: number): string {
   const units = ['B', 'KB', 'MB', 'GB'];
@@ -339,9 +330,10 @@ export class PmEditorService
         const { fragment } = pendingHeading;
         this.pendingHeading = undefined;
         this.navigateToHeading(editorView, fragment);
-      } else if (pendingHeading) {
-        this.pendingHeading = undefined;
       } else {
+        if (pendingHeading) {
+          this.pendingHeading = undefined;
+        }
         this.restoreCursor(editorView, wsPath);
       }
     } catch (cause) {
@@ -368,11 +360,13 @@ export class PmEditorService
   private unmountEditor(domNode: HTMLElement) {
     const editor = this.editors.get(domNode);
     if (editor && 'editorView' in editor) {
-      const { selection } = editor.editorView.state;
-      if (selection instanceof TextSelection && selection.empty) {
-        this.rememberedCursors.set(editor.wsPath, selection.head);
-      } else {
+      const position = getRememberedCursorPosition(
+        editor.editorView.state.selection,
+      );
+      if (position === undefined) {
         this.rememberedCursors.delete(editor.wsPath);
+      } else {
+        this.rememberedCursors.set(editor.wsPath, position);
       }
       editor.editorView.destroy();
     }

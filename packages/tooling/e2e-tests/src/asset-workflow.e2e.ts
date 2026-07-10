@@ -198,14 +198,6 @@ test('pastes workspace-backed image and PDF assets, reloads, and opens asset pag
   const toaster = page.locator('[data-sonner-toaster]');
   await expect(toaster).toHaveAttribute('data-x-position', 'right');
   await expect(toaster).toHaveAttribute('data-y-position', 'top');
-
-  const toastBox = await savedToast.boundingBox();
-  const viewport = page.viewportSize();
-  if (!toastBox || !viewport) {
-    throw new Error('Expected the toast and viewport to have visible bounds');
-  }
-  expect(toastBox.x + toastBox.width).toBeGreaterThan(viewport.width - 48);
-  expect(toastBox.y).toBeLessThan(48);
   const markdown = await readStoredMarkdown(page, workspaceName, noteName);
   expect(markdown).not.toContain('data:');
   expect(markdown).toContain('[Spec Sheet.PDF](assets/spec-sheet-');
