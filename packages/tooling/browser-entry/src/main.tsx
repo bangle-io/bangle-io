@@ -5,7 +5,6 @@ import { App } from '@bangle.io/app';
 import { ThemeManager } from '@bangle.io/color-scheme-manager';
 import {
   DEFAULT_EDITOR_ENGINE,
-  EDITOR_RELOAD_SAVE_DRAIN_TIMEOUT_MS,
   THEME_MANAGER_CONFIG,
 } from '@bangle.io/constants';
 import {
@@ -14,7 +13,6 @@ import {
   resetEditorEnginePreference,
 } from '@bangle.io/initialize-services';
 import { Logger } from '@bangle.io/logger';
-import { waitForSaveQueueToDrain } from '@bangle.io/service-core';
 import { createStore } from 'jotai';
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -87,66 +85,19 @@ async function main(logger: Logger) {
     root.unmount();
   });
 
-  let reloadInFlight = false;
   rootEmitter.on(
     'event::app:reload-ui',
     () => {
-      if (reloadInFlight) {
-        return;
-      }
-      reloadInFlight = true;
-      void reloadUiAfterSaveDrain({
-        editorEngine: services.core.editorEngine,
-        logger,
-        reload: () => {
-          abortController.abort();
-          queueMicrotask(() => {
-            void main(logger).catch((error) => {
-              handleStartupFailure(error, logger);
-            });
-          });
-        },
-      }).then((reloaded) => {
-        // A failed/pending save deliberately keeps this tab alive. Allow a
-        // later reload request to retry after the user resolves the save.
-        if (!reloaded) {
-          reloadInFlight = false;
-        }
+      logger.info('-------------Reloading UI-------------');
+      abortController.abort();
+      queueMicrotask(() => {
+        void main(logger).catch((error) => {
+          handleStartupFailure(error, logger);
+        });
       });
     },
     abortController.signal,
   );
-}
-
-/**
- * Every tab independently protects its current editor before honoring a UI
- * reload. Cross-tab engine switches therefore cannot unmount a receiving tab
- * while that tab still owns pending or failed content.
- */
-export async function reloadUiAfterSaveDrain({
-  editorEngine,
-  logger,
-  reload,
-  timeoutMs = EDITOR_RELOAD_SAVE_DRAIN_TIMEOUT_MS,
-}: {
-  editorEngine: {
-    hasPendingOrFailedSave: () => boolean;
-    subscribeToSaveStatus: (listener: () => void) => () => void;
-  };
-  logger: Pick<Logger, 'error' | 'info'>;
-  reload: () => void;
-  timeoutMs?: number;
-}): Promise<boolean> {
-  const drained = await waitForSaveQueueToDrain(editorEngine, timeoutMs);
-  if (!drained) {
-    logger.error(
-      'Refusing to reload UI while this tab has pending or failed editor saves',
-    );
-    return false;
-  }
-  logger.info('-------------Reloading UI-------------');
-  reload();
-  return true;
 }
 
 function handleStartupFailure(error: unknown, logger: Logger) {

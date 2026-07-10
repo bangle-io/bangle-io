@@ -23,51 +23,16 @@ import type {
   RootEmitter,
 } from '@bangle.io/types';
 import { readEditorEnginePreference } from './editor-engine-preference';
-import {
-  createServiceSetup,
-  type ValidatedEditorEngineServiceConstructor,
-} from './service-setup';
+import { createServiceSetup } from './service-setup';
 
-export async function initializeServices(
+export function initializeServices(
   commonOpts: BaseServiceCommonOptions,
   rootEmitter: RootEmitter,
   commands: EnabledBangleAppCommand[],
   commandHandlers: Array<{ id: string; handler: CommandHandler }>,
   theme: ThemeManager,
 ) {
-  // Resolve each dynamic import in its own branch so the concrete constructor
-  // reaches `createServiceSetup`. Widening both classes to a shared return
-  // type would erase the dependency shape that DI validates.
-  if (readEditorEnginePreference() === 'wordgard') {
-    const { EditorWService } = await import('@bangle.io/editor-w');
-    return initializeServicesWithEditorEngine(
-      commonOpts,
-      rootEmitter,
-      commands,
-      commandHandlers,
-      theme,
-      EditorWService,
-    );
-  }
-  const { PmEditorService } = await import('@bangle.io/editor');
-  return initializeServicesWithEditorEngine(
-    commonOpts,
-    rootEmitter,
-    commands,
-    commandHandlers,
-    theme,
-    PmEditorService,
-  );
-}
-
-function initializeServicesWithEditorEngine<const TEditorEngine>(
-  commonOpts: BaseServiceCommonOptions,
-  rootEmitter: RootEmitter,
-  commands: EnabledBangleAppCommand[],
-  commandHandlers: Array<{ id: string; handler: CommandHandler }>,
-  theme: ThemeManager,
-  editorEngine: ValidatedEditorEngineServiceConstructor<TEditorEngine>,
-) {
+  const editorEngineId = readEditorEnginePreference();
   // Native FS root-handle resolution needs workspace metadata, which lives in
   // a core service. The lookup is late-bound: it is wired right after the
   // setup is created and only runs after services are instantiated.
@@ -123,10 +88,7 @@ function initializeServicesWithEditorEngine<const TEditorEngine>(
     })),
   };
 
-  const setup = createServiceSetup<
-    typeof browserPlatformServices,
-    TEditorEngine
-  >({
+  const setup = createServiceSetup({
     commonOpts,
     rootEmitter,
     commands,
@@ -135,7 +97,7 @@ function initializeServicesWithEditorEngine<const TEditorEngine>(
     shortcutTarget: document,
     platformServices: browserPlatformServices,
     fileStorageSlots: ['fileStorageIdb', 'fileStorageNativeFs'],
-    editorEngine,
+    editorEngineId,
   });
 
   getWorkspaceOps = () => setup.getServices().workspaceOps;

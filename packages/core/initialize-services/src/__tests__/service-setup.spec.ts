@@ -1,7 +1,6 @@
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { commandHandlers } from '@bangle.io/command-handlers';
 import { getEnabledCommands } from '@bangle.io/commands';
-import { PmEditorService } from '@bangle.io/editor';
 import { slot } from '@bangle.io/poor-mans-di';
 import {
   FileStorageMemory,
@@ -49,7 +48,7 @@ function makeSetup({
       router: MemoryRouterService,
     },
     fileStorageSlots: ['fileStorageMemory'],
-    editorEngine: PmEditorService,
+    editorEngineId: 'prosemirror',
   });
 
   return { setup, controller };
@@ -90,7 +89,7 @@ describe('createServiceSetup', () => {
         })),
       },
       fileStorageSlots: [],
-      editorEngine: PmEditorService,
+      editorEngineId: 'prosemirror',
     });
 
     controller.abort();
@@ -120,47 +119,7 @@ describe('createServiceSetup', () => {
         router: MemoryRouterService,
       },
       fileStorageSlots: [],
-      editorEngine: PmEditorService,
-    });
-
-    controller.abort();
-  });
-
-  test('rejects an editor engine whose static deps drift from its constructor', () => {
-    const controller = new AbortController();
-    const { commonOpts, rootEmitter } = makeTestCommonOpts({ controller });
-    type PmContext = ConstructorParameters<typeof PmEditorService>[0];
-    type PmDependencies = ConstructorParameters<typeof PmEditorService>[1];
-    const dependencyMismatchedEngine = PmEditorService as unknown as {
-      new (
-        context: PmContext,
-        dependencies: Pick<PmDependencies, 'fileSystem'>,
-      ): PmEditorService;
-      readonly deps: readonly ['navigation'];
-    };
-
-    createServiceSetup({
-      commonOpts,
-      rootEmitter,
-      commands: [],
-      commandHandlers: [],
-      themeManager,
-      shortcutTarget: {
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-      },
-      platformServices: {
-        errorService: TestErrorHandlerService,
-        database: MemoryDatabaseService,
-        syncDatabase: MemorySyncDatabaseService,
-        fileStorageMemory: slot(FileStorageMemory, () => ({
-          onChange: () => {},
-        })),
-        router: MemoryRouterService,
-      },
-      fileStorageSlots: ['fileStorageMemory'],
-      // @ts-expect-error engine `static deps` and constructor keys must match.
-      editorEngine: dependencyMismatchedEngine,
+      editorEngineId: 'prosemirror',
     });
 
     controller.abort();
@@ -217,7 +176,7 @@ describe('createServiceSetup', () => {
         router: MemoryRouterService,
       },
       fileStorageSlots: ['fileStorageMemory', 'fileStorageMemoryDuplicate'],
-      editorEngine: PmEditorService,
+      editorEngineId: 'prosemirror',
     });
 
     expect(() => setup.instantiate()).toThrow(
@@ -274,7 +233,7 @@ describe('createServiceSetup', () => {
         router: MemoryRouterService,
       },
       fileStorageSlots: ['fileStorageMemory'],
-      editorEngine: PmEditorService,
+      editorEngineId: 'prosemirror',
       coreConfigOverrides: {
         commandRegistry: (base) => ({
           ...base,

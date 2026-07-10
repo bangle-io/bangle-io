@@ -15,9 +15,8 @@ import {
 } from '../editor-engine-preference';
 
 /**
- * Writes the preference through the real browser sync-database service using
- * the exact call `atomStorage`'s `setItem` makes, so this spec pins the full
- * key/encoding chain between the atom write path and the boot-time reader.
+ * Writes through the real browser sync-database service so this spec pins the
+ * key and encoding shared by the service write and boot-time read paths.
  */
 async function writePreferenceViaSyncDb(value: unknown) {
   const controller = new AbortController();
@@ -46,7 +45,7 @@ describe('editor engine preference boot-time access', () => {
     window.localStorage.clear();
   });
 
-  test('reads the value the sync database wrote for the workbench atom', async () => {
+  test('reads the value written through the sync database', async () => {
     expect(readEditorEnginePreference()).toBe('prosemirror');
 
     await writePreferenceViaSyncDb('wordgard');

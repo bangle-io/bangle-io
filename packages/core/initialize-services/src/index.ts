@@ -16,7 +16,7 @@ export {
   resetEditorEnginePreference,
 } from './editor-engine-preference';
 
-export async function initializeServices(
+export function initializeServices(
   logger: Logger,
   rootEmitter: RootEmitter,
   store: Store,
@@ -38,7 +38,7 @@ export async function initializeServices(
     },
   };
 
-  const services = await initializeServices2(
+  const services = initializeServices2(
     commonOpts,
     rootEmitter,
     getEnabledCommands(),

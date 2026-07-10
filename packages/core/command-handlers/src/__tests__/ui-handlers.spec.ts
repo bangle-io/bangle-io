@@ -53,9 +53,6 @@ describe('UI command handlers', () => {
         expect(persistSpy).toHaveBeenCalledWith('wordgard');
       });
       expect(reloadSpy).not.toHaveBeenCalled();
-      expect(testEnv.store.get(services.workbenchState.$editorEngine)).toBe(
-        'prosemirror',
-      );
       expect(toastSpy).toHaveBeenCalledWith(
         t.app.toasts.editorEngineSwitchPreferenceFailed,
       );

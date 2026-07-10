@@ -758,9 +758,6 @@ importers:
       '@bangle.io/root-emitter':
         specifier: workspace:*
         version: link:../../shared/root-emitter
-      '@bangle.io/service-core':
-        specifier: workspace:*
-        version: link:../../core/service-core
       '@bangle.io/translations':
         specifier: workspace:*
         version: link:../../shared/translations
@@ -1020,9 +1017,6 @@ importers:
       '@bangle.io/context':
         specifier: workspace:*
         version: link:../../core/context
-      '@bangle.io/editor':
-        specifier: workspace:*
-        version: link:../../core/editor
       '@bangle.io/initialize-services':
         specifier: workspace:*
         version: link:../../core/initialize-services

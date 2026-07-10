@@ -66,7 +66,6 @@ export type RootEvents =
 export const CROSS_TAB_EVENTS = [
   'event::file:update',
   'event::file:force-update',
-  'event::app:reload-ui',
 ] as const satisfies RootEvents['event'][];
 export type CrossTabEvent = (typeof CROSS_TAB_EVENTS)[number];
 export class RootEmitter {

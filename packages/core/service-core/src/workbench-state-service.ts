@@ -10,11 +10,9 @@ import type {
   ThemeManager,
 } from '@bangle.io/color-scheme-manager';
 import {
-  DEFAULT_EDITOR_ENGINE,
   EDITOR_ENGINE_PREFERENCE_KEY,
   type EditorEngineId,
   isAssetLocationPreference,
-  isEditorEngineId,
   SERVICE_NAME,
   SIDEBAR_DEFAULT_WIDTH,
 } from '@bangle.io/constants';
@@ -38,11 +36,6 @@ type Route = 'omni-home' | 'omni-command' | 'omni-filtered';
 const AssetLocationPreferenceValidator = {
   validate: isAssetLocationPreference,
   typeName: 'asset-location-preference',
-};
-
-const EditorEngineIdValidator = {
-  validate: isEditorEngineId,
-  typeName: 'editor-engine-id',
 };
 
 function determineOmniSearchRoute(input: string, currentRoute: Route): Route {
@@ -88,7 +81,6 @@ export class WorkbenchStateService extends BaseService {
   private $_assetLocationPreference:
     | PrimitiveAtom<AssetLocationPreference>
     | undefined;
-  private $_editorEngine: PrimitiveAtom<EditorEngineId> | undefined;
 
   $openWsDialog = atom(false);
   $openOmniSearch = atom(false);
@@ -144,10 +136,6 @@ export class WorkbenchStateService extends BaseService {
 
   hookMount() {
     this.addCleanup(
-      // Keep the persisted engine atom mounted even though bootstrap, rather
-      // than React, is its primary consumer. Sync-database notifications then
-      // update this tab only after a durable preference write succeeds.
-      this.store.sub(this.$editorEngine, () => {}),
       this.config.themeManager.onThemeChange(({ preference }) => {
         this.store.set(this.$themePref, preference);
       }),
@@ -184,11 +172,7 @@ export class WorkbenchStateService extends BaseService {
     this.config.themeManager.setPreference(preference);
   }
 
-  /**
-   * Persists the selected editor engine before its sync-database notification
-   * updates the mounted atom. A storage failure therefore leaves both the
-   * current in-memory preference and the running editor unchanged.
-   */
+  /** Persists the engine that bootstrap should use on the next reload. */
   public changeEditorEnginePreference(preference: EditorEngineId): boolean {
     const key = atomStorageKey(this.name, EDITOR_ENGINE_PREFERENCE_KEY);
     try {
@@ -197,31 +181,9 @@ export class WorkbenchStateService extends BaseService {
         () => ({ value: preference }),
         { tableName: 'sync' },
       );
-      if (result.found && result.value === preference) {
-        return true;
-      }
-      this.logger.error(
-        'Editor engine preference write did not report the requested value',
-        preference,
-      );
+      return result.found && result.value === preference;
     } catch (error) {
       this.logger.error('Unable to persist editor engine preference', error);
-    }
-
-    // A notification failure may throw after localStorage has already been
-    // written. Confirm the durable value directly before deciding whether a
-    // reload is safe; the stored preference, not the notification result, is
-    // the source of truth for the next bootstrap.
-    try {
-      const persisted = this.dep.syncDatabase.getEntry(key, {
-        tableName: 'sync',
-      });
-      return persisted.found && persisted.value === preference;
-    } catch (error) {
-      this.logger.error(
-        'Unable to confirm the persisted editor engine preference',
-        error,
-      );
       return false;
     }
   }
@@ -318,26 +280,6 @@ export class WorkbenchStateService extends BaseService {
       });
     }
     return this.$_showNoteFilesOnlyInSidebar;
-  }
-
-  /**
-   * The persisted editor-engine preference (plans/011). The composition root
-   * reads the same sync-database entry synchronously before the container is
-   * built, so a change only takes effect through a UI reload
-   * (`command::ui:switch-editor-engine` handles the full switch protocol).
-   */
-  get $editorEngine() {
-    if (!this.$_editorEngine) {
-      this.$_editorEngine = atomStorage({
-        serviceName: this.name,
-        key: EDITOR_ENGINE_PREFERENCE_KEY,
-        initValue: DEFAULT_EDITOR_ENGINE,
-        syncDb: this.dep.syncDatabase,
-        validator: EditorEngineIdValidator,
-        logger: this.logger,
-      });
-    }
-    return this.$_editorEngine;
   }
 
   get $assetLocationPreference() {

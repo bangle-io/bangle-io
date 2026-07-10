@@ -9,9 +9,8 @@ import {
 import { BrowserLocalStorageSyncDatabaseService } from '@bangle.io/service-platform';
 
 /**
- * Where the browser sync database persists `WorkbenchStateService`'s
- * `$editorEngine` atom. Composed from the same helpers the write path uses so
- * the two can never drift apart silently.
+ * Where the browser sync database persists the editor-engine preference.
+ * Composed from the same helpers as the write path so the two cannot drift.
  */
 export const EDITOR_ENGINE_PREFERENCE_STORAGE_KEY =
   BrowserLocalStorageSyncDatabaseService.storageKeyFor(
@@ -24,7 +23,7 @@ export const EDITOR_ENGINE_PREFERENCE_STORAGE_KEY =
 
 /**
  * Reads the persisted editor-engine preference before any service exists.
- * The composition root must pick an engine class prior to container
+ * The composition root must pick an engine id prior to container
  * instantiation, so this reads the sync database's localStorage entry
  * directly. Unknown or corrupt values fall back to the default engine —
  * a bad preference must never be able to prevent boot.

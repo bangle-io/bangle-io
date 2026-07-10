@@ -1,7 +1,7 @@
 import { throwAppError } from '@bangle.io/base-utils';
 import {
   EDITOR_ENGINE_IDS,
-  EDITOR_RELOAD_SAVE_DRAIN_TIMEOUT_MS,
+  EDITOR_ENGINE_SWITCH_SAVE_DRAIN_TIMEOUT_MS,
   isEditorEngineId,
 } from '@bangle.io/constants';
 import { waitForSaveQueueToDrain } from '@bangle.io/service-core';
@@ -82,7 +82,7 @@ export const basicOperationsHandlers = [
     'command::ui:switch-editor-engine',
     ({ workbenchState, editorEngine }, _, key) => {
       const { store } = getCtx(key);
-      const currentEngine = store.get(workbenchState.$editorEngine);
+      const currentEngine = editorEngine.engineId;
 
       store.set(workbenchState.$singleSelectDialog, () => {
         return {
@@ -108,7 +108,7 @@ export const basicOperationsHandlers = [
             void (async () => {
               const drained = await waitForSaveQueueToDrain(
                 editorEngine,
-                EDITOR_RELOAD_SAVE_DRAIN_TIMEOUT_MS,
+                EDITOR_ENGINE_SWITCH_SAVE_DRAIN_TIMEOUT_MS,
               );
               if (!drained) {
                 toast.error(t.app.toasts.editorEngineSwitchBlockedBySaves);

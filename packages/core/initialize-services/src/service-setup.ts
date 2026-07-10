@@ -1,7 +1,10 @@
 import { assertIsDefined } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import type { EnabledBangleAppCommand } from '@bangle.io/commands';
+import type { EditorEngineId } from '@bangle.io/constants';
 import type { CoreServices, EditorEngineContract } from '@bangle.io/context';
+import { PmEditorService } from '@bangle.io/editor';
+import { EditorWService } from '@bangle.io/editor-w';
 import {
   type ConstructorConfig,
   type ConstructorToInstance,
@@ -48,10 +51,7 @@ type AppServiceMapEntry = ServiceMapEntry<BaseServiceCommonOptions>;
  * The canonical core service classes, minus the editor engine. Every
  * composition root (browser and test) gets exactly these core services;
  * `createServiceSetup` pairs each class with its config, so callers supply
- * only platform slots plus the `editorEngine` class. The engine is the one
- * deliberately open slot: each composition root decides which implementation
- * powers the editing surface (plans/011), and production dynamic-imports only
- * the active engine so the inactive stack never loads.
+ * only platform slots plus the selected editor-engine id.
  */
 export const coreServiceClasses = {
   commandDispatcher: CommandDispatchService,
@@ -72,36 +72,6 @@ export const coreServiceClasses = {
 >;
 
 type CoreServiceClassMap = typeof coreServiceClasses;
-
-/**
- * A registrable editor engine: a config-less service class whose instances
- * satisfy `EditorEngineContract` and whose dependencies resolve within the
- * core slots — an engine talks to the platform through core services, never
- * through platform slots directly (that also keeps the platform-requirements
- * derivation below independent of the chosen engine).
- */
-type EditorEngineServiceConstructor<TClass> =
-  TClass extends AnyAppServiceConstructor
-    ? InstanceType<TClass> extends EditorEngineContract
-      ? TClass extends { readonly deps: readonly CoreServiceSlotId[] }
-        ? TClass
-        : never
-      : never
-    : never;
-
-type EditorEngineGraph<TEditorEngine> = CoreServiceClassMap & {
-  editorEngine: EditorEngineServiceConstructor<TEditorEngine>;
-};
-
-type ValidatedEditorEngine<TEditorEngine> = ValidateServiceMap<
-  BaseServiceCommonOptions,
-  EditorEngineGraph<TEditorEngine>
->['editorEngine'];
-
-export type ValidatedEditorEngineServiceConstructor<TEditorEngine> =
-  TEditorEngine &
-    EditorEngineServiceConstructor<TEditorEngine> &
-    ValidatedEditorEngine<TEditorEngine>;
 
 /**
  * A platform service map supplies environment-specific slots only; core slot
@@ -199,8 +169,6 @@ type _AssertValidCoreGraph = AssertTrue<
 
 /**
  * Core slots that carry a config and therefore accept a config override.
- * The editor engine is excluded by construction: engines are config-less
- * classes (see `EditorEngineServiceConstructor`).
  */
 type ConfiguredCoreSlotId = {
   [K in keyof CoreServiceClassMap]: CoreServiceClassMap[K] extends new (
@@ -231,10 +199,7 @@ type FileStorageSlot<TPlatformMap extends PlatformServiceMap> = {
     : never;
 }[keyof TPlatformMap & string];
 
-export type ServiceSetupOptions<
-  TPlatformMap extends PlatformServiceMap,
-  TEditorEngine,
-> = {
+export type ServiceSetupOptions<TPlatformMap extends PlatformServiceMap> = {
   commonOpts: BaseServiceCommonOptions;
   rootEmitter: RootEmitter;
   commands: EnabledBangleAppCommand[];
@@ -264,14 +229,8 @@ export type ServiceSetupOptions<
    * keyed by their `workspaceType` and served to `FileSystemService`.
    */
   fileStorageSlots: ReadonlyArray<FileStorageSlot<TPlatformMap>>;
-  /**
-   * The editor engine powering the editing surface. Consumers only ever see
-   * the `EditorEngineContract` slot; the class registered here is the single
-   * point deciding which engine a tab runs (plans/011). The browser
-   * composition root resolves it from the persisted preference via dynamic
-   * import; tests pass an engine class directly.
-   */
-  editorEngine: ValidatedEditorEngineServiceConstructor<TEditorEngine>;
+  /** The editor engine powering the editing surface. */
+  editorEngineId: EditorEngineId;
   /** Optional per-slot decorators over the canonical core configs. */
   coreConfigOverrides?: CoreConfigOverrides;
 };
@@ -324,8 +283,7 @@ function toCoreServices(s: CoreInstances): CoreServices {
  */
 export function createServiceSetup<
   const TPlatformMap extends PlatformServiceMap,
-  const TEditorEngine,
->(options: ServiceSetupOptions<TPlatformMap, TEditorEngine>) {
+>(options: ServiceSetupOptions<TPlatformMap>) {
   const {
     commonOpts,
     rootEmitter,
@@ -334,7 +292,7 @@ export function createServiceSetup<
     themeManager,
     shortcutTarget,
     fileStorageSlots,
-    editorEngine,
+    editorEngineId,
     coreConfigOverrides,
   } = options;
   const platformServices: TPlatformMap = options.platformServices;
@@ -461,7 +419,8 @@ export function createServiceSetup<
         ),
       })),
     ),
-    editorEngine,
+    editorEngine:
+      editorEngineId === 'wordgard' ? EditorWService : PmEditorService,
   } satisfies Record<CoreServiceSlotId, AppServiceMapEntry>;
 
   // Core slots always win the join; the annotation drops any phantom core

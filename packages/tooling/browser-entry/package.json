@@ -42,7 +42,6 @@
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/root-emitter": "workspace:*",
-    "@bangle.io/service-core": "workspace:*",
     "@bangle.io/translations": "workspace:*",
     "@sentry/browser": "^10.63.0",
     "@sentry/vite-plugin": "^5.3.0",
