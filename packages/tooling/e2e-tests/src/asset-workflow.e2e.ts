@@ -191,11 +191,13 @@ test('pastes workspace-backed image and PDF assets, reloads, and opens asset pag
     .toContain(
       '![Extremely Long Image Drop Filename For Toast UX.PNG](assets/extremely-long-image-drop-filename-for-toast-ux-',
     );
-  await expect(
-    page.getByText(
-      'Saved Extremely Long Image Drop...For Toast UX.PNG + 1 more',
-    ),
-  ).toBeVisible();
+  const savedToast = page.getByRole('listitem').filter({
+    hasText: 'Saved Extremely Long Image Drop...For Toast UX.PNG + 1 more',
+  });
+  await expect(savedToast).toBeVisible();
+  const toaster = page.locator('[data-sonner-toaster]');
+  await expect(toaster).toHaveAttribute('data-x-position', 'right');
+  await expect(toaster).toHaveAttribute('data-y-position', 'top');
   const markdown = await readStoredMarkdown(page, workspaceName, noteName);
   expect(markdown).not.toContain('data:');
   expect(markdown).toContain('[Spec Sheet.PDF](assets/spec-sheet-');

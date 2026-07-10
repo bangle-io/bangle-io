@@ -51,6 +51,10 @@ import { setupExtensions } from './extensions';
 import { findHeadingIndexBySlug } from './heading-slug';
 import { createLocalImageNodeView } from './local-image-node-view';
 import { createEditor } from './pm-setup';
+import {
+  getRememberedCursorPosition,
+  resolveRememberedCursor,
+} from './remembered-cursor';
 import { isMarkdownRoundTripPreserved } from './round-trip-check';
 
 const editorSaveQueueStore = createEditorSaveQueueStore();
@@ -135,6 +139,7 @@ export class PmEditorService
 
   private saveQueue: EditorSaveQueue;
   private pendingHeading: { fragment: string; wsPath: string } | undefined;
+  private rememberedCursors = new Map<string, number>();
 
   private editors = new Map<HTMLElement, EditorEntry>();
 
@@ -213,6 +218,7 @@ export class PmEditorService
         }
       }
       this.editors.clear();
+      this.rememberedCursors.clear();
     });
     this.addCleanup(
       this.store.sub(this.dependencies.navigation.$routeInfo, () => {
@@ -324,8 +330,11 @@ export class PmEditorService
         const { fragment } = pendingHeading;
         this.pendingHeading = undefined;
         this.navigateToHeading(editorView, fragment);
-      } else if (pendingHeading) {
-        this.pendingHeading = undefined;
+      } else {
+        if (pendingHeading) {
+          this.pendingHeading = undefined;
+        }
+        this.restoreCursor(editorView, wsPath);
       }
     } catch (cause) {
       const editorEntry = this.editors.get(domNode);
@@ -351,12 +360,43 @@ export class PmEditorService
   private unmountEditor(domNode: HTMLElement) {
     const editor = this.editors.get(domNode);
     if (editor && 'editorView' in editor) {
+      const position = getRememberedCursorPosition(
+        editor.editorView.state.selection,
+      );
+      if (position === undefined) {
+        this.rememberedCursors.delete(editor.wsPath);
+      } else {
+        this.rememberedCursors.set(editor.wsPath, position);
+      }
       editor.editorView.destroy();
     }
     this.editors.delete(domNode);
     if (editor) {
       this.setRoundTripWarning(editor.wsPath, false);
     }
+  }
+
+  private restoreCursor(editorView: EditorView, wsPath: string): void {
+    const position = this.rememberedCursors.get(wsPath);
+    if (position === undefined) {
+      return;
+    }
+    const selection = resolveRememberedCursor(editorView.state.doc, position);
+    if (!selection) {
+      return;
+    }
+    editorView.dispatch(
+      editorView.state.tr.setSelection(selection).scrollIntoView(),
+    );
+    // Restoring a cursor inside a Markdown link is navigation state, not a
+    // user interaction with that link. Keep the cursor without reopening the
+    // floating link editor, which can otherwise cover content after returning
+    // to a note.
+    this.extensions.linkMenu.command.dismissLinkMenu()(
+      editorView.state,
+      editorView.dispatch,
+      editorView,
+    );
   }
 
   /**

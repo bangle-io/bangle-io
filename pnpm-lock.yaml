@@ -100,6 +100,9 @@ importers:
       '@bangle.io/base-utils':
         specifier: workspace:*
         version: link:../../shared/base-utils
+      '@bangle.io/config':
+        specifier: workspace:*
+        version: link:../../shared/config
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
