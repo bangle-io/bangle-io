@@ -52,7 +52,7 @@ export function App({
             <BrowserAppDocumentSetup />
             <AppDialogs />
             <OmniSearch />
-            <Toaster position="top-center" />
+            <Toaster position="top-right" />
             <AppErrorHandler rootEmitter={rootEmitter} />
             <SaveProtection />
             <AppSidebar>

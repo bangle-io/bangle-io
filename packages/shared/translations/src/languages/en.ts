@@ -141,6 +141,8 @@ export const t = {
       general: {
         title: 'General',
         appSection: 'App',
+        versionTitle: 'Version',
+        versionDescription: 'The version and build identity of this app.',
         installPwaTitle: 'Install Bangle.io',
         installPwaDescription:
           'Add Bangle.io to this device and open it in its own app window.',

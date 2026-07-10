@@ -1,3 +1,4 @@
+import { FRIENDLY_ID } from '@bangle.io/config';
 import {
   ASSET_LOCATION_PREFERENCES,
   isAssetLocationPreference,
@@ -174,10 +175,19 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
           <SettingsPage.SettingsPageContent>
             {activePage === 'general' ? (
               <>
-                {pwaInstall.canInstall || pwaInstall.isInstalling ? (
-                  <SettingsPage.SettingsSection
-                    title={t.app.settings.general.appSection}
-                  >
+                <SettingsPage.SettingsSection
+                  title={t.app.settings.general.appSection}
+                >
+                  <SettingsPage.SettingsRow
+                    control={
+                      <code className="rounded-md bg-muted px-2.5 py-1 font-mono text-muted-foreground text-sm">
+                        {FRIENDLY_ID}
+                      </code>
+                    }
+                    description={t.app.settings.general.versionDescription}
+                    title={t.app.settings.general.versionTitle}
+                  />
+                  {pwaInstall.canInstall || pwaInstall.isInstalling ? (
                     <SettingsPage.SettingsRow
                       control={
                         <Button
@@ -196,8 +206,8 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
                       description={t.app.settings.general.installPwaDescription}
                       title={t.app.settings.general.installPwaTitle}
                     />
-                  </SettingsPage.SettingsSection>
-                ) : null}
+                  ) : null}
+                </SettingsPage.SettingsSection>
 
                 <SettingsPage.SettingsSection
                   title={t.app.settings.general.appearanceSection}

@@ -14,6 +14,15 @@ test('general settings update and persist user preferences', async ({
 
   await expect(page.getByRole('link', { name: 'Back to app' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'General' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { exact: true, name: 'App' }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/^\d+\.\d+\.\d+\+local$/, { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Install app' })).toHaveCount(
+    0,
+  );
 
   await page.getByRole('combobox', { name: 'Theme preference' }).click();
   await page.getByRole('option', { name: 'Dark' }).click();
