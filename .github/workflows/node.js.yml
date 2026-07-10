@@ -76,7 +76,7 @@ jobs:
       - name: Production build
         run: pnpm run build
   e2e-tests:
-    timeout-minutes: 10
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.60.0-noble
     steps:
