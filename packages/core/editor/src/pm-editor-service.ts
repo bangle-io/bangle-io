@@ -64,6 +64,23 @@ import {
 } from './round-trip-check';
 
 const ASSET_TOAST_FILE_NAME_MAX_LENGTH = 44;
+
+/**
+ * Quiet period between an external change notification and the first disk
+ * read, letting in-progress writes (truncate-then-write) finish first.
+ */
+const EXTERNAL_SYNC_QUIET_MS = 150;
+/**
+ * Gap between the two confirming reads that must agree before externally
+ * changed content is applied to an open editor.
+ */
+const EXTERNAL_SYNC_STABILITY_MS = 100;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
 const EMPTY_WS_PATH_SET: ReadonlySet<string> = new Set();
 
 export type PmEditorServiceConfig = {
@@ -154,6 +171,14 @@ export class PmEditorService
 
   private editors = new Map<HTMLElement, EditorEntry>();
 
+  /**
+   * Markdown parse/serialize loaders keyed by editor schema. Every mounted
+   * editor builds its own `Schema` instance, and parsing creates nodes bound
+   * to the loader's schema — feeding nodes from one editor's schema into
+   * another editor's document makes ProseMirror's replace fitting silently
+   * drop the content. Keying by schema keeps each loader usable only with
+   * the views it belongs to.
+   */
   private markdownBySchema = new WeakMap<
     Schema,
     ReturnType<typeof markdownLoader>
@@ -357,11 +382,15 @@ export class PmEditorService
       return;
     }
     this.externalSyncRuns.set(wsPath, false);
+    // Bounded so a file under continuous external writes cannot spin this
+    // loop forever; the next watcher event starts a fresh sync.
+    let attempts = 0;
     try {
       do {
         this.externalSyncRuns.set(wsPath, false);
+        attempts += 1;
         await this.applyExternalContentIfClean(wsPath);
-      } while (this.externalSyncRuns.get(wsPath));
+      } while (this.externalSyncRuns.get(wsPath) && attempts < 5);
     } finally {
       this.externalSyncRuns.delete(wsPath);
     }
@@ -388,11 +417,28 @@ export class PmEditorService
     }
     const docsBefore = views.map((view) => view.state.doc);
 
+    // Watcher records are hints that can fire mid-write: a sync tool (or the
+    // browser's own writable stream) may truncate the file before the new
+    // bytes land, with no follow-up record for the final commit. Wait out a
+    // short quiet period, then require two consecutive reads to agree before
+    // treating the content as settled — otherwise an open note would flash
+    // (or stick) empty on a truncate-then-write.
+    await sleep(EXTERNAL_SYNC_QUIET_MS);
+    const firstRead = await this.dependencies.fileSystem.readFileAsText(wsPath);
+    if (firstRead === undefined) {
+      return;
+    }
+    await sleep(EXTERNAL_SYNC_STABILITY_MS);
     const diskText = await this.dependencies.fileSystem.readFileAsText(wsPath);
     if (diskText === undefined) {
       return;
     }
-    // The user may have typed while the read was in flight — re-check, and
+    if (diskText !== firstRead) {
+      // Still being written — run another pass after the loop's rerun check.
+      this.externalSyncRuns.set(wsPath, true);
+      return;
+    }
+    // The user may have typed while the reads were in flight — re-check, and
     // bail if any doc moved on. A newer watcher event re-triggers this pass.
     if (this.saveQueue.hasPendingOrFailed(wsPath)) {
       return;
@@ -427,6 +473,15 @@ export class PmEditorService
       const { state } = view;
       const selectionHead = state.selection.head;
       let tr = state.tr.replaceWith(0, state.doc.content.size, parsed.content);
+      // Defense in depth: if the replacement lost the parsed content (e.g.
+      // a schema mismatch makes the replace fitting drop foreign nodes),
+      // never apply it — a wrong-but-present note beats a blanked one.
+      if (parsed.content.size > 0 && tr.doc.content.size === 0) {
+        this.logger.error(
+          `External sync for ${wsPath} produced an empty document from non-empty content; skipping`,
+        );
+        return;
+      }
       tr = tr.setSelection(
         TextSelection.near(
           tr.doc.resolve(Math.min(selectionHead, tr.doc.content.size)),

@@ -99,10 +99,15 @@ describe('editor refresh on external file changes', () => {
       'updated by a sync tool elsewhere',
     );
 
-    await vi.waitFor(() => {
-      expect(editorText(domNode)).toContain('updated by a sync tool elsewhere');
-      expect(editorText(domNode)).not.toContain('the original note body');
-    });
+    await vi.waitFor(
+      () => {
+        expect(editorText(domNode)).toContain(
+          'updated by a sync tool elsewhere',
+        );
+        expect(editorText(domNode)).not.toContain('the original note body');
+      },
+      { timeout: 3_000 },
+    );
 
     // Applying external content must not bounce a save back to storage —
     // that write would churn the file's mtime and make sync tools loop.
@@ -124,9 +129,12 @@ describe('editor refresh on external file changes', () => {
       sender: EXTERNAL_SENDER,
     });
 
-    await vi.waitFor(() => {
-      expect(editorText(domNode)).toContain('content after coarse refresh');
-    });
+    await vi.waitFor(
+      () => {
+        expect(editorText(domNode)).toContain('content after coarse refresh');
+      },
+      { timeout: 3_000 },
+    );
   });
 
   it('never clobbers unsaved editor content: pending edits win over the external copy', async () => {
@@ -135,8 +143,15 @@ describe('editor refresh on external file changes', () => {
     );
 
     // Wedge the save pipeline so the user's edit stays pending/unsaved.
+    // Resolvable at the end: the save queue store is a module-level
+    // singleton (production wiring), so a forever-pending entry would leak
+    // a dirty state for this wsPath into later tests.
+    let releaseSave = () => {};
     vi.spyOn(services.fileSystem, 'writeFile').mockImplementation(
-      () => new Promise<void>(() => {}),
+      () =>
+        new Promise<void>((resolve) => {
+          releaseSave = resolve;
+        }),
     );
 
     // Simulate the user typing (inserts at the current selection and
@@ -154,13 +169,98 @@ describe('editor refresh on external file changes', () => {
       'external content that must not win',
     );
 
-    // Give the sync path ample opportunity to (incorrectly) run.
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    // Give the sync path ample opportunity to (incorrectly) run — well past
+    // its quiet-period and stability-read delays.
+    await new Promise((resolve) => setTimeout(resolve, 700));
 
     expect(editorText(domNode)).toContain('USER-UNSAVED-EDIT');
     expect(editorText(domNode)).not.toContain(
       'external content that must not win',
     );
+
+    // Unwedge the save so the shared queue store returns to clean.
+    releaseSave();
+    await vi.waitFor(() => {
+      expect(services.editorEngine.hasPendingOrFailedSave()).toBe(false);
+    });
+  });
+
+  it('does not apply a transient mid-write read; it settles on the final content', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      'the original note body',
+    );
+
+    // Simulate a truncate-then-write external editor: the first read after
+    // the watcher event sees an empty file, later reads see the final
+    // content. The empty snapshot must never reach the editor.
+    const realRead = services.fileSystem.readFileAsText.bind(
+      services.fileSystem,
+    );
+    const readSpy = vi
+      .spyOn(services.fileSystem, 'readFileAsText')
+      .mockImplementation(realRead);
+    readSpy.mockImplementationOnce(async () => '');
+
+    await simulateExternalEdit(testEnv, services, 'final synced content');
+
+    await vi.waitFor(
+      () => {
+        expect(editorText(domNode)).toContain('final synced content');
+      },
+      { timeout: 3_000 },
+    );
+    // The transient empty read never replaced the doc: had it been applied,
+    // the placeholder-empty doc would have been visible and, worse, the
+    // final content would only arrive via a second watcher event that this
+    // simulation never sends.
+  });
+
+  it('applies external content to a note loaded after another note primed the markdown loader', async () => {
+    // Regression: markdown loaders are schema-bound and every editor builds
+    // its own schema. Loading one note first (its load-time fidelity check
+    // primes the loader) must not make a later note's external sync parse
+    // with a foreign schema — that silently produced an empty document.
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      'the original note body',
+    );
+
+    const otherWsPath = `${WS_NAME}:other.md`;
+    await services.fileSystem.createTextFile(otherWsPath, 'other note');
+    const otherDomNode = document.createElement('div');
+    document.body.append(otherDomNode);
+    cleanupDomNodes.push(otherDomNode);
+    services.editorEngine.mountEditor({
+      domNode: otherDomNode,
+      wsPath: otherWsPath,
+      name: 'second-test-editor',
+      focus: false,
+    });
+    await vi.waitFor(() => {
+      expect(otherDomNode.textContent).toContain('other note');
+    });
+
+    await services.fileStorageMemory.writeFile(
+      otherWsPath,
+      new File(['other note updated externally'], 'other.md', {
+        type: 'text/plain',
+      }),
+    );
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-content-update',
+      wsPath: otherWsPath,
+      sender: EXTERNAL_SENDER,
+    });
+
+    await vi.waitFor(
+      () => {
+        expect(otherDomNode.textContent).toContain(
+          'other note updated externally',
+        );
+      },
+      { timeout: 3_000 },
+    );
+    // The first editor is untouched.
+    expect(editorText(domNode)).toContain('the original note body');
   });
 
   it('leaves the editor untouched when the external content is identical (echo)', async () => {
@@ -171,7 +271,7 @@ describe('editor refresh on external file changes', () => {
     const docBefore = domNode.innerHTML;
 
     await simulateExternalEdit(testEnv, services, 'the original note body\n');
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 700));
 
     expect(domNode.innerHTML).toBe(docBefore);
     expect(editorText(domNode)).toContain('the original note body');
