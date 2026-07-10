@@ -1,5 +1,6 @@
 import {
   atomStorage,
+  atomStorageKey,
   BaseService,
   type BaseServiceContext,
   getEventSenderMetadata,
@@ -143,6 +144,10 @@ export class WorkbenchStateService extends BaseService {
 
   hookMount() {
     this.addCleanup(
+      // Keep the persisted engine atom mounted even though bootstrap, rather
+      // than React, is its primary consumer. Sync-database notifications then
+      // update this tab only after a durable preference write succeeds.
+      this.store.sub(this.$editorEngine, () => {}),
       this.config.themeManager.onThemeChange(({ preference }) => {
         this.store.set(this.$themePref, preference);
       }),
@@ -177,6 +182,48 @@ export class WorkbenchStateService extends BaseService {
 
   public changeThemePreference(preference: ThemeConfig['defaultPreference']) {
     this.config.themeManager.setPreference(preference);
+  }
+
+  /**
+   * Persists the selected editor engine before its sync-database notification
+   * updates the mounted atom. A storage failure therefore leaves both the
+   * current in-memory preference and the running editor unchanged.
+   */
+  public changeEditorEnginePreference(preference: EditorEngineId): boolean {
+    const key = atomStorageKey(this.name, EDITOR_ENGINE_PREFERENCE_KEY);
+    try {
+      const result = this.dep.syncDatabase.updateEntry(
+        key,
+        () => ({ value: preference }),
+        { tableName: 'sync' },
+      );
+      if (result.found && result.value === preference) {
+        return true;
+      }
+      this.logger.error(
+        'Editor engine preference write did not report the requested value',
+        preference,
+      );
+    } catch (error) {
+      this.logger.error('Unable to persist editor engine preference', error);
+    }
+
+    // A notification failure may throw after localStorage has already been
+    // written. Confirm the durable value directly before deciding whether a
+    // reload is safe; the stored preference, not the notification result, is
+    // the source of truth for the next bootstrap.
+    try {
+      const persisted = this.dep.syncDatabase.getEntry(key, {
+        tableName: 'sync',
+      });
+      return persisted.found && persisted.value === preference;
+    } catch (error) {
+      this.logger.error(
+        'Unable to confirm the persisted editor engine preference',
+        error,
+      );
+      return false;
+    }
   }
 
   public updateOmniSearchInput(input: string) {

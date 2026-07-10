@@ -531,6 +531,8 @@ export const t = {
       saveFailed: 'Changes could not be saved. Retry to keep your latest edit.',
       editorEngineSwitchBlockedBySaves:
         'Cannot switch editors: a note has unsaved changes that could not be written. Retry the failed save first.',
+      editorEngineSwitchPreferenceFailed:
+        'Could not save the editor choice. Your current editor is still active.',
     },
     pageWelcome: {
       newUser: 'Welcome to Bangle',

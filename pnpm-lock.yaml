@@ -182,6 +182,9 @@ importers:
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
+      '@bangle.io/service-core':
+        specifier: workspace:*
+        version: link:../service-core
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -198,9 +201,6 @@ importers:
         specifier: 19.2.7
         version: 19.2.7
     devDependencies:
-      '@bangle.io/service-core':
-        specifier: workspace:*
-        version: link:../service-core
       '@bangle.io/test-utils':
         specifier: workspace:*
         version: link:../../tooling/test-utils
@@ -758,6 +758,9 @@ importers:
       '@bangle.io/root-emitter':
         specifier: workspace:*
         version: link:../../shared/root-emitter
+      '@bangle.io/service-core':
+        specifier: workspace:*
+        version: link:../../core/service-core
       '@bangle.io/translations':
         specifier: workspace:*
         version: link:../../shared/translations

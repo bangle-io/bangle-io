@@ -1,20 +1,14 @@
 import { throwAppError } from '@bangle.io/base-utils';
-import { EDITOR_ENGINE_IDS, isEditorEngineId } from '@bangle.io/constants';
+import {
+  EDITOR_ENGINE_IDS,
+  EDITOR_RELOAD_SAVE_DRAIN_TIMEOUT_MS,
+  isEditorEngineId,
+} from '@bangle.io/constants';
+import { waitForSaveQueueToDrain } from '@bangle.io/service-core';
 import { toast } from '@bangle.io/ui-components';
 import { FlaskConical, Sun } from 'lucide-react';
 import { c, getCtx } from '../helper';
-import {
-  readTextFromClipboard,
-  waitForSaveQueueToDrain,
-  writeTextToClipboard,
-} from '../utils';
-
-/**
- * How long the engine switch waits for in-flight saves before refusing.
- * Healthy saves coalesce within milliseconds; anything still unsaved after
- * this long is effectively a failed write that needs the user.
- */
-const ENGINE_SWITCH_SAVE_DRAIN_TIMEOUT_MS = 5_000;
+import { readTextFromClipboard, writeTextToClipboard } from '../utils';
 
 export const basicOperationsHandlers = [
   c('command::ui:toggle-sidebar', ({ workbenchState }, _, key) => {
@@ -114,13 +108,16 @@ export const basicOperationsHandlers = [
             void (async () => {
               const drained = await waitForSaveQueueToDrain(
                 editorEngine,
-                ENGINE_SWITCH_SAVE_DRAIN_TIMEOUT_MS,
+                EDITOR_RELOAD_SAVE_DRAIN_TIMEOUT_MS,
               );
               if (!drained) {
                 toast.error(t.app.toasts.editorEngineSwitchBlockedBySaves);
                 return;
               }
-              store.set(workbenchState.$editorEngine, targetEngine);
+              if (!workbenchState.changeEditorEnginePreference(targetEngine)) {
+                toast.error(t.app.toasts.editorEngineSwitchPreferenceFailed);
+                return;
+              }
               workbenchState.reloadUi();
             })();
           },

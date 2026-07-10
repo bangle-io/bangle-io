@@ -79,6 +79,12 @@ export function isEditorEngineId(value: unknown): value is EditorEngineId {
  * from the sync database before the service container exists.
  */
 export const EDITOR_ENGINE_PREFERENCE_KEY = 'editor-engine';
+/**
+ * Maximum time any UI reload waits for the current tab's editor writes.
+ * Healthy saves settle quickly; reaching this bound indicates a failed save
+ * that must keep the tab mounted so its unsaved content remains recoverable.
+ */
+export const EDITOR_RELOAD_SAVE_DRAIN_TIMEOUT_MS = 5_000;
 
 export const WORKSPACE_STORAGE_TYPE = {
   Help: 'helpfs',

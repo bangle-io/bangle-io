@@ -76,3 +76,90 @@ test('switching editor engines round-trips through reload with the note intact',
     await expect(pmEditor).toContainText('Hello Engines edited');
   });
 });
+
+test('cross-tab engine switching waits for every tab to finish saving', async ({
+  context,
+  page,
+}) => {
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName: 'engine-switch-cross-tab-ws',
+    noteName: 'shared-note',
+  });
+
+  const secondPage = await context.newPage();
+  const secondTabUrl = new URL(page.url());
+  secondTabUrl.searchParams.set('debug', 'true');
+  await secondPage.goto(secondTabUrl.toString(), { waitUntil: 'networkidle' });
+  const secondEditor = getEditorLocator(secondPage, {});
+  await expect(secondEditor).toBeVisible();
+
+  await secondPage.evaluate(() => {
+    const testWindow = window as typeof window & {
+      __releaseEngineSwitchWrite?: () => void;
+      services?: {
+        core: {
+          fileSystem: {
+            writeFile: (wsPath: string, file: File) => Promise<void>;
+          };
+        };
+      };
+    };
+    const fileSystem = testWindow.services?.core.fileSystem;
+    if (!fileSystem) {
+      throw new Error('Debug services are unavailable');
+    }
+    const originalWrite = fileSystem.writeFile.bind(fileSystem);
+    let releaseWrite: (() => void) | undefined;
+    const writeGate = new Promise<void>((resolve) => {
+      releaseWrite = resolve;
+    });
+    testWindow.__releaseEngineSwitchWrite = () => releaseWrite?.();
+    fileSystem.writeFile = async (wsPath, file) => {
+      await writeGate;
+      await originalWrite(wsPath, file);
+    };
+  });
+
+  await secondEditor.click();
+  await clearEditor(secondPage, {});
+  await secondEditor.pressSequentially('# Saved by the second tab', {
+    delay: 20,
+  });
+  await expect
+    .poll(() =>
+      secondPage.evaluate(() => {
+        const testWindow = window as typeof window & {
+          services?: {
+            core: {
+              editorEngine: {
+                hasPendingOrFailedSave: () => boolean;
+              };
+            };
+          };
+        };
+        return Boolean(
+          testWindow.services?.core.editorEngine.hasPendingOrFailedSave(),
+        );
+      }),
+    )
+    .toBe(true);
+
+  await runSwitchEngineCommand(page, 'Wordgard (experimental)');
+  await expect(page.locator(WORDGARD_EDITOR)).toBeVisible();
+
+  // The receiving tab must remain mounted on its current engine while its
+  // write is blocked, even though the shared preference has changed.
+  await expect(secondPage.locator(PM_EDITOR)).toBeVisible();
+  await expect(secondPage.locator(WORDGARD_EDITOR)).toHaveCount(0);
+
+  await secondPage.evaluate(() => {
+    const testWindow = window as typeof window & {
+      __releaseEngineSwitchWrite?: () => void;
+    };
+    testWindow.__releaseEngineSwitchWrite?.();
+  });
+
+  const secondWordgardEditor = secondPage.locator(WORDGARD_EDITOR);
+  await expect(secondWordgardEditor).toBeVisible();
+  await expect(secondWordgardEditor).toContainText('# Saved by the second tab');
+});

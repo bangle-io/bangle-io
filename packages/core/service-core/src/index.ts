@@ -1,6 +1,7 @@
 export { CommandDispatchService } from './command-dispatch-service';
 export type { CommandHandlerConfig } from './command-registry-service';
 export { CommandRegistryService } from './command-registry-service';
+export { waitForSaveQueueToDrain } from './editor-save-status';
 export { EditorService } from './editor-service';
 export type {
   FileContentUpdateEvent,

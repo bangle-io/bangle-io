@@ -2,6 +2,7 @@
 /// <reference types="@vitest/browser/matchers" />
 import '@testing-library/jest-dom/vitest';
 import { SETTINGS_PAGE_DEFINITIONS } from '@bangle.io/constants';
+import { toast } from '@bangle.io/ui-components';
 import { describe, expect, it, vi } from 'vitest';
 import { setupTest } from './test-utils';
 
@@ -29,6 +30,35 @@ describe('UI command handlers', () => {
       const spy = vi.spyOn(services.workbenchState, 'reloadUi');
       dispatch('command::ui:reload-app', null);
       expect(spy).toHaveBeenCalled();
+    });
+  });
+
+  describe('command::ui:switch-editor-engine', () => {
+    it('does not reload when the engine preference cannot be persisted', async () => {
+      const { dispatch, services, testEnv } = await setupTest({
+        targetId: 'command::ui:switch-editor-engine',
+      });
+      const persistSpy = vi
+        .spyOn(services.workbenchState, 'changeEditorEnginePreference')
+        .mockReturnValue(false);
+      const reloadSpy = vi.spyOn(services.workbenchState, 'reloadUi');
+      const toastSpy = vi.spyOn(toast, 'error').mockImplementation(() => '');
+
+      dispatch('command::ui:switch-editor-engine', null);
+      testEnv.store
+        .get(services.workbenchState.$singleSelectDialog)
+        ?.onSelect({ id: 'wordgard', title: 'Wordgard (experimental)' });
+
+      await vi.waitFor(() => {
+        expect(persistSpy).toHaveBeenCalledWith('wordgard');
+      });
+      expect(reloadSpy).not.toHaveBeenCalled();
+      expect(testEnv.store.get(services.workbenchState.$editorEngine)).toBe(
+        'prosemirror',
+      );
+      expect(toastSpy).toHaveBeenCalledWith(
+        t.app.toasts.editorEngineSwitchPreferenceFailed,
+      );
     });
   });
 

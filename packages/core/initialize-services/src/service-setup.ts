@@ -80,14 +80,28 @@ type CoreServiceClassMap = typeof coreServiceClasses;
  * through platform slots directly (that also keeps the platform-requirements
  * derivation below independent of the chosen engine).
  */
-export type EditorEngineServiceConstructor = (new (
-  context: { ctx: BaseServiceCommonOptions; serviceContext: ServiceContext },
-  // The concrete dependency shape is the engine's own business; the DI
-  // container resolves it from the class's `static deps` slot ids.
-  dependencies: any,
-) => EditorEngineContract) & {
-  readonly deps: readonly CoreServiceSlotId[];
+type EditorEngineServiceConstructor<TClass> =
+  TClass extends AnyAppServiceConstructor
+    ? InstanceType<TClass> extends EditorEngineContract
+      ? TClass extends { readonly deps: readonly CoreServiceSlotId[] }
+        ? TClass
+        : never
+      : never
+    : never;
+
+type EditorEngineGraph<TEditorEngine> = CoreServiceClassMap & {
+  editorEngine: EditorEngineServiceConstructor<TEditorEngine>;
 };
+
+type ValidatedEditorEngine<TEditorEngine> = ValidateServiceMap<
+  BaseServiceCommonOptions,
+  EditorEngineGraph<TEditorEngine>
+>['editorEngine'];
+
+export type ValidatedEditorEngineServiceConstructor<TEditorEngine> =
+  TEditorEngine &
+    EditorEngineServiceConstructor<TEditorEngine> &
+    ValidatedEditorEngine<TEditorEngine>;
 
 /**
  * A platform service map supplies environment-specific slots only; core slot
@@ -217,7 +231,10 @@ type FileStorageSlot<TPlatformMap extends PlatformServiceMap> = {
     : never;
 }[keyof TPlatformMap & string];
 
-export type ServiceSetupOptions<TPlatformMap extends PlatformServiceMap> = {
+export type ServiceSetupOptions<
+  TPlatformMap extends PlatformServiceMap,
+  TEditorEngine,
+> = {
   commonOpts: BaseServiceCommonOptions;
   rootEmitter: RootEmitter;
   commands: EnabledBangleAppCommand[];
@@ -254,7 +271,7 @@ export type ServiceSetupOptions<TPlatformMap extends PlatformServiceMap> = {
    * composition root resolves it from the persisted preference via dynamic
    * import; tests pass an engine class directly.
    */
-  editorEngine: EditorEngineServiceConstructor;
+  editorEngine: ValidatedEditorEngineServiceConstructor<TEditorEngine>;
   /** Optional per-slot decorators over the canonical core configs. */
   coreConfigOverrides?: CoreConfigOverrides;
 };
@@ -307,7 +324,8 @@ function toCoreServices(s: CoreInstances): CoreServices {
  */
 export function createServiceSetup<
   const TPlatformMap extends PlatformServiceMap,
->(options: ServiceSetupOptions<TPlatformMap>) {
+  const TEditorEngine,
+>(options: ServiceSetupOptions<TPlatformMap, TEditorEngine>) {
   const {
     commonOpts,
     rootEmitter,

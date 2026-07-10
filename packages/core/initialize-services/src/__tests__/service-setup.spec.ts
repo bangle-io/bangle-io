@@ -126,6 +126,46 @@ describe('createServiceSetup', () => {
     controller.abort();
   });
 
+  test('rejects an editor engine whose static deps drift from its constructor', () => {
+    const controller = new AbortController();
+    const { commonOpts, rootEmitter } = makeTestCommonOpts({ controller });
+    type PmContext = ConstructorParameters<typeof PmEditorService>[0];
+    type PmDependencies = ConstructorParameters<typeof PmEditorService>[1];
+    const dependencyMismatchedEngine = PmEditorService as unknown as {
+      new (
+        context: PmContext,
+        dependencies: Pick<PmDependencies, 'fileSystem'>,
+      ): PmEditorService;
+      readonly deps: readonly ['navigation'];
+    };
+
+    createServiceSetup({
+      commonOpts,
+      rootEmitter,
+      commands: [],
+      commandHandlers: [],
+      themeManager,
+      shortcutTarget: {
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      },
+      platformServices: {
+        errorService: TestErrorHandlerService,
+        database: MemoryDatabaseService,
+        syncDatabase: MemorySyncDatabaseService,
+        fileStorageMemory: slot(FileStorageMemory, () => ({
+          onChange: () => {},
+        })),
+        router: MemoryRouterService,
+      },
+      fileStorageSlots: ['fileStorageMemory'],
+      // @ts-expect-error engine `static deps` and constructor keys must match.
+      editorEngine: dependencyMismatchedEngine,
+    });
+
+    controller.abort();
+  });
+
   test('instantiates, mounts, and reports a healthy service graph', async () => {
     const { setup, controller } = makeSetup();
 

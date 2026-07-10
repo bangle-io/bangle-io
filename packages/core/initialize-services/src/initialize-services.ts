@@ -25,22 +25,8 @@ import type {
 import { readEditorEnginePreference } from './editor-engine-preference';
 import {
   createServiceSetup,
-  type EditorEngineServiceConstructor,
+  type ValidatedEditorEngineServiceConstructor,
 } from './service-setup';
-
-/**
- * Resolves the persisted engine preference to a service class. Only the
- * chosen engine's package is imported — Vite code-splits both engine stacks,
- * so a ProseMirror tab never parses Wordgard code and vice versa (plans/011).
- */
-async function loadEditorEngine(): Promise<EditorEngineServiceConstructor> {
-  if (readEditorEnginePreference() === 'wordgard') {
-    const { EditorWService } = await import('@bangle.io/editor-w');
-    return EditorWService;
-  }
-  const { PmEditorService } = await import('@bangle.io/editor');
-  return PmEditorService;
-}
 
 export async function initializeServices(
   commonOpts: BaseServiceCommonOptions,
@@ -49,7 +35,39 @@ export async function initializeServices(
   commandHandlers: Array<{ id: string; handler: CommandHandler }>,
   theme: ThemeManager,
 ) {
-  const editorEngine = await loadEditorEngine();
+  // Resolve each dynamic import in its own branch so the concrete constructor
+  // reaches `createServiceSetup`. Widening both classes to a shared return
+  // type would erase the dependency shape that DI validates.
+  if (readEditorEnginePreference() === 'wordgard') {
+    const { EditorWService } = await import('@bangle.io/editor-w');
+    return initializeServicesWithEditorEngine(
+      commonOpts,
+      rootEmitter,
+      commands,
+      commandHandlers,
+      theme,
+      EditorWService,
+    );
+  }
+  const { PmEditorService } = await import('@bangle.io/editor');
+  return initializeServicesWithEditorEngine(
+    commonOpts,
+    rootEmitter,
+    commands,
+    commandHandlers,
+    theme,
+    PmEditorService,
+  );
+}
+
+function initializeServicesWithEditorEngine<const TEditorEngine>(
+  commonOpts: BaseServiceCommonOptions,
+  rootEmitter: RootEmitter,
+  commands: EnabledBangleAppCommand[],
+  commandHandlers: Array<{ id: string; handler: CommandHandler }>,
+  theme: ThemeManager,
+  editorEngine: ValidatedEditorEngineServiceConstructor<TEditorEngine>,
+) {
   // Native FS root-handle resolution needs workspace metadata, which lives in
   // a core service. The lookup is late-bound: it is wired right after the
   // setup is created and only runs after services are instantiated.
@@ -105,7 +123,10 @@ export async function initializeServices(
     })),
   };
 
-  const setup = createServiceSetup({
+  const setup = createServiceSetup<
+    typeof browserPlatformServices,
+    TEditorEngine
+  >({
     commonOpts,
     rootEmitter,
     commands,
