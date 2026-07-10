@@ -97,7 +97,13 @@ test('general settings can install the PWA when the browser exposes an install p
   });
 
   await page.goto('/');
-  await expect(page).toHaveTitle('Bangle.io', { timeout: 15_000 });
+
+  // Navigate through the mounted app before dispatching the synthetic event.
+  // The document title is present in the static HTML, so waiting on it does
+  // not guarantee React's beforeinstallprompt listener has been registered.
+  await page.getByRole('button', { name: /Bangle\.io/ }).click();
+  await page.getByRole('menuitem', { name: 'Settings' }).click();
+  await expect(page.getByRole('heading', { name: 'General' })).toBeVisible();
 
   await page.evaluate(() => {
     const event = new Event('beforeinstallprompt', {
@@ -119,10 +125,6 @@ test('general settings can install the PWA when the browser exposes an install p
     });
   });
 
-  await page.getByRole('button', { name: /Bangle\.io/ }).click();
-  await page.getByRole('menuitem', { name: 'Settings' }).click();
-
-  await expect(page.getByRole('heading', { name: 'General' })).toBeVisible();
   await expect(
     page.getByRole('heading', { exact: true, name: 'App' }),
   ).toBeVisible();
