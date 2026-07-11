@@ -419,8 +419,9 @@ export function createServiceSetup<
         ),
       })),
     ),
-    editorEngine:
+    editorEngine: slot(
       editorEngineId === 'wordgard' ? EditorWService : PmEditorService,
+    ),
   } satisfies Record<CoreServiceSlotId, AppServiceMapEntry>;
 
   // Core slots always win the join; the annotation drops any phantom core
