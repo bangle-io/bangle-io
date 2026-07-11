@@ -40,6 +40,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  SidebarRail,
   useSidebar,
 } from './sidebar';
 
@@ -333,6 +334,7 @@ export function AppSidebar({
           {footerChildren}
         </AppSidebarFooter>
       )}
+      <SidebarRail />
     </Sidebar>
   );
 }

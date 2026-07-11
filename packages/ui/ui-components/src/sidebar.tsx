@@ -16,14 +16,26 @@ import {
   TooltipTrigger,
   useRender,
 } from '@bangle.io/base-ui';
+import {
+  SIDEBAR_DEFAULT_WIDTH,
+  SIDEBAR_MAX_WIDTH,
+  SIDEBAR_MIN_WIDTH,
+} from '@bangle.io/constants';
 import { useIsMobile } from '@bangle.io/ui-misc';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { PanelLeftIcon } from 'lucide-react';
 import * as React from 'react';
 
-const SIDEBAR_WIDTH = '17rem';
 const SIDEBAR_WIDTH_MOBILE = '18rem';
 const SIDEBAR_WIDTH_ICON = '3rem';
+
+export function clampSidebarWidth(
+  width: number,
+  minWidth = SIDEBAR_MIN_WIDTH,
+  maxWidth = SIDEBAR_MAX_WIDTH,
+) {
+  return Math.min(Math.max(width, minWidth), maxWidth);
+}
 
 type SidebarContextProps = {
   state: 'expanded' | 'collapsed';
@@ -33,6 +45,12 @@ type SidebarContextProps = {
   setOpenMobile: (open: boolean) => void;
   isMobile: boolean;
   toggleSidebar: () => void;
+  width: number;
+  minWidth: number;
+  maxWidth: number;
+  isResizing: boolean;
+  previewWidth: (width: number) => void;
+  commitWidth: (width: number) => void;
 };
 
 const SidebarContext = React.createContext<SidebarContextProps | null>(null);
@@ -54,6 +72,11 @@ function SidebarProvider({
   defaultOpen = true,
   open: openProp,
   onOpenChange: setOpenProp,
+  defaultWidth = SIDEBAR_DEFAULT_WIDTH,
+  width: widthProp,
+  onWidthChange: setWidthProp,
+  minWidth = SIDEBAR_MIN_WIDTH,
+  maxWidth = SIDEBAR_MAX_WIDTH,
   className,
   style,
   children,
@@ -62,12 +85,26 @@ function SidebarProvider({
   defaultOpen?: boolean;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  defaultWidth?: number;
+  width?: number;
+  onWidthChange?: (width: number) => void;
+  minWidth?: number;
+  maxWidth?: number;
 }) {
   const isMobile = useIsMobile();
   const [openMobile, setOpenMobile] = React.useState(false);
 
   const [_open, _setOpen] = React.useState(defaultOpen);
+  const [_width, _setWidth] = React.useState(() =>
+    clampSidebarWidth(defaultWidth, minWidth, maxWidth),
+  );
+  const [previewedWidth, setPreviewedWidth] = React.useState<number>();
   const open = openProp ?? _open;
+  const width = clampSidebarWidth(
+    previewedWidth ?? widthProp ?? _width,
+    minWidth,
+    maxWidth,
+  );
   const setOpen = React.useCallback(
     (value: boolean | ((value: boolean) => boolean)) => {
       const openState = typeof value === 'function' ? value(open) : value;
@@ -86,6 +123,26 @@ function SidebarProvider({
       : setOpen((current) => !current);
   }, [isMobile, setOpen]);
 
+  const previewWidth = React.useCallback(
+    (nextWidth: number) => {
+      setPreviewedWidth(clampSidebarWidth(nextWidth, minWidth, maxWidth));
+    },
+    [maxWidth, minWidth],
+  );
+
+  const commitWidth = React.useCallback(
+    (nextWidth: number) => {
+      const clampedWidth = clampSidebarWidth(nextWidth, minWidth, maxWidth);
+      if (setWidthProp) {
+        setWidthProp(clampedWidth);
+      } else {
+        _setWidth(clampedWidth);
+      }
+      setPreviewedWidth(undefined);
+    },
+    [maxWidth, minWidth, setWidthProp],
+  );
+
   const state = open ? 'expanded' : 'collapsed';
 
   const contextValue = React.useMemo<SidebarContextProps>(
@@ -97,8 +154,27 @@ function SidebarProvider({
       openMobile,
       setOpenMobile,
       toggleSidebar,
+      width,
+      minWidth,
+      maxWidth,
+      isResizing: previewedWidth !== undefined,
+      previewWidth,
+      commitWidth,
     }),
-    [state, open, setOpen, isMobile, openMobile, toggleSidebar],
+    [
+      state,
+      open,
+      setOpen,
+      isMobile,
+      openMobile,
+      toggleSidebar,
+      width,
+      minWidth,
+      maxWidth,
+      previewedWidth,
+      previewWidth,
+      commitWidth,
+    ],
   );
 
   return (
@@ -108,7 +184,7 @@ function SidebarProvider({
           data-slot="sidebar-wrapper"
           style={
             {
-              '--sidebar-width': SIDEBAR_WIDTH,
+              '--sidebar-width': `${width}px`,
               '--sidebar-width-icon': SIDEBAR_WIDTH_ICON,
               ...style,
             } as React.CSSProperties
@@ -117,6 +193,9 @@ function SidebarProvider({
             'group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar',
             className,
           )}
+          data-sidebar-resizing={
+            previewedWidth !== undefined ? 'true' : 'false'
+          }
           {...props}
         >
           {children}
@@ -197,7 +276,7 @@ function Sidebar({
       <div
         data-slot="sidebar-gap"
         className={cn(
-          'relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear',
+          'relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear group-data-[sidebar-resizing=true]/sidebar-wrapper:transition-none',
           'group-data-[collapsible=offcanvas]:w-0',
           'group-data-[side=right]:rotate-180',
           variant === 'floating' || variant === 'inset'
@@ -209,7 +288,7 @@ function Sidebar({
         data-slot="sidebar-container"
         data-side={side}
         className={cn(
-          'fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear data-[side=right]:right-0 data-[side=left]:left-0 data-[side=right]:group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)] data-[side=left]:group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)] md:flex',
+          'fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear data-[side=right]:right-0 data-[side=left]:left-0 group-data-[sidebar-resizing=true]/sidebar-wrapper:transition-none data-[side=right]:group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)] data-[side=left]:group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)] md:flex',
           // When slid off-canvas, clip the panel so decorative shadows do not
           // bleed back across the viewport edge.
           'group-data-[collapsible=offcanvas]:overflow-hidden',
@@ -258,27 +337,126 @@ function SidebarTrigger({
   );
 }
 
-function SidebarRail({ className, ...props }: React.ComponentProps<'button'>) {
-  const { toggleSidebar } = useSidebar();
+function SidebarRail({ className, ...props }: React.ComponentProps<'hr'>) {
+  const {
+    state,
+    isMobile,
+    width,
+    minWidth,
+    maxWidth,
+    isResizing,
+    previewWidth,
+    commitWidth,
+  } = useSidebar();
+  const dragRef = React.useRef<
+    | {
+        pointerId: number;
+        startX: number;
+        startWidth: number;
+        direction: 1 | -1;
+      }
+    | undefined
+  >(undefined);
+
+  const resizeDirection = (element: HTMLElement): 1 | -1 => {
+    return element.closest('[data-side="right"]') ? -1 : 1;
+  };
+
+  const finishPointerResize = (event: React.PointerEvent<HTMLHRElement>) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) {
+      return;
+    }
+
+    const nextWidth =
+      drag.startWidth + (event.clientX - drag.startX) * drag.direction;
+    dragRef.current = undefined;
+    commitWidth(nextWidth);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  };
+
+  if (isMobile) {
+    return null;
+  }
 
   return (
-    <button
+    <hr
+      {...props}
       data-sidebar="rail"
       data-slot="sidebar-rail"
+      data-resizing={isResizing ? 'true' : 'false'}
+      aria-orientation="vertical"
+      aria-valuemin={minWidth}
+      aria-valuemax={maxWidth}
+      aria-valuenow={Math.round(width)}
       aria-label={t.app.sidebar.toggleSidebarRailTitle}
-      tabIndex={-1}
-      onClick={toggleSidebar}
+      tabIndex={isMobile || state === 'collapsed' ? -1 : 0}
+      onDoubleClick={() => commitWidth(SIDEBAR_DEFAULT_WIDTH)}
+      onKeyDown={(event) => {
+        const direction = resizeDirection(event.currentTarget);
+        const step = event.shiftKey ? 24 : 8;
+        let nextWidth: number | undefined;
+        if (event.key === 'Home') {
+          nextWidth = minWidth;
+        } else if (event.key === 'End') {
+          nextWidth = maxWidth;
+        } else if (event.key === 'ArrowLeft') {
+          nextWidth = width - step * direction;
+        } else if (event.key === 'ArrowRight') {
+          nextWidth = width + step * direction;
+        }
+
+        if (nextWidth !== undefined) {
+          event.preventDefault();
+          commitWidth(nextWidth);
+        }
+      }}
+      onPointerDown={(event) => {
+        if (
+          event.button !== 0 ||
+          !event.isPrimary ||
+          isMobile ||
+          state === 'collapsed'
+        ) {
+          return;
+        }
+
+        event.preventDefault();
+        event.currentTarget.setPointerCapture(event.pointerId);
+        dragRef.current = {
+          pointerId: event.pointerId,
+          startX: event.clientX,
+          startWidth: width,
+          direction: resizeDirection(event.currentTarget),
+        };
+        previewWidth(width);
+      }}
+      onPointerMove={(event) => {
+        const drag = dragRef.current;
+        if (!drag || drag.pointerId !== event.pointerId) {
+          return;
+        }
+        previewWidth(
+          drag.startWidth + (event.clientX - drag.startX) * drag.direction,
+        );
+      }}
+      onPointerUp={finishPointerResize}
+      onPointerCancel={(event) => {
+        const drag = dragRef.current;
+        if (drag?.pointerId === event.pointerId) {
+          dragRef.current = undefined;
+          commitWidth(drag.startWidth);
+        }
+      }}
       title={t.app.sidebar.toggleSidebarRailTitle}
       className={cn(
-        'absolute inset-y-0 z-20 hidden w-4 transition-all ease-linear after:absolute after:inset-y-0 after:start-1/2 after:w-[2px] hover:after:bg-sidebar-border group-data-[side=left]:-right-4 group-data-[side=right]:left-0 sm:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2',
-        'in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize',
-        '[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize',
-        'group-data-[collapsible=offcanvas]:translate-x-0 hover:group-data-[collapsible=offcanvas]:bg-sidebar group-data-[collapsible=offcanvas]:after:left-full',
-        '[[data-side=left][data-collapsible=offcanvas]_&]:-right-2',
-        '[[data-side=right][data-collapsible=offcanvas]_&]:-left-2',
+        'absolute inset-y-0 z-20 m-0 hidden h-auto w-4 touch-none select-none border-0 outline-none after:absolute after:inset-y-0 after:start-1/2 after:w-px after:bg-sidebar-border/60 after:transition-[width,background-color] hover:after:w-0.5 hover:after:bg-primary/70 focus-visible:after:w-0.5 focus-visible:after:bg-ring data-[resizing=true]:after:w-0.5 data-[resizing=true]:after:bg-primary group-data-[side=left]:-right-2 group-data-[side=right]:-left-2 sm:flex',
+        'cursor-col-resize',
+        'group-data-[collapsible=offcanvas]:pointer-events-none group-data-[collapsible=offcanvas]:opacity-0',
         className,
       )}
-      {...props}
     />
   );
 }

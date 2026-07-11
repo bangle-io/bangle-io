@@ -5,6 +5,9 @@ export const COLOR_SCHEME = {
   DARK: DARK_SCHEME,
 } as const;
 export const WIDESCREEN_WIDTH = 759;
+export const SIDEBAR_DEFAULT_WIDTH = 272;
+export const SIDEBAR_MIN_WIDTH = 224;
+export const SIDEBAR_MAX_WIDTH = 400;
 export const KEYBOARD_SHORTCUTS = {
   toggleOmniSearch: { id: 'toggleOmniSearch', keys: ['ctrl', 'k'] },
 } as const;

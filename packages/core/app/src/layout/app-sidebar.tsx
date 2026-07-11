@@ -16,6 +16,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   const setOpenOmniSearch = useSetAtom(workbenchState.$openOmniSearch);
   const workspaces = useAtomValue(workspaceState.$workspaces);
   const [sidebarOpen, setSidebarOpen] = useAtom(workbenchState.$sidebarOpen);
+  const [sidebarWidth, setSidebarWidth] = useAtom(workbenchState.$sidebarWidth);
   const [showNoteFilesOnly, setShowNoteFilesOnly] = useAtom(
     workbenchState.$showNoteFilesOnlyInSidebar,
   );
@@ -34,6 +35,8 @@ export const AppSidebar = ({ children }: SidebarProps) => {
     <Sidebar.SidebarProvider
       open={sidebarOpen}
       onOpenChange={(open) => setSidebarOpen(open)}
+      width={sidebarWidth}
+      onWidthChange={setSidebarWidth}
     >
       <UIAppSidebar
         workspaces={workspaces.map((ws, _i) => ({

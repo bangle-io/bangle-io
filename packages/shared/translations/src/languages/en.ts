@@ -133,7 +133,7 @@ export const t = {
       discord: 'Discord',
       footerTitle: 'Bangle.io',
       toggleSidebarSr: 'Toggle Sidebar',
-      toggleSidebarRailTitle: 'Toggle Sidebar',
+      toggleSidebarRailTitle: 'Resize sidebar. Double-click to reset.',
     },
     settings: {
       title: 'Settings',
