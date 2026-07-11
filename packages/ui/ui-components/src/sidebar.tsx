@@ -392,7 +392,7 @@ function SidebarRail({ className, ...props }: React.ComponentProps<'hr'>) {
       aria-valuemax={maxWidth}
       aria-valuenow={Math.round(width)}
       aria-label={t.app.sidebar.toggleSidebarRailTitle}
-      tabIndex={isMobile || state === 'collapsed' ? -1 : 0}
+      tabIndex={state === 'collapsed' ? -1 : 0}
       onDoubleClick={() => commitWidth(SIDEBAR_DEFAULT_WIDTH)}
       onKeyDown={(event) => {
         const direction = resizeDirection(event.currentTarget);
@@ -414,12 +414,7 @@ function SidebarRail({ className, ...props }: React.ComponentProps<'hr'>) {
         }
       }}
       onPointerDown={(event) => {
-        if (
-          event.button !== 0 ||
-          !event.isPrimary ||
-          isMobile ||
-          state === 'collapsed'
-        ) {
+        if (event.button !== 0 || !event.isPrimary || state === 'collapsed') {
           return;
         }
 

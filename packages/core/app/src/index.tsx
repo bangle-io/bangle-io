@@ -6,7 +6,7 @@ import {
 } from '@bangle.io/context';
 import type { Logger } from '@bangle.io/logger';
 import { OmniSearch } from '@bangle.io/omni-search';
-import type { RootEmitter, Store } from '@bangle.io/types';
+import type { AppRouteInfo, RootEmitter, Store } from '@bangle.io/types';
 import { Toaster } from '@bangle.io/ui-components';
 import { Provider, useAtomValue } from 'jotai/react';
 import React from 'react';
@@ -86,6 +86,29 @@ function BrowserAppDocumentSetup() {
   return null;
 }
 
+function routeUsesWorkspaceFileTree(route: AppRouteInfo['route']): boolean {
+  switch (route) {
+    case 'editor':
+    case 'asset':
+    case 'ws-home':
+      return true;
+    case 'welcome':
+    case 'native-fs-auth-req':
+    case 'native-fs-auth-failed':
+    case 'workspace-not-found':
+    case 'ws-path-not-found':
+    case 'fatal-error':
+    case 'not-found':
+    case 'settings-general':
+    case 'settings-workspaces':
+      return false;
+    default: {
+      const _exhaustiveCheck: never = route;
+      throw new Error(`Unknown route: ${_exhaustiveCheck}`);
+    }
+  }
+}
+
 function AppRoutes() {
   const coreServices = useCoreServices();
   const { route } = useAtomValue(coreServices.navigation.$routeInfo);
@@ -95,7 +118,7 @@ function AppRoutes() {
 
   if (
     fileTreeListState.status === 'native-fs-directory-not-found' &&
-    (route === 'editor' || route === 'asset' || route === 'ws-home')
+    routeUsesWorkspaceFileTree(route)
   ) {
     return <PageNativeFsRecovery wsName={fileTreeListState.wsName} />;
   }
