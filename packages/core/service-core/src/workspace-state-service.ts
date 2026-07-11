@@ -4,6 +4,7 @@ import {
   BaseService,
   type BaseServiceContext,
   createAsyncAtom,
+  getAppErrorCause,
   isAbortError,
   isAppError,
 } from '@bangle.io/base-utils';
@@ -36,6 +37,11 @@ const FILE_TREE_LIST_OK: FileTreeListState = { status: 'ok' };
 
 export type FileTreeListState =
   | { status: 'ok'; error?: undefined }
+  | {
+      status: 'native-fs-directory-not-found';
+      error: unknown;
+      wsName: string;
+    }
   | { status: 'error'; error: unknown };
 
 export type BacklinkIndexState =
@@ -287,7 +293,24 @@ export class WorkspaceStateService extends BaseService {
                 if (this.lastListedWsName !== wsName) {
                   set(this.$rawWsPaths, EMPTY_STRING_ARRAY);
                 }
-                set(this.$fileTreeListState, { status: 'error', error });
+                const appError = isAppError(error)
+                  ? getAppErrorCause(error)
+                  : undefined;
+                if (
+                  appError?.name ===
+                    'error::file-storage:file-does-not-exist' &&
+                  appError.payload.storage ===
+                    SERVICE_NAME.fileStorageNativeFsService &&
+                  appError.payload.wsPath === `${wsName}:`
+                ) {
+                  set(this.$fileTreeListState, {
+                    status: 'native-fs-directory-not-found',
+                    error,
+                    wsName,
+                  });
+                } else {
+                  set(this.$fileTreeListState, { status: 'error', error });
+                }
                 if (error instanceof Error && isAppError(error)) {
                   this.emitAppError(error);
                 } else {

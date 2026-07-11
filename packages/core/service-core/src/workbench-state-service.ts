@@ -8,7 +8,11 @@ import type {
   ThemeConfig,
   ThemeManager,
 } from '@bangle.io/color-scheme-manager';
-import { isAssetLocationPreference, SERVICE_NAME } from '@bangle.io/constants';
+import {
+  isAssetLocationPreference,
+  SERVICE_NAME,
+  SIDEBAR_DEFAULT_WIDTH,
+} from '@bangle.io/constants';
 import { T } from '@bangle.io/mini-js-utils';
 import type {
   AssetLocationPreference,
@@ -68,6 +72,7 @@ export class WorkbenchStateService extends BaseService {
 
   private $_wideEditor: PrimitiveAtom<boolean> | undefined;
   private $_sidebarOpen: PrimitiveAtom<boolean> | undefined;
+  private $_sidebarWidth: PrimitiveAtom<number> | undefined;
   private $_linkedMentionsCollapsed: PrimitiveAtom<boolean> | undefined;
   private $_showNoteFilesOnlyInSidebar: PrimitiveAtom<boolean> | undefined;
   private $_assetLocationPreference:
@@ -210,6 +215,24 @@ export class WorkbenchStateService extends BaseService {
       });
     }
     return this.$_sidebarOpen;
+  }
+
+  get $sidebarWidth() {
+    if (!this.$_sidebarWidth) {
+      this.$_sidebarWidth = atomStorage({
+        serviceName: this.name,
+        key: 'sidebar-width',
+        initValue: SIDEBAR_DEFAULT_WIDTH,
+        syncDb: this.dep.syncDatabase,
+        validator: {
+          validate: (value): value is number =>
+            typeof value === 'number' && Number.isFinite(value),
+          typeName: 'finite-number',
+        },
+        logger: this.logger,
+      });
+    }
+    return this.$_sidebarWidth;
   }
 
   get $linkedMentionsCollapsed() {

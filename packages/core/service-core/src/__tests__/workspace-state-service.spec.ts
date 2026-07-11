@@ -1,3 +1,4 @@
+import { throwAppError } from '@bangle.io/base-utils';
 import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -599,6 +600,40 @@ describe('WorkspaceStateService file tree updates', () => {
 
     // Never present workspace A's files as workspace B's tree.
     expect(services.workspaceState.resolveAtoms().wsPaths).toEqual([]);
+  });
+
+  it('exposes a typed recovery state when a native workspace directory is missing', async () => {
+    const { services, store } = await setupWorkspaceStateService({
+      controller,
+    });
+
+    vi.spyOn(services.fileSystem, 'listWorkspaceFiles').mockImplementation(
+      async (wsName) => {
+        throwAppError(
+          'error::file-storage:file-does-not-exist',
+          'Native workspace path was not found',
+          {
+            storage: 'file-storage-nativefs',
+            wsPath: `${wsName}:`,
+          },
+        );
+      },
+    );
+
+    services.fileSystem.refreshFileTree();
+
+    await vi.waitFor(() => {
+      expect(store.get(services.workspaceState.$fileTreeListState)).toEqual({
+        status: 'native-fs-directory-not-found',
+        error: expect.any(Error),
+        wsName: WS_NAME,
+      });
+    });
+
+    // A missing folder is a recovery state, never an empty-workspace success.
+    expect(
+      services.workspaceState.resolveAtoms().wsPaths.map((path) => path.wsPath),
+    ).not.toEqual([]);
   });
 
   it('does not expose ignored Markdown files returned by storage scans', async () => {

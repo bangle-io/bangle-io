@@ -79,6 +79,82 @@ test('converts a typed fenced-code marker inside a blockquote', async ({
     .toBe('> ```ts\n> const quoted = true;\n> ```');
 });
 
+test('Shift-Enter adds persisted lines inside nested code blocks', async ({
+  page,
+}) => {
+  const workspaceName = 'nested-code-block-newlines';
+  const noteName = 'nested-newlines';
+  const initialMarkdown = [
+    '- ```js',
+    '  const listed = true;',
+    '  ```',
+    '',
+    '> ```ts',
+    '> const quoted = true;',
+    '> ```',
+  ].join('\n');
+  const expectedMarkdown = [
+    '- ```js',
+    '  const listed = true;',
+    '  return listed;',
+    '  ```',
+    '',
+    '> ```ts',
+    '> const quoted = true;',
+    '> return quoted;',
+    '> ```',
+  ].join('\n');
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(page, workspaceName, noteName, initialMarkdown);
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  // Flat-list renders list items without a native <li>; the first fenced block
+  // is the list-owned block and persisted Markdown below proves its ownership.
+  const listedCode = editor.locator('pre code').first();
+  const listedBox = await listedCode.boundingBox();
+  expect(listedBox).not.toBeNull();
+  if (!listedBox) {
+    return;
+  }
+  await page.mouse.click(listedBox.x + 24, listedBox.y + listedBox.height - 8);
+  await page.keyboard.press(isDarwin ? 'Control+e' : 'End');
+  await page.keyboard.press('Shift+Enter');
+  await page.keyboard.insertText('return listed;');
+
+  const quotedCode = editor.locator('blockquote pre code');
+  const quotedBox = await quotedCode.boundingBox();
+  expect(quotedBox).not.toBeNull();
+  if (!quotedBox) {
+    return;
+  }
+  await page.mouse.click(quotedBox.x + 24, quotedBox.y + quotedBox.height - 8);
+  await page.keyboard.press(isDarwin ? 'Control+e' : 'End');
+  await page.keyboard.press('Shift+Enter');
+  await page.keyboard.insertText('return quoted;');
+
+  await expect(listedCode).toContainText(
+    'const listed = true;\nreturn listed;',
+  );
+  await expect(quotedCode).toContainText(
+    'const quoted = true;\nreturn quoted;',
+  );
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(expectedMarkdown);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(editor.locator('pre code').first()).toContainText(
+    'const listed = true;\nreturn listed;',
+  );
+  await expect(editor.locator('blockquote pre code')).toContainText(
+    'const quoted = true;\nreturn quoted;',
+  );
+  await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
+    expectedMarkdown,
+  );
+});
+
 test('copies code-block text from the visible code action', async ({
   context,
   page,

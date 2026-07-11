@@ -41,6 +41,13 @@ describe('shouldReportAppError', () => {
     },
     {
       appError: {
+        name: 'error::workspace:native-fs-reconnect-failed',
+        payload: { wsName: 'notes' },
+      } satisfies AppError,
+      expected: false,
+    },
+    {
+      appError: {
         name: 'error::file:already-existing',
         payload: { wsPath: 'notes:existing.md' },
       } satisfies AppError,

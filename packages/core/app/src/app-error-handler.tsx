@@ -1,4 +1,5 @@
 import { getGithubUrl, handleAppError } from '@bangle.io/base-utils';
+import { SERVICE_NAME } from '@bangle.io/constants';
 import { useCoreServices, useLogger } from '@bangle.io/context';
 import type { AppError, RootEmitter } from '@bangle.io/types';
 import { toast } from '@bangle.io/ui-components';
@@ -10,6 +11,7 @@ export function shouldReportAppError(appError: AppError): boolean {
     case 'error::file:size-too-large':
     case 'error::file-storage:file-does-not-exist':
     case 'error::workspace:native-fs-auth-needed':
+    case 'error::workspace:native-fs-reconnect-failed':
     case 'error::workspace:no-note-opened':
     case 'error::workspace:no-notes-found':
     case 'error::workspace:not-opened':
@@ -98,6 +100,31 @@ export function AppErrorHandler({ rootEmitter }: { rootEmitter: RootEmitter }) {
               { wsName: appError.payload.wsName },
               'AppErrorHandler',
             );
+            return;
+          }
+
+          case 'error::workspace:native-fs-reconnect-failed': {
+            toast.error(error.message, {
+              duration: 5000,
+              cancel: {
+                label: t.app.common.dismiss,
+                onClick: () => {},
+              },
+            });
+            return;
+          }
+
+          case 'error::file-storage:file-does-not-exist': {
+            if (
+              appError.payload.storage ===
+                SERVICE_NAME.fileStorageNativeFsService &&
+              appError.payload.wsPath.endsWith(':')
+            ) {
+              // WorkspaceState exposes a missing Native FS root as a full-page
+              // recovery view. A second transient toast would compete with it.
+              return;
+            }
+            showAppLikeError(error);
             return;
           }
 

@@ -109,7 +109,8 @@ export const t = {
       discord: 'Discord',
       footerTitle: 'Bangle.io',
       toggleSidebarSr: 'Seitenleiste umschalten',
-      toggleSidebarRailTitle: 'Seitenleiste umschalten',
+      toggleSidebarRailTitle:
+        'Seitenleiste skalieren. Doppelklicken zum Zurücksetzen.',
     },
     settings: {
       title: 'Einstellungen',
