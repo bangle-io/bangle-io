@@ -30,6 +30,7 @@ export type CodeBlockConfig = {
   // keys
   keyToCodeBlock?: string | false;
   keyExit?: string | false;
+  keyInsertNewline?: string | false;
   keyBackspace?: string | false;
   keyDeleteWordBackward?: string | false;
   keyJumpToLineStart?: string | false;
@@ -52,6 +53,7 @@ const DEFAULT_CONFIG: RequiredConfig = {
   getParagraphNodeType: defaultGetParagraphNodeType,
   keyToCodeBlock: false,
   keyExit: 'Enter',
+  keyInsertNewline: 'Shift-Enter',
   keyBackspace: 'Backspace',
   keyDeleteWordBackward: isMac ? 'Alt-Backspace' : false,
   keyJumpToLineStart: isMac ? 'Ctrl-a' : false,
@@ -133,6 +135,7 @@ function pluginKeybindings(config: RequiredConfig) {
         : convertCommand,
     ],
     [config.keyBackspace, backspaceEmptyCodeBlock(config)],
+    [config.keyInsertNewline, insertCodeBlockNewline(config)],
     [config.keyDeleteWordBackward, deletePreviousCodeWord(config)],
     [config.keyJumpToLineStart, jumpToCodeLineBoundary(config, 'start')],
     [config.keyJumpToLineEnd, jumpToCodeLineBoundary(config, 'end')],
@@ -157,6 +160,23 @@ function pluginKeybindings(config: RequiredConfig) {
 }
 
 // COMMANDS
+function insertCodeBlockNewline(config: RequiredConfig): Command {
+  return (state, dispatch) => {
+    const codeBlockType = getNodeType(state.schema, config.name);
+    const { $from, $to } = state.selection;
+    const node = findParentNodeOfType(codeBlockType)(state.selection);
+
+    if (!node || $from.parent !== $to.parent) {
+      return false;
+    }
+
+    if (dispatch) {
+      dispatch(state.tr.insertText('\n').scrollIntoView());
+    }
+    return true;
+  };
+}
+
 function moveCodeBlock(
   config: RequiredConfig,
   direction: 'UP' | 'DOWN',
@@ -645,7 +665,7 @@ function markdown(config: RequiredConfig): CollectionType['markdown'] {
           const info = getCodeBlockInfo(node.attrs.language);
           const fence = createCodeFence(node.textContent, info);
           state.write(`${fence}${info}\n`);
-          state.write(node.textContent);
+          state.text(node.textContent, false);
           if (node.textContent) {
             state.write('\n');
           }

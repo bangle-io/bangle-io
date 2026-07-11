@@ -127,28 +127,30 @@ describe('code block Markdown', () => {
 
   it('parses fenced code blocks inside blockquotes', () => {
     const { document, serialized } = expectEquivalentAfterSerialize(
-      '> ```js\n> quoted();\n> ```',
+      '> ```js\n> quoted();\n> return quoted;\n> ```',
     );
     const [blockquote] = findNodes(document, 'blockquote');
     const [codeBlock] = findNodes(document, 'code_block');
 
     expect(blockquote).toBeDefined();
     expect(codeBlock?.attrs.language).toBe('js');
-    expect(codeBlock?.textContent).toBe('quoted();');
-    expect(serialized).toBe('> ```js\n> quoted();\n> ```');
+    expect(codeBlock?.textContent).toBe('quoted();\nreturn quoted;');
+    expect(serialized).toBe('> ```js\n> quoted();\n> return quoted;\n> ```');
   });
 
   it('parses fenced code blocks inside list items', () => {
     const { document, serialized } = expectEquivalentAfterSerialize(
-      '- item\n\n  ```js\n  listed();\n  ```',
+      '- item\n\n  ```js\n  listed();\n  return listed;\n  ```',
     );
     const [list] = findNodes(document, 'list');
     const [codeBlock] = findNodes(document, 'code_block');
 
     expect(list).toBeDefined();
     expect(codeBlock?.attrs.language).toBe('js');
-    expect(codeBlock?.textContent).toBe('listed();');
-    expect(serialized).toBe('- item\n\n  ```js\n  listed();\n  ```');
+    expect(codeBlock?.textContent).toBe('listed();\nreturn listed;');
+    expect(serialized).toBe(
+      '- item\n\n  ```js\n  listed();\n  return listed;\n  ```',
+    );
   });
 
   it('serializes fenced code blocks inside ordered list items with marker-width indentation', () => {

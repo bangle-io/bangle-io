@@ -5,6 +5,7 @@ import { setupBase } from '../base';
 import { setupBlockquote } from '../blockquote';
 import { setupCodeBlock } from '../code-block';
 import { collection } from '../common';
+import { setupHardBreak } from '../hard-break';
 import { setupHeading } from '../heading';
 import { setupList } from '../list';
 import { setupParagraph } from '../paragraph';
@@ -57,6 +58,7 @@ const nestedEditorTest = createBangerEditorTestSetup({
     setupBlockquote(),
     setupList(),
     setupCodeBlock(),
+    setupHardBreak(),
     collection({
       id: 'restricted-test-container',
       nodes: {
@@ -136,6 +138,44 @@ describe('code block keymap', () => {
 
     editor.expectDoc(doc(codeBlock('const done = true;\n')));
     expect(editor.selectionParentType()).toBe('code_block');
+  });
+
+  it('keeps Shift-Enter inside top-level and nested code blocks', () => {
+    const topLevelEditor = nestedEditorTest.createEditor(
+      nestedEditorTest.builders.doc(
+        nestedEditorTest.builders.codeBlock('top<cursor>'),
+      ),
+    );
+
+    expect(topLevelEditor.pressKey('Enter', { shiftKey: true })).toBe(true);
+    topLevelEditor.expectDoc(
+      nestedEditorTest.builders.doc(
+        nestedEditorTest.builders.codeBlock('top\n'),
+      ),
+    );
+    expect(topLevelEditor.selectionParentType()).toBe('code_block');
+
+    const blockquote = nestedEditorTest.nodeBuilder('bq');
+    const list = nestedEditorTest.nodeBuilder('list');
+    const nestedDoc = nestedEditorTest.nodeBuilder('doc');
+    const nestedCodeBlock = nestedEditorTest.nodeBuilder('codeBlock');
+    const blockquoteEditor = nestedEditorTest.createEditor(
+      nestedDoc(blockquote(nestedCodeBlock('quoted<cursor>'))),
+    );
+
+    expect(blockquoteEditor.pressKey('Enter', { shiftKey: true })).toBe(true);
+    blockquoteEditor.expectDoc(
+      nestedDoc(blockquote(nestedCodeBlock('quoted\n'))),
+    );
+    expect(blockquoteEditor.selectionParentType()).toBe('code_block');
+
+    const listEditor = nestedEditorTest.createEditor(
+      nestedDoc(list(nestedCodeBlock('listed<cursor>'))),
+    );
+
+    expect(listEditor.pressKey('Enter', { shiftKey: true })).toBe(true);
+    listEditor.expectDoc(nestedDoc(list(nestedCodeBlock('listed\n'))));
+    expect(listEditor.selectionParentType()).toBe('code_block');
   });
 
   it('exits an empty code block on Enter so it does not trap the cursor', () => {
