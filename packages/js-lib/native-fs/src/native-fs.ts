@@ -149,8 +149,7 @@ export class NativeFs {
             code: NATIVE_FS_ERROR_CODE.alreadyExists,
           });
         }
-        const { handle } = await this.resolveFile(segments, { create: true });
-        await this.writeToHandle(handle, data);
+        await this.writeWithCreateRollback(segments, data, { create: true });
       });
     });
   }
@@ -170,10 +169,57 @@ export class NativeFs {
       const segments = splitFilePath(path);
       await ensurePermission(this.rootHandle, 'readwrite');
       await this.withExclusiveLocks([path], async () => {
-        const { handle } = await this.resolveFile(segments, { create });
-        await this.writeToHandle(handle, data);
+        await this.writeWithCreateRollback(segments, data, { create });
       });
     });
+  }
+
+  /**
+   * Resolves the file (creating it and missing parents when `create` is set
+   * and it is absent) and writes `data` to it. When the write fails on an
+   * entry this call itself created, the empty entry is removed again — a
+   * failed create must not leave an empty file behind that shows up in
+   * listings and blocks retries with `alreadyExists`.
+   */
+  private async writeWithCreateRollback(
+    segments: readonly string[],
+    data: Blob,
+    opts: { create: boolean },
+  ): Promise<void> {
+    let existed = true;
+    try {
+      await this.resolveFile(segments, { create: false });
+    } catch (error) {
+      if (
+        !isNativeFsError(
+          toNativeFsError(error, ''),
+          NATIVE_FS_ERROR_CODE.notFound,
+        )
+      ) {
+        throw error;
+      }
+      existed = false;
+    }
+    if (!existed && !opts.create) {
+      throw new NativeFsError({
+        message: `Cannot write "${joinPath(segments)}": the file does not exist`,
+        code: NATIVE_FS_ERROR_CODE.notFound,
+      });
+    }
+
+    const { parent, handle } = await this.resolveFile(segments, {
+      create: !existed,
+    });
+    try {
+      await this.writeToHandle(handle, data);
+    } catch (error) {
+      if (!existed) {
+        // Best effort: the original write failure is what the caller must
+        // see, even if the rollback itself fails.
+        await parent.removeEntry(handle.name).catch(() => undefined);
+      }
+      throw error;
+    }
   }
 
   /** Deletes the file, rejecting with `notFound` if it does not exist. */
@@ -262,26 +308,40 @@ export class NativeFs {
 
           // Fallback: copy, verify the destination write landed, then delete
           // the source. On any failure before the final delete the source file
-          // is left untouched.
+          // is left untouched, and a destination entry this move created is
+          // rolled back so the failed move does not leave an empty/corrupt
+          // file that blocks a retry with `alreadyExists`.
           const sourceFile = await source.handle.getFile();
           const destination = await this.resolveFile(newSegments, {
             create: true,
           });
-          await this.writeToHandle(destination.handle, sourceFile);
-          const written = await destination.handle.getFile();
-          // Compare the actual bytes read back, not File.size metadata: a
-          // same-length corrupt write must also keep the source. The source
-          // is already fully in memory for the copy, so this does not raise
-          // the peak memory beyond what copy-then-delete already requires.
-          const [writtenBytes, sourceBytes] = await Promise.all([
-            written.arrayBuffer(),
-            sourceFile.arrayBuffer(),
-          ]);
-          if (!bytesEqual(writtenBytes, sourceBytes)) {
-            throw new NativeFsError({
-              message: `Move verification failed for "${newPath}": the destination content does not match the source after writing. The source file was kept.`,
-              code: NATIVE_FS_ERROR_CODE.moveVerificationFailed,
-            });
+          try {
+            await this.writeToHandle(destination.handle, sourceFile);
+            const written = await destination.handle.getFile();
+            // Compare the actual bytes read back, not File.size metadata: a
+            // same-length corrupt write must also keep the source. The source
+            // is already fully in memory for the copy, so this does not raise
+            // the peak memory beyond what copy-then-delete already requires.
+            const [writtenBytes, sourceBytes] = await Promise.all([
+              written.arrayBuffer(),
+              sourceFile.arrayBuffer(),
+            ]);
+            if (!bytesEqual(writtenBytes, sourceBytes)) {
+              throw new NativeFsError({
+                message: `Move verification failed for "${newPath}": the destination content does not match the source after writing. The source file was kept.`,
+                code: NATIVE_FS_ERROR_CODE.moveVerificationFailed,
+              });
+            }
+          } catch (error) {
+            if (!destinationTaken) {
+              // Best effort: the original failure is what the caller must
+              // see. A pre-existing destination (overwrite move) is left in
+              // place — it is safe to overwrite again on retry.
+              await destination.parent
+                .removeEntry(destination.handle.name)
+                .catch(() => undefined);
+            }
+            throw error;
           }
           await source.parent.removeEntry(source.handle.name);
         });

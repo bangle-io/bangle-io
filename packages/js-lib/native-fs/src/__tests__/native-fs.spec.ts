@@ -161,6 +161,101 @@ describe('createFile and writeFile', () => {
   });
 });
 
+describe('failed writes roll back created entries', () => {
+  it('a failed first create leaves no empty file and does not block retry', async () => {
+    const { fs, root } = setup();
+    // Rig the not-yet-existing file to fail its first write: pre-seeding the
+    // failure requires the handle, so create it through the fake directly.
+    const dir = root;
+    const preFailing = new FakeFileHandle('new.md');
+    preFailing.writeFailure = new DOMException(
+      'disk full',
+      'QuotaExceededError',
+    );
+    // Intercept creation: when NativeFs creates the handle, the fake returns
+    // this pre-rigged one.
+    const realGetFileHandle = dir.getFileHandle.bind(dir);
+    dir.getFileHandle = async (name, options) => {
+      if (name === 'new.md' && options?.create && !dir.entries.has(name)) {
+        dir.entries.set(name, preFailing);
+        return preFailing;
+      }
+      return realGetFileHandle(name, options);
+    };
+
+    const error = await fs
+      .createFile('new.md', new Blob(['x']))
+      .catch((e) => e);
+    expect(isNativeFsError(error, NATIVE_FS_ERROR_CODE.quotaExceeded)).toBe(
+      true,
+    );
+    // The empty entry was rolled back...
+    expect(getEntry(root, 'new.md')).toBeUndefined();
+
+    // ...so a retry succeeds instead of failing with alreadyExists.
+    preFailing.writeFailure = undefined;
+    await fs.createFile('new.md', new Blob(['retried']));
+    expect(await fs.readFileText('new.md')).toBe('retried');
+  });
+
+  it('a failed writeFile on a new file leaves no empty file behind', async () => {
+    const { fs, root } = setup();
+    const preFailing = new FakeFileHandle('made.md');
+    preFailing.writeFailure = new DOMException('boom', 'QuotaExceededError');
+    const realGetFileHandle = root.getFileHandle.bind(root);
+    root.getFileHandle = async (name, options) => {
+      if (name === 'made.md' && options?.create && !root.entries.has(name)) {
+        root.entries.set(name, preFailing);
+        return preFailing;
+      }
+      return realGetFileHandle(name, options);
+    };
+
+    const error = await fs
+      .writeFile('made.md', new Blob(['x']))
+      .catch((e) => e);
+    expect(isNativeFsError(error, NATIVE_FS_ERROR_CODE.quotaExceeded)).toBe(
+      true,
+    );
+    expect(getEntry(root, 'made.md')).toBeUndefined();
+
+    // An existing file that fails a write is NOT deleted.
+    await fs.createFile('kept.md', new Blob(['original']));
+    const kept = getEntry(root, 'kept.md') as FakeFileHandle;
+    kept.writeFailure = new DOMException('boom', 'QuotaExceededError');
+    await expect(fs.writeFile('kept.md', new Blob(['y']))).rejects.toThrow();
+    expect(await fs.readFileText('kept.md')).toBe('original');
+  });
+
+  it('a failed fallback move rolls back the destination it created, keeping the source', async () => {
+    const { fs, root, seeded } = setup({ 'a.md': 'precious' });
+    await seeded;
+    const preFailing = new FakeFileHandle('b.md');
+    preFailing.writeFailure = new DOMException('boom', 'QuotaExceededError');
+    const realGetFileHandle = root.getFileHandle.bind(root);
+    root.getFileHandle = async (name, options) => {
+      if (name === 'b.md' && options?.create && !root.entries.has(name)) {
+        root.entries.set(name, preFailing);
+        return preFailing;
+      }
+      return realGetFileHandle(name, options);
+    };
+
+    const error = await fs.moveFile('a.md', 'b.md').catch((e) => e);
+    expect(isNativeFsError(error, NATIVE_FS_ERROR_CODE.quotaExceeded)).toBe(
+      true,
+    );
+    expect(await fs.readFileText('a.md')).toBe('precious');
+    // No empty destination lingers, so retrying the same move succeeds
+    // (previously it would have failed with alreadyExists).
+    expect(getEntry(root, 'b.md')).toBeUndefined();
+    preFailing.writeFailure = undefined;
+    await fs.moveFile('a.md', 'b.md');
+    expect(await fs.readFileText('b.md')).toBe('precious');
+    expect(getEntry(root, 'a.md')).toBeUndefined();
+  });
+});
+
 describe('deleteFile', () => {
   it('deletes an existing file', async () => {
     const { fs, root, seeded } = setup({ 'a/b.md': 'x' });
