@@ -11,8 +11,13 @@ interface SidebarProps {
 }
 
 export const AppSidebar = ({ children }: SidebarProps) => {
-  const { commandDispatcher, workspaceState, workbenchState, navigation } =
-    useCoreServices();
+  const {
+    commandDispatcher,
+    workspaceState,
+    workbenchState,
+    navigation,
+    userActivityService,
+  } = useCoreServices();
   const setOpenOmniSearch = useSetAtom(workbenchState.$openOmniSearch);
   const workspaces = useAtomValue(workspaceState.$workspaces);
   const [sidebarOpen, setSidebarOpen] = useAtom(workbenchState.$sidebarOpen);
@@ -24,7 +29,28 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   const activeWsPaths = useAtomValue(workspaceState.$activeWsPaths);
   const wsPaths = useAtomValue(workspaceState.$wsPaths);
   const noteWsPaths = useAtomValue(workspaceState.$noteWsPaths);
+  const starredWsPaths = useAtomValue(userActivityService.$starredWsPaths);
   const fileTreeListState = useAtomValue(workspaceState.$fileTreeListState);
+
+  const starredItems = React.useMemo(() => {
+    const notesByWsPath = new Map(
+      noteWsPaths.map((wsPath) => [wsPath.wsPath, wsPath]),
+    );
+    const activePathSet = new Set(activeWsPaths.map((wsPath) => wsPath.wsPath));
+
+    return starredWsPaths.flatMap((starredWsPath) => {
+      const wsPath = notesByWsPath.get(starredWsPath);
+      return wsPath
+        ? [
+            {
+              title: wsPath.fileName || wsPath.path,
+              wsPath: wsPath.wsPath,
+              isActive: activePathSet.has(wsPath.wsPath),
+            },
+          ]
+        : [];
+    });
+  }, [activeWsPaths, noteWsPaths, starredWsPaths]);
 
   const getActionsForEntry = useSidebarFileActions({
     activeWsName,
@@ -51,6 +77,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
           title: wsPath.fileName || '',
           wsPath: wsPath.wsPath,
         }))}
+        starredItems={starredItems}
         wsPathToHref={(wsPath) => navigation.toWsFileUri(wsPath)}
         wsNameToHref={(wsName) =>
           navigation.toUri({

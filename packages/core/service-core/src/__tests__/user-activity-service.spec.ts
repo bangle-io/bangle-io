@@ -332,6 +332,27 @@ describe('UserActivityService', () => {
       });
     });
 
+    it('preserves persisted order while filtering stale paths', async () => {
+      const { userActivityService, workspaceOps, goWsPath } =
+        await setupUserActivityService({ controller });
+
+      await goWsPath(TEST_WS_PATH_IN_WS2);
+      await workspaceOps.updateWorkspaceMetadata(TEST_WS_NAME, (metadata) => ({
+        ...metadata,
+        'starred-items': [
+          TEST_WS_PATH2,
+          `${TEST_WS_NAME}:deleted-note.md`,
+          TEST_WS_PATH,
+        ],
+      }));
+      await goWsPath(TEST_WS_PATH);
+
+      await vi.waitFor(async () => {
+        const { starredWsPaths } = userActivityService.resolveAtoms();
+        expect(starredWsPaths).toEqual([TEST_WS_PATH2, TEST_WS_PATH]);
+      });
+    });
+
     it('should toggle star status correctly on multiple calls', async () => {
       const { userActivityService, goWsPath } = await setupUserActivityService({
         controller,

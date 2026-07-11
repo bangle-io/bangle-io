@@ -592,6 +592,7 @@ export const t = {
     components: {
       appSidebar: {
         openedLabel: 'Opened',
+        starredLabel: 'Starred',
         filesLabel: 'Files',
         fileTreeLabel: 'Workspace files',
         noteCount: ({ count }: { count: number }) =>

@@ -16,6 +16,7 @@ import {
   Plus,
   Search,
   Settings,
+  Star,
 } from 'lucide-react';
 import React, { useId } from 'react';
 import bangleIcon from './bangle-transparent_x512.png';
@@ -64,6 +65,7 @@ export type AppSidebarProps = {
   workspaces: Workspace[];
   filePaths: string[];
   navItems: NavItem[];
+  starredItems?: NavItem[];
   onSearchClick?: () => void;
   activeFilePaths?: string[];
   getActionsForEntry: (
@@ -200,6 +202,7 @@ export function AppSidebar({
   workspaces,
   filePaths,
   navItems,
+  starredItems = [],
   onSearchClick = () => {},
   activeFilePaths = [],
   getActionsForEntry,
@@ -236,60 +239,18 @@ export function AppSidebar({
         />
       </SidebarHeader>
       <SidebarContent className="gap-1 overflow-hidden">
-        {navItems.length > 0 && (
-          <SidebarGroup>
-            <SidebarGroupLabel>
-              {t.app.components.appSidebar.openedLabel}
-            </SidebarGroupLabel>
-            <SidebarMenu className="gap-2">
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.title} className="min-w-0">
-                  <SidebarMenuButton
-                    render={
-                      <a
-                        href={
-                          wsPathToHref ? wsPathToHref(item.wsPath) : '#dead'
-                        }
-                        title={item.title}
-                        className="min-w-0 font-medium"
-                      />
-                    }
-                  >
-                    <span className="block min-w-0 truncate">{item.title}</span>
-                  </SidebarMenuButton>
-                  {item.items?.length ? (
-                    <SidebarMenuSub className="ml-0 border-l-0 px-1.5">
-                      {item.items.map((item) => (
-                        <SidebarMenuSubItem
-                          key={item.title}
-                          className="min-w-0"
-                        >
-                          <SidebarMenuSubButton
-                            render={
-                              <a
-                                href={
-                                  wsPathToHref
-                                    ? wsPathToHref(item.wsPath)
-                                    : '#dead'
-                                }
-                                title={item.title}
-                                className="min-w-0"
-                              />
-                            }
-                          >
-                            <span className="block min-w-0 truncate">
-                              {item.title}
-                            </span>
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
-                      ))}
-                    </SidebarMenuSub>
-                  ) : null}
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroup>
-        )}
+        <SidebarNavGroup
+          items={navItems}
+          label={t.app.components.appSidebar.openedLabel}
+          wsPathToHref={wsPathToHref}
+        />
+        <SidebarNavGroup
+          items={starredItems}
+          label={t.app.components.appSidebar.starredLabel}
+          wsPathToHref={wsPathToHref}
+          icon={Star}
+          scrollable
+        />
         <SidebarGroup className="min-h-0 flex-1 overflow-hidden p-0 pt-0">
           <SidebarGroupLabel className="sr-only">
             {t.app.components.appSidebar.filesLabel}
@@ -336,6 +297,100 @@ export function AppSidebar({
       )}
       <SidebarRail />
     </Sidebar>
+  );
+}
+
+function SidebarNavGroup({
+  items,
+  label,
+  wsPathToHref,
+  icon: Icon,
+  scrollable = false,
+}: {
+  items: NavItem[];
+  label: string;
+  wsPathToHref?: (wsPath: string) => string;
+  icon?: React.ElementType;
+  scrollable?: boolean;
+}) {
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  if (items.length === 0) {
+    return null;
+  }
+
+  return (
+    <SidebarGroup className="py-1">
+      <SidebarGroupLabel>{label}</SidebarGroupLabel>
+      <SidebarMenu
+        className={cn(
+          'gap-1',
+          scrollable && 'max-h-[min(10rem,25vh)] overflow-y-auto pr-1',
+        )}
+      >
+        {items.map((item) => (
+          <SidebarMenuItem key={item.wsPath} className="min-w-0">
+            <SidebarMenuButton
+              isActive={item.isActive}
+              render={
+                <a
+                  href={wsPathToHref ? wsPathToHref(item.wsPath) : '#dead'}
+                  title={item.title}
+                  aria-current={item.isActive ? 'page' : undefined}
+                  className="min-w-0 font-medium"
+                  onClick={() => {
+                    if (isMobile) {
+                      setOpenMobile(false);
+                    }
+                  }}
+                />
+              }
+            >
+              {Icon && (
+                <Icon
+                  aria-hidden="true"
+                  className="size-3.5 shrink-0 fill-current text-amber-500"
+                />
+              )}
+              <span className="block min-w-0 truncate">{item.title}</span>
+            </SidebarMenuButton>
+            {item.items?.length ? (
+              <SidebarMenuSub className="ml-0 border-l-0 px-1.5">
+                {item.items.map((childItem) => (
+                  <SidebarMenuSubItem
+                    key={childItem.wsPath}
+                    className="min-w-0"
+                  >
+                    <SidebarMenuSubButton
+                      render={
+                        <a
+                          href={
+                            wsPathToHref
+                              ? wsPathToHref(childItem.wsPath)
+                              : '#dead'
+                          }
+                          title={childItem.title}
+                          className="min-w-0"
+                          onClick={() => {
+                            if (isMobile) {
+                              setOpenMobile(false);
+                            }
+                          }}
+                        />
+                      }
+                    >
+                      <span className="block min-w-0 truncate">
+                        {childItem.title}
+                      </span>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                ))}
+              </SidebarMenuSub>
+            ) : null}
+          </SidebarMenuItem>
+        ))}
+      </SidebarMenu>
+    </SidebarGroup>
   );
 }
 
