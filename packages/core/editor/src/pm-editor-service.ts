@@ -16,7 +16,6 @@ import {
 } from '@bangle.io/prosemirror-plugins';
 import {
   displayNameForAsset,
-  type ExternalFileChangeEvent,
   type FileSystemService,
   type NavigationService,
   type StoredMarkdownAsset,
@@ -50,6 +49,7 @@ import {
   EditorSaveQueue,
 } from './editor-save-queue';
 import { setupExtensions } from './extensions';
+import { ExternalContentSync } from './external-content-sync';
 import { findHeadingIndexBySlug } from './heading-slug';
 import { createLocalImageNodeView } from './local-image-node-view';
 import { createEditor } from './pm-setup';
@@ -65,22 +65,6 @@ import {
 
 const ASSET_TOAST_FILE_NAME_MAX_LENGTH = 44;
 
-/**
- * Quiet period between an external change notification and the first disk
- * read, letting in-progress writes (truncate-then-write) finish first.
- */
-const EXTERNAL_SYNC_QUIET_MS = 150;
-/**
- * Gap between the two confirming reads that must agree before externally
- * changed content is applied to an open editor.
- */
-const EXTERNAL_SYNC_STABILITY_MS = 100;
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
 const EMPTY_WS_PATH_SET: ReadonlySet<string> = new Set();
 
 export type PmEditorServiceConfig = {
@@ -186,17 +170,48 @@ export class PmEditorService
 
   private handledExternalChangeSequence = 0;
   /**
-   * wsPaths with an external-sync pass in flight; the boolean marks whether
-   * another external event arrived meanwhile and the pass must run again.
-   */
-  private externalSyncRuns = new Map<string, boolean>();
-  /**
    * One-shot markers telling `onDocChange` that the next doc change for this
    * wsPath was produced by an external sync (not the user) and must not be
    * re-saved — writing it back would bump the file's mtime and make sync
    * tools churn on their own change.
    */
   private suppressSaveForExternalSync = new Set<string>();
+
+  /**
+   * Reconciles open editors with externally changed files. Owns sequencing,
+   * coalescing, and content-stability policy; this service only supplies the
+   * narrow host surface below.
+   */
+  private externalContentSync = new ExternalContentSync({
+    getViews: (wsPath) =>
+      [...this.readyEditors()]
+        .filter((editor) => editor.wsPath === wsPath)
+        .map((editor) => editor.editorView),
+    getMountedWsPaths: (wsName) => [
+      ...new Set(
+        [...this.readyEditors()]
+          .filter(
+            (editor) =>
+              wsName === undefined ||
+              WsPath.safeParse(editor.wsPath).data?.wsName === wsName,
+          )
+          .map((editor) => editor.wsPath),
+      ),
+    ],
+    hasPendingSaves: (wsPath) => this.saveQueue.hasPendingOrFailed(wsPath),
+    readFileAsText: (wsPath) =>
+      this.dependencies.fileSystem.readFileAsText(wsPath),
+    getMarkdown: (schema) => this.getMarkdown(schema),
+    withSaveSuppressed: (wsPath, dispatch) => {
+      this.suppressSaveForExternalSync.add(wsPath);
+      try {
+        dispatch();
+      } finally {
+        this.suppressSaveForExternalSync.delete(wsPath);
+      }
+    },
+    logger: this.logger,
+  });
 
   constructor(
     context: BaseServiceContext,
@@ -323,7 +338,7 @@ export class PmEditorService
             return;
           }
           this.handledExternalChangeSequence = event.sequence;
-          this.onExternalFileChange(event);
+          this.externalContentSync.handleEvent(event);
         },
       ),
     );
@@ -338,166 +353,6 @@ export class PmEditorService
       }
       this.editors.set(domNode, { ...editor, wsPath: newWsPath });
     }
-  }
-
-  /**
-   * Reacts to file changes made outside this app instance (sync tools, other
-   * editors) by refreshing mounted editors from disk — but only when doing so
-   * cannot lose user work; unsaved local edits always win over the external
-   * copy.
-   */
-  private onExternalFileChange(event: ExternalFileChangeEvent): void {
-    if (
-      event.type !== 'file-content-update' &&
-      event.type !== 'file-create' &&
-      event.type !== 'refresh'
-    ) {
-      return;
-    }
-    const targets = new Set<string>();
-    for (const editor of this.editors.values()) {
-      if (!('editorView' in editor)) {
-        continue;
-      }
-      if (event.type === 'refresh' || editor.wsPath === event.wsPath) {
-        targets.add(editor.wsPath);
-      }
-    }
-    for (const wsPath of targets) {
-      void this.syncEditorWithDisk(wsPath).catch((error) => {
-        this.logger.warn(
-          `Failed to refresh editor from external change: ${wsPath}`,
-          error,
-        );
-      });
-    }
-  }
-
-  private async syncEditorWithDisk(wsPath: string): Promise<void> {
-    const running = this.externalSyncRuns.get(wsPath);
-    if (running !== undefined) {
-      // A pass is already in flight — ask it to run once more so the final
-      // external state is not dropped.
-      this.externalSyncRuns.set(wsPath, true);
-      return;
-    }
-    this.externalSyncRuns.set(wsPath, false);
-    // Bounded so a file under continuous external writes cannot spin this
-    // loop forever; the next watcher event starts a fresh sync.
-    let attempts = 0;
-    try {
-      do {
-        this.externalSyncRuns.set(wsPath, false);
-        attempts += 1;
-        await this.applyExternalContentIfClean(wsPath);
-      } while (this.externalSyncRuns.get(wsPath) && attempts < 5);
-    } finally {
-      this.externalSyncRuns.delete(wsPath);
-    }
-  }
-
-  private async applyExternalContentIfClean(wsPath: string): Promise<void> {
-    // Unsaved or failed-to-save local edits always win: replacing the doc
-    // would destroy content that exists nowhere else.
-    if (this.saveQueue.hasPendingOrFailed(wsPath)) {
-      return;
-    }
-    const views: EditorView[] = [];
-    for (const editor of this.editors.values()) {
-      if (
-        'editorView' in editor &&
-        editor.wsPath === wsPath &&
-        !editor.editorView.isDestroyed
-      ) {
-        views.push(editor.editorView);
-      }
-    }
-    if (views.length === 0) {
-      return;
-    }
-    const docsBefore = views.map((view) => view.state.doc);
-
-    // Watcher records are hints that can fire mid-write: a sync tool (or the
-    // browser's own writable stream) may truncate the file before the new
-    // bytes land, with no follow-up record for the final commit. Wait out a
-    // short quiet period, then require two consecutive reads to agree before
-    // treating the content as settled — otherwise an open note would flash
-    // (or stick) empty on a truncate-then-write.
-    await sleep(EXTERNAL_SYNC_QUIET_MS);
-    const firstRead = await this.dependencies.fileSystem.readFileAsText(wsPath);
-    if (firstRead === undefined) {
-      return;
-    }
-    await sleep(EXTERNAL_SYNC_STABILITY_MS);
-    const diskText = await this.dependencies.fileSystem.readFileAsText(wsPath);
-    if (diskText === undefined) {
-      return;
-    }
-    if (diskText !== firstRead) {
-      // Still being written — run another pass after the loop's rerun check.
-      this.externalSyncRuns.set(wsPath, true);
-      return;
-    }
-    // The user may have typed while the reads were in flight — re-check, and
-    // bail if any doc moved on. A newer watcher event re-triggers this pass.
-    if (this.saveQueue.hasPendingOrFailed(wsPath)) {
-      return;
-    }
-
-    views.forEach((view, index) => {
-      if (view.isDestroyed || view.state.doc !== docsBefore[index]) {
-        return;
-      }
-      const markdown = this.getMarkdown(view.state.schema);
-      let parsed: ReturnType<typeof markdown.parser.parse>;
-      try {
-        parsed = markdown.parser.parse(diskText);
-      } catch (error) {
-        // A parse failure must never touch the editor (or disk) — the user
-        // keeps their current view of the note.
-        this.logger.warn(
-          `Could not parse externally changed content for ${wsPath}`,
-          error,
-        );
-        return;
-      }
-      // Compare through the serializer so normalization differences (e.g.
-      // list markers) don't register as changes; equal content means this is
-      // our own echo or a no-op and the editor is left untouched.
-      const currentSerialized = markdown.serializer.serialize(view.state.doc);
-      const diskSerialized = markdown.serializer.serialize(parsed);
-      if (currentSerialized === diskSerialized) {
-        return;
-      }
-
-      const { state } = view;
-      const selectionHead = state.selection.head;
-      let tr = state.tr.replaceWith(0, state.doc.content.size, parsed.content);
-      // Defense in depth: if the replacement lost the parsed content (e.g.
-      // a schema mismatch makes the replace fitting drop foreign nodes),
-      // never apply it — a wrong-but-present note beats a blanked one.
-      if (parsed.content.size > 0 && tr.doc.content.size === 0) {
-        this.logger.error(
-          `External sync for ${wsPath} produced an empty document from non-empty content; skipping`,
-        );
-        return;
-      }
-      tr = tr.setSelection(
-        TextSelection.near(
-          tr.doc.resolve(Math.min(selectionHead, tr.doc.content.size)),
-        ),
-      );
-      // External content is not a user edit: keep it out of the undo stack
-      // (undoing it locally would fight the sync tool).
-      tr = tr.setMeta('addToHistory', false);
-
-      this.suppressSaveForExternalSync.add(wsPath);
-      try {
-        view.dispatch(tr);
-      } finally {
-        this.suppressSaveForExternalSync.delete(wsPath);
-      }
-    });
   }
 
   mountEditor({
@@ -1351,6 +1206,15 @@ export class PmEditorService
     );
     this.markdownBySchema.set(schema, markdown);
     return markdown;
+  }
+
+  /** Mounted editors whose view is created and not destroyed. */
+  private *readyEditors(): Generator<ReadyEditorEntry> {
+    for (const editor of this.editors.values()) {
+      if ('editorView' in editor && !editor.editorView.isDestroyed) {
+        yield editor;
+      }
+    }
   }
 
   private getActiveEditorView() {

@@ -57,6 +57,8 @@ export type ExternalFileChangeEvent = {
     | 'file-rename'
     | 'refresh';
   wsPath?: string;
+  /** For `refresh`: the workspace the refresh concerns; absent = app-wide. */
+  wsName?: string;
 };
 
 type FileReadOptions = {
@@ -137,7 +139,10 @@ export class FileSystemService extends BaseService {
         this.store.set(this.$fileRenameCount, (c) => c + 1);
         this.store.set(this.$fileForceUpdateCount, (c) => c + 1);
         if (event.sender.tag === EXTERNAL_FILE_CHANGE_SENDER_TAG) {
-          this.setExternalFileChangeEvent({ type: 'refresh' });
+          this.setExternalFileChangeEvent({
+            type: 'refresh',
+            wsName: event.wsName,
+          });
         }
       },
       this.abortSignal,

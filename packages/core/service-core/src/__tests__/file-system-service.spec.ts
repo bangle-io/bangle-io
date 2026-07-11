@@ -454,13 +454,16 @@ describe('external file change events', () => {
       wsPath: 'some-ws:one.md',
     });
 
-    // An externally tagged force-update maps to a coarse refresh.
+    // An externally tagged force-update maps to a coarse refresh, keeping
+    // its workspace scope when the emitter provided one.
     testEnv.rootEmitter.emit('event::file:force-update', {
+      wsName: 'some-ws',
       sender: EXTERNAL_SENDER,
     });
     expect(store.get(fileSystem.$externalFileChangeEvent)).toEqual({
       sequence: 2,
       type: 'refresh',
+      wsName: 'some-ws',
     });
 
     controller.abort();

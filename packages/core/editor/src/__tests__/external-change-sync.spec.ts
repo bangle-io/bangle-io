@@ -263,6 +263,61 @@ describe('editor refresh on external file changes', () => {
     expect(editorText(domNode)).toContain('the original note body');
   });
 
+  it('a workspace-scoped refresh does not touch editors in other workspaces', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      'the original note body',
+    );
+
+    // Mount a second editor in a different workspace.
+    const OTHER_WS = 'other-ws';
+    await services.workspaceOps.createWorkspaceInfo({
+      name: OTHER_WS,
+      type: WORKSPACE_STORAGE_TYPE.Memory,
+      metadata: {},
+    });
+    const otherWsPath = `${OTHER_WS}:note.md`;
+    await services.fileSystem.createTextFile(otherWsPath, 'other ws note');
+    const otherDomNode = document.createElement('div');
+    document.body.append(otherDomNode);
+    cleanupDomNodes.push(otherDomNode);
+    services.editorEngine.mountEditor({
+      domNode: otherDomNode,
+      wsPath: otherWsPath,
+      name: 'other-ws-editor',
+      focus: false,
+    });
+    await vi.waitFor(() => {
+      expect(otherDomNode.textContent).toContain('other ws note');
+    });
+
+    // Change BOTH notes on storage, then send a refresh scoped to OTHER_WS.
+    await services.fileStorageMemory.writeFile(
+      NOTE_WS_PATH,
+      new File(['changed but out of scope'], 'note.md', {
+        type: 'text/plain',
+      }),
+    );
+    await services.fileStorageMemory.writeFile(
+      otherWsPath,
+      new File(['other ws refreshed'], 'note.md', { type: 'text/plain' }),
+    );
+    testEnv.rootEmitter.emit('event::file:force-update', {
+      wsName: OTHER_WS,
+      sender: EXTERNAL_SENDER,
+    });
+
+    await vi.waitFor(
+      () => {
+        expect(otherDomNode.textContent).toContain('other ws refreshed');
+      },
+      { timeout: 3_000 },
+    );
+    // The first workspace's editor was outside the refresh scope: untouched
+    // even though its file changed on storage.
+    expect(editorText(domNode)).toContain('the original note body');
+    expect(editorText(domNode)).not.toContain('changed but out of scope');
+  });
+
   it('leaves the editor untouched when the external content is identical (echo)', async () => {
     const { testEnv, services, domNode } = await setupEditorWithNote(
       'the original note body',

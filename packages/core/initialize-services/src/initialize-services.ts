@@ -129,7 +129,10 @@ export function initializeServices(
             break;
           }
           case 'refresh': {
-            rootEmitter.emit('event::file:force-update', { sender });
+            rootEmitter.emit('event::file:force-update', {
+              wsName: change.wsName,
+              sender,
+            });
             break;
           }
           default: {
