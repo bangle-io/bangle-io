@@ -1,10 +1,10 @@
-import {
-  BaseFileSystemError,
-  NATIVE_BROWSER_USER_ABORTED_ERROR,
-  pickADirectory,
-} from '@bangle.io/baby-fs';
 import { throwAppError } from '@bangle.io/base-utils';
 import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
+import {
+  isNativeFsError,
+  NATIVE_FS_ERROR_CODE,
+  pickDirectory,
+} from '@bangle.io/native-fs';
 import { c } from '../helper';
 
 export const nativeFsRecoveryHandlers = [
@@ -24,12 +24,9 @@ export const nativeFsRecoveryHandlers = [
 
       let rootDirHandle: FileSystemDirectoryHandle;
       try {
-        rootDirHandle = await pickADirectory();
+        rootDirHandle = await pickDirectory();
       } catch (error) {
-        if (
-          error instanceof BaseFileSystemError &&
-          error.code === NATIVE_BROWSER_USER_ABORTED_ERROR
-        ) {
+        if (isNativeFsError(error, NATIVE_FS_ERROR_CODE.userAborted)) {
           return;
         }
         throwAppError(
@@ -39,9 +36,10 @@ export const nativeFsRecoveryHandlers = [
         );
       }
 
-      // Native FS paths are rooted by the directory name today. Accepting a
-      // different folder would make a successful reconnect look like an empty
-      // workspace, so preserve the old handle until the selection is valid.
+      // Storage no longer roots paths in the directory name, so any folder
+      // would technically load — which is exactly why the name check stays:
+      // it guards against silently rebinding the workspace to the wrong
+      // folder. The old handle is preserved until the selection is valid.
       if (rootDirHandle.name !== wsName) {
         throwAppError(
           'error::workspace:native-fs-reconnect-failed',
