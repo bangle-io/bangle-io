@@ -368,6 +368,18 @@ export const t = {
         noNoteOpenToClone: 'No note open to clone',
         noWorkspaceForDailyNote: 'No workspace is open to create a daily note.',
         noNoteOpened: 'No note is currently open.',
+        reconnectNotFound: ({ wsName }: { wsName: string }) =>
+          `The workspace "${wsName}" is no longer available.`,
+        reconnectFailed:
+          'Bangle could not reconnect that folder. Your workspace was not changed.',
+        reconnectNameMismatch: ({
+          expectedName,
+          selectedName,
+        }: {
+          expectedName: string;
+          selectedName: string;
+        }) =>
+          `Choose the folder named "${expectedName}", not "${selectedName}". Your workspace was not changed.`,
       },
       file: {
         invalidNotePath: 'Invalid note path provided',
@@ -542,6 +554,13 @@ export const t = {
       recentNotesHeading: 'Recent notes',
       noNotesMessage: 'No notes found in this workspace.',
       newNoteButton: 'New Note',
+      switchWorkspaceButton: 'Switch Workspace',
+    },
+    pageNativeFsRecovery: {
+      title: 'Reconnect your workspace folder',
+      description: ({ wsName }: { wsName: string }) =>
+        `Bangle can’t find the folder linked to “${wsName}”. It may have moved, been deleted, or be on a disconnected drive. Bangle has not changed your workspace entry or files. Locate the same folder to reconnect it.`,
+      locateFolderButton: 'Locate Folder',
       switchWorkspaceButton: 'Switch Workspace',
     },
     pageWsPathNotFound: {

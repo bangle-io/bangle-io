@@ -25,6 +25,7 @@ import {
   PageFatalError,
   PageNativeFsAuthFailed,
   PageNativeFsAuthReq,
+  PageNativeFsRecovery,
   PageNotFound,
   PageSettings,
   PageWelcome,
@@ -88,6 +89,16 @@ function BrowserAppDocumentSetup() {
 function AppRoutes() {
   const coreServices = useCoreServices();
   const { route } = useAtomValue(coreServices.navigation.$routeInfo);
+  const fileTreeListState = useAtomValue(
+    coreServices.workspaceState.$fileTreeListState,
+  );
+
+  if (
+    fileTreeListState.status === 'native-fs-directory-not-found' &&
+    (route === 'editor' || route === 'asset' || route === 'ws-home')
+  ) {
+    return <PageNativeFsRecovery wsName={fileTreeListState.wsName} />;
+  }
 
   switch (route) {
     case 'editor':

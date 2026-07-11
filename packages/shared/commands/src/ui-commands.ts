@@ -314,6 +314,17 @@ export const uiCommands = narrow([
     omniSearch: false,
   },
   {
+    id: 'command::ui:reconnect-native-fs-workspace',
+    dependencies: {
+      services: ['workspaceOps', 'workbenchState'],
+    },
+    autoFocusEditor: false,
+    args: {
+      wsName: T.String,
+    },
+    omniSearch: false,
+  },
+  {
     id: 'command::ui:toggle-all-files',
     title: 'View All Files',
     keywords: ['files', 'list', 'browse', 'all'],
