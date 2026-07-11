@@ -154,7 +154,7 @@ test('table menu adds and removes rows and columns', async ({ page }) => {
   await page.keyboard.press('Escape');
 
   await openTableMenu();
-  await page.getByRole('menuitem', { name: 'Delete table' }).click();
+  await page.getByRole('menuitem', { name: 'Delete table' }).press('Enter');
   await expect(editor.locator('table')).toHaveCount(0);
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))

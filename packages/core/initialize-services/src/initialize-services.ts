@@ -6,6 +6,12 @@ import {
 } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import type { EnabledBangleAppCommand } from '@bangle.io/commands';
+import {
+  DEFAULT_EDITOR_ENGINE,
+  EDITOR_ENGINE_QUERY_PARAM,
+  type EditorEngineId,
+  isEditorEngineId,
+} from '@bangle.io/constants';
 import { slot } from '@bangle.io/poor-mans-di';
 import type { WorkspaceOpsService } from '@bangle.io/service-core';
 import {
@@ -24,6 +30,15 @@ import type {
 } from '@bangle.io/types';
 import { createServiceSetup } from './service-setup';
 
+export function readEditorEngineFromUrl(
+  location: Pick<Location, 'search'> = window.location,
+): EditorEngineId {
+  const engineId = new URLSearchParams(location.search).get(
+    EDITOR_ENGINE_QUERY_PARAM,
+  );
+  return isEditorEngineId(engineId) ? engineId : DEFAULT_EDITOR_ENGINE;
+}
+
 export function initializeServices(
   commonOpts: BaseServiceCommonOptions,
   rootEmitter: RootEmitter,
@@ -31,6 +46,7 @@ export function initializeServices(
   commandHandlers: Array<{ id: string; handler: CommandHandler }>,
   theme: ThemeManager,
 ) {
+  const editorEngineId = readEditorEngineFromUrl();
   // Native FS root-handle resolution needs workspace metadata, which lives in
   // a core service. The lookup is late-bound: it is wired right after the
   // setup is created and only runs after services are instantiated.
@@ -81,7 +97,7 @@ export function initializeServices(
       },
     })),
     router: slot(BrowserRouterService, () => ({
-      strategy: new HashStrategy(),
+      strategy: new HashStrategy(window.location.search),
       basePath: '/ws',
     })),
   };
@@ -95,6 +111,7 @@ export function initializeServices(
     shortcutTarget: document,
     platformServices: browserPlatformServices,
     fileStorageSlots: ['fileStorageIdb', 'fileStorageNativeFs'],
+    editorEngineId,
   });
 
   getWorkspaceOps = () => setup.getServices().workspaceOps;

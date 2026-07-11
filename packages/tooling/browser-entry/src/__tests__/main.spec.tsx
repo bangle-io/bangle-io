@@ -14,7 +14,8 @@ vi.mock('@bangle.io/app', () => ({
   App: () => null,
 }));
 
-vi.mock('@bangle.io/initialize-services', () => ({
+vi.mock('@bangle.io/initialize-services', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@bangle.io/initialize-services')>()),
   initializeServices: mocks.initializeServices,
 }));
 
@@ -27,6 +28,7 @@ describe('browser entry startup', () => {
     vi.resetModules();
     vi.stubGlobal('t', t);
     document.body.innerHTML = '<div id="root"></div>';
+    window.history.replaceState(null, '', '/');
     mocks.initializeSentry.mockReset();
     mocks.initializeServices.mockReset();
   });

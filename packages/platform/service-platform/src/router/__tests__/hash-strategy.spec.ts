@@ -40,6 +40,23 @@ describe('HashStrategy', () => {
   });
 
   describe('encodeRouteInfo', () => {
+    it('preserves query parameters outside the hash route', () => {
+      const strategyWithSearch = new HashStrategy(
+        '?editorEngine=wordgard&debug=true',
+      );
+
+      expect(
+        strategyWithSearch.encodeRouteInfo(
+          { route: 'welcome', payload: {} },
+          basePath,
+        ),
+      ).toEqual({
+        pathname: '/app',
+        search: '?editorEngine=wordgard&debug=true',
+        hash: '#route=welcome',
+      });
+    });
+
     it('should encode editor route info into hash', () => {
       const routeInfo: AppRouteInfo = {
         route: 'editor',

@@ -1,7 +1,10 @@
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { commandHandlers as defaultCommandHandlers } from '@bangle.io/command-handlers';
 import { getEnabledCommands } from '@bangle.io/commands';
-import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
+import {
+  type EditorEngineId,
+  THEME_MANAGER_CONFIG,
+} from '@bangle.io/constants';
 import type { CoreServices } from '@bangle.io/context';
 import {
   type CoreConfigOverrides,
@@ -66,6 +69,7 @@ function createTestServiceSetup(
   commands: ReturnType<typeof getEnabledCommands>,
   commandHandlers: Array<{ id: string; handler: CommandHandler }>,
   coreConfigOverrides: CoreConfigOverrides | undefined,
+  editorEngineId: EditorEngineId,
 ): TestServiceSetup {
   return createServiceSetup({
     commonOpts,
@@ -89,6 +93,7 @@ function createTestServiceSetup(
       router: MemoryRouterService,
     },
     fileStorageSlots: ['fileStorageMemory'],
+    editorEngineId,
     coreConfigOverrides,
   });
 }
@@ -110,18 +115,21 @@ export type TestEnvironment = {
  * services. Core wiring comes from the same `createServiceSetup` builder the
  * browser composition root uses, so test setup mirrors production setup.
  * Tests tune core services through `coreConfigOverrides` (decorators over the
- * canonical configs) or by supplying `commands`/`commandHandlers`.
+ * canonical configs), or select the real editor implementation with
+ * `editorEngineId`.
  */
 export function createTestEnvironment({
   controller = new AbortController(),
   commands = getEnabledCommands(),
   commandHandlers = defaultCommandHandlers,
   coreConfigOverrides,
+  editorEngineId = 'prosemirror',
 }: {
   controller?: AbortController;
   commands?: ReturnType<typeof getEnabledCommands>;
   commandHandlers?: Array<{ id: string; handler: CommandHandler }>;
   coreConfigOverrides?: CoreConfigOverrides;
+  editorEngineId?: EditorEngineId;
 } = {}): TestEnvironment {
   const { commonOpts, mockLog, rootEmitter } = makeTestCommonOpts({
     controller,
@@ -133,6 +141,7 @@ export function createTestEnvironment({
     commands,
     commandHandlers,
     coreConfigOverrides,
+    editorEngineId,
   );
 
   return {

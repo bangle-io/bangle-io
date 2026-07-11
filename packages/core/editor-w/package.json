@@ -1,12 +1,12 @@
 {
-  "name": "@bangle.io/app",
-  "description": "",
+  "name": "@bangle.io/editor-w",
+  "description": "The Wordgard editor engine (plans/011). Currently the M0b stub: a read-only note view proving the engine-switch plumbing end to end.",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "packages/core/app"
+    "directory": "packages/core/editor-w"
   },
   "authors": [
     {
@@ -19,7 +19,8 @@
   "bugs": "https://github.com/bangle-io/bangle-io/issues",
   "banglePackageConfig": {
     "env": "browser",
-    "kind": "app"
+    "kind": "app",
+    "type": "browser"
   },
   "main": "src/index.tsx",
   "module": "src/index.tsx",
@@ -28,27 +29,13 @@
   },
   "scripts": {},
   "dependencies": {
-    "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/base-utils": "workspace:*",
-    "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/context": "workspace:*",
-    "@bangle.io/editor": "workspace:*",
-    "@bangle.io/editor-w": "workspace:*",
-    "@bangle.io/fuzzysearch": "workspace:*",
-    "@bangle.io/logger": "workspace:*",
-    "@bangle.io/omni-search": "workspace:*",
-    "@bangle.io/types": "workspace:*",
-    "@bangle.io/ui-components": "workspace:*",
+    "@bangle.io/service-core": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "@tanstack/react-virtual": "^3.14.5",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.2",
-    "date-fns": "^4.4.0",
-    "jotai": "^2.20.1",
-    "lucide-react": "^1.23.0",
-    "react": "19.2.7",
-    "react-error-boundary": "^6.1.2"
+    "@types/react": "^19.2.17",
+    "react": "19.2.7"
   },
   "devDependencies": {
     "@bangle.io/test-utils": "workspace:*"

@@ -1,9 +1,37 @@
 // @vitest-environment jsdom
 /// <reference types="@vitest/browser/matchers" />
 import '@testing-library/jest-dom/vitest';
-import { SETTINGS_PAGE_DEFINITIONS } from '@bangle.io/constants';
+import {
+  EDITOR_ENGINE_QUERY_PARAM,
+  type EditorEngineId,
+  SETTINGS_PAGE_DEFINITIONS,
+} from '@bangle.io/constants';
 import { describe, expect, it, vi } from 'vitest';
 import { setupTest } from './test-utils';
+
+type SetupResult = Awaited<ReturnType<typeof setupTest>>;
+
+function countReloadEvents(testEnv: SetupResult['testEnv']) {
+  let count = 0;
+  testEnv.rootEmitter.on(
+    'event::app:reload-ui',
+    () => count++,
+    testEnv.commonOpts.rootAbortSignal,
+  );
+  return () => count;
+}
+
+function selectEditorEngine(
+  { services, testEnv }: Pick<SetupResult, 'services' | 'testEnv'>,
+  engineId: EditorEngineId,
+) {
+  const dialog = testEnv.store.get(services.workbenchState.$singleSelectDialog);
+  const option = dialog?.options.find((item) => item.id === engineId);
+  if (!dialog || !option) {
+    throw new Error(`Expected the "${engineId}" editor option`);
+  }
+  dialog.onSelect(option);
+}
 
 describe('UI command handlers', () => {
   describe('command::ui:toggle-sidebar', () => {
@@ -23,12 +51,42 @@ describe('UI command handlers', () => {
 
   describe('command::ui:reload-app', () => {
     it('should reload the app', async () => {
-      const { dispatch, services } = await setupTest({
+      const { dispatch, testEnv } = await setupTest({
         targetId: 'command::ui:reload-app',
       });
-      const spy = vi.spyOn(services.workbenchState, 'reloadUi');
+      const reloadCount = countReloadEvents(testEnv);
+
       dispatch('command::ui:reload-app', null);
-      expect(spy).toHaveBeenCalled();
+
+      expect(reloadCount()).toBe(1);
+    });
+  });
+
+  describe('command::ui:switch-editor-engine', () => {
+    it('updates the URL and reloads the current page', async () => {
+      const { dispatch, services, testEnv } = await setupTest({
+        targetId: 'command::ui:switch-editor-engine',
+      });
+      const reloadSpy = vi
+        .spyOn(window.history, 'go')
+        .mockImplementation(() => {});
+      window.history.replaceState(null, '', '/?debug=true#route=welcome');
+
+      dispatch('command::ui:switch-editor-engine', null);
+      selectEditorEngine({ services, testEnv }, 'wordgard');
+
+      await vi.waitFor(() => {
+        expect(reloadSpy).toHaveBeenCalledOnce();
+      });
+      expect(
+        new URL(window.location.href).searchParams.get(
+          EDITOR_ENGINE_QUERY_PARAM,
+        ),
+      ).toBe('wordgard');
+      expect(new URL(window.location.href).searchParams.get('debug')).toBe(
+        'true',
+      );
+      reloadSpy.mockRestore();
     });
   });
 

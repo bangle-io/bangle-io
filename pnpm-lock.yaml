@@ -112,6 +112,9 @@ importers:
       '@bangle.io/editor':
         specifier: workspace:*
         version: link:../editor
+      '@bangle.io/editor-w':
+        specifier: workspace:*
+        version: link:../editor-w
       '@bangle.io/fuzzysearch':
         specifier: workspace:*
         version: link:../../js-lib/fuzzysearch
@@ -179,6 +182,9 @@ importers:
       '@bangle.io/mini-js-utils':
         specifier: workspace:*
         version: link:../../js-lib/mini-js-utils
+      '@bangle.io/service-core':
+        specifier: workspace:*
+        version: link:../service-core
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -195,9 +201,6 @@ importers:
         specifier: 19.2.7
         version: 19.2.7
     devDependencies:
-      '@bangle.io/service-core':
-        specifier: workspace:*
-        version: link:../service-core
       '@bangle.io/test-utils':
         specifier: workspace:*
         version: link:../../tooling/test-utils
@@ -287,6 +290,34 @@ importers:
         specifier: workspace:*
         version: link:../../tooling/test-utils
 
+  packages/core/editor-w:
+    dependencies:
+      '@bangle.io/base-utils':
+        specifier: workspace:*
+        version: link:../../shared/base-utils
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
+      '@bangle.io/context':
+        specifier: workspace:*
+        version: link:../context
+      '@bangle.io/service-core':
+        specifier: workspace:*
+        version: link:../service-core
+      '@bangle.io/ws-path':
+        specifier: workspace:*
+        version: link:../../shared/ws-path
+      '@types/react':
+        specifier: ^19.2.17
+        version: 19.2.17
+      react:
+        specifier: 19.2.7
+        version: 19.2.7
+    devDependencies:
+      '@bangle.io/test-utils':
+        specifier: workspace:*
+        version: link:../../tooling/test-utils
+
   packages/core/initialize-services:
     dependencies:
       '@bangle.io/baby-fs':
@@ -304,12 +335,18 @@ importers:
       '@bangle.io/commands':
         specifier: workspace:*
         version: link:../../shared/commands
+      '@bangle.io/constants':
+        specifier: workspace:*
+        version: link:../../shared/constants
       '@bangle.io/context':
         specifier: workspace:*
         version: link:../context
       '@bangle.io/editor':
         specifier: workspace:*
         version: link:../editor
+      '@bangle.io/editor-w':
+        specifier: workspace:*
+        version: link:../editor-w
       '@bangle.io/poor-mans-di':
         specifier: workspace:*
         version: link:../../js-lib/poor-mans-di

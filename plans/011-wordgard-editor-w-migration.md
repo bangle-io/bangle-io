@@ -5,12 +5,13 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-05
-updated: 2026-07-06
+updated: 2026-07-07
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/609
   - https://github.com/bangle-io/bangle-io/pull/613
   - https://github.com/bangle-io/bangle-io/pull/616
+  - https://github.com/bangle-io/bangle-io/pull/620
 related_issues: []
 ---
 
@@ -67,7 +68,7 @@ exists):
   `initialize-services/src/service-setup.ts` (`editorEngine: PmEditorService`)
   rather than a parameterized option; it becomes conditional when editor-w
   scaffolds.
-- The persisted engine preference and the omni-search switch command are
+- The URL engine selection and the omni-search switch command are
   deferred to the editor-w stub (start of M1/M2) — a switch with one engine
   is untestable dead code.
 - `service-core/backlink-markdown-extractor.ts` still imports
@@ -202,6 +203,43 @@ exists):
   closing-fence normalization, unclosed-fence stays a thematic break,
   mid-document `---` untouched) plus the reworked thematic-break
   fixtures are all BOTH_ENGINES.
+### M0b complete — the engine switch is live
+
+- **`@bangle.io/editor-w` stub** (`packages/core/editor-w`): `EditorWService`
+  implements `EditorEngineContract` with `engineId: 'wordgard'` and renders
+  the note's Markdown source **read-only** (no Wordgard code yet). The save
+  contract reports a permanently clean state, a missing note renders empty
+  without writing (mirrors PM), and a failed read shows an error state and
+  never writes. Its React surface carries a persistent "experimental
+  preview" notice with a one-click switch back.
+- **URL selection**: the composition root reads `?editorEngine=` before the
+  container exists. Unknown or missing values select ProseMirror. The hash
+  router preserves the query string during normal navigation, with no stored
+  preference or storage migration.
+- **Composition-root selection**: `createServiceSetup` takes the selected
+  `EditorEngineId` and directly registers `PmEditorService` or
+  `EditorWService`. `EditorSurface` directly renders the matching component.
+  Both packages ship together; the simpler composition is preferred while
+  there are only two engines.
+- **Switch command**: `command::ui:switch-editor-engine` (omni-search)
+  opens the standard single-select dialog ("ProseMirror (stable)" /
+  "Wordgard (experimental)"), waits for the save queue to drain
+  (`waitForSaveQueueToDrain`, 5s bound — a still-dirty queue means a failed
+  save), refuses with a toast in that case, else updates the current tab's URL
+  and reloads that page. Other tabs keep their own URL and current editor,
+  so their saves are never interrupted by a switch elsewhere.
+- **Coverage**: unit specs for the stub service (read-only, load-failure,
+  idempotent mount), URL selection, and the drain helper;
+  `editor-engine-switch.e2e.ts` covers the full loop —
+  switch → wordgard renders raw markdown read-only → survives browser
+  reload → typing does nothing → switch back → note editable with no data
+  loss. It also proves that switching one tab does not reload another. The e2e
+  keys on `data-editor-engine`.
+- Deferred (deliberately): migrating shared e2e helpers off `.ProseMirror`
+  onto a neutral hook (revisit when editor-w is writable in M2); a gate for
+  editor-mount-time crashes (a React-render crash lands in the app error
+  boundary as before).
+
 - **Coordination rule with plan 012 (markdown feature parity):** every
   012 construct changes what a note's bytes mean, so each 012 milestone
   must either land the Wordgard `MarkdownSpec` + BOTH_ENGINES corpus
@@ -437,13 +475,13 @@ string." No shared rich-document representation is ever needed.
   generalizes to a per-**surface** switch (WYSIWYG engines + the source editor)
   with no new seam.
 
-**Two levels of switching.** The engine-switch design below (persisted
-preference, reload-based) is right for *heavy* WYSIWYG engines — it avoids
+**Two levels of switching.** The engine-switch design below (URL-selected,
+reload-based) is right for *heavy* WYSIWYG engines — it avoids
 double-mounted editors and stale plugin state. A raw source editor is
 lightweight and stateless enough that a **per-note rich ⇄ raw toggle** can be an
 *instant* swap rather than a reload, feasible precisely because of the
 markdown-as-interchange property above. Shape the switch command/dialog and the
-persisted preference so that adding a third option, or a per-note mode toggle,
+engine selection so that adding a third option, or a per-note mode toggle,
 is *additive* — do not hardcode "exactly one engine per tab, changeable only by
 reload" so deeply that an in-place surface swap becomes impossible.
 
@@ -456,7 +494,7 @@ the rich → raw handoff: if a note's parse→serialize is proven lossless, the
 rich ⇄ raw toggle is lossless too.
 
 **Cost noted, not paid here.** CodeMirror is a real future dependency (bundle
-weight; dynamic-import it like an inactive engine). Convenient coincidence:
+weight; load it only when source mode is used). Convenient coincidence:
 Wordgard's extension architecture is modeled on CodeMirror 6, so the mental
 models (facets, state fields, extensions) transfer — the Wordgard stack warms us
 up for the source editor.
@@ -472,19 +510,12 @@ about the raw editor is in scope for this plan.
 (per the repo's DI invariant: configure services before the container is
 built):
 
-1. A persisted preference — `editorEngine: 'prosemirror' | 'wordgard'`
-   (default `'prosemirror'`) — stored via the existing `atomStorage`
-   pattern on `WorkbenchStateService` (same mechanism as `wide-editor`),
-   readable synchronously-enough during bootstrap from the sync database.
-2. `initialize-services` reads the flag and registers **one** implementation
-   under the `editorEngine` slot. The other engine's code is behind a
-   dynamic `import()` so the inactive stack is not parsed/executed (and Vite
-   code-splits it). Only one engine is ever live in a tab.
-3. **Boot guard:** if the wordgard path throws during service setup or first
-   mount, reset the flag to `'prosemirror'` and reload. An experimental
-   engine must never be able to brick the app; the escape hatch cannot live
-   inside the thing that is broken.
-
+1. The current URL selects `?editorEngine=prosemirror|wordgard`; missing or
+   unknown values default to ProseMirror. The hash router preserves this query
+   parameter during app navigation.
+2. `initialize-services` reads the flag and `createServiceSetup` directly
+   registers **one** implementation under the `editorEngine` slot. Both engine
+   packages are statically imported, but only one service is live in a tab.
 **Switching is a reload, not a hot swap.** The omni-search command
 (`command::ui:switch-editor-engine`, `omniSearch: true`) opens the standard
 single-select dialog — "ProseMirror (stable)" / "Wordgard (experimental)" —
@@ -493,9 +524,9 @@ then:
 1. Refuses (with a toast pointing at the failed save) if
    `hasPendingOrFailedSave()` reports failed writes; otherwise awaits the
    save queue draining.
-2. Writes the preference.
-3. Triggers the existing `event::app:reload-ui` machinery (already
-   cross-tab, so all tabs converge on the same engine).
+2. Updates `editorEngine` in the current tab's query string.
+3. Reloads the current page. Other tabs keep running with their own URL and
+   current editor.
 
 Reload-based switching is deliberate: it matches the DI model, avoids
 double-mounted editors and stale plugin state, reuses existing reload +
@@ -503,7 +534,7 @@ save-protection infrastructure, and keeps the switch **boring** — which is
 what a data-carrying switch should be. Additive futures this must not preclude:
 per-note or side-by-side comparison, and — the concrete near-term one — a
 per-note rich ⇄ raw (source) toggle that can swap in place without a reload
-(see "Designing for a raw source editor"). Keep the preference enum and this
+(see "Designing for a raw source editor"). Keep the engine enum and this
 command shaped so a third value or a mode toggle is additive, not a redesign.
 
 **Observability:** the editor root element carries
@@ -820,13 +851,14 @@ stragglers onto the contract, `implements` check on `PmEditorService`,
 in the app layer. Exit (met): everything outside `core/editor` compiles
 against the contract only; zero behavior change for PM users.
 
-**M0b — Switch plumbing (lands with the editor-w stub)**
-The persisted engine preference, the omni-search switch command,
-composition-root selection with dynamic import, and the boot guard — landed
+**M0b — Switch plumbing (lands with the editor-w stub) — DONE**
+The URL engine selection, the omni-search switch command,
+and composition-root selection — landed
 together with a stub editor-w package whose "editor" renders the note
 read-only (no Wordgard yet), so the switch is real and e2e-testable the day
-it exists. Exit: switching engines round-trips through reload on a real
-workspace; e2e covers the switch + fallback.
+it exists. Exit (met): switching engines round-trips through reload on a
+real workspace; e2e covers the switch + fallback (see "M0b complete"
+above).
 
 **M1 — `wordgard-markdown` + shared syntax + golden corpus**
 The shared markdown-it syntax layer is **done** — extracted as
@@ -918,7 +950,7 @@ outlive the flip as a safety valve.
 - Unit (vitest): wordgard-markdown and wordgard-utils logic tests are
   headless (doc/state modules don't need a browser). Editor-behavior tests
   that need real DOM use Playwright component tests, as today.
-- E2E: helpers gain an engine parameter (set the preference via the switch
+- E2E: helpers gain an engine parameter (set the URL via the switch
   command in a fixture, assert on `data-editor-engine`). The full suite
   stays PM-default; an editor-w smoke set grows per milestone and runs in
   `pnpm e2e:ci`. At M6 the full suite runs on both.
@@ -956,11 +988,10 @@ training. `.claude/skills/wordgard/` ships in this PR:
 - **Markdown serialization fidelity is the hard 20%.** That is why M1
   precedes any writable editor, why the tokenizer is shared, and why the
   gate exists at all.
-- **Two engines on main for months** — bundle and maintenance overhead.
-  Dynamic import keeps the inactive engine out of the hot path; the parity
-  matrix keeps the tail visible instead of open-ended; feature work during
-  the transition may need dual implementation (accepted cost, weighed per
-  feature).
+- **Two engines on main for months** — bundle and maintenance overhead. Both
+  engines ship for now to keep composition straightforward; the parity matrix
+  keeps the tail visible instead of open-ended, and feature work during the
+  transition may need dual implementation (accepted cost, weighed per feature).
 - **Fork drift** between editor-w and core/editor before M2 extraction.
   Mitigation: extract `editor-common` as soon as the save queue is needed
   (M2), keep the fork window short.
@@ -1001,11 +1032,16 @@ None. M0 can start immediately.
 2. Scaffold `wordgard-utils` + `wordgard-markdown`, build the codec, add the
    golden corpus with both-engine contract tests: **done** (see "M1
    essentially complete" above).
-3. M0b next: stub `@bangle.io/editor-w` package + persisted engine
-   preference + omni-search switch command + composition-root selection +
-   boot guard + e2e switch coverage.
-4. Extract `editor-common` (save queue, load-status, `<Editor>` shell) when
-   editor-w first needs it (M2).
+3. M0b: **done** — stub `@bangle.io/editor-w`, URL selection,
+   omni-search switch command, static composition-root selection, and e2e
+   switch coverage (see "M0b complete" above).
+4. M2 next: wire a real Wordgard editor into editor-w (schema assembly from
+   wordgard-utils bundles, history, keymaps, styles, `t`→PhraseSet bridge),
+   extract `editor-common` (save queue, load-status, `<Editor>` shell) when
+   editor-w first needs it, and bring the round-trip gate live (including
+   the strict-vs-normalizing policy decision). M4-P0 (wordgard-plus
+   scaffold + bridge) can proceed in parallel — it needs no editor-w
+   service.
 5. Table parity (M3): move `banger-editor/table/table-markdown.ts` into the
    shared layer, add Wordgard table specs, and flip the corpus table
    fixtures to both engines.
