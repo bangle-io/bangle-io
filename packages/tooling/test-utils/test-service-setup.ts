@@ -1,7 +1,10 @@
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { commandHandlers as defaultCommandHandlers } from '@bangle.io/command-handlers';
 import { getEnabledCommands } from '@bangle.io/commands';
-import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
+import {
+  type EditorEngineId,
+  THEME_MANAGER_CONFIG,
+} from '@bangle.io/constants';
 import type { CoreServices } from '@bangle.io/context';
 import {
   type CoreConfigOverrides,
@@ -12,8 +15,8 @@ import {
   FileStorageMemory,
   MemoryDatabaseService,
   MemoryRouterService,
-  MemorySyncDatabaseService,
   TestErrorHandlerService,
+  TestSyncDatabaseService,
 } from '@bangle.io/service-platform/testing';
 import type {
   BaseServiceCommonOptions,
@@ -47,7 +50,7 @@ const PLATFORM_SLOT_IDS = [
 type TestServices = CoreServices & {
   errorService: TestErrorHandlerService;
   database: MemoryDatabaseService;
-  syncDatabase: MemorySyncDatabaseService;
+  syncDatabase: TestSyncDatabaseService;
   fileStorageMemory: FileStorageMemory;
   router: MemoryRouterService;
 };
@@ -66,6 +69,7 @@ function createTestServiceSetup(
   commands: ReturnType<typeof getEnabledCommands>,
   commandHandlers: Array<{ id: string; handler: CommandHandler }>,
   coreConfigOverrides: CoreConfigOverrides | undefined,
+  editorEngineId: EditorEngineId,
 ): TestServiceSetup {
   return createServiceSetup({
     commonOpts,
@@ -80,7 +84,7 @@ function createTestServiceSetup(
     platformServices: {
       errorService: TestErrorHandlerService,
       database: MemoryDatabaseService,
-      syncDatabase: MemorySyncDatabaseService,
+      syncDatabase: TestSyncDatabaseService,
       fileStorageMemory: slot(FileStorageMemory, () => ({
         onChange: (change) => {
           commonOpts.logger.info('File storage change:', change);
@@ -89,7 +93,7 @@ function createTestServiceSetup(
       router: MemoryRouterService,
     },
     fileStorageSlots: ['fileStorageMemory'],
-    editorEngineId: 'prosemirror',
+    editorEngineId,
     coreConfigOverrides,
   });
 }
@@ -102,6 +106,7 @@ export type TestEnvironment = {
   commonOpts: ReturnType<typeof makeTestCommonOpts>['commonOpts'];
   store: Store;
   coreServices: () => CoreServices;
+  getServices: () => TestServices;
   mountAll: () => Promise<void>;
   instantiateAll: (focusService?: keyof TestServices & string) => TestServices;
 };
@@ -111,18 +116,22 @@ export type TestEnvironment = {
  * services. Core wiring comes from the same `createServiceSetup` builder the
  * browser composition root uses, so test setup mirrors production setup.
  * Tests tune core services through `coreConfigOverrides` (decorators over the
- * canonical configs) or by supplying `commands`/`commandHandlers`.
+ * canonical configs), select the real editor implementation with
+ * `editorEngineId`. The in-memory sync database exposes explicit fault
+ * controls for failure-path tests without replacing service methods.
  */
 export function createTestEnvironment({
   controller = new AbortController(),
   commands = getEnabledCommands(),
   commandHandlers = defaultCommandHandlers,
   coreConfigOverrides,
+  editorEngineId = 'prosemirror',
 }: {
   controller?: AbortController;
   commands?: ReturnType<typeof getEnabledCommands>;
   commandHandlers?: Array<{ id: string; handler: CommandHandler }>;
   coreConfigOverrides?: CoreConfigOverrides;
+  editorEngineId?: EditorEngineId;
 } = {}): TestEnvironment {
   const { commonOpts, mockLog, rootEmitter } = makeTestCommonOpts({
     controller,
@@ -134,6 +143,7 @@ export function createTestEnvironment({
     commands,
     commandHandlers,
     coreConfigOverrides,
+    editorEngineId,
   );
 
   return {
@@ -149,6 +159,9 @@ export function createTestEnvironment({
      * Throws if called before `instantiateAll()`.
      */
     coreServices: setup.coreServices,
+
+    /** Full instantiated graph for assertions and platform fault controls. */
+    getServices: setup.getServices,
 
     /**
      * Mounts all services. Useful for ensuring all asynchronous initialization

@@ -12,9 +12,10 @@ import type {
 import { initializeServices as initializeServices2 } from './initialize-services';
 
 export {
+  EDITOR_ENGINE_PREFERENCE_STORAGE_KEY,
   readEditorEnginePreference,
   resetEditorEnginePreference,
-} from './editor-engine-preference';
+} from './initialize-services';
 
 export function initializeServices(
   logger: Logger,

@@ -118,7 +118,7 @@ function handleStartupFailure(error: unknown, logger: Logger) {
  * rather than looping.
  */
 export function recoverFromExperimentalEngineFailure(
-  logger: Logger,
+  logger: Pick<Logger, 'error'>,
   storage: Pick<Storage, 'getItem' | 'setItem'> = window.localStorage,
   reload: () => void = () => window.location.reload(),
 ): boolean {

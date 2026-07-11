@@ -3,7 +3,6 @@
 import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import { createTestEnvironment, waitForExpect } from '@bangle.io/test-utils';
 import { describe, expect, test } from 'vitest';
-import { EditorWService } from '../editor-w-service';
 
 const TEST_WS_NAME = 'test-ws';
 const NOTE_WS_PATH = `${TEST_WS_NAME}:note.md`;
@@ -11,7 +10,10 @@ const NOTE_CONTENT = '# Hello\n\nSome **markdown** content.\n';
 
 async function setup() {
   const controller = new AbortController();
-  const testEnv = createTestEnvironment({ controller });
+  const testEnv = createTestEnvironment({
+    controller,
+    editorEngineId: 'wordgard',
+  });
   const services = testEnv.instantiateAll();
   await testEnv.mountAll();
 
@@ -22,16 +24,12 @@ async function setup() {
   });
   await services.fileSystem.createTextFile(NOTE_WS_PATH, NOTE_CONTENT);
 
-  const service = new EditorWService(
-    {
-      ctx: testEnv.commonOpts,
-      serviceContext: { abortSignal: testEnv.commonOpts.rootAbortSignal },
-    },
-    { fileSystem: services.fileSystem },
-  );
-  await service.mount();
-
-  return { service, services, controller, mockLog: testEnv.mockLog };
+  return {
+    service: services.editorEngine,
+    services,
+    controller,
+    mockLog: testEnv.mockLog,
+  };
 }
 
 describe('EditorWService (M0b read-only stub)', () => {

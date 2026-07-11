@@ -1,11 +1,19 @@
 import { isFileSystemDirectoryHandle } from '@bangle.io/baby-fs';
 import {
   assertIsDefined,
+  atomStorageKey,
   getEventSenderMetadata,
   throwAppError,
 } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import type { EnabledBangleAppCommand } from '@bangle.io/commands';
+import {
+  DEFAULT_EDITOR_ENGINE,
+  EDITOR_ENGINE_PREFERENCE_KEY,
+  type EditorEngineId,
+  isEditorEngineId,
+  SERVICE_NAME,
+} from '@bangle.io/constants';
 import { slot } from '@bangle.io/poor-mans-di';
 import type { WorkspaceOpsService } from '@bangle.io/service-core';
 import {
@@ -22,8 +30,45 @@ import type {
   CommandHandler,
   RootEmitter,
 } from '@bangle.io/types';
-import { readEditorEnginePreference } from './editor-engine-preference';
 import { createServiceSetup } from './service-setup';
+
+export const EDITOR_ENGINE_PREFERENCE_STORAGE_KEY =
+  BrowserLocalStorageSyncDatabaseService.storageKeyFor(
+    atomStorageKey(
+      SERVICE_NAME.workbenchStateService,
+      EDITOR_ENGINE_PREFERENCE_KEY,
+    ),
+    'sync',
+  );
+
+export function readEditorEnginePreference(
+  storage: Pick<Storage, 'getItem'> = window.localStorage,
+): EditorEngineId {
+  try {
+    const raw = storage.getItem(EDITOR_ENGINE_PREFERENCE_STORAGE_KEY);
+    if (raw === null) {
+      return DEFAULT_EDITOR_ENGINE;
+    }
+    const parsed: unknown = JSON.parse(raw);
+    return isEditorEngineId(parsed) ? parsed : DEFAULT_EDITOR_ENGINE;
+  } catch {
+    return DEFAULT_EDITOR_ENGINE;
+  }
+}
+
+export function resetEditorEnginePreference(
+  storage: Pick<Storage, 'setItem'> = window.localStorage,
+): boolean {
+  try {
+    storage.setItem(
+      EDITOR_ENGINE_PREFERENCE_STORAGE_KEY,
+      JSON.stringify(DEFAULT_EDITOR_ENGINE),
+    );
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export function initializeServices(
   commonOpts: BaseServiceCommonOptions,

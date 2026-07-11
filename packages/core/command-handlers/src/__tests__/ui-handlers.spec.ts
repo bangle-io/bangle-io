@@ -1,10 +1,45 @@
 // @vitest-environment jsdom
 /// <reference types="@vitest/browser/matchers" />
 import '@testing-library/jest-dom/vitest';
-import { SETTINGS_PAGE_DEFINITIONS } from '@bangle.io/constants';
+import { atomStorageKey } from '@bangle.io/base-utils';
+import {
+  EDITOR_ENGINE_PREFERENCE_KEY,
+  type EditorEngineId,
+  SERVICE_NAME,
+  SETTINGS_PAGE_DEFINITIONS,
+} from '@bangle.io/constants';
 import { toast } from '@bangle.io/ui-components';
 import { describe, expect, it, vi } from 'vitest';
 import { setupTest } from './test-utils';
+
+type SetupResult = Awaited<ReturnType<typeof setupTest>>;
+
+const editorEnginePreferenceKey = atomStorageKey(
+  SERVICE_NAME.workbenchStateService,
+  EDITOR_ENGINE_PREFERENCE_KEY,
+);
+
+function countReloadEvents(testEnv: SetupResult['testEnv']) {
+  let count = 0;
+  testEnv.rootEmitter.on(
+    'event::app:reload-ui',
+    () => count++,
+    testEnv.commonOpts.rootAbortSignal,
+  );
+  return () => count;
+}
+
+function selectEditorEngine(
+  { services, testEnv }: Pick<SetupResult, 'services' | 'testEnv'>,
+  engineId: EditorEngineId,
+) {
+  const dialog = testEnv.store.get(services.workbenchState.$singleSelectDialog);
+  const option = dialog?.options.find((item) => item.id === engineId);
+  if (!dialog || !option) {
+    throw new Error(`Expected the "${engineId}" editor option`);
+  }
+  dialog.onSelect(option);
+}
 
 describe('UI command handlers', () => {
   describe('command::ui:toggle-sidebar', () => {
@@ -24,38 +59,62 @@ describe('UI command handlers', () => {
 
   describe('command::ui:reload-app', () => {
     it('should reload the app', async () => {
-      const { dispatch, services } = await setupTest({
+      const { dispatch, testEnv } = await setupTest({
         targetId: 'command::ui:reload-app',
       });
-      const spy = vi.spyOn(services.workbenchState, 'reloadUi');
+      const reloadCount = countReloadEvents(testEnv);
+
       dispatch('command::ui:reload-app', null);
-      expect(spy).toHaveBeenCalled();
+
+      expect(reloadCount()).toBe(1);
     });
   });
 
   describe('command::ui:switch-editor-engine', () => {
+    it('persists the preference and emits a reload event', async () => {
+      const { dispatch, services, testEnv } = await setupTest({
+        targetId: 'command::ui:switch-editor-engine',
+      });
+      const { syncDatabase } = testEnv.getServices();
+      const reloadCount = countReloadEvents(testEnv);
+
+      dispatch('command::ui:switch-editor-engine', null);
+      selectEditorEngine({ services, testEnv }, 'wordgard');
+
+      await vi.waitFor(() => {
+        expect(reloadCount()).toBe(1);
+      });
+      expect(
+        syncDatabase.getEntry(editorEnginePreferenceKey, {
+          tableName: 'sync',
+        }),
+      ).toEqual({ found: true, value: 'wordgard' });
+    });
+
     it('does not reload when the engine preference cannot be persisted', async () => {
       const { dispatch, services, testEnv } = await setupTest({
         targetId: 'command::ui:switch-editor-engine',
       });
-      const persistSpy = vi
-        .spyOn(services.workbenchState, 'changeEditorEnginePreference')
-        .mockReturnValue(false);
-      const reloadSpy = vi.spyOn(services.workbenchState, 'reloadUi');
+      const { syncDatabase } = testEnv.getServices();
+      syncDatabase.failWrites();
+      const reloadCount = countReloadEvents(testEnv);
       const toastSpy = vi.spyOn(toast, 'error').mockImplementation(() => '');
 
       dispatch('command::ui:switch-editor-engine', null);
-      testEnv.store
-        .get(services.workbenchState.$singleSelectDialog)
-        ?.onSelect({ id: 'wordgard', title: 'Wordgard (experimental)' });
+      selectEditorEngine({ services, testEnv }, 'wordgard');
 
       await vi.waitFor(() => {
-        expect(persistSpy).toHaveBeenCalledWith('wordgard');
+        expect(toastSpy).toHaveBeenCalledWith(
+          t.app.toasts.editorEngineSwitchPreferenceFailed,
+        );
       });
-      expect(reloadSpy).not.toHaveBeenCalled();
-      expect(toastSpy).toHaveBeenCalledWith(
-        t.app.toasts.editorEngineSwitchPreferenceFailed,
-      );
+      expect(reloadCount()).toBe(0);
+      expect(
+        syncDatabase.getEntry(editorEnginePreferenceKey, {
+          tableName: 'sync',
+        }),
+      ).toEqual({ found: false, value: undefined });
+      toastSpy.mockRestore();
     });
   });
 

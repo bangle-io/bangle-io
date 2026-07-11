@@ -12,7 +12,7 @@ import {
   EDITOR_ENGINE_PREFERENCE_STORAGE_KEY,
   readEditorEnginePreference,
   resetEditorEnginePreference,
-} from '../editor-engine-preference';
+} from '../initialize-services';
 
 /**
  * Writes through the real browser sync-database service so this spec pins the

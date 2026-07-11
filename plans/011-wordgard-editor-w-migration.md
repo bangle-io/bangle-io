@@ -215,7 +215,7 @@ exists):
 - **Persisted preference**: `WorkbenchStateService` writes the selected engine
   to the sync database under `EDITOR_ENGINE_PREFERENCE_KEY`. The composition
   root reads the same localStorage entry synchronously before the container
-  exists (`initialize-services/editor-engine-preference.ts`, composed from
+  exists (`initialize-services/initialize-services.ts`, composed from
   `atomStorageKey` + the sync-db's static `storageKeyFor` so the paths cannot
   drift). The running engine service remains the source of truth in memory.
 - **Composition-root selection**: `createServiceSetup` takes the selected

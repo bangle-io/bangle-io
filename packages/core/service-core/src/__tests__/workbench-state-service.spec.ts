@@ -4,7 +4,7 @@ import {
   SERVICE_NAME,
 } from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 const editorEngineStorageKey = atomStorageKey(
   SERVICE_NAME.workbenchStateService,
@@ -32,9 +32,7 @@ describe('WorkbenchStateService editor engine preference', () => {
     const testEnv = createTestEnvironment();
     const services = testEnv.instantiateAll();
     await testEnv.mountAll();
-    vi.spyOn(services.syncDatabase, 'updateEntry').mockImplementation(() => {
-      throw new Error('storage quota exceeded');
-    });
+    services.syncDatabase.failWrites(new Error('storage quota exceeded'));
 
     expect(
       services.workbenchState.changeEditorEnginePreference('wordgard'),

@@ -2,24 +2,25 @@
  * @vitest-environment happy-dom
  */
 
+import {
+  EDITOR_ENGINE_PREFERENCE_STORAGE_KEY,
+  readEditorEnginePreference,
+} from '@bangle.io/initialize-services';
 import { t } from '@bangle.io/translations';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
   initializeSentry: vi.fn(),
   initializeServices: vi.fn(),
-  readEditorEnginePreference: vi.fn((): string => 'prosemirror'),
-  resetEditorEnginePreference: vi.fn((): boolean => true),
 }));
 
 vi.mock('@bangle.io/app', () => ({
   App: () => null,
 }));
 
-vi.mock('@bangle.io/initialize-services', () => ({
+vi.mock('@bangle.io/initialize-services', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@bangle.io/initialize-services')>()),
   initializeServices: mocks.initializeServices,
-  readEditorEnginePreference: mocks.readEditorEnginePreference,
-  resetEditorEnginePreference: mocks.resetEditorEnginePreference,
 }));
 
 vi.mock('../setup-sentry', () => ({
@@ -31,12 +32,9 @@ describe('browser entry startup', () => {
     vi.resetModules();
     vi.stubGlobal('t', t);
     document.body.innerHTML = '<div id="root"></div>';
+    window.localStorage.clear();
     mocks.initializeSentry.mockReset();
     mocks.initializeServices.mockReset();
-    mocks.readEditorEnginePreference.mockReset();
-    mocks.readEditorEnginePreference.mockReturnValue('prosemirror');
-    mocks.resetEditorEnginePreference.mockReset();
-    mocks.resetEditorEnginePreference.mockReturnValue(true);
   });
 
   afterEach(() => {
@@ -83,7 +81,10 @@ describe('browser entry startup', () => {
     const reloadSpy = vi
       .spyOn(window.location, 'reload')
       .mockImplementation(() => {});
-    mocks.readEditorEnginePreference.mockReturnValue('wordgard');
+    window.localStorage.setItem(
+      EDITOR_ENGINE_PREFERENCE_STORAGE_KEY,
+      JSON.stringify('wordgard'),
+    );
     mocks.initializeServices.mockImplementationOnce(() =>
       Promise.reject(error),
     );
@@ -91,9 +92,9 @@ describe('browser entry startup', () => {
     await import('../main');
 
     await vi.waitFor(() => {
-      expect(mocks.resetEditorEnginePreference).toHaveBeenCalled();
       expect(reloadSpy).toHaveBeenCalled();
     });
+    expect(readEditorEnginePreference()).toBe('prosemirror');
 
     // The recovery path reloads; the startup error screen must not render.
     expect(document.getElementById('root')?.textContent ?? '').not.toContain(
@@ -105,30 +106,40 @@ describe('browser entry startup', () => {
     const { recoverFromExperimentalEngineFailure } = await import('../main');
     const logger = {
       error: vi.fn(),
-    } as unknown as import('@bangle.io/logger').Logger;
-    const storage = { getItem: vi.fn(), setItem: vi.fn() };
+    };
     const reload = vi.fn();
 
     // Default engine selected: nothing to recover from.
-    mocks.readEditorEnginePreference.mockReturnValue('prosemirror');
-    expect(recoverFromExperimentalEngineFailure(logger, storage, reload)).toBe(
-      false,
-    );
+    expect(
+      recoverFromExperimentalEngineFailure(logger, window.localStorage, reload),
+    ).toBe(false);
     expect(reload).not.toHaveBeenCalled();
 
     // Experimental engine selected: reset + reload.
-    mocks.readEditorEnginePreference.mockReturnValue('wordgard');
-    expect(recoverFromExperimentalEngineFailure(logger, storage, reload)).toBe(
-      true,
+    window.localStorage.setItem(
+      EDITOR_ENGINE_PREFERENCE_STORAGE_KEY,
+      JSON.stringify('wordgard'),
     );
-    expect(mocks.resetEditorEnginePreference).toHaveBeenCalled();
+    expect(
+      recoverFromExperimentalEngineFailure(logger, window.localStorage, reload),
+    ).toBe(true);
+    expect(readEditorEnginePreference()).toBe('prosemirror');
     expect(reload).toHaveBeenCalledTimes(1);
 
     // Unwritable storage: fall through to the error screen, never loop.
-    mocks.resetEditorEnginePreference.mockReturnValue(false);
-    expect(recoverFromExperimentalEngineFailure(logger, storage, reload)).toBe(
-      false,
+    const unavailableStorage = {
+      getItem: window.localStorage.getItem.bind(window.localStorage),
+      setItem: () => {
+        throw new Error('storage unavailable');
+      },
+    };
+    window.localStorage.setItem(
+      EDITOR_ENGINE_PREFERENCE_STORAGE_KEY,
+      JSON.stringify('wordgard'),
     );
+    expect(
+      recoverFromExperimentalEngineFailure(logger, unavailableStorage, reload),
+    ).toBe(false);
     expect(reload).toHaveBeenCalledTimes(1);
   });
 });
