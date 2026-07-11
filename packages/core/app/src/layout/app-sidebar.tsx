@@ -32,6 +32,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   const starredWsPaths = useAtomValue(userActivityService.$starredWsPaths);
   const fileTreeListState = useAtomValue(workspaceState.$fileTreeListState);
 
+  // Keep this domain-to-view join local until another consumer needs it.
   const starredItems = React.useMemo(() => {
     const notesByWsPath = new Map(
       noteWsPaths.map((wsPath) => [wsPath.wsPath, wsPath]),
