@@ -2,8 +2,6 @@
  * @vitest-environment happy-dom
  */
 
-import { EDITOR_ENGINE_QUERY_PARAM } from '@bangle.io/constants';
-import { readEditorEngineFromUrl } from '@bangle.io/initialize-services';
 import { t } from '@bangle.io/translations';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
@@ -72,49 +70,5 @@ describe('browser entry startup', () => {
       error.message,
     );
     expect(startupSignal?.aborted).toBe(true);
-  });
-
-  test('boot guard resets an experimental engine URL and reloads instead of showing the error screen', async () => {
-    const error = new Error('wordgard stack exploded');
-    const reloadSpy = vi
-      .spyOn(window.location, 'reload')
-      .mockImplementation(() => {});
-    window.history.replaceState(null, '', '/?editorEngine=wordgard');
-    mocks.initializeServices.mockImplementationOnce(() =>
-      Promise.reject(error),
-    );
-
-    await import('../main');
-
-    await vi.waitFor(() => {
-      expect(reloadSpy).toHaveBeenCalled();
-    });
-    expect(readEditorEngineFromUrl()).toBe('prosemirror');
-
-    // The recovery path reloads; the startup error screen must not render.
-    expect(document.getElementById('root')?.textContent ?? '').not.toContain(
-      t.app.pageStartupError.title,
-    );
-  });
-
-  test('recoverFromExperimentalEngineFailure only fires for a non-default engine', async () => {
-    const { recoverFromExperimentalEngineFailure } = await import('../main');
-    const logger = {
-      error: vi.fn(),
-    };
-    const reload = vi.fn();
-
-    // Default engine selected: nothing to recover from.
-    expect(recoverFromExperimentalEngineFailure(logger, reload)).toBe(false);
-    expect(reload).not.toHaveBeenCalled();
-
-    // Experimental engine selected: reset + reload.
-    window.history.replaceState(null, '', '/?editorEngine=wordgard');
-    expect(recoverFromExperimentalEngineFailure(logger, reload)).toBe(true);
-    expect(readEditorEngineFromUrl()).toBe('prosemirror');
-    expect(
-      new URL(window.location.href).searchParams.get(EDITOR_ENGINE_QUERY_PARAM),
-    ).toBe('prosemirror');
-    expect(reload).toHaveBeenCalledTimes(1);
   });
 });

@@ -228,22 +228,17 @@ exists):
   save), refuses with a toast in that case, else updates the current tab's URL
   and reloads that page. Other tabs keep their own URL and current editor,
   so their saves are never interrupted by a switch elsewhere.
-- **Boot guard** (`browser-entry`): if startup fails while a non-default
-  engine is selected, the URL is reset to ProseMirror and the page reloads once;
-  after the reset a second failure falls through to the normal startup
-  error screen, so the guard cannot loop and the escape hatch lives outside
-  the failing engine.
 - **Coverage**: unit specs for the stub service (read-only, load-failure,
-  idempotent mount), URL selection, the drain helper, and
-  the boot guard; `editor-engine-switch.e2e.ts` covers the full loop —
+  idempotent mount), URL selection, and the drain helper;
+  `editor-engine-switch.e2e.ts` covers the full loop —
   switch → wordgard renders raw markdown read-only → survives browser
   reload → typing does nothing → switch back → note editable with no data
   loss. It also proves that switching one tab does not reload another. The e2e
   keys on `data-editor-engine`.
 - Deferred (deliberately): migrating shared e2e helpers off `.ProseMirror`
   onto a neutral hook (revisit when editor-w is writable in M2); a gate for
-  editor-mount-time crashes (the boot guard covers service setup + mount —
-  a React-render crash lands in the app error boundary as before).
+  editor-mount-time crashes (a React-render crash lands in the app error
+  boundary as before).
 
 - **Coordination rule with plan 012 (markdown feature parity):** every
   012 construct changes what a note's bytes mean, so each 012 milestone
@@ -521,11 +516,6 @@ built):
 2. `initialize-services` reads the flag and `createServiceSetup` directly
    registers **one** implementation under the `editorEngine` slot. Both engine
    packages are statically imported, but only one service is live in a tab.
-3. **Boot guard:** if the wordgard path throws during service setup or first
-   mount, replace the URL value with `'prosemirror'` and reload. An experimental
-   engine must never be able to brick the app; the escape hatch cannot live
-   inside the thing that is broken.
-
 **Switching is a reload, not a hot swap.** The omni-search command
 (`command::ui:switch-editor-engine`, `omniSearch: true`) opens the standard
 single-select dialog — "ProseMirror (stable)" / "Wordgard (experimental)" —
@@ -863,7 +853,7 @@ against the contract only; zero behavior change for PM users.
 
 **M0b — Switch plumbing (lands with the editor-w stub) — DONE**
 The URL engine selection, the omni-search switch command,
-composition-root selection, and the boot guard — landed
+and composition-root selection — landed
 together with a stub editor-w package whose "editor" renders the note
 read-only (no Wordgard yet), so the switch is real and e2e-testable the day
 it exists. Exit (met): switching engines round-trips through reload on a
@@ -1043,8 +1033,8 @@ None. M0 can start immediately.
    golden corpus with both-engine contract tests: **done** (see "M1
    essentially complete" above).
 3. M0b: **done** — stub `@bangle.io/editor-w`, URL selection,
-   omni-search switch command, static composition-root selection, boot guard,
-   and e2e switch coverage (see "M0b complete" above).
+   omni-search switch command, static composition-root selection, and e2e
+   switch coverage (see "M0b complete" above).
 4. M2 next: wire a real Wordgard editor into editor-w (schema assembly from
    wordgard-utils bundles, history, keymaps, styles, `t`→PhraseSet bridge),
    extract `editor-common` (save queue, load-status, `<Editor>` shell) when
