@@ -1,7 +1,6 @@
 import { isFileSystemDirectoryHandle } from '@bangle.io/baby-fs';
 import {
   assertIsDefined,
-  atomStorageKey,
   getEventSenderMetadata,
   throwAppError,
 } from '@bangle.io/base-utils';
@@ -9,10 +8,9 @@ import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import type { EnabledBangleAppCommand } from '@bangle.io/commands';
 import {
   DEFAULT_EDITOR_ENGINE,
-  EDITOR_ENGINE_PREFERENCE_KEY,
+  EDITOR_ENGINE_QUERY_PARAM,
   type EditorEngineId,
   isEditorEngineId,
-  SERVICE_NAME,
 } from '@bangle.io/constants';
 import { slot } from '@bangle.io/poor-mans-di';
 import type { WorkspaceOpsService } from '@bangle.io/service-core';
@@ -32,42 +30,13 @@ import type {
 } from '@bangle.io/types';
 import { createServiceSetup } from './service-setup';
 
-export const EDITOR_ENGINE_PREFERENCE_STORAGE_KEY =
-  BrowserLocalStorageSyncDatabaseService.storageKeyFor(
-    atomStorageKey(
-      SERVICE_NAME.workbenchStateService,
-      EDITOR_ENGINE_PREFERENCE_KEY,
-    ),
-    'sync',
-  );
-
-export function readEditorEnginePreference(
-  storage: Pick<Storage, 'getItem'> = window.localStorage,
+export function readEditorEngineFromUrl(
+  location: Pick<Location, 'search'> = window.location,
 ): EditorEngineId {
-  try {
-    const raw = storage.getItem(EDITOR_ENGINE_PREFERENCE_STORAGE_KEY);
-    if (raw === null) {
-      return DEFAULT_EDITOR_ENGINE;
-    }
-    const parsed: unknown = JSON.parse(raw);
-    return isEditorEngineId(parsed) ? parsed : DEFAULT_EDITOR_ENGINE;
-  } catch {
-    return DEFAULT_EDITOR_ENGINE;
-  }
-}
-
-export function resetEditorEnginePreference(
-  storage: Pick<Storage, 'setItem'> = window.localStorage,
-): boolean {
-  try {
-    storage.setItem(
-      EDITOR_ENGINE_PREFERENCE_STORAGE_KEY,
-      JSON.stringify(DEFAULT_EDITOR_ENGINE),
-    );
-    return true;
-  } catch {
-    return false;
-  }
+  const engineId = new URLSearchParams(location.search).get(
+    EDITOR_ENGINE_QUERY_PARAM,
+  );
+  return isEditorEngineId(engineId) ? engineId : DEFAULT_EDITOR_ENGINE;
 }
 
 export function initializeServices(
@@ -77,7 +46,7 @@ export function initializeServices(
   commandHandlers: Array<{ id: string; handler: CommandHandler }>,
   theme: ThemeManager,
 ) {
-  const editorEngineId = readEditorEnginePreference();
+  const editorEngineId = readEditorEngineFromUrl();
   // Native FS root-handle resolution needs workspace metadata, which lives in
   // a core service. The lookup is late-bound: it is wired right after the
   // setup is created and only runs after services are instantiated.
@@ -128,7 +97,7 @@ export function initializeServices(
       },
     })),
     router: slot(BrowserRouterService, () => ({
-      strategy: new HashStrategy(),
+      strategy: new HashStrategy(window.location.search),
       basePath: '/ws',
     })),
   };

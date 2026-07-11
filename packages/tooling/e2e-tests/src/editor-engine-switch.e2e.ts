@@ -46,7 +46,8 @@ test('switching editor engines round-trips through reload with the note intact',
     ).toBeVisible();
   });
 
-  await test.step('engine choice persists across a browser reload', async () => {
+  await test.step('URL engine selection survives a browser reload', async () => {
+    await expect(page).toHaveURL(/editorEngine=wordgard/);
     await page.reload({ waitUntil: 'networkidle' });
     const wordgardEditor = page.locator(WORDGARD_EDITOR);
     await expect(wordgardEditor).toBeVisible();
@@ -94,7 +95,7 @@ test('switching engines reloads only the current tab', async ({
   await expect(page.locator(WORDGARD_EDITOR)).toBeVisible();
 
   // Reloading every tab would bypass the other tab's save protection. The
-  // persisted preference applies there on its next normal reload instead.
+  // The other tab keeps its own URL and active editor.
   await expect(secondPage.locator(PM_EDITOR)).toBeVisible();
   await expect(secondPage.locator(WORDGARD_EDITOR)).toHaveCount(0);
 });

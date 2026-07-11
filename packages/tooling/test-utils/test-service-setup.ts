@@ -15,8 +15,8 @@ import {
   FileStorageMemory,
   MemoryDatabaseService,
   MemoryRouterService,
+  MemorySyncDatabaseService,
   TestErrorHandlerService,
-  TestSyncDatabaseService,
 } from '@bangle.io/service-platform/testing';
 import type {
   BaseServiceCommonOptions,
@@ -50,7 +50,7 @@ const PLATFORM_SLOT_IDS = [
 type TestServices = CoreServices & {
   errorService: TestErrorHandlerService;
   database: MemoryDatabaseService;
-  syncDatabase: TestSyncDatabaseService;
+  syncDatabase: MemorySyncDatabaseService;
   fileStorageMemory: FileStorageMemory;
   router: MemoryRouterService;
 };
@@ -84,7 +84,7 @@ function createTestServiceSetup(
     platformServices: {
       errorService: TestErrorHandlerService,
       database: MemoryDatabaseService,
-      syncDatabase: TestSyncDatabaseService,
+      syncDatabase: MemorySyncDatabaseService,
       fileStorageMemory: slot(FileStorageMemory, () => ({
         onChange: (change) => {
           commonOpts.logger.info('File storage change:', change);
@@ -106,7 +106,6 @@ export type TestEnvironment = {
   commonOpts: ReturnType<typeof makeTestCommonOpts>['commonOpts'];
   store: Store;
   coreServices: () => CoreServices;
-  getServices: () => TestServices;
   mountAll: () => Promise<void>;
   instantiateAll: (focusService?: keyof TestServices & string) => TestServices;
 };
@@ -116,9 +115,8 @@ export type TestEnvironment = {
  * services. Core wiring comes from the same `createServiceSetup` builder the
  * browser composition root uses, so test setup mirrors production setup.
  * Tests tune core services through `coreConfigOverrides` (decorators over the
- * canonical configs), select the real editor implementation with
- * `editorEngineId`. The in-memory sync database exposes explicit fault
- * controls for failure-path tests without replacing service methods.
+ * canonical configs), or select the real editor implementation with
+ * `editorEngineId`.
  */
 export function createTestEnvironment({
   controller = new AbortController(),
@@ -159,9 +157,6 @@ export function createTestEnvironment({
      * Throws if called before `instantiateAll()`.
      */
     coreServices: setup.coreServices,
-
-    /** Full instantiated graph for assertions and platform fault controls. */
-    getServices: setup.getServices,
 
     /**
      * Mounts all services. Useful for ensuring all asynchronous initialization

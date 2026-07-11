@@ -19,7 +19,7 @@ type EditorEntry = {
  *
  * M0b stub: renders the note's Markdown source read-only — no Wordgard code
  * yet. Its purpose is to make the engine switch real and testable end to end
- * (persisted preference, composition-root selection, reload round-trip, boot
+ * (URL selection, composition-root selection, reload round-trip, boot
  * guard) before any writable Wordgard editor exists. Because it never
  * mutates the document there is nothing to save: the save-related contract
  * methods report a permanently clean state, which keeps save protection and

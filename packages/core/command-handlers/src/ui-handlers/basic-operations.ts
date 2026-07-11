@@ -1,6 +1,7 @@
 import { throwAppError } from '@bangle.io/base-utils';
 import {
   EDITOR_ENGINE_IDS,
+  EDITOR_ENGINE_QUERY_PARAM,
   EDITOR_ENGINE_SWITCH_SAVE_DRAIN_TIMEOUT_MS,
   isEditorEngineId,
 } from '@bangle.io/constants';
@@ -114,11 +115,10 @@ export const basicOperationsHandlers = [
                 toast.error(t.app.toasts.editorEngineSwitchBlockedBySaves);
                 return;
               }
-              if (!workbenchState.changeEditorEnginePreference(targetEngine)) {
-                toast.error(t.app.toasts.editorEngineSwitchPreferenceFailed);
-                return;
-              }
-              workbenchState.reloadUi();
+              const url = new URL(window.location.href);
+              url.searchParams.set(EDITOR_ENGINE_QUERY_PARAM, targetEngine);
+              window.history.replaceState(window.history.state, '', url);
+              window.history.go(0);
             })();
           },
         };

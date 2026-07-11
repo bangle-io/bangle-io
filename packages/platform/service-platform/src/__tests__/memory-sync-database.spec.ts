@@ -4,7 +4,6 @@ import type {
   SyncDatabaseQueryOptions,
 } from '@bangle.io/types';
 import { describe, expect, it } from 'vitest';
-import { TestSyncDatabaseService } from '../../testing';
 import { MemorySyncDatabaseService } from '../memory-sync-database';
 
 async function setup() {
@@ -102,42 +101,6 @@ describe('MemorySyncDatabaseService', () => {
     expect(changes.at(1)?.type).toBe('update');
     expect(changes.at(2)?.type).toBe('delete');
 
-    controller.abort();
-  });
-});
-
-describe('TestSyncDatabaseService', () => {
-  const options: SyncDatabaseQueryOptions = { tableName: 'sync' };
-
-  it('fails writes only while the fault control is active', async () => {
-    const { commonOpts, controller } = makeTestCommonOpts();
-    const service = new TestSyncDatabaseService(
-      {
-        ctx: commonOpts,
-        serviceContext: { abortSignal: commonOpts.rootAbortSignal },
-      },
-      null,
-    );
-    await service.mount();
-
-    service.updateEntry('key', () => ({ value: 'before' }), options);
-    const failure = new Error('quota exceeded');
-    service.failWrites(failure);
-
-    expect(() =>
-      service.updateEntry('key', () => ({ value: 'during' }), options),
-    ).toThrow(failure);
-    expect(service.getEntry('key', options)).toEqual({
-      found: true,
-      value: 'before',
-    });
-
-    service.allowWrites();
-    service.updateEntry('key', () => ({ value: 'after' }), options);
-    expect(service.getEntry('key', options)).toEqual({
-      found: true,
-      value: 'after',
-    });
     controller.abort();
   });
 });

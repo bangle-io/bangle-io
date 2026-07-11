@@ -2,10 +2,8 @@
  * @vitest-environment happy-dom
  */
 
-import {
-  EDITOR_ENGINE_PREFERENCE_STORAGE_KEY,
-  readEditorEnginePreference,
-} from '@bangle.io/initialize-services';
+import { EDITOR_ENGINE_QUERY_PARAM } from '@bangle.io/constants';
+import { readEditorEngineFromUrl } from '@bangle.io/initialize-services';
 import { t } from '@bangle.io/translations';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
@@ -32,7 +30,7 @@ describe('browser entry startup', () => {
     vi.resetModules();
     vi.stubGlobal('t', t);
     document.body.innerHTML = '<div id="root"></div>';
-    window.localStorage.clear();
+    window.history.replaceState(null, '', '/');
     mocks.initializeSentry.mockReset();
     mocks.initializeServices.mockReset();
   });
@@ -76,15 +74,12 @@ describe('browser entry startup', () => {
     expect(startupSignal?.aborted).toBe(true);
   });
 
-  test('boot guard resets an experimental engine preference and reloads instead of showing the error screen', async () => {
+  test('boot guard resets an experimental engine URL and reloads instead of showing the error screen', async () => {
     const error = new Error('wordgard stack exploded');
     const reloadSpy = vi
       .spyOn(window.location, 'reload')
       .mockImplementation(() => {});
-    window.localStorage.setItem(
-      EDITOR_ENGINE_PREFERENCE_STORAGE_KEY,
-      JSON.stringify('wordgard'),
-    );
+    window.history.replaceState(null, '', '/?editorEngine=wordgard');
     mocks.initializeServices.mockImplementationOnce(() =>
       Promise.reject(error),
     );
@@ -94,7 +89,7 @@ describe('browser entry startup', () => {
     await vi.waitFor(() => {
       expect(reloadSpy).toHaveBeenCalled();
     });
-    expect(readEditorEnginePreference()).toBe('prosemirror');
+    expect(readEditorEngineFromUrl()).toBe('prosemirror');
 
     // The recovery path reloads; the startup error screen must not render.
     expect(document.getElementById('root')?.textContent ?? '').not.toContain(
@@ -102,7 +97,7 @@ describe('browser entry startup', () => {
     );
   });
 
-  test('recoverFromExperimentalEngineFailure only fires for a non-default engine and a writable storage', async () => {
+  test('recoverFromExperimentalEngineFailure only fires for a non-default engine', async () => {
     const { recoverFromExperimentalEngineFailure } = await import('../main');
     const logger = {
       error: vi.fn(),
@@ -110,36 +105,16 @@ describe('browser entry startup', () => {
     const reload = vi.fn();
 
     // Default engine selected: nothing to recover from.
-    expect(
-      recoverFromExperimentalEngineFailure(logger, window.localStorage, reload),
-    ).toBe(false);
+    expect(recoverFromExperimentalEngineFailure(logger, reload)).toBe(false);
     expect(reload).not.toHaveBeenCalled();
 
     // Experimental engine selected: reset + reload.
-    window.localStorage.setItem(
-      EDITOR_ENGINE_PREFERENCE_STORAGE_KEY,
-      JSON.stringify('wordgard'),
-    );
+    window.history.replaceState(null, '', '/?editorEngine=wordgard');
+    expect(recoverFromExperimentalEngineFailure(logger, reload)).toBe(true);
+    expect(readEditorEngineFromUrl()).toBe('prosemirror');
     expect(
-      recoverFromExperimentalEngineFailure(logger, window.localStorage, reload),
-    ).toBe(true);
-    expect(readEditorEnginePreference()).toBe('prosemirror');
-    expect(reload).toHaveBeenCalledTimes(1);
-
-    // Unwritable storage: fall through to the error screen, never loop.
-    const unavailableStorage = {
-      getItem: window.localStorage.getItem.bind(window.localStorage),
-      setItem: () => {
-        throw new Error('storage unavailable');
-      },
-    };
-    window.localStorage.setItem(
-      EDITOR_ENGINE_PREFERENCE_STORAGE_KEY,
-      JSON.stringify('wordgard'),
-    );
-    expect(
-      recoverFromExperimentalEngineFailure(logger, unavailableStorage, reload),
-    ).toBe(false);
+      new URL(window.location.href).searchParams.get(EDITOR_ENGINE_QUERY_PARAM),
+    ).toBe('prosemirror');
     expect(reload).toHaveBeenCalledTimes(1);
   });
 });

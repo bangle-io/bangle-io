@@ -1,6 +1,5 @@
 import {
   atomStorage,
-  atomStorageKey,
   BaseService,
   type BaseServiceContext,
   getEventSenderMetadata,
@@ -10,8 +9,6 @@ import type {
   ThemeManager,
 } from '@bangle.io/color-scheme-manager';
 import {
-  EDITOR_ENGINE_PREFERENCE_KEY,
-  type EditorEngineId,
   isAssetLocationPreference,
   SERVICE_NAME,
   SIDEBAR_DEFAULT_WIDTH,
@@ -170,22 +167,6 @@ export class WorkbenchStateService extends BaseService {
 
   public changeThemePreference(preference: ThemeConfig['defaultPreference']) {
     this.config.themeManager.setPreference(preference);
-  }
-
-  /** Persists the engine that bootstrap should use on the next reload. */
-  public changeEditorEnginePreference(preference: EditorEngineId): boolean {
-    const key = atomStorageKey(this.name, EDITOR_ENGINE_PREFERENCE_KEY);
-    try {
-      const result = this.dep.syncDatabase.updateEntry(
-        key,
-        () => ({ value: preference }),
-        { tableName: 'sync' },
-      );
-      return result.found && result.value === preference;
-    } catch (error) {
-      this.logger.error('Unable to persist editor engine preference', error);
-      return false;
-    }
   }
 
   public updateOmniSearchInput(input: string) {

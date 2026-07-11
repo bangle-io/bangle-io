@@ -1,23 +1,15 @@
 // @vitest-environment jsdom
 /// <reference types="@vitest/browser/matchers" />
 import '@testing-library/jest-dom/vitest';
-import { atomStorageKey } from '@bangle.io/base-utils';
 import {
-  EDITOR_ENGINE_PREFERENCE_KEY,
+  EDITOR_ENGINE_QUERY_PARAM,
   type EditorEngineId,
-  SERVICE_NAME,
   SETTINGS_PAGE_DEFINITIONS,
 } from '@bangle.io/constants';
-import { toast } from '@bangle.io/ui-components';
 import { describe, expect, it, vi } from 'vitest';
 import { setupTest } from './test-utils';
 
 type SetupResult = Awaited<ReturnType<typeof setupTest>>;
-
-const editorEnginePreferenceKey = atomStorageKey(
-  SERVICE_NAME.workbenchStateService,
-  EDITOR_ENGINE_PREFERENCE_KEY,
-);
 
 function countReloadEvents(testEnv: SetupResult['testEnv']) {
   let count = 0;
@@ -71,50 +63,30 @@ describe('UI command handlers', () => {
   });
 
   describe('command::ui:switch-editor-engine', () => {
-    it('persists the preference and emits a reload event', async () => {
+    it('updates the URL and reloads the current page', async () => {
       const { dispatch, services, testEnv } = await setupTest({
         targetId: 'command::ui:switch-editor-engine',
       });
-      const { syncDatabase } = testEnv.getServices();
-      const reloadCount = countReloadEvents(testEnv);
+      const reloadSpy = vi
+        .spyOn(window.history, 'go')
+        .mockImplementation(() => {});
+      window.history.replaceState(null, '', '/?debug=true#route=welcome');
 
       dispatch('command::ui:switch-editor-engine', null);
       selectEditorEngine({ services, testEnv }, 'wordgard');
 
       await vi.waitFor(() => {
-        expect(reloadCount()).toBe(1);
+        expect(reloadSpy).toHaveBeenCalledOnce();
       });
       expect(
-        syncDatabase.getEntry(editorEnginePreferenceKey, {
-          tableName: 'sync',
-        }),
-      ).toEqual({ found: true, value: 'wordgard' });
-    });
-
-    it('does not reload when the engine preference cannot be persisted', async () => {
-      const { dispatch, services, testEnv } = await setupTest({
-        targetId: 'command::ui:switch-editor-engine',
-      });
-      const { syncDatabase } = testEnv.getServices();
-      syncDatabase.failWrites();
-      const reloadCount = countReloadEvents(testEnv);
-      const toastSpy = vi.spyOn(toast, 'error').mockImplementation(() => '');
-
-      dispatch('command::ui:switch-editor-engine', null);
-      selectEditorEngine({ services, testEnv }, 'wordgard');
-
-      await vi.waitFor(() => {
-        expect(toastSpy).toHaveBeenCalledWith(
-          t.app.toasts.editorEngineSwitchPreferenceFailed,
-        );
-      });
-      expect(reloadCount()).toBe(0);
-      expect(
-        syncDatabase.getEntry(editorEnginePreferenceKey, {
-          tableName: 'sync',
-        }),
-      ).toEqual({ found: false, value: undefined });
-      toastSpy.mockRestore();
+        new URL(window.location.href).searchParams.get(
+          EDITOR_ENGINE_QUERY_PARAM,
+        ),
+      ).toBe('wordgard');
+      expect(new URL(window.location.href).searchParams.get('debug')).toBe(
+        'true',
+      );
+      reloadSpy.mockRestore();
     });
   });
 

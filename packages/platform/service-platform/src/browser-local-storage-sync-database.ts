@@ -12,15 +12,6 @@ export class BrowserLocalStorageSyncDatabaseService
   extends BaseService
   implements BaseAppSyncDatabase
 {
-  /**
-   * The `localStorage` key an entry lives under. Static so bootstrap code
-   * (before any service exists) can read an entry from the same location the
-   * mounted service writes to.
-   */
-  static storageKeyFor(key: string, tableName: string): string {
-    return `${SERVICE_NAME.browserLocalStorageSyncDatabaseService}.${tableName}:${key}`;
-  }
-
   private storage: Storage = window.localStorage;
   private syncBus?: TypedBroadcastBus<SyncDatabaseChange>;
 
@@ -167,7 +158,7 @@ export class BrowserLocalStorageSyncDatabaseService
   }
 
   private getStorageKey(key: string, tableName: string): string {
-    return BrowserLocalStorageSyncDatabaseService.storageKeyFor(key, tableName);
+    return `${this.getTablePrefix(tableName)}:${key}`;
   }
 
   private getTablePrefix(tableName: string): string {

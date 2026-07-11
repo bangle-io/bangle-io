@@ -60,8 +60,8 @@ export function isAssetLocationPreference(
 }
 /**
  * The editor engines that can power the note editing surface
- * (see plans/011-wordgard-editor-w-migration.md). The persisted preference
- * and every `EditorEngineContract.engineId` must be one of these.
+ * (see plans/011-wordgard-editor-w-migration.md). The URL selection and every
+ * `EditorEngineContract.engineId` must be one of these.
  */
 export const EDITOR_ENGINE_IDS = ['prosemirror', 'wordgard'] as const;
 export type EditorEngineId = (typeof EDITOR_ENGINE_IDS)[number];
@@ -73,11 +73,7 @@ export function isEditorEngineId(value: unknown): value is EditorEngineId {
     EDITOR_ENGINE_IDS.includes(value as EditorEngineId)
   );
 }
-/**
- * The sync-database key under which `WorkbenchStateService` persists the
- * engine preference for the next bootstrap.
- */
-export const EDITOR_ENGINE_PREFERENCE_KEY = 'editor-engine';
+export const EDITOR_ENGINE_QUERY_PARAM = 'editorEngine';
 /**
  * Maximum time an editor-engine switch waits for the current tab's writes.
  * Healthy saves settle quickly; reaching this bound indicates a failed save

@@ -68,7 +68,7 @@ exists):
   `initialize-services/src/service-setup.ts` (`editorEngine: PmEditorService`)
   rather than a parameterized option; it becomes conditional when editor-w
   scaffolds.
-- The persisted engine preference and the omni-search switch command are
+- The URL engine selection and the omni-search switch command are
   deferred to the editor-w stub (start of M1/M2) — a switch with one engine
   is untestable dead code.
 - `service-core/backlink-markdown-extractor.ts` still imports
@@ -212,12 +212,10 @@ exists):
   without writing (mirrors PM), and a failed read shows an error state and
   never writes. Its React surface carries a persistent "experimental
   preview" notice with a one-click switch back.
-- **Persisted preference**: `WorkbenchStateService` writes the selected engine
-  to the sync database under `EDITOR_ENGINE_PREFERENCE_KEY`. The composition
-  root reads the same localStorage entry synchronously before the container
-  exists (`initialize-services/initialize-services.ts`, composed from
-  `atomStorageKey` + the sync-db's static `storageKeyFor` so the paths cannot
-  drift). The running engine service remains the source of truth in memory.
+- **URL selection**: the composition root reads `?editorEngine=` before the
+  container exists. Unknown or missing values select ProseMirror. The hash
+  router preserves the query string during normal navigation, with no stored
+  preference or storage migration.
 - **Composition-root selection**: `createServiceSetup` takes the selected
   `EditorEngineId` and directly registers `PmEditorService` or
   `EditorWService`. `EditorSurface` directly renders the matching component.
@@ -227,17 +225,16 @@ exists):
   opens the standard single-select dialog ("ProseMirror (stable)" /
   "Wordgard (experimental)"), waits for the save queue to drain
   (`waitForSaveQueueToDrain`, 5s bound — a still-dirty queue means a failed
-  save), refuses with a toast in that case, else durably writes the preference
-  and reloads only the current tab. Other tabs keep their current editor and
-  adopt the preference on their next normal reload, so their saves are never
-  interrupted by a switch elsewhere.
+  save), refuses with a toast in that case, else updates the current tab's URL
+  and reloads that page. Other tabs keep their own URL and current editor,
+  so their saves are never interrupted by a switch elsewhere.
 - **Boot guard** (`browser-entry`): if startup fails while a non-default
-  engine is selected, the preference is reset and the page reloads once;
+  engine is selected, the URL is reset to ProseMirror and the page reloads once;
   after the reset a second failure falls through to the normal startup
   error screen, so the guard cannot loop and the escape hatch lives outside
   the failing engine.
 - **Coverage**: unit specs for the stub service (read-only, load-failure,
-  idempotent mount), the preference read/reset chain, the drain helper, and
+  idempotent mount), URL selection, the drain helper, and
   the boot guard; `editor-engine-switch.e2e.ts` covers the full loop —
   switch → wordgard renders raw markdown read-only → survives browser
   reload → typing does nothing → switch back → note editable with no data
@@ -483,13 +480,13 @@ string." No shared rich-document representation is ever needed.
   generalizes to a per-**surface** switch (WYSIWYG engines + the source editor)
   with no new seam.
 
-**Two levels of switching.** The engine-switch design below (persisted
-preference, reload-based) is right for *heavy* WYSIWYG engines — it avoids
+**Two levels of switching.** The engine-switch design below (URL-selected,
+reload-based) is right for *heavy* WYSIWYG engines — it avoids
 double-mounted editors and stale plugin state. A raw source editor is
 lightweight and stateless enough that a **per-note rich ⇄ raw toggle** can be an
 *instant* swap rather than a reload, feasible precisely because of the
 markdown-as-interchange property above. Shape the switch command/dialog and the
-persisted preference so that adding a third option, or a per-note mode toggle,
+engine selection so that adding a third option, or a per-note mode toggle,
 is *additive* — do not hardcode "exactly one engine per tab, changeable only by
 reload" so deeply that an in-place surface swap becomes impossible.
 
@@ -518,14 +515,14 @@ about the raw editor is in scope for this plan.
 (per the repo's DI invariant: configure services before the container is
 built):
 
-1. A persisted preference — `editorEngine: 'prosemirror' | 'wordgard'`
-   (default `'prosemirror'`) — is written by `WorkbenchStateService` and read
-   synchronously during bootstrap from the sync database's localStorage entry.
+1. The current URL selects `?editorEngine=prosemirror|wordgard`; missing or
+   unknown values default to ProseMirror. The hash router preserves this query
+   parameter during app navigation.
 2. `initialize-services` reads the flag and `createServiceSetup` directly
    registers **one** implementation under the `editorEngine` slot. Both engine
    packages are statically imported, but only one service is live in a tab.
 3. **Boot guard:** if the wordgard path throws during service setup or first
-   mount, reset the flag to `'prosemirror'` and reload. An experimental
+   mount, replace the URL value with `'prosemirror'` and reload. An experimental
    engine must never be able to brick the app; the escape hatch cannot live
    inside the thing that is broken.
 
@@ -537,9 +534,9 @@ then:
 1. Refuses (with a toast pointing at the failed save) if
    `hasPendingOrFailedSave()` reports failed writes; otherwise awaits the
    save queue draining.
-2. Writes the preference.
-3. Triggers the existing `event::app:reload-ui` machinery locally. Other tabs
-   keep running and use the persisted choice when they next reload normally.
+2. Updates `editorEngine` in the current tab's query string.
+3. Reloads the current page. Other tabs keep running with their own URL and
+   current editor.
 
 Reload-based switching is deliberate: it matches the DI model, avoids
 double-mounted editors and stale plugin state, reuses existing reload +
@@ -547,7 +544,7 @@ save-protection infrastructure, and keeps the switch **boring** — which is
 what a data-carrying switch should be. Additive futures this must not preclude:
 per-note or side-by-side comparison, and — the concrete near-term one — a
 per-note rich ⇄ raw (source) toggle that can swap in place without a reload
-(see "Designing for a raw source editor"). Keep the preference enum and this
+(see "Designing for a raw source editor"). Keep the engine enum and this
 command shaped so a third value or a mode toggle is additive, not a redesign.
 
 **Observability:** the editor root element carries
@@ -865,7 +862,7 @@ in the app layer. Exit (met): everything outside `core/editor` compiles
 against the contract only; zero behavior change for PM users.
 
 **M0b — Switch plumbing (lands with the editor-w stub) — DONE**
-The persisted engine preference, the omni-search switch command,
+The URL engine selection, the omni-search switch command,
 composition-root selection, and the boot guard — landed
 together with a stub editor-w package whose "editor" renders the note
 read-only (no Wordgard yet), so the switch is real and e2e-testable the day
@@ -963,7 +960,7 @@ outlive the flip as a safety valve.
 - Unit (vitest): wordgard-markdown and wordgard-utils logic tests are
   headless (doc/state modules don't need a browser). Editor-behavior tests
   that need real DOM use Playwright component tests, as today.
-- E2E: helpers gain an engine parameter (set the preference via the switch
+- E2E: helpers gain an engine parameter (set the URL via the switch
   command in a fixture, assert on `data-editor-engine`). The full suite
   stays PM-default; an editor-w smoke set grows per milestone and runs in
   `pnpm e2e:ci`. At M6 the full suite runs on both.
@@ -1045,9 +1042,9 @@ None. M0 can start immediately.
 2. Scaffold `wordgard-utils` + `wordgard-markdown`, build the codec, add the
    golden corpus with both-engine contract tests: **done** (see "M1
    essentially complete" above).
-3. M0b: **done** — stub `@bangle.io/editor-w`, persisted preference,
-   omni-search switch command, composition-root selection with dynamic
-   import, boot guard, and e2e switch coverage (see "M0b complete" above).
+3. M0b: **done** — stub `@bangle.io/editor-w`, URL selection,
+   omni-search switch command, static composition-root selection, boot guard,
+   and e2e switch coverage (see "M0b complete" above).
 4. M2 next: wire a real Wordgard editor into editor-w (schema assembly from
    wordgard-utils bundles, history, keymaps, styles, `t`→PhraseSet bridge),
    extract `editor-common` (save queue, load-status, `<Editor>` shell) when

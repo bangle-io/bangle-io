@@ -5,12 +5,12 @@ import { App } from '@bangle.io/app';
 import { ThemeManager } from '@bangle.io/color-scheme-manager';
 import {
   DEFAULT_EDITOR_ENGINE,
+  EDITOR_ENGINE_QUERY_PARAM,
   THEME_MANAGER_CONFIG,
 } from '@bangle.io/constants';
 import {
   initializeServices,
-  readEditorEnginePreference,
-  resetEditorEnginePreference,
+  readEditorEngineFromUrl,
 } from '@bangle.io/initialize-services';
 import { Logger } from '@bangle.io/logger';
 import { createStore } from 'jotai';
@@ -110,24 +110,23 @@ function handleStartupFailure(error: unknown, logger: Logger) {
 
 /**
  * Boot guard for the experimental editor engine (plans/011 M0b): if startup
- * failed while a non-default engine was selected, reset the persisted
- * preference and reload so the stable engine boots instead. An experimental
+ * failed while a non-default engine was selected, replace the URL selection
+ * and reload so the stable engine boots instead. An experimental
  * engine must never be able to brick the app — and this escape hatch cannot
- * live inside the thing that is broken. After the reset the preference reads
- * as the default, so a second failure falls through to the error screen
+ * live inside the thing that is broken. After the reset the URL reads as the
+ * default, so a second failure falls through to the error screen
  * rather than looping.
  */
 export function recoverFromExperimentalEngineFailure(
   logger: Pick<Logger, 'error'>,
-  storage: Pick<Storage, 'getItem' | 'setItem'> = window.localStorage,
   reload: () => void = () => window.location.reload(),
 ): boolean {
-  if (readEditorEnginePreference(storage) === DEFAULT_EDITOR_ENGINE) {
+  if (readEditorEngineFromUrl() === DEFAULT_EDITOR_ENGINE) {
     return false;
   }
-  if (!resetEditorEnginePreference(storage)) {
-    return false;
-  }
+  const url = new URL(window.location.href);
+  url.searchParams.set(EDITOR_ENGINE_QUERY_PARAM, DEFAULT_EDITOR_ENGINE);
+  window.history.replaceState(window.history.state, '', url);
   logger.error(
     `Experimental editor engine failed to boot; falling back to "${DEFAULT_EDITOR_ENGINE}" and reloading`,
   );

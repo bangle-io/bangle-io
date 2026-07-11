@@ -19,6 +19,8 @@ import {
  * and instead uses the fragment (hash) for better privacy in some contexts.
  */
 export class HashStrategy implements RouteStrategy {
+  constructor(private readonly search = '') {}
+
   parseBrowserLocation(location: Location, basePath: string): EncodedRoute {
     // We ignore location.search here, focusing on the hash.
     // The returned EncodedRoute keeps the 'pathname' so we can strip the base path,
@@ -36,7 +38,7 @@ export class HashStrategy implements RouteStrategy {
 
     return {
       pathname: basePath || '/',
-      search: '',
+      search: this.search,
       hash: hashStr ? `#${hashStr}` : '',
     };
   }
