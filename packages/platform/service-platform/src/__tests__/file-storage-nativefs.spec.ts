@@ -461,7 +461,11 @@ describe('external change watching', () => {
     ]);
   });
 
-  it("suppresses the observer echo of the app's own writes", async () => {
+  it('still reports external changes to a path the app itself just wrote', async () => {
+    // Regression for a removed "self-write echo" ledger: a path+time filter
+    // cannot tell the app's own echo from a sync tool overwriting the same
+    // file moments after a local save, and silently dropped the latter.
+    // Echoes are instead coalesced downstream by content comparison.
     const observer = stubFileSystemObserver();
     const { service, onExternalChange } = await setup(
       undefined,
@@ -479,23 +483,18 @@ describe('external change watching', () => {
       expect(observer.observe).toHaveBeenCalledTimes(1);
     });
 
-    // The OS-level record produced by our own write arrives shortly after.
+    // A record for the just-written path (echo or a genuinely external
+    // overwrite — indistinguishable here) must flow through.
     await observer.emitRecords([
       {
-        type: 'appeared',
-        relativePathComponents: ['mine.md'],
-        changedHandle: { kind: 'file' },
-      },
-      {
         type: 'modified',
-        relativePathComponents: ['truly-external.md'],
+        relativePathComponents: ['mine.md'],
         changedHandle: { kind: 'file' },
       },
     ]);
 
-    // Only the genuinely external change comes through.
     expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
-      { type: 'update', wsPath: 'myWorkspace:truly-external.md' },
+      { type: 'update', wsPath: 'myWorkspace:mine.md' },
     ]);
   });
 

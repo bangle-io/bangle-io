@@ -50,3 +50,19 @@ describe('workspace file visibility policy', () => {
     expect(isVisibleWorkspaceFilePath('garden:assets/THUMBS.DB')).toBe(false);
   });
 });
+
+describe('transient swap/temp files', () => {
+  it.each([
+    'ws:note.md.crswap',
+    'ws:docs/other.MD.CRSWAP',
+    'ws:draft.tmp',
+    'ws:notes/file.swp',
+  ])('hides %s from workspace listings and watchers', (wsPath) => {
+    expect(isVisibleWorkspaceFilePath(wsPath)).toBe(false);
+  });
+
+  it('still shows regular notes and assets', () => {
+    expect(isVisibleWorkspaceFilePath('ws:note.md')).toBe(true);
+    expect(isVisibleWorkspaceFilePath('ws:image.png')).toBe(true);
+  });
+});

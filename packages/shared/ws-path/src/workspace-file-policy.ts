@@ -17,6 +17,14 @@ const IGNORED_DIRECTORY_NAMES = new Set([
 
 const IGNORED_FILE_NAMES = new Set(['desktop.ini', 'thumbs.db']);
 
+/**
+ * Transient files other software writes next to real content: Chromium's
+ * File System Access swap files and common editor temp suffixes. They can
+ * surface through directory listings and file watchers mid-write and must
+ * never be treated as workspace content.
+ */
+const IGNORED_FILE_SUFFIXES = ['.crswap', '.tmp', '.swp'];
+
 function pathSegments(filePath: WsFilePath): readonly string[] {
   return filePath.path.split('/').filter(Boolean);
 }
@@ -50,6 +58,11 @@ export function isVisibleWorkspaceFilePath(
   if (
     parentSegments.some((segment) => isIgnoredWorkspacePathSegment(segment))
   ) {
+    return false;
+  }
+
+  const lowerFileName = fileName.toLowerCase();
+  if (IGNORED_FILE_SUFFIXES.some((suffix) => lowerFileName.endsWith(suffix))) {
     return false;
   }
 

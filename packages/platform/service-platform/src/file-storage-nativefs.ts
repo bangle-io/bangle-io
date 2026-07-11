@@ -38,6 +38,12 @@ type Config = {
    * app instance (sync tools, other editors). Providing it turns on
    * FileSystemObserver watching (Chrome 133+) per opened workspace, plus the
    * page-return revalidation below when `subscribePageReturn` is supplied.
+   *
+   * Records caused by the app's own writes are NOT filtered here: a
+   * path+time ledger cannot distinguish an echo from a genuine external
+   * overwrite of the same file moments after a local save. Downstream
+   * consumers coalesce echoes by comparing content, which is cheap and
+   * cannot drop a real edit.
    */
   onExternalChange?: (event: FileStorageExternalChangeEvent) => void;
   /**
@@ -56,13 +62,6 @@ type Config = {
 };
 
 /**
- * How long after one of our own mutations a watcher record for the same
- * wsPath is treated as the echo of that mutation and dropped. Covers the
- * observer's callback latency plus slack for slow disk writes.
- */
-const SELF_WRITE_ECHO_WINDOW_MS = 5_000;
-
-/**
  * Minimum spacing between coarse refreshes triggered by returning to the
  * page. A refresh re-lists the workspace and revalidates open notes, so it
  * must not fire on every alt-tab; anything the observer already reported has
@@ -79,7 +78,6 @@ export class FileStorageNativeFs
 
   private fsCache: Map<string, NativeFs> = new Map();
   private watchedWorkspaces = new Set<string>();
-  private recentSelfWrites = new Map<string, number>();
   private lastPageReturnRevalidation = 0;
 
   constructor(
@@ -101,7 +99,6 @@ export class FileStorageNativeFs
     this.addCleanup(() => {
       this.fsCache.clear();
       this.watchedWorkspaces.clear();
-      this.recentSelfWrites.clear();
     });
   }
 
@@ -212,23 +209,6 @@ export class FileStorageNativeFs
     }
   }
 
-  private noteSelfWrite(...wsPaths: string[]): void {
-    const now = Date.now();
-    for (const [path, at] of this.recentSelfWrites) {
-      if (now - at > SELF_WRITE_ECHO_WINDOW_MS) {
-        this.recentSelfWrites.delete(path);
-      }
-    }
-    for (const wsPath of wsPaths) {
-      this.recentSelfWrites.set(wsPath, now);
-    }
-  }
-
-  private isRecentSelfWrite(wsPath: string): boolean {
-    const at = this.recentSelfWrites.get(wsPath);
-    return at !== undefined && Date.now() - at <= SELF_WRITE_ECHO_WINDOW_MS;
-  }
-
   private handleWatchChanges(wsName: string, changes: NativeFsChange[]): void {
     const onExternalChange = this.config.onExternalChange;
     if (!onExternalChange) {
@@ -278,12 +258,6 @@ export class FileStorageNativeFs
           emitRefresh();
           continue;
         }
-        if (
-          this.isRecentSelfWrite(newWsPath) ||
-          this.isRecentSelfWrite(oldWsPath)
-        ) {
-          continue;
-        }
         onExternalChange({ type: 'rename', oldWsPath, newWsPath });
         continue;
       }
@@ -292,9 +266,6 @@ export class FileStorageNativeFs
       if (wsPath === undefined) {
         // Hidden/system/unparseable paths (sync temp files, dotfiles) are
         // invisible to the app; ignore them entirely.
-        continue;
-      }
-      if (this.isRecentSelfWrite(wsPath)) {
         continue;
       }
       switch (change.type) {
@@ -329,7 +300,6 @@ export class FileStorageNativeFs
   async createFile(wsPath: string, file: File): Promise<void> {
     await this.mountPromise;
     const fs = await this.getFs({ wsPath });
-    this.noteSelfWrite(wsPath);
     try {
       await fs.createFile(this.toRelativePath(wsPath), file);
     } catch (error) {
@@ -350,7 +320,6 @@ export class FileStorageNativeFs
   async deleteFile(wsPath: string): Promise<void> {
     await this.mountPromise;
     const fs = await this.getFs({ wsPath });
-    this.noteSelfWrite(wsPath);
     try {
       await fs.deleteFile(this.toRelativePath(wsPath));
     } catch (error) {
@@ -461,7 +430,6 @@ export class FileStorageNativeFs
     await this.mountPromise;
     assertSameWorkspaceRename(wsPath, newWsPath);
     const fs = await this.getFs({ wsPath });
-    this.noteSelfWrite(wsPath, newWsPath);
     try {
       await fs.moveFile(
         this.toRelativePath(wsPath),
@@ -499,7 +467,6 @@ export class FileStorageNativeFs
   async writeFile(wsPath: string, file: File): Promise<void> {
     await this.mountPromise;
     const fs = await this.getFs({ wsPath });
-    this.noteSelfWrite(wsPath);
     try {
       await fs.writeFile(this.toRelativePath(wsPath), file, { create: false });
     } catch (error) {
