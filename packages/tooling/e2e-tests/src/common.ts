@@ -9,17 +9,16 @@ export const EDITOR_SELECTOR = '.ProseMirror';
 export const EDITOR_FOCUSED_SELECTOR = `${EDITOR_SELECTOR}.ProseMirror-focused`;
 const DEFAULT_SLEEP_TIME = 20;
 
-export async function expandAllFileTreeFolders(page: Page) {
+export async function expandFileTreeFolder(page: Page, name: string | RegExp) {
   const explorer = page.getByTestId('bangle-file-explorer');
-  const expandButton = explorer.getByRole('button', {
-    name: 'Expand All Folders',
-  });
+  const folder = explorer.getByRole('treeitem', { name });
 
-  await expect(expandButton).toBeEnabled();
-  await expandButton.click();
-  await expect(
-    explorer.getByRole('button', { name: 'Collapse All Folders' }),
-  ).toBeVisible();
+  await expect(folder).toBeVisible();
+  if ((await folder.getAttribute('aria-expanded')) !== 'true') {
+    await folder.focus();
+    await page.keyboard.press('ArrowRight');
+  }
+  await expect(folder).toHaveAttribute('aria-expanded', 'true');
 }
 
 /**

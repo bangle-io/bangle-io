@@ -621,7 +621,6 @@ export const t = {
         newFileActionSr: 'Create File',
         newFolderActionTitle: 'New Folder',
         collapseAllFoldersActionTitle: 'Collapse All Folders',
-        expandAllFoldersActionTitle: 'Expand All Folders',
         showNoteFilesOnlyActionTitle: 'Show Notes Only',
         newNoteHereActionTitle: 'New Note Here',
         newFolderHereActionTitle: 'New Folder Here',

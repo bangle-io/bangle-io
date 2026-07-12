@@ -25,9 +25,10 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   const [showNoteFilesOnly, setShowNoteFilesOnly] = useAtom(
     workbenchState.$showNoteFilesOnlyInSidebar,
   );
-  const [fileTreeExpanded, setFileTreeExpanded] = useAtom(
-    workbenchState.$fileTreeExpanded,
-  );
+  const [
+    fileTreeExpandedPathsByWorkspace,
+    setFileTreeExpandedPathsByWorkspace,
+  ] = useAtom(workbenchState.$fileTreeExpandedPathsByWorkspace);
   const activeWsName = useAtomValue(navigation.$wsName);
   const activeWsPaths = useAtomValue(workspaceState.$activeWsPaths);
   const wsPaths = useAtomValue(workspaceState.$wsPaths);
@@ -166,8 +167,21 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             : undefined
         }
         activeFilePaths={activeWsPaths.map((wsPath) => wsPath.path)}
-        fileTreeExpanded={fileTreeExpanded}
-        onFileTreeExpandedChange={setFileTreeExpanded}
+        expandedFileTreePaths={
+          activeWsName
+            ? fileTreeExpandedPathsByWorkspace[activeWsName]
+            : undefined
+        }
+        onExpandedFileTreePathsChange={(expandedPaths) => {
+          if (!activeWsName) {
+            return;
+          }
+
+          setFileTreeExpandedPathsByWorkspace((current) => ({
+            ...current,
+            [activeWsName]: expandedPaths,
+          }));
+        }}
         commandButtonClassName="desktop-titlebar-no-drag"
         showNoteFilesOnly={showNoteFilesOnly}
         onShowNoteFilesOnlyChange={setShowNoteFilesOnly}

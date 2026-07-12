@@ -3,7 +3,7 @@ import {
   clearEditor,
   createBrowserWorkspace,
   dragTreeItemOnto,
-  expandAllFileTreeFolders,
+  expandFileTreeFolder,
   expectNoPageHorizontalOverflow,
   getEditorLocator,
   getEditorText,
@@ -225,7 +225,7 @@ async function writeStoredFiles(
   );
 }
 
-test('file explorer toggles between the active note path and all expanded folders', async ({
+test('file explorer collapse-all preserves user expansion until invoked', async ({
   page,
 }) => {
   const workspaceName = `explorer-collapse-all-${Date.now()}`;
@@ -234,7 +234,7 @@ test('file explorer toggles between the active note path and all expanded folder
     page,
     workspaceName,
     'z-active/branch/current',
-    'Current note',
+    'Current note\n\n[[hidden]]',
   );
   await writeStoredMarkdown(
     page,
@@ -281,7 +281,7 @@ test('file explorer toggles between the active note path and all expanded folder
 
   await test.step('starts collapsed while preserving and revealing the active note path', async () => {
     await expect(
-      explorer.getByRole('button', { name: 'Expand All Folders' }),
+      explorer.getByRole('button', { name: 'Collapse All Folders' }),
     ).toBeVisible();
     await expect(activeFolder).toHaveAttribute('aria-expanded', 'true');
     await expect(branchFolder).toHaveAttribute('aria-expanded', 'true');
@@ -292,45 +292,62 @@ test('file explorer toggles between the active note path and all expanded folder
     await expect(otherFolder).toHaveAttribute('aria-expanded', 'false');
   });
 
-  await explorer.getByRole('button', { name: 'Expand All Folders' }).click();
+  const muddiedFolder = explorer.getByRole('treeitem', {
+    name: /^bulk-00 \/ deep$/,
+  });
+  await muddiedFolder.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(muddiedFolder).toHaveAttribute('aria-expanded', 'true');
 
-  await expectFileTreeItemInViewport(currentNote);
-  await setFileExplorerScrollTop(page, 0);
-  await expect(otherFolder).toHaveAttribute('aria-expanded', 'true');
-  const deepFolder = explorer.getByRole('treeitem', { name: /^deep$/ });
-  await expect(deepFolder).toHaveAttribute('aria-expanded', 'true');
-  await expect(
-    explorer.getByRole('treeitem', { name: /^hidden\.md$/ }),
-  ).toBeVisible();
+  await test.step('backlink navigation opens its ancestors without collapsing user-expanded folders', async () => {
+    await getEditorLocator(page, {})
+      .getByRole('link', { name: 'hidden', exact: true })
+      .click();
+    await expect(page).toHaveURL(
+      new RegExp(
+        `ws#route=editor&wsPath=${encodeURIComponent(
+          `${workspaceName}:a-other/deep/hidden.md`,
+        )}$`,
+      ),
+    );
 
-  await test.step('persists expanded mode across reload', async () => {
+    const hiddenNote = explorer.getByRole('treeitem', {
+      name: /^hidden\.md$/,
+    });
+    await expect(hiddenNote).toBeVisible();
+    await expectFileTreeItemInViewport(hiddenNote);
+    await expect(muddiedFolder).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  await test.step('persists manual expansion across reload', async () => {
+    await expect
+      .poll(() =>
+        page.evaluate(() =>
+          window.localStorage.getItem(
+            'browser-local-storage-sync-database.sync:workbench-state:file-tree-expanded-paths-by-workspace',
+          ),
+        ),
+      )
+      .toContain('bulk-00/deep');
     await page.reload();
-    await expect(
-      explorer.getByRole('button', { name: 'Collapse All Folders' }),
-    ).toBeVisible();
-    await expectFileTreeItemInViewport(currentNote);
-    await setFileExplorerScrollTop(page, 0);
-    await expect(otherFolder).toHaveAttribute('aria-expanded', 'true');
-    await expect(deepFolder).toHaveAttribute('aria-expanded', 'true');
+    await expect(muddiedFolder).toHaveAttribute('aria-expanded', 'true');
   });
 
   await explorer.getByRole('button', { name: 'Collapse All Folders' }).click();
 
-  await expect(currentNote).toBeVisible();
-  await expectFileTreeItemInViewport(currentNote);
-  await setFileExplorerScrollTop(page, 0);
-  await expect(otherFolder).toHaveAttribute('aria-expanded', 'false');
-  await expect(deepFolder).toBeHidden();
+  const hiddenNote = explorer.getByRole('treeitem', { name: /^hidden\.md$/ });
+  await expect(hiddenNote).toBeVisible();
+  await expectFileTreeItemInViewport(hiddenNote);
+  await expect(muddiedFolder).toHaveAttribute('aria-expanded', 'false');
 
-  await test.step('persists collapsed mode across reload', async () => {
+  await test.step('persists the collapse-all result across reload', async () => {
     await page.reload();
     await expect(
-      explorer.getByRole('button', { name: 'Expand All Folders' }),
+      explorer.getByRole('button', { name: 'Collapse All Folders' }),
     ).toBeVisible();
-    await expect(currentNote).toBeVisible();
-    await expectFileTreeItemInViewport(currentNote);
-    await setFileExplorerScrollTop(page, 0);
-    await expect(otherFolder).toHaveAttribute('aria-expanded', 'false');
+    await expect(hiddenNote).toBeVisible();
+    await expectFileTreeItemInViewport(hiddenNote);
+    await expect(muddiedFolder).toHaveAttribute('aria-expanded', 'false');
   });
 });
 
@@ -423,7 +440,7 @@ test('file explorer creates folders, opens notes, and survives reload', async ({
   });
 
   await test.step('three-dot file menu is fully visible and hittable', async () => {
-    await expandAllFileTreeFolders(page);
+    await expandFileTreeFolder(page, /^docs$/);
     const alphaRow = explorer.getByRole('treeitem', { name: /alpha\.md/ });
 
     await alphaRow.hover();
@@ -531,6 +548,7 @@ test('file explorer creates folders, opens notes, and survives reload', async ({
     await expect(
       explorer.getByRole('treeitem', { name: /^docs$/ }),
     ).toBeVisible();
+    await expandFileTreeFolder(page, /^docs$/);
     await explorer.getByRole('treeitem', { name: /untitled-2\.md/ }).click();
 
     await expect(
@@ -624,8 +642,6 @@ test('file explorer keeps folders expanded when a note is moved', async ({
 
   const explorer = page.getByTestId('bangle-file-explorer');
   await expect(explorer).toBeVisible();
-  await expandAllFileTreeFolders(page);
-
   const keepFolder = explorer.getByRole('treeitem', { name: /^keep$/ });
   const nestedFolder = explorer.getByRole('treeitem', { name: /^nested$/ });
 
@@ -765,7 +781,9 @@ test('file explorer shows common workspace files and opens non-notes as assets',
 
   const explorer = page.getByTestId('bangle-file-explorer');
   await expect(explorer).toBeVisible();
-  await expandAllFileTreeFolders(page);
+  await expandFileTreeFolder(page, /^notes$/);
+  await expandFileTreeFolder(page, /^src$/);
+  await expandFileTreeFolder(page, /^assets$/);
   const notesOnlyToggle = explorer.getByRole('button', {
     name: 'Show Notes Only',
   });

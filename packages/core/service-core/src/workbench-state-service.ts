@@ -35,6 +35,20 @@ const AssetLocationPreferenceValidator = {
   typeName: 'asset-location-preference',
 };
 
+type FileTreeExpandedPathsByWorkspace = Record<string, readonly string[]>;
+
+const FileTreeExpandedPathsByWorkspaceValidator = {
+  validate: (value: unknown): value is FileTreeExpandedPathsByWorkspace =>
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    Object.values(value).every(
+      (paths) =>
+        Array.isArray(paths) && paths.every((path) => typeof path === 'string'),
+    ),
+  typeName: 'file-tree-expanded-paths-by-workspace',
+};
+
 function determineOmniSearchRoute(input: string, currentRoute: Route): Route {
   switch (currentRoute) {
     case 'omni-home': {
@@ -75,7 +89,9 @@ export class WorkbenchStateService extends BaseService {
   private $_sidebarWidth: PrimitiveAtom<number> | undefined;
   private $_linkedMentionsCollapsed: PrimitiveAtom<boolean> | undefined;
   private $_showNoteFilesOnlyInSidebar: PrimitiveAtom<boolean> | undefined;
-  private $_fileTreeExpanded: PrimitiveAtom<boolean> | undefined;
+  private $_fileTreeExpandedPathsByWorkspace:
+    | PrimitiveAtom<FileTreeExpandedPathsByWorkspace>
+    | undefined;
   private $_assetLocationPreference:
     | PrimitiveAtom<AssetLocationPreference>
     | undefined;
@@ -264,18 +280,18 @@ export class WorkbenchStateService extends BaseService {
     return this.$_showNoteFilesOnlyInSidebar;
   }
 
-  get $fileTreeExpanded() {
-    if (!this.$_fileTreeExpanded) {
-      this.$_fileTreeExpanded = atomStorage({
+  get $fileTreeExpandedPathsByWorkspace() {
+    if (!this.$_fileTreeExpandedPathsByWorkspace) {
+      this.$_fileTreeExpandedPathsByWorkspace = atomStorage({
         serviceName: this.name,
-        key: 'file-tree-expanded',
-        initValue: false,
+        key: 'file-tree-expanded-paths-by-workspace',
+        initValue: {},
         syncDb: this.dep.syncDatabase,
-        validator: T.Boolean,
+        validator: FileTreeExpandedPathsByWorkspaceValidator,
         logger: this.logger,
       });
     }
-    return this.$_fileTreeExpanded;
+    return this.$_fileTreeExpandedPathsByWorkspace;
   }
 
   get $assetLocationPreference() {

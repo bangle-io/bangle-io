@@ -564,7 +564,6 @@ export const t = {
         newFileActionSr: 'Datei erstellen',
         newFolderActionTitle: 'Neuer Ordner',
         collapseAllFoldersActionTitle: 'Alle Ordner einklappen',
-        expandAllFoldersActionTitle: 'Alle Ordner ausklappen',
         showNoteFilesOnlyActionTitle: 'Nur Notizen anzeigen',
         newNoteHereActionTitle: 'Neue Notiz hier',
         newFolderHereActionTitle: 'Neuer Ordner hier',
