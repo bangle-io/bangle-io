@@ -576,6 +576,44 @@ describe('UI command handlers', () => {
       dialog?.onSelect({ id: 'test-ws', title: 'test-ws' });
       expect(services.navigation.resolveAtoms().wsName).toBe('test-ws');
     });
+
+    it('does not mutate the workspace list while sorting dialog options', async () => {
+      const { dispatch, testEnv, services } = await setupTest({
+        targetId: 'command::ui:switch-workspace',
+        workspaces: [{ name: 'zeta' }, { name: 'alpha' }],
+      });
+      const oldTimestamp = Date.now() - 8 * 24 * 60 * 60 * 1000;
+      const dateNowSpy = vi.spyOn(Date, 'now').mockReturnValue(oldTimestamp);
+      await services.workspaceOps.updateWorkspaceInfo(
+        'zeta',
+        (workspace) => workspace,
+      );
+      dateNowSpy.mockRestore();
+      await vi.waitFor(() => {
+        expect(
+          testEnv.store
+            .get(services.workspaceState.$workspaces)
+            .find((workspace) => workspace.name === 'zeta')?.lastModified,
+        ).toBe(oldTimestamp);
+      });
+      const workspaces = testEnv.store.get(services.workspaceState.$workspaces);
+      const sourceOrder = workspaces.map((workspace) => workspace.name);
+      expect(sourceOrder).toEqual(['zeta', 'alpha']);
+
+      dispatch('command::ui:switch-workspace', null);
+
+      expect(testEnv.store.get(services.workspaceState.$workspaces)).toBe(
+        workspaces,
+      );
+      expect(workspaces.map((workspace) => workspace.name)).toEqual(
+        sourceOrder,
+      );
+      expect(
+        testEnv.store
+          .get(services.workbenchState.$singleSelectDialog)
+          ?.options.map((option) => option.title),
+      ).toEqual(['alpha', 'zeta']);
+    });
   });
 
   describe('command::ui:delete-workspace-dialog', () => {
@@ -662,6 +700,42 @@ describe('UI command handlers', () => {
       await vi.waitFor(() => {
         expect(services.navigation.resolveAtoms().wsName).toBe('test-ws');
       });
+    });
+
+    it('reports invalid workspace metadata as a command failure', async () => {
+      const { dispatch, getCommandResults, services, testEnv } =
+        await setupTest({
+          targetId: 'command::ui:native-fs-auth',
+          autoNavigate: false,
+        });
+
+      dispatch('command::ui:native-fs-auth', { wsName: 'test-ws' });
+
+      await vi.waitFor(() => {
+        expect(
+          getCommandResults().filter((result) => result.type === 'failure'),
+        ).toEqual([
+          expect.objectContaining({
+            command: expect.objectContaining({
+              id: 'command::ui:native-fs-auth',
+            }),
+          }),
+        ]);
+        expect(testEnv.commonOpts.emitAppError).toHaveBeenCalledWith(
+          expect.objectContaining({
+            cause: expect.objectContaining({
+              name: 'error::workspace:invalid-metadata',
+              payload: { wsName: 'test-ws' },
+            }),
+          }),
+        );
+        expect(
+          getCommandResults().filter((result) => result.type === 'success'),
+        ).toEqual([]);
+      });
+      expect(testEnv.store.get(services.workbenchState.$alertDialog)).toBe(
+        undefined,
+      );
     });
   });
 

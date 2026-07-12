@@ -58,21 +58,19 @@ export class WorkspaceOpsService extends BaseService {
   ): Promise<WorkspaceInfo | undefined> {
     await this.mountPromise;
 
-    const cacheKey =
-      wsName + (options?.type || '') + (options?.allowDeleted || '');
-    if (this.workspaceInfoCache.has(cacheKey)) {
-      return this.workspaceInfoCache.get(cacheKey);
+    let wsInfo = this.workspaceInfoCache.get(wsName);
+    if (!wsInfo) {
+      const result = await this.database.getEntry(wsName, {
+        tableName: DATABASE_TABLE_NAME.workspaceInfo,
+      });
+
+      if (!result.found) {
+        return undefined;
+      }
+
+      wsInfo = result.value as WorkspaceInfo;
+      this.workspaceInfoCache.set(wsName, wsInfo);
     }
-
-    const result = await this.database.getEntry(wsName, {
-      tableName: DATABASE_TABLE_NAME.workspaceInfo,
-    });
-
-    if (!result.found) {
-      return undefined;
-    }
-
-    const wsInfo = result.value as WorkspaceInfo;
 
     if (!options?.allowDeleted && wsInfo?.deleted) {
       return undefined;
@@ -82,7 +80,6 @@ export class WorkspaceOpsService extends BaseService {
       return undefined;
     }
 
-    this.workspaceInfoCache.set(cacheKey, wsInfo);
     return wsInfo;
   }
 

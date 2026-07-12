@@ -26,10 +26,8 @@ import {
   ShortcutService,
   type ShortcutServiceConfig,
   UserActivityService,
-  WorkbenchService,
   WorkbenchStateService,
   WorkspaceOpsService,
-  WorkspaceService,
   WorkspaceStateService,
 } from '@bangle.io/service-core';
 import type {
@@ -60,9 +58,7 @@ export const coreServiceClasses = {
   navigation: NavigationService,
   shortcut: ShortcutService,
   editorService: EditorService,
-  workbench: WorkbenchService,
   workbenchState: WorkbenchStateService,
-  workspace: WorkspaceService,
   workspaceOps: WorkspaceOpsService,
   workspaceState: WorkspaceStateService,
   userActivityService: UserActivityService,
@@ -263,9 +259,7 @@ function toCoreServices(s: CoreInstances): CoreServices {
     navigation: s.navigation,
     shortcut: s.shortcut,
     editorService: s.editorService,
-    workbench: s.workbench,
     workbenchState: s.workbenchState,
-    workspace: s.workspace,
     workspaceOps: s.workspaceOps,
     workspaceState: s.workspaceState,
     userActivityService: s.userActivityService,
@@ -396,7 +390,6 @@ export function createServiceSetup<
         ),
       })),
     ),
-    workbench: slot(WorkbenchService),
     workbenchState: slot(
       WorkbenchStateService,
       withOverride('workbenchState', () => ({
@@ -407,7 +400,6 @@ export function createServiceSetup<
         ),
       })),
     ),
-    workspace: slot(WorkspaceService),
     workspaceOps: slot(WorkspaceOpsService),
     workspaceState: slot(WorkspaceStateService),
     userActivityService: slot(
@@ -457,9 +449,7 @@ export function createServiceSetup<
       navigation: s.navigation,
       shortcut: s.shortcut,
       editorService: s.editorService,
-      workbench: s.workbench,
       workbenchState: s.workbenchState,
-      workspace: s.workspace,
       workspaceOps: s.workspaceOps,
       workspaceState: s.workspaceState,
       userActivityService: s.userActivityService,

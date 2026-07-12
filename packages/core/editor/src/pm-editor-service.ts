@@ -143,7 +143,10 @@ export class PmEditorService
 
   private editors = new Map<HTMLElement, EditorEntry>();
 
-  private markdown: ReturnType<typeof markdownLoader> | undefined;
+  private markdownBySchema = new WeakMap<
+    Schema,
+    ReturnType<typeof markdownLoader>
+  >();
 
   constructor(
     context: BaseServiceContext,
@@ -985,11 +988,17 @@ export class PmEditorService
   }
 
   private getMarkdown(schema: Schema) {
-    this.markdown ??= markdownLoader(
+    const existing = this.markdownBySchema.get(schema);
+    if (existing) {
+      return existing;
+    }
+
+    const markdown = markdownLoader(
       [...Object.values(this.extensions)],
       schema,
     );
-    return this.markdown;
+    this.markdownBySchema.set(schema, markdown);
+    return markdown;
   }
 
   private getActiveEditorView() {

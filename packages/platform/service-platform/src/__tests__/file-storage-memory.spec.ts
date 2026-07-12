@@ -94,6 +94,46 @@ describe('FileStorageMemory', () => {
     });
   });
 
+  it('provider contract: listAllFiles only returns files from the exact workspace', async () => {
+    const { service } = await setup();
+
+    await service.createFile('notes:one.md', new File(['one'], 'one.md'));
+    await service.createFile(
+      'notes-archive:two.md',
+      new File(['two'], 'two.md'),
+    );
+
+    await expect(
+      service.listAllFiles('notes', new AbortController().signal),
+    ).resolves.toEqual(['notes:one.md']);
+  });
+
+  it('provider contract: renameFile rejects an existing destination without overwriting either file', async () => {
+    const { service, onChange } = await setup();
+    const oldPath = 'myWorkspace:source.md';
+    const newPath = 'myWorkspace:destination.md';
+
+    await service.createFile(oldPath, new File(['Source'], 'source.md'));
+    await service.createFile(
+      newPath,
+      new File(['Destination'], 'destination.md'),
+    );
+    onChange.mockClear();
+
+    await expect(
+      service.renameFile(oldPath, { newWsPath: newPath }),
+    ).rejects.toMatchObject({
+      cause: expect.objectContaining({
+        name: 'error::file:already-existing',
+        payload: { wsPath: newPath },
+      }),
+    });
+
+    expect(await (await service.readFile(oldPath))?.text()).toBe('Source');
+    expect(await (await service.readFile(newPath))?.text()).toBe('Destination');
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
   it('should throw error when writing file that does not exist', async () => {
     const { service } = await setup();
     const wsPath = 'myWorkspace:nonExistent.md';
