@@ -27,6 +27,11 @@ import type {
 } from '@bangle.io/ui-components';
 import { atom, type PrimitiveAtom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
+import {
+  type FileTreeExpandedPathsByWorkspace,
+  type FileTreeExpansionAction,
+  reduceFileTreeExpansion,
+} from './file-tree-expansion-state';
 
 type Route = 'omni-home' | 'omni-command' | 'omni-filtered';
 
@@ -34,8 +39,6 @@ const AssetLocationPreferenceValidator = {
   validate: isAssetLocationPreference,
   typeName: 'asset-location-preference',
 };
-
-type FileTreeExpandedPathsByWorkspace = Record<string, readonly string[]>;
 
 const FileTreeExpandedPathsByWorkspaceValidator = {
   validate: (value: unknown): value is FileTreeExpandedPathsByWorkspace =>
@@ -204,6 +207,40 @@ export class WorkbenchStateService extends BaseService {
     this.config.emitter.emit('event::app:reload-ui', {
       sender: getEventSenderMetadata({ tag: this.name }),
     });
+  }
+
+  public setFileTreeDirectoryExpanded(
+    workspaceName: string,
+    path: string,
+    expanded: boolean,
+  ) {
+    this.updateFileTreeExpansion({
+      type: 'set-directory',
+      workspaceName,
+      path,
+      expanded,
+    });
+  }
+
+  public revealFileTreePaths(workspaceName: string, paths: readonly string[]) {
+    this.updateFileTreeExpansion({ type: 'reveal', workspaceName, paths });
+  }
+
+  public collapseFileTree(
+    workspaceName: string,
+    keepExpandedPaths: readonly string[],
+  ) {
+    this.updateFileTreeExpansion({
+      type: 'collapse-all',
+      workspaceName,
+      keepExpandedPaths,
+    });
+  }
+
+  private updateFileTreeExpansion(action: FileTreeExpansionAction) {
+    this.store.set(this.$fileTreeExpandedPathsByWorkspace, (current) =>
+      reduceFileTreeExpansion(current, action),
+    );
   }
 
   get $wideEditor() {

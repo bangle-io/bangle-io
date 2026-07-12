@@ -82,7 +82,9 @@ export type AppSidebarProps = {
   showNoteFilesOnly: boolean;
   onShowNoteFilesOnlyChange: (showNoteFilesOnly: boolean) => void;
   expandedFileTreePaths?: readonly string[];
-  onExpandedFileTreePathsChange: (expandedPaths: readonly string[]) => void;
+  onFileTreeDirectoryExpansionChange: (path: string, expanded: boolean) => void;
+  onRevealFileTreePaths: (paths: readonly string[]) => void;
+  onCollapseFileTree: (keepExpandedPaths: readonly string[]) => void;
   /**
    * When set, renders a recoverable error notice above the file tree, e.g.
    * after a failed workspace file scan. The tree below keeps showing the last
@@ -213,7 +215,9 @@ export function AppSidebar({
   onMoveFile,
   onOpenFile,
   expandedFileTreePaths,
-  onExpandedFileTreePathsChange,
+  onFileTreeDirectoryExpansionChange,
+  onRevealFileTreePaths,
+  onCollapseFileTree,
   showNoteFilesOnly,
   onShowNoteFilesOnlyChange,
   fileTreeNotice,
@@ -285,7 +289,9 @@ export function AppSidebar({
               onMoveFile={onMoveFile}
               onOpenFile={onOpenFile}
               expandedPaths={expandedFileTreePaths}
-              onExpandedPathsChange={onExpandedFileTreePathsChange}
+              onDirectoryExpansionChange={onFileTreeDirectoryExpansionChange}
+              onRevealPaths={onRevealFileTreePaths}
+              onCollapseAll={onCollapseFileTree}
               showNoteFilesOnly={showNoteFilesOnly}
               onShowNoteFilesOnlyChange={onShowNoteFilesOnlyChange}
             />

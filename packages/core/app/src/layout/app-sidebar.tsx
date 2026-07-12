@@ -25,10 +25,9 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   const [showNoteFilesOnly, setShowNoteFilesOnly] = useAtom(
     workbenchState.$showNoteFilesOnlyInSidebar,
   );
-  const [
-    fileTreeExpandedPathsByWorkspace,
-    setFileTreeExpandedPathsByWorkspace,
-  ] = useAtom(workbenchState.$fileTreeExpandedPathsByWorkspace);
+  const fileTreeExpandedPathsByWorkspace = useAtomValue(
+    workbenchState.$fileTreeExpandedPathsByWorkspace,
+  );
   const activeWsName = useAtomValue(navigation.$wsName);
   const activeWsPaths = useAtomValue(workspaceState.$activeWsPaths);
   const wsPaths = useAtomValue(workspaceState.$wsPaths);
@@ -61,6 +60,35 @@ export const AppSidebar = ({ children }: SidebarProps) => {
     activeWsName,
     commandDispatcher,
   });
+
+  const handleFileTreeDirectoryExpansionChange = React.useCallback(
+    (path: string, expanded: boolean) => {
+      if (activeWsName) {
+        workbenchState.setFileTreeDirectoryExpanded(
+          activeWsName,
+          path,
+          expanded,
+        );
+      }
+    },
+    [activeWsName, workbenchState],
+  );
+  const handleRevealFileTreePaths = React.useCallback(
+    (paths: readonly string[]) => {
+      if (activeWsName) {
+        workbenchState.revealFileTreePaths(activeWsName, paths);
+      }
+    },
+    [activeWsName, workbenchState],
+  );
+  const handleCollapseFileTree = React.useCallback(
+    (keepExpandedPaths: readonly string[]) => {
+      if (activeWsName) {
+        workbenchState.collapseFileTree(activeWsName, keepExpandedPaths);
+      }
+    },
+    [activeWsName, workbenchState],
+  );
 
   return (
     <Sidebar.SidebarProvider
@@ -172,16 +200,11 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             ? fileTreeExpandedPathsByWorkspace[activeWsName]
             : undefined
         }
-        onExpandedFileTreePathsChange={(expandedPaths) => {
-          if (!activeWsName) {
-            return;
-          }
-
-          setFileTreeExpandedPathsByWorkspace((current) => ({
-            ...current,
-            [activeWsName]: expandedPaths,
-          }));
-        }}
+        onFileTreeDirectoryExpansionChange={
+          handleFileTreeDirectoryExpansionChange
+        }
+        onRevealFileTreePaths={handleRevealFileTreePaths}
+        onCollapseFileTree={handleCollapseFileTree}
         commandButtonClassName="desktop-titlebar-no-drag"
         showNoteFilesOnly={showNoteFilesOnly}
         onShowNoteFilesOnlyChange={setShowNoteFilesOnly}
