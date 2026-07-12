@@ -1,14 +1,22 @@
 ---
 title: Markdown Table Support
-status: active
+status: completed
 type: plan
-archived: false
+archived: true
+archived_on: 2026-07-12
 created: 2026-07-01
-updated: 2026-07-01
+updated: 2026-07-12
 owner: mixed
-related_prs: []
+related_prs:
+  - https://github.com/bangle-io/bangle-io/pull/556
 related_issues: []
 ---
+
+> DONE Completed on 2026-07-02 in PR #556. V1 shipped editable Markdown pipe
+> tables, visible row/column/alignment controls, keyboard navigation, exact
+> round-trip coverage, and Playwright persistence coverage. The implementation
+> passed the repository checks recorded below; later table polish is separate
+> follow-up work rather than part of this completed V1 plan.
 
 # Markdown Table Support
 
@@ -33,7 +41,7 @@ inside a Markdown note, not a second product embedded in the editor.
 
 ## Current Status
 
-V1 is implemented on branch `worktree-markdown-table-support` (2026-07-01):
+V1 merged to `main` in PR #556 on 2026-07-02:
 
 - `packages/js-lib/banger-editor/src/table.ts` owns the schema
   (`prosemirror-tables` `tableNodes`, inline-only cells, `align` cell attr),
@@ -821,11 +829,5 @@ The first released version should satisfy all of these:
 
 ## Next Steps
 
-1. Re-read the files listed in "Current Status" and "Reference Projects".
-2. Confirm the current `prosemirror-tables` package version and API.
-3. Start with schema, parser, serializer, and round-trip tests.
-4. Register the extension only after the Markdown path is covered.
-5. Add command wrappers and keyboard behavior.
-6. Add slash command insertion.
-7. Add handle UI using ProseKit as the UX reference.
-8. Finish with E2E persistence coverage and the required repo checks.
+No remaining V1 work. Track optional table polish as separate project items so
+it can be prioritized independently from the shipped Markdown table workflow.

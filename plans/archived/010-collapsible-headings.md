@@ -2,14 +2,20 @@
 title: Collapsible Headings (fold / unfold sections)
 status: completed
 type: plan
-archived: false
-archived_on:
+archived: true
+archived_on: 2026-07-12
 created: 2026-07-03
-updated: 2026-07-03
+updated: 2026-07-12
 owner: agent
-related_prs: []
+related_prs:
+  - https://github.com/bangle-io/bangle-io/pull/597
 related_issues: []
 ---
+
+> DONE Completed on 2026-07-04 in PR #597. Collapsible headings shipped as
+> view-only editor state with Markdown round-trip safety, focused unit tests,
+> committed Playwright coverage, and the lint, test, E2E, build, and manual
+> Playwright smoke verification recorded below.
 
 # Collapsible Headings
 
