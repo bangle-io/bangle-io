@@ -7,8 +7,20 @@ import type {
   FileTree as PierreFileTreeModel,
 } from '@pierre/trees';
 import { FileTree, useFileTree } from '@pierre/trees/react';
-import { FilePlus2, FileText, FolderPlus } from 'lucide-react';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import {
+  ChevronsDownUp,
+  ChevronsUpDown,
+  FilePlus2,
+  FileText,
+  FolderPlus,
+} from 'lucide-react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { BANGLE_PIERRE_FILE_TREE_ICONS } from './pierre-file-tree-icons';
 import {
   type FileTreeEntry,
@@ -144,6 +156,29 @@ function collectAncestorDirectoryPaths(paths: readonly string[]): string[] {
   }
 
   return [...directories];
+}
+
+function setExpandedDirectories(
+  model: PierreFileTreeModel,
+  directoryPaths: readonly string[],
+  expandedPaths: ReadonlySet<string>,
+): void {
+  // Collapse children before parents, then expand parents before children. This
+  // keeps the operation deterministic even when the tree implementation skips
+  // rendering descendants of a collapsed directory.
+  for (const directoryPath of [...directoryPaths].reverse()) {
+    const item = model.getItem(directoryPath);
+    if (item && 'collapse' in item && !expandedPaths.has(directoryPath)) {
+      item.collapse();
+    }
+  }
+
+  for (const directoryPath of directoryPaths) {
+    const item = model.getItem(directoryPath);
+    if (item && 'expand' in item && expandedPaths.has(directoryPath)) {
+      item.expand();
+    }
+  }
 }
 
 // `resetPaths` re-seeds expansion from the tree's `initialExpansion` unless it
@@ -316,6 +351,16 @@ export function PierreFileTree({
     () => activePaths.map((path) => normalizeInputPath(path)),
     [activePaths],
   );
+  const activeTreePath = activeTreePaths.at(-1);
+  const directoryPaths = useMemo(
+    () => collectAncestorDirectoryPaths(treePaths),
+    [treePaths],
+  );
+  const activeAncestorPaths = useMemo(
+    () => collectAncestorDirectoryPaths(activeTreePath ? [activeTreePath] : []),
+    [activeTreePath],
+  );
+  const [expandAllOnNextClick, setExpandAllOnNextClick] = useState(false);
   const filePathSetRef = useRef<ReadonlySet<string>>(filePathSet);
   const modelRef = useRef<PierreFileTreeModel | null>(null);
   const contextMenuSelectedEntriesRef = useRef<readonly FileTreeEntry[]>([]);
@@ -336,7 +381,7 @@ export function PierreFileTree({
   // The file the active route points at. Kept current on every render so
   // `onSelectionChange` can tell a genuine user open from a route-driven
   // re-select (see `shouldOpenSelectedFile`).
-  activeSelectedPathRef.current = activeTreePaths.at(-1) ?? null;
+  activeSelectedPathRef.current = activeTreePath ?? null;
 
   // Single source of truth for "is this drop a real move?": exactly one dragged
   // file we know about, landing in a directory other than its current parent.
@@ -520,6 +565,14 @@ export function PierreFileTree({
   }, [model, treePaths]);
 
   useEffect(() => {
+    if (!expandAllOnNextClick) {
+      return;
+    }
+
+    setExpandedDirectories(model, directoryPaths, new Set(activeAncestorPaths));
+  }, [activeAncestorPaths, directoryPaths, expandAllOnNextClick, model]);
+
+  useEffect(() => {
     const nextSelectedPath = activeTreePaths.at(-1) ?? null;
     const shouldPreserveScroll =
       pendingUserOpenPathRef.current === nextSelectedPath;
@@ -592,6 +645,19 @@ export function PierreFileTree({
     }
   };
 
+  const handleToggleAllDirectories = (): void => {
+    const nextExpandedPaths = expandAllOnNextClick
+      ? new Set(directoryPaths)
+      : new Set(activeAncestorPaths);
+
+    setExpandedDirectories(model, directoryPaths, nextExpandedPaths);
+    setExpandAllOnNextClick(!expandAllOnNextClick);
+  };
+
+  const toggleAllDirectoriesLabel = expandAllOnNextClick
+    ? t.app.components.appSidebar.expandAllFoldersActionTitle
+    : t.app.components.appSidebar.collapseAllFoldersActionTitle;
+
   return (
     <div
       ref={rootElementRef}
@@ -606,6 +672,20 @@ export function PierreFileTree({
           <span className="min-w-0 flex-1 truncate font-medium text-[11px] text-sidebar-foreground/55 uppercase tracking-wide">
             {t.app.components.appSidebar.filesLabel}
           </span>
+          <button
+            type="button"
+            className="inline-flex size-6 items-center justify-center rounded-sm text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-40"
+            aria-label={toggleAllDirectoriesLabel}
+            title={toggleAllDirectoriesLabel}
+            disabled={directoryPaths.length === 0}
+            onClick={handleToggleAllDirectories}
+          >
+            {expandAllOnNextClick ? (
+              <ChevronsUpDown className="size-3.5" />
+            ) : (
+              <ChevronsDownUp className="size-3.5" />
+            )}
+          </button>
           <button
             type="button"
             className={cn(

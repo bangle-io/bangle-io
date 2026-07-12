@@ -198,6 +198,80 @@ async function writeStoredFiles(
   );
 }
 
+test('file explorer toggles between the active note path and all expanded folders', async ({
+  page,
+}) => {
+  const workspaceName = `explorer-collapse-all-${Date.now()}`;
+  await createBrowserWorkspace(page, { workspaceName });
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'active/branch/current',
+    'Current note',
+  );
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'active/sibling',
+    'Active sibling',
+  );
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'other/deep/hidden',
+    'Other note',
+  );
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'other/root',
+    'Other root note',
+  );
+
+  await page.goto(
+    `/ws#route=editor&wsPath=${encodeURIComponent(
+      `${workspaceName}:active/branch/current.md`,
+    )}`,
+  );
+  await page.reload();
+
+  const explorer = page.getByTestId('bangle-file-explorer');
+  const activeFolder = explorer.getByRole('treeitem', { name: /^active$/ });
+  const branchFolder = explorer.getByRole('treeitem', { name: /^branch$/ });
+  const otherFolder = explorer.getByRole('treeitem', { name: /^other$/ });
+
+  await activeFolder.focus();
+  await page.keyboard.press('ArrowRight');
+  await branchFolder.focus();
+  await page.keyboard.press('ArrowRight');
+  await otherFolder.focus();
+  await page.keyboard.press('ArrowRight');
+  const deepFolder = explorer.getByRole('treeitem', { name: /^deep$/ });
+  await deepFolder.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(
+    explorer.getByRole('treeitem', { name: /^hidden\.md$/ }),
+  ).toBeVisible();
+
+  await explorer.getByRole('button', { name: 'Collapse All Folders' }).click();
+
+  await expect(activeFolder).toHaveAttribute('aria-expanded', 'true');
+  await expect(branchFolder).toHaveAttribute('aria-expanded', 'true');
+  await expect(
+    explorer.getByRole('treeitem', { name: /^current\.md$/ }),
+  ).toBeVisible();
+  await expect(otherFolder).toHaveAttribute('aria-expanded', 'false');
+  await expect(deepFolder).toBeHidden();
+
+  await explorer.getByRole('button', { name: 'Expand All Folders' }).click();
+
+  await expect(otherFolder).toHaveAttribute('aria-expanded', 'true');
+  await expect(deepFolder).toHaveAttribute('aria-expanded', 'true');
+  await expect(
+    explorer.getByRole('treeitem', { name: /^hidden\.md$/ }),
+  ).toBeVisible();
+});
+
 test('file explorer creates folders, opens notes, and survives reload', async ({
   page,
 }) => {
