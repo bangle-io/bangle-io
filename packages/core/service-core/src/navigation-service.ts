@@ -79,11 +79,7 @@ export class NavigationService extends BaseService {
     if (routeInfo.route === 'ws-home') {
       return routeInfo.payload.wsName;
     }
-    if (
-      routeInfo.route === 'editor' ||
-      routeInfo.route === 'asset' ||
-      routeInfo.route === 'ws-path-not-found'
-    ) {
+    if (routeInfo.route === 'editor' || routeInfo.route === 'asset') {
       return WsPath.safeParse(routeInfo.payload.wsPath).data?.wsName;
     }
 

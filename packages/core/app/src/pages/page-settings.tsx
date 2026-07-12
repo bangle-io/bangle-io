@@ -107,12 +107,43 @@ function getSettingsReturnTo(routeInfo: AppRouteInfo) {
   return routeInfo.payload.returnTo;
 }
 
-function safeAppHref(href: string | undefined) {
-  if (!href?.startsWith('/') || href.startsWith('//')) {
+function hasUnsafeAppHrefCharacter(href: string) {
+  return [...href].some((character) => {
+    const codePoint = character.codePointAt(0) ?? 0;
+    return (
+      character === '\\' ||
+      codePoint <= 0x1f ||
+      (codePoint >= 0x7f && codePoint <= 0x9f)
+    );
+  });
+}
+
+/** @internal Exported from this module only for focused URL-boundary tests. */
+export function safeAppHref(
+  href: string | undefined,
+  currentHref = window.location.href,
+) {
+  if (!href || hasUnsafeAppHrefCharacter(href)) {
     return undefined;
   }
 
-  return href;
+  try {
+    const currentUrl = new URL(currentHref);
+    const targetUrl = new URL(href, currentUrl);
+
+    if (
+      !href.startsWith('/') ||
+      href.startsWith('//') ||
+      targetUrl.protocol !== currentUrl.protocol ||
+      targetUrl.host !== currentUrl.host
+    ) {
+      return undefined;
+    }
+
+    return `${targetUrl.pathname}${targetUrl.search}${targetUrl.hash}`;
+  } catch {
+    return undefined;
+  }
 }
 
 export function PageSettings() {

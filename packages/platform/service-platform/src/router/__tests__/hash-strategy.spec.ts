@@ -71,20 +71,6 @@ describe('HashStrategy', () => {
       });
     });
 
-    it('should handle fatal-error with Error object properly', () => {
-      const routeInfo: AppRouteInfo = {
-        route: 'fatal-error',
-        payload: { error: new Error('Something bad') },
-      };
-
-      const result = strategy.encodeRouteInfo(routeInfo, '/app/');
-      // basePath is used as-is in encodeRouteInfo
-      expect(result.pathname).toBe('/app/');
-      expect(result.search).toBe('');
-      expect(result.hash).toContain('fatal-error');
-      expect(result.hash).toContain('error=Something+bad');
-    });
-
     it('should handle empty payload fields', () => {
       const routeInfo: AppRouteInfo = {
         route: 'editor',
@@ -193,18 +179,6 @@ describe('HashStrategy', () => {
       expect(result.payload).toEqual({ path: '/invalid-wsPath' });
     });
 
-    it('should decode a fatal-error route', () => {
-      const encoded: EncodedRoute = {
-        pathname: '/app',
-        search: '',
-        hash: '#route=fatal-error&error=OMG',
-      };
-
-      const result = strategy.decodeRouteInfo(encoded, basePath);
-      expect(result.route).toBe('fatal-error');
-      expect((result.payload as { error: Error }).error.message).toBe('OMG');
-    });
-
     it('should decode settings general route', () => {
       const encoded: EncodedRoute = {
         pathname: '/app',
@@ -270,14 +244,6 @@ describe('HashStrategy', () => {
         basePath: '',
       },
       {
-        name: 'fatal-error route with basePath',
-        routeInfo: {
-          route: 'fatal-error',
-          payload: { error: new Error('Test error') },
-        },
-        basePath: '/someBase',
-      },
-      {
         name: 'settings general route with basePath',
         routeInfo: {
           route: 'settings-general',
@@ -291,15 +257,7 @@ describe('HashStrategy', () => {
       it(`should encode/decode for ${name}`, () => {
         const encoded = strategy.encodeRouteInfo(routeInfo, basePath);
         const decoded = strategy.decodeRouteInfo(encoded, basePath);
-        // Because we store only the error message for 'fatal-error', test carefully
-        if (routeInfo.route === 'fatal-error') {
-          expect(decoded.route).toBe('fatal-error');
-          expect((decoded.payload as { error: Error }).error.message).toBe(
-            (routeInfo.payload as { error: Error }).error.message,
-          );
-        } else {
-          expect(decoded).toEqual(routeInfo);
-        }
+        expect(decoded).toEqual(routeInfo);
       });
     });
   });

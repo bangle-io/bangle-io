@@ -85,6 +85,26 @@ test('general settings returns to the route it was opened from', async ({
   ).toBeVisible();
 });
 
+test('general settings rejects an external return target', async ({ page }) => {
+  const hash = new URLSearchParams({
+    route: 'settings-general',
+    returnTo: '/\\evil.example/path',
+  });
+
+  await page.goto(`/#${hash.toString()}`);
+  await expect(page.getByRole('heading', { name: 'General' })).toBeVisible();
+
+  const backLink = page.getByRole('link', { name: 'Back to app' });
+  const href = await backLink.getAttribute('href');
+  expect(href).not.toBeNull();
+  expect(new URL(href ?? '', page.url()).origin).toBe(
+    new URL(page.url()).origin,
+  );
+
+  await backLink.click();
+  await expect(page).toHaveURL(/#route=welcome$/);
+});
+
 test('general settings can install the PWA when the browser exposes an install prompt', async ({
   page,
 }) => {
