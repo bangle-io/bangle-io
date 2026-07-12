@@ -35,19 +35,12 @@ export type FileStorageChangeEvent =
 /**
  * A change made to workspace files by something other than this app instance
  * (a sync tool, another editor, a shell command), detected by a storage
- * provider's watcher. `refresh` is the coarse fallback when the watcher only
- * knows "something under this workspace changed".
+ * provider's watcher. Per-path changes reuse the mutation event shape;
+ * `refresh` is the coarse fallback when the watcher only knows "something
+ * under this workspace changed".
  */
 export type FileStorageExternalChangeEvent =
-  | {
-      type: 'create' | 'update' | 'delete';
-      wsPath: string;
-    }
-  | {
-      type: 'rename';
-      oldWsPath: string;
-      newWsPath: string;
-    }
+  | FileStorageChangeEvent
   | {
       type: 'refresh';
       wsName: string;

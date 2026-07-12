@@ -51,14 +51,22 @@ describe('workspace file visibility policy', () => {
   });
 });
 
-describe('transient swap/temp files', () => {
+describe('transient swap files', () => {
   it.each([
     'ws:note.md.crswap',
     'ws:docs/other.MD.CRSWAP',
-    'ws:draft.tmp',
-    'ws:notes/file.swp',
-  ])('hides %s from workspace listings and watchers', (wsPath) => {
+  ])('hides Chromium swap file %s from workspace listings and watchers', (wsPath) => {
     expect(isVisibleWorkspaceFilePath(wsPath)).toBe(false);
+  });
+
+  it.each([
+    'ws:export.tmp',
+    'ws:notes/recovered.swp',
+  ])('keeps possibly-legitimate temp-suffixed user file %s visible', (wsPath) => {
+    // .tmp/.swp can be real pre-existing user files (and the asset
+    // pipeline accepts them); only the native FS watcher suppresses them
+    // as change noise, listings must not hide them.
+    expect(isVisibleWorkspaceFilePath(wsPath)).toBe(true);
   });
 
   it('still shows regular notes and assets', () => {

@@ -15,6 +15,7 @@ import {
   NATIVE_FS_ERROR_CODE,
   NativeFs,
   type NativeFsChange,
+  supportsFileSystemObserver,
 } from '@bangle.io/native-fs';
 import type {
   BaseFileStorageProvider,
@@ -27,6 +28,7 @@ import {
   WsPath,
 } from '@bangle.io/ws-path';
 import { assertSameWorkspaceRename } from './file-storage-utils';
+import type { PageReturnInfo } from './router/page-return';
 
 type Config = {
   getRootDirHandle: (
@@ -50,26 +52,46 @@ type Config = {
    * Subscribes `listener` to "the user returned to the page" transitions
    * (tab became visible again, window regained focus). The composition root
    * wires this to the platform router's page-lifecycle stream (see
-   * `onPageReturn` in this package), keeping the visibility source swappable
-   * and out of this service.
+   * `onPageReturn` in this package, which also collapses one return's
+   * transition burst into a single notification), keeping the visibility
+   * source swappable and out of this service.
    *
-   * On each return the service re-emits a throttled coarse refresh for every
-   * opened workspace and re-arms watchers that died — OS file watchers are
-   * best-effort (frozen tabs, permission loss, network drives), so returning
-   * to the page is the natural moment to reconcile.
+   * On each return the service re-arms watchers that died and re-emits a
+   * coarse refresh where the watcher may have missed something — OS file
+   * watchers are best-effort (frozen tabs, permission loss, network drives),
+   * so returning to the page is the natural moment to reconcile.
    */
-  subscribePageReturn?: (listener: () => void, signal: AbortSignal) => void;
+  subscribePageReturn?: (
+    listener: (info: PageReturnInfo) => void,
+    signal: AbortSignal,
+  ) => void;
 };
 
 /**
- * Window within which page-return notifications are treated as one return:
- * a single return fires both `visibilitychange` and `focus` back-to-back,
- * and only the first should refresh. Kept short deliberately — for browsers
- * without `FileSystemObserver` this refresh is the only reconciliation, so a
- * genuinely separate leave→edit→return cycle moments later must not be
- * swallowed by a wall-clock throttle.
+ * Transient-file suffixes suppressed from WATCHER events only: other
+ * software's scratch files churn constantly next to real content and would
+ * otherwise spam per-path refreshes. Unlike the shared workspace file policy
+ * (which hides `.crswap` everywhere), these stay visible in listings — a
+ * pre-existing `export.tmp` can be a legitimate user file; only its change
+ * noise is unwanted.
  */
-const PAGE_RETURN_DEDUPE_MS = 1_000;
+const TRANSIENT_WATCH_SUFFIXES = ['.tmp', '.swp'];
+
+/** How the watcher should treat a path from an observer record. */
+type WatchPathClass =
+  | { kind: 'file'; wsPath: string }
+  | { kind: 'ignored' }
+  | { kind: 'coarse' };
+
+type FsCacheEntry = {
+  fs: NativeFs;
+  /**
+   * Whether a watch is (believed to be) armed for this workspace. Set
+   * optimistically when a watch starts; cleared when starting fails or the
+   * observer reports an `errored` record, so the next page return re-arms.
+   */
+  watching: boolean;
+};
 
 export class FileStorageNativeFs
   extends BaseService
@@ -78,9 +100,7 @@ export class FileStorageNativeFs
   public readonly workspaceType = WORKSPACE_STORAGE_TYPE.NativeFS;
   public readonly maxFileSizeBytes = FILE_STORAGE_MAX_FILE_SIZE_BYTES.nativeFs;
 
-  private fsCache: Map<string, NativeFs> = new Map();
-  private watchedWorkspaces = new Set<string>();
-  private lastPageReturnRevalidation = 0;
+  private fsCache: Map<string, FsCacheEntry> = new Map();
 
   constructor(
     context: BaseServiceContext,
@@ -94,13 +114,12 @@ export class FileStorageNativeFs
     assertIsDefined(this.config.getRootDirHandle, 'getRootDirHandle');
     if (this.config.onExternalChange) {
       this.config.subscribePageReturn?.(
-        () => this.revalidateOnPageReturn(),
+        (info) => this.revalidateOnPageReturn(info),
         this.abortSignal,
       );
     }
     this.addCleanup(() => {
       this.fsCache.clear();
-      this.watchedWorkspaces.clear();
     });
   }
 
@@ -140,9 +159,9 @@ export class FileStorageNativeFs
       );
     }
 
-    const cachedFs = this.fsCache.get(wsName);
-    if (cachedFs) {
-      return cachedFs;
+    const cached = this.fsCache.get(wsName);
+    if (cached) {
+      return cached.fs;
     }
 
     const { handle: rootDirHandle } =
@@ -155,28 +174,36 @@ export class FileStorageNativeFs
       lockScope: wsName,
     });
 
-    this.fsCache.set(wsName, fs);
-    this.startWatching(wsName, fs);
+    const entry: FsCacheEntry = { fs, watching: false };
+    this.fsCache.set(wsName, entry);
+    this.startWatching(wsName, entry);
     return fs;
   }
 
   // ---- external change watching ----
 
-  private startWatching(wsName: string, fs: NativeFs): void {
-    if (!this.config.onExternalChange || this.watchedWorkspaces.has(wsName)) {
+  private startWatching(wsName: string, entry: FsCacheEntry): void {
+    if (
+      !this.config.onExternalChange ||
+      entry.watching ||
+      // Without the observer API, watching can never arm; leaving the entry
+      // unmarked keeps page-return revalidation as the refresh path (and
+      // avoids arming optimistically only to fail asynchronously each time).
+      !supportsFileSystemObserver()
+    ) {
       return;
     }
-    this.watchedWorkspaces.add(wsName);
+    entry.watching = true;
 
     // Watching is best-effort: a failure to observe must never break file
     // operations, so errors are logged rather than propagated. A failed
     // start leaves the workspace unmarked so the next page return retries.
-    void fs
+    void entry.fs
       .watch((changes) => this.handleWatchChanges(wsName, changes), {
         signal: this.abortSignal,
       })
       .catch((error) => {
-        this.watchedWorkspaces.delete(wsName);
+        entry.watching = false;
         this.logger.warn(
           `Unable to watch native FS workspace "${wsName}" for external changes`,
           error,
@@ -185,27 +212,68 @@ export class FileStorageNativeFs
   }
 
   /**
-   * The user came back to the page: emit a throttled coarse refresh for
-   * every opened workspace and retry watchers that failed or died. This is
+   * The user came back to the page: retry watchers that failed or died, and
+   * emit a coarse refresh where the watcher may have missed changes. This is
    * the safety net for everything the observer cannot promise — events
    * missed while the tab was frozen, watchers killed by permission loss,
    * filesystems where OS watching is unreliable — and the only refresh
    * mechanism at all when `FileSystemObserver` is unsupported.
+   *
+   * A return from a hidden/frozen tab refreshes every opened workspace: the
+   * browser may have starved the observer while the tab was away. A mere
+   * window refocus (the page stayed visible throughout) misses nothing while
+   * a watcher is armed, so only workspaces without a live watcher — observer
+   * unsupported, or the watch died — are refreshed; anything else would
+   * re-list every workspace and re-read every open note on each alt-tab.
    */
-  private revalidateOnPageReturn(): void {
+  private revalidateOnPageReturn(info: PageReturnInfo): void {
     const onExternalChange = this.config.onExternalChange;
     if (!onExternalChange || this.fsCache.size === 0) {
       return;
     }
-    const now = Date.now();
-    if (now - this.lastPageReturnRevalidation < PAGE_RETURN_DEDUPE_MS) {
-      return;
+    for (const [wsName, entry] of this.fsCache) {
+      const wasWatching = entry.watching;
+      this.startWatching(wsName, entry);
+      if (info.returnedFromHidden || !wasWatching) {
+        onExternalChange({ type: 'refresh', wsName });
+      }
     }
-    this.lastPageReturnRevalidation = now;
-    for (const [wsName, fs] of this.fsCache) {
-      this.startWatching(wsName, fs);
-      onExternalChange({ type: 'refresh', wsName });
+  }
+
+  /**
+   * How the watcher should treat a record's path:
+   *
+   * - `file`: a visible workspace file — emit a targeted per-path event.
+   * - `ignored`: invisible to the app (dotfiles, ignored directories,
+   *   `.crswap`, transient watch suffixes) — drop the record entirely.
+   * - `coarse`: directory-shaped or unparseable — the record cannot be
+   *   mapped to per-path events; only a workspace re-list reconciles it.
+   *   Deleted entries carry no handle (`kind` is unknowable for
+   *   `disappeared` records), so path shape is the only directory signal
+   *   left. A dotted directory name is indistinguishable from a file here;
+   *   the resulting per-path event is wrong but harmless — the counter bump
+   *   still re-lists the tree.
+   */
+  private classifyWatchPath(
+    wsName: string,
+    relativePath: string,
+  ): WatchPathClass {
+    const result = WsPath.safeFromParts(wsName, relativePath);
+    const wsPath = result.ok && result.data ? result.data.wsPath : undefined;
+    if (wsPath === undefined) {
+      return { kind: 'coarse' };
     }
+    if (!WsPath.safeParseFile(wsPath).data) {
+      return { kind: 'coarse' };
+    }
+    if (!isVisibleWorkspaceFilePath(wsPath)) {
+      return { kind: 'ignored' };
+    }
+    const lowerPath = relativePath.toLowerCase();
+    if (TRANSIENT_WATCH_SUFFIXES.some((suffix) => lowerPath.endsWith(suffix))) {
+      return { kind: 'ignored' };
+    }
+    return { kind: 'file', wsPath };
   }
 
   private handleWatchChanges(wsName: string, changes: NativeFsChange[]): void {
@@ -213,15 +281,6 @@ export class FileStorageNativeFs
     if (!onExternalChange) {
       return;
     }
-
-    const toVisibleWsPath = (relativePath: string): string | undefined => {
-      const result = WsPath.safeFromParts(wsName, relativePath);
-      const wsPath = result.ok && result.data ? result.data.wsPath : undefined;
-      if (wsPath === undefined) {
-        return undefined;
-      }
-      return isVisibleWorkspaceFilePath(wsPath) ? wsPath : undefined;
-    };
 
     // One observer callback can deliver a burst (a sync tool touching many
     // files at once), so the batch is coalesced before anything is emitted:
@@ -236,8 +295,16 @@ export class FileStorageNativeFs
       // watched directory disappeared). Un-mark the workspace so the next
       // page return re-arms the watcher, and refresh what we may have missed.
       if (change.type === 'errored') {
-        this.watchedWorkspaces.delete(wsName);
+        const entry = this.fsCache.get(wsName);
+        if (entry) {
+          entry.watching = false;
+        }
         needsRefresh = true;
+        continue;
+      }
+      if (needsRefresh) {
+        // The coarse refresh subsumes every per-path event in this batch;
+        // only further `errored` records (handled above) still matter.
         continue;
       }
       // Directory-level records and records the observer could not classify
@@ -249,29 +316,59 @@ export class FileStorageNativeFs
       }
 
       if (change.type === 'moved') {
-        const newWsPath = toVisibleWsPath(change.path);
-        const oldWsPath =
-          change.movedFromPath === undefined
-            ? undefined
-            : toVisibleWsPath(change.movedFromPath);
-        if (!newWsPath || !oldWsPath) {
+        if (change.movedFromPath === undefined) {
+          // Origin unknown (platform watchers cannot always pair renames):
+          // a visible file may have been renamed away, and only a re-list
+          // can tell.
           needsRefresh = true;
           continue;
         }
-        specificEvents.set(`rename:${oldWsPath}->${newWsPath}`, {
-          type: 'rename',
-          oldWsPath,
-          newWsPath,
-        });
+        const from = this.classifyWatchPath(wsName, change.movedFromPath);
+        const to = this.classifyWatchPath(wsName, change.path);
+        if (from.kind === 'coarse' || to.kind === 'coarse') {
+          needsRefresh = true;
+        } else if (from.kind === 'file' && to.kind === 'file') {
+          specificEvents.set(`rename:${from.wsPath}->${to.wsPath}`, {
+            type: 'rename',
+            oldWsPath: from.wsPath,
+            newWsPath: to.wsPath,
+          });
+        } else if (to.kind === 'file') {
+          // Atomic-write pattern (Chromium's own `.crswap` commit, sync
+          // tools' write-to-temp-then-rename): content materialized at the
+          // visible path from a transient one the app never showed. Treat it
+          // as the visible file appearing rather than refreshing the whole
+          // workspace — with self-writes deliberately unfiltered, a coarse
+          // refresh here would re-list on every local save.
+          specificEvents.set(`create:${to.wsPath}`, {
+            type: 'create',
+            wsPath: to.wsPath,
+          });
+        } else if (from.kind === 'file') {
+          // Visible file moved to an invisible path — gone as far as the
+          // app is concerned.
+          specificEvents.set(`delete:${from.wsPath}`, {
+            type: 'delete',
+            wsPath: from.wsPath,
+          });
+        }
+        // Both endpoints invisible: a transient-to-transient shuffle the
+        // app never shows — drop it like the equivalent appeared/disappeared
+        // records.
         continue;
       }
 
-      const wsPath = toVisibleWsPath(change.path);
-      if (wsPath === undefined) {
-        // Hidden/system/unparseable paths (sync temp files, dotfiles) are
+      const classified = this.classifyWatchPath(wsName, change.path);
+      if (classified.kind === 'coarse') {
+        needsRefresh = true;
+        continue;
+      }
+      if (classified.kind === 'ignored') {
+        // Hidden/system/transient paths (sync temp files, dotfiles) are
         // invisible to the app; ignore them entirely.
         continue;
       }
+      const wsPath = classified.wsPath;
       switch (change.type) {
         case 'appeared': {
           specificEvents.set(`create:${wsPath}`, { type: 'create', wsPath });

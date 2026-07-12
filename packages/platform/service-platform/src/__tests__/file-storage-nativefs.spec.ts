@@ -7,6 +7,7 @@ import { isAbortError } from '@bangle.io/mini-js-utils';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { FileStorageNativeFs } from '../file-storage-nativefs';
+import type { PageReturnInfo } from '../router/page-return';
 import { testCrossWorkspaceRenameContract } from './file-storage-rename-contract';
 
 class FakeFileHandle {
@@ -119,9 +120,11 @@ async function setup(
   const onExternalChange = vi.fn();
   // Captures the page-return listener the service registers so tests can
   // simulate the user coming back to the tab.
-  let pageReturnListener: (() => void) | undefined;
-  const triggerPageReturn = () => {
-    pageReturnListener?.();
+  let pageReturnListener: ((info: PageReturnInfo) => void) | undefined;
+  const triggerPageReturn = (
+    info: PageReturnInfo = { returnedFromHidden: true },
+  ) => {
+    pageReturnListener?.(info);
   };
   const rootDirHandle = new FakeDirectoryHandle(
     rootName,
@@ -141,7 +144,7 @@ async function setup(
       ...(options.withExternalChange
         ? {
             onExternalChange,
-            subscribePageReturn: (listener: () => void) => {
+            subscribePageReturn: (listener: (info: PageReturnInfo) => void) => {
               pageReturnListener = listener;
             },
           }
@@ -437,9 +440,10 @@ describe('external change watching', () => {
         changedHandle: { kind: 'file' },
       },
       {
+        // Deleted entries carry no handle in real Chrome (kind unknowable);
+        // classification must come from the path shape.
         type: 'disappeared',
         relativePathComponents: ['gone.md'],
-        changedHandle: { kind: 'file' },
       },
       {
         type: 'moved',
@@ -590,48 +594,180 @@ describe('external change watching', () => {
     ]);
   });
 
-  it('revalidates opened workspaces on page return, deduping one return burst', async () => {
-    vi.useFakeTimers();
-    try {
-      // Works with or without the observer API; here it is absent, making
-      // page-return revalidation the only refresh path.
-      const { service, onExternalChange, triggerPageReturn } = await setup(
-        undefined,
-        'myWorkspace',
-        {
-          withExternalChange: true,
-        },
-      );
+  it('coarse-refreshes a deleted directory, whose record has no handle to say so', async () => {
+    const observer = stubFileSystemObserver();
+    const { service, onExternalChange } = await setup(
+      undefined,
+      'myWorkspace',
+      {
+        withExternalChange: true,
+      },
+    );
+    await service.fileExists('myWorkspace:seed.md');
+    await vi.waitFor(() => {
+      expect(observer.observe).toHaveBeenCalledTimes(1);
+    });
 
-      // Before any workspace is opened, a page return is a no-op.
-      triggerPageReturn();
-      expect(onExternalChange).not.toHaveBeenCalled();
+    // Real Chrome delivers `disappeared` with changedHandle: null, so a
+    // deleted DIRECTORY is indistinguishable from a file by `kind`. Its
+    // extensionless path is directory-shaped, and its descendants get no
+    // records of their own — only a re-list reconciles the tree.
+    await observer.emitRecords([
+      { type: 'disappeared', relativePathComponents: ['archive'] },
+    ]);
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'refresh', wsName: 'myWorkspace' },
+    ]);
+  });
 
-      await service.fileExists('myWorkspace:seed.md');
-      triggerPageReturn();
-      expect(onExternalChange).toHaveBeenCalledWith({
-        type: 'refresh',
-        wsName: 'myWorkspace',
-      });
+  it('degrades atomic-write moves to per-path events instead of workspace refreshes', async () => {
+    const observer = stubFileSystemObserver();
+    const { service, onExternalChange } = await setup(
+      undefined,
+      'myWorkspace',
+      {
+        withExternalChange: true,
+      },
+    );
+    await service.fileExists('myWorkspace:seed.md');
+    await vi.waitFor(() => {
+      expect(observer.observe).toHaveBeenCalledTimes(1);
+    });
 
-      // The same return fires visibilitychange and focus back-to-back;
-      // the duplicate notification does not refresh again.
-      onExternalChange.mockClear();
-      triggerPageReturn();
-      expect(onExternalChange).not.toHaveBeenCalled();
+    await observer.emitRecords([
+      // Chromium's own createWritable commit / sync tools' write-to-temp:
+      // the visible file materialized from a transient path. A workspace
+      // refresh here would re-list on EVERY local save (self-writes are
+      // deliberately unfiltered).
+      {
+        type: 'moved',
+        relativePathComponents: ['note.md'],
+        relativePathMovedFrom: ['note.md.crswap'],
+        changedHandle: { kind: 'file' },
+      },
+      // Visible file moved onto a transient path: gone as far as the app
+      // is concerned.
+      {
+        type: 'moved',
+        relativePathComponents: ['trash.md.tmp'],
+        relativePathMovedFrom: ['trash.md'],
+        changedHandle: { kind: 'file' },
+      },
+      // Transient-to-transient shuffle: never shown, fully ignored.
+      {
+        type: 'moved',
+        relativePathComponents: ['b.md.tmp'],
+        relativePathMovedFrom: ['a.md.tmp'],
+        changedHandle: { kind: 'file' },
+      },
+    ]);
 
-      // A genuinely separate leave→edit→return cycle moments later MUST
-      // refresh: without an observer this is the only reconciliation, so a
-      // wall-clock throttle would permanently miss that cycle's edits.
-      vi.advanceTimersByTime(1_500);
-      triggerPageReturn();
-      expect(onExternalChange).toHaveBeenCalledWith({
-        type: 'refresh',
-        wsName: 'myWorkspace',
-      });
-    } finally {
-      vi.useRealTimers();
-    }
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'create', wsPath: 'myWorkspace:note.md' },
+      { type: 'delete', wsPath: 'myWorkspace:trash.md' },
+    ]);
+  });
+
+  it('suppresses transient temp-suffix churn without hiding those files from listings', async () => {
+    const observer = stubFileSystemObserver();
+    const { service, onExternalChange } = await setup(
+      undefined,
+      'myWorkspace',
+      {
+        withExternalChange: true,
+      },
+    );
+    await service.fileExists('myWorkspace:seed.md');
+    await vi.waitFor(() => {
+      expect(observer.observe).toHaveBeenCalledTimes(1);
+    });
+
+    // Editors/sync tools churn `.tmp`/`.swp` scratch files constantly; the
+    // watcher drops them (the shared listing policy deliberately does NOT —
+    // a pre-existing `export.tmp` can be a legitimate user file).
+    await observer.emitRecords([
+      {
+        type: 'modified',
+        relativePathComponents: ['export.tmp'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'appeared',
+        relativePathComponents: ['recovered.swp'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'modified',
+        relativePathComponents: ['real-note.md'],
+        changedHandle: { kind: 'file' },
+      },
+    ]);
+
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'update', wsPath: 'myWorkspace:real-note.md' },
+    ]);
+  });
+
+  it('revalidates opened workspaces on every page return when no observer exists', async () => {
+    // The observer API is absent here, so watchers can never arm and
+    // page-return revalidation is the only refresh path — it must fire for
+    // hidden-returns AND plain refocus alike. (Collapsing one return's
+    // visibilitychange+focus burst is owned by onPageReturn and covered in
+    // page-return.spec.ts.)
+    const { service, onExternalChange, triggerPageReturn } = await setup(
+      undefined,
+      'myWorkspace',
+      {
+        withExternalChange: true,
+      },
+    );
+
+    // Before any workspace is opened, a page return is a no-op.
+    triggerPageReturn();
+    expect(onExternalChange).not.toHaveBeenCalled();
+
+    await service.fileExists('myWorkspace:seed.md');
+    triggerPageReturn({ returnedFromHidden: true });
+    expect(onExternalChange).toHaveBeenCalledWith({
+      type: 'refresh',
+      wsName: 'myWorkspace',
+    });
+
+    onExternalChange.mockClear();
+    triggerPageReturn({ returnedFromHidden: false });
+    expect(onExternalChange).toHaveBeenCalledWith({
+      type: 'refresh',
+      wsName: 'myWorkspace',
+    });
+  });
+
+  it('skips the refresh on plain refocus while a watcher is armed and healthy', async () => {
+    const observer = stubFileSystemObserver();
+    const { service, onExternalChange, triggerPageReturn } = await setup(
+      undefined,
+      'myWorkspace',
+      {
+        withExternalChange: true,
+      },
+    );
+    await service.fileExists('myWorkspace:seed.md');
+    await vi.waitFor(() => {
+      expect(observer.observe).toHaveBeenCalledTimes(1);
+    });
+
+    // The page stayed visible the whole time and the observer was armed:
+    // nothing was missed, so refreshing would re-list the workspace and
+    // re-read every open note on every alt-tab for no reason.
+    triggerPageReturn({ returnedFromHidden: false });
+    expect(onExternalChange).not.toHaveBeenCalled();
+
+    // A return from a hidden/frozen tab refreshes even with a live watcher:
+    // the browser may have starved the observer while the tab was away.
+    triggerPageReturn({ returnedFromHidden: true });
+    expect(onExternalChange).toHaveBeenCalledWith({
+      type: 'refresh',
+      wsName: 'myWorkspace',
+    });
   });
 
   it('re-arms a dead watcher on page return after the observer errored', async () => {
@@ -656,8 +792,14 @@ describe('external change watching', () => {
       { type: 'refresh', wsName: 'myWorkspace' },
     ]);
 
-    // Coming back to the page re-establishes the observer.
-    triggerPageReturn();
+    // Even a plain refocus re-establishes the observer AND refreshes: with
+    // the watcher dead, anything could have been missed meanwhile.
+    onExternalChange.mockClear();
+    triggerPageReturn({ returnedFromHidden: false });
+    expect(onExternalChange).toHaveBeenCalledWith({
+      type: 'refresh',
+      wsName: 'myWorkspace',
+    });
     await vi.waitFor(() => {
       expect(observer.observe).toHaveBeenCalledTimes(2);
     });

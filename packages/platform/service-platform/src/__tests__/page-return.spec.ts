@@ -1,7 +1,11 @@
 import { Emitter } from '@bangle.io/mini-js-utils';
 import type { BaseRouter, PageLifeCycleState } from '@bangle.io/types';
-import { describe, expect, it } from 'vitest';
-import { isPageReturnTransition, onPageReturn } from '../router/page-return';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  isPageReturnTransition,
+  onPageReturn,
+  type PageReturnInfo,
+} from '../router/page-return';
 
 describe('isPageReturnTransition', () => {
   it.each<[PageLifeCycleState, PageLifeCycleState, boolean]>([
@@ -27,13 +31,18 @@ describe('isPageReturnTransition', () => {
 });
 
 describe('onPageReturn', () => {
-  it('fires only for return transitions and stops on abort', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  function setup() {
     const emitter: BaseRouter['emitter'] = new Emitter();
     const controller = new AbortController();
-    let fired = 0;
-
-    onPageReturn(emitter, () => (fired += 1), controller.signal);
-
+    const fired: PageReturnInfo[] = [];
+    onPageReturn(emitter, (info) => fired.push(info), controller.signal);
     const emit = (
       previous: PageLifeCycleState,
       current: PageLifeCycleState,
@@ -43,19 +52,50 @@ describe('onPageReturn', () => {
         previous,
       });
     };
+    return { emit, fired, controller };
+  }
+
+  it('fires only for return transitions, reporting where the user came from', () => {
+    const { emit, fired, controller } = setup();
 
     emit(undefined, 'active'); // initial load
-    expect(fired).toBe(0);
+    expect(fired).toEqual([]);
     emit('active', 'hidden'); // user leaves
-    expect(fired).toBe(0);
+    expect(fired).toEqual([]);
     emit('hidden', 'passive'); // tab visible again
-    expect(fired).toBe(1);
-    emit('passive', 'active'); // window focused
-    expect(fired).toBe(2);
+    expect(fired).toEqual([{ returnedFromHidden: true }]);
+
+    vi.advanceTimersByTime(2_000);
+    emit('passive', 'active'); // window focused later, page stayed visible
+    expect(fired).toEqual([
+      { returnedFromHidden: true },
+      { returnedFromHidden: false },
+    ]);
 
     controller.abort();
+    vi.advanceTimersByTime(2_000);
     emit('active', 'hidden');
     emit('hidden', 'active');
-    expect(fired).toBe(2);
+    expect(fired).toHaveLength(2);
+  });
+
+  it('collapses one return burst (hidden → passive → active) into one call', () => {
+    const { emit, fired } = setup();
+
+    emit('active', 'hidden');
+    emit('hidden', 'passive');
+    emit('passive', 'active'); // same return, milliseconds later
+    expect(fired).toEqual([{ returnedFromHidden: true }]);
+
+    // A genuinely separate leave→return cycle moments later must fire —
+    // consumers without an observer rely on returns as their only
+    // reconciliation, so this must be a burst dedupe, not a throttle.
+    vi.advanceTimersByTime(1_500);
+    emit('active', 'hidden');
+    emit('hidden', 'active');
+    expect(fired).toEqual([
+      { returnedFromHidden: true },
+      { returnedFromHidden: true },
+    ]);
   });
 });
