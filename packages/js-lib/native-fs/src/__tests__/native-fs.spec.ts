@@ -133,7 +133,7 @@ describe('createFile and writeFile', () => {
     expect(await fs.readFileText('a.md')).toBe('old');
   });
 
-  it('requests an exclusive writable and falls back when unsupported', async () => {
+  it('requests an exclusive writable, falls back when unsupported, and remembers the answer', async () => {
     const { fs, root, seeded } = setup({ 'a.md': 'old' });
     await seeded;
     const handle = getEntry(root, 'a.md') as FakeFileHandle;
@@ -143,8 +143,39 @@ describe('createFile and writeFile', () => {
 
     handle.supportsWritableMode = false;
     await fs.writeFile('a.md', new Blob(['two']));
-    expect(handle.sawWritableModes).toEqual(['exclusive', undefined]);
+    expect(handle.sawWritableModes).toEqual([
+      'exclusive',
+      'exclusive', // rejected with TypeError...
+      undefined, // ...then the fallback
+    ]);
     expect(await fs.readFileText('a.md')).toBe('two');
+
+    // Support is an engine property: after one TypeError the failed
+    // exclusive attempt is not repeated on subsequent writes.
+    await fs.writeFile('a.md', new Blob(['three']));
+    expect(handle.sawWritableModes).toEqual([
+      'exclusive',
+      'exclusive',
+      undefined,
+      undefined,
+    ]);
+    expect(await fs.readFileText('a.md')).toBe('three');
+  });
+
+  it('resolves an existing file once per overwrite (autosave hot path)', async () => {
+    const { fs, root, seeded } = setup({ 'a.md': 'old' });
+    await seeded;
+    let fileHandleLookups = 0;
+    const realGetFileHandle = root.getFileHandle.bind(root);
+    root.getFileHandle = async (name, options) => {
+      fileHandleLookups += 1;
+      return realGetFileHandle(name, options);
+    };
+
+    await fs.writeFile('a.md', new Blob(['new']));
+    // The probe doubles as the resolution — no second directory walk.
+    expect(fileHandleLookups).toBe(1);
+    expect(await fs.readFileText('a.md')).toBe('new');
   });
 
   it('aborts the writable on write failure so partial content is not committed', async () => {

@@ -101,6 +101,8 @@ const KNOWN_CHANGE_TYPES: readonly FileSystemChangeType[] = [
 export class NativeFs {
   readonly rootHandle: FileSystemDirectoryHandle;
   private readonly lockScope: string;
+  /** Memoized after the first TypeError from `createWritable({mode})`. */
+  private exclusiveWritableUnsupported = false;
 
   constructor(opts: NativeFsOpts) {
     this.rootHandle = opts.rootHandle;
@@ -156,26 +158,6 @@ export class NativeFs {
       const segments = splitFilePath(path);
       await ensurePermission(this.rootHandle, 'readwrite');
       await this.withExclusiveLocks([path], async () => {
-        let taken = true;
-        try {
-          await this.resolveFile(segments, { create: false });
-        } catch (error) {
-          if (
-            !isNativeFsError(
-              toNativeFsError(error, ''),
-              NATIVE_FS_ERROR_CODE.notFound,
-            )
-          ) {
-            throw error;
-          }
-          taken = false;
-        }
-        if (taken) {
-          throw new NativeFsError({
-            message: `Cannot create "${path}": the file already exists`,
-            code: NATIVE_FS_ERROR_CODE.alreadyExists,
-          });
-        }
         await this.writeWithCreateRollback(segments, data, {
           create: true,
           failIfTaken: true,
@@ -216,9 +198,14 @@ export class NativeFs {
     data: Blob,
     opts: { create: boolean; failIfTaken?: boolean },
   ): Promise<void> {
-    let existed = true;
+    // A single probe doubles as the resolution for the existing-file case:
+    // the overwrite path (every autosave) reuses the resolved handle instead
+    // of walking the directory tree a second time.
+    let resolved:
+      | { parent: FileSystemDirectoryHandle; handle: FileSystemFileHandle }
+      | undefined;
     try {
-      await this.resolveFile(segments, { create: false });
+      resolved = await this.resolveFile(segments, { create: false });
     } catch (error) {
       if (
         !isNativeFsError(
@@ -228,7 +215,13 @@ export class NativeFs {
       ) {
         throw error;
       }
-      existed = false;
+    }
+    const existed = resolved !== undefined;
+    if (existed && opts.failIfTaken) {
+      throw new NativeFsError({
+        message: `Cannot create "${joinPath(segments)}": the file already exists`,
+        code: NATIVE_FS_ERROR_CODE.alreadyExists,
+      });
     }
     if (!existed && !opts.create) {
       throw new NativeFsError({
@@ -237,9 +230,8 @@ export class NativeFs {
       });
     }
 
-    const { parent, handle } = await this.resolveFile(segments, {
-      create: !existed,
-    });
+    const { parent, handle } =
+      resolved ?? (await this.resolveFile(segments, { create: true }));
     if (!existed && opts.failIfTaken) {
       // Between the notFound probe and the create, an external writer (sync
       // tool, another program) can take this path; getFileHandle(create)
@@ -604,6 +596,9 @@ export class NativeFs {
   private async openWritable(
     handle: FileSystemFileHandle,
   ): Promise<FileSystemWritableFileStream> {
+    if (this.exclusiveWritableUnsupported) {
+      return handle.createWritable({ keepExistingData: false });
+    }
     const exclusiveOpts: CreateWritableOpts = {
       keepExistingData: false,
       mode: 'exclusive',
@@ -614,8 +609,11 @@ export class NativeFs {
       );
     } catch (error) {
       // Engines that know the `mode` member but not the `exclusive` value
-      // reject with a TypeError; retry in the default (siloed) mode.
+      // reject with a TypeError; retry in the default (siloed) mode and
+      // remember the answer — support is an engine property, not a
+      // per-file one, so there is no point re-asking on every write.
       if (error instanceof TypeError) {
+        this.exclusiveWritableUnsupported = true;
         return handle.createWritable({ keepExistingData: false });
       }
       throw error;
