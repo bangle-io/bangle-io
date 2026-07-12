@@ -71,6 +71,15 @@ export type PmEditorServiceConfig = {
   saveCoordinator: EditorSaveCoordinator;
 };
 
+/**
+ * Stable per-path toast id so repeated refusals for the same note update one
+ * toast instead of stacking, and a later successful reconciliation can
+ * withdraw it.
+ */
+function staleExternalContentToastId(wsPath: string): string {
+  return `external-stale-content:${wsPath}`;
+}
+
 function formatFileSize(bytes: number): string {
   const units = ['B', 'KB', 'MB', 'GB'];
   let value = bytes;
@@ -174,6 +183,12 @@ export class PmEditorService
    * wsPath was produced by an external sync (not the user) and must not be
    * re-saved — writing it back would bump the file's mtime and make sync
    * tools churn on their own change.
+   *
+   * Contract: this only works because the saveDoc plugin's `view.update`
+   * (and therefore `onDocChange`) runs synchronously inside
+   * `view.dispatch`, which `withSaveSuppressed` wraps. If the save pipeline
+   * ever defers off the dispatch (debounce, microtask), this flag must move
+   * onto the transaction itself (a meta read from plugin state).
    */
   private suppressSaveForExternalSync = new Set<string>();
 
@@ -182,36 +197,47 @@ export class PmEditorService
    * coalescing, and content-stability policy; this service only supplies the
    * narrow host surface below.
    */
-  private externalContentSync = new ExternalContentSync({
-    getViews: (wsPath) =>
-      [...this.readyEditors()]
-        .filter((editor) => editor.wsPath === wsPath)
-        .map((editor) => editor.editorView),
-    getMountedWsPaths: (wsName) => [
-      ...new Set(
+  private externalContentSync = new ExternalContentSync(
+    {
+      getViews: (wsPath) =>
         [...this.readyEditors()]
-          .filter(
-            (editor) =>
-              wsName === undefined ||
-              WsPath.safeParse(editor.wsPath).data?.wsName === wsName,
-          )
-          .map((editor) => editor.wsPath),
-      ),
-    ],
-    hasPendingSaves: (wsPath) => this.saveQueue.hasPendingOrFailed(wsPath),
-    readFileAsText: (wsPath) =>
-      this.dependencies.fileSystem.readFileAsText(wsPath),
-    getMarkdown: (schema) => this.getMarkdown(schema),
-    withSaveSuppressed: (wsPath, dispatch) => {
-      this.suppressSaveForExternalSync.add(wsPath);
-      try {
-        dispatch();
-      } finally {
-        this.suppressSaveForExternalSync.delete(wsPath);
-      }
+          .filter((editor) => editor.wsPath === wsPath)
+          .map((editor) => editor.editorView),
+      getMountedWsPaths: (wsName) => [
+        ...new Set(
+          [...this.readyEditors()]
+            .filter(
+              (editor) =>
+                wsName === undefined ||
+                WsPath.safeParse(editor.wsPath).data?.wsName === wsName,
+            )
+            .map((editor) => editor.wsPath),
+        ),
+      ],
+      hasPendingSaves: (wsPath) => this.saveQueue.hasPendingOrFailed(wsPath),
+      readFileAsText: (wsPath) =>
+        this.dependencies.fileSystem.readFileAsText(wsPath, {
+          signal: this.abortSignal,
+        }),
+      getMarkdown: (schema) => this.getMarkdown(schema),
+      withSaveSuppressed: (wsPath, dispatch) => {
+        this.suppressSaveForExternalSync.add(wsPath);
+        try {
+          dispatch();
+        } finally {
+          this.suppressSaveForExternalSync.delete(wsPath);
+        }
+      },
+      onStaleContentRefused: (wsPath) => {
+        this.showStaleExternalContentToast(wsPath);
+      },
+      onContentReconciled: (wsPath) => {
+        toast.dismiss(staleExternalContentToastId(wsPath));
+      },
+      logger: this.logger,
     },
-    logger: this.logger,
-  });
+    this.abortSignal,
+  );
 
   constructor(
     context: BaseServiceContext,
@@ -407,9 +433,8 @@ export class PmEditorService
         onDocChange: (doc) => {
           const currentWsPath = this.editors.get(domNode)?.wsPath ?? wsPath;
           if (this.suppressSaveForExternalSync.has(currentWsPath)) {
-            // This doc change was produced by an external sync applying disk
-            // content to the editor — writing it back would be a no-op write
-            // that churns the file's mtime.
+            // External sync applying disk content — must not be re-saved;
+            // see suppressSaveForExternalSync.
             return;
           }
           this.saveQueue.enqueue(currentWsPath, doc);
@@ -560,6 +585,32 @@ export class PmEditorService
       );
       this.setRoundTripWarning(wsPath, true);
     }
+  }
+
+  /**
+   * The external sync confirmed the disk copy of `wsPath` differs but
+   * refused to auto-apply it (fidelity, emptied-file, schema, or parse
+   * refusal). Without this the user would keep looking at silently stale
+   * content with only a console warning. Reloading the UI sends the note
+   * through the load path, which shows the disk content and surfaces the
+   * fidelity warning when applicable.
+   */
+  private showStaleExternalContentToast(wsPath: string): void {
+    const fileName = WsPath.safeParseFile(wsPath).data?.fileName ?? wsPath;
+    toast.warning(t.app.toasts.externalChangeNotApplied({ fileName }), {
+      id: staleExternalContentToastId(wsPath),
+      duration: Number.POSITIVE_INFINITY,
+      cancel: {
+        label: t.app.common.dismiss,
+        onClick: () => {},
+      },
+      action: {
+        label: t.app.toasts.reloadToApplyExternalChange,
+        onClick: () => {
+          this.dependencies.workbenchState.reloadUi();
+        },
+      },
+    });
   }
 
   private setRoundTripWarning(wsPath: string, hasWarning: boolean): void {

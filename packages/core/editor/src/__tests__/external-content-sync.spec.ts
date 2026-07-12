@@ -13,10 +13,15 @@ import {
  */
 
 function makeEvent(
-  partial: Partial<ExternalFileChangeEvent> &
-    Pick<ExternalFileChangeEvent, 'type'>,
+  payload:
+    | {
+        type: 'file-create' | 'file-content-update' | 'file-delete';
+        wsPath: string;
+      }
+    | { type: 'file-rename'; wsPath: string; oldWsPath: string }
+    | { type: 'refresh'; wsName?: string },
 ): ExternalFileChangeEvent {
-  return { sequence: 1, ...partial };
+  return { sequence: 1, ...payload };
 }
 
 function makeHost(overrides: Partial<ExternalContentSyncHost> = {}) {
@@ -31,6 +36,8 @@ function makeHost(overrides: Partial<ExternalContentSyncHost> = {}) {
       throw new Error('not needed in these tests');
     }),
     withSaveSuppressed: vi.fn((_wsPath, dispatch) => dispatch()),
+    onStaleContentRefused: vi.fn(),
+    onContentReconciled: vi.fn(),
     logger: { warn: vi.fn(), error: vi.fn() },
     ...overrides,
   };
@@ -66,7 +73,13 @@ describe('target selection', () => {
     );
     // Deletes and renames never reconcile content.
     sync.handleEvent(makeEvent({ type: 'file-delete', wsPath: 'ws:open.md' }));
-    sync.handleEvent(makeEvent({ type: 'file-rename', wsPath: 'ws:open.md' }));
+    sync.handleEvent(
+      makeEvent({
+        type: 'file-rename',
+        wsPath: 'ws:open.md',
+        oldWsPath: 'ws:old.md',
+      }),
+    );
 
     expect(getViews).toHaveBeenCalledWith('ws:closed.md');
     expect(getViews).toHaveBeenCalledWith('ws:open.md');
@@ -128,7 +141,7 @@ describe('coalescing and stability', () => {
     expect(passes).toBe(2);
   });
 
-  it('disagreeing reads rerun the pass until stable, bounded per burst', async () => {
+  it('never-stable content is bounded: one burst, one trailing pass, then gives up', async () => {
     let reads = 0;
     const host = makeHost({
       getViews: vi.fn(() => [{ state: { doc: {} } } as never]),
@@ -144,11 +157,165 @@ describe('coalescing and stability', () => {
       makeEvent({ type: 'file-content-update', wsPath: 'ws:a.md' }),
     );
 
-    // MAX_PASSES = 5 → exactly 10 reads, then the burst gives up.
+    // MAX_PASSES = 5 → 10 reads in the burst...
     await waitUntil(() => reads === 10, 10_000);
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    expect(reads).toBe(10);
+    // ...then the single delayed trailing pass runs its own bounded burst
+    // and gives up for good (a trailing pass never re-arms another).
+    await waitUntil(() => reads === 20, 10_000);
+    await new Promise((resolve) => setTimeout(resolve, 2_000));
+    expect(reads).toBe(20);
+    expect(host.logger.warn).toHaveBeenCalledWith(
+      expect.stringContaining('kept changing'),
+    );
     // Nothing was ever applied.
     expect(host.withSaveSuppressed).not.toHaveBeenCalled();
+  }, 20_000);
+
+  it('content that settles after the pass bound is still applied by the trailing pass', async () => {
+    let reads = 0;
+    const host = makeHost({
+      // A destroyed view keeps the pass from reaching content application
+      // while still exercising the full read protocol.
+      getViews: vi.fn(() => [
+        { isDestroyed: true, state: { doc: {} } } as never,
+      ]),
+      readFileAsText: vi.fn(async () => {
+        reads += 1;
+        // Unstable through the whole first burst (10 reads), stable after.
+        return reads <= 10 ? `content-${reads}` : 'settled';
+      }),
+    });
+    const sync = new ExternalContentSync(host);
+
+    sync.handleEvent(
+      makeEvent({ type: 'file-content-update', wsPath: 'ws:a.md' }),
+    );
+
+    // Burst exhausts unstable; the trailing pass gets two agreeing reads and
+    // settles instead of silently dropping the pending work.
+    await waitUntil(() => reads === 12, 10_000);
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    expect(reads).toBe(12);
+    expect(host.logger.warn).not.toHaveBeenCalledWith(
+      expect.stringContaining('kept changing'),
+    );
+  }, 15_000);
+
+  it('a view busy with IME composition is never replaced; the pass retries', async () => {
+    let reads = 0;
+    const view = {
+      isDestroyed: false,
+      composing: true,
+      state: { doc: {}, schema: {} },
+    } as never;
+    const host = makeHost({
+      getViews: vi.fn(() => [view]),
+      readFileAsText: vi.fn(async () => {
+        reads += 1;
+        return 'stable external content';
+      }),
+    });
+    const sync = new ExternalContentSync(host);
+
+    sync.handleEvent(
+      makeEvent({ type: 'file-content-update', wsPath: 'ws:a.md' }),
+    );
+
+    // Stable reads but a composing view: the pass keeps retrying (bounded)
+    // instead of dispatching into the live composition.
+    await waitUntil(() => reads >= 4, 10_000);
+    expect(host.withSaveSuppressed).not.toHaveBeenCalled();
+    expect(host.getMarkdown).not.toHaveBeenCalled();
+  });
+});
+
+describe('refusal and reconciliation reporting', () => {
+  it('an unparseable external change is refused and reported to the host', async () => {
+    const view = {
+      isDestroyed: false,
+      composing: false,
+      state: { doc: {}, schema: {} },
+    } as never;
+    const host = makeHost({
+      getViews: vi.fn(() => [view]),
+      getMarkdown: vi.fn(
+        () =>
+          ({
+            parser: {
+              parse: () => {
+                throw new Error('cannot parse');
+              },
+            },
+            serializer: { serialize: () => 'unused' },
+          }) as never,
+      ),
+    });
+    const sync = new ExternalContentSync(host);
+
+    sync.handleEvent(
+      makeEvent({ type: 'file-content-update', wsPath: 'ws:a.md' }),
+    );
+
+    await waitUntil(
+      () => vi.mocked(host.onStaleContentRefused).mock.calls.length > 0,
+    );
+    expect(host.onStaleContentRefused).toHaveBeenCalledWith('ws:a.md');
+    expect(host.onContentReconciled).not.toHaveBeenCalled();
+    expect(host.withSaveSuppressed).not.toHaveBeenCalled();
+  });
+
+  it('an echo (serializer-equal content) reports reconciliation, clearing stale notices', async () => {
+    const view = {
+      isDestroyed: false,
+      composing: false,
+      state: { doc: {}, schema: {} },
+    } as never;
+    const host = makeHost({
+      getViews: vi.fn(() => [view]),
+      getMarkdown: vi.fn(
+        () =>
+          ({
+            parser: { parse: () => ({}) },
+            // Editor doc and disk content serialize identically → echo.
+            serializer: { serialize: () => 'same output' },
+          }) as never,
+      ),
+    });
+    const sync = new ExternalContentSync(host);
+
+    sync.handleEvent(
+      makeEvent({ type: 'file-content-update', wsPath: 'ws:a.md' }),
+    );
+
+    await waitUntil(
+      () => vi.mocked(host.onContentReconciled).mock.calls.length > 0,
+    );
+    expect(host.onContentReconciled).toHaveBeenCalledWith('ws:a.md');
+    expect(host.onStaleContentRefused).not.toHaveBeenCalled();
+    expect(host.withSaveSuppressed).not.toHaveBeenCalled();
+  });
+});
+
+describe('abort', () => {
+  it('an aborted signal stops in-flight passes without further reads', async () => {
+    let reads = 0;
+    const controller = new AbortController();
+    const host = makeHost({
+      getViews: vi.fn(() => [{ state: { doc: {} } } as never]),
+      readFileAsText: vi.fn(async () => {
+        reads += 1;
+        return `content-${reads}`;
+      }),
+    });
+    const sync = new ExternalContentSync(host, controller.signal);
+
+    sync.handleEvent(
+      makeEvent({ type: 'file-content-update', wsPath: 'ws:a.md' }),
+    );
+    // Abort while the first pass sleeps through its quiet period.
+    controller.abort();
+
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    expect(reads).toBe(0);
   });
 });

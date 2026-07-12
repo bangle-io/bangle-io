@@ -5,6 +5,7 @@ import {
   WORKSPACE_STORAGE_TYPE,
 } from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
+import { toast } from '@bangle.io/ui-components';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const WS_NAME = 'test-ws';
@@ -18,6 +19,7 @@ let cleanupControllers: AbortController[] = [];
 let cleanupDomNodes: HTMLElement[] = [];
 
 afterEach(() => {
+  vi.restoreAllMocks();
   for (const controller of cleanupControllers) {
     controller.abort();
   }
@@ -364,5 +366,50 @@ describe('editor refresh on external file changes', () => {
 
     expect(domNode.innerHTML).toBe(docBefore);
     expect(editorText(domNode)).toContain('the original note body');
+  });
+
+  it('surfaces a refusal as a per-note warning toast and withdraws it once reconciled', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      'the original note body',
+    );
+    const warningSpy = vi.spyOn(toast, 'warning');
+    const dismissSpy = vi.spyOn(toast, 'dismiss');
+    const expectedToastId = `external-stale-content:${NOTE_WS_PATH}`;
+
+    // Content the fidelity gate refuses: without a user-visible surface the
+    // editor would silently show older content than disk forever.
+    await simulateExternalEdit(
+      testEnv,
+      services,
+      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
+    );
+    await vi.waitFor(
+      () => {
+        expect(warningSpy).toHaveBeenCalled();
+      },
+      { timeout: 3_000 },
+    );
+    const [message, options] = warningSpy.mock.calls[0] ?? [];
+    expect(String(message)).toContain('note.md');
+    expect(options?.id).toBe(expectedToastId);
+    // The refusal itself still holds — the editor keeps the current note.
+    expect(editorText(domNode)).toContain('the original note body');
+
+    // The sync tool then writes content the editor can apply: the stale
+    // notice is withdrawn instead of lingering over reconciled state.
+    await simulateExternalEdit(
+      testEnv,
+      services,
+      'clean content after the conflict',
+    );
+    await vi.waitFor(
+      () => {
+        expect(editorText(domNode)).toContain(
+          'clean content after the conflict',
+        );
+      },
+      { timeout: 3_000 },
+    );
+    expect(dismissSpy).toHaveBeenCalledWith(expectedToastId);
   });
 });

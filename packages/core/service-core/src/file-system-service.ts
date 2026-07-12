@@ -48,18 +48,27 @@ export type FileRenameEvent = {
  * broadcast from another tab's watcher. `refresh` means "something changed,
  * re-read what you depend on" without a specific path.
  */
+type ExternalFileChangePayload =
+  | {
+      type: 'file-create' | 'file-content-update' | 'file-delete';
+      wsPath: string;
+    }
+  | {
+      type: 'file-rename';
+      /** The path the file now lives at. */
+      wsPath: string;
+      /** The path the file was renamed away from. */
+      oldWsPath: string;
+    }
+  | {
+      type: 'refresh';
+      /** The workspace the refresh concerns; absent = app-wide. */
+      wsName?: string;
+    };
+
 export type ExternalFileChangeEvent = {
   sequence: number;
-  type:
-    | 'file-create'
-    | 'file-content-update'
-    | 'file-delete'
-    | 'file-rename'
-    | 'refresh';
-  wsPath?: string;
-  /** For `refresh`: the workspace the refresh concerns; absent = app-wide. */
-  wsName?: string;
-};
+} & ExternalFileChangePayload;
 
 type FileReadOptions = {
   signal?: AbortSignal;
@@ -152,10 +161,27 @@ export class FileSystemService extends BaseService {
       'event::file:update',
       (event) => {
         if (event.sender.tag === EXTERNAL_FILE_CHANGE_SENDER_TAG) {
-          this.setExternalFileChangeEvent({
-            type: event.type,
-            wsPath: event.wsPath,
-          });
+          if (event.type === 'file-rename') {
+            if (event.oldWsPath !== undefined) {
+              this.setExternalFileChangeEvent({
+                type: 'file-rename',
+                wsPath: event.wsPath,
+                oldWsPath: event.oldWsPath,
+              });
+            } else {
+              // A rename without its origin cannot be acted on per-path;
+              // degrade to a workspace-scoped refresh.
+              this.setExternalFileChangeEvent({
+                type: 'refresh',
+                wsName: WsPath.safeParse(event.wsPath).data?.wsName,
+              });
+            }
+          } else {
+            this.setExternalFileChangeEvent({
+              type: event.type,
+              wsPath: event.wsPath,
+            });
+          }
         }
         switch (event.type) {
           case 'file-create': {
@@ -201,9 +227,7 @@ export class FileSystemService extends BaseService {
     );
   }
 
-  private setExternalFileChangeEvent(
-    event: Omit<ExternalFileChangeEvent, 'sequence'>,
-  ): void {
+  private setExternalFileChangeEvent(event: ExternalFileChangePayload): void {
     this.externalFileChangeSequence += 1;
     this.store.set(this.$externalFileChangeEvent, {
       sequence: this.externalFileChangeSequence,
