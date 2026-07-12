@@ -7,7 +7,7 @@ import type {
   FileTree as PierreFileTreeModel,
 } from '@pierre/trees';
 import { FileTree, useFileTree } from '@pierre/trees/react';
-import { FilePlus2, FileText, FolderPlus } from 'lucide-react';
+import { FilePlus2, FileText, FolderPlus, SquareMinus } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { BANGLE_PIERRE_FILE_TREE_ICONS } from './pierre-file-tree-icons';
 import {
@@ -17,6 +17,10 @@ import {
   normalizePierreFilePath,
   shouldOpenSelectedFile,
 } from './types';
+import {
+  collectPierreDirectoryPaths,
+  usePierreFileTreeExpansion,
+} from './use-pierre-file-tree-expansion';
 
 // Tune the Pierre tree to read like the rest of the sidebar (the previous file
 // tree): comfortable full-width rows with an icon + name, rounded hover/selected
@@ -63,6 +67,7 @@ const TREE_UNSAFE_CSS = `
 
 const CONTEXT_MENU_WIDTH = 176;
 const CONTEXT_MENU_VIEWPORT_MARGIN = 8;
+const EMPTY_PATHS: readonly string[] = [];
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
@@ -125,27 +130,6 @@ function getParentDirectory(path: string): string | undefined {
   return normalizePierreDirectoryPath(path.slice(0, slashIndex));
 }
 
-// Every ancestor directory id implied by a set of file paths. Directories are
-// implicit in Bangle (they exist only through contained notes), so the tree's
-// directory ids are the prefix paths of its files, e.g. `a/b/c.md` implies the
-// directories `a` and `a/b`.
-function collectAncestorDirectoryPaths(paths: readonly string[]): string[] {
-  const directories = new Set<string>();
-
-  for (const path of paths) {
-    const segments = normalizeInputPath(path).split('/');
-    segments.pop();
-
-    let accumulated = '';
-    for (const segment of segments) {
-      accumulated = accumulated ? `${accumulated}/${segment}` : segment;
-      directories.add(accumulated);
-    }
-  }
-
-  return [...directories];
-}
-
 // `resetPaths` re-seeds expansion from the tree's `initialExpansion` unless it
 // is told otherwise, so a bare reset collapses every folder the user opened.
 // Because Bangle drives the tree imperatively from Jotai state, any note
@@ -155,7 +139,7 @@ function resetModelPathsPreservingExpansion(
   model: PierreFileTreeModel,
   nextPaths: readonly string[],
 ): void {
-  const initialExpandedPaths = collectAncestorDirectoryPaths(nextPaths).filter(
+  const initialExpandedPaths = collectPierreDirectoryPaths(nextPaths).filter(
     (directoryPath) => {
       const item = model.getItem(directoryPath);
       return item !== null && 'isExpanded' in item && item.isExpanded();
@@ -261,7 +245,11 @@ function getCurrentSelectedEntries(
 export interface PierreFileTreeProps {
   activePaths?: readonly string[];
   className?: string;
+  expandedPaths?: readonly string[];
   filePaths: readonly string[];
+  onDirectoryExpansionChange: (path: string, expanded: boolean) => void;
+  onRevealPaths: (paths: readonly string[]) => void;
+  onCollapseAll: (keepExpandedPaths: readonly string[]) => void;
   onCreateDirectory: (pathPrefix: string | undefined) => void;
   onCreateNote: (pathPrefix: string | undefined) => void;
   onMoveFile: (
@@ -278,9 +266,13 @@ export interface PierreFileTreeProps {
 }
 
 export function PierreFileTree({
-  activePaths = [],
+  activePaths = EMPTY_PATHS,
   className,
+  expandedPaths = EMPTY_PATHS,
   filePaths,
+  onDirectoryExpansionChange,
+  onRevealPaths,
+  onCollapseAll,
   onCreateDirectory,
   onCreateNote,
   onMoveFile,
@@ -316,6 +308,25 @@ export function PierreFileTree({
     () => activePaths.map((path) => normalizeInputPath(path)),
     [activePaths],
   );
+  const activeTreePath = activeTreePaths.at(-1);
+  const activeTreePathIsAvailable = Boolean(
+    activeTreePath && filePathSet.has(activeTreePath),
+  );
+  const directoryPaths = useMemo(
+    () => collectPierreDirectoryPaths(treePaths),
+    [treePaths],
+  );
+  const activeAncestorPaths = useMemo(
+    () =>
+      activeTreePathIsAvailable && activeTreePath
+        ? collectPierreDirectoryPaths([activeTreePath])
+        : [],
+    [activeTreePath, activeTreePathIsAvailable],
+  );
+  const initialExpandedPaths = useMemo(
+    () => [...new Set([...expandedPaths, ...activeAncestorPaths])],
+    [activeAncestorPaths, expandedPaths],
+  );
   const filePathSetRef = useRef<ReadonlySet<string>>(filePathSet);
   const modelRef = useRef<PierreFileTreeModel | null>(null);
   const contextMenuSelectedEntriesRef = useRef<readonly FileTreeEntry[]>([]);
@@ -336,7 +347,7 @@ export function PierreFileTree({
   // The file the active route points at. Kept current on every render so
   // `onSelectionChange` can tell a genuine user open from a route-driven
   // re-select (see `shouldOpenSelectedFile`).
-  activeSelectedPathRef.current = activeTreePaths.at(-1) ?? null;
+  activeSelectedPathRef.current = activeTreePath ?? null;
 
   // Single source of truth for "is this drop a real move?": exactly one dragged
   // file we know about, landing in a directory other than its current parent.
@@ -471,7 +482,8 @@ export function PierreFileTree({
       },
     },
     flattenEmptyDirectories: true,
-    initialExpansion: 1,
+    initialExpandedPaths,
+    initialExpansion: 'closed',
     onSelectionChange: (selectedPaths) => {
       const selectedPath = selectedPaths.at(-1);
       const normalizedPath = selectedPath
@@ -515,16 +527,32 @@ export function PierreFileTree({
   });
   modelRef.current = model;
 
-  useEffect(() => {
-    resetModelPathsPreservingExpansion(model, treePaths);
-  }, [model, treePaths]);
+  const collapseAll = usePierreFileTreeExpansion({
+    model,
+    treePaths,
+    directoryPaths,
+    expandedPaths,
+    activeAncestorPaths,
+    onDirectoryExpansionChange,
+    onRevealPaths,
+    onCollapseAll,
+  });
 
   useEffect(() => {
-    const nextSelectedPath = activeTreePaths.at(-1) ?? null;
+    const nextSelectedPath = activeTreePath ?? null;
     const shouldPreserveScroll =
       pendingUserOpenPathRef.current === nextSelectedPath;
 
     if (selectedPathRef.current === nextSelectedPath) {
+      if (nextSelectedPath && activeTreePathIsAvailable) {
+        model.getItem(nextSelectedPath)?.select();
+        if (!shouldPreserveScroll) {
+          model.scrollToPath(nextSelectedPath, {
+            focus: false,
+            offset: 'nearest',
+          });
+        }
+      }
       if (shouldPreserveScroll) {
         pendingUserOpenPathRef.current = null;
       }
@@ -538,7 +566,7 @@ export function PierreFileTree({
       model.getItem(previousSelectedPath)?.deselect();
     }
 
-    if (nextSelectedPath) {
+    if (nextSelectedPath && activeTreePathIsAvailable) {
       model.getItem(nextSelectedPath)?.select();
       if (shouldPreserveScroll) {
         pendingUserOpenPathRef.current = null;
@@ -549,7 +577,7 @@ export function PierreFileTree({
         });
       }
     }
-  }, [activeTreePaths, model]);
+  }, [activeTreePath, activeTreePathIsAvailable, model]);
 
   useEffect(
     () => () => {
@@ -592,6 +620,19 @@ export function PierreFileTree({
     }
   };
 
+  const handleCollapseAllDirectories = (): void => {
+    collapseAll();
+
+    if (activeTreePath) {
+      window.requestAnimationFrame(() => {
+        model.scrollToPath(activeTreePath, {
+          focus: false,
+          offset: 'nearest',
+        });
+      });
+    }
+  };
+
   return (
     <div
       ref={rootElementRef}
@@ -606,6 +647,18 @@ export function PierreFileTree({
           <span className="min-w-0 flex-1 truncate font-medium text-[11px] text-sidebar-foreground/55 uppercase tracking-wide">
             {t.app.components.appSidebar.filesLabel}
           </span>
+          <button
+            type="button"
+            className="inline-flex size-6 items-center justify-center rounded-sm text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-40"
+            aria-label={
+              t.app.components.appSidebar.collapseAllFoldersActionTitle
+            }
+            title={t.app.components.appSidebar.collapseAllFoldersActionTitle}
+            disabled={directoryPaths.length === 0}
+            onClick={handleCollapseAllDirectories}
+          >
+            <SquareMinus className="size-3.5" />
+          </button>
           <button
             type="button"
             className={cn(

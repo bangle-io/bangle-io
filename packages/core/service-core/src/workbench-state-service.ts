@@ -27,12 +27,29 @@ import type {
 } from '@bangle.io/ui-components';
 import { atom, type PrimitiveAtom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
+import {
+  type FileTreeExpandedPathsByWorkspace,
+  type FileTreeExpansionAction,
+  reduceFileTreeExpansion,
+} from './file-tree-expansion-state';
 
 type Route = 'omni-home' | 'omni-command' | 'omni-filtered';
 
 const AssetLocationPreferenceValidator = {
   validate: isAssetLocationPreference,
   typeName: 'asset-location-preference',
+};
+
+const FileTreeExpandedPathsByWorkspaceValidator = {
+  validate: (value: unknown): value is FileTreeExpandedPathsByWorkspace =>
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    Object.values(value).every(
+      (paths) =>
+        Array.isArray(paths) && paths.every((path) => typeof path === 'string'),
+    ),
+  typeName: 'file-tree-expanded-paths-by-workspace',
 };
 
 function determineOmniSearchRoute(input: string, currentRoute: Route): Route {
@@ -75,6 +92,9 @@ export class WorkbenchStateService extends BaseService {
   private $_sidebarWidth: PrimitiveAtom<number> | undefined;
   private $_linkedMentionsCollapsed: PrimitiveAtom<boolean> | undefined;
   private $_showNoteFilesOnlyInSidebar: PrimitiveAtom<boolean> | undefined;
+  private $_fileTreeExpandedPathsByWorkspace:
+    | PrimitiveAtom<FileTreeExpandedPathsByWorkspace>
+    | undefined;
   private $_assetLocationPreference:
     | PrimitiveAtom<AssetLocationPreference>
     | undefined;
@@ -189,6 +209,40 @@ export class WorkbenchStateService extends BaseService {
     });
   }
 
+  public setFileTreeDirectoryExpanded(
+    workspaceName: string,
+    path: string,
+    expanded: boolean,
+  ) {
+    this.updateFileTreeExpansion({
+      type: 'set-directory',
+      workspaceName,
+      path,
+      expanded,
+    });
+  }
+
+  public revealFileTreePaths(workspaceName: string, paths: readonly string[]) {
+    this.updateFileTreeExpansion({ type: 'reveal', workspaceName, paths });
+  }
+
+  public collapseFileTree(
+    workspaceName: string,
+    keepExpandedPaths: readonly string[],
+  ) {
+    this.updateFileTreeExpansion({
+      type: 'collapse-all',
+      workspaceName,
+      keepExpandedPaths,
+    });
+  }
+
+  private updateFileTreeExpansion(action: FileTreeExpansionAction) {
+    this.store.set(this.$fileTreeExpandedPathsByWorkspace, (current) =>
+      reduceFileTreeExpansion(current, action),
+    );
+  }
+
   get $wideEditor() {
     if (!this.$_wideEditor) {
       this.$_wideEditor = atomStorage({
@@ -261,6 +315,20 @@ export class WorkbenchStateService extends BaseService {
       });
     }
     return this.$_showNoteFilesOnlyInSidebar;
+  }
+
+  get $fileTreeExpandedPathsByWorkspace() {
+    if (!this.$_fileTreeExpandedPathsByWorkspace) {
+      this.$_fileTreeExpandedPathsByWorkspace = atomStorage({
+        serviceName: this.name,
+        key: 'file-tree-expanded-paths-by-workspace',
+        initValue: {},
+        syncDb: this.dep.syncDatabase,
+        validator: FileTreeExpandedPathsByWorkspaceValidator,
+        logger: this.logger,
+      });
+    }
+    return this.$_fileTreeExpandedPathsByWorkspace;
   }
 
   get $assetLocationPreference() {

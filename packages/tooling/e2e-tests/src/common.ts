@@ -9,6 +9,18 @@ export const EDITOR_SELECTOR = '.ProseMirror';
 export const EDITOR_FOCUSED_SELECTOR = `${EDITOR_SELECTOR}.ProseMirror-focused`;
 const DEFAULT_SLEEP_TIME = 20;
 
+export async function expandFileTreeFolder(page: Page, name: string | RegExp) {
+  const explorer = page.getByTestId('bangle-file-explorer');
+  const folder = explorer.getByRole('treeitem', { name });
+
+  await expect(folder).toBeVisible();
+  if ((await folder.getAttribute('aria-expanded')) !== 'true') {
+    await folder.focus();
+    await page.keyboard.press('ArrowRight');
+  }
+  await expect(folder).toHaveAttribute('aria-expanded', 'true');
+}
+
 /**
  * Presses an *app-level* keyboard shortcut (e.g. Cmd/Ctrl+K for omni-search).
  *

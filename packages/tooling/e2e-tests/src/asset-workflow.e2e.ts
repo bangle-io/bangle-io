@@ -3,6 +3,7 @@ import {
   createBrowserWorkspaceAndNote,
   ctrlKey,
   EDITOR_SELECTOR,
+  expandFileTreeFolder,
   getEditorLocator,
   readStoredMarkdown,
   selectEditorText,
@@ -402,6 +403,7 @@ test('copies workspace paths and smart-links pasted or dropped existing assets',
   await page.reload({ waitUntil: 'networkidle' });
 
   const explorer = page.getByTestId('bangle-file-explorer');
+  await expandFileTreeFolder(page, /^assets$/);
   await expect(
     explorer.getByRole('treeitem', { name: /^assets$/ }),
   ).toBeVisible();
@@ -501,6 +503,7 @@ test('drags existing sidebar assets into the editor as smart Markdown links', as
   await page.reload({ waitUntil: 'networkidle' });
 
   const explorer = page.getByTestId('bangle-file-explorer');
+  await expandFileTreeFolder(page, /^assets$/);
   const editor = getEditorLocator(page, {});
   await expect(editor).toBeVisible();
   const editorRoute = page.url();
