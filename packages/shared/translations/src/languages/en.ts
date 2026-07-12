@@ -538,27 +538,12 @@ export const t = {
       recentWorkspacesHeading: 'Recent workspaces',
       createWorkspacePrompt: 'Create a workspace to get started.',
     },
-    pageFatalError: {
-      title: 'Fatal Error',
-      description:
-        'Something went seriously wrong. We apologize for the inconvenience.',
-      reloadButton: 'Reload App',
-      reportButton: 'Report Issue',
-    },
     pageStartupError: {
       title: 'Bangle could not start',
       description:
         'A required service failed during startup. Your notes were not changed.',
       detailsLabel: 'Startup error details',
       reloadButton: 'Reload App',
-    },
-    pageNativeFsAuthFailed: {
-      title: 'Authentication Failed Please try again',
-      tryAgainButton: 'Try Again',
-    },
-    pageNativeFsAuthReq: {
-      title: 'Authentication Required, Please allow access to continue',
-      authorizeButton: 'Authorize',
     },
     pageNotFound: {
       title: 'Page Not Found',
@@ -582,9 +567,6 @@ export const t = {
         `Bangle can’t find the folder linked to “${wsName}”. It may have moved, been deleted, or be on a disconnected drive. Bangle has not changed your workspace entry or files. Locate the same folder to reconnect it.`,
       locateFolderButton: 'Locate Folder',
       switchWorkspaceButton: 'Switch Workspace',
-    },
-    pageWsPathNotFound: {
-      // Using NoteNotFoundView strings
     },
     noteNotFoundView: {
       title: 'Note Not Found',

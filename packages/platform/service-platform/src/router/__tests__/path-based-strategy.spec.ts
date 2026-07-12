@@ -138,20 +138,6 @@ describe('PathBasedStrategy', () => {
       });
     });
 
-    it('should encode fatal error route', () => {
-      const routeInfo: AppRouteInfo = {
-        route: 'fatal-error',
-        payload: { error: new Error('test error') },
-      };
-
-      const result = strategy.encodeRouteInfo(routeInfo, basePath);
-      expect(result).toEqual({
-        pathname: '/app/fatal-error',
-        search: '?error=test+error',
-        hash: '',
-      });
-    });
-
     it('should handle empty basePath', () => {
       const routeInfo: AppRouteInfo = {
         route: 'editor',
@@ -233,19 +219,6 @@ describe('PathBasedStrategy', () => {
       expect(result).toEqual({
         route: 'ws-home',
         payload: { wsName: 'test' },
-      });
-    });
-
-    it('should decode fatal error route', () => {
-      const encoded: EncodedRoute = {
-        pathname: '/fatal-error',
-        search: '?error=test+error',
-      };
-
-      const result = strategy.decodeRouteInfo(encoded, basePath);
-      expect(result).toEqual({
-        route: 'fatal-error',
-        payload: { error: new Error('test error') },
       });
     });
 

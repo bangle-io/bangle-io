@@ -23,6 +23,16 @@ async function openNoteFromExplorer(page: Page, fileName: string) {
   await expect(page).toHaveURL(editorUrl(fileName));
 }
 
+test('retired direct routes render the normal not-found page', async ({
+  page,
+}) => {
+  await page.goto('/#route=fatal-error&error=old');
+
+  await expect(
+    page.getByRole('heading', { name: 'Page Not Found' }),
+  ).toBeVisible();
+});
+
 // Regression: opening a note from the file explorer must create exactly one
 // browser-history entry. A stale implementation re-fired the tree's "open"
 // callback when the active route (and therefore the tree selection) changed

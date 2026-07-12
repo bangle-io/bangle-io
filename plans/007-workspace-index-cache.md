@@ -3,8 +3,9 @@ title: Workspace Index Cache
 status: planned
 type: plan
 archived: false
+archived_on:
 created: 2026-06-30
-updated: 2026-06-30
+updated: 2026-07-12
 owner: mixed
 related_prs: []
 related_issues: []
@@ -32,9 +33,12 @@ clearing, and eventual persisted snapshots.
 ## Current Status
 
 - `WorkspaceStateService.$backlinkIndex` currently builds an in-memory reverse
-  link map for the active workspace, reading Markdown notes with concurrency
-  `4`, preserving prior data during rebuilds, aborting stale rebuilds, and
-  surfacing an error state.
+  link map for the active workspace. A content-update counter triggers a
+  debounced full rebuild, files are read serially, and the atom aborts stale
+  generations. On failure it exposes an error state with an empty map rather
+  than retaining last-good data. Bounded concurrency, typed incremental event
+  updates, and stale-while-error behavior remain target work (also tracked as
+  A8 in plan 005).
 - `packages/core/app/src/components/backlinks/linked-mentions.tsx` now renders
   backlinks from `WorkspaceStateService.$backlinkIndex` instead of reading or
   parsing Markdown in React.

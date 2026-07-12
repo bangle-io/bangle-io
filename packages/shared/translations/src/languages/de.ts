@@ -489,28 +489,12 @@ export const t = {
       createWorkspacePrompt:
         'Erstellen Sie einen Arbeitsbereich, um loszulegen.',
     },
-    pageFatalError: {
-      title: 'Schwerwiegender Fehler',
-      description:
-        'Etwas ist ernsthaft schiefgelaufen. Wir entschuldigen uns für die Unannehmlichkeiten.',
-      reloadButton: 'App neu laden',
-      reportButton: 'Problem melden',
-    },
     pageStartupError: {
       title: 'Bangle konnte nicht gestartet werden',
       description:
         'Ein erforderlicher Dienst ist beim Start fehlgeschlagen. Ihre Notizen wurden nicht geändert.',
       detailsLabel: 'Details zum Startfehler',
       reloadButton: 'App neu laden',
-    },
-    pageNativeFsAuthFailed: {
-      title: 'Authentifizierung fehlgeschlagen. Bitte versuchen Sie es erneut',
-      tryAgainButton: 'Erneut versuchen',
-    },
-    pageNativeFsAuthReq: {
-      title:
-        'Authentifizierung erforderlich. Bitte erlauben Sie den Zugriff, um fortzufahren',
-      authorizeButton: 'Autorisieren',
     },
     pageNotFound: {
       title: 'Seite nicht gefunden',
@@ -527,9 +511,6 @@ export const t = {
       noNotesMessage: 'Keine Notizen in diesem Arbeitsbereich gefunden.',
       newNoteButton: 'Neue Notiz',
       switchWorkspaceButton: 'Arbeitsbereich wechseln',
-    },
-    pageWsPathNotFound: {
-      // Using NoteNotFoundView strings
     },
     noteNotFoundView: {
       title: 'Notiz nicht gefunden',

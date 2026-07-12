@@ -109,6 +109,21 @@ describe('MemoryRouterService', () => {
     expect(service.basePath).toBe('/test');
   });
 
+  it('decodes retired route ids as not-found', async () => {
+    const { service } = await setup();
+    const retiredRoute = encodeURIComponent(
+      JSON.stringify({
+        route: 'fatal-error',
+        payload: { error: 'old error' },
+      }),
+    );
+
+    expect(service.fromUri(`/memory/${retiredRoute}`)).toEqual({
+      route: 'not-found',
+      payload: { path: 'fatal-error' },
+    });
+  });
+
   it('should cleanup emitter on abort', async () => {
     const { service, controller } = await setup();
     const events: any[] = [];
