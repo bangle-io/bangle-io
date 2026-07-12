@@ -50,6 +50,26 @@ export interface NativeFsChange {
   kind?: 'file' | 'directory';
 }
 
+/**
+ * Best-effort rollback of an entry this operation created: deletes only if
+ * the file is still empty, so a racing external writer's bytes can never be
+ * destroyed by our cleanup. Swallows every failure — rollback must not mask
+ * the original error.
+ */
+async function removeEntryIfEmpty(
+  parent: FileSystemDirectoryHandle,
+  handle: FileSystemFileHandle,
+): Promise<void> {
+  try {
+    const file = await handle.getFile();
+    if (file.size === 0) {
+      await parent.removeEntry(handle.name);
+    }
+  } catch {
+    // best effort
+  }
+}
+
 const KNOWN_CHANGE_TYPES: readonly FileSystemChangeType[] = [
   'appeared',
   'disappeared',
@@ -151,7 +171,10 @@ export class NativeFs {
             code: NATIVE_FS_ERROR_CODE.alreadyExists,
           });
         }
-        await this.writeWithCreateRollback(segments, data, { create: true });
+        await this.writeWithCreateRollback(segments, data, {
+          create: true,
+          failIfTaken: true,
+        });
       });
     });
   }
@@ -186,7 +209,7 @@ export class NativeFs {
   private async writeWithCreateRollback(
     segments: readonly string[],
     data: Blob,
-    opts: { create: boolean },
+    opts: { create: boolean; failIfTaken?: boolean },
   ): Promise<void> {
     let existed = true;
     try {
@@ -212,13 +235,46 @@ export class NativeFs {
     const { parent, handle } = await this.resolveFile(segments, {
       create: !existed,
     });
+    if (!existed && opts.failIfTaken) {
+      // Between the notFound probe and the create, an external writer (sync
+      // tool, another program) can take this path; getFileHandle(create)
+      // then returns THEIR file, not a fresh one. Web Locks only serialize
+      // our own tabs. A freshly created entry is empty, so any bytes prove
+      // the entry is not ours — honor create semantics instead of
+      // overwriting it.
+      const claimed = await handle.getFile();
+      if (claimed.size > 0) {
+        throw new NativeFsError({
+          message: `Cannot create "${joinPath(segments)}": the file already exists`,
+          code: NATIVE_FS_ERROR_CODE.alreadyExists,
+        });
+      }
+    }
     try {
       await this.writeToHandle(handle, data);
     } catch (error) {
       if (!existed) {
         // Best effort: the original write failure is what the caller must
         // see, even if the rollback itself fails.
-        await parent.removeEntry(handle.name).catch(() => undefined);
+        await removeEntryIfEmpty(parent, handle);
+      }
+      throw error;
+    }
+  }
+
+  /** Existence probe that treats only `notFound` as false. */
+  private async fileEntryExists(segments: readonly string[]): Promise<boolean> {
+    try {
+      await this.resolveFile(segments, { create: false });
+      return true;
+    } catch (error) {
+      if (
+        isNativeFsError(
+          toNativeFsError(error, ''),
+          NATIVE_FS_ERROR_CODE.notFound,
+        )
+      ) {
+        return false;
       }
       throw error;
     }
@@ -298,8 +354,23 @@ export class NativeFs {
               newSegments.slice(0, -1),
               { create: true },
             );
-            await nativeMove.call(source.handle, destinationDir, newName);
-            return;
+            try {
+              await nativeMove.call(source.handle, destinationDir, newName);
+              return;
+            } catch (error) {
+              // Chromium exposes move() while rejecting it for picked local
+              // directories (it currently only supports OPFS moves), so a
+              // rejection here usually means "unsupported", not "failed".
+              // Fall back to copy+delete only when the rejected move
+              // provably did nothing — source still present, destination
+              // still absent — otherwise surface the error untouched.
+              const sourceIntact = await this.fileEntryExists(oldSegments);
+              const destinationAbsent =
+                !(await this.fileEntryExists(newSegments));
+              if (!sourceIntact || !destinationAbsent) {
+                throw error;
+              }
+            }
           }
 
           // Fallback: copy, verify the destination write landed, then delete
@@ -311,6 +382,17 @@ export class NativeFs {
           const destination = await this.resolveFile(newSegments, {
             create: true,
           });
+          // Same external-writer claim check as file creation: a freshly
+          // created destination is empty; existing bytes mean another
+          // program took the path between the probe and the create, and its
+          // file must be neither overwritten nor rolled back.
+          const claimed = await destination.handle.getFile();
+          if (claimed.size > 0) {
+            throw new NativeFsError({
+              message: `Cannot move to "${newPath}": the file already exists`,
+              code: NATIVE_FS_ERROR_CODE.alreadyExists,
+            });
+          }
           try {
             await this.writeToHandle(destination.handle, sourceFile);
             const written = await destination.handle.getFile();
@@ -328,16 +410,21 @@ export class NativeFs {
                 code: NATIVE_FS_ERROR_CODE.moveVerificationFailed,
               });
             }
+            // Deleting the source is part of the guarded scope: if it
+            // fails (OS lock, permission change), leaving the copy behind
+            // would strand a half-completed rename whose retry dies with
+            // alreadyExists — so the destination copy is rolled back and
+            // the move rejects with the source untouched.
+            await source.parent.removeEntry(source.handle.name);
           } catch (error) {
-            // The destination entry was created by this move (an occupied
-            // destination rejects above), so roll it back. Best effort: the
-            // original failure is what the caller must see.
+            // The destination entry passed the empty-claim check above, so
+            // it was created (and only ever written) by this move. Best
+            // effort: the original failure is what the caller must see.
             await destination.parent
               .removeEntry(destination.handle.name)
               .catch(() => undefined);
             throw error;
           }
-          await source.parent.removeEntry(source.handle.name);
         });
       },
     );

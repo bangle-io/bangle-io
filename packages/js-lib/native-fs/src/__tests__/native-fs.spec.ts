@@ -256,6 +256,137 @@ describe('failed writes roll back created entries', () => {
   });
 });
 
+describe('racing external writers (TOCTOU)', () => {
+  /**
+   * Simulates an external program creating `name` (with `content`) in the
+   * window between the notFound probe and getFileHandle({create:true}) —
+   * the create call then returns the external file instead of a fresh one.
+   */
+  function injectExternalFileOnCreate(
+    root: FakeDirectoryHandle,
+    name: string,
+    content: string,
+  ): FakeFileHandle {
+    const external = new FakeFileHandle(name, content);
+    const realGetFileHandle = root.getFileHandle.bind(root);
+    root.getFileHandle = async (entryName, options) => {
+      if (entryName === name && options?.create && !root.entries.has(name)) {
+        root.entries.set(name, external);
+        return external;
+      }
+      return realGetFileHandle(entryName, options);
+    };
+    return external;
+  }
+
+  it('createFile refuses to overwrite a file that appeared mid-create', async () => {
+    const { fs, root } = setup();
+    injectExternalFileOnCreate(root, 'raced.md', 'external bytes');
+
+    const error = await fs
+      .createFile('raced.md', new Blob(['ours']))
+      .catch((e) => e);
+    expect(isNativeFsError(error, NATIVE_FS_ERROR_CODE.alreadyExists)).toBe(
+      true,
+    );
+    // The external file is intact — neither overwritten nor rolled back.
+    expect(await fs.readFileText('raced.md')).toBe('external bytes');
+  });
+
+  it('a failed write never rolls back an entry holding external bytes', async () => {
+    const { fs, root } = setup();
+    const external = injectExternalFileOnCreate(root, 'raced.md', 'theirs');
+    external.writeFailure = new DOMException('boom', 'QuotaExceededError');
+
+    // writeFile(create:true) may legitimately overwrite, but when its write
+    // fails the rollback must not delete a file it cannot prove it created.
+    const error = await fs
+      .writeFile('raced.md', new Blob(['ours']))
+      .catch((e) => e);
+    expect(isNativeFsError(error, NATIVE_FS_ERROR_CODE.quotaExceeded)).toBe(
+      true,
+    );
+    expect(await fs.readFileText('raced.md')).toBe('theirs');
+  });
+
+  it('a fallback move refuses a destination that appeared mid-move', async () => {
+    const { fs, root, seeded } = setup({ 'a.md': 'source' });
+    await seeded;
+    injectExternalFileOnCreate(root, 'b.md', 'external bytes');
+
+    const error = await fs.moveFile('a.md', 'b.md').catch((e) => e);
+    expect(isNativeFsError(error, NATIVE_FS_ERROR_CODE.alreadyExists)).toBe(
+      true,
+    );
+    expect(await fs.readFileText('a.md')).toBe('source');
+    expect(await fs.readFileText('b.md')).toBe('external bytes');
+  });
+});
+
+describe('move failure modes', () => {
+  it('rolls back the destination copy when deleting the source fails', async () => {
+    const { fs, root, seeded } = setup({ 'a.md': 'precious' });
+    await seeded;
+    // OS lock / permission change at the final step of copy->verify->delete.
+    const realRemoveEntry = root.removeEntry.bind(root);
+    root.removeEntry = async (name: string) => {
+      if (name === 'a.md') {
+        throw new DOMException('locked', 'NoModificationAllowedError');
+      }
+      return realRemoveEntry(name);
+    };
+
+    const error = await fs.moveFile('a.md', 'b.md').catch((e) => e);
+    expect(
+      isNativeFsError(error, NATIVE_FS_ERROR_CODE.modificationNotAllowed),
+    ).toBe(true);
+    // No half-completed rename: the source survives and the destination copy
+    // was rolled back, so a retry does not die with alreadyExists.
+    expect(await fs.readFileText('a.md')).toBe('precious');
+    expect(getEntry(root, 'b.md')).toBeUndefined();
+
+    root.removeEntry = realRemoveEntry;
+    await fs.moveFile('a.md', 'b.md');
+    expect(await fs.readFileText('b.md')).toBe('precious');
+    expect(getEntry(root, 'a.md')).toBeUndefined();
+  });
+
+  it('falls back to copy+delete when a present native move() rejects without effect', async () => {
+    // Chromium exposes FileSystemFileHandle.move() but rejects it for picked
+    // local directories (only OPFS moves are supported today).
+    const { fs, root, seeded } = setup({ 'a.md': 'precious' });
+    await seeded;
+    const source = getEntry(root, 'a.md') as FakeFileHandle;
+    source.move = async () => {
+      throw new DOMException('move not supported here', 'NotSupportedError');
+    };
+
+    await fs.moveFile('a.md', 'b.md');
+    expect(await fs.readFileText('b.md')).toBe('precious');
+    expect(getEntry(root, 'a.md')).toBeUndefined();
+  });
+
+  it('does not fall back when a rejected native move left a destination behind', async () => {
+    const { fs, root, seeded } = setup({ 'a.md': 'precious' });
+    await seeded;
+    const source = getEntry(root, 'a.md') as FakeFileHandle;
+    source.move = async (destination, newName) => {
+      // A move that failed midway: destination materialized, then rejected.
+      destination.entries.set(
+        newName ?? 'b.md',
+        new FakeFileHandle(newName ?? 'b.md', 'half-moved'),
+      );
+      throw new DOMException('failed midway', 'InvalidStateError');
+    };
+
+    const error = await fs.moveFile('a.md', 'b.md').catch((e) => e);
+    // The original error surfaces; copy+delete must NOT run on top of an
+    // ambiguous half-effect.
+    expect(isNativeFsError(error, NATIVE_FS_ERROR_CODE.unknown)).toBe(true);
+    expect(await fs.readFileText('a.md')).toBe('precious');
+  });
+});
+
 describe('deleteFile', () => {
   it('deletes an existing file', async () => {
     const { fs, root, seeded } = setup({ 'a/b.md': 'x' });

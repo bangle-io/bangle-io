@@ -136,4 +136,19 @@ describe('pickDirectory', () => {
       true,
     );
   });
+
+  it('wraps a rejecting requestPermission in the typed taxonomy', async () => {
+    const dir = new FakeDirectoryHandle('my-notes');
+    dir.permissions.readwrite = 'prompt';
+    dir.requestPermission = async () => {
+      throw new DOMException('prompt failed', 'InvalidStateError');
+    };
+    vi.stubGlobal('showDirectoryPicker', async () => asRootHandle(dir));
+
+    const error = await pickDirectory().catch((e) => e);
+    expect(isNativeFsError(error, NATIVE_FS_ERROR_CODE.permissionDenied)).toBe(
+      true,
+    );
+    expect((error as { cause?: unknown }).cause).toBeInstanceOf(DOMException);
+  });
 });

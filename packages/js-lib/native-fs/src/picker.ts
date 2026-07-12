@@ -60,7 +60,31 @@ export async function pickDirectory(
   // Passing `mode` to the picker already prompts for it in Chrome 105+, in
   // which case this resolves immediately; older implementations that ignored
   // the option get the explicit prompt instead.
-  if (!(await requestPermission(handle, mode))) {
+  let granted: boolean;
+  try {
+    granted = await requestPermission(handle, mode);
+  } catch (error) {
+    // requestPermission can itself reject (e.g. the user gesture expired by
+    // the time the explicit prompt runs); keep the typed taxonomy instead of
+    // leaking a raw DOMException to the UI.
+    if (
+      error instanceof DOMException &&
+      (error.name === 'SecurityError' ||
+        error.message.toLowerCase().includes('user activation'))
+    ) {
+      throw new NativeFsError({
+        message: `Requesting ${mode} permission for "${handle.name}" requires a user gesture`,
+        code: NATIVE_FS_ERROR_CODE.activationRequired,
+        cause: error,
+      });
+    }
+    throw new NativeFsError({
+      message: `Unable to request ${mode} permission for "${handle.name}"`,
+      code: NATIVE_FS_ERROR_CODE.permissionDenied,
+      cause: error,
+    });
+  }
+  if (!granted) {
     throw new NativeFsError({
       message: `Permission (${mode}) was denied for "${handle.name}"`,
       code: NATIVE_FS_ERROR_CODE.permissionDenied,
