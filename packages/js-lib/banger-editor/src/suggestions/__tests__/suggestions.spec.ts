@@ -423,3 +423,85 @@ describe('suggestions provider state', () => {
     expect(slashSelect).not.toHaveBeenCalled();
   });
 });
+
+describe('openSuggestion', () => {
+  it('inserts the trigger with the suggestion mark and activates the provider', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: '', store });
+
+    const handled = slashSuggestions.command.openSuggestion()(
+      view.state,
+      view.dispatch,
+      view,
+    );
+
+    expect(handled).toBe(true);
+    expect(view.state.doc.textContent).toBe('/');
+    const markType = schema.marks.slash_command;
+    if (!markType) throw new Error('missing slash_command mark');
+    expect(view.state.doc.rangeHasMark(1, 2, markType)).toBe(true);
+    expect(editorStore.get(view.state, $suggestions).get(view)).toMatchObject({
+      markName: 'slash_command',
+      show: true,
+      text: '/',
+    });
+  });
+
+  it('does not open inside a link', () => {
+    const store = createStore();
+    const linkMark = schema.marks.link;
+    if (!linkMark) throw new Error('missing link mark');
+    const doc = schema.node('doc', null, [
+      schema.node('paragraph', null, [
+        schema.text('site', [linkMark.create({ href: 'https://example.com' })]),
+      ]),
+    ]);
+    const mount = document.createElement('div');
+    document.body.append(mount);
+    const state = EditorState.create({
+      doc,
+      schema,
+      selection: TextSelection.create(doc, 3),
+      plugins: resolve([
+        collection({
+          id: 'test-store',
+          plugin: { store: editorStore.storePlugin(store) },
+        }),
+        setupBase(),
+        setupParagraph(),
+        setupLink(),
+        slashSuggestions,
+        wikiSuggestions,
+        dateSuggestions,
+      ]).resolvePlugins({ schema }),
+    });
+    const view = new EditorView({ mount }, { state });
+    editors.push(view);
+
+    const handled = slashSuggestions.command.openSuggestion()(
+      view.state,
+      view.dispatch,
+      view,
+    );
+
+    expect(handled).toBe(false);
+    expect(view.state.doc.textContent).toBe('site');
+  });
+
+  it('does not open when the selection is not empty', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: 'hello', store });
+    view.dispatch(
+      view.state.tr.setSelection(TextSelection.create(view.state.doc, 1, 4)),
+    );
+
+    const handled = slashSuggestions.command.openSuggestion()(
+      view.state,
+      view.dispatch,
+      view,
+    );
+
+    expect(handled).toBe(false);
+    expect(view.state.doc.textContent).toBe('hello');
+  });
+});

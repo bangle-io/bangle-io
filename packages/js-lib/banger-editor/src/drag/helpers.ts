@@ -1,4 +1,8 @@
 import type { EditorState, EditorView, PMNode, Schema } from '../pm';
+import type {
+  BlockHandleLabels,
+  BlockHandleOrientation,
+} from './drag-handle-ui';
 
 export const ORDERED_LIST_TAG = 'OL';
 
@@ -14,12 +18,29 @@ export interface NodeOffsetCalculationArgs {
   state: EditorState;
 }
 
+export interface HandleOrientationArgs {
+  rect: { top: number; left: number; width: number };
+  /** Horizontal space between the hovered block and the editor's left edge. */
+  gutterWidth: number;
+  view: EditorView;
+}
+
 export interface GlobalDragHandlePluginOptions {
   dragHandleWidth: number;
   scrollTreshold: number;
-  dragHandleSelector?: string;
   excludedTags: string[];
   customNodes: string[];
+  /** Strings for the block handle buttons and the add-block tooltip. */
+  labels?: BlockHandleLabels;
+  /**
+   * Decides how the "+"/grip cluster is laid out for the hovered block:
+   * side by side when there is gutter room, stacked (+ above grip) when not.
+   */
+  getHandleOrientation?: (
+    args: HandleOrientationArgs,
+  ) => BlockHandleOrientation;
+  /** Called after the "+" button successfully inserted an empty paragraph. */
+  onBlockAdd?: (view: EditorView, info: { above: boolean }) => void;
   // Updated type checks to receive EditorState for more context
   isTableRow?: (state: EditorState, node: PMNode) => boolean;
   isListItem?: (state: EditorState, node: PMNode) => boolean;

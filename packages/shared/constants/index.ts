@@ -125,6 +125,13 @@ export const SERVICE_NAME = {
   editorWService: 'editor-w',
 } as const;
 export const APP_MAIN_CONTENT_PADDING = 'px-4 py-4 pt-0 md:px-6';
+/**
+ * Left gutter for the editor page: wider than the default content padding so
+ * the hover block handle ("+" and drag grip side by side) fits beside the
+ * text. Sections rendered below the editor (e.g. linked mentions) share it so
+ * their content stays aligned with the editor text.
+ */
+export const EDITOR_GUTTER_PADDING_LEFT = 'pl-10 md:pl-14';
 export type ServiceName = (typeof SERVICE_NAME)[keyof typeof SERVICE_NAME];
 export { browserHistoryStateEvents } from './browser-history-events';
 export { commandExcludedServices, commandKeyToContext } from './command';

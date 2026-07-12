@@ -2,9 +2,15 @@ import type { PMNode } from '../pm';
 import { Fragment, Plugin, PluginKey, Slice } from '../pm';
 import { isNodeSelection } from '../pm-utils';
 import {
+  BLOCK_HANDLE_BUTTON_GAP,
+  setBlockHandleOrientation,
+} from './drag-handle-ui';
+import {
+  getBlockHandleElement,
   getCurrentListType,
   hideDragHandle,
   resetListType,
+  setHoveredBlockDom,
   showDragHandle,
 } from './drag-handle-view';
 import {
@@ -70,14 +76,26 @@ export function createDragHandleEventsPlugin(
             state: view.state,
           });
 
-          // Position the handle
-          const handleEl =
-            document.querySelector<HTMLElement>('[data-drag-handle]');
+          // Position the handle cluster
+          const handleEl = getBlockHandleElement();
           if (!handleEl) return false;
 
-          handleEl.style.left = `${result.left - result.width}px`;
+          const editorRect = view.dom.getBoundingClientRect();
+          const orientation = options.getHandleOrientation({
+            rect: result,
+            gutterWidth: result.left - editorRect.left,
+            view,
+          });
+          setBlockHandleOrientation(handleEl, orientation);
+
+          const clusterWidth =
+            orientation === 'horizontal'
+              ? result.width * 2 + BLOCK_HANDLE_BUTTON_GAP
+              : result.width;
+          handleEl.style.left = `${Math.max(2, result.left - clusterWidth)}px`;
           handleEl.style.top = `${result.top}px`;
 
+          setHoveredBlockDom(node);
           showDragHandle(options);
           return false; // Do not prevent PM’s default
         },

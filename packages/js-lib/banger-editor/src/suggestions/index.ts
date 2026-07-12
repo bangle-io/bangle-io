@@ -5,6 +5,7 @@ import { inputRules } from '../pm';
 import { triggerInputRule } from './input-rule';
 import { suggestionKeymap } from './keymap';
 import {
+  openSuggestion,
   pluginSuggestion,
   type ReplacementContent,
   removeSuggestMark,
@@ -66,6 +67,12 @@ export function setupSuggestions(config: SuggestionConfig) {
         return removeSuggestMark({
           markName: config.markName,
           selection,
+        });
+      },
+      openSuggestion: () => {
+        return openSuggestion({
+          markName: config.markName,
+          trigger: config.trigger,
         });
       },
     },

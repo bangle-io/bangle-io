@@ -349,6 +349,54 @@ function doesQueryHaveTrigger(
   return textContent.includes(trigger);
 }
 
+/**
+ * Programmatically start a suggestion at the current cursor, producing the
+ * same document state as if the user had typed the trigger text — the
+ * suggestion plugin picks the mark up on its next update and shows the UI.
+ */
+export function openSuggestion({
+  markName,
+  trigger,
+}: {
+  markName: string;
+  trigger: string;
+}): Command {
+  return (state, dispatch, view) => {
+    const { schema, selection } = state;
+    if (!selection.empty || !isTextSelection(selection)) {
+      return false;
+    }
+    const linkMarkType = schema.marks.link;
+    if (
+      selection.$from.parent.type.spec.code ||
+      selection.$from
+        .marks()
+        .some((mark) => mark.type.spec.code || mark.type === linkMarkType)
+    ) {
+      return false;
+    }
+
+    const mark = schema.mark(markName, { trigger });
+    const marks = selection.$from.marks();
+    const tr = state.tr
+      .replaceWith(
+        selection.from,
+        selection.to,
+        schema.text(trigger, [mark, ...marks]),
+      )
+      .addStoredMark(mark)
+      .scrollIntoView();
+
+    if (dispatch) {
+      if (view && typeof view.focus === 'function') {
+        view.focus();
+      }
+      dispatch(tr);
+    }
+    return true;
+  };
+}
+
 export function removeSuggestMark({
   markName,
   selection,

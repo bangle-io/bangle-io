@@ -1,7 +1,8 @@
 import type { EditorView } from '../pm';
 import { NodeSelection, Plugin, PluginKey, TextSelection } from '../pm';
 import { isNodeSelection } from '../pm-utils';
-import { createDragHandle } from './drag-handle-ui';
+import { addBlockNextTo } from './add-block';
+import { createBlockHandle } from './drag-handle-ui';
 import {
   calcNodePos,
   type GlobalDragHandlePluginOptions,
@@ -9,10 +10,21 @@ import {
   nodePosAtDOM,
 } from './helpers';
 
-let dragHandleElement: HTMLElement | null = null;
+let blockHandleElement: HTMLElement | null = null;
+let hoveredBlockDom: Element | null = null;
 let listType = '';
 
 const dragHandleViewPluginKey = new PluginKey('drag-handle-view');
+
+/** The wrapper holding the "+" button and the drag grip. */
+export function getBlockHandleElement() {
+  return blockHandleElement;
+}
+
+/** Records which block DOM node the handle cluster is currently anchored to. */
+export function setHoveredBlockDom(node: Element | null) {
+  hoveredBlockDom = node;
+}
 
 function handleDragStart(
   event: DragEvent,
@@ -22,13 +34,20 @@ function handleDragStart(
   view.focus();
   if (!event.dataTransfer) return;
 
-  const node = nodeDOMAtCoords(
-    {
-      x: event.clientX + options.horizontalNodeOffset + options.dragHandleWidth,
-      y: event.clientY,
-    },
-    options,
-  );
+  // Prefer the block recorded on hover — the grip may sit further from the
+  // block than the coordinate probe assumes (e.g. vertical orientation).
+  const node = hoveredBlockDom?.isConnected
+    ? hoveredBlockDom
+    : nodeDOMAtCoords(
+        {
+          x:
+            event.clientX +
+            options.horizontalNodeOffset +
+            options.dragHandleWidth,
+          y: event.clientY,
+        },
+        options,
+      );
   if (!(node instanceof Element)) return;
 
   let draggedNodePos = nodePosAtDOM(node, view, options);
@@ -114,21 +133,22 @@ export function createDragHandleViewPlugin(
     key: dragHandleViewPluginKey,
 
     view: (view) => {
-      // Attempt to find an existing drag-handle from user’s custom selector, else create one
-      const handleBySelector = options.dragHandleSelector
-        ? document.querySelector<HTMLElement>(options.dragHandleSelector)
-        : null;
-
-      dragHandleElement = handleBySelector ?? createDragHandle();
-      dragHandleElement.draggable = true;
-      dragHandleElement.dataset.dragHandle = '';
-      dragHandleElement.classList.add(options.dragHandleClassName);
+      const { wrapper, plusButton, dragButton } = createBlockHandle(
+        options.labels,
+      );
+      blockHandleElement = wrapper;
+      // The class is used by the editor mouseout containment check below.
+      wrapper.classList.add(options.dragHandleClassName);
+      plusButton.classList.add(options.dragHandleClassName);
+      dragButton.classList.add(options.dragHandleClassName);
+      dragButton.draggable = true;
+      dragButton.dataset.dragHandle = '';
 
       // Attach DOM listeners
       const onDragHandleDragStart = (e: DragEvent) => {
         handleDragStart(e, view, options);
       };
-      dragHandleElement.addEventListener('dragstart', onDragHandleDragStart);
+      dragButton.addEventListener('dragstart', onDragHandleDragStart);
 
       const onDragHandleDrag = (e: DragEvent) => {
         hideDragHandle(options);
@@ -139,14 +159,32 @@ export function createDragHandleViewPlugin(
           window.scrollTo({ top: scrollY + 30, behavior: 'smooth' });
         }
       };
-      dragHandleElement.addEventListener('drag', onDragHandleDrag);
+      dragButton.addEventListener('drag', onDragHandleDrag);
+
+      // Keep the editor focused and the hovered block recorded; a mousedown
+      // that reaches the document would blur the editor before the click.
+      const onPlusMouseDown = (e: MouseEvent) => {
+        e.preventDefault();
+      };
+      plusButton.addEventListener('mousedown', onPlusMouseDown);
+
+      const onPlusClick = (e: MouseEvent) => {
+        e.preventDefault();
+        const target = hoveredBlockDom;
+        if (!target || !target.isConnected) {
+          return;
+        }
+        const above = e.altKey;
+        if (addBlockNextTo(view, target, { above }, options)) {
+          options.onBlockAdd(view, { above });
+        }
+        hideDragHandle(options);
+      };
+      plusButton.addEventListener('click', onPlusClick);
 
       hideDragHandle(options);
 
-      // Insert the handle if user’s selector didn’t return an existing handle
-      if (!handleBySelector) {
-        view.dom.parentElement?.appendChild(dragHandleElement);
-      }
+      view.dom.parentElement?.appendChild(wrapper);
 
       // Hide handle when mouse leaves the editor area
       const hideHandleOnEditorOut = (event: MouseEvent) => {
@@ -168,15 +206,13 @@ export function createDragHandleViewPlugin(
 
       return {
         destroy: () => {
-          if (!handleBySelector) {
-            dragHandleElement?.remove?.();
-          }
-          dragHandleElement?.removeEventListener('drag', onDragHandleDrag);
-          dragHandleElement?.removeEventListener(
-            'dragstart',
-            onDragHandleDragStart,
-          );
-          dragHandleElement = null;
+          wrapper.remove();
+          dragButton.removeEventListener('drag', onDragHandleDrag);
+          dragButton.removeEventListener('dragstart', onDragHandleDragStart);
+          plusButton.removeEventListener('mousedown', onPlusMouseDown);
+          plusButton.removeEventListener('click', onPlusClick);
+          blockHandleElement = null;
+          hoveredBlockDom = null;
           view.dom.parentElement?.removeEventListener(
             'mouseout',
             hideHandleOnEditorOut,
@@ -187,16 +223,17 @@ export function createDragHandleViewPlugin(
   });
 }
 
-// Simple helpers to show/hide the drag handle
+// Simple helpers to show/hide the block handle cluster
 export function hideDragHandle(
   options: Required<GlobalDragHandlePluginOptions>,
 ) {
-  dragHandleElement?.classList.add(options.dragHandleHideClassName);
+  blockHandleElement?.classList.add(options.dragHandleHideClassName);
+  hoveredBlockDom = null;
 }
 export function showDragHandle(
   options: Required<GlobalDragHandlePluginOptions>,
 ) {
-  dragHandleElement?.classList.remove(options.dragHandleHideClassName);
+  blockHandleElement?.classList.remove(options.dragHandleHideClassName);
 }
 
 // So that other plugins can see which type of list we started with (ordered vs. un-ordered)

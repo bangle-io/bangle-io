@@ -37,6 +37,41 @@ test('slash command stays active with multiple suggestion providers registered',
     .toBe('# Slash Title');
 });
 
+test('slash menu shows grouped items with icons and filters as you type', async ({
+  page,
+}) => {
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName: 'slash-command-menu-structure',
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('/');
+
+  const menu = page.getByTestId('slash-command-menu');
+  await expect(menu).toBeVisible();
+  await expect(menu.getByText('Basic blocks')).toBeVisible();
+  await expect(menu.getByText('Lists', { exact: true })).toBeVisible();
+  await expect(menu.getByText('Time', { exact: true })).toBeVisible();
+
+  // Items render as icon + title + description rows.
+  const headingItem = menu.getByRole('option', { name: /Heading 1/ });
+  await expect(headingItem).toBeVisible();
+  await expect(headingItem.locator('svg')).toBeVisible();
+  await expect(headingItem.getByText('Large section heading')).toBeVisible();
+
+  // Typing narrows the menu, including alias matches.
+  await page.keyboard.insertText('head');
+  await expect(menu.getByText('Heading 1')).toBeVisible();
+  await expect(menu.getByText('Bullet list')).toBeHidden();
+
+  // A query with no matches shows the empty state.
+  await page.keyboard.insertText('zzzz');
+  await expect(menu.getByText('No results')).toBeVisible();
+});
+
 test('slash command can insert a persisted code block', async ({ page }) => {
   const workspaceName = 'slash-command-code-block';
   await createBrowserWorkspaceAndNote(page, {

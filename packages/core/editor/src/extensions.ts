@@ -1,3 +1,4 @@
+import { isDarwin } from '@bangle.io/base-utils';
 import type { Logger } from '@bangle.io/logger';
 import {
   type LinkConfig,
@@ -42,7 +43,6 @@ import {
 } from './asset-link-plugin';
 import { setupCodeHighlight } from './code-highlight';
 import { setupFrontmatterActions } from './frontmatter-actions';
-import { funPlaceholder } from './utils';
 
 /**
  * The date picker is a first-class suggestion surface: `$date` is a real
@@ -63,6 +63,13 @@ export function setupExtensions(
 ) {
   const link = setupLink({ onOpenLink });
   const frontmatter = setupFrontmatter();
+  const suggestions = setupSuggestions({
+    providerId: 'slash-command',
+    markName: 'slash_command',
+    trigger: '/',
+    markClassName: 'text-pop',
+    logger: logger.child('suggestions'),
+  });
   return {
     image: setupImage(),
     ...(assetFileConfig
@@ -97,6 +104,19 @@ export function setupExtensions(
       pluginOptions: {
         notDraggableClassName: 'prosemirror-flat-list',
         excludedTags: ['blockquote'],
+        labels: {
+          addBlockLabel: t.app.editor.blockHandle.addBlock,
+          addBelowHint: t.app.editor.blockHandle.addBelowHint,
+          addAboveHint: t.app.editor.blockHandle.addAboveHint({
+            modifier: isDarwin ? '⌥' : 'Alt',
+          }),
+          dragHandleLabel: t.app.editor.blockHandle.dragHandle,
+        },
+        // Open the slash menu on the freshly inserted empty block so the
+        // "+" button lands the user directly in block selection.
+        onBlockAdd: (view) => {
+          suggestions.command.openSuggestion()(view.state, view.dispatch, view);
+        },
       },
     }),
     dropGapCursor: setupDropGapCursor({
@@ -115,13 +135,7 @@ export function setupExtensions(
     history: setupHistory(),
     paragraph: setupParagraph(),
     strike: setupStrike(),
-    suggestions: setupSuggestions({
-      providerId: 'slash-command',
-      markName: 'slash_command',
-      trigger: '/',
-      markClassName: 'text-pop',
-      logger: logger.child('suggestions'),
-    }),
+    suggestions,
     trailingNode: setupTrailingNode(),
     dateSuggestions: setupSuggestions({
       providerId: 'date-picker',
@@ -146,7 +160,8 @@ export function setupExtensions(
     underline: setupUnderline(),
     horizontalRule: setupHorizontalRule(),
     placeholder: setupPlaceholder({
-      placeholder: funPlaceholder(),
+      placeholder: t.app.editor.placeholder.emptyDoc,
+      blockPlaceholder: t.app.editor.placeholder.emptyBlock,
     }),
     code: setupCode(),
     codeBlock: setupCodeBlock(),
