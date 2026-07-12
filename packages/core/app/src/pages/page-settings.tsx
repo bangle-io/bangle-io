@@ -134,6 +134,7 @@ export function safeAppHref(
     if (
       !href.startsWith('/') ||
       href.startsWith('//') ||
+      targetUrl.pathname.startsWith('//') ||
       targetUrl.protocol !== currentUrl.protocol ||
       targetUrl.host !== currentUrl.host
     ) {

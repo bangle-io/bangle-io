@@ -85,10 +85,12 @@ test('general settings returns to the route it was opened from', async ({
   ).toBeVisible();
 });
 
-test('general settings rejects an external return target', async ({ page }) => {
+test('general settings rejects an external return target after path normalization', async ({
+  page,
+}) => {
   const hash = new URLSearchParams({
     route: 'settings-general',
-    returnTo: '/\\evil.example/path',
+    returnTo: '/foo/..//evil.example/path',
   });
 
   await page.goto(`/#${hash.toString()}`);

@@ -73,6 +73,7 @@ describe('PageSettings', () => {
   it.each([
     ['an absolute URL', 'https://evil.example/path'],
     ['a scheme-relative URL', '//evil.example/path'],
+    ['a normalized scheme-relative URL', '/foo/..//evil.example/path'],
     ['a raw-backslash URL', '/\\evil.example/path'],
     ['a control-character URL', '/\nevil.example/path'],
     ['a malformed URL', 'http://[::1'],
