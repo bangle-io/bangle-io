@@ -352,8 +352,6 @@ describe('move failure modes', () => {
   });
 
   it('falls back to copy+delete when a present native move() rejects without effect', async () => {
-    // Chromium exposes FileSystemFileHandle.move() but rejects it for picked
-    // local directories (only OPFS moves are supported today).
     const { fs, root, seeded } = setup({ 'a.md': 'precious' });
     await seeded;
     const source = getEntry(root, 'a.md') as FakeFileHandle;
@@ -384,6 +382,26 @@ describe('move failure modes', () => {
     // ambiguous half-effect.
     expect(isNativeFsError(error, NATIVE_FS_ERROR_CODE.unknown)).toBe(true);
     expect(await fs.readFileText('a.md')).toBe('precious');
+  });
+
+  it('preserves a destination changed after verification when source deletion fails', async () => {
+    const { fs, root, seeded } = setup({ 'a.md': 'precious' });
+    await seeded;
+    const realRemoveEntry = root.removeEntry.bind(root);
+    root.removeEntry = async (name: string) => {
+      if (name === 'a.md') {
+        const destination = getEntry(root, 'b.md') as FakeFileHandle;
+        const writable = await destination.createWritable();
+        await writable.write(new Blob(['external replacement']));
+        await writable.close();
+        throw new DOMException('locked', 'NoModificationAllowedError');
+      }
+      return realRemoveEntry(name);
+    };
+
+    await expect(fs.moveFile('a.md', 'b.md')).rejects.toThrow();
+    expect(await fs.readFileText('a.md')).toBe('precious');
+    expect(await fs.readFileText('b.md')).toBe('external replacement');
   });
 });
 

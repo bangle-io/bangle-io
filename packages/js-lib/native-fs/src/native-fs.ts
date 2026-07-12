@@ -51,18 +51,23 @@ export interface NativeFsChange {
 }
 
 /**
- * Best-effort rollback of an entry this operation created: deletes only if
- * the file is still empty, so a racing external writer's bytes can never be
- * destroyed by our cleanup. Swallows every failure — rollback must not mask
- * the original error.
+ * Best-effort rollback of a destination candidate. Without `expectedBytes`,
+ * deletes only while the file is empty. With a snapshot, deletes only while
+ * the bytes are unchanged. Swallows every failure so rollback never masks the
+ * original error.
  */
-async function removeEntryIfEmpty(
+async function removeEntryIfUnchanged(
   parent: FileSystemDirectoryHandle,
   handle: FileSystemFileHandle,
+  expectedBytes?: ArrayBuffer,
 ): Promise<void> {
   try {
     const file = await handle.getFile();
-    if (file.size === 0) {
+    const unchanged =
+      expectedBytes === undefined
+        ? file.size === 0
+        : bytesEqual(await file.arrayBuffer(), expectedBytes);
+    if (unchanged) {
       await parent.removeEntry(handle.name);
     }
   } catch {
@@ -254,9 +259,9 @@ export class NativeFs {
       await this.writeToHandle(handle, data);
     } catch (error) {
       if (!existed) {
-        // Best effort: the original write failure is what the caller must
-        // see, even if the rollback itself fails.
-        await removeEntryIfEmpty(parent, handle);
+        // Best effort: only remove an entry that is still empty. Non-empty
+        // bytes prove an external writer took or changed the path.
+        await removeEntryIfUnchanged(parent, handle);
       }
       throw error;
     }
@@ -295,12 +300,13 @@ export class NativeFs {
   }
 
   /**
-   * Moves/renames a file, rejecting with `alreadyExists` when the
-   * destination is taken — an occupied destination is never deleted or
-   * overwritten. Uses the native `FileSystemFileHandle.move()` when
-   * available; otherwise falls back to copy → verify destination → delete
-   * source, so the source is only removed after the destination write is
-   * confirmed durable.
+   * Moves/renames a file, rejecting with `alreadyExists` when the destination
+   * is occupied at the preflight check. The browser's native move API has no
+   * conditional/no-replace option, so an external program can still take the
+   * destination in the final probe-to-move window; Web Locks cover app tabs,
+   * not OS writers. Uses native move when available, otherwise falls back to
+   * copy → verify destination → delete source, so the source is only removed
+   * after the destination write is confirmed durable.
    */
   async moveFile(oldPath: string, newPath: string): Promise<void> {
     return guardNativeFsOp(
@@ -358,12 +364,9 @@ export class NativeFs {
               await nativeMove.call(source.handle, destinationDir, newName);
               return;
             } catch (error) {
-              // Chromium exposes move() while rejecting it for picked local
-              // directories (it currently only supports OPFS moves), so a
-              // rejection here usually means "unsupported", not "failed".
-              // Fall back to copy+delete only when the rejected move
-              // provably did nothing — source still present, destination
-              // still absent — otherwise surface the error untouched.
+              // Rejection names for unsupported local moves vary across
+              // engines, so fall back based on effects rather than names. The
+              // fallback is safe only when the move provably did nothing.
               const sourceIntact = await this.fileEntryExists(oldSegments);
               const destinationAbsent =
                 !(await this.fileEntryExists(newSegments));
@@ -393,6 +396,7 @@ export class NativeFs {
               code: NATIVE_FS_ERROR_CODE.alreadyExists,
             });
           }
+          let rollbackSnapshot: ArrayBuffer | undefined;
           try {
             await this.writeToHandle(destination.handle, sourceFile);
             const written = await destination.handle.getFile();
@@ -404,6 +408,7 @@ export class NativeFs {
               written.arrayBuffer(),
               sourceFile.arrayBuffer(),
             ]);
+            rollbackSnapshot = writtenBytes;
             if (!bytesEqual(writtenBytes, sourceBytes)) {
               throw new NativeFsError({
                 message: `Move verification failed for "${newPath}": the destination content does not match the source after writing. The source file was kept.`,
@@ -417,12 +422,14 @@ export class NativeFs {
             // the move rejects with the source untouched.
             await source.parent.removeEntry(source.handle.name);
           } catch (error) {
-            // The destination entry passed the empty-claim check above, so
-            // it was created (and only ever written) by this move. Best
-            // effort: the original failure is what the caller must see.
-            await destination.parent
-              .removeEntry(destination.handle.name)
-              .catch(() => undefined);
+            // Do not remove a destination that an external writer changed
+            // after our write/verification. Before a snapshot exists, only an
+            // empty entry is safe to clean up.
+            await removeEntryIfUnchanged(
+              destination.parent,
+              destination.handle,
+              rollbackSnapshot,
+            );
             throw error;
           }
         });
