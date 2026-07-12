@@ -41,6 +41,19 @@ export function createBlockActionButton({
 }
 
 /**
+ * Marks a widget wrapper as editor chrome: interface elements (language
+ * badges, copy/delete buttons, ...) that render inside the editable content
+ * DOM but are not document content. Chrome must be non-editable so
+ * ProseMirror never places the cursor in it, and it carries
+ * `data-editor-chrome` so text extraction (tests, tooling) can exclude it —
+ * document text offsets must never depend on when chrome happens to render.
+ */
+export function markEditorChrome(element: HTMLElement): void {
+  element.contentEditable = 'false';
+  element.dataset.editorChrome = 'true';
+}
+
+/**
  * Events a block-action widget handles itself; ProseMirror must not treat
  * them as editor interactions. Used as the widget decoration's `stopEvent`.
  */

@@ -451,60 +451,131 @@ export async function loadBrowserWorkspaceFixture(
   return { workspaceName, files: files.map((file) => file.relativePath) };
 }
 
+/**
+ * Places a DOM selection over document text found inside the editor, retrying
+ * until the text exists (content and async decorations render over several
+ * frames — a one-shot walk is racy).
+ *
+ * Text offsets are computed over CONTENT text nodes only: widget chrome
+ * (language badges, copy/delete buttons) is marked `data-editor-chrome` and
+ * excluded, so offsets do not shift depending on whether async chrome has
+ * rendered yet. The filter deliberately does NOT key on
+ * `contenteditable="false"` — document atoms (e.g. wiki links) render
+ * non-editable too, and their text is real content.
+ */
+async function placeEditorTextSelection(
+  page: Page,
+  text: string,
+  mode: 'select' | 'collapse-after',
+) {
+  const editor = page.locator(EDITOR_SELECTOR);
+  await expect
+    .poll(
+      () =>
+        editor.evaluate(
+          (editorRoot, input) => {
+            const isChrome = (candidate: Text) => {
+              const chrome = candidate.parentElement?.closest(
+                '[data-editor-chrome]',
+              );
+              return Boolean(chrome && editorRoot.contains(chrome));
+            };
+            const walker = document.createTreeWalker(
+              editorRoot,
+              NodeFilter.SHOW_TEXT,
+            );
+            const textNodes: Text[] = [];
+            let node = walker.nextNode();
+            while (node) {
+              if (node instanceof Text && !isChrome(node)) {
+                textNodes.push(node);
+              }
+              node = walker.nextNode();
+            }
+
+            const fullText = textNodes
+              .map((textNode) => textNode.data)
+              .join('');
+            const start = fullText.indexOf(input.text);
+            if (start < 0) {
+              return false;
+            }
+            const end = start + input.text.length;
+
+            const resolveOffset = (offset: number) => {
+              let consumed = 0;
+              for (const textNode of textNodes) {
+                const next = consumed + textNode.length;
+                if (offset <= next) {
+                  return { node: textNode, offset: offset - consumed };
+                }
+                consumed = next;
+              }
+              throw new Error(`Unable to resolve editor offset: ${offset}`);
+            };
+
+            editorRoot.focus();
+            const range = document.createRange();
+            if (input.mode === 'collapse-after') {
+              const at = resolveOffset(end);
+              range.setStart(at.node, at.offset);
+              range.collapse(true);
+            } else {
+              const from = resolveOffset(start);
+              const to = resolveOffset(end);
+              range.setStart(from.node, from.offset);
+              range.setEnd(to.node, to.offset);
+            }
+            const selection = window.getSelection();
+            selection?.removeAllRanges();
+            selection?.addRange(range);
+            document.dispatchEvent(
+              new Event('selectionchange', { bubbles: true }),
+            );
+            return true;
+          },
+          { text, mode },
+        ),
+      { message: `Unable to find editor text: ${text}` },
+    )
+    .toBe(true);
+}
+
 /** Selects the first exact text occurrence through a real browser Range. */
 export async function selectEditorText(page: Page, text: string) {
-  await page.locator(EDITOR_SELECTOR).evaluate((editor, selectedText) => {
-    editor.focus();
-    const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT);
-    const textNodes: Text[] = [];
-    let node = walker.nextNode();
-    while (node) {
-      textNodes.push(node as Text);
-      node = walker.nextNode();
-    }
+  await placeEditorTextSelection(page, text, 'select');
+}
 
-    const fullText = textNodes.map((textNode) => textNode.data).join('');
-    const start = fullText.indexOf(selectedText);
-    if (start < 0) {
-      throw new Error(`Unable to find editor text: ${selectedText}`);
-    }
-    const end = start + selectedText.length;
-
-    const resolveOffset = (offset: number) => {
-      let consumed = 0;
-      for (const textNode of textNodes) {
-        const next = consumed + textNode.length;
-        if (offset <= next) {
-          return { node: textNode, offset: offset - consumed };
-        }
-        consumed = next;
-      }
-      throw new Error(`Unable to resolve editor offset: ${offset}`);
-    };
-
-    const from = resolveOffset(start);
-    const to = resolveOffset(end);
-    const range = document.createRange();
-    range.setStart(from.node, from.offset);
-    range.setEnd(to.node, to.offset);
-    const selection = window.getSelection();
-    selection?.removeAllRanges();
-    selection?.addRange(range);
-    document.dispatchEvent(new Event('selectionchange', { bubbles: true }));
-  }, text);
+/**
+ * Places a collapsed caret immediately after the first exact occurrence of
+ * `text`. Prefer this over mouse coordinates + visual-line keys (`End`),
+ * which race async rendering (e.g. syntax highlighting swapping text nodes
+ * between the click and the keypress) and depend on line wrapping.
+ */
+export async function collapseEditorSelectionAfterText(
+  page: Page,
+  text: string,
+) {
+  await placeEditorTextSelection(page, text, 'collapse-after');
 }
 
 export async function collapseEditorSelection(page: Page, offset: number) {
   await page.locator(EDITOR_SELECTOR).evaluate((editor, cursorOffset) => {
+    const isChrome = (candidate: Text) => {
+      const chrome = candidate.parentElement?.closest('[data-editor-chrome]');
+      return Boolean(chrome && editor.contains(chrome));
+    };
     editor.focus();
     const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT);
     let textNode = walker.nextNode();
     let consumed = 0;
     while (textNode instanceof Text) {
-      if (cursorOffset <= consumed + textNode.length) {
-        break;
+      if (!isChrome(textNode)) {
+        if (cursorOffset <= consumed + textNode.length) {
+          break;
+        }
+        consumed += textNode.length;
       }
-      consumed += textNode.length;
       textNode = walker.nextNode();
     }
     if (!(textNode instanceof Text)) {

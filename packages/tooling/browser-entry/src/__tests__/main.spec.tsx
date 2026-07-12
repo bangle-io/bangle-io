@@ -39,7 +39,12 @@ describe('browser entry startup', () => {
     document.body.innerHTML = '';
   });
 
-  test('renders a user-visible startup error when service initialization fails', async () => {
+  // Importing `../main` pulls in the whole app graph; under a fully parallel
+  // vitest run that import alone can eat most of the default 5s test budget,
+  // so this test gets a wider one — it is import-bound, not logic-bound.
+  test('renders a user-visible startup error when service initialization fails', {
+    timeout: 30_000,
+  }, async () => {
     const error = new Error('database mount failed');
     let startupSignal: AbortSignal | undefined;
     mocks.initializeServices.mockImplementationOnce(
@@ -57,11 +62,14 @@ describe('browser entry startup', () => {
 
     await import('../main');
 
-    await vi.waitFor(() => {
-      expect(document.getElementById('root')?.textContent ?? '').toContain(
-        t.app.pageStartupError.title,
-      );
-    });
+    await vi.waitFor(
+      () => {
+        expect(document.getElementById('root')?.textContent ?? '').toContain(
+          t.app.pageStartupError.title,
+        );
+      },
+      { timeout: 10_000 },
+    );
 
     expect(document.getElementById('root')?.textContent ?? '').toContain(
       t.app.pageStartupError.description,
