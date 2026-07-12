@@ -196,7 +196,8 @@ export const AppSidebar = ({ children }: SidebarProps) => {
         }
         activeFilePaths={activeWsPaths.map((wsPath) => wsPath.path)}
         expandedFileTreePaths={
-          activeWsName
+          activeWsName &&
+          Object.hasOwn(fileTreeExpandedPathsByWorkspace, activeWsName)
             ? fileTreeExpandedPathsByWorkspace[activeWsName]
             : undefined
         }

@@ -435,6 +435,35 @@ test('collapse-all persistence does not bounce between tabs', async ({
   await secondPage.close();
 });
 
+test('collapse-all supports a prototype-key workspace name', async ({
+  page,
+}) => {
+  const workspaceName = 'constructor';
+  await createBrowserWorkspace(page, { workspaceName });
+  await writeStoredMarkdown(page, workspaceName, 'active/current', 'Current');
+  await writeStoredMarkdown(page, workspaceName, 'other/note', 'Other');
+
+  await page.goto(
+    `/ws#route=editor&wsPath=${encodeURIComponent(
+      `${workspaceName}:active/current.md`,
+    )}`,
+  );
+  await page.reload();
+
+  const explorer = page.getByTestId('bangle-file-explorer');
+  const activeFolder = explorer.getByRole('treeitem', { name: /^active$/ });
+  const otherFolder = explorer.getByRole('treeitem', { name: /^other$/ });
+
+  await expect(activeFolder).toHaveAttribute('aria-expanded', 'true');
+  await otherFolder.press('ArrowRight');
+  await expect(otherFolder).toHaveAttribute('aria-expanded', 'true');
+
+  await explorer.getByRole('button', { name: 'Collapse All Folders' }).click();
+
+  await expect(activeFolder).toHaveAttribute('aria-expanded', 'true');
+  await expect(otherFolder).toHaveAttribute('aria-expanded', 'false');
+});
+
 test('file explorer creates folders, opens notes, and survives reload', async ({
   page,
 }) => {

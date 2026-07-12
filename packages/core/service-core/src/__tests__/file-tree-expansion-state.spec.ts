@@ -66,4 +66,22 @@ describe('reduceFileTreeExpansion', () => {
       }),
     ).toBe(state);
   });
+
+  it.each([
+    'constructor',
+    '__proto__',
+  ])('treats the prototype-key workspace %s as an independent entry', (workspaceName) => {
+    const result = reduceFileTreeExpansion(
+      {},
+      {
+        type: 'set-directory',
+        workspaceName,
+        path: 'docs',
+        expanded: true,
+      },
+    );
+
+    expect(Object.hasOwn(result, workspaceName)).toBe(true);
+    expect(result[workspaceName]).toEqual(['docs']);
+  });
 });

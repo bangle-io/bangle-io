@@ -37,7 +37,9 @@ export function reduceFileTreeExpansion(
   current: FileTreeExpandedPathsByWorkspace,
   action: FileTreeExpansionAction,
 ): FileTreeExpandedPathsByWorkspace {
-  const currentPaths = current[action.workspaceName] ?? [];
+  const currentPaths = Object.hasOwn(current, action.workspaceName)
+    ? (current[action.workspaceName] ?? [])
+    : [];
   let nextPaths: readonly string[];
 
   switch (action.type) {
