@@ -13,6 +13,7 @@ related_prs:
   - https://github.com/bangle-io/bangle-io/pull/616
   - https://github.com/bangle-io/bangle-io/pull/620
   - https://github.com/bangle-io/bangle-io/pull/623
+  - https://github.com/bangle-io/bangle-io/pull/630
 related_issues: []
 ---
 

@@ -7,7 +7,8 @@ archived_on:
 created: 2026-07-12
 updated: 2026-07-12
 owner: agent
-related_prs: []
+related_prs:
+  - https://github.com/bangle-io/bangle-io/pull/630
 related_issues: []
 ---
 
