@@ -14,13 +14,7 @@ import {
   FileText,
   FolderPlus,
 } from 'lucide-react';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { BANGLE_PIERRE_FILE_TREE_ICONS } from './pierre-file-tree-icons';
 import {
   type FileTreeEntry,
@@ -296,7 +290,9 @@ function getCurrentSelectedEntries(
 export interface PierreFileTreeProps {
   activePaths?: readonly string[];
   className?: string;
+  fileTreeExpanded: boolean;
   filePaths: readonly string[];
+  onFileTreeExpandedChange: (expanded: boolean) => void;
   onCreateDirectory: (pathPrefix: string | undefined) => void;
   onCreateNote: (pathPrefix: string | undefined) => void;
   onMoveFile: (
@@ -315,7 +311,9 @@ export interface PierreFileTreeProps {
 export function PierreFileTree({
   activePaths = [],
   className,
+  fileTreeExpanded,
   filePaths,
+  onFileTreeExpandedChange,
   onCreateDirectory,
   onCreateNote,
   onMoveFile,
@@ -360,7 +358,10 @@ export function PierreFileTree({
     () => collectAncestorDirectoryPaths(activeTreePath ? [activeTreePath] : []),
     [activeTreePath],
   );
-  const [expandAllOnNextClick, setExpandAllOnNextClick] = useState(false);
+  const lastCollapsedActivePathRef = useRef<{
+    model: PierreFileTreeModel;
+    path: string | null;
+  } | null>(null);
   const filePathSetRef = useRef<ReadonlySet<string>>(filePathSet);
   const modelRef = useRef<PierreFileTreeModel | null>(null);
   const contextMenuSelectedEntriesRef = useRef<readonly FileTreeEntry[]>([]);
@@ -516,7 +517,10 @@ export function PierreFileTree({
       },
     },
     flattenEmptyDirectories: true,
-    initialExpansion: 1,
+    initialExpandedPaths: fileTreeExpanded
+      ? directoryPaths
+      : activeAncestorPaths,
+    initialExpansion: 'closed',
     onSelectionChange: (selectedPaths) => {
       const selectedPath = selectedPaths.at(-1);
       const normalizedPath = selectedPath
@@ -565,12 +569,70 @@ export function PierreFileTree({
   }, [model, treePaths]);
 
   useEffect(() => {
-    if (!expandAllOnNextClick) {
+    if (fileTreeExpanded || treePaths.length === 0) {
       return;
     }
 
-    setExpandedDirectories(model, directoryPaths, new Set(activeAncestorPaths));
-  }, [activeAncestorPaths, directoryPaths, expandAllOnNextClick, model]);
+    const activePath = activeTreePath ?? null;
+    const lastApplied = lastCollapsedActivePathRef.current;
+    if (lastApplied?.model === model && lastApplied.path === activePath) {
+      return;
+    }
+    if (activeTreePath && !filePathSet.has(activeTreePath)) {
+      return;
+    }
+
+    setExpandedDirectories(
+      model,
+      directoryPaths,
+      new Set(
+        collectAncestorDirectoryPaths(activeTreePath ? [activeTreePath] : []),
+      ),
+    );
+    lastCollapsedActivePathRef.current = { model, path: activePath };
+
+    if (!activeTreePath) {
+      return;
+    }
+
+    const animationFrame = window.requestAnimationFrame(() => {
+      model.scrollToPath(activeTreePath, {
+        focus: false,
+        offset: 'nearest',
+      });
+    });
+
+    return () => window.cancelAnimationFrame(animationFrame);
+  }, [
+    activeTreePath,
+    directoryPaths,
+    filePathSet,
+    fileTreeExpanded,
+    model,
+    treePaths.length,
+  ]);
+
+  useEffect(() => {
+    if (!fileTreeExpanded) {
+      return;
+    }
+
+    lastCollapsedActivePathRef.current = null;
+    setExpandedDirectories(model, directoryPaths, new Set(directoryPaths));
+
+    if (!activeTreePath) {
+      return;
+    }
+
+    const animationFrame = window.requestAnimationFrame(() => {
+      model.scrollToPath(activeTreePath, {
+        focus: false,
+        offset: 'nearest',
+      });
+    });
+
+    return () => window.cancelAnimationFrame(animationFrame);
+  }, [activeTreePath, directoryPaths, fileTreeExpanded, model]);
 
   useEffect(() => {
     const nextSelectedPath = activeTreePaths.at(-1) ?? null;
@@ -646,17 +708,18 @@ export function PierreFileTree({
   };
 
   const handleToggleAllDirectories = (): void => {
-    const nextExpandedPaths = expandAllOnNextClick
-      ? new Set(directoryPaths)
-      : new Set(activeAncestorPaths);
+    const nextFileTreeExpanded = !fileTreeExpanded;
+    const nextExpandedPaths = new Set(
+      nextFileTreeExpanded ? directoryPaths : activeAncestorPaths,
+    );
 
     setExpandedDirectories(model, directoryPaths, nextExpandedPaths);
-    setExpandAllOnNextClick(!expandAllOnNextClick);
+    onFileTreeExpandedChange(nextFileTreeExpanded);
   };
 
-  const toggleAllDirectoriesLabel = expandAllOnNextClick
-    ? t.app.components.appSidebar.expandAllFoldersActionTitle
-    : t.app.components.appSidebar.collapseAllFoldersActionTitle;
+  const toggleAllDirectoriesLabel = fileTreeExpanded
+    ? t.app.components.appSidebar.collapseAllFoldersActionTitle
+    : t.app.components.appSidebar.expandAllFoldersActionTitle;
 
   return (
     <div
@@ -680,10 +743,10 @@ export function PierreFileTree({
             disabled={directoryPaths.length === 0}
             onClick={handleToggleAllDirectories}
           >
-            {expandAllOnNextClick ? (
-              <ChevronsUpDown className="size-3.5" />
-            ) : (
+            {fileTreeExpanded ? (
               <ChevronsDownUp className="size-3.5" />
+            ) : (
+              <ChevronsUpDown className="size-3.5" />
             )}
           </button>
           <button

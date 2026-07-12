@@ -75,6 +75,7 @@ export class WorkbenchStateService extends BaseService {
   private $_sidebarWidth: PrimitiveAtom<number> | undefined;
   private $_linkedMentionsCollapsed: PrimitiveAtom<boolean> | undefined;
   private $_showNoteFilesOnlyInSidebar: PrimitiveAtom<boolean> | undefined;
+  private $_fileTreeExpanded: PrimitiveAtom<boolean> | undefined;
   private $_assetLocationPreference:
     | PrimitiveAtom<AssetLocationPreference>
     | undefined;
@@ -261,6 +262,20 @@ export class WorkbenchStateService extends BaseService {
       });
     }
     return this.$_showNoteFilesOnlyInSidebar;
+  }
+
+  get $fileTreeExpanded() {
+    if (!this.$_fileTreeExpanded) {
+      this.$_fileTreeExpanded = atomStorage({
+        serviceName: this.name,
+        key: 'file-tree-expanded',
+        initValue: false,
+        syncDb: this.dep.syncDatabase,
+        validator: T.Boolean,
+        logger: this.logger,
+      });
+    }
+    return this.$_fileTreeExpanded;
   }
 
   get $assetLocationPreference() {
