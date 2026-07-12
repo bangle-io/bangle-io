@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-05
-updated: 2026-07-11
+updated: 2026-07-12
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/609
@@ -478,6 +478,13 @@ view to editing its Markdown source directly. It is **not built in this plan** â
 the goal here is only to keep the seam and kernel flexible enough that it (and
 surfaces like it) slot in without a redesign. Placed right, that flexibility is
 nearly free, and it sharpens the Wordgard work rather than competing with it.
+
+Implementation is now specified separately in
+`plans/013-live-markdown-source-editor.md`. That plan makes Live Markdown a
+surface mode above the selected rich engine and pulls the `editor-common`
+extraction forward as shared foundation. This section remains the architectural
+constraint for Wordgard work; plan 013 owns the source-editor product and
+delivery milestones.
 
 **The realization:** the `editorEngine` slot is not "which WYSIWYG library" â€” it
 is *whatever powers the editing surface* (as the name already intends). Editing
