@@ -516,31 +516,43 @@ export function replaceSuggestMarkWith({
     }
 
     try {
+      // Caret target in NEW-doc coordinates: nothing before queryMark.start
+      // moves, so the caret belongs right after the inserted content. This
+      // must not go through tr.mapping — the offset is already post-replace,
+      // and mapping it again double-shifts when the inserted content is
+      // longer than the replaced query text.
+      let pos: number;
       if (typeof content === 'string') {
         tr = tr.replaceWith(
           queryMark.start,
           queryMark.end,
           schema.text(content),
         );
+        pos = queryMark.start + content.length;
       } else if (content instanceof Fragment) {
         tr = tr.replaceWith(queryMark.start, queryMark.end, content);
+        pos = queryMark.start + content.size;
       } else if (content instanceof PMNode) {
         if (content.isText) {
           tr = tr.replaceWith(queryMark.start, queryMark.end, content);
+          pos = queryMark.start + content.nodeSize;
         } else if (content.isBlock) {
           tr = safeInsert(content)(tr);
+          pos = tr.mapping.map(queryMark.start + 1);
         } else if (content.isInline) {
           const fragment = Fragment.fromArray([content, schema.text(' ')]);
           tr = tr.replaceWith(queryMark.start, queryMark.end, fragment);
+          pos = queryMark.start + fragment.size;
+        } else {
+          console.warn('Unknown content type, skipping replacement');
+          return false;
         }
       } else {
         console.warn('Unknown content type, skipping replacement');
         return false;
       }
 
-      const pos = tr.mapping.map(
-        queryMark.start + (content instanceof Fragment ? content.size : 1),
-      );
+      pos = Math.min(pos, tr.doc.content.size);
       tr = tr.setSelection(Selection.near(tr.doc.resolve(pos)));
 
       if (dispatch) {

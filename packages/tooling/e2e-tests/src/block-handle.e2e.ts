@@ -4,6 +4,7 @@ import {
   getEditorLocator,
   readStoredMarkdown,
   waitForEditorFocus,
+  writeStoredMarkdown,
 } from './common';
 
 const EMPTY_DOC_HINT = "Write something, or press '/' for commands…";
@@ -100,6 +101,55 @@ test('alt-clicking the plus button inserts the block above', async ({
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
     .toBe('Above\n\nFirst line');
+});
+
+test('plus button on a table inserts around it without splitting the table', async ({
+  page,
+}) => {
+  const workspaceName = 'block-handle-table';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'Home',
+    '| a | b |\n| --- | --- |\n| 1 | 2 |',
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await expect(editor.locator('table')).toBeVisible();
+
+  await editor.locator('td', { hasText: '1' }).hover();
+  const addButton = page.getByRole('button', { name: 'Add block' });
+  await expect(addButton).toBeVisible();
+  await addButton.click();
+
+  const menu = page.getByTestId('slash-command-menu');
+  await expect(menu).toBeVisible();
+  await menu.getByText('Text', { exact: true }).click();
+  await page.keyboard.insertText('after table');
+
+  // The table must stay one table; the new paragraph lands after it.
+  await expect(editor.locator('table')).toHaveCount(1);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toMatch(/^\| a \| b \|[\s\S]*\| 1 \| 2 \|\n\nafter table$/);
+
+  // Alt-click inserts before the table, still without splitting it.
+  await editor.locator('td', { hasText: '1' }).hover();
+  await expect(addButton).toBeVisible();
+  await addButton.click({ modifiers: ['Alt'] });
+  await expect(menu).toBeVisible();
+  await menu.getByText('Text', { exact: true }).click();
+  await page.keyboard.insertText('before table');
+
+  await expect(editor.locator('table')).toHaveCount(1);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toMatch(/^before table\n\n\| a \| b \|[\s\S]*\n\nafter table$/);
 });
 
 test('block handle stacks vertically when the gutter is narrow', async ({

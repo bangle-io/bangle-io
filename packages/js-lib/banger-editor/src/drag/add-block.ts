@@ -1,19 +1,11 @@
 import type { EditorView } from '../pm';
 import { TextSelection } from '../pm';
-import {
-  calcNodePos,
-  type GlobalDragHandlePluginOptions,
-  nodePosAtDOM,
-} from './helpers';
+import { type GlobalDragHandlePluginOptions, nodePosAtDOM } from './helpers';
 
 /**
- * Inserts an empty paragraph as a sibling of the block rendered by
- * `blockDom` — after it by default, before it when `above` is set — and
- * places the cursor inside the new paragraph.
- *
- * Returns false (and leaves the document untouched) when the position cannot
- * be resolved or the schema forbids a paragraph at that boundary (e.g.
- * above a frontmatter block).
+ * Inserts an empty paragraph next to the block rendered by `blockDom` —
+ * after it by default, before it when `above` is set — and places the cursor
+ * inside the new paragraph.
  */
 export function addBlockNextTo(
   view: EditorView,
@@ -25,28 +17,69 @@ export function addBlockNextTo(
   if (rawPos == null || rawPos < 0) {
     return false;
   }
-  const pos = calcNodePos(rawPos, view.state);
-  const node = view.state.doc.nodeAt(pos);
-  if (!node) {
+  return insertParagraphNear(view, rawPos, { above });
+}
+
+/**
+ * Inserts an empty paragraph as a sibling of the block around `rawPos`.
+ *
+ * The insertion point is found by walking up from the resolved position to
+ * the closest depth whose parent accepts a paragraph there. Inserting must
+ * never go through ProseMirror's slice fitting (`tr.insert` at an invalid
+ * position), which "fits" the content by splitting the surrounding node —
+ * that is how a paragraph forced into a table tears it in two. Positions
+ * inside tables or isolating nodes climb out first, so the paragraph lands
+ * before/after the whole structure instead.
+ *
+ * Returns false (leaving the document untouched) when no valid spot exists,
+ * e.g. above a frontmatter block that must stay first in the document.
+ */
+export function insertParagraphNear(
+  view: EditorView,
+  rawPos: number,
+  { above }: { above: boolean },
+): boolean {
+  const { state } = view;
+  const paragraphType = state.schema.nodes.paragraph;
+  if (!paragraphType || rawPos > state.doc.content.size) {
     return false;
+  }
+  const $pos = state.doc.resolve(rawPos);
+
+  let startDepth = $pos.depth;
+  for (let depth = 1; depth <= $pos.depth; depth++) {
+    const ancestor = $pos.node(depth);
+    if (ancestor.type.spec.tableRole || ancestor.type.spec.isolating) {
+      startDepth = depth - 1;
+      break;
+    }
   }
 
-  const paragraph = view.state.schema.nodes.paragraph?.createAndFill();
-  if (!paragraph) {
-    return false;
-  }
+  for (let depth = startDepth; depth >= 0; depth--) {
+    const parent = $pos.node(depth);
+    const index = $pos.index(depth);
+    const insertIndex = above ? index : Math.min(index + 1, parent.childCount);
+    if (!parent.canReplaceWith(insertIndex, insertIndex, paragraphType)) {
+      continue;
+    }
 
-  const insertPos = above ? pos : pos + node.nodeSize;
-  let tr: typeof view.state.tr;
-  try {
-    tr = view.state.tr.insert(insertPos, paragraph);
-  } catch {
-    return false;
+    const paragraph = paragraphType.createAndFill();
+    if (!paragraph) {
+      return false;
+    }
+
+    const base = $pos.posAtIndex(index, depth);
+    const insertPos = above
+      ? base
+      : base + (index < parent.childCount ? parent.child(index).nodeSize : 0);
+
+    let tr = state.tr.insert(insertPos, paragraph);
+    tr = tr
+      .setSelection(TextSelection.near(tr.doc.resolve(insertPos + 1)))
+      .scrollIntoView();
+    view.focus();
+    view.dispatch(tr);
+    return true;
   }
-  tr = tr
-    .setSelection(TextSelection.near(tr.doc.resolve(insertPos + 1)))
-    .scrollIntoView();
-  view.focus();
-  view.dispatch(tr);
-  return true;
+  return false;
 }

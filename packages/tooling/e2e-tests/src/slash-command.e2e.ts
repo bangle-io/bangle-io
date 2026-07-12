@@ -72,6 +72,76 @@ test('slash menu shows grouped items with icons and filters as you type', async 
   await expect(menu.getByText('No results')).toBeVisible();
 });
 
+test('clicking the Date item without filtering opens the calendar', async ({
+  page,
+}) => {
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName: 'slash-command-date-click',
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('/');
+
+  const menu = page.getByTestId('slash-command-menu');
+  await expect(menu).toBeVisible();
+  await menu.getByText('Date', { exact: true }).click();
+
+  await expect(page.locator('[data-slot="calendar"]')).toBeVisible();
+});
+
+test('selecting a slash item with the mouse keeps typing in the editor', async ({
+  page,
+}) => {
+  const workspaceName = 'slash-command-mouse-focus';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('/');
+
+  const menu = page.getByTestId('slash-command-menu');
+  await expect(menu).toBeVisible();
+  await menu.getByText('Code block').click();
+
+  await expect(editor.locator('pre')).toBeVisible();
+  // The click must not steal focus from the editor: typing continues in the
+  // freshly inserted block without clicking back into the editor.
+  await expect(editor).toBeFocused();
+  await page.keyboard.insertText('typed after mouse click');
+  await expect(editor.locator('pre code')).toContainText(
+    'typed after mouse click',
+  );
+});
+
+test('typing a query ranks direct matches above fuzzy ones', async ({
+  page,
+}) => {
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName: 'slash-command-ranking',
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('/');
+  const menu = page.getByTestId('slash-command-menu');
+  await expect(menu).toBeVisible();
+
+  await page.keyboard.insertText('date');
+  const selected = menu.locator('[cmdk-item][data-selected="true"]');
+  await expect(selected).toContainText('Date');
+  // Fuzzy noise like "Heading 1" must not outrank or accompany the match.
+  await expect(menu.getByText('Heading 1')).toBeHidden();
+});
+
 test('slash command can insert a persisted code block', async ({ page }) => {
   const workspaceName = 'slash-command-code-block';
   await createBrowserWorkspaceAndNote(page, {

@@ -505,3 +505,26 @@ describe('openSuggestion', () => {
     expect(view.state.doc.textContent).toBe('hello');
   });
 });
+
+describe('replaceSuggestMarkWith', () => {
+  it('replaces a bare trigger with longer content and puts the caret after it', () => {
+    const store = createStore();
+    const view = createEditor({ text: '/', markName: 'slash_command', store });
+
+    const dateMark = schema.marks.date_suggestion;
+    if (!dateMark) throw new Error('missing date_suggestion mark');
+    const fragment = Fragment.from(
+      schema.text('$date', [dateMark.create({ trigger: '$date' })]),
+    );
+
+    // Regression: content longer than the replaced query used to double-map
+    // the caret position past the end of the document and silently fail.
+    const handled = slashSuggestions.command.replaceSuggestMarkWith({
+      content: fragment,
+    })(view.state, view.dispatch, view);
+
+    expect(handled).toBe(true);
+    expect(view.state.doc.textContent).toBe('$date');
+    expect(view.state.selection.from).toBe(6);
+  });
+});

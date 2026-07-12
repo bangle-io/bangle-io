@@ -55,6 +55,30 @@ import {
 } from './use-floating-position';
 import { useSuggestionUiHandler } from './use-suggestion-ui-handler';
 
+/**
+ * Match plainly instead of cmdk's fuzzy scorer: fuzzy matching lets scattered
+ * letters ("date" inside "heading-1 h1 title large") outrank the item whose
+ * name is literally the query. Values start with the canonical id followed by
+ * alias words, so prefix > word-prefix > substring covers every useful hit.
+ */
+function slashMenuFilter(value: string, search: string): number {
+  const query = search.toLowerCase().trim();
+  if (!query) {
+    return 1;
+  }
+  const haystack = value.toLowerCase();
+  if (haystack.startsWith(query)) {
+    return 1;
+  }
+  if (haystack.split(/[\s-]+/).some((word) => word.startsWith(query))) {
+    return 0.8;
+  }
+  if (haystack.includes(query)) {
+    return 0.5;
+  }
+  return 0;
+}
+
 type SlashItem = {
   /** cmdk filter value: canonical id plus search aliases. */
   value: string;
@@ -342,9 +366,25 @@ export function SlashCommand({
   ];
 
   return (
-    <div ref={slashRef} style={FLOATING_INITIAL_STYLE}>
+    // biome-ignore lint/a11y/noStaticElementInteractions: focus guard for a floating menu, not an interactive control.
+    <div
+      ref={slashRef}
+      style={FLOATING_INITIAL_STYLE}
+      onMouseDown={(event) => {
+        // The editor must keep focus and its selection while the menu is
+        // clicked — the menu is an extension of typing, like Notion's. Only
+        // the list element itself is exempt so its scrollbar stays draggable.
+        if (
+          !(event.target instanceof HTMLElement) ||
+          !event.target.hasAttribute('cmdk-list')
+        ) {
+          event.preventDefault();
+        }
+      }}
+    >
       <Command
         ref={commandRef}
+        filter={slashMenuFilter}
         data-testid="slash-command-menu"
         className="w-72 overflow-hidden rounded-lg border bg-popover text-popover-foreground shadow-lg"
       >
