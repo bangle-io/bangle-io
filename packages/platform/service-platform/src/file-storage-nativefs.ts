@@ -214,13 +214,6 @@ export class FileStorageNativeFs
       return;
     }
 
-    let refreshEmitted = false;
-    const emitRefresh = () => {
-      if (!refreshEmitted) {
-        refreshEmitted = true;
-        onExternalChange({ type: 'refresh', wsName });
-      }
-    };
     const toVisibleWsPath = (relativePath: string): string | undefined => {
       const result = WsPath.safeFromParts(wsName, relativePath);
       const wsPath = result.ok && result.data ? result.data.wsPath : undefined;
@@ -230,20 +223,28 @@ export class FileStorageNativeFs
       return isVisibleWorkspaceFilePath(wsPath) ? wsPath : undefined;
     };
 
+    // One observer callback can deliver a burst (a sync tool touching many
+    // files at once), so the batch is coalesced before anything is emitted:
+    // identical records collapse to one event, and once any record demands a
+    // coarse refresh the refresh alone is emitted — it re-lists the workspace
+    // and revalidates its open notes, subsuming every per-path event in the
+    // same batch.
+    let needsRefresh = false;
+    const specificEvents = new Map<string, FileStorageExternalChangeEvent>();
     for (const change of changes) {
       // An `errored` record means observation broke (permission loss, the
       // watched directory disappeared). Un-mark the workspace so the next
       // page return re-arms the watcher, and refresh what we may have missed.
       if (change.type === 'errored') {
         this.watchedWorkspaces.delete(wsName);
-        emitRefresh();
+        needsRefresh = true;
         continue;
       }
       // Directory-level records and records the observer could not classify
       // only tell us "something under this workspace changed" — fall back to
       // one coarse refresh instead of guessing per-file events.
       if (change.type === 'unknown' || change.kind === 'directory') {
-        emitRefresh();
+        needsRefresh = true;
         continue;
       }
 
@@ -254,10 +255,14 @@ export class FileStorageNativeFs
             ? undefined
             : toVisibleWsPath(change.movedFromPath);
         if (!newWsPath || !oldWsPath) {
-          emitRefresh();
+          needsRefresh = true;
           continue;
         }
-        onExternalChange({ type: 'rename', oldWsPath, newWsPath });
+        specificEvents.set(`rename:${oldWsPath}->${newWsPath}`, {
+          type: 'rename',
+          oldWsPath,
+          newWsPath,
+        });
         continue;
       }
 
@@ -269,21 +274,29 @@ export class FileStorageNativeFs
       }
       switch (change.type) {
         case 'appeared': {
-          onExternalChange({ type: 'create', wsPath });
+          specificEvents.set(`create:${wsPath}`, { type: 'create', wsPath });
           break;
         }
         case 'modified': {
-          onExternalChange({ type: 'update', wsPath });
+          specificEvents.set(`update:${wsPath}`, { type: 'update', wsPath });
           break;
         }
         case 'disappeared': {
-          onExternalChange({ type: 'delete', wsPath });
+          specificEvents.set(`delete:${wsPath}`, { type: 'delete', wsPath });
           break;
         }
         default: {
           const _exhaustiveCheck: never = change.type;
         }
       }
+    }
+
+    if (needsRefresh) {
+      onExternalChange({ type: 'refresh', wsName });
+      return;
+    }
+    for (const event of specificEvents.values()) {
+      onExternalChange(event);
     }
   }
 

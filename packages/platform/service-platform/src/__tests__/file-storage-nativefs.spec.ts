@@ -461,6 +461,64 @@ describe('external change watching', () => {
     ]);
   });
 
+  it('coalesces one observer burst: duplicates collapse, a coarse record wins alone', async () => {
+    const observer = stubFileSystemObserver();
+    const { service, onExternalChange } = await setup(
+      undefined,
+      'myWorkspace',
+      {
+        withExternalChange: true,
+      },
+    );
+    await service.createFile('myWorkspace:seed.md', new File(['x'], 'seed.md'));
+    await vi.waitFor(() => {
+      expect(observer.observe).toHaveBeenCalledTimes(1);
+    });
+
+    // Duplicate records for the same path collapse into one event.
+    await observer.emitRecords([
+      {
+        type: 'modified',
+        relativePathComponents: ['a.md'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'modified',
+        relativePathComponents: ['a.md'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'modified',
+        relativePathComponents: ['b.md'],
+        changedHandle: { kind: 'file' },
+      },
+    ]);
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'update', wsPath: 'myWorkspace:a.md' },
+      { type: 'update', wsPath: 'myWorkspace:b.md' },
+    ]);
+
+    // Once any record in the batch demands a coarse refresh, the refresh is
+    // emitted alone — it re-lists the workspace and revalidates open notes,
+    // so per-path events in the same batch would only duplicate that work.
+    onExternalChange.mockClear();
+    await observer.emitRecords([
+      {
+        type: 'modified',
+        relativePathComponents: ['a.md'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'appeared',
+        relativePathComponents: ['sub'],
+        changedHandle: { kind: 'directory' },
+      },
+    ]);
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'refresh', wsName: 'myWorkspace' },
+    ]);
+  });
+
   it('still reports external changes to a path the app itself just wrote', async () => {
     // Regression for a removed "self-write echo" ledger: a path+time filter
     // cannot tell the app's own echo from a sync tool overwriting the same
