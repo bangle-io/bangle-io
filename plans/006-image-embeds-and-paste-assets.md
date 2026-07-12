@@ -1,12 +1,14 @@
 ---
 title: Image Embeds And Paste Assets
-status: planned
+status: active
 type: plan
 archived: false
 created: 2026-06-30
-updated: 2026-06-30
+updated: 2026-07-12
 owner: mixed
-related_prs: []
+related_prs:
+  - https://github.com/bangle-io/bangle-io/pull/587
+  - https://github.com/bangle-io/bangle-io/pull/610
 related_issues: []
 ---
 
@@ -31,24 +33,19 @@ The target behavior is:
 
 ## Current Status
 
-- Current editor setup already registers `setupImage()` from
-  `@bangle.io/prosemirror-plugins` in
-  `packages/core/editor/src/extensions.ts`.
-- `packages/js-lib/banger-editor/src/image.ts` already defines an inline image
-  node with `src`, `alt`, and `title`, Markdown parse/serialize support, input
-  rules, paste handling, drop handling, and an `updateImageNodeAttribute`
-  command.
-- The default paste/drop behavior currently converts image files into `data:`
-  URLs. That is acceptable as a generic fallback, but not as Bangle's released
-  behavior because it bloats Markdown, bypasses workspace file persistence, and
-  gives no durable asset name.
-- `FileSystemService` can already create and read arbitrary workspace files by
-  `wsPath`, but `listFiles()` currently filters the workspace tree to note
-  extensions. Image assets should be stored and read without necessarily
-  becoming navigable notes.
-- Existing E2E fixtures include local missing images and data images in
-  `packages/tooling/e2e-tests/src/fixtures/workspaces/markdown-edge-cases/04-links-and-images.md`.
-  Preserve those cases.
+- PR #587 shipped workspace-backed asset paste/drop, relative Markdown paths,
+  local image rendering, asset routing, write-before-insert ordering, and
+  Playwright persistence coverage for images and PDFs.
+- PR #610 fixed duplicate image nodes when browsers surface the same clipboard
+  file through multiple transfer-list views.
+- `packages/js-lib/banger-editor/src/image.ts` owns the image schema and
+  Markdown parse/serialize behavior; `packages/core/editor/src/asset-file-plugin.ts`
+  and `local-image-node-view.ts` own Bangle's durable asset workflow.
+- The image-specific selected-node menu is not implemented. Editing `alt` and
+  `title`, replacing an image, and any Markdown-compatible sizing controls
+  remain the main unfinished scope in this plan.
+- Failure and recovery coverage should still be expanded for permission loss,
+  quota failures, and missing assets without document mutation.
 
 ## Legacy Findings
 

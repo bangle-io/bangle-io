@@ -5,9 +5,10 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-02
-updated: 2026-07-02
+updated: 2026-07-12
 owner: mixed
-related_prs: []
+related_prs:
+  - https://github.com/bangle-io/bangle-io/pull/567
 related_issues: []
 ---
 
@@ -51,6 +52,11 @@ Decisions made (2026-07-02, with Kushan):
   without its full-native UI architecture.
 
 ## Milestones
+
+PR #567 merged the M0 repository scaffolding: the Expo/WebView package, app
+variants, EAS profiles, and manual GitHub workflow. M0 is not complete until the
+human-owned account/provisioning steps below put the app on a physical phone.
+M1-M3 remain unstarted.
 
 ### M0 — pipeline end-to-end (this plan's exit criterion: app on a phone)
 
