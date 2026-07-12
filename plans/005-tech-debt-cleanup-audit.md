@@ -3,10 +3,13 @@ title: Tech Debt Cleanup Audit
 status: active
 type: plan
 archived: false
+archived_on:
 created: 2026-06-15
-updated: 2026-07-07
+updated: 2026-07-12
 owner: mixed
-related_prs: []
+related_prs:
+  - https://github.com/bangle-io/bangle-io/pull/631
+  - https://github.com/bangle-io/bangle-io/pull/632
 related_issues: []
 ---
 
@@ -19,16 +22,23 @@ cleanup roadmap. The audit focused on Bangle.io priorities: protect user data,
 preserve Markdown fidelity, keep local-first behavior predictable, and maintain
 clear workspace boundaries.
 
-The most urgent cleanup area is editor persistence and file-system safety.
-Several code paths currently fire storage mutations without awaiting or
-surfacing failures, and editor saves are triggered for every document update
-without visible queuing, coalescing, or stale-write protection. That work should
-land before broader UI or tooling cleanup.
+The most urgent remaining cleanup area is failure-state continuity across
+resource and service lifetimes. Save serialization/coalescing has landed, but
+workspace-list failures can still erase last-good UI state, the module-global
+save store can retain tasks from a disposed service graph, and command/dialog
+workflows can still detach asynchronous completion. Those items should land
+before broader UI or tooling cleanup.
 
 ## Current Status
 
 - Audit completed across architecture/package boundaries, editor and storage
   safety, React UI/state, and tooling/test hygiene.
+- A 2026-07-12 core/app containment re-audit is recorded below with a verified
+  open/resolved matrix. PR #631 closed the schema-bound Markdown parser bug,
+  cache-key collision, memory-storage contract bugs, workspace-list mutation,
+  one Native FS handler promise, and two dead services. PR #632 removes five
+  orphan routes and hardens Settings return-link validation. The remaining
+  correctness and boundary work is explicitly retained in this plan.
 - P0.1 started with an editor-owned per-`wsPath` save queue that serializes
   writes, coalesces rapid edits to the latest pending document, exposes
   `clean`, `pending`, and `failed` save states, and emits app errors when the
@@ -36,7 +46,8 @@ land before broader UI or tooling cleanup.
   for explicit retry, and `PmEditorService` exposes save status/dirty APIs and
   change subscriptions. Pending or failed saves now activate browser
   navigation/reload protection, failed saves show a persistent translated retry
-  action, and a successful retry clears protection.
+  action, and a successful retry clears protection. Store ownership across UI
+  reload/service-graph replacement remains C4 below.
 - P0.2 started with explicit editor load rejection handling that emits an app
   error instead of leaving the mount promise silently pending. Failed load
   status and a same-node retry API are now exposed. Parse-failure isolation and
@@ -50,9 +61,11 @@ land before broader UI or tooling cleanup.
     `RENAME_VERIFICATION_FAILED_ERROR` with cause; failure-point tests cover
     both backends. Journaled pending-move records and startup recovery remain
     follow-up.
-  - P0.5 done: `WorkspaceStateService` preserves the last known file tree on
-    same-workspace list failures, exposes `$fileTreeListState`, and the
-    sidebar shows a retry notice backed by `command::ws:refresh-file-tree`.
+  - P0.5 done for file-tree listing: `WorkspaceStateService` preserves the last
+    known file tree on same-workspace list failures, exposes
+    `$fileTreeListState`, and the sidebar shows a retry notice backed by
+    `command::ws:refresh-file-tree`. This does not cover `$workspaces` metadata
+    refresh failures; that remains C1 in the 2026-07-12 matrix.
   - P1.1 partially superseded: the shared golden corpus
     (`test-utils/markdown-corpus.ts`) plus a load-time round-trip fidelity
     gate in `PmEditorService` (warns when a note cannot round-trip; opening
@@ -60,16 +73,18 @@ land before broader UI or tooling cleanup.
     012.
   - P2.1 and P2.2 verified already resolved on main: `@bangle.io/types` no
     longer imports core services and no package-private `src` imports remain.
-  - P2.3 re-assessed: storage services now reach `FileSystemService` via a
-    config thunk resolved inside `instantiate()` and asserted before use;
-    full constructor DI conflicts with environment-configurable storage
-    slots, so the current shape is accepted.
+  - P2.3 improved mechanically: storage services now reach
+    `FileSystemService` via a config thunk resolved inside `instantiate()` and
+    asserted before use. The 2026-07-12 re-audit reopens the Native FS half as
+    A3 because its platform root-handle provider still calls upward into
+    `WorkspaceOpsService` through a late-bound closure.
   - P3.1 verified already resolved: no duplicate component trees remain.
   - P3.2 done for render paths: remaining render-time `resolveAtoms()` reads
     replaced with `useAtomValue` subscriptions.
-  - P3.5 done: sidebar file-tree actions extracted to
-    `useSidebarFileActions`, footer menu to `SidebarFooterMenu`; AppSidebar
-    is a thin composition layer.
+  - P3.5 done for app-level decomposition: sidebar file-tree actions moved to
+    `useSidebarFileActions`, the footer menu moved to `SidebarFooterMenu`, and
+    core `AppSidebar` is a thin composition layer. Moving the one-caller,
+    Bangle-specific 582-line UI composition out of `ui-components` remains A6.
   - P4.1 done: GitHub Actions runs `pnpm run build`.
   - P4.5 partially done: `noFloatingPromises` is now a Biome error repo-wide;
     `noExplicitAny` (163 sites) and `noUnusedVariables` remain warnings.
@@ -777,7 +792,83 @@ Verification:
 
 - Unit tests assert error code and cause shape.
 
-## Suggested Execution Order
+## 2026-07-12 Core/App Containment Re-audit
+
+This matrix reconciles the focused core/app audit against current code and the
+first two cleanup batches. It is the durable handoff for findings that were not
+covered precisely by the original 2026-06-15 audit. A resolved item remains
+listed so future agents do not rediscover it or accidentally restore it.
+
+### Correctness First
+
+| ID | Status | Finding and required boundary | ROI |
+| --- | --- | --- | --- |
+| C1 | Open | `createAsyncAtom` still computes its handled-error fallback with `initialValue()` instead of the previous value. `WorkspaceStateService.$workspaces` therefore resolves a failed refresh to `[]`, which can hide an existing workspace and its tree. Replace fallback-only atoms with an explicit `{ status, data, error }` resource that retains last-good data; test a refresh failure after a successful load. | Critical / medium |
+| C2 | Resolved in PR #631 | `PmEditorService` now caches `markdownLoader` instances per ProseMirror `Schema` in a `WeakMap`. A real two-editor regression proves paste uses the active editor schema. | High / small-medium |
+| C3 | Partial | PR #631 made the Native FS metadata lookup awaitable and report invalid metadata as command failure. `CommandDispatchService.dispatch()` still returns `void`, reports a missing handler as success, converts null args with `args || {}`, releases cycle/focus state before async completion, and detaches non-app async errors. Native FS permission work also occurs later in a dialog callback, outside command completion. Make command completion an awaitable typed result and move callback-owned workflows behind feature controllers. | Critical / medium |
+| C4 | Open | The editor save-queue store remains module-global while each queued task captures the writer and error emitter from the service instance that enqueued it. UI reload rebuilds the service graph, so retrying a retained failure can execute through a disposed graph. Move the store to an explicit root-lifetime coordinator and resolve the current writer at execution time; test a failed save across `event::app:reload-ui`. | Critical data safety / medium |
+| C5 | Open | `CreateWorkspaceDialog` types `onDone` as returning `void`, but production passes an async durable workspace create. Submit paths neither await nor catch it and have no busy/error state, allowing unhandled rejection and duplicate submission. Make submission awaitable, disable repeat submit, keep the dialog open on failure, and add a real-service rejection test. | High / medium |
+| C6 | Open | `PageAsset` catches every storage, permission, decode, and object-URL failure, discards the cause, and renders the same generic copy as a missing file. Preserve missing vs failed states, emit/log the error, expose retry/recovery, and test Native FS permission loss. Plan 006 owns the broader unreadable-asset UX. | High / small-medium |
+| C7 | Resolved in PR #631 | Workspace info cache entries are keyed by workspace name and filtered after lookup. Memory storage now compares parsed workspace names exactly and rejects rename over an existing destination, with focused contract regressions. | Medium-high / small |
+| C8 | In PR #632 | Settings return-link validation now rejects both raw scheme-relative inputs and paths that normalize to `//host/...`; the latter previously passed the same-host check and became an external anchor when reserialized. Keep unit and browser E2E coverage for the normalized path. | Security blocker / small |
+
+### Architecture And Ownership Backlog
+
+| ID | Status | Refactor and containment goal | Expected reduction or benefit |
+| --- | --- | --- | --- |
+| A1 | Open; extends P3.2 | Move dialog intents and transient feature state out of `WorkbenchStateService`. It still imports UI prop types and stores callbacks/icons/full dialog props, plus Omni and All Files state, inside `service-core`. Put feature-owned state and callback execution beside the owning app feature; keep durable preferences in the service. | 250-500 LOC; removes core-to-UI coupling |
+| A2 | Open | Replace the global `commandKeyToContext` WeakMap and string-selected service-locator kernel with direct typed handler context. Colocate command metadata and handlers by feature; keep only serializable cross-context command contracts in shared. | 100-200 LOC; explicit dependencies |
+| A3 | Open; reopens P2.3 | Remove the hidden Native FS upward dependency. `initialize-services` currently gives the platform storage adapter a late-bound closure that calls core `WorkspaceOpsService`. Introduce a core-owned workspace storage-session/root-handle registry with explicit invalidation and a downward platform contract. | Removes reload/recovery glue and runtime cycle |
+| A4 | Partial | PR #631 deleted `WorkspaceService` and pass-through `WorkbenchService` and strengthened graph validation. The core aggregate is still repeated in `coreServiceClasses`, `coreServiceSlots`, `getCoreInstances`, `toCoreServices`, and public service types. Derive these views from one descriptor, remove the unused `WorkbenchStateService` database dependency, and delete unused command-key, navigation `fromUri`, and workspace misc-data APIs after focused verification. | 150-250 LOC |
+| A5 | Open | Fold All Files into Omni Search as a file-only scope. Both surfaces independently map workspace files, fuzzy-search, virtualize results, dispatch navigation, and maintain separate open/input state. | 184-230 LOC |
+| A6 | Open; remainder of P3.5 | Move the one-caller Bangle-specific `ui-components/AppSidebar` composition into `core/app/features/sidebar`. Keep reusable sidebar and file-tree primitives in UI, but remove the roughly 30-prop adapter boundary split across a 582-line UI component and its sole app caller. | About 100-200 LOC and one feature boundary |
+| A7 | Resolved in PR #632 | Delete the five zero-producer fatal/auth/missing routes, their pages/types/decoder branches/translations, and unused `ROUTES`; stale IDs decode through normal `not-found`. | 205 net code LOC before review hardening |
+| A8 | Open; tracked by plan 007 | Extract backlink indexing from `WorkspaceStateService`. Current content-update signals trigger a debounced serial full-workspace reread, and a failed rebuild returns an empty map. A dedicated index service should update per source from typed file events, use bounded concurrency, ignore stale generations, and retain last-good data. | Performance, failure semantics, ownership |
+| A9 | Partial | PR #631 stopped the switch-workspace dialog from mutating the atom array with `.sort()`. Welcome, switcher, and settings still need one immutable workspace-summary model and one sorting policy; cached workspace objects/arrays should not be exposed as mutable shared state. | 80-150 LOC and consistent ordering |
+| A10 | Open | Delete production editor debug plumbing. `pm-setup.ts` unconditionally enables debug, installs schema/view/helpers on `window`, and ships roughly 230 lines of console inspection helpers. Keep any useful tooling in a lazy development-only module. | About 270 LOC and smaller production surface |
+| A11 | Open | Collapse `settings-general` and `settings-workspaces` into one `settings` route with a typed page payload and one command. Page selection is currently repeated across route types, constants, decoders, commands, handlers, and app rendering. | Smaller cross-layer route surface |
+
+### Test Architecture Follow-up
+
+- T1 — split the monolithic `@bangle.io/test-utils` barrel. The package
+  runtime-depends on command handlers, initialization, core, and platform while
+  those packages dev-depend back on test-utils; its own common setup modules
+  also form a direct import cycle. Keep lightweight common options separate
+  from full production-wiring helpers.
+- T2 — preserve the real memory-backed production wiring, but replace repeated
+  storage-adapter and router-strategy cases with parameterized contract suites.
+  The audit estimated 550-850 removable test lines while increasing backend and
+  strategy parity coverage.
+
+### Target Boundary
+
+- `service-core`: durable domain state, workflows, and preferences; no React
+  components, UI prop types, or callback-bearing dialog models.
+- `app/features/*`: feature UI, transient state, dialog controllers, and
+  feature-specific command registration.
+- `ui/*`: reusable primitives only; Bangle-branded one-caller compositions stay
+  in app.
+- `platform/*`: browser and storage mechanisms that never call upward into
+  core.
+- `initialize-services`: one derived graph and explicit session providers, not
+  parallel registries or late-bound upward closures.
+
+### Recommended Next Batches
+
+1. C1 workspace resource state and C4 save-coordinator lifetime, because both
+   can hide or endanger existing user data.
+2. C3 command completion plus C5 async workspace creation, with real-service
+   failure tests and no detached promises.
+3. C6 asset read/recovery semantics, aligned with plan 006.
+4. A1-A4 boundary work in independently reviewable slices; do not combine the
+   command kernel, Native FS session provider, and service-graph derivation in
+   one PR.
+5. A5, A6, A9, A10, and A11 as code-reduction batches with user-visible E2E
+   coverage where navigation or interaction changes.
+6. A8 through plan 007, after correcting the temporary index's failure and
+   concurrency assumptions.
+
+## Original 2026-06-15 Suggested Execution Order
 
 1. Editor save queue, error surfacing, and pending-save state.
 2. Await command storage mutations and add failure-ordering tests.
