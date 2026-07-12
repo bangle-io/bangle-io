@@ -12,6 +12,7 @@ import {
   createBlockActionButton,
   deleteBlockAt,
   isBlockActionEvent,
+  markEditorChrome,
 } from './block-action-button';
 import {
   DEFAULT_CODE_BLOCK_LANGUAGE,
@@ -231,7 +232,7 @@ function createCopyButtonWidget(
   const copyLabel = t.app.editor.codeBlock.copy;
   const wrapper = document.createElement('span');
   wrapper.className = 'prosemirror-code-copy-widget';
-  wrapper.contentEditable = 'false';
+  markEditorChrome(wrapper);
 
   const button = document.createElement('button');
   button.type = 'button';
@@ -347,7 +348,7 @@ function createLanguageBadgeWidget(
 ): HTMLElement {
   const wrapper = document.createElement('span');
   wrapper.className = 'prosemirror-code-language-widget';
-  wrapper.contentEditable = 'false';
+  markEditorChrome(wrapper);
   wrapper.append(
     createLanguageButton(wrapper, language, getCodeBlockPos, editorView),
   );

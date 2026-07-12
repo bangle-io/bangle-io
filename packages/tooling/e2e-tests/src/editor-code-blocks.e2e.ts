@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import {
   clearEditor,
+  collapseEditorSelectionAfterText,
   createBrowserWorkspaceAndNote,
   ctrlKey,
   expectReadableContrast,
@@ -112,24 +113,17 @@ test('Shift-Enter adds persisted lines inside nested code blocks', async ({
   // Flat-list renders list items without a native <li>; the first fenced block
   // is the list-owned block and persisted Markdown below proves its ownership.
   const listedCode = editor.locator('pre code').first();
-  const listedBox = await listedCode.boundingBox();
-  expect(listedBox).not.toBeNull();
-  if (!listedBox) {
-    return;
-  }
-  await page.mouse.click(listedBox.x + 24, listedBox.y + listedBox.height - 8);
-  await page.keyboard.press(isDarwin ? 'Control+e' : 'End');
+  const quotedCode = editor.locator('blockquote pre code');
+
+  // Place the caret through a DOM Range instead of mouse coordinates +
+  // visual-line End: async syntax highlighting swaps the code text nodes
+  // shortly after load, which can void a coordinate-derived caret or a
+  // native End keypress between the click and the keystroke.
+  await collapseEditorSelectionAfterText(page, 'const listed = true;');
   await page.keyboard.press('Shift+Enter');
   await page.keyboard.insertText('return listed;');
 
-  const quotedCode = editor.locator('blockquote pre code');
-  const quotedBox = await quotedCode.boundingBox();
-  expect(quotedBox).not.toBeNull();
-  if (!quotedBox) {
-    return;
-  }
-  await page.mouse.click(quotedBox.x + 24, quotedBox.y + quotedBox.height - 8);
-  await page.keyboard.press(isDarwin ? 'Control+e' : 'End');
+  await collapseEditorSelectionAfterText(page, 'const quoted = true;');
   await page.keyboard.press('Shift+Enter');
   await page.keyboard.insertText('return quoted;');
 

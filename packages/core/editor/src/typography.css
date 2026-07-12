@@ -256,6 +256,10 @@ div.ProseMirror {
     display: flex;
     align-items: center;
     gap: 0.2rem;
+    /* Chrome is never document text (data-editor-chrome); also keep native
+       drag-selections from sweeping it up. */
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   & .prosemirror-code-language-widget {
@@ -263,6 +267,8 @@ div.ProseMirror {
     top: 0.42rem;
     left: 0.75rem;
     z-index: 1;
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   & .prosemirror-code-language-button {

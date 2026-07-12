@@ -11,6 +11,7 @@ import type { EditorView } from 'prosemirror-view';
 import {
   createBlockActionButton,
   isBlockActionEvent,
+  markEditorChrome,
 } from './block-action-button';
 
 const FRONTMATTER_ACTIONS_PLUGIN_KEY = new PluginKey('frontmatter-actions');
@@ -75,7 +76,7 @@ function createDeleteButtonWidget(
 ): HTMLElement {
   const wrapper = document.createElement('span');
   wrapper.className = 'prosemirror-frontmatter-actions-widget';
-  wrapper.contentEditable = 'false';
+  markEditorChrome(wrapper);
 
   wrapper.appendChild(
     createBlockActionButton({
