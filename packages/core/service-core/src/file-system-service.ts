@@ -1,4 +1,3 @@
-import { readFileAsText } from '@bangle.io/baby-fs';
 import {
   assertIsDefined,
   BaseService,
@@ -257,7 +256,7 @@ export class FileSystemService extends BaseService {
     if (!file) {
       return undefined;
     }
-    const text = await readFileAsText(file);
+    const text = await file.text();
     throwIfAborted(options.signal);
     return text;
   }

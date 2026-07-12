@@ -104,11 +104,11 @@ class FakeDirectoryHandle {
   }
 }
 
-async function setup(onEntryVisited?: () => void) {
+async function setup(onEntryVisited?: () => void, rootName = 'myWorkspace') {
   const { commonOpts } = createTestEnvironment();
   const onChange = vi.fn();
   const rootDirHandle = new FakeDirectoryHandle(
-    'myWorkspace',
+    rootName,
     onEntryVisited,
   ) as unknown as FileSystemDirectoryHandle;
   const service = new FileStorageNativeFs(
@@ -244,5 +244,93 @@ describe('FileStorageNativeFs', () => {
     // early instead of completing and only discarding the result afterward.
     expect(dirB.valuesCalls).toBe(0);
     expect(dirA.valuesCalls).toBe(1);
+  });
+
+  it('does not require the workspace name to match the picked folder basename', async () => {
+    // The on-disk layout is root-relative: a workspace named `myWorkspace`
+    // can live in a folder called anything (renamed later, duplicated
+    // basenames, etc).
+    const { service } = await setup(undefined, 'Some Renamed Folder');
+    const wsPath = 'myWorkspace:dir/note.md';
+
+    await service.createFile(wsPath, new File(['content'], 'note.md'));
+    const file = await service.readFile(wsPath);
+    expect(await file?.text()).toBe('content');
+    await expect(
+      service.listAllFiles('myWorkspace', new AbortController().signal),
+    ).resolves.toEqual([wsPath]);
+  });
+
+  it('provider contract: writeFile refuses to create a missing file', async () => {
+    const { service, onChange } = await setup();
+    await expect(
+      service.writeFile(
+        'myWorkspace:missing.md',
+        new File(['data'], 'missing.md'),
+      ),
+    ).rejects.toMatchObject({
+      cause: expect.objectContaining({
+        name: 'error::file-storage:file-does-not-exist',
+      }),
+    });
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('provider contract: deleteFile surfaces a missing file as a typed app error', async () => {
+    const { service, onChange } = await setup();
+    await expect(
+      service.deleteFile('myWorkspace:missing.md'),
+    ).rejects.toMatchObject({
+      cause: expect.objectContaining({
+        name: 'error::file-storage:file-does-not-exist',
+      }),
+    });
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('provider contract: rename moves content, emits one rename event, and rejects conflicts', async () => {
+    const { service, onChange } = await setup();
+    await service.createFile(
+      'myWorkspace:a.md',
+      new File(['a-content'], 'a.md'),
+    );
+    await service.createFile(
+      'myWorkspace:taken.md',
+      new File(['taken'], 'taken.md'),
+    );
+    onChange.mockClear();
+
+    await expect(
+      service.renameFile('myWorkspace:a.md', {
+        newWsPath: 'myWorkspace:taken.md',
+      }),
+    ).rejects.toMatchObject({
+      cause: expect.objectContaining({
+        name: 'error::file:already-existing',
+        payload: { wsPath: 'myWorkspace:taken.md' },
+      }),
+    });
+    // A failed rename must leave both files intact.
+    expect(await (await service.readFile('myWorkspace:a.md'))?.text()).toBe(
+      'a-content',
+    );
+    expect(await (await service.readFile('myWorkspace:taken.md'))?.text()).toBe(
+      'taken',
+    );
+    expect(onChange).not.toHaveBeenCalled();
+
+    await service.renameFile('myWorkspace:a.md', {
+      newWsPath: 'myWorkspace:sub/b.md',
+    });
+    expect(await service.readFile('myWorkspace:a.md')).toBeUndefined();
+    expect(await (await service.readFile('myWorkspace:sub/b.md'))?.text()).toBe(
+      'a-content',
+    );
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith({
+      type: 'rename',
+      oldWsPath: 'myWorkspace:a.md',
+      newWsPath: 'myWorkspace:sub/b.md',
+    });
   });
 });

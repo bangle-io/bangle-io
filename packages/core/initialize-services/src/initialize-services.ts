@@ -1,4 +1,3 @@
-import { isFileSystemDirectoryHandle } from '@bangle.io/baby-fs';
 import {
   assertIsDefined,
   getEventSenderMetadata,
@@ -12,6 +11,7 @@ import {
   type EditorEngineId,
   isEditorEngineId,
 } from '@bangle.io/constants';
+import { isFileSystemDirectoryHandle } from '@bangle.io/native-fs';
 import { slot } from '@bangle.io/poor-mans-di';
 import type { WorkspaceOpsService } from '@bangle.io/service-core';
 import {
