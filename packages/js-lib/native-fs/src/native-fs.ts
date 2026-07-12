@@ -46,6 +46,8 @@ export interface NativeFsChange {
   path: string;
   /** For `moved` records, the root-relative path the entry moved from. */
   movedFromPath?: string;
+  /** Kind of the changed entry, when the change record carries a handle. */
+  kind?: 'file' | 'directory';
 }
 
 const KNOWN_CHANGE_TYPES: readonly FileSystemChangeType[] = [
@@ -237,17 +239,14 @@ export class NativeFs {
   }
 
   /**
-   * Moves/renames a file. Uses the native `FileSystemFileHandle.move()` when
+   * Moves/renames a file, rejecting with `alreadyExists` when the
+   * destination is taken — an occupied destination is never deleted or
+   * overwritten. Uses the native `FileSystemFileHandle.move()` when
    * available; otherwise falls back to copy → verify destination → delete
    * source, so the source is only removed after the destination write is
    * confirmed durable.
    */
-  async moveFile(
-    oldPath: string,
-    newPath: string,
-    opts: { overwrite?: boolean } = {},
-  ): Promise<void> {
-    const { overwrite = false } = opts;
+  async moveFile(oldPath: string, newPath: string): Promise<void> {
     return guardNativeFsOp(
       `moveFile "${oldPath}" -> "${newPath}"`,
       async () => {
@@ -278,7 +277,7 @@ export class NativeFs {
             }
             destinationTaken = false;
           }
-          if (destinationTaken && !overwrite) {
+          if (destinationTaken) {
             throw new NativeFsError({
               message: `Cannot move to "${newPath}": the file already exists`,
               code: NATIVE_FS_ERROR_CODE.alreadyExists,
@@ -299,9 +298,6 @@ export class NativeFs {
               newSegments.slice(0, -1),
               { create: true },
             );
-            if (destinationTaken) {
-              await destinationDir.removeEntry(newName);
-            }
             await nativeMove.call(source.handle, destinationDir, newName);
             return;
           }
@@ -333,14 +329,12 @@ export class NativeFs {
               });
             }
           } catch (error) {
-            if (!destinationTaken) {
-              // Best effort: the original failure is what the caller must
-              // see. A pre-existing destination (overwrite move) is left in
-              // place — it is safe to overwrite again on retry.
-              await destination.parent
-                .removeEntry(destination.handle.name)
-                .catch(() => undefined);
-            }
+            // The destination entry was created by this move (an occupied
+            // destination rejects above), so roll it back. Best effort: the
+            // original failure is what the caller must see.
+            await destination.parent
+              .removeEntry(destination.handle.name)
+              .catch(() => undefined);
             throw error;
           }
           await source.parent.removeEntry(source.handle.name);
@@ -612,10 +606,16 @@ function mapChangeRecord(record: FileSystemChangeRecordLike): NativeFsChange {
   const movedFromPath = record.relativePathMovedFrom
     ? joinPath(record.relativePathMovedFrom)
     : undefined;
+  const handleKind = record.changedHandle?.kind;
+  const kind =
+    handleKind === 'file' || handleKind === 'directory'
+      ? handleKind
+      : undefined;
   return {
     type,
     path: joinPath(record.relativePathComponents ?? []),
     ...(movedFromPath === undefined ? {} : { movedFromPath }),
+    ...(kind === undefined ? {} : { kind }),
   };
 }
 

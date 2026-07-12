@@ -300,7 +300,9 @@ describe('moveFile', () => {
     expect(await fs.readFileText('b/new.md')).toBe('content');
   });
 
-  it('rejects when the destination exists, unless overwrite is set', async () => {
+  it('rejects when the destination exists, preserving both files', async () => {
+    // There is deliberately no overwrite escape hatch: an occupied
+    // destination is never deleted, so no failure mode can lose it.
     const { fs, seeded } = setup({ 'a.md': 'source', 'b.md': 'target' });
     await seeded;
     const error = await fs.moveFile('a.md', 'b.md').catch((e) => e);
@@ -309,46 +311,62 @@ describe('moveFile', () => {
     );
     expect(await fs.readFileText('a.md')).toBe('source');
     expect(await fs.readFileText('b.md')).toBe('target');
-
-    await fs.moveFile('a.md', 'b.md', { overwrite: true });
-    expect(await fs.readFileText('b.md')).toBe('source');
-    expect(await fs.exists('a.md')).toBe(false);
   });
 
-  it('keeps the source when the destination write fails', async () => {
+  /**
+   * Rigs the not-yet-existing destination so the handle the move creates is
+   * pre-configured (write failure, corrupt read-back, ...).
+   */
+  function interceptDestinationCreate(
+    root: FakeDirectoryHandle,
+    name: string,
+    rig: (handle: FakeFileHandle) => void,
+  ) {
+    const preRigged = new FakeFileHandle(name);
+    rig(preRigged);
+    const realGetFileHandle = root.getFileHandle.bind(root);
+    root.getFileHandle = async (entryName, options) => {
+      if (entryName === name && options?.create && !root.entries.has(name)) {
+        root.entries.set(name, preRigged);
+        return preRigged;
+      }
+      return realGetFileHandle(entryName, options);
+    };
+  }
+
+  it('keeps the source and rolls back the destination when the write fails', async () => {
     const { fs, root, seeded } = setup({ 'a.md': 'precious' });
     await seeded;
-    // Pre-create the destination handle so we can rig its writes to fail,
-    // then move with overwrite.
-    await fs.createFile('b.md', new Blob(['stub']));
-    const dest = getEntry(root, 'b.md') as FakeFileHandle;
-    dest.writeFailure = new DOMException('boom', 'NoModificationAllowedError');
+    interceptDestinationCreate(root, 'b.md', (handle) => {
+      handle.writeFailure = new DOMException(
+        'boom',
+        'NoModificationAllowedError',
+      );
+    });
 
-    const error = await fs
-      .moveFile('a.md', 'b.md', { overwrite: true })
-      .catch((e) => e);
+    const error = await fs.moveFile('a.md', 'b.md').catch((e) => e);
     expect(
       isNativeFsError(error, NATIVE_FS_ERROR_CODE.modificationNotAllowed),
     ).toBe(true);
     expect(await fs.readFileText('a.md')).toBe('precious');
+    expect(getEntry(root, 'b.md')).toBeUndefined();
   });
 
   it('keeps the source when the destination reads back corrupted, even at the same length', async () => {
     const { fs, root, seeded } = setup({ 'a.md': 'precious' });
     await seeded;
-    // Pre-create the destination so its read-back can be rigged to return
-    // byte-flipped (same length) content: File.size alone would not catch it.
-    await fs.createFile('b.md', new Blob(['stub']));
-    const dest = getEntry(root, 'b.md') as FakeFileHandle;
-    dest.corruptReadBack = true;
+    // Rig the destination read-back to return byte-flipped (same length)
+    // content: File.size alone would not catch it.
+    interceptDestinationCreate(root, 'b.md', (handle) => {
+      handle.corruptReadBack = true;
+    });
 
-    const error = await fs
-      .moveFile('a.md', 'b.md', { overwrite: true })
-      .catch((e) => e);
+    const error = await fs.moveFile('a.md', 'b.md').catch((e) => e);
     expect(
       isNativeFsError(error, NATIVE_FS_ERROR_CODE.moveVerificationFailed),
     ).toBe(true);
     expect(await fs.readFileText('a.md')).toBe('precious');
+    expect(getEntry(root, 'b.md')).toBeUndefined();
   });
 
   it('rejects moving a file onto itself', async () => {
@@ -532,6 +550,11 @@ describe('watch', () => {
           relativePathComponents: ['b.md'],
           relativePathMovedFrom: ['a.md'],
         },
+        {
+          type: 'modified',
+          relativePathComponents: ['dir'],
+          changedHandle: { kind: 'directory' },
+        },
         { type: 'something-new', relativePathComponents: [] },
       ],
       undefined,
@@ -540,6 +563,7 @@ describe('watch', () => {
       [
         { type: 'appeared', path: 'a/new.md' },
         { type: 'moved', path: 'b.md', movedFromPath: 'a.md' },
+        { type: 'modified', path: 'dir', kind: 'directory' },
         { type: 'unknown', path: '' },
       ],
     ]);
