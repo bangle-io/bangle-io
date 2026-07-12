@@ -136,11 +136,15 @@ export function usePierreFileTreeExpansion({
     previousExpandedPathsRef.current = readExpandedPaths(model, directoryPaths);
 
     return model.subscribe(() => {
+      if (isProjectingRef.current) {
+        return;
+      }
+
       const previous = previousExpandedPathsRef.current;
       const current = readExpandedPaths(model, directoryPaths);
       previousExpandedPathsRef.current = current;
 
-      if (isProjectingRef.current || setsEqual(previous, current)) {
+      if (setsEqual(previous, current)) {
         return;
       }
 
