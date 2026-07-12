@@ -532,32 +532,48 @@ describe('external change watching', () => {
     ]);
   });
 
-  it('revalidates opened workspaces on page return, throttled', async () => {
-    // Works with or without the observer API; here it is absent, making
-    // page-return revalidation the only refresh path.
-    const { service, onExternalChange, triggerPageReturn } = await setup(
-      undefined,
-      'myWorkspace',
-      {
-        withExternalChange: true,
-      },
-    );
+  it('revalidates opened workspaces on page return, deduping one return burst', async () => {
+    vi.useFakeTimers();
+    try {
+      // Works with or without the observer API; here it is absent, making
+      // page-return revalidation the only refresh path.
+      const { service, onExternalChange, triggerPageReturn } = await setup(
+        undefined,
+        'myWorkspace',
+        {
+          withExternalChange: true,
+        },
+      );
 
-    // Before any workspace is opened, a page return is a no-op.
-    triggerPageReturn();
-    expect(onExternalChange).not.toHaveBeenCalled();
+      // Before any workspace is opened, a page return is a no-op.
+      triggerPageReturn();
+      expect(onExternalChange).not.toHaveBeenCalled();
 
-    await service.fileExists('myWorkspace:seed.md');
-    triggerPageReturn();
-    expect(onExternalChange).toHaveBeenCalledWith({
-      type: 'refresh',
-      wsName: 'myWorkspace',
-    });
+      await service.fileExists('myWorkspace:seed.md');
+      triggerPageReturn();
+      expect(onExternalChange).toHaveBeenCalledWith({
+        type: 'refresh',
+        wsName: 'myWorkspace',
+      });
 
-    // A second return within the throttle window does not refresh again.
-    onExternalChange.mockClear();
-    triggerPageReturn();
-    expect(onExternalChange).not.toHaveBeenCalled();
+      // The same return fires visibilitychange and focus back-to-back;
+      // the duplicate notification does not refresh again.
+      onExternalChange.mockClear();
+      triggerPageReturn();
+      expect(onExternalChange).not.toHaveBeenCalled();
+
+      // A genuinely separate leave→edit→return cycle moments later MUST
+      // refresh: without an observer this is the only reconciliation, so a
+      // wall-clock throttle would permanently miss that cycle's edits.
+      vi.advanceTimersByTime(1_500);
+      triggerPageReturn();
+      expect(onExternalChange).toHaveBeenCalledWith({
+        type: 'refresh',
+        wsName: 'myWorkspace',
+      });
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('re-arms a dead watcher on page return after the observer errored', async () => {

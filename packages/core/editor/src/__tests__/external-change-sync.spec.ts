@@ -263,6 +263,40 @@ describe('editor refresh on external file changes', () => {
     expect(editorText(domNode)).toContain('the original note body');
   });
 
+  it('refuses external content that does not round-trip (fidelity gate)', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      'the original note body',
+    );
+
+    // Reference-style links resolve to inline links in the schema, so
+    // serializing rewrites the source — exactly the lossy shape the load
+    // path refuses. The external sync must refuse it too: applying it would
+    // let the user's next keystroke save the rewritten note.
+    await simulateExternalEdit(
+      testEnv,
+      services,
+      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 700));
+    expect(editorText(domNode)).toContain('the original note body');
+    expect(editorText(domNode)).not.toContain('the spec');
+  });
+
+  it('never blanks a non-empty note from an external truncation', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      'the original note body',
+    );
+
+    // A truncate-then-write writer can stay empty across both stability
+    // reads. Emptying the note is the destructive shape of that race, so it
+    // is never auto-applied.
+    await simulateExternalEdit(testEnv, services, '');
+
+    await new Promise((resolve) => setTimeout(resolve, 700));
+    expect(editorText(domNode)).toContain('the original note body');
+  });
+
   it('a workspace-scoped refresh does not touch editors in other workspaces', async () => {
     const { testEnv, services, domNode } = await setupEditorWithNote(
       'the original note body',

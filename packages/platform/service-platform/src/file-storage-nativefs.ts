@@ -62,12 +62,14 @@ type Config = {
 };
 
 /**
- * Minimum spacing between coarse refreshes triggered by returning to the
- * page. A refresh re-lists the workspace and revalidates open notes, so it
- * must not fire on every alt-tab; anything the observer already reported has
- * flowed through the fine-grained path regardless.
+ * Window within which page-return notifications are treated as one return:
+ * a single return fires both `visibilitychange` and `focus` back-to-back,
+ * and only the first should refresh. Kept short deliberately — for browsers
+ * without `FileSystemObserver` this refresh is the only reconciliation, so a
+ * genuinely separate leave→edit→return cycle moments later must not be
+ * swallowed by a wall-clock throttle.
  */
-const PAGE_RETURN_REVALIDATE_MIN_INTERVAL_MS = 15_000;
+const PAGE_RETURN_DEDUPE_MS = 1_000;
 
 export class FileStorageNativeFs
   extends BaseService
@@ -196,10 +198,7 @@ export class FileStorageNativeFs
       return;
     }
     const now = Date.now();
-    if (
-      now - this.lastPageReturnRevalidation <
-      PAGE_RETURN_REVALIDATE_MIN_INTERVAL_MS
-    ) {
+    if (now - this.lastPageReturnRevalidation < PAGE_RETURN_DEDUPE_MS) {
       return;
     }
     this.lastPageReturnRevalidation = now;

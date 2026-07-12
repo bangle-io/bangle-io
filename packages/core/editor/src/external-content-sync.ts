@@ -5,6 +5,7 @@ import type {
 } from '@bangle.io/prosemirror-plugins';
 import { TextSelection } from '@bangle.io/prosemirror-plugins';
 import type { ExternalFileChangeEvent } from '@bangle.io/service-core';
+import { isMarkdownRoundTripPreserved } from './round-trip-check';
 
 /**
  * Quiet period between an external change notification and the first disk
@@ -195,6 +196,29 @@ export class ExternalContentSync {
       const currentSerialized = markdown.serializer.serialize(view.state.doc);
       const diskSerialized = markdown.serializer.serialize(parsed);
       if (currentSerialized === diskSerialized) {
+        continue;
+      }
+      // Same fidelity gate as initial note loading: if the external Markdown
+      // does not round-trip exactly (footnotes, reference links, other
+      // constructs the schema rewrites), applying it would put a lossy doc in
+      // the editor and the user's next keystroke would save that loss to
+      // disk. Leave the editor as-is; opening the note goes through the load
+      // path, which surfaces the fidelity warning.
+      if (!isMarkdownRoundTripPreserved(diskText, diskSerialized)) {
+        this.host.logger.warn(
+          `External change to ${wsPath} does not round-trip through the editor; not auto-applying`,
+        );
+        continue;
+      }
+      // Two agreeing reads can still both land inside a truncate-then-write
+      // writer's truncated state. Blanking a non-empty note is the one
+      // destructive shape of that race, so never auto-apply it — a genuine
+      // external clear still shows after the writer's next event with real
+      // content, or on reload.
+      if (diskText.trim() === '' && currentSerialized.trim() !== '') {
+        this.host.logger.warn(
+          `External change emptied ${wsPath}; keeping the editor content`,
+        );
         continue;
       }
 
