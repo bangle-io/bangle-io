@@ -1,9 +1,4 @@
-import type {
-  BaseError,
-  BaseErrorService,
-  BaseService,
-  Logger,
-} from '@bangle.io/base-utils';
+import type { BaseError, BaseService, Logger } from '@bangle.io/base-utils';
 import type { createStore } from 'jotai';
 
 import type { BaseAppDatabase, BaseAppSyncDatabase } from './base-database';
@@ -37,9 +32,7 @@ export type CoreServiceSlotId =
   | 'navigation'
   | 'shortcut'
   | 'userActivityService'
-  | 'workbench'
   | 'workbenchState'
-  | 'workspace'
   | 'workspaceOps'
   | 'workspaceState';
 

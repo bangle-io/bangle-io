@@ -7,10 +7,8 @@ import type {
   NavigationService,
   ShortcutService,
   UserActivityService,
-  WorkbenchService,
   WorkbenchStateService,
   WorkspaceOpsService,
-  WorkspaceService,
   WorkspaceStateService,
 } from '@bangle.io/service-core';
 import type { CommandExcludedServiceSlotId } from '@bangle.io/types';
@@ -65,9 +63,7 @@ export type CoreServices<
   navigation: NavigationService;
   shortcut: ShortcutService;
   userActivityService: UserActivityService;
-  workbench: WorkbenchService;
   workbenchState: WorkbenchStateService;
-  workspace: WorkspaceService;
   workspaceOps: WorkspaceOpsService;
   workspaceState: WorkspaceStateService;
 };

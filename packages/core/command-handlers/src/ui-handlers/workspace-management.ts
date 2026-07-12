@@ -30,7 +30,7 @@ export const workspaceManagementHandlers = [
           searchPlaceholder: t.app.dialogs.switchWorkspace.searchPlaceholder,
           groupLabel: t.app.dialogs.switchWorkspace.groupLabel,
           emptyMessage: t.app.dialogs.switchWorkspace.emptyMessage,
-          options: (workspaces || [])
+          options: [...(workspaces || [])]
             .sort((a, b) => {
               const aRecent = new Date(a.lastModified) >= sevenDaysAgo;
               const bRecent = new Date(b.lastModified) >= sevenDaysAgo;
@@ -106,80 +106,79 @@ export const workspaceManagementHandlers = [
 
   c(
     'command::ui:native-fs-auth',
-    (
+    async (
       { workspaceOps, navigation, workbenchState, editorService },
       { wsName },
       key,
     ) => {
       const { store } = getCtx(key);
 
-      workspaceOps.getWorkspaceMetadata(wsName).then(({ rootDirHandle }) => {
-        if (!isFileSystemDirectoryHandle(rootDirHandle)) {
-          throwAppError(
-            'error::workspace:invalid-metadata',
-            t.app.errors.workspace.invalidMetadata({ wsName }),
-            { wsName },
-          );
-        }
+      const { rootDirHandle } = await workspaceOps.getWorkspaceMetadata(wsName);
+      if (!isFileSystemDirectoryHandle(rootDirHandle)) {
+        throwAppError(
+          'error::workspace:invalid-metadata',
+          t.app.errors.workspace.invalidMetadata({ wsName }),
+          { wsName },
+        );
+      }
 
-        let attempt = 0;
+      let attempt = 0;
 
-        const failAndGoToHome = () => {
-          toast.error(t.app.toasts.permissionNotGranted, {
-            duration: 5000,
-            cancel: {
-              label: t.app.common.dismiss,
-              onClick: () => {},
-            },
-          });
-          navigation.goHome();
-        };
-
-        const onNotGranted = () => {
-          queueMicrotask(() => {
-            if (attempt++ > 2) {
-              failAndGoToHome();
-              return;
-            }
-            store.set(workbenchState.$alertDialog, {
-              dialogId: 'dialog::workspace:native-fs-auth-needed',
-              title: t.app.dialogs.nativeFsAuth.title,
-              description: t.app.dialogs.nativeFsAuth.descriptionRetry({
-                wsName,
-              }),
-              continueText: t.app.dialogs.nativeFsAuth.continueTextRetry,
-              onContinue,
-              onCancel: () => {
-                failAndGoToHome();
-              },
-            });
-          });
-        };
-
-        const onContinue = async () => {
-          const granted = await requestPermission(rootDirHandle, 'readwrite');
-
-          if (!granted) {
-            onNotGranted();
-            return;
-          }
-
-          editorService.onNativeFsAuthSuccess(wsName);
-          navigation.goWorkspace(wsName, { skipIfAlreadyThere: true });
-        };
-
-        store.set(workbenchState.$alertDialog, {
-          dialogId: 'dialog::workspace:native-fs-auth-needed',
-          title: t.app.dialogs.nativeFsAuth.title,
-          description: t.app.dialogs.nativeFsAuth.descriptionInitial({
-            wsName,
-          }),
-          continueText: t.app.dialogs.nativeFsAuth.continueTextInitial,
-          onContinue,
-          onCancel: () => {
-            failAndGoToHome();
+      const failAndGoToHome = () => {
+        toast.error(t.app.toasts.permissionNotGranted, {
+          duration: 5000,
+          cancel: {
+            label: t.app.common.dismiss,
+            onClick: () => {},
           },
         });
+        navigation.goHome();
+      };
+
+      const onNotGranted = () => {
+        queueMicrotask(() => {
+          if (attempt++ > 2) {
+            failAndGoToHome();
+            return;
+          }
+          store.set(workbenchState.$alertDialog, {
+            dialogId: 'dialog::workspace:native-fs-auth-needed',
+            title: t.app.dialogs.nativeFsAuth.title,
+            description: t.app.dialogs.nativeFsAuth.descriptionRetry({
+              wsName,
+            }),
+            continueText: t.app.dialogs.nativeFsAuth.continueTextRetry,
+            onContinue,
+            onCancel: () => {
+              failAndGoToHome();
+            },
+          });
+        });
+      };
+
+      const onContinue = async () => {
+        const granted = await requestPermission(rootDirHandle, 'readwrite');
+
+        if (!granted) {
+          onNotGranted();
+          return;
+        }
+
+        editorService.onNativeFsAuthSuccess(wsName);
+        navigation.goWorkspace(wsName, { skipIfAlreadyThere: true });
+      };
+
+      store.set(workbenchState.$alertDialog, {
+        dialogId: 'dialog::workspace:native-fs-auth-needed',
+        title: t.app.dialogs.nativeFsAuth.title,
+        description: t.app.dialogs.nativeFsAuth.descriptionInitial({
+          wsName,
+        }),
+        continueText: t.app.dialogs.nativeFsAuth.continueTextInitial,
+        onContinue,
+        onCancel: () => {
+          failAndGoToHome();
+        },
       });
     },
   ),

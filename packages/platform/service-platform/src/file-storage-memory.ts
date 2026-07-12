@@ -127,12 +127,10 @@ export class FileStorageMemory
   ): Promise<string[]> {
     await this.mountPromise;
 
-    const files = Array.from(this.fileEntries.keys())
-      .filter((path) => path.startsWith(wsName))
-      .map((path) => WsPath.fromFSPath(path))
-      .filter((r) => !!r)
-      .map((r) => r.wsPath)
-      .sort((a, b) => a.localeCompare(b));
+    const files = Array.from(this.fileEntries.keys()).flatMap((path) => {
+      const parsedPath = WsPath.fromFSPath(path);
+      return parsedPath?.wsName === wsName ? [parsedPath.wsPath] : [];
+    });
 
     abortSignal.throwIfAborted();
 
@@ -160,6 +158,16 @@ export class FileStorageMemory
         message: 'File not found',
         code: FILE_NOT_FOUND_ERROR,
       });
+    }
+
+    if (this.fileEntries.has(newPath)) {
+      throwAppError(
+        'error::file:already-existing',
+        'Cannot rename as a file with the same name already exists',
+        {
+          wsPath: newWsPath,
+        },
+      );
     }
 
     this.fileEntries.set(newPath, entry);
