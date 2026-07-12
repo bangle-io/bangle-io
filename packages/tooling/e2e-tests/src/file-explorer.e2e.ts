@@ -115,6 +115,26 @@ async function expectFileTreeItemInViewport(item: Locator) {
     .toBe(true);
 }
 
+async function readPersistedExpandedPaths(
+  page: Page,
+  workspaceName: string,
+): Promise<readonly string[] | undefined> {
+  return page.evaluate((name) => {
+    const stored = window.localStorage.getItem(
+      'browser-local-storage-sync-database.sync:workbench-state:file-tree-expanded-paths-by-workspace',
+    );
+    if (!stored) {
+      return undefined;
+    }
+
+    const pathsByWorkspace = JSON.parse(stored) as Record<
+      string,
+      readonly string[]
+    >;
+    return pathsByWorkspace[name];
+  }, workspaceName);
+}
+
 async function readStoredFileText(
   page: Page,
   workspaceName: string,
@@ -298,6 +318,7 @@ test('file explorer collapse-all preserves user expansion until invoked', async 
   await muddiedFolder.focus();
   await page.keyboard.press('ArrowRight');
   await expect(muddiedFolder).toHaveAttribute('aria-expanded', 'true');
+  await expectFileTreeItemInViewport(muddiedFolder);
 
   await test.step('backlink navigation opens its ancestors without collapsing user-expanded folders', async () => {
     await getEditorLocator(page, {})
@@ -349,6 +370,69 @@ test('file explorer collapse-all preserves user expansion until invoked', async 
     await expectFileTreeItemInViewport(hiddenNote);
     await expect(muddiedFolder).toHaveAttribute('aria-expanded', 'false');
   });
+});
+
+test('collapse-all persistence does not bounce between tabs', async ({
+  page,
+}) => {
+  const workspaceName = `explorer-collapse-cross-tab-${Date.now()}`;
+  await createBrowserWorkspace(page, { workspaceName });
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'a-active/current',
+    'First active note',
+  );
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'b-active/current',
+    'Second active note',
+  );
+
+  await page.goto(
+    `/ws#route=editor&wsPath=${encodeURIComponent(
+      `${workspaceName}:a-active/current.md`,
+    )}`,
+  );
+  await page.reload();
+  const secondPage = await page.context().newPage();
+  await secondPage.goto(
+    `/ws#route=editor&wsPath=${encodeURIComponent(
+      `${workspaceName}:b-active/current.md`,
+    )}`,
+  );
+
+  const firstExplorer = page.getByTestId('bangle-file-explorer');
+  const secondExplorer = secondPage.getByTestId('bangle-file-explorer');
+  const firstPageOtherFolder = firstExplorer.getByRole('treeitem', {
+    name: /^b-active$/,
+  });
+  const secondPageOtherFolder = secondExplorer.getByRole('treeitem', {
+    name: /^a-active$/,
+  });
+
+  await expect(firstPageOtherFolder).toHaveAttribute('aria-expanded', 'true');
+  await secondExplorer
+    .getByRole('button', { name: 'Collapse All Folders' })
+    .click();
+  await expect(secondPageOtherFolder).toHaveAttribute('aria-expanded', 'false');
+
+  await firstExplorer
+    .getByRole('button', { name: 'Collapse All Folders' })
+    .click();
+  await expect(secondPageOtherFolder).toHaveAttribute('aria-expanded', 'true');
+  await expect
+    .poll(() => readPersistedExpandedPaths(page, workspaceName))
+    .toEqual(['a-active']);
+
+  await page.reload();
+  await expect(
+    firstExplorer.getByRole('treeitem', { name: /^a-active$/ }),
+  ).toHaveAttribute('aria-expanded', 'true');
+  await expect(firstPageOtherFolder).toHaveAttribute('aria-expanded', 'false');
+
+  await secondPage.close();
 });
 
 test('file explorer creates folders, opens notes, and survives reload', async ({

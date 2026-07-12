@@ -363,6 +363,9 @@ export function PierreFileTree({
     [activePaths],
   );
   const activeTreePath = activeTreePaths.at(-1);
+  const activeTreePathIsAvailable = Boolean(
+    activeTreePath && filePathSet.has(activeTreePath),
+  );
   const directoryPaths = useMemo(
     () => collectAncestorDirectoryPaths(treePaths),
     [treePaths],
@@ -376,6 +379,9 @@ export function PierreFileTree({
   const onExpandedPathsChangeRef = useRef(onExpandedPathsChange);
   const suppressExpansionPersistenceRef = useRef(false);
   const lastReportedExpandedPathsSignatureRef = useRef<string | null>(null);
+  const observedExpandedPathsSignatureRef = useRef(
+    (expandedPaths ?? []).join('\0'),
+  );
   const filePathSetRef = useRef<ReadonlySet<string>>(filePathSet);
   const modelRef = useRef<PierreFileTreeModel | null>(null);
   const contextMenuSelectedEntriesRef = useRef<readonly FileTreeEntry[]>([]);
@@ -396,6 +402,11 @@ export function PierreFileTree({
   directoryPathsRef.current = directoryPaths;
   expandedPathsRef.current = expandedPaths;
   onExpandedPathsChangeRef.current = onExpandedPathsChange;
+  const expandedPathsSignature = (expandedPaths ?? []).join('\0');
+  if (observedExpandedPathsSignatureRef.current !== expandedPathsSignature) {
+    observedExpandedPathsSignatureRef.current = expandedPathsSignature;
+    lastReportedExpandedPathsSignatureRef.current = expandedPathsSignature;
+  }
   // The file the active route points at. Kept current on every render so
   // `onSelectionChange` can tell a genuine user open from a route-driven
   // re-select (see `shouldOpenSelectedFile`).
@@ -616,7 +627,16 @@ export function PierreFileTree({
   modelRef.current = model;
 
   useEffect(() => {
-    resetModelPathsPreservingExpansion(model, treePaths);
+    // A path reset temporarily drops directories that are filtered out and
+    // recreates newly visible directories in their default collapsed state.
+    // Let the controlled expansion effect below reconcile that intermediate
+    // model before any expansion state is persisted.
+    suppressExpansionPersistenceRef.current = true;
+    try {
+      resetModelPathsPreservingExpansion(model, treePaths);
+    } finally {
+      suppressExpansionPersistenceRef.current = false;
+    }
   }, [model, treePaths]);
 
   useEffect(() => {
@@ -624,7 +644,7 @@ export function PierreFileTree({
       return;
     }
 
-    if (activeTreePath && !filePathSet.has(activeTreePath)) {
+    if (activeTreePath && !activeTreePathIsAvailable) {
       return;
     }
 
@@ -638,11 +658,26 @@ export function PierreFileTree({
     } finally {
       suppressExpansionPersistenceRef.current = false;
     }
-    reportExpandedPaths(model);
+  }, [
+    activeAncestorPaths,
+    activeTreePath,
+    directoryPaths,
+    expandedPaths,
+    activeTreePathIsAvailable,
+    model,
+    treePaths.length,
+  ]);
 
-    if (!activeTreePath) {
+  useEffect(() => {
+    if (!activeTreePath || !activeTreePathIsAvailable) {
       return;
     }
+
+    // Active ancestors are forced open locally during controlled-state
+    // reconciliation. Persist them only when the active route (or available
+    // file set) changes, so an expansion update received from another tab is
+    // not immediately written back with this tab's active ancestors added.
+    reportExpandedPaths(model);
 
     const animationFrame = window.requestAnimationFrame(() => {
       model.scrollToPath(activeTreePath, {
@@ -652,16 +687,7 @@ export function PierreFileTree({
     });
 
     return () => window.cancelAnimationFrame(animationFrame);
-  }, [
-    activeAncestorPaths,
-    activeTreePath,
-    directoryPaths,
-    expandedPaths,
-    filePathSet,
-    model,
-    reportExpandedPaths,
-    treePaths.length,
-  ]);
+  }, [activeTreePath, activeTreePathIsAvailable, model, reportExpandedPaths]);
 
   useEffect(() => {
     const unsubscribe = model.subscribe(() => reportExpandedPaths(model));
