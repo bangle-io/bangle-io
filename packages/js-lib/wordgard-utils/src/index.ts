@@ -9,6 +9,8 @@
  * grow this surface as `editor-w` milestones need more (state, editor,
  * command, history, table, phrases).
  */
+
+export { Command, listIsActive, Menu } from 'wordgard/command';
 export {
   Attributes,
   ChangeSet,
@@ -27,6 +29,22 @@ export {
   type Token,
   ValidationError,
 } from 'wordgard/doc';
+// Editor-side modules, grown for M4-P0 (wordgard-plus bridge): the editor
+// class (with its Update/Plugin/updateListener statics), tooltips, state
+// primitives, the command/menu model, history depth queries, and the
+// built-in schema bundles that carry first-party menu buttons.
+export { Tooltip, Wordgard } from 'wordgard/editor';
+export { history, redoDepth, undoDepth } from 'wordgard/history';
+export {
+  basicSchema,
+  blockquote,
+  bulletList,
+  emphasis,
+  heading,
+  orderedList,
+  strong,
+} from 'wordgard/schema';
+export { GardSelection, GardState, Transaction } from 'wordgard/state';
 export {
   Alignment,
   BackgroundColor,

@@ -580,6 +580,31 @@ importers:
         specifier: ^14.1.2
         version: 14.1.2
 
+  packages/js-lib/wordgard-plus:
+    dependencies:
+      '@bangle.io/wordgard-utils':
+        specifier: workspace:*
+        version: link:../wordgard-utils
+      '@types/react':
+        specifier: ^19.2.17
+        version: 19.2.17
+      '@types/react-dom':
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.17)
+      jotai:
+        specifier: ^2.20.1
+        version: 2.20.1(@babel/core@7.29.7)(@babel/template@7.29.7)(@types/react@19.2.17)(react@19.2.7)
+      react:
+        specifier: 19.2.7
+        version: 19.2.7
+      react-dom:
+        specifier: 19.2.7
+        version: 19.2.7(react@19.2.7)
+    devDependencies:
+      '@testing-library/react':
+        specifier: ^16.3.2
+        version: 16.3.2(@testing-library/dom@10.4.0)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+
   packages/js-lib/wordgard-utils:
     dependencies:
       wordgard:
@@ -966,6 +991,12 @@ importers:
       '@bangle.io/translations':
         specifier: workspace:*
         version: link:../../shared/translations
+      '@bangle.io/wordgard-plus':
+        specifier: workspace:*
+        version: link:../../js-lib/wordgard-plus
+      '@bangle.io/wordgard-utils':
+        specifier: workspace:*
+        version: link:../../js-lib/wordgard-utils
       '@chromatic-com/storybook':
         specifier: ^5.2.1
         version: 5.2.1(storybook@10.4.6(@testing-library/dom@10.4.0)(@types/react@19.2.17)(prettier@3.9.4)(react@19.2.7))
@@ -993,6 +1024,9 @@ importers:
       chromatic:
         specifier: ^18.0.1
         version: 18.0.1
+      jotai:
+        specifier: ^2.20.1
+        version: 2.20.1(@babel/core@7.29.7)(@babel/template@7.29.7)(@types/react@19.2.17)(react@19.2.7)
       storybook:
         specifier: ^10.4.6
         version: 10.4.6(@testing-library/dom@10.4.0)(@types/react@19.2.17)(prettier@3.9.4)(react@19.2.7)
