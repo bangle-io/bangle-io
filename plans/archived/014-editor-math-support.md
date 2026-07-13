@@ -1,9 +1,9 @@
 ---
 title: ProseMirror editor math support
-status: planned
+status: completed
 type: plan
-archived: false
-archived_on:
+archived: true
+archived_on: 2026-07-12
 created: 2026-07-12
 updated: 2026-07-12
 owner: mixed
@@ -12,6 +12,12 @@ related_prs:
 related_issues:
   - https://github.com/bangle-io/bangle-io/issues/197
 ---
+
+> DONE Completed on 2026-07-12 in PR #637. Final verification passed with
+> `pnpm lint:ci`, `pnpm test:ci`, `pnpm build`, focused and full Playwright
+> suites, `pnpm local-ci-check`, and a Playwright CLI editing and persistence
+> smoke. Two unrelated E2E cases were flaky during the final serial suite and
+> passed on retry; the math workflow passed without a retry.
 
 # ProseMirror editor math support
 

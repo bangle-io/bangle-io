@@ -1,4 +1,6 @@
 import 'prosemirror-view/style/prosemirror.css';
+import 'katex/dist/katex.min.css';
+import '@benrbray/prosemirror-math/dist/prosemirror-math.css';
 import './typography.css';
 
 import { cx } from '@bangle.io/base-utils';

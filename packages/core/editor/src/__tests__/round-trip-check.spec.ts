@@ -15,6 +15,7 @@ import {
   setupItalic,
   setupLink,
   setupList,
+  setupMath,
   setupParagraph,
   setupStrike,
   setupTable,
@@ -33,6 +34,7 @@ function createMarkdown() {
     setupBlockquote(),
     setupBold(),
     setupList(),
+    setupMath(),
     setupHardBreak(),
     setupHeading(),
     setupParagraph(),
@@ -89,6 +91,8 @@ describe('round-trip gate against the real serializer', () => {
     ['blockquote', '> quoted text\n'],
     ['inline formatting', 'Some **bold** and _italic_ and `code`.\n'],
     ['link', '[bangle](https://bangle.io)\n'],
+    ['math block', '$$\nx^2 + y^2\n$$\n'],
+    ['escaped dollar', String.raw`escaped \$x$`],
   ])('preserves %s', (_label, source) => {
     expect(roundTrip(source)).toBe(true);
   });
@@ -100,7 +104,6 @@ describe('round-trip gate against the real serializer', () => {
     ['reference link', '[foo][ref]\n\n[ref]: https://example.com\n'],
     ['single-tilde strikethrough', 'this is ~gone~ now\n'],
     ['html entity', 'Tom &amp; Jerry\n'],
-    ['math block', '$$\nx^2 + y^2\n$$\n'],
     ['definition list', 'term\n: definition\n'],
   ])('flags %s as not preserved', (_label, source) => {
     expect(roundTrip(source)).toBe(false);

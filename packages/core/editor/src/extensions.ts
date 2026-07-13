@@ -21,6 +21,7 @@ import {
   setupLink,
   setupLinkMenu,
   setupList,
+  setupMath,
   setupParagraph,
   setupPlaceholder,
   setupSelectionMenu,
@@ -102,6 +103,7 @@ export function setupExtensions(
     blockquote: setupBlockquote(),
     bold: setupBold(),
     list: setupList(),
+    math: setupMath(),
 
     dragNode: setupDragNode({
       pluginOptions: {
