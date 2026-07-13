@@ -7,7 +7,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  Label,
 } from '@bangle.io/base-ui';
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
 import {
@@ -18,7 +17,7 @@ import {
   Settings,
   Star,
 } from 'lucide-react';
-import React, { useId } from 'react';
+import React from 'react';
 import bangleIcon from './bangle-transparent_x512.png';
 import {
   type FileTreeEntry,
@@ -34,7 +33,6 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
-  SidebarInput,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -449,34 +447,25 @@ function CommandButton({
   className?: string;
   onClick: () => void;
 }) {
-  const commandButtonId = useId();
   return (
-    <div
-      // biome-ignore lint/a11y/useSemanticElements: requires div wrapper for proper component styling integration
-      role="button"
-      tabIndex={0}
+    <button
+      type="button"
+      aria-label={t.app.common.searchLabel}
       onClick={onClick}
-      onKeyUp={(e) => e.key === 'Enter' && onClick()}
-      className={cn('w-full cursor-pointer', className)}
+      className={cn('w-full cursor-pointer text-left', className)}
     >
       <SidebarGroup className="p-0">
         <SidebarGroupContent className="relative">
-          <Label htmlFor={commandButtonId} className="sr-only">
-            {t.app.common.searchLabel}
-          </Label>
-          <SidebarInput
-            id={commandButtonId}
-            placeholder={t.app.common.searchInputPlaceholder}
-            className="pointer-events-none h-8 rounded-md bg-background/70 pr-8 pl-8"
-            readOnly
-          />
+          <div className="flex h-8 w-full items-center rounded-md border border-input bg-background/70 pr-8 pl-8 text-muted-foreground text-sm shadow-none">
+            {t.app.common.searchInputPlaceholder}
+          </div>
           <Search className="pointer-events-none absolute top-1/2 left-2 size-4 -translate-y-1/2 select-none opacity-50" />
           <div className="absolute top-1/2 right-2 -translate-y-1/2 rounded-sm opacity-70">
             <KbdShortcut keys={KEYBOARD_SHORTCUTS.toggleOmniSearch.keys} />
           </div>
         </SidebarGroupContent>
       </SidebarGroup>
-    </div>
+    </button>
   );
 }
 
