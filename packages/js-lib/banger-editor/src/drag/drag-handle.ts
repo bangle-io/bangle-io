@@ -55,7 +55,7 @@ export function createDragHandleEventsPlugin(
             node.matches(excludedTagList) ||
             notDragging
           ) {
-            hideDragHandle(options);
+            hideDragHandle(view, options);
             return false;
           }
 
@@ -77,7 +77,7 @@ export function createDragHandleEventsPlugin(
           });
 
           // Position the handle cluster
-          const handleEl = getBlockHandleElement();
+          const handleEl = getBlockHandleElement(view);
           if (!handleEl) return false;
 
           const editorRect = view.dom.getBoundingClientRect();
@@ -95,18 +95,18 @@ export function createDragHandleEventsPlugin(
           handleEl.style.left = `${Math.max(2, result.left - clusterWidth)}px`;
           handleEl.style.top = `${result.top}px`;
 
-          setHoveredBlockDom(node);
-          showDragHandle(options);
+          setHoveredBlockDom(view, node);
+          showDragHandle(view, options);
           return false; // Do not prevent PM’s default
         },
 
-        keydown: () => {
-          hideDragHandle(options);
+        keydown: (view) => {
+          hideDragHandle(view, options);
           return false;
         },
 
-        mousewheel: () => {
-          hideDragHandle(options);
+        mousewheel: (view) => {
+          hideDragHandle(view, options);
           return false;
         },
 
@@ -117,7 +117,7 @@ export function createDragHandleEventsPlugin(
 
         drop: (view, event) => {
           view.dom.classList.remove(options.editorDraggingClassName);
-          hideDragHandle(options);
+          hideDragHandle(view, options);
 
           let droppedNode: PMNode | null = null;
           const dropPos = view.posAtCoords({

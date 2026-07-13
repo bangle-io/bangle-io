@@ -139,6 +139,14 @@ export class EditorWService
     return () => {};
   }
 
+  toggleHeading(_level: number): boolean {
+    return false;
+  }
+
+  insertTable(): boolean {
+    return false;
+  }
+
   toggleHeadingCollapse(): boolean {
     return false;
   }

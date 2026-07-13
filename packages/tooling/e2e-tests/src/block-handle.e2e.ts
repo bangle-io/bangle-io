@@ -103,6 +103,47 @@ test('alt-clicking the plus button inserts the block above', async ({
     .toBe('Above\n\nFirst line');
 });
 
+test('escaping the plus-button menu leaves no stray slash behind', async ({
+  page,
+}) => {
+  const workspaceName = 'block-handle-escape';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('First line');
+
+  await editor.locator('p', { hasText: 'First line' }).hover();
+  const addButton = page.getByRole('button', { name: 'Add block' });
+  await expect(addButton).toBeVisible();
+  await addButton.click();
+
+  const menu = page.getByTestId('slash-command-menu');
+  await expect(menu).toBeVisible();
+  // The "/" was inserted programmatically, so Escape must remove it —
+  // unlike a typed trigger, which stays as text.
+  await page.keyboard.press('Escape');
+  await expect(menu).toBeHidden();
+  await expect(editor).not.toContainText('/');
+
+  // Repeated + on the same block reuses the empty paragraph instead of
+  // stacking new ones.
+  await editor.locator('p', { hasText: 'First line' }).hover();
+  await expect(addButton).toBeVisible();
+  await addButton.click();
+  await expect(menu).toBeVisible();
+  await page.keyboard.press('Escape');
+
+  await expect(editor.locator('p')).toHaveCount(2);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe('First line');
+});
+
 test('plus button on a table inserts around it without splitting the table', async ({
   page,
 }) => {

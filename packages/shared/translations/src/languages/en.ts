@@ -109,6 +109,7 @@ export const t = {
         groupBasic: 'Basic blocks',
         groupLists: 'Lists',
         groupTime: 'Time',
+        groupTable: 'Table',
         empty: 'No results',
         paragraph: 'Text',
         paragraphDesc: 'Plain paragraph text',

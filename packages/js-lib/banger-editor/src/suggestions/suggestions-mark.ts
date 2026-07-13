@@ -3,6 +3,12 @@ import { getMarkType } from '../pm-utils';
 
 type SuggestionsMarkAttrs = {
   trigger: string;
+  /**
+   * True when the suggestion was opened programmatically (e.g. the "+"
+   * block button) rather than by typing the trigger. Escape removes the
+   * whole synthetic trigger text; a typed trigger stays in the document.
+   */
+  synthetic?: boolean;
 };
 
 export function suggestionsMark<TMarkName extends string>({
@@ -32,6 +38,7 @@ export function suggestionsMark<TMarkName extends string>({
     },
     attrs: {
       trigger: { default: trigger },
+      synthetic: { default: false },
     },
   };
 }

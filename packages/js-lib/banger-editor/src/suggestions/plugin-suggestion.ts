@@ -353,6 +353,8 @@ function doesQueryHaveTrigger(
  * Programmatically start a suggestion at the current cursor, producing the
  * same document state as if the user had typed the trigger text — the
  * suggestion plugin picks the mark up on its next update and shows the UI.
+ * The mark is flagged `synthetic` so Escape removes the trigger text too,
+ * instead of leaving a stray character the user never typed.
  */
 export function openSuggestion({
   markName,
@@ -376,7 +378,7 @@ export function openSuggestion({
       return false;
     }
 
-    const mark = schema.mark(markName, { trigger });
+    const mark = schema.mark(markName, { trigger, synthetic: true });
     const marks = selection.$from.marks();
     const tr = state.tr
       .replaceWith(

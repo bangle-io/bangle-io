@@ -1,10 +1,12 @@
 import { keybinding, PRIORITY } from '../common';
+import { getMarkType } from '../pm-utils';
 import { store } from '../store';
 import {
   $suggestion,
   $suggestions,
   $suggestionUi,
   removeSuggestMark,
+  replaceSuggestMarkWith,
   updateSuggestionForView,
 } from './plugin-suggestion';
 
@@ -18,6 +20,19 @@ export const suggestionKeymap = () =>
             ? store.get(state, $suggestions).get(view)
             : store.get(state, $suggestion);
           if (suggestion) {
+            // A synthetic trigger (opened programmatically, e.g. via the
+            // "+" block button) was never typed, so Escape must remove the
+            // trigger text too; a typed trigger stays in the document.
+            const markType = getMarkType(state.schema, suggestion.markName);
+            const activeMark = state.selection.$from
+              .marks()
+              .find((mark) => mark.type === markType);
+            if (activeMark?.attrs.synthetic) {
+              return replaceSuggestMarkWith({
+                markName: suggestion.markName,
+                content: '',
+              })(state, dispatch, view);
+            }
             return removeSuggestMark({
               markName: suggestion.markName,
               selection: state.selection,
@@ -29,7 +44,9 @@ export const suggestionKeymap = () =>
       [
         'ArrowDown',
         (state, _dispatch, view) => {
-          if (!view) return false;
+          // During IME composition arrow keys navigate the composition
+          // candidates, not the menu.
+          if (!view || view.composing) return false;
           const suggestions = store.get(state, $suggestions);
           const suggestion = suggestions.get(view);
           if (suggestion) {
@@ -57,7 +74,7 @@ export const suggestionKeymap = () =>
       [
         'ArrowUp',
         (state, _dispatch, view) => {
-          if (!view) return false;
+          if (!view || view.composing) return false;
           const suggestions = store.get(state, $suggestions);
           const suggestion = suggestions.get(view);
           if (suggestion) {
@@ -78,7 +95,9 @@ export const suggestionKeymap = () =>
       [
         'Enter',
         (state, _dispatch, view) => {
-          if (!view) return false;
+          // Enter confirming an IME composition (Japanese, Chinese, Korean)
+          // must never select the highlighted menu item.
+          if (!view || view.composing) return false;
           const suggestion = store.get(state, $suggestions).get(view);
           if (suggestion) {
             const ui = store.get(state, $suggestionUi).get(view);

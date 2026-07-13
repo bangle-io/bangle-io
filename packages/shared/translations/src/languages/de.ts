@@ -91,6 +91,7 @@ export const t = {
         groupBasic: 'Grundbausteine',
         groupLists: 'Listen',
         groupTime: 'Zeit',
+        groupTable: 'Tabelle',
         empty: 'Keine Ergebnisse',
         paragraph: 'Text',
         paragraphDesc: 'Einfacher Absatztext',

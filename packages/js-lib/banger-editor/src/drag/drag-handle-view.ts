@@ -10,20 +10,32 @@ import {
   nodePosAtDOM,
 } from './helpers';
 
-let blockHandleElement: HTMLElement | null = null;
-let hoveredBlockDom: Element | null = null;
+type BlockHandleState = {
+  wrapper: HTMLElement;
+  hoveredBlockDom: Element | null;
+};
+
+// Handle and hover state are per editor view: several views can be mounted
+// at once (e.g. two open notes) and each owns its own handle cluster.
+const blockHandles = new WeakMap<EditorView, BlockHandleState>();
+
+// A drag is a singleton interaction that can end in a different editor view
+// than it started in, so the originating list type stays module level.
 let listType = '';
 
 const dragHandleViewPluginKey = new PluginKey('drag-handle-view');
 
-/** The wrapper holding the "+" button and the drag grip. */
-export function getBlockHandleElement() {
-  return blockHandleElement;
+/** The wrapper holding the "+" button and the drag grip for this view. */
+export function getBlockHandleElement(view: EditorView) {
+  return blockHandles.get(view)?.wrapper ?? null;
 }
 
-/** Records which block DOM node the handle cluster is currently anchored to. */
-export function setHoveredBlockDom(node: Element | null) {
-  hoveredBlockDom = node;
+/** Records which block DOM node the view's handle cluster is anchored to. */
+export function setHoveredBlockDom(view: EditorView, node: Element | null) {
+  const state = blockHandles.get(view);
+  if (state) {
+    state.hoveredBlockDom = node;
+  }
 }
 
 function handleDragStart(
@@ -36,6 +48,7 @@ function handleDragStart(
 
   // Prefer the block recorded on hover — the grip may sit further from the
   // block than the coordinate probe assumes (e.g. vertical orientation).
+  const hoveredBlockDom = blockHandles.get(view)?.hoveredBlockDom;
   const node = hoveredBlockDom?.isConnected
     ? hoveredBlockDom
     : nodeDOMAtCoords(
@@ -136,7 +149,7 @@ export function createDragHandleViewPlugin(
       const { wrapper, plusButton, dragButton } = createBlockHandle(
         options.labels,
       );
-      blockHandleElement = wrapper;
+      blockHandles.set(view, { wrapper, hoveredBlockDom: null });
       // The class is used by the editor mouseout containment check below.
       wrapper.classList.add(options.dragHandleClassName);
       plusButton.classList.add(options.dragHandleClassName);
@@ -151,7 +164,7 @@ export function createDragHandleViewPlugin(
       dragButton.addEventListener('dragstart', onDragHandleDragStart);
 
       const onDragHandleDrag = (e: DragEvent) => {
-        hideDragHandle(options);
+        hideDragHandle(view, options);
         const scrollY = window.scrollY;
         if (e.clientY < options.scrollTreshold) {
           window.scrollTo({ top: scrollY - 30, behavior: 'smooth' });
@@ -170,7 +183,7 @@ export function createDragHandleViewPlugin(
 
       const onPlusClick = (e: MouseEvent) => {
         e.preventDefault();
-        const target = hoveredBlockDom;
+        const target = blockHandles.get(view)?.hoveredBlockDom;
         if (!target || !target.isConnected) {
           return;
         }
@@ -178,11 +191,11 @@ export function createDragHandleViewPlugin(
         if (addBlockNextTo(view, target, { above }, options)) {
           options.onBlockAdd(view, { above });
         }
-        hideDragHandle(options);
+        hideDragHandle(view, options);
       };
       plusButton.addEventListener('click', onPlusClick);
 
-      hideDragHandle(options);
+      hideDragHandle(view, options);
 
       view.dom.parentElement?.appendChild(wrapper);
 
@@ -197,7 +210,7 @@ export function createDragHandleViewPlugin(
 
           if (isInsideEditor) return;
         }
-        hideDragHandle(options);
+        hideDragHandle(view, options);
       };
       view.dom.parentElement?.addEventListener(
         'mouseout',
@@ -211,8 +224,7 @@ export function createDragHandleViewPlugin(
           dragButton.removeEventListener('dragstart', onDragHandleDragStart);
           plusButton.removeEventListener('mousedown', onPlusMouseDown);
           plusButton.removeEventListener('click', onPlusClick);
-          blockHandleElement = null;
-          hoveredBlockDom = null;
+          blockHandles.delete(view);
           view.dom.parentElement?.removeEventListener(
             'mouseout',
             hideHandleOnEditorOut,
@@ -223,17 +235,25 @@ export function createDragHandleViewPlugin(
   });
 }
 
-// Simple helpers to show/hide the block handle cluster
+// Simple helpers to show/hide a view's block handle cluster
 export function hideDragHandle(
+  view: EditorView,
   options: Required<GlobalDragHandlePluginOptions>,
 ) {
-  blockHandleElement?.classList.add(options.dragHandleHideClassName);
-  hoveredBlockDom = null;
+  const state = blockHandles.get(view);
+  if (!state) {
+    return;
+  }
+  state.wrapper.classList.add(options.dragHandleHideClassName);
+  state.hoveredBlockDom = null;
 }
 export function showDragHandle(
+  view: EditorView,
   options: Required<GlobalDragHandlePluginOptions>,
 ) {
-  blockHandleElement?.classList.remove(options.dragHandleHideClassName);
+  blockHandles
+    .get(view)
+    ?.wrapper.classList.remove(options.dragHandleHideClassName);
 }
 
 // So that other plugins can see which type of list we started with (ordered vs. un-ordered)

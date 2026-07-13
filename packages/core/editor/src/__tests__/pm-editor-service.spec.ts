@@ -79,4 +79,71 @@ describe('PmEditorService', () => {
     firstDomNode.remove();
     secondDomNode.remove();
   });
+
+  test('toggleHeading and insertTable act on the active editor', async () => {
+    const controller = new AbortController();
+    const testEnv = createTestEnvironment({ controller });
+    const services = testEnv.instantiateAll();
+    await testEnv.mountAll();
+
+    await services.workspaceOps.createWorkspaceInfo({
+      name: TEST_WS_NAME,
+      type: WORKSPACE_STORAGE_TYPE.Memory,
+      metadata: {},
+    });
+    await services.fileSystem.createTextFile(
+      `${TEST_WS_NAME}:note.md`,
+      'Toggle me',
+    );
+
+    if (!(services.editorEngine instanceof PmEditorService)) {
+      throw new Error('Expected the ProseMirror editor engine');
+    }
+    const service = services.editorEngine;
+    const domNode = document.createElement('div');
+    document.body.append(domNode);
+
+    const unmount = service.mountEditor({
+      domNode,
+      wsPath: `${TEST_WS_NAME}:note.md`,
+      name: 'note-editor',
+    });
+    await waitForExpect(() => {
+      expect(service.getEditor('note-editor')).toBeDefined();
+    });
+    const view = service.getEditor('note-editor');
+    if (!view) {
+      throw new Error('Expected the editor to be ready');
+    }
+    view.focus();
+
+    expect(service.toggleHeading(2)).toBe(true);
+    expect(view.state.doc.firstChild?.type.name).toBe('heading');
+    expect(view.state.doc.firstChild?.attrs.level).toBe(2);
+
+    // Toggling the same level converts back to a paragraph.
+    expect(service.toggleHeading(2)).toBe(true);
+    expect(view.state.doc.firstChild?.type.name).toBe('paragraph');
+
+    expect(service.insertTable()).toBe(true);
+    let hasTable = false;
+    view.state.doc.descendants((node) => {
+      if (node.type.name === 'table') {
+        hasTable = true;
+      }
+      return !hasTable;
+    });
+    expect(hasTable).toBe(true);
+
+    unmount();
+    await waitForExpect(() => {
+      expect(service.getEditor('note-editor')).toBeUndefined();
+    });
+    // With no active editor both refuse instead of throwing.
+    expect(service.toggleHeading(1)).toBe(false);
+    expect(service.insertTable()).toBe(false);
+
+    controller.abort();
+    domNode.remove();
+  });
 });

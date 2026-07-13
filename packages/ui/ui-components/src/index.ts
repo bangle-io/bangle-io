@@ -95,6 +95,7 @@ export type {
 export { AppSidebar } from './app-sidebar';
 export { default as bangleTransparentIconUrl } from './bangle-transparent_x512.png';
 export * as Breadcrumb from './breadcrumb';
+export { CommandMenuRow } from './command-menu-row';
 export * as Dhancha from './Dhancha';
 export type { DialogSingleInputProps } from './dialog-single-input';
 export { DialogSingleInput } from './dialog-single-input';

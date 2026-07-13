@@ -1,5 +1,6 @@
 import {
   basicOperationsHandlers,
+  editorOperationsHandlers,
   nativeFsRecoveryHandlers,
   noteManagementHandlers,
   testHandlers,
@@ -9,6 +10,7 @@ import {
 export const uiCommandHandlers = [
   ...testHandlers,
   ...basicOperationsHandlers,
+  ...editorOperationsHandlers,
   ...nativeFsRecoveryHandlers,
   ...noteManagementHandlers,
   ...workspaceManagementHandlers,

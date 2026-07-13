@@ -58,6 +58,31 @@ export function insertParagraphNear(
   for (let depth = startDepth; depth >= 0; depth--) {
     const parent = $pos.node(depth);
     const index = $pos.index(depth);
+    const base = $pos.posAtIndex(index, depth);
+
+    // Reuse an adjacent empty paragraph instead of stacking new ones, so
+    // repeated "+" clicks land in the same empty block.
+    const neighborIndex = above ? index - 1 : index + 1;
+    const neighbor =
+      neighborIndex >= 0 && neighborIndex < parent.childCount
+        ? parent.child(neighborIndex)
+        : null;
+    if (
+      neighbor &&
+      neighbor.type === paragraphType &&
+      neighbor.content.size === 0
+    ) {
+      const neighborStart = above
+        ? base - neighbor.nodeSize
+        : base + (index < parent.childCount ? parent.child(index).nodeSize : 0);
+      const tr = state.tr
+        .setSelection(TextSelection.near(state.doc.resolve(neighborStart + 1)))
+        .scrollIntoView();
+      view.focus();
+      view.dispatch(tr);
+      return true;
+    }
+
     const insertIndex = above ? index : Math.min(index + 1, parent.childCount);
     if (!parent.canReplaceWith(insertIndex, insertIndex, paragraphType)) {
       continue;
@@ -68,7 +93,6 @@ export function insertParagraphNear(
       return false;
     }
 
-    const base = $pos.posAtIndex(index, depth);
     const insertPos = above
       ? base
       : base + (index < parent.childCount ? parent.child(index).nodeSize : 0);

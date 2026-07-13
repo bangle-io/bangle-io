@@ -62,6 +62,28 @@ describe('insertParagraphNear', () => {
     expect(editor.selectionParentText()).toBe('');
   });
 
+  it('reuses an adjacent empty paragraph below instead of stacking a new one', () => {
+    const editor = setup.createEditor(doc(p('one'), p(), p('two')));
+
+    const handled = insertParagraphNear(editor.view, 0, { above: false });
+
+    expect(handled).toBe(true);
+    editor.expectDoc(doc(p('one'), p(), p('two')));
+    expect(editor.selectionParentType()).toBe('paragraph');
+    expect(editor.selectionParentText()).toBe('');
+  });
+
+  it('reuses an adjacent empty paragraph above with above', () => {
+    const editor = setup.createEditor(doc(p(), p('one')));
+
+    // Position before the "one" paragraph.
+    const handled = insertParagraphNear(editor.view, 2, { above: true });
+
+    expect(handled).toBe(true);
+    editor.expectDoc(doc(p(), p('one')));
+    expect(editor.selectionParentText()).toBe('');
+  });
+
   it('inserts before a top-level paragraph with above', () => {
     const editor = setup.createEditor(doc(p('one')));
     const handled = insertParagraphNear(editor.view, 0, { above: true });

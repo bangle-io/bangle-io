@@ -1,9 +1,11 @@
 import { expect, test } from '@playwright/test';
 import {
+  collapseEditorSelectionAfterText,
   createBrowserWorkspaceAndNote,
   getEditorLocator,
   readStoredMarkdown,
   waitForEditorFocus,
+  writeStoredMarkdown,
 } from './common';
 
 // Pin the browser locale so `data-day` (written with the browser's default
@@ -70,6 +72,64 @@ test('slash menu shows grouped items with icons and filters as you type', async 
   // A query with no matches shows the empty state.
   await page.keyboard.insertText('zzzz');
   await expect(menu.getByText('No results')).toBeVisible();
+});
+
+test('slash menu inside a table offers table operations instead of block transforms', async ({
+  page,
+}) => {
+  const workspaceName = 'slash-command-table-context';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'Home',
+    '| a | b |\n| --- | --- |\n| 1 | 2 |',
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await expect(editor.locator('table')).toBeVisible();
+
+  // Range-based caret placement: visual-line keys (Home/End) race
+  // ProseMirror's state reconciliation. The leading space provides the
+  // trigger boundary the slash input rule requires mid-text.
+  await collapseEditorSelectionAfterText(page, '1');
+  await page.keyboard.insertText(' /');
+
+  const menu = page.getByTestId('slash-command-menu');
+  await expect(menu).toBeVisible();
+
+  // Block transforms don't apply inside inline-content cells.
+  await expect(menu.getByText('Table', { exact: true })).toBeVisible();
+  await expect(menu.getByText('Heading 1')).toBeHidden();
+  await expect(menu.getByText('Code block')).toBeHidden();
+  await expect(menu.getByText('Bullet list')).toBeHidden();
+  // Inline text inserts still apply.
+  await expect(menu.getByText('Today', { exact: true })).toBeVisible();
+  // In a body row every structural action is available.
+  await expect(menu.getByText('Add row above')).toBeVisible();
+
+  await menu.getByText('Add row below').click();
+
+  await expect(editor.locator('table tr')).toHaveCount(3);
+  await expect
+    .poll(async () => {
+      const markdown = await readStoredMarkdown(page, workspaceName, 'Home');
+      return markdown?.split('\n').filter((line) => line.startsWith('|'))
+        .length;
+    })
+    .toBe(4);
+
+  // In the header row "Add row above" is impossible (the command refuses),
+  // so the shared availability gating must hide it here.
+  await collapseEditorSelectionAfterText(page, 'a');
+  await page.keyboard.insertText(' /');
+  await expect(menu).toBeVisible();
+  await expect(menu.getByText('Add row below')).toBeVisible();
+  await expect(menu.getByText('Add row above')).toBeHidden();
 });
 
 test('clicking the Date item without filtering opens the calendar', async ({

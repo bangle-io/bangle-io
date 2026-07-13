@@ -291,6 +291,24 @@ describe('suggestions provider state', () => {
     });
   });
 
+  it('activates when boundary and trigger arrive together in one chunk', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: 'note', store });
+
+    // insertText/dictation can deliver " /" in a single handleTextInput
+    // call, so the boundary character is part of the pending text rather
+    // than the document. This used to build an inverted replace range that
+    // corrupted structured nodes (e.g. split a table into an extra column).
+    expect(handleTextInput(view, 5, 5, ' /')).toBe(true);
+
+    expect(view.state.doc.textContent).toBe('note /');
+    expect(editorStore.get(view.state, $suggestions).get(view)).toMatchObject({
+      markName: 'slash_command',
+      text: '/',
+      show: true,
+    });
+  });
+
   it('hands off to another provider when the mark is swapped for its trigger text', () => {
     const store = createStore();
     const view = createPlainEditor({ text: '', store });
@@ -503,6 +521,67 @@ describe('openSuggestion', () => {
 
     expect(handled).toBe(false);
     expect(view.state.doc.textContent).toBe('hello');
+  });
+});
+
+describe('synthetic suggestions and composition', () => {
+  it('Escape removes a synthetic trigger entirely', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: 'note', store });
+
+    slashSuggestions.command.openSuggestion()(view.state, view.dispatch, view);
+    expect(view.state.doc.textContent).toBe('note/');
+
+    // The "+" button user never typed the "/": Escape must not leave it.
+    expect(pressKey(view, 'Escape')).toBe(true);
+    expect(view.state.doc.textContent).toBe('note');
+    expect(editorStore.get(view.state, $suggestions).get(view)).toBeUndefined();
+  });
+
+  it('Escape keeps a typed trigger as plain text', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: 'note ', store });
+
+    expect(handleTextInput(view, 6, 6, '/')).toBe(true);
+    expect(view.state.doc.textContent).toBe('note /');
+
+    expect(pressKey(view, 'Escape')).toBe(true);
+    expect(view.state.doc.textContent).toBe('note /');
+    expect(editorStore.get(view.state, $suggestions).get(view)).toBeUndefined();
+  });
+
+  it('ignores menu keys while an IME composition is active', () => {
+    const store = createStore();
+    const view = createEditor({ text: '/', markName: 'slash_command', store });
+    const onSelect = vi.fn();
+    editorStore.set(
+      view.state,
+      $suggestionUi,
+      new Map<EditorView, SuggestionUiHandlers>([
+        [view, { slash_command: { onSelect, optionCount: 3 } }],
+      ]),
+    );
+
+    // Simulate the browser-IME boundary: EditorView.composing is a getter
+    // fed by native composition events jsdom cannot produce.
+    Object.defineProperty(view, 'composing', {
+      configurable: true,
+      get: () => true,
+    });
+
+    // Arrow keys navigate composition candidates, not the menu.
+    pressKey(view, 'ArrowDown');
+    pressKey(view, 'ArrowDown');
+    expect(
+      editorStore.get(view.state, $suggestions).get(view)?.selectedIndex,
+    ).toBe(0);
+
+    // Enter confirms the composition; it must not select the highlighted
+    // item. (Other keymaps may still legitimately handle the key.)
+    pressKey(view, 'Enter');
+    expect(onSelect).not.toHaveBeenCalled();
+
+    Reflect.deleteProperty(view, 'composing');
   });
 });
 
