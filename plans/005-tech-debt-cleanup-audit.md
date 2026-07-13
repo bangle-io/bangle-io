@@ -118,6 +118,16 @@ before broader UI or tooling cleanup.
   - P3.4 improved: the sidebar search affordance is now a semantic button with
     native Enter/Space behavior instead of a `div role="button"` wrapped around
     a read-only input. App E2E exercises the Space-key path.
+- 2026-07-12 IndexedDB error and type hygiene cleanup:
+  - P5.3 done: the remaining IndexedDB adapter now retains the original
+    rejection as `Error.cause` for both generic upstream errors and translated
+    constraint failures. The replacement Native FS library already preserves
+    causes when it normalizes browser errors; the legacy Native Browser FS
+    evidence was removed with that adapter.
+  - P5.1 improved: foundational `BaseError` stack capture no longer relies on
+    `any` or the obsolete `__proto__` fallback, and the touched IndexedDB slice
+    no longer carries an unsafe array guard, a parameter-assignment lint
+    suppression, or dead untyped test helpers.
 - Findings are grouped by priority and theme below.
 
 ## Scope
@@ -765,6 +775,8 @@ Plan:
 - Separate public API `any` from internal implementation `any`.
 - Replace command arg `any` with inferred validator output where feasible.
 - Add typed wrappers around native browser APIs that currently require casts.
+- [x] Remove avoidable `any` and obsolete prototype fallback logic from the
+  foundational `BaseError` and IndexedDB adapter slice.
 - Keep intentional negative type tests using `@ts-expect-error`.
 
 Verification:
@@ -804,23 +816,25 @@ Verification:
 
 Problem:
 
-- Some storage wrappers convert upstream failures to broad app-specific errors
+- The IndexedDB adapter converted upstream failures to broad storage errors
   without preserving original cause details.
 
 Evidence:
 
 - `packages/js-lib/baby-fs/indexed-db-fs.ts`
-- `packages/js-lib/baby-fs/native-browser-fs.ts`
+- `packages/js-lib/native-fs/src/errors.ts`
 
 Plan:
 
-- Preserve original error cause where supported.
-- Keep user-facing messages safe and readable.
-- Log structured diagnostic details through the existing logger/error service.
+- [x] Preserve original error cause for generic IndexedDB failures and mapped
+  constraint failures.
+- [x] Verify the replacement Native FS error normalization preserves causes.
+- [x] Keep user-facing messages safe and readable while retaining structured
+  diagnostic details on the error object.
 
 Verification:
 
-- Unit tests assert error code and cause shape.
+- [x] Unit tests assert error code and cause shape.
 
 ## 2026-07-12 Core/App Containment Re-audit
 

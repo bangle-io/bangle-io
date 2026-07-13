@@ -1,11 +1,5 @@
 export class BaseError extends Error {
   code?: string;
-  /**
-   *
-   * @param {*} message
-   * @param {*} code - error code
-   * @param {*} cause - the cause of the error
-   */
   constructor({
     message,
     code,
@@ -18,10 +12,13 @@ export class BaseError extends Error {
     // 'Error' breaks prototype chain here
     super(message, { cause });
 
-    // Error.captureStackTrace is a v8-specific method so not avilable on
+    // Error.captureStackTrace is a V8-specific method, so it is not available on
     // Firefox or Safari
-    if ((Error as any).captureStackTrace) {
-      (Error as any).captureStackTrace(this, BaseError);
+    const errorConstructor = Error as ErrorConstructor & {
+      captureStackTrace?: (target: object, constructorOption?: object) => void;
+    };
+    if (errorConstructor.captureStackTrace) {
+      errorConstructor.captureStackTrace(this, BaseError);
     } else {
       const stack = new Error().stack;
 
@@ -33,11 +30,7 @@ export class BaseError extends Error {
     // restore prototype chain
     const actualProto = new.target.prototype;
 
-    if (Object.setPrototypeOf) {
-      Object.setPrototypeOf(this, actualProto);
-    } else {
-      (this as any).__proto__ = actualProto;
-    }
+    Object.setPrototypeOf(this, actualProto);
 
     this.name = this.constructor.name;
 

@@ -15,13 +15,12 @@ import {
 import { readFileAsText as readFileAsTextHelper } from './read-file-as-text';
 
 function catchUpstream<T>(idbPromise: Promise<T>, errorMessage: string) {
-  return idbPromise.catch((_error) => {
-    return Promise.reject(
-      new IndexedDBFileSystemError({
-        message: errorMessage,
-        code: UPSTREAM_ERROR,
-      }),
-    );
+  return idbPromise.catch((cause: unknown) => {
+    throw new IndexedDBFileSystemError({
+      message: errorMessage,
+      code: UPSTREAM_ERROR,
+      cause,
+    });
   });
 }
 
@@ -157,12 +156,8 @@ export class IndexedDBFileSystem extends BaseFileSystem {
       throw new Error('Keys in opendirRecursive must be array');
     }
 
-    if (dirPath && !dirPath.endsWith('/')) {
-      // biome-ignore lint/style/noParameterAssign: <explanation>
-      dirPath += '/';
-    }
-
-    const result = dirPath ? keys.filter((k) => k.startsWith(dirPath)) : keys;
+    const dirPrefix = dirPath.endsWith('/') ? dirPath : `${dirPath}/`;
+    const result = keys.filter((key) => key.startsWith(dirPrefix));
 
     return result;
   }
@@ -270,11 +265,13 @@ export class IndexedDBFileSystem extends BaseFileSystem {
         throw new IndexedDBFileSystemError({
           message: `File "${filePath}" already exists`,
           code: FILE_ALREADY_EXISTS_ERROR,
+          cause: error,
         });
       }
       throw new IndexedDBFileSystemError({
         message: 'Error creating file',
         code: UPSTREAM_ERROR,
+        cause: error,
       });
     }
 
@@ -295,7 +292,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
 
 export class IndexedDBFileSystemError extends BaseFileSystemError {}
 
-function isArrayOfStrings(arr: any): arr is string[] {
+function isArrayOfStrings(arr: unknown): arr is string[] {
   if (!Array.isArray(arr)) {
     return false;
   }
