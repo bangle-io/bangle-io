@@ -12,6 +12,7 @@ related_prs:
   - https://github.com/bangle-io/bangle-io/pull/632
   - https://github.com/bangle-io/bangle-io/pull/635
   - https://github.com/bangle-io/bangle-io/pull/636
+  - https://github.com/bangle-io/bangle-io/pull/638
 related_issues: []
 ---
 
