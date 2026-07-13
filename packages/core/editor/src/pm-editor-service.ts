@@ -899,6 +899,42 @@ export class PmEditorService
     }
   }
 
+  /** Toggles the block at the current selection to/from a heading. */
+  toggleHeading(level: number): boolean {
+    const view = this.getActiveEditorView();
+    if (!view) {
+      return false;
+    }
+    const handled = this.extensions.heading.command.toggleHeading(level)(
+      view.state,
+      view.dispatch,
+      view,
+    );
+    if (handled) {
+      view.focus();
+    }
+    return handled;
+  }
+
+  /** Inserts a starter table at the current selection. */
+  insertTable(): boolean {
+    const view = this.getActiveEditorView();
+    if (!view) {
+      return false;
+    }
+    const handled = this.extensions.table.command.insertTable()(
+      view.state,
+      view.dispatch,
+      view,
+    );
+    if (handled) {
+      // Replacing the focused block with the table drops DOM focus; restore
+      // it so typing goes into the first cell.
+      view.focus();
+    }
+    return handled;
+  }
+
   /** Folds/unfolds the heading section at the current selection. */
   toggleHeadingCollapse(): boolean {
     const view = this.getActiveEditorView();

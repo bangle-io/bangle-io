@@ -18,6 +18,8 @@ export const suggestionKeymap = () =>
             ? store.get(state, $suggestions).get(view)
             : store.get(state, $suggestion);
           if (suggestion) {
+            // removeSuggestMark keeps typed trigger text but deletes
+            // synthetic (programmatically opened) triggers entirely.
             return removeSuggestMark({
               markName: suggestion.markName,
               selection: state.selection,
@@ -29,7 +31,9 @@ export const suggestionKeymap = () =>
       [
         'ArrowDown',
         (state, _dispatch, view) => {
-          if (!view) return false;
+          // During IME composition arrow keys navigate the composition
+          // candidates, not the menu.
+          if (!view || view.composing) return false;
           const suggestions = store.get(state, $suggestions);
           const suggestion = suggestions.get(view);
           if (suggestion) {
@@ -57,7 +61,7 @@ export const suggestionKeymap = () =>
       [
         'ArrowUp',
         (state, _dispatch, view) => {
-          if (!view) return false;
+          if (!view || view.composing) return false;
           const suggestions = store.get(state, $suggestions);
           const suggestion = suggestions.get(view);
           if (suggestion) {
@@ -78,7 +82,9 @@ export const suggestionKeymap = () =>
       [
         'Enter',
         (state, _dispatch, view) => {
-          if (!view) return false;
+          // Enter confirming an IME composition (Japanese, Chinese, Korean)
+          // must never select the highlighted menu item.
+          if (!view || view.composing) return false;
           const suggestion = store.get(state, $suggestions).get(view);
           if (suggestion) {
             const ui = store.get(state, $suggestionUi).get(view);

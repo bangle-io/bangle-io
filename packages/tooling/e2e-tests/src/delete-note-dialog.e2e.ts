@@ -14,7 +14,7 @@ test('delete note command opens confirmation without an intermediate picker', as
   await page
     .getByPlaceholder('Type a command or search...')
     .fill('Delete Note');
-  await page.getByRole('option', { name: '> Delete Note' }).click();
+  await page.getByRole('option', { name: 'Delete Note' }).click();
 
   const confirmation = page.getByRole('alertdialog');
   await expect(confirmation).toBeVisible();
@@ -56,7 +56,7 @@ test('move note dialog accepts directory destinations from the file tree', async
 
   await pressAppShortcut(page, 'k');
   await page.getByPlaceholder('Type a command or search...').fill('New Folder');
-  await page.getByRole('option', { name: '> New Folder' }).click();
+  await page.getByRole('option', { name: 'New Folder' }).click();
 
   const createDirectory = page.getByRole('dialog', {
     name: 'Create Folder',
@@ -117,7 +117,7 @@ test('move note dialog offers folder creation when there is no destination', asy
 
   await pressAppShortcut(page, 'k');
   await page.getByPlaceholder('Type a command or search...').fill('Move Note');
-  await page.getByRole('option', { name: '> Move Note' }).click();
+  await page.getByRole('option', { name: 'Move Note' }).click();
 
   const moveDialog = page.getByRole('dialog', { name: 'Move "root-note"' });
   await expect(moveDialog).toBeVisible();

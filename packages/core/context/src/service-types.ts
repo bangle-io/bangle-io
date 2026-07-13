@@ -40,6 +40,14 @@ export type EditorEngineContract = BaseService & {
   getSelectionMarkdown: () => string | null;
   hasPendingOrFailedSave: (wsPath?: string) => boolean;
   insertMarkdownAtSelection: (markdownText: string) => boolean;
+  /** Inserts a starter table at the current selection in the active editor
+   * and focuses its first cell. Returns false when there is no active
+   * editor or the position cannot hold a table. */
+  insertTable: () => boolean;
+  /** Toggles the block at the current selection between a heading of the
+   * given level and a paragraph. Returns false when there is no active
+   * editor. */
+  toggleHeading: (level: number) => boolean;
   mountEditor: (params: {
     domNode: HTMLElement;
     wsPath: string;

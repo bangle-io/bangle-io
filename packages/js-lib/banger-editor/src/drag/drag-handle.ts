@@ -2,9 +2,15 @@ import type { PMNode } from '../pm';
 import { Fragment, Plugin, PluginKey, Slice } from '../pm';
 import { isNodeSelection } from '../pm-utils';
 import {
+  BLOCK_HANDLE_BUTTON_GAP,
+  setBlockHandleOrientation,
+} from './drag-handle-ui';
+import {
+  getBlockHandleElement,
   getCurrentListType,
   hideDragHandle,
   resetListType,
+  setHoveredBlockDom,
   showDragHandle,
 } from './drag-handle-view';
 import {
@@ -49,7 +55,7 @@ export function createDragHandleEventsPlugin(
             node.matches(excludedTagList) ||
             notDragging
           ) {
-            hideDragHandle(options);
+            hideDragHandle(view, options);
             return false;
           }
 
@@ -70,25 +76,37 @@ export function createDragHandleEventsPlugin(
             state: view.state,
           });
 
-          // Position the handle
-          const handleEl =
-            document.querySelector<HTMLElement>('[data-drag-handle]');
+          // Position the handle cluster
+          const handleEl = getBlockHandleElement(view);
           if (!handleEl) return false;
 
-          handleEl.style.left = `${result.left - result.width}px`;
+          const editorRect = view.dom.getBoundingClientRect();
+          const orientation = options.getHandleOrientation({
+            rect: result,
+            gutterWidth: result.left - editorRect.left,
+            view,
+          });
+          setBlockHandleOrientation(handleEl, orientation);
+
+          const clusterWidth =
+            orientation === 'horizontal'
+              ? result.width * 2 + BLOCK_HANDLE_BUTTON_GAP
+              : result.width;
+          handleEl.style.left = `${Math.max(2, result.left - clusterWidth)}px`;
           handleEl.style.top = `${result.top}px`;
 
-          showDragHandle(options);
+          setHoveredBlockDom(view, node);
+          showDragHandle(view, options);
           return false; // Do not prevent PM’s default
         },
 
-        keydown: () => {
-          hideDragHandle(options);
+        keydown: (view) => {
+          hideDragHandle(view, options);
           return false;
         },
 
-        mousewheel: () => {
-          hideDragHandle(options);
+        mousewheel: (view) => {
+          hideDragHandle(view, options);
           return false;
         },
 
@@ -99,7 +117,7 @@ export function createDragHandleEventsPlugin(
 
         drop: (view, event) => {
           view.dom.classList.remove(options.editorDraggingClassName);
-          hideDragHandle(options);
+          hideDragHandle(view, options);
 
           let droppedNode: PMNode | null = null;
           const dropPos = view.posAtCoords({

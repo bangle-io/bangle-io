@@ -1,9 +1,11 @@
 import { expect, test } from '@playwright/test';
 import {
+  collapseEditorSelectionAfterText,
   createBrowserWorkspaceAndNote,
   getEditorLocator,
   readStoredMarkdown,
   waitForEditorFocus,
+  writeStoredMarkdown,
 } from './common';
 
 // Pin the browser locale so `data-day` (written with the browser's default
@@ -35,6 +37,196 @@ test('slash command stays active with multiple suggestion providers registered',
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
     .toBe('# Slash Title');
+});
+
+test('slash menu shows grouped items with icons and filters as you type', async ({
+  page,
+}) => {
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName: 'slash-command-menu-structure',
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('/');
+
+  const menu = page.getByTestId('slash-command-menu');
+  await expect(menu).toBeVisible();
+  await expect(menu.getByText('Basic blocks')).toBeVisible();
+  await expect(menu.getByText('Lists', { exact: true })).toBeVisible();
+  await expect(menu.getByText('Time', { exact: true })).toBeVisible();
+
+  // Items render as icon + title + description rows.
+  const headingItem = menu.getByRole('option', { name: /Heading 1/ });
+  await expect(headingItem).toBeVisible();
+  await expect(headingItem.locator('svg')).toBeVisible();
+  await expect(headingItem.getByText('Large section heading')).toBeVisible();
+
+  // Typing narrows the menu, including alias matches.
+  await page.keyboard.insertText('head');
+  await expect(menu.getByText('Heading 1')).toBeVisible();
+  await expect(menu.getByText('Bullet list')).toBeHidden();
+
+  // A query with no matches shows the empty state.
+  await page.keyboard.insertText('zzzz');
+  await expect(menu.getByText('No results')).toBeVisible();
+});
+
+test('slash menu inside a table offers table operations instead of block transforms', async ({
+  page,
+}) => {
+  const workspaceName = 'slash-command-table-context';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'Home',
+    '| a | b |\n| --- | --- |\n| 1 | 2 |',
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await expect(editor.locator('table')).toBeVisible();
+
+  // Range-based caret placement: visual-line keys (Home/End) race
+  // ProseMirror's state reconciliation. The leading space provides the
+  // trigger boundary the slash input rule requires mid-text.
+  await collapseEditorSelectionAfterText(page, '1');
+  await page.keyboard.insertText(' /');
+
+  const menu = page.getByTestId('slash-command-menu');
+  await expect(menu).toBeVisible();
+
+  // Block transforms don't apply inside inline-content cells.
+  await expect(menu.getByText('Table', { exact: true })).toBeVisible();
+  await expect(menu.getByText('Heading 1')).toBeHidden();
+  await expect(menu.getByText('Code block')).toBeHidden();
+  await expect(menu.getByText('Bullet list')).toBeHidden();
+  // Inline text inserts still apply.
+  await expect(menu.getByText('Today', { exact: true })).toBeVisible();
+  // In a body row every structural action is available.
+  await expect(menu.getByText('Add row above')).toBeVisible();
+
+  await menu.getByText('Add row below').click();
+
+  await expect(editor.locator('table tr')).toHaveCount(3);
+  await expect
+    .poll(async () => {
+      const markdown = await readStoredMarkdown(page, workspaceName, 'Home');
+      return markdown?.split('\n').filter((line) => line.startsWith('|'))
+        .length;
+    })
+    .toBe(4);
+
+  // In the header row "Add row above" is impossible (the command refuses),
+  // so the shared availability gating must hide it here.
+  await collapseEditorSelectionAfterText(page, 'a');
+  await page.keyboard.insertText(' /');
+  await expect(menu).toBeVisible();
+  await expect(menu.getByText('Add row below')).toBeVisible();
+  await expect(menu.getByText('Add row above')).toBeHidden();
+});
+
+test('a space ends the slash query but keeps the typed text', async ({
+  page,
+}) => {
+  const workspaceName = 'slash-command-space-ends';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('/');
+
+  const menu = page.getByTestId('slash-command-menu');
+  await expect(menu).toBeVisible();
+
+  await page.keyboard.insertText(' ');
+  await expect(menu).toBeHidden();
+
+  // The typed characters stay ordinary text and editing continues.
+  await page.keyboard.insertText('after');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe('/ after');
+});
+
+test('clicking the Date item without filtering opens the calendar', async ({
+  page,
+}) => {
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName: 'slash-command-date-click',
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('/');
+
+  const menu = page.getByTestId('slash-command-menu');
+  await expect(menu).toBeVisible();
+  await menu.getByText('Date', { exact: true }).click();
+
+  await expect(page.locator('[data-slot="calendar"]')).toBeVisible();
+});
+
+test('selecting a slash item with the mouse keeps typing in the editor', async ({
+  page,
+}) => {
+  const workspaceName = 'slash-command-mouse-focus';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('/');
+
+  const menu = page.getByTestId('slash-command-menu');
+  await expect(menu).toBeVisible();
+  await menu.getByText('Code block').click();
+
+  await expect(editor.locator('pre')).toBeVisible();
+  // The click must not steal focus from the editor: typing continues in the
+  // freshly inserted block without clicking back into the editor.
+  await expect(editor).toBeFocused();
+  await page.keyboard.insertText('typed after mouse click');
+  await expect(editor.locator('pre code')).toContainText(
+    'typed after mouse click',
+  );
+});
+
+test('typing a query ranks direct matches above fuzzy ones', async ({
+  page,
+}) => {
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName: 'slash-command-ranking',
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('/');
+  const menu = page.getByTestId('slash-command-menu');
+  await expect(menu).toBeVisible();
+
+  await page.keyboard.insertText('date');
+  const selected = menu.locator('[cmdk-item][data-selected="true"]');
+  await expect(selected).toContainText('Date');
+  // Fuzzy noise like "Heading 1" must not outrank or accompany the match.
+  await expect(menu.getByText('Heading 1')).toBeHidden();
 });
 
 test('slash command can insert a persisted code block', async ({ page }) => {

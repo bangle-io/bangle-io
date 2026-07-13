@@ -92,13 +92,13 @@ test('workspaces settings lists workspaces and exposes row actions', async ({
   await searchButton.press('Space');
   await page.getByRole('combobox').fill('settings');
   await expect(
-    page.getByRole('option', { exact: true, name: '> Settings' }),
+    page.getByRole('option', { exact: true, name: 'Settings' }),
   ).toBeVisible();
   await expect(
-    page.getByRole('option', { name: '> Settings - General' }),
+    page.getByRole('option', { name: 'Settings - General' }),
   ).toBeVisible();
   await expect(
-    page.getByRole('option', { name: '> Settings - Workspaces' }),
+    page.getByRole('option', { name: 'Settings - Workspaces' }),
   ).toBeVisible();
 });
 

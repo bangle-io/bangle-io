@@ -1,4 +1,4 @@
-import { APP_MAIN_CONTENT_PADDING } from '@bangle.io/constants';
+import { EDITOR_GUTTER_PADDING_LEFT } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import { useAtomValue } from 'jotai';
 import React, { useMemo } from 'react';
@@ -10,6 +10,9 @@ import { AppHeader } from '../layout/app-header';
 import { PageContentContainer } from '../layout/main-content-container';
 
 const MAIN_EDITOR_NAME = 'main-editor';
+
+// APP_MAIN_CONTENT_PADDING with the left side widened for the block handle.
+const EDITOR_CONTENT_PADDING = `py-4 pt-0 pr-4 md:pr-6 ${EDITOR_GUTTER_PADDING_LEFT}`;
 
 export function PageEditor() {
   const coreServices = useCoreServices();
@@ -40,7 +43,7 @@ export function PageEditor() {
               key={editorKey}
               name={editorKey}
               wsPath={currentWsPath.wsPath}
-              className={APP_MAIN_CONTENT_PADDING}
+              className={EDITOR_CONTENT_PADDING}
             />
             <LinkedMentions currentWsPath={currentWsPath} />
           </>

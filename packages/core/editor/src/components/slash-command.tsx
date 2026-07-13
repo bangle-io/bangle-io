@@ -1,4 +1,8 @@
-import { $suggestions, Fragment } from '@bangle.io/prosemirror-plugins';
+import {
+  $suggestions,
+  Fragment,
+  type Command as PMCommand,
+} from '@bangle.io/prosemirror-plugins';
 import {
   Command,
   CommandEmpty,
@@ -7,16 +11,9 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  CommandMenuRow,
   CommandSeparator,
 } from '@bangle.io/ui-components';
-import {
-  addMonths,
-  addWeeks,
-  format,
-  startOfMonth,
-  startOfWeek,
-  subDays,
-} from 'date-fns';
 import { useAtomValue } from 'jotai';
 import React, {
   type ReactElement,
@@ -28,6 +25,7 @@ import React, {
 
 import { DATE_SUGGESTION } from '../extensions';
 import { useEditorCoreServices } from '../use-editor-core-services';
+import { buildSlashMenuGroups, slashMenuFilter } from './slash-items';
 import {
   FLOATING_INITIAL_STYLE,
   useFloatingPosition,
@@ -98,7 +96,9 @@ export function SlashCommand({
   const slashRef = useFloatingPosition({
     show: Boolean(active?.show),
     anchorEl: () => active?.anchorEl() ?? null,
-    boundarySelector: '.ProseMirror:not([contenteditable="false"])',
+    // Constrain to the owning editor: a global selector would pick the
+    // first editable ProseMirror on the page and leak across editors.
+    boundaryElement: editorView?.dom ?? null,
   });
 
   const ext = editorEngine.extensions;
@@ -134,11 +134,46 @@ export function SlashCommand({
     return null;
   }
 
+  const run = (command: PMCommand, { refocus }: { refocus?: boolean } = {}) => {
+    dismissCommandUi();
+    command(editorView.state, editorView.dispatch, editorView);
+    if (refocus) {
+      // Some inserts replace or move the focused block, dropping DOM focus;
+      // restore it so typing continues in the new block.
+      editorView.focus();
+    }
+  };
+
+  const groups = buildSlashMenuGroups(ext, editorView.state, {
+    run,
+    insertText: (text) => run(ext.base.command.insertText({ text })),
+    openDatePicker,
+  });
+
+  const labels = t.app.editor.slashCommand;
+
   return (
-    <div ref={slashRef} style={FLOATING_INITIAL_STYLE}>
+    // biome-ignore lint/a11y/noStaticElementInteractions: focus guard for a floating menu, not an interactive control.
+    <div
+      ref={slashRef}
+      style={FLOATING_INITIAL_STYLE}
+      onMouseDown={(event) => {
+        // The editor must keep focus and its selection while the menu is
+        // clicked — the menu is an extension of typing, like Notion's. Only
+        // the list element itself is exempt so its scrollbar stays draggable.
+        if (
+          !(event.target instanceof HTMLElement) ||
+          !event.target.hasAttribute('cmdk-list')
+        ) {
+          event.preventDefault();
+        }
+      }}
+    >
       <Command
         ref={commandRef}
-        className="overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md"
+        filter={slashMenuFilter}
+        data-testid="slash-command-menu"
+        className="w-72 overflow-hidden rounded-lg border bg-popover text-popover-foreground shadow-lg"
       >
         <CommandInput
           hidden
@@ -146,227 +181,34 @@ export function SlashCommand({
           onValueChange={() => {}}
         />
         <CommandEmpty>
-          <span className="text-muted-foreground">Nothing found</span>
+          <span className="text-muted-foreground">{labels.empty}</span>
         </CommandEmpty>
-        <CommandList>
-          <CommandGroup heading="Basic">
-            <CommandItem
-              value="paragraph"
-              onSelect={() => {
-                dismissCommandUi();
-                ext.paragraph.command.convertToParagraph(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Paragraph
-            </CommandItem>
-            <CommandItem
-              value="heading-1"
-              onSelect={() => {
-                dismissCommandUi();
-                ext.heading.command.toggleHeading(1)(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Heading 1
-            </CommandItem>
-            <CommandItem
-              value="heading-2"
-              onSelect={() => {
-                dismissCommandUi();
-                ext.heading.command.toggleHeading(2)(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Heading 2
-            </CommandItem>
-            <CommandItem
-              value="heading-3"
-              onSelect={() => {
-                dismissCommandUi();
-                ext.heading.command.toggleHeading(3)(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Heading 3
-            </CommandItem>
-            <CommandItem
-              value="code-block code fenced-code snippet"
-              onSelect={() => {
-                dismissCommandUi();
-                ext.codeBlock.command.toggleCodeBlock(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Code block
-            </CommandItem>
-            {!ext.frontmatter.query.hasFrontmatter(editorView.state) && (
-              <CommandItem
-                value="frontmatter yaml properties metadata"
-                onSelect={() => {
-                  dismissCommandUi();
-                  ext.frontmatter.command.insertFrontmatter(
-                    editorView.state,
-                    editorView.dispatch,
-                    editorView,
+        <CommandList className="max-h-[330px] overscroll-contain">
+          {groups.map((group, groupIndex) => (
+            <React.Fragment key={group.heading}>
+              {groupIndex > 0 && <CommandSeparator />}
+              <CommandGroup heading={group.heading}>
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <CommandItem
+                      key={item.value}
+                      value={item.value}
+                      onSelect={item.onSelect}
+                    >
+                      <CommandMenuRow
+                        icon={<Icon aria-hidden />}
+                        title={item.title}
+                        description={item.description}
+                      />
+                    </CommandItem>
                   );
-                  // Inserting at the doc top moves focus away from the typed
-                  // position; restore it so typing lands in the block.
-                  editorView.focus();
-                }}
-              >
-                {t.app.editor.slashCommand.frontmatter}
-              </CommandItem>
-            )}
-            <CommandItem
-              value="table grid"
-              onSelect={() => {
-                dismissCommandUi();
-                ext.table.command.insertTable()(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-                // Replacing the focused paragraph with the table drops DOM
-                // focus; restore it so typing goes into the first cell.
-                editorView.focus();
-              }}
-            >
-              {t.app.editor.slashCommand.table}
-            </CommandItem>
-          </CommandGroup>
-
-          <CommandSeparator />
-
-          <CommandGroup heading="Lists">
-            <CommandItem
-              value="bullet-list"
-              onSelect={() => {
-                dismissCommandUi();
-                ext.list.command.toggleBulletList(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Bullet list
-            </CommandItem>
-            <CommandItem
-              value="numbered-list"
-              onSelect={() => {
-                dismissCommandUi();
-                ext.list.command.toggleOrderedList(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Numbered list
-            </CommandItem>
-            <CommandItem
-              value="todo-list"
-              onSelect={() => {
-                dismissCommandUi();
-                ext.list.command.toggleTaskList(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              To-do list
-            </CommandItem>
-          </CommandGroup>
-
-          <CommandSeparator />
-
-          <CommandGroup heading="Time">
-            <CommandItem value="date calendar" onSelect={openDatePicker}>
-              {t.app.editor.slashCommand.date}
-            </CommandItem>
-            <CommandItem
-              value="today"
-              onSelect={() => {
-                dismissCommandUi();
-                const today = format(new Date(), 'PP');
-
-                ext.base.command.insertText({ text: today })(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Today
-            </CommandItem>
-            <CommandItem
-              value="yesterday"
-              onSelect={() => {
-                dismissCommandUi();
-                const yesterday = format(subDays(new Date(), 1), 'PP');
-                ext.base.command.insertText({ text: yesterday })(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Yesterday
-            </CommandItem>
-            <CommandItem
-              value="next-week"
-              onSelect={() => {
-                dismissCommandUi();
-                const nextWeek = format(
-                  startOfWeek(addWeeks(new Date(), 1)),
-                  'PPP',
-                );
-                ext.base.command.insertText({ text: nextWeek })(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Next week
-            </CommandItem>
-            <CommandItem
-              value="next-month"
-              onSelect={() => {
-                dismissCommandUi();
-                const nextMonth = format(
-                  startOfMonth(addMonths(new Date(), 1)),
-                  'PP',
-                );
-                ext.base.command.insertText({ text: nextMonth })(
-                  editorView.state,
-                  editorView.dispatch,
-                  editorView,
-                );
-              }}
-            >
-              Next month
-            </CommandItem>
-          </CommandGroup>
+                })}
+              </CommandGroup>
+            </React.Fragment>
+          ))}
         </CommandList>
-        <CommandHints hints={['Enter to select', 'Escape to dismiss']} />
+        <CommandHints hints={[labels.hintSelect, labels.hintDismiss]} />
       </Command>
     </div>
   );

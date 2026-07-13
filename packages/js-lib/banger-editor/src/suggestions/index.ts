@@ -5,6 +5,7 @@ import { inputRules } from '../pm';
 import { triggerInputRule } from './input-rule';
 import { suggestionKeymap } from './keymap';
 import {
+  openSuggestion,
   pluginSuggestion,
   type ReplacementContent,
   removeSuggestMark,
@@ -25,6 +26,9 @@ export type SuggestionConfig = {
   logger?: Logger;
   requireTriggerBoundary?: boolean;
   installKeymap?: boolean;
+  /** End the suggestion when the query contains whitespace (slash menu
+   * behavior); providers with multi-word queries (wiki links) leave it off. */
+  endOnWhitespace?: boolean;
 };
 
 export function setupSuggestions(config: SuggestionConfig) {
@@ -66,6 +70,12 @@ export function setupSuggestions(config: SuggestionConfig) {
         return removeSuggestMark({
           markName: config.markName,
           selection,
+        });
+      },
+      openSuggestion: () => {
+        return openSuggestion({
+          markName: config.markName,
+          trigger: config.trigger,
         });
       },
     },

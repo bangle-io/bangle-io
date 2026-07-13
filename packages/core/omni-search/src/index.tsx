@@ -12,11 +12,12 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  CommandMenuRow,
   CommandSeparator,
-  KbdShortcut,
 } from '@bangle.io/ui-components';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useAtom, useAtomValue } from 'jotai';
+import { FileText, SquareChevronRight } from 'lucide-react';
 import React, { useMemo } from 'react';
 
 const MAX_COMMANDS_PER_GROUP = 5;
@@ -43,6 +44,14 @@ type CommandItemProp = {
   onSelect: () => void;
 };
 
+function itemIcon(item: CommandItemProp) {
+  return item.metadata.type === 'command' ? (
+    <SquareChevronRight aria-hidden />
+  ) : (
+    <FileText aria-hidden />
+  );
+}
+
 function CommandGroupSection({
   heading,
   items,
@@ -59,8 +68,11 @@ function CommandGroupSection({
           title={item.title}
           onSelect={item.onSelect}
         >
-          <span>{item.title}</span>
-          {item.keybindings && <KbdShortcut keys={item.keybindings} />}
+          <CommandMenuRow
+            icon={itemIcon(item)}
+            title={item.title}
+            keybindings={item.keybindings}
+          />
         </CommandItem>
       ))}
     </CommandGroup>
@@ -262,11 +274,11 @@ function FilteredRoute({
               }}
             >
               <CommandItem id={key} title={item.title} onSelect={item.onSelect}>
-                <span>
-                  {item.metadata.type === 'command' ? '> ' : ''}
-                  {item.title}
-                </span>
-                {item.keybindings && <KbdShortcut keys={item.keybindings} />}
+                <CommandMenuRow
+                  icon={itemIcon(item)}
+                  title={item.title}
+                  keybindings={item.keybindings}
+                />
               </CommandItem>
             </div>
           );

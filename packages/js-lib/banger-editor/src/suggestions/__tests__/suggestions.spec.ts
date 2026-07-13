@@ -19,6 +19,7 @@ import {
   $suggestions,
   $suggestionUi,
   type SuggestionUiHandlers,
+  stripSyntheticSuggestionText,
 } from '../plugin-suggestion';
 
 const slashSuggestions = setupSuggestions({
@@ -26,6 +27,7 @@ const slashSuggestions = setupSuggestions({
   markName: 'slash_command',
   trigger: '/',
   markClassName: 'slash',
+  endOnWhitespace: true,
 });
 const wikiSuggestions = setupSuggestions({
   providerId: 'wiki-link',
@@ -291,6 +293,24 @@ describe('suggestions provider state', () => {
     });
   });
 
+  it('activates when boundary and trigger arrive together in one chunk', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: 'note', store });
+
+    // insertText/dictation can deliver " /" in a single handleTextInput
+    // call, so the boundary character is part of the pending text rather
+    // than the document. This used to build an inverted replace range that
+    // corrupted structured nodes (e.g. split a table into an extra column).
+    expect(handleTextInput(view, 5, 5, ' /')).toBe(true);
+
+    expect(view.state.doc.textContent).toBe('note /');
+    expect(editorStore.get(view.state, $suggestions).get(view)).toMatchObject({
+      markName: 'slash_command',
+      text: '/',
+      show: true,
+    });
+  });
+
   it('hands off to another provider when the mark is swapped for its trigger text', () => {
     const store = createStore();
     const view = createPlainEditor({ text: '', store });
@@ -421,5 +441,251 @@ describe('suggestions provider state', () => {
     expect(pressKey(wikiView, 'Enter')).toBe(true);
     expect(wikiSelect).toHaveBeenCalledTimes(1);
     expect(slashSelect).not.toHaveBeenCalled();
+  });
+});
+
+describe('openSuggestion', () => {
+  it('inserts the trigger with the suggestion mark and activates the provider', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: '', store });
+
+    const handled = slashSuggestions.command.openSuggestion()(
+      view.state,
+      view.dispatch,
+      view,
+    );
+
+    expect(handled).toBe(true);
+    expect(view.state.doc.textContent).toBe('/');
+    const markType = schema.marks.slash_command;
+    if (!markType) throw new Error('missing slash_command mark');
+    expect(view.state.doc.rangeHasMark(1, 2, markType)).toBe(true);
+    expect(editorStore.get(view.state, $suggestions).get(view)).toMatchObject({
+      markName: 'slash_command',
+      show: true,
+      text: '/',
+    });
+  });
+
+  it('does not open inside a link', () => {
+    const store = createStore();
+    const linkMark = schema.marks.link;
+    if (!linkMark) throw new Error('missing link mark');
+    const doc = schema.node('doc', null, [
+      schema.node('paragraph', null, [
+        schema.text('site', [linkMark.create({ href: 'https://example.com' })]),
+      ]),
+    ]);
+    const mount = document.createElement('div');
+    document.body.append(mount);
+    const state = EditorState.create({
+      doc,
+      schema,
+      selection: TextSelection.create(doc, 3),
+      plugins: resolve([
+        collection({
+          id: 'test-store',
+          plugin: { store: editorStore.storePlugin(store) },
+        }),
+        setupBase(),
+        setupParagraph(),
+        setupLink(),
+        slashSuggestions,
+        wikiSuggestions,
+        dateSuggestions,
+      ]).resolvePlugins({ schema }),
+    });
+    const view = new EditorView({ mount }, { state });
+    editors.push(view);
+
+    const handled = slashSuggestions.command.openSuggestion()(
+      view.state,
+      view.dispatch,
+      view,
+    );
+
+    expect(handled).toBe(false);
+    expect(view.state.doc.textContent).toBe('site');
+  });
+
+  it('does not open when the selection is not empty', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: 'hello', store });
+    view.dispatch(
+      view.state.tr.setSelection(TextSelection.create(view.state.doc, 1, 4)),
+    );
+
+    const handled = slashSuggestions.command.openSuggestion()(
+      view.state,
+      view.dispatch,
+      view,
+    );
+
+    expect(handled).toBe(false);
+    expect(view.state.doc.textContent).toBe('hello');
+  });
+});
+
+describe('synthetic suggestions and composition', () => {
+  it('Escape removes a synthetic trigger entirely', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: 'note', store });
+
+    slashSuggestions.command.openSuggestion()(view.state, view.dispatch, view);
+    expect(view.state.doc.textContent).toBe('note/');
+
+    // The "+" button user never typed the "/": Escape must not leave it.
+    expect(pressKey(view, 'Escape')).toBe(true);
+    expect(view.state.doc.textContent).toBe('note');
+    expect(editorStore.get(view.state, $suggestions).get(view)).toBeUndefined();
+  });
+
+  it('Escape keeps a typed trigger as plain text', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: 'note ', store });
+
+    expect(handleTextInput(view, 6, 6, '/')).toBe(true);
+    expect(view.state.doc.textContent).toBe('note /');
+
+    expect(pressKey(view, 'Escape')).toBe(true);
+    expect(view.state.doc.textContent).toBe('note /');
+    expect(editorStore.get(view.state, $suggestions).get(view)).toBeUndefined();
+  });
+
+  it('ignores menu keys while an IME composition is active', () => {
+    const store = createStore();
+    const view = createEditor({ text: '/', markName: 'slash_command', store });
+    const onSelect = vi.fn();
+    editorStore.set(
+      view.state,
+      $suggestionUi,
+      new Map<EditorView, SuggestionUiHandlers>([
+        [view, { slash_command: { onSelect, optionCount: 3 } }],
+      ]),
+    );
+
+    // Simulate the browser-IME boundary: EditorView.composing is a getter
+    // fed by native composition events jsdom cannot produce.
+    Object.defineProperty(view, 'composing', {
+      configurable: true,
+      get: () => true,
+    });
+
+    // Arrow keys navigate composition candidates, not the menu.
+    pressKey(view, 'ArrowDown');
+    pressKey(view, 'ArrowDown');
+    expect(
+      editorStore.get(view.state, $suggestions).get(view)?.selectedIndex,
+    ).toBe(0);
+
+    // Enter confirms the composition; it must not select the highlighted
+    // item. (Other keymaps may still legitimately handle the key.)
+    pressKey(view, 'Enter');
+    expect(onSelect).not.toHaveBeenCalled();
+
+    Reflect.deleteProperty(view, 'composing');
+  });
+});
+
+describe('synthetic trigger persistence safety', () => {
+  it('moving the selection away deletes a synthetic trigger', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: 'note', store });
+    slashSuggestions.command.openSuggestion()(view.state, view.dispatch, view);
+    expect(view.state.doc.textContent).toBe('note/');
+
+    view.dispatch(
+      view.state.tr.setSelection(TextSelection.create(view.state.doc, 1)),
+    );
+
+    expect(view.state.doc.textContent).toBe('note');
+    expect(editorStore.get(view.state, $suggestions).get(view)).toBeUndefined();
+  });
+
+  it('moving the selection away keeps a typed trigger as text', () => {
+    const store = createStore();
+    const view = createEditor({ text: '/', markName: 'slash_command', store });
+
+    view.dispatch(
+      view.state.tr.setSelection(TextSelection.create(view.state.doc, 1)),
+    );
+
+    expect(view.state.doc.textContent).toBe('/');
+    const markType = schema.marks.slash_command;
+    if (!markType) throw new Error('missing mark');
+    expect(view.state.doc.rangeHasMark(1, 2, markType)).toBe(false);
+  });
+
+  it('stripSyntheticSuggestionText removes synthetic text and keeps typed text', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: 'note', store });
+    slashSuggestions.command.openSuggestion()(view.state, view.dispatch, view);
+    expect(view.state.doc.textContent).toBe('note/');
+
+    expect(stripSyntheticSuggestionText(view.state.doc).textContent).toBe(
+      'note',
+    );
+
+    const typedView = createEditor({
+      text: '/head',
+      markName: 'slash_command',
+      store: createStore(),
+    });
+    expect(stripSyntheticSuggestionText(typedView.state.doc).textContent).toBe(
+      '/head',
+    );
+  });
+});
+
+describe('endOnWhitespace', () => {
+  it('a space ends the slash query and keeps the typed text', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: 'note ', store });
+    expect(handleTextInput(view, 6, 6, '/')).toBe(true);
+    expect(editorStore.get(view.state, $suggestions).get(view)?.markName).toBe(
+      'slash_command',
+    );
+
+    view.dispatch(view.state.tr.insertText(' '));
+
+    expect(view.state.doc.textContent).toBe('note / ');
+    expect(editorStore.get(view.state, $suggestions).get(view)).toBeUndefined();
+  });
+
+  it('wiki-link queries keep spaces', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: 'note ', store });
+    expect(handleTextInput(view, 6, 6, '[[')).toBe(true);
+
+    view.dispatch(view.state.tr.insertText('my note'));
+
+    expect(view.state.doc.textContent).toBe('note [[my note');
+    expect(editorStore.get(view.state, $suggestions).get(view)).toMatchObject({
+      markName: 'wiki_link_suggestion',
+      text: '[[my note',
+    });
+  });
+});
+
+describe('replaceSuggestMarkWith', () => {
+  it('replaces a bare trigger with longer content and puts the caret after it', () => {
+    const store = createStore();
+    const view = createEditor({ text: '/', markName: 'slash_command', store });
+
+    const dateMark = schema.marks.date_suggestion;
+    if (!dateMark) throw new Error('missing date_suggestion mark');
+    const fragment = Fragment.from(
+      schema.text('$date', [dateMark.create({ trigger: '$date' })]),
+    );
+
+    // Regression: content longer than the replaced query used to double-map
+    // the caret position past the end of the document and silently fail.
+    const handled = slashSuggestions.command.replaceSuggestMarkWith({
+      content: fragment,
+    })(view.state, view.dispatch, view);
+
+    expect(handled).toBe(true);
+    expect(view.state.doc.textContent).toBe('$date');
+    expect(view.state.selection.from).toBe(6);
   });
 });

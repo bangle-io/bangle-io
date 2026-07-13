@@ -1,3 +1,4 @@
+import { EDITOR_GUTTER_PADDING_LEFT } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import { Button, buttonVariants, cn } from '@bangle.io/ui-components';
 import type { WsFilePath } from '@bangle.io/ws-path';
@@ -42,7 +43,12 @@ export function LinkedMentions({
   return (
     <section
       aria-labelledby="linked-mentions-heading"
-      className="border-border border-t px-4 py-4 md:px-6"
+      className={cn(
+        // Left padding follows the editor gutter so the section lines up
+        // with the editor text.
+        'border-border border-t py-4 pr-4 md:pr-6',
+        EDITOR_GUTTER_PADDING_LEFT,
+      )}
     >
       <div className="flex w-full flex-col gap-2">
         <div className="flex items-center gap-1">

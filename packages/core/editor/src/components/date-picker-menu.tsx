@@ -94,7 +94,9 @@ export function DatePickerMenu({
   const floatingRef = useFloatingPosition({
     show: Boolean(active?.show),
     anchorEl: () => active?.anchorEl() ?? null,
-    boundarySelector: '.ProseMirror:not([contenteditable="false"])',
+    // Constrain to the owning editor: a global selector would pick the
+    // first editable ProseMirror on the page and leak across editors.
+    boundaryElement: editorView?.dom ?? null,
   });
 
   const handleKeyDown = useCallback(

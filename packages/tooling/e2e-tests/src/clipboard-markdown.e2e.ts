@@ -11,7 +11,7 @@ import {
 async function runCommand(page: Page, title: string) {
   await pressAppShortcut(page, 'k');
   await page.getByPlaceholder('Type a command or search...').fill(title);
-  await page.getByRole('option', { name: `> ${title}` }).click();
+  await page.getByRole('option', { name: title }).click();
 }
 
 test('copies the editor selection as Markdown', async ({ context, page }) => {
