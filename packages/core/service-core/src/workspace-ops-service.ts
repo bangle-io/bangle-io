@@ -249,57 +249,6 @@ export class WorkspaceOpsService extends BaseService {
     return true;
   }
 
-  public async getMiscData(key: string): Promise<{ data: string } | undefined> {
-    await this.mountPromise;
-    const data = await this.database.getEntry(key, {
-      tableName: DATABASE_TABLE_NAME.misc,
-    });
-
-    if (!data.found) {
-      return undefined;
-    }
-
-    if (typeof data.value !== 'string') {
-      throwAppError('error::workspace:invalid-misc-data', 'Invalid misc data', {
-        info: key,
-      });
-    }
-
-    return {
-      data: data.value,
-    };
-  }
-
-  public async setMiscData(key: string, data: string): Promise<void> {
-    await this.mountPromise;
-    if (typeof data !== 'string') {
-      throwAppError(
-        'error::workspace:invalid-misc-data',
-        `Invalid data for key ${key}`,
-        {
-          info: key,
-        },
-      );
-    }
-
-    await this.database.updateEntry(
-      key,
-      () => {
-        return {
-          value: data,
-        };
-      },
-      { tableName: DATABASE_TABLE_NAME.misc },
-    );
-  }
-
-  public async deleteMiscData(key: string): Promise<void> {
-    await this.mountPromise;
-    await this.database.deleteEntry(key, {
-      tableName: DATABASE_TABLE_NAME.misc,
-    });
-  }
-
   public invalidateCache(): void {
     this.workspaceInfoCache.clear();
   }

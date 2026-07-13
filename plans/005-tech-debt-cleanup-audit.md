@@ -11,6 +11,7 @@ related_prs:
   - https://github.com/bangle-io/bangle-io/pull/631
   - https://github.com/bangle-io/bangle-io/pull/632
   - https://github.com/bangle-io/bangle-io/pull/635
+  - https://github.com/bangle-io/bangle-io/pull/636
 related_issues: []
 ---
 
@@ -102,6 +103,11 @@ before broader UI or tooling cleanup.
   - P3.3 improved: `StarButton` now follows the application convention of using
     the global `t` object instead of importing translations directly. The
     broader literal-string sweep remains open.
+- 2026-07-12 obsolete service API cleanup (PR #636):
+  - A4 improved: removed the zero-consumer command object-to-key cache/getter,
+    core navigation `fromUri` pass-through, workspace misc-data methods, and
+    their unreachable app-error variant. The generic database misc table stays
+    intact so this cleanup does not alter persisted storage schemas.
 - Findings are grouped by priority and theme below.
 
 ## Scope
@@ -833,7 +839,7 @@ listed so future agents do not rediscover it or accidentally restore it.
 | A1 | Open; extends P3.2 | Move dialog intents and transient feature state out of `WorkbenchStateService`. It still imports UI prop types and stores callbacks/icons/full dialog props, plus Omni and All Files state, inside `service-core`. Put feature-owned state and callback execution beside the owning app feature; keep durable preferences in the service. | 250-500 LOC; removes core-to-UI coupling |
 | A2 | Open | Replace the global `commandKeyToContext` WeakMap and string-selected service-locator kernel with direct typed handler context. Colocate command metadata and handlers by feature; keep only serializable cross-context command contracts in shared. | 100-200 LOC; explicit dependencies |
 | A3 | Open; reopens P2.3 | Remove the hidden Native FS upward dependency. `initialize-services` currently gives the platform storage adapter a late-bound closure that calls core `WorkspaceOpsService`. Introduce a core-owned workspace storage-session/root-handle registry with explicit invalidation and a downward platform contract. | Removes reload/recovery glue and runtime cycle |
-| A4 | Partial | PR #631 deleted `WorkspaceService` and pass-through `WorkbenchService` and strengthened graph validation. The unused `WorkbenchStateService` database dependency was removed in the 2026-07-12 high-ROI batch. The core aggregate is still repeated in `coreServiceClasses`, `coreServiceSlots`, `getCoreInstances`, `toCoreServices`, and public service types. Derive these views from one descriptor and delete unused command-key, navigation `fromUri`, and workspace misc-data APIs after focused verification. | 150-250 LOC |
+| A4 | Partial | PR #631 deleted `WorkspaceService` and pass-through `WorkbenchService` and strengthened graph validation. The 2026-07-12 cleanup batches removed the unused `WorkbenchStateService` database dependency plus the zero-consumer command-key cache/getter, navigation `fromUri` pass-through, and workspace misc-data methods/error variant. The core aggregate is still repeated in `coreServiceClasses`, `coreServiceSlots`, `getCoreInstances`, `toCoreServices`, and public service types; derive those views from one descriptor in a separate slice. | 150-250 LOC originally; remaining benefit is one derived service graph |
 | A5 | Open | Fold All Files into Omni Search as a file-only scope. Both surfaces independently map workspace files, fuzzy-search, virtualize results, dispatch navigation, and maintain separate open/input state. | 184-230 LOC |
 | A6 | Open; remainder of P3.5 | Move the one-caller Bangle-specific `ui-components/AppSidebar` composition into `core/app/features/sidebar`. Keep reusable sidebar and file-tree primitives in UI, but remove the roughly 30-prop adapter boundary split across a 582-line UI component and its sole app caller. | About 100-200 LOC and one feature boundary |
 | A7 | Resolved in PR #632 | Delete the five zero-producer fatal/auth/missing routes, their pages/types/decoder branches/translations, and unused `ROUTES`; stale IDs decode through normal `not-found`. | 205 net code LOC before review hardening |

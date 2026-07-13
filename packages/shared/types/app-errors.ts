@@ -46,12 +46,6 @@ export type AppError =
       };
     }
   | {
-      name: `error::workspace:invalid-misc-data`;
-      payload: {
-        info: string;
-      };
-    }
-  | {
       name: `error::workspace:not-allowed`;
       payload: {
         wsName?: string;
