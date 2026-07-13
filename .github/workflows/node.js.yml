@@ -108,5 +108,7 @@ jobs:
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
-          path: playwright-report/
+          path: |
+            packages/tooling/e2e-tests/playwright-report/
+            packages/tooling/e2e-tests/test-results/
           retention-days: 30
