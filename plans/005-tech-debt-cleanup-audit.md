@@ -11,6 +11,7 @@ related_prs:
   - https://github.com/bangle-io/bangle-io/pull/631
   - https://github.com/bangle-io/bangle-io/pull/632
   - https://github.com/bangle-io/bangle-io/pull/635
+  - https://github.com/bangle-io/bangle-io/pull/636
 related_issues: []
 ---
 
@@ -102,7 +103,7 @@ before broader UI or tooling cleanup.
   - P3.3 improved: `StarButton` now follows the application convention of using
     the global `t` object instead of importing translations directly. The
     broader literal-string sweep remains open.
-- 2026-07-12 obsolete service API cleanup:
+- 2026-07-12 obsolete service API cleanup (PR #636):
   - A4 improved: removed the zero-consumer command object-to-key cache/getter,
     core navigation `fromUri` pass-through, workspace misc-data methods, and
     their unreachable app-error variant. The generic database misc table stays
