@@ -144,7 +144,19 @@ export class FileStorageIndexedDB
     const oldFsPath = toFSPathOrThrow(wsPath);
     const newFsPath = toFSPathOrThrow(newWsPath);
 
-    await this.idb.rename(oldFsPath, newFsPath);
+    try {
+      await this.idb.rename(oldFsPath, newFsPath);
+    } catch (error) {
+      if (
+        error instanceof BaseFileSystemError &&
+        error.code === FILE_ALREADY_EXISTS_ERROR
+      ) {
+        throwAppError('error::file:already-existing', 'File already exists', {
+          wsPath: newWsPath,
+        });
+      }
+      throw error;
+    }
 
     this.emitChange({
       type: 'rename',

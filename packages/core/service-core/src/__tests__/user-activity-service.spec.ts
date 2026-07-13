@@ -9,6 +9,7 @@ const TEST_WS_PATH = 'test-workspace:test.md';
 const TEST_WS_PATH2 = 'test-workspace:test2.md';
 const TEST_WS_PATH3 = 'test-workspace:test3.md';
 const TEST_WS_PATH4 = 'test-workspace:test4.md';
+const TEST_WS_RENAMED_PATH = 'test-workspace:renamed.md';
 
 const TEST_WS_NAME2 = 'test-workspace-2';
 const TEST_WS_PATH_IN_WS2 = 'test-workspace-2:file-in-ws2.md';
@@ -86,6 +87,7 @@ async function setupUserActivityService({
   });
 
   return {
+    fileSystem: services.fileSystem,
     userActivityService,
     navigation,
     goWsPath: async (path: string) => {
@@ -282,6 +284,50 @@ describe('UserActivityService', () => {
   });
 
   describe('Starring', () => {
+    it('migrates a starred path after the file is durably relocated', async () => {
+      const { fileSystem, userActivityService, workspaceOps, goWsPath } =
+        await setupUserActivityService({ controller });
+
+      await goWsPath(TEST_WS_PATH);
+      await userActivityService.toggleStarItem(WsPath.fromString(TEST_WS_PATH));
+      await fileSystem.renameFile({
+        oldWsPath: TEST_WS_PATH,
+        newWsPath: TEST_WS_RENAMED_PATH,
+      });
+
+      await expect(
+        userActivityService.relocateStarredItem(
+          WsPath.fromString(TEST_WS_PATH),
+          WsPath.fromString(TEST_WS_RENAMED_PATH),
+        ),
+      ).resolves.toBe('relocated');
+
+      await vi.waitFor(async () => {
+        expect(userActivityService.resolveAtoms().starredWsPaths).toEqual([
+          TEST_WS_RENAMED_PATH,
+        ]);
+        await expect(
+          workspaceOps.getWorkspaceMetadata(TEST_WS_NAME),
+        ).resolves.toMatchObject({
+          'starred-items': [TEST_WS_RENAMED_PATH],
+        });
+      });
+    });
+
+    it('does not mutate metadata when the relocated path was not starred', async () => {
+      const { userActivityService, workspaceOps } =
+        await setupUserActivityService({ controller });
+      const updateSpy = vi.spyOn(workspaceOps, 'updateWorkspaceMetadata');
+
+      await expect(
+        userActivityService.relocateStarredItem(
+          WsPath.fromString(TEST_WS_PATH),
+          WsPath.fromString(TEST_WS_RENAMED_PATH),
+        ),
+      ).resolves.toBe('not-starred');
+      expect(updateSpy).not.toHaveBeenCalled();
+    });
+
     it('should record starred ws paths', async () => {
       const { userActivityService, goWsPath } = await setupUserActivityService({
         controller,

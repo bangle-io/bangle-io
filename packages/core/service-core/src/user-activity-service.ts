@@ -38,6 +38,11 @@ type ActivityLogEntry<T extends EntityType = EntityType> = {
 const ACTIVITY_LOG_KEY = 'ws-activity';
 const STARRED_ITEMS_KEY = 'starred-items';
 
+export type StarredItemRelocationResult =
+  | 'failed'
+  | 'not-starred'
+  | 'relocated';
+
 /**
  * Tracks user activities like recent workspaces and commands executed
  */
@@ -144,6 +149,7 @@ export class UserActivityService extends BaseService {
     async (get): Promise<string[]> => {
       await this.mountPromise;
       get(this.$starredItemsChangeCounter);
+      get(this.workspaceOps.$workspaceInfoChange);
       const wsPaths = get(this.workspaceState.$noteWsPaths);
       const wsName = get(this.workspaceState.$currentWsName);
       if (wsPaths.length === 0 || !wsName) {
@@ -400,6 +406,37 @@ export class UserActivityService extends BaseService {
     await this.starredItemManager.toggleStarItem(item, desiredState);
     this.store.set(this.$starredItemsChangeCounter, (c) => c + 1);
   }
+
+  /**
+   * Migrates a starred path after its durable file relocation. Metadata
+   * failures are returned explicitly because the file operation has already
+   * succeeded and must never be reported as though it were rolled back.
+   */
+  public async relocateStarredItem(
+    oldItem: WsPath,
+    newItem: WsPath,
+  ): Promise<StarredItemRelocationResult> {
+    await this.mountPromise;
+
+    try {
+      const relocated = await this.starredItemManager.relocateStarredItem(
+        oldItem,
+        newItem,
+      );
+      if (!relocated) {
+        return 'not-starred';
+      }
+      this.store.set(this.$starredItemsChangeCounter, (c) => c + 1);
+      return 'relocated';
+    } catch (error) {
+      this.logger.error('Unable to migrate starred item after relocation', {
+        error,
+        newWsPath: newItem.wsPath,
+        oldWsPath: oldItem.wsPath,
+      });
+      return 'failed';
+    }
+  }
 }
 
 class StarredItemManager {
@@ -461,6 +498,63 @@ class StarredItemManager {
       }
       return Array.from(set);
     });
+  }
+
+  async relocateStarredItem(
+    oldItem: WsPath,
+    newItem: WsPath,
+  ): Promise<boolean> {
+    if (oldItem.wsName !== newItem.wsName) {
+      throwAppError(
+        'error::file:invalid-operation',
+        'Cannot migrate a starred note across workspaces',
+        {
+          operation: 'relocate-starred-item',
+          oldWsPath: oldItem.wsPath,
+          newWsPath: newItem.wsPath,
+        },
+      );
+    }
+
+    const metadata = await this.workspaceOps.getWorkspaceMetadata(
+      oldItem.wsName,
+    );
+    const rawStarredItems = metadata[STARRED_ITEMS_KEY] ?? [];
+    if (!Array.isArray(rawStarredItems)) {
+      throwAppError(
+        'error::workspace:invalid-metadata',
+        `Invalid starred items metadata for ${oldItem.wsName}`,
+        { wsName: oldItem.wsName },
+      );
+    }
+    if (!rawStarredItems.includes(oldItem.wsPath)) {
+      return false;
+    }
+
+    await this.workspaceOps.updateWorkspaceMetadata(
+      oldItem.wsName,
+      (currentMetadata) => {
+        const currentRawStarredItems = currentMetadata[STARRED_ITEMS_KEY] ?? [];
+        if (!Array.isArray(currentRawStarredItems)) {
+          throwAppError(
+            'error::workspace:invalid-metadata',
+            `Invalid starred items metadata for ${oldItem.wsName}`,
+            { wsName: oldItem.wsName },
+          );
+        }
+
+        const relocatedItems = currentRawStarredItems.map((wsPath) =>
+          wsPath === oldItem.wsPath ? newItem.wsPath : wsPath,
+        );
+
+        return {
+          ...currentMetadata,
+          [STARRED_ITEMS_KEY]: [...new Set(relocatedItems)],
+        };
+      },
+    );
+
+    return true;
   }
 
   async getStarredItems(wsName: string): Promise<string[]> {

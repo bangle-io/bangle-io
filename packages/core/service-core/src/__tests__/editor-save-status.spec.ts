@@ -5,8 +5,12 @@ describe('waitForSaveQueueToDrain', () => {
   function makeEngine(initiallyDirty: boolean) {
     let dirty = initiallyDirty;
     const listeners = new Set<() => void>();
+    const checkedWsPaths: Array<string | undefined> = [];
     return {
-      hasPendingOrFailedSave: () => dirty,
+      hasPendingOrFailedSave: (wsPath?: string) => {
+        checkedWsPaths.push(wsPath);
+        return dirty;
+      },
       subscribeToSaveStatus: (listener: () => void) => {
         listeners.add(listener);
         return () => listeners.delete(listener);
@@ -17,6 +21,7 @@ describe('waitForSaveQueueToDrain', () => {
           listener();
         }
       },
+      checkedWsPaths,
       listenerCount: () => listeners.size,
     };
   }
@@ -63,5 +68,19 @@ describe('waitForSaveQueueToDrain', () => {
     vi.advanceTimersByTime(1000);
 
     await expect(result).resolves.toBe(false);
+  });
+
+  it('scopes every dirty-state check to one file when requested', async () => {
+    const engine = makeEngine(true);
+    const result = waitForSaveQueueToDrain(engine, 1000, 'notes:source.md');
+
+    engine.setDirty(false);
+
+    await expect(result).resolves.toBe(true);
+    expect(engine.checkedWsPaths).not.toContain(undefined);
+    expect(engine.checkedWsPaths.length).toBeGreaterThanOrEqual(2);
+    expect(
+      engine.checkedWsPaths.every((wsPath) => wsPath === 'notes:source.md'),
+    ).toBe(true);
   });
 });

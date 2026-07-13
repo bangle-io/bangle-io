@@ -127,7 +127,15 @@ export const wsCommands = narrow([
     id: 'command::ws:rename-ws-path',
     title: 'Rename Note',
     omniSearch: false,
-    dependencies: { services: ['fileSystem', 'navigation'] },
+    dependencies: {
+      services: [
+        'editorEngine',
+        'fileSystem',
+        'navigation',
+        'userActivityService',
+        'workspaceState',
+      ],
+    },
     args: {
       wsPath: T.String,
       newWsPath: T.String,
@@ -138,7 +146,13 @@ export const wsCommands = narrow([
     title: 'Move Note',
     omniSearch: false,
     dependencies: {
-      services: ['fileSystem', 'navigation', 'workspaceState'],
+      services: [
+        'editorEngine',
+        'fileSystem',
+        'navigation',
+        'userActivityService',
+        'workspaceState',
+      ],
     },
     args: {
       wsPath: T.String,

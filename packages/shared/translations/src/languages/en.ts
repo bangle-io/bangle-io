@@ -474,6 +474,8 @@ export const t = {
           'Cannot move file during rename operation. Use move command.',
         cannotRenameToDifferentWorkspace:
           'Cannot rename note to a different workspace',
+        relocationBlockedByUnsavedChanges:
+          'Cannot rename or move this note until its latest changes are saved',
         alreadyExistsInDest: ({ fileName }: { fileName: string }) =>
           `A note named "${fileName}" already exists in the destination folder`,
         originalNoteNotFound: 'Original note not found',
@@ -577,9 +579,13 @@ export const t = {
       filesDeleteFailed: 'Could not delete files',
       fileMoved: ({ fileName }: { fileName: string }) => `Moved ${fileName}`,
       fileMoveFailed: 'Could not move file',
+      fileMoveStarUpdateFailed: ({ fileName }: { fileName: string }) =>
+        `Moved ${fileName}, but could not preserve its starred status`,
       fileRenamed: ({ fileName }: { fileName: string }) =>
         `Renamed to ${fileName}`,
       fileRenameFailed: 'Could not rename file',
+      fileRenameStarUpdateFailed: ({ fileName }: { fileName: string }) =>
+        `Renamed to ${fileName}, but could not preserve its starred status`,
       folderDeleted: ({ folderName }: { folderName: string }) =>
         `Deleted ${folderName}`,
       folderDeleteFailed: 'Could not delete folder',

@@ -1,5 +1,7 @@
 // packages/core/command-handlers/src/ws-command-handlers.ts
-import { throwAppError } from '@bangle.io/base-utils';
+import { isAppError, throwAppError } from '@bangle.io/base-utils';
+import { EDITOR_SAVE_DRAIN_TIMEOUT_MS } from '@bangle.io/constants';
+import { waitForSaveQueueToDrain } from '@bangle.io/service-core';
 import { toast } from '@bangle.io/ui-components';
 import { WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { c, getCtx } from './helper';
@@ -41,6 +43,43 @@ function normalizeDestinationDirWsPath(destDirWsPath: string): string {
   const wsName = destDirWsPath.slice(0, separatorIndex);
   const path = destDirWsPath.slice(separatorIndex + 1).replace(/^\/+/, '');
   return path ? WsDirPath.fromParts(wsName, path).wsPath : `${wsName}:`;
+}
+
+function assertRelocationDestinationAvailable(
+  existingWsPaths: readonly string[],
+  newWsPath: string,
+  fileName: string,
+): void {
+  if (existingWsPaths.includes(newWsPath)) {
+    throwAppError(
+      'error::file:already-existing',
+      t.app.errors.file.alreadyExistsInDest({ fileName }),
+      { wsPath: newWsPath },
+    );
+  }
+}
+
+async function assertSourceSaveDrained(
+  editorEngine: {
+    hasPendingOrFailedSave: (wsPath?: string) => boolean;
+    subscribeToSaveStatus: (listener: () => void) => () => void;
+  },
+  oldWsPath: string,
+  newWsPath: string,
+  operation: 'move' | 'rename',
+): Promise<void> {
+  const drained = await waitForSaveQueueToDrain(
+    editorEngine,
+    EDITOR_SAVE_DRAIN_TIMEOUT_MS,
+    oldWsPath,
+  );
+  if (!drained) {
+    throwAppError(
+      'error::file:invalid-operation',
+      t.app.errors.file.relocationBlockedByUnsavedChanges,
+      { operation, oldWsPath, newWsPath },
+    );
+  }
 }
 
 export const wsCommandHandlers = [
@@ -163,7 +202,18 @@ export const wsCommandHandlers = [
 
   c(
     'command::ws:rename-ws-path',
-    async ({ fileSystem, navigation }, { wsPath, newWsPath }) => {
+    async (
+      {
+        editorEngine,
+        fileSystem,
+        navigation,
+        userActivityService,
+        workspaceState,
+      },
+      { wsPath, newWsPath },
+      key,
+    ) => {
+      const { store } = getCtx(key);
       const oldPath = WsPath.fromString(wsPath);
       const newPath = WsPath.fromString(newWsPath);
 
@@ -190,6 +240,17 @@ export const wsCommandHandlers = [
       }
 
       const newFilePath = WsPath.assertFile(newWsPath);
+      if (wsPath === newWsPath) {
+        return;
+      }
+
+      assertRelocationDestinationAvailable(
+        store.get(workspaceState.$wsPaths).map((path) => path.wsPath),
+        newWsPath,
+        newFilePath.fileName,
+      );
+      await assertSourceSaveDrained(editorEngine, wsPath, newWsPath, 'rename');
+
       const needsRedirect =
         navigation.resolveAtoms().activeWsFilePath?.wsPath === wsPath;
 
@@ -201,12 +262,27 @@ export const wsCommandHandlers = [
           oldWsPath: wsPath,
           newWsPath,
         });
+      } catch (error) {
+        if (!isAppError(error)) {
+          toast.error(t.app.toasts.fileRenameFailed);
+        }
+        throw error;
+      }
+
+      const starResult = await userActivityService.relocateStarredItem(
+        oldPath,
+        newPath,
+      );
+      if (starResult === 'failed') {
+        toast.warning(
+          t.app.toasts.fileRenameStarUpdateFailed({
+            fileName: newFilePath.fileName,
+          }),
+        );
+      } else {
         toast.success(
           t.app.toasts.fileRenamed({ fileName: newFilePath.fileName }),
         );
-      } catch (error) {
-        toast.error(t.app.toasts.fileRenameFailed);
-        throw error;
       }
       if (needsRedirect) {
         navigation.goWsPath(newWsPath);
@@ -217,7 +293,13 @@ export const wsCommandHandlers = [
   c(
     'command::ws:move-ws-path',
     async (
-      { fileSystem, navigation, workspaceState },
+      {
+        editorEngine,
+        fileSystem,
+        navigation,
+        userActivityService,
+        workspaceState,
+      },
       { wsPath, destDirWsPath },
       key,
     ) => {
@@ -246,20 +328,12 @@ export const wsCommandHandlers = [
         return;
       }
 
-      const existingWsPaths = store
-        .get(workspaceState.$wsPaths)
-        .map((path) => path.wsPath);
-      if (existingWsPaths.includes(newWsPath)) {
-        throwAppError(
-          'error::file:already-existing',
-          t.app.errors.file.alreadyExistsInDest({
-            fileName: filePath.fileName,
-          }),
-          {
-            wsPath: newWsPath,
-          },
-        );
-      }
+      assertRelocationDestinationAvailable(
+        store.get(workspaceState.$wsPaths).map((path) => path.wsPath),
+        newWsPath,
+        filePath.fileName,
+      );
+      await assertSourceSaveDrained(editorEngine, wsPath, newWsPath, 'move');
 
       const needsRedirect =
         navigation.resolveAtoms().activeWsFilePath?.wsPath === wsPath;
@@ -275,10 +349,25 @@ export const wsCommandHandlers = [
           oldWsPath: wsPath,
           newWsPath,
         });
-        toast.success(t.app.toasts.fileMoved({ fileName: filePath.fileName }));
       } catch (error) {
-        toast.error(t.app.toasts.fileMoveFailed);
+        if (!isAppError(error)) {
+          toast.error(t.app.toasts.fileMoveFailed);
+        }
         throw error;
+      }
+
+      const starResult = await userActivityService.relocateStarredItem(
+        filePath,
+        WsPath.fromString(newWsPath),
+      );
+      if (starResult === 'failed') {
+        toast.warning(
+          t.app.toasts.fileMoveStarUpdateFailed({
+            fileName: filePath.fileName,
+          }),
+        );
+      } else {
+        toast.success(t.app.toasts.fileMoved({ fileName: filePath.fileName }));
       }
       if (needsRedirect) {
         navigation.goWsPath(newWsPath);
