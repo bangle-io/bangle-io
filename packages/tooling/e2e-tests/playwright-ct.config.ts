@@ -28,6 +28,7 @@ function readPortEnv(name: string, fallback: number): number {
 export default defineConfig({
   testDir: './src',
   testMatch: '**/*.@(ct).?(c|m)[jt]s?(x)',
+  outputDir: './test-results/component',
 
   /* The base directory, relative to the config file, for snapshot files created with toMatchSnapshot and toHaveScreenshot. */
   snapshotDir: './__snapshots__',
@@ -42,7 +43,7 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [['html', { outputFolder: './playwright-report/component' }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */

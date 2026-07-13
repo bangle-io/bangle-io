@@ -162,8 +162,7 @@ test('follows interoperable relative Markdown link forms', async ({ page }) => {
   await expect
     .poll(() =>
       page.evaluate(() => {
-        const view = Reflect.get(globalThis, 'editorView');
-        return view?.state.selection.$from.parent.textContent;
+        return window.getSelection()?.anchorNode?.textContent;
       }),
     )
     .toBe('Current File Target: punctuation!');

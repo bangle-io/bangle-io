@@ -10,6 +10,7 @@ owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/631
   - https://github.com/bangle-io/bangle-io/pull/632
+  - https://github.com/bangle-io/bangle-io/pull/635
 related_issues: []
 ---
 
@@ -88,6 +89,19 @@ before broader UI or tooling cleanup.
   - P4.1 done: GitHub Actions runs `pnpm run build`.
   - P4.5 partially done: `noFloatingPromises` is now a Biome error repo-wide;
     `noExplicitAny` (163 sites) and `noUnusedVariables` remain warnings.
+- 2026-07-12 high-ROI cleanup batch:
+  - A10 done: production editor setup no longer enables global debug mode,
+    installs the schema/editor view on `window`, or ships the console-only
+    document inspection helpers. E2E assertions now observe DOM selection and
+    navigation rather than the private editor global.
+  - P4.2 done: the external Playwright sample was deleted, E2E and component
+    reports/results use separate package-local directories, and CI uploads
+    those actual artifact paths.
+  - A4 improved: `WorkbenchStateService` no longer declares or receives its
+    unused database dependency.
+  - P3.3 improved: `StarButton` now follows the application convention of using
+    the global `t` object instead of importing translations directly. The
+    broader literal-string sweep remains open.
 - Findings are grouped by priority and theme below.
 
 ## Scope
@@ -510,7 +524,7 @@ Plan:
 
 - Add missing keys to `packages/shared/translations/src/languages/en.ts`.
 - Replace literals with global `t` references.
-- Remove direct `t` imports.
+- [x] Remove direct `t` imports from the audited production UI components.
 - Extend translation tests to catch imported `t` or common literal patterns.
 
 Verification:
@@ -618,10 +632,10 @@ Evidence:
 
 Plan:
 
-- Delete or replace the external sample with a local app smoke test.
-- Upload `packages/tooling/e2e-tests/playwright-report/` and relevant
+- [x] Delete or replace the external sample with a local app smoke test.
+- [x] Upload `packages/tooling/e2e-tests/playwright-report/` and relevant
   `test-results/` paths.
-- Move component-style tests to CT or import from `@playwright/test`.
+- [x] Move component-style tests to CT or import from `@playwright/test`.
 
 Verification:
 
@@ -819,13 +833,13 @@ listed so future agents do not rediscover it or accidentally restore it.
 | A1 | Open; extends P3.2 | Move dialog intents and transient feature state out of `WorkbenchStateService`. It still imports UI prop types and stores callbacks/icons/full dialog props, plus Omni and All Files state, inside `service-core`. Put feature-owned state and callback execution beside the owning app feature; keep durable preferences in the service. | 250-500 LOC; removes core-to-UI coupling |
 | A2 | Open | Replace the global `commandKeyToContext` WeakMap and string-selected service-locator kernel with direct typed handler context. Colocate command metadata and handlers by feature; keep only serializable cross-context command contracts in shared. | 100-200 LOC; explicit dependencies |
 | A3 | Open; reopens P2.3 | Remove the hidden Native FS upward dependency. `initialize-services` currently gives the platform storage adapter a late-bound closure that calls core `WorkspaceOpsService`. Introduce a core-owned workspace storage-session/root-handle registry with explicit invalidation and a downward platform contract. | Removes reload/recovery glue and runtime cycle |
-| A4 | Partial | PR #631 deleted `WorkspaceService` and pass-through `WorkbenchService` and strengthened graph validation. The core aggregate is still repeated in `coreServiceClasses`, `coreServiceSlots`, `getCoreInstances`, `toCoreServices`, and public service types. Derive these views from one descriptor, remove the unused `WorkbenchStateService` database dependency, and delete unused command-key, navigation `fromUri`, and workspace misc-data APIs after focused verification. | 150-250 LOC |
+| A4 | Partial | PR #631 deleted `WorkspaceService` and pass-through `WorkbenchService` and strengthened graph validation. The unused `WorkbenchStateService` database dependency was removed in the 2026-07-12 high-ROI batch. The core aggregate is still repeated in `coreServiceClasses`, `coreServiceSlots`, `getCoreInstances`, `toCoreServices`, and public service types. Derive these views from one descriptor and delete unused command-key, navigation `fromUri`, and workspace misc-data APIs after focused verification. | 150-250 LOC |
 | A5 | Open | Fold All Files into Omni Search as a file-only scope. Both surfaces independently map workspace files, fuzzy-search, virtualize results, dispatch navigation, and maintain separate open/input state. | 184-230 LOC |
 | A6 | Open; remainder of P3.5 | Move the one-caller Bangle-specific `ui-components/AppSidebar` composition into `core/app/features/sidebar`. Keep reusable sidebar and file-tree primitives in UI, but remove the roughly 30-prop adapter boundary split across a 582-line UI component and its sole app caller. | About 100-200 LOC and one feature boundary |
 | A7 | Resolved in PR #632 | Delete the five zero-producer fatal/auth/missing routes, their pages/types/decoder branches/translations, and unused `ROUTES`; stale IDs decode through normal `not-found`. | 205 net code LOC before review hardening |
 | A8 | Open; tracked by plan 007 | Extract backlink indexing from `WorkspaceStateService`. Current content-update signals trigger a debounced serial full-workspace reread, and a failed rebuild returns an empty map. A dedicated index service should update per source from typed file events, use bounded concurrency, ignore stale generations, and retain last-good data. | Performance, failure semantics, ownership |
 | A9 | Partial | PR #631 stopped the switch-workspace dialog from mutating the atom array with `.sort()`. Welcome, switcher, and settings still need one immutable workspace-summary model and one sorting policy; cached workspace objects/arrays should not be exposed as mutable shared state. | 80-150 LOC and consistent ordering |
-| A10 | Open | Delete production editor debug plumbing. `pm-setup.ts` unconditionally enables debug, installs schema/view/helpers on `window`, and ships roughly 230 lines of console inspection helpers. Keep any useful tooling in a lazy development-only module. | About 270 LOC and smaller production surface |
+| A10 | Resolved in 2026-07-12 high-ROI batch | Production editor setup no longer enables debug mode, installs schema/view/helpers on `window`, or ships the console inspection helpers. E2E coverage now observes the DOM instead of the removed private global. | Removed 313 source lines and the production debug surface |
 | A11 | Open | Collapse `settings-general` and `settings-workspaces` into one `settings` route with a typed page payload and one command. Page selection is currently repeated across route types, constants, decoders, commands, handlers, and app rendering. | Smaller cross-layer route surface |
 
 ### Test Architecture Follow-up

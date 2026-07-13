@@ -16,7 +16,6 @@ import {
 import { T } from '@bangle.io/mini-js-utils';
 import type {
   AssetLocationPreference,
-  BaseDatabaseService,
   BaseSyncDatabaseService,
   ScopedEmitter,
 } from '@bangle.io/types';
@@ -85,7 +84,7 @@ function determineOmniSearchRoute(input: string, currentRoute: Route): Route {
  * Manages UI state such as theme preferences, dialogs, and omni-search state
  */
 export class WorkbenchStateService extends BaseService {
-  static deps = ['database', 'syncDatabase'] as const;
+  static deps = ['syncDatabase'] as const;
 
   private $_wideEditor: PrimitiveAtom<boolean> | undefined;
   private $_sidebarOpen: PrimitiveAtom<boolean> | undefined;
@@ -139,7 +138,6 @@ export class WorkbenchStateService extends BaseService {
   constructor(
     context: BaseServiceContext,
     private dep: {
-      database: BaseDatabaseService;
       syncDatabase: BaseSyncDatabaseService;
     },
     private config: {
