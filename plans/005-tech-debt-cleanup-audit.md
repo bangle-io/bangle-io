@@ -10,6 +10,7 @@ owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/631
   - https://github.com/bangle-io/bangle-io/pull/632
+  - https://github.com/bangle-io/bangle-io/pull/635
 related_issues: []
 ---
 
