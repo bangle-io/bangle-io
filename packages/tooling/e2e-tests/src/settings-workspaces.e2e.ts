@@ -74,9 +74,22 @@ test('workspaces settings lists workspaces and exposes row actions', async ({
   await expect(
     page.getByRole('dialog', { name: 'Select a workspace type' }),
   ).toBeVisible();
+  await page.getByRole('radio', { name: /Browser/i }).click();
+  await page.getByRole('button', { name: 'Next' }).click();
+  await page
+    .getByLabel('Workspace Name', { exact: true })
+    .fill(workspaceWithNote);
+  await page.getByRole('button', { name: 'Create' }).dblclick();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await expect(page.getByRole('alert')).toContainText(
+    'Cannot create workspace as it already exists',
+  );
+  await expect(page.getByRole('button', { name: 'Create' })).toBeEnabled();
   await page.getByRole('button', { name: 'Cancel' }).click();
 
-  await page.getByRole('button', { name: /Search/ }).click();
+  const searchButton = page.getByRole('button', { name: /Search/ });
+  await searchButton.focus();
+  await searchButton.press('Space');
   await page.getByRole('combobox').fill('settings');
   await expect(
     page.getByRole('option', { exact: true, name: '> Settings' }),

@@ -99,3 +99,23 @@ test('Shows error for invalid workspace name', async ({ mount, page }) => {
   await expect(page.getByText(/contains invalid characters/i)).toBeVisible();
   await expect(page.getByRole('button', { name: 'Create' })).toBeDisabled();
 });
+
+test('keeps the dialog open and allows retry after creation fails', async ({
+  mount,
+  page,
+}) => {
+  await mount(<stories.CreateFailure />);
+
+  await page.getByRole('radio', { name: /Browser Storage/i }).click();
+  await page.getByRole('button', { name: /next/i }).click();
+  await page.getByLabel('Workspace Name', { exact: true }).fill('my_workspace');
+  await page.getByRole('button', { name: 'Create' }).dblclick();
+
+  await expect(page.getByRole('button', { name: 'Create' })).toBeDisabled();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await expect(page.getByRole('alert')).toHaveText(
+    'Workspace storage is unavailable.',
+  );
+  await expect(page.getByLabel('Creation attempts')).toHaveText('1');
+  await expect(page.getByRole('button', { name: 'Create' })).toBeEnabled();
+});

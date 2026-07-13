@@ -108,6 +108,15 @@ before broader UI or tooling cleanup.
     core navigation `fromUri` pass-through, workspace misc-data methods, and
     their unreachable app-error variant. The generic database misc table stays
     intact so this cleanup does not alter persisted storage schemas.
+- 2026-07-12 workspace dialog correctness and accessibility cleanup:
+  - C5 done: workspace creation now awaits the durable callback, blocks repeat
+    submission and dismissal while pending, keeps the dialog open on failure,
+    and restores an in-dialog retry path. Component coverage proves a
+    double-click starts one attempt, while app E2E covers a real duplicate
+    workspace rejection.
+  - P3.4 improved: the sidebar search affordance is now a semantic button with
+    native Enter/Space behavior instead of a `div role="button"` wrapped around
+    a read-only input. App E2E exercises the Space-key path.
 - Findings are grouped by priority and theme below.
 
 ## Scope
@@ -557,8 +566,8 @@ Plan:
 
 - Move dialog title/description into `DialogContent` where Radix expects them.
 - Add optional `DialogDescription` support to command dialogs.
-- Replace the sidebar pseudo-button with a real button or fully implement Space,
-  Enter, focus, and label semantics.
+- [x] Replace the sidebar pseudo-button with a real button or fully implement
+  Space, Enter, focus, and label semantics.
 - Consider Radix RadioGroup for workspace type selection, or add stable
   `aria-labelledby` and `aria-describedby` wiring.
 
@@ -827,7 +836,7 @@ listed so future agents do not rediscover it or accidentally restore it.
 | C2 | Resolved in PR #631 | `PmEditorService` now caches `markdownLoader` instances per ProseMirror `Schema` in a `WeakMap`. A real two-editor regression proves paste uses the active editor schema. | High / small-medium |
 | C3 | Partial | PR #631 made the Native FS metadata lookup awaitable and report invalid metadata as command failure. `CommandDispatchService.dispatch()` still returns `void`, reports a missing handler as success, converts null args with `args || {}`, releases cycle/focus state before async completion, and detaches non-app async errors. Native FS permission work also occurs later in a dialog callback, outside command completion. Make command completion an awaitable typed result and move callback-owned workflows behind feature controllers. | Critical / medium |
 | C4 | Open | The editor save-queue store remains module-global while each queued task captures the writer and error emitter from the service instance that enqueued it. UI reload rebuilds the service graph, so retrying a retained failure can execute through a disposed graph. Move the store to an explicit root-lifetime coordinator and resolve the current writer at execution time; test a failed save across `event::app:reload-ui`. | Critical data safety / medium |
-| C5 | Open | `CreateWorkspaceDialog` types `onDone` as returning `void`, but production passes an async durable workspace create. Submit paths neither await nor catch it and have no busy/error state, allowing unhandled rejection and duplicate submission. Make submission awaitable, disable repeat submit, keep the dialog open on failure, and add a real-service rejection test. | High / medium |
+| C5 | Resolved in 2026-07-12 workspace dialog cleanup | `CreateWorkspaceDialog` now accepts and awaits async durable creation, blocks duplicate submission and dismissal while pending, preserves the dialog with an alert on failure, and permits retry. Component coverage counts one callback for a double-click; app E2E exercises the real duplicate-workspace service rejection. | High / medium |
 | C6 | Open | `PageAsset` catches every storage, permission, decode, and object-URL failure, discards the cause, and renders the same generic copy as a missing file. Preserve missing vs failed states, emit/log the error, expose retry/recovery, and test Native FS permission loss. Plan 006 owns the broader unreadable-asset UX. | High / small-medium |
 | C7 | Resolved in PR #631 | Workspace info cache entries are keyed by workspace name and filtered after lookup. Memory storage now compares parsed workspace names exactly and rejects rename over an existing destination, with focused contract regressions. | Medium-high / small |
 | C8 | In PR #632 | Settings return-link validation now rejects both raw scheme-relative inputs and paths that normalize to `//host/...`; the latter previously passed the same-host check and became an external anchor when reserialized. Keep unit and browser E2E coverage for the normalized path. | Security blocker / small |
@@ -877,8 +886,8 @@ listed so future agents do not rediscover it or accidentally restore it.
 
 1. C1 workspace resource state and C4 save-coordinator lifetime, because both
    can hide or endanger existing user data.
-2. C3 command completion plus C5 async workspace creation, with real-service
-   failure tests and no detached promises.
+2. C3 command completion, with real-service failure tests and no detached
+   promises. C5 async workspace creation is complete.
 3. C6 asset read/recovery semantics, aligned with plan 006.
 4. A1-A4 boundary work in independently reviewable slices; do not combine the
    command kernel, Native FS session provider, and service-graph derivation in

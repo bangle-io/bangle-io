@@ -361,6 +361,7 @@ export const t = {
         directoryPickingUnsupported: 'Directory picking is not supported.',
         pickDirectoryButton: 'Pick Directory',
         invalidDirectoryDefault: 'Invalid directory selection',
+        createFailed: 'Could not create the workspace. Please try again.',
       },
       allFiles: {
         title: 'All Files',
