@@ -138,10 +138,6 @@ export class NavigationService extends BaseService {
     return this.routerService.toUri(routeInfo);
   }
 
-  public fromUri(uri: string): AppRouteInfo {
-    return this.routerService.fromUri(uri);
-  }
-
   public go(
     to: AppRouteInfo,
     options?: { replace?: boolean; state?: RouterState },
