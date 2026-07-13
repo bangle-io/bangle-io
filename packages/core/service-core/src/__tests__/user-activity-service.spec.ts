@@ -294,13 +294,16 @@ describe('UserActivityService', () => {
         oldWsPath: TEST_WS_PATH,
         newWsPath: TEST_WS_RENAMED_PATH,
       });
+      const metadataReadSpy = vi.spyOn(workspaceOps, 'getWorkspaceMetadata');
 
       await expect(
         userActivityService.relocateStarredItem(
           WsPath.fromString(TEST_WS_PATH),
           WsPath.fromString(TEST_WS_RENAMED_PATH),
         ),
-      ).resolves.toBe('relocated');
+      ).resolves.toBe('succeeded');
+      expect(metadataReadSpy).not.toHaveBeenCalled();
+      metadataReadSpy.mockRestore();
 
       await vi.waitFor(async () => {
         expect(userActivityService.resolveAtoms().starredWsPaths).toEqual([
@@ -314,7 +317,7 @@ describe('UserActivityService', () => {
       });
     });
 
-    it('does not mutate metadata when the relocated path was not starred', async () => {
+    it('leaves metadata unchanged when the relocated path was not starred', async () => {
       const { userActivityService, workspaceOps } =
         await setupUserActivityService({ controller });
       const updateSpy = vi.spyOn(workspaceOps, 'updateWorkspaceMetadata');
@@ -324,8 +327,11 @@ describe('UserActivityService', () => {
           WsPath.fromString(TEST_WS_PATH),
           WsPath.fromString(TEST_WS_RENAMED_PATH),
         ),
-      ).resolves.toBe('not-starred');
-      expect(updateSpy).not.toHaveBeenCalled();
+      ).resolves.toBe('succeeded');
+      expect(updateSpy).toHaveBeenCalledOnce();
+      await expect(
+        workspaceOps.getWorkspaceMetadata(TEST_WS_NAME),
+      ).resolves.not.toHaveProperty('starred-items');
     });
 
     it('should record starred ws paths', async () => {

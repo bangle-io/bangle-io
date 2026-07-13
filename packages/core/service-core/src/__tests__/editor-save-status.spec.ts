@@ -6,12 +6,14 @@ describe('waitForSaveQueueToDrain', () => {
     let dirty = initiallyDirty;
     const listeners = new Set<() => void>();
     const checkedWsPaths: Array<string | undefined> = [];
+    const subscribedWsPaths: Array<string | undefined> = [];
     return {
       hasPendingOrFailedSave: (wsPath?: string) => {
         checkedWsPaths.push(wsPath);
         return dirty;
       },
-      subscribeToSaveStatus: (listener: () => void) => {
+      subscribeToSaveStatus: (listener: () => void, wsPath?: string) => {
+        subscribedWsPaths.push(wsPath);
         listeners.add(listener);
         return () => listeners.delete(listener);
       },
@@ -22,6 +24,7 @@ describe('waitForSaveQueueToDrain', () => {
         }
       },
       checkedWsPaths,
+      subscribedWsPaths,
       listenerCount: () => listeners.size,
     };
   }
@@ -82,5 +85,6 @@ describe('waitForSaveQueueToDrain', () => {
     expect(
       engine.checkedWsPaths.every((wsPath) => wsPath === 'notes:source.md'),
     ).toBe(true);
+    expect(engine.subscribedWsPaths).toEqual(['notes:source.md']);
   });
 });

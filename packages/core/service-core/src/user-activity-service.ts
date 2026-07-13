@@ -38,10 +38,7 @@ type ActivityLogEntry<T extends EntityType = EntityType> = {
 const ACTIVITY_LOG_KEY = 'ws-activity';
 const STARRED_ITEMS_KEY = 'starred-items';
 
-export type StarredItemRelocationResult =
-  | 'failed'
-  | 'not-starred'
-  | 'relocated';
+export type StarredItemRelocationResult = 'failed' | 'succeeded';
 
 /**
  * Tracks user activities like recent workspaces and commands executed
@@ -423,11 +420,10 @@ export class UserActivityService extends BaseService {
         oldItem,
         newItem,
       );
-      if (!relocated) {
-        return 'not-starred';
+      if (relocated) {
+        this.store.set(this.$starredItemsChangeCounter, (c) => c + 1);
       }
-      this.store.set(this.$starredItemsChangeCounter, (c) => c + 1);
-      return 'relocated';
+      return 'succeeded';
     } catch (error) {
       this.logger.error('Unable to migrate starred item after relocation', {
         error,
@@ -516,21 +512,7 @@ class StarredItemManager {
       );
     }
 
-    const metadata = await this.workspaceOps.getWorkspaceMetadata(
-      oldItem.wsName,
-    );
-    const rawStarredItems = metadata[STARRED_ITEMS_KEY] ?? [];
-    if (!Array.isArray(rawStarredItems)) {
-      throwAppError(
-        'error::workspace:invalid-metadata',
-        `Invalid starred items metadata for ${oldItem.wsName}`,
-        { wsName: oldItem.wsName },
-      );
-    }
-    if (!rawStarredItems.includes(oldItem.wsPath)) {
-      return false;
-    }
-
+    let relocated = false;
     await this.workspaceOps.updateWorkspaceMetadata(
       oldItem.wsName,
       (currentMetadata) => {
@@ -542,6 +524,11 @@ class StarredItemManager {
             { wsName: oldItem.wsName },
           );
         }
+        if (!currentRawStarredItems.includes(oldItem.wsPath)) {
+          return currentMetadata;
+        }
+
+        relocated = true;
 
         const relocatedItems = currentRawStarredItems.map((wsPath) =>
           wsPath === oldItem.wsPath ? newItem.wsPath : wsPath,
@@ -554,7 +541,7 @@ class StarredItemManager {
       },
     );
 
-    return true;
+    return relocated;
   }
 
   async getStarredItems(wsName: string): Promise<string[]> {

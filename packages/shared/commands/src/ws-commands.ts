@@ -133,7 +133,6 @@ export const wsCommands = narrow([
         'fileSystem',
         'navigation',
         'userActivityService',
-        'workspaceState',
       ],
     },
     args: {
@@ -151,7 +150,6 @@ export const wsCommands = narrow([
         'fileSystem',
         'navigation',
         'userActivityService',
-        'workspaceState',
       ],
     },
     args: {

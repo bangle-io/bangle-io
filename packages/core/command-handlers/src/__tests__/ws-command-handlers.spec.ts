@@ -289,7 +289,7 @@ describe('WS command handlers', () => {
       });
     });
 
-    test('reports a destination conflict without calling storage', async () => {
+    test('reports the storage-authoritative destination conflict', async () => {
       const SOURCE_WS_PATH = 'test-ws:source.md';
       const DESTINATION_WS_PATH = 'test-ws:destination.md';
       const { dispatch, services, getCommandResults, testEnv } =
@@ -323,7 +323,16 @@ describe('WS command handlers', () => {
           }),
         );
       });
-      expect(renameSpy).not.toHaveBeenCalled();
+      expect(renameSpy).toHaveBeenCalledWith({
+        oldWsPath: SOURCE_WS_PATH,
+        newWsPath: DESTINATION_WS_PATH,
+      });
+      await expect(
+        services.fileSystem.readFile(SOURCE_WS_PATH),
+      ).resolves.toBeDefined();
+      await expect(
+        services.fileSystem.readFile(DESTINATION_WS_PATH),
+      ).resolves.toBeDefined();
     });
 
     test('reports storage rename failures before navigating to the destination', async () => {
@@ -467,9 +476,12 @@ describe('WS command handlers', () => {
         );
       });
 
-      // The conflict must never fall through to a destructive rename: both the
-      // dragged note and the note it collides with keep their original content.
-      expect(renameSpy).not.toHaveBeenCalled();
+      // Storage is the atomic conflict authority, and both the dragged note and
+      // the note it collides with keep their original content.
+      expect(renameSpy).toHaveBeenCalledWith({
+        oldWsPath: SOURCE_WS_PATH,
+        newWsPath: EXISTING_WS_PATH,
+      });
       await expect(
         services.fileSystem.readFileAsText(SOURCE_WS_PATH),
       ).resolves.toBe('source body');

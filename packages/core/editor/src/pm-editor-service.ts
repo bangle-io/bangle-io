@@ -252,6 +252,37 @@ export class PmEditorService
         }
       }),
     );
+    this.addCleanup(
+      this.store.sub(this.dependencies.fileSystem.$fileRenameEvent, () => {
+        const event = this.store.get(
+          this.dependencies.fileSystem.$fileRenameEvent,
+        );
+        if (event) {
+          this.handleFileRename(event.oldWsPath, event.wsPath);
+        }
+      }),
+    );
+  }
+
+  private handleFileRename(oldWsPath: string, newWsPath: string): void {
+    this.saveQueue.relocate(oldWsPath, newWsPath);
+
+    let renamedOpenEditor = false;
+    for (const [domNode, editor] of this.editors) {
+      if (editor.wsPath !== oldWsPath) {
+        continue;
+      }
+      this.editors.set(domNode, { ...editor, wsPath: newWsPath });
+      renamedOpenEditor = true;
+    }
+
+    if (
+      renamedOpenEditor &&
+      this.dependencies.navigation.resolveAtoms().activeWsFilePath?.wsPath ===
+        oldWsPath
+    ) {
+      this.dependencies.navigation.goWsPath(newWsPath);
+    }
   }
 
   mountEditor({
@@ -304,7 +335,8 @@ export class PmEditorService
         store: this.store as Store,
         domNode,
         onDocChange: (doc) => {
-          this.saveQueue.enqueue(wsPath, doc);
+          const currentWsPath = this.editors.get(domNode)?.wsPath ?? wsPath;
+          this.saveQueue.enqueue(currentWsPath, doc);
         },
         extensions: this.extensions,
         nodeViews: {
@@ -512,8 +544,8 @@ export class PmEditorService
     return this.saveQueue.hasPendingOrFailed(wsPath);
   }
 
-  subscribeToSaveStatus(listener: () => void): () => void {
-    return this.saveQueue.subscribe(listener);
+  subscribeToSaveStatus(listener: () => void, wsPath?: string): () => void {
+    return this.saveQueue.subscribe(listener, wsPath);
   }
 
   retryFailedSave(wsPath: string): boolean {

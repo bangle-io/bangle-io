@@ -3,6 +3,7 @@ import {
   createBrowserWorkspaceAndNote,
   getEditorLocator,
   readStoredMarkdown,
+  waitForEditorFocus,
   writeStoredMarkdown,
 } from './common';
 
@@ -38,6 +39,7 @@ test('rename and move preserve the latest content and starred path across tabs a
   const renamedWsPath = `${workspaceName}:${renamedName}.md`;
   const movedWsPath = `${workspaceName}:Archive/${renamedName}.md`;
   const latestContent = 'Latest content before relocation';
+  const crossTabContent = ' edited from the second tab after rename';
 
   await createBrowserWorkspaceAndNote(page, {
     workspaceName,
@@ -53,6 +55,7 @@ test('rename and move preserve the latest content and starred path across tabs a
 
   const editor = getEditorLocator(page, {});
   await editor.click();
+  await waitForEditorFocus(page, {});
   await page.keyboard.type(latestContent);
   await page.getByRole('button', { name: 'Star this item' }).click();
   await expect(starredLink(page, `${sourceName}.md`)).toBeVisible();
@@ -79,6 +82,18 @@ test('rename and move preserve the latest content and starred path across tabs a
     'href',
     `/ws#route=editor&wsPath=${encodeURIComponent(renamedWsPath)}`,
   );
+  await expect(secondPage).toHaveURL(
+    `/ws#route=editor&wsPath=${encodeURIComponent(renamedWsPath)}`,
+  );
+
+  const secondEditor = getEditorLocator(secondPage, {});
+  await secondEditor.click();
+  await waitForEditorFocus(secondPage, {});
+  await secondPage.keyboard.press('End');
+  await secondPage.keyboard.type(crossTabContent);
+  await expect
+    .poll(() => readStoredMarkdown(secondPage, workspaceName, renamedName))
+    .toContain(crossTabContent.trim());
 
   await openFileAction(page, `${renamedName}.md`, 'Move');
   const moveDialog = page.getByRole('dialog', {
@@ -100,9 +115,15 @@ test('rename and move preserve the latest content and starred path across tabs a
     'href',
     `/ws#route=editor&wsPath=${encodeURIComponent(movedWsPath)}`,
   );
+  await expect(secondPage).toHaveURL(
+    `/ws#route=editor&wsPath=${encodeURIComponent(movedWsPath)}`,
+  );
 
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(getEditorLocator(page, {})).toContainText(latestContent);
+  await expect(getEditorLocator(page, {})).toContainText(
+    crossTabContent.trim(),
+  );
   await expect(starredLink(page, `${renamedName}.md`)).toHaveAttribute(
     'href',
     `/ws#route=editor&wsPath=${encodeURIComponent(movedWsPath)}`,
@@ -127,6 +148,7 @@ test('rename conflict reports one expected error and preserves both notes', asyn
     noteName: 'source',
   });
   await getEditorLocator(page, {}).click();
+  await waitForEditorFocus(page, {});
   await page.keyboard.type('Source body');
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, 'source'))

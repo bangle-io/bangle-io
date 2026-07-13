@@ -10,7 +10,10 @@
 export function waitForSaveQueueToDrain(
   engine: {
     hasPendingOrFailedSave: (wsPath?: string) => boolean;
-    subscribeToSaveStatus: (listener: () => void) => () => void;
+    subscribeToSaveStatus: (
+      listener: () => void,
+      wsPath?: string,
+    ) => () => void;
   },
   timeoutMs: number,
   wsPath?: string,
@@ -42,7 +45,7 @@ export function waitForSaveQueueToDrain(
       if (!hasPendingOrFailedSave()) {
         finish(true);
       }
-    });
+    }, wsPath);
     if (settled) {
       // The listener fired synchronously during subscription.
       unsubscribe();
