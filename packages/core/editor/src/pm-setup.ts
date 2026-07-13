@@ -9,6 +9,7 @@ import {
   Plugin,
   resolve,
   Schema,
+  stripSyntheticSuggestionText,
 } from '@bangle.io/prosemirror-plugins';
 
 import type { Store } from '@bangle.io/types';
@@ -47,8 +48,12 @@ export function createEditor({
               return {
                 update(view, prevState) {
                   if (onDocChange && !view.state.doc.eq(prevState.doc)) {
+                    // A synthetic suggestion trigger (the "+" button's "/")
+                    // must never reach storage, even when a debounced save
+                    // fires while the menu is still open or the editor
+                    // unmounts mid-suggestion.
                     const result = markdown.serializer.serialize(
-                      view.state.doc,
+                      stripSyntheticSuggestionText(view.state.doc),
                     );
 
                     onDocChange(result);

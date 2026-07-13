@@ -1,12 +1,10 @@
 import { keybinding, PRIORITY } from '../common';
-import { getMarkType } from '../pm-utils';
 import { store } from '../store';
 import {
   $suggestion,
   $suggestions,
   $suggestionUi,
   removeSuggestMark,
-  replaceSuggestMarkWith,
   updateSuggestionForView,
 } from './plugin-suggestion';
 
@@ -20,19 +18,8 @@ export const suggestionKeymap = () =>
             ? store.get(state, $suggestions).get(view)
             : store.get(state, $suggestion);
           if (suggestion) {
-            // A synthetic trigger (opened programmatically, e.g. via the
-            // "+" block button) was never typed, so Escape must remove the
-            // trigger text too; a typed trigger stays in the document.
-            const markType = getMarkType(state.schema, suggestion.markName);
-            const activeMark = state.selection.$from
-              .marks()
-              .find((mark) => mark.type === markType);
-            if (activeMark?.attrs.synthetic) {
-              return replaceSuggestMarkWith({
-                markName: suggestion.markName,
-                content: '',
-              })(state, dispatch, view);
-            }
+            // removeSuggestMark keeps typed trigger text but deletes
+            // synthetic (programmatically opened) triggers entirely.
             return removeSuggestMark({
               markName: suggestion.markName,
               selection: state.selection,

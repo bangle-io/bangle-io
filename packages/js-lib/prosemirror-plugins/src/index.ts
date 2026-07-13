@@ -324,6 +324,7 @@ export {
   splitBlockAs,
   splitBlockKeepMarks,
   store,
+  stripSyntheticSuggestionText,
   suggestionKeymap,
   suggestionsMark,
   TableMap,

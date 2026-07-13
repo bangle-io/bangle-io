@@ -9,6 +9,7 @@ import {
   PluginKey,
   PMNode,
   Selection,
+  Transform,
 } from '../pm';
 import {
   clampRange,
@@ -196,10 +197,12 @@ export function pluginSuggestion({
   markName,
   trigger,
   logger,
+  endOnWhitespace = false,
 }: {
   markName: string;
   trigger: string;
   logger?: Logger;
+  endOnWhitespace?: boolean;
 }) {
   return new Plugin({
     key: new PluginKey(`suggestion-${markName}`),
@@ -281,6 +284,21 @@ export function pluginSuggestion({
               return;
             }
             logger?.debug('querytext', result?.text);
+
+            // Whitespace ends the query for providers that opt in (the
+            // slash menu): the typed text stays in the document, the menu
+            // closes. Providers like wiki links keep spaces in queries.
+            if (
+              endOnWhitespace &&
+              /\s/.test((result.text ?? '').slice(trigger.length))
+            ) {
+              logger?.debug('suggestion:whitespace ended the query');
+              removeSuggestMark({
+                markName,
+                selection: state.selection,
+              })(state, view.dispatch, view);
+              return;
+            }
 
             if (
               suggestion?.markName === markName &&
@@ -440,6 +458,23 @@ export function removeSuggestMark({
       return false;
     }
 
+    // A synthetic trigger (opened programmatically, e.g. the "+" block
+    // button) was never typed: deactivating it removes the text too, so a
+    // "/" the user never wrote cannot linger in the document. Typed
+    // triggers keep their text and only lose the mark.
+    const activeMark = state.doc
+      .nodeAt(queryMark.start)
+      ?.marks.find((mark) => mark.type === markType);
+    if (activeMark?.attrs.synthetic) {
+      dispatch?.(
+        state.tr
+          .delete(queryMark.start, queryMark.end)
+          .removeStoredMark(markType)
+          .setMeta('addToHistory', false),
+      );
+      return true;
+    }
+
     dispatch?.(
       state.tr
         .removeMark(queryMark.start, queryMark.end, markType)
@@ -448,6 +483,38 @@ export function removeSuggestMark({
     );
     return true;
   };
+}
+
+/**
+ * Returns a copy of `doc` without any text carrying a synthetic suggestion
+ * mark. The save path serializes through this so a programmatically opened
+ * trigger (e.g. the "+" block button's "/") can never reach storage, even
+ * when the editor unmounts or a debounced save fires while the menu is
+ * still open.
+ */
+export function stripSyntheticSuggestionText(doc: PMNode): PMNode {
+  const ranges: Array<[number, number]> = [];
+  doc.descendants((node, pos) => {
+    if (
+      node.isText &&
+      node.marks.some(
+        (mark) =>
+          mark.type.spec.group === 'suggestTriggerMarks' &&
+          mark.attrs.synthetic,
+      )
+    ) {
+      ranges.push([pos, pos + node.nodeSize]);
+    }
+    return true;
+  });
+  if (ranges.length === 0) {
+    return doc;
+  }
+  const transform = new Transform(doc);
+  for (const [from, to] of ranges.reverse()) {
+    transform.delete(from, to);
+  }
+  return transform.doc;
 }
 
 /**

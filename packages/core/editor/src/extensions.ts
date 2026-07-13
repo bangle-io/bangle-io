@@ -68,6 +68,9 @@ export function setupExtensions(
     markName: 'slash_command',
     trigger: '/',
     markClassName: 'text-pop',
+    // A space ends the slash query (menu closes, text stays) — slash items
+    // are single-word matches, unlike wiki-link queries.
+    endOnWhitespace: true,
     logger: logger.child('suggestions'),
   });
   return {

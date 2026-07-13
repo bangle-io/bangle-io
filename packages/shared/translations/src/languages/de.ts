@@ -446,6 +446,8 @@ export const t = {
       },
     },
     toasts: {
+      editorCommandUnavailable:
+        'Dieser Editor-Befehl ist hier nicht möglich. Setze den Cursor in einen normalen Textblock und versuche es erneut.',
       assetSaveInProgress: ({
         fileName,
         remainingCount,

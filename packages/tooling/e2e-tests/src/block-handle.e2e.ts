@@ -144,6 +144,43 @@ test('escaping the plus-button menu leaves no stray slash behind', async ({
     .toBe('First line');
 });
 
+test('navigating away while the plus menu is open persists no slash', async ({
+  page,
+}) => {
+  const workspaceName = 'block-handle-navigate';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('First line');
+
+  await editor.locator('p', { hasText: 'First line' }).hover();
+  const addButton = page.getByRole('button', { name: 'Add block' });
+  await expect(addButton).toBeVisible();
+  await addButton.click();
+  await expect(page.getByTestId('slash-command-menu')).toBeVisible();
+
+  // Abandon the menu by leaving the note entirely — the synthetic "/" must
+  // not reach storage.
+  await page
+    .getByRole('navigation', { name: 'breadcrumb' })
+    .getByRole('link', { name: 'Home' })
+    .click();
+  await expect(editor).toBeHidden();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe('First line');
+
+  // Reopening shows the note without any stray character.
+  await page.getByRole('treeitem', { name: 'Home.md' }).click();
+  await expect(getEditorLocator(page, {})).toContainText('First line');
+  await expect(getEditorLocator(page, {})).not.toContainText('/');
+});
+
 test('plus button on a table inserts around it without splitting the table', async ({
   page,
 }) => {

@@ -132,6 +132,33 @@ test('slash menu inside a table offers table operations instead of block transfo
   await expect(menu.getByText('Add row above')).toBeHidden();
 });
 
+test('a space ends the slash query but keeps the typed text', async ({
+  page,
+}) => {
+  const workspaceName = 'slash-command-space-ends';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('/');
+
+  const menu = page.getByTestId('slash-command-menu');
+  await expect(menu).toBeVisible();
+
+  await page.keyboard.insertText(' ');
+  await expect(menu).toBeHidden();
+
+  // The typed characters stay ordinary text and editing continues.
+  await page.keyboard.insertText('after');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe('/ after');
+});
+
 test('clicking the Date item without filtering opens the calendar', async ({
   page,
 }) => {

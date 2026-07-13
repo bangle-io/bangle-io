@@ -5,6 +5,7 @@ import {
   pressAppShortcut,
   readStoredMarkdown,
   waitForEditorFocus,
+  writeStoredMarkdown,
 } from './common';
 
 test('omni search runs editor block commands on the active note', async ({
@@ -51,4 +52,38 @@ test('omni search runs editor block commands on the active note', async ({
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
     .toMatch(/^# Make me a heading[\s\S]*\| first cell/);
+});
+
+test('omni editor commands report when they cannot run', async ({ page }) => {
+  const workspaceName = 'omni-editor-commands-unavailable';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'Home',
+    '| a | b |\n| --- | --- |\n| 1 | 2 |',
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await expect(editor.locator('table')).toBeVisible();
+  await editor.locator('td', { hasText: '1' }).click();
+  await waitForEditorFocus(page, {});
+
+  // Table cells hold inline content only, so heading toggles cannot apply.
+  await pressAppShortcut(page, 'k');
+  const dialog = page.getByRole('dialog', { name: 'omni command bar' });
+  await dialog
+    .getByPlaceholder('Type a command or search...')
+    .fill('toggle heading 1');
+  await dialog.getByText('Toggle Heading 1').click();
+
+  await expect(
+    page.getByText('That editor command cannot run here', { exact: false }),
+  ).toBeVisible();
+  await expect(editor.locator('table')).toHaveCount(1);
+  await expect(editor.getByRole('heading')).toHaveCount(0);
 });

@@ -336,6 +336,7 @@ export {
   removeSuggestMark,
   replaceSuggestMarkWith,
   setupSuggestions,
+  stripSyntheticSuggestionText,
   suggestionKeymap,
   suggestionsMark,
   triggerInputRule,

@@ -89,14 +89,17 @@ incidental configuration rather than a stated policy. Decide the intended
 matrix (top-level blocks, list items, blockquote children, table as a unit)
 and encode it in tests before enabling handles on nested structures.
 
-### 6. Space terminates an empty slash query
+### 6. Omni editor-command availability
 
-Typing `/` then space currently keeps the suggestion mark alive with a
-space-containing query. ProseKit, tiptap, Outline, and Novel dismiss the menu
-when space follows an empty query. Implement dismissal for `"/ "` (remove the
-mark, keep the typed text), decide behavior for spaces inside a non-empty
-query (`/next week` should probably keep matching), and cover both in
-suggestions unit tests plus a slash-command e2e.
+`command::editor:*` commands always appear in omni search; when the engine
+cannot apply them (cursor in a table cell, no mounted editor, read-only
+wordgard engine) the handler now shows an "unavailable" toast
+(`t.app.toasts.editorCommandUnavailable`) instead of failing silently. The
+remaining follow-up is first-class availability: hide or disable commands in
+the omni list based on live engine/selection state, then revalidate at
+execution (PM commands already self-validate). Requires a dynamic
+availability hook on the command registry — design it against more consumers
+than these four commands before building.
 
 ### 7. Intentional undo grouping
 
@@ -115,9 +118,22 @@ outside click closes the menu without inserting; dragging the menu's
 scrollbar (the `[cmdk-list]` mousedown exemption in `slash-command.tsx`)
 neither blurs the editor nor selects an item.
 
+## Completed since first draft
+
+- Space terminates the slash query (`endOnWhitespace` per provider; wiki
+  links keep multi-word queries) — unit + e2e covered.
+- Synthetic trigger persistence: `removeSuggestMark` deletes
+  synthetic-marked text on every deactivation path, and the save path
+  serializes through `stripSyntheticSuggestionText`, so a "+"-opened `/`
+  can never reach storage (navigate-away e2e covers the repro).
+
 ## Out of scope
 
 - Fullwidth `／` slash trigger (separate product decision).
+- Rebuilding programmatic menu opening as plugin-state-only (no document
+  text): rejected as disproportionate — it forks positioning, query, and
+  keymap handling into a second state model. The synthetic-mark approach
+  plus serialization stripping achieves the same invariant.
 - Atlaskit's typeahead state machine or custom history machinery; only its
   test invariants are worth mining.
 - Yjs relative positions, async item loading/debounce infrastructure — not

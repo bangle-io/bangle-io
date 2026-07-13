@@ -26,6 +26,9 @@ export type SuggestionConfig = {
   logger?: Logger;
   requireTriggerBoundary?: boolean;
   installKeymap?: boolean;
+  /** End the suggestion when the query contains whitespace (slash menu
+   * behavior); providers with multi-word queries (wiki links) leave it off. */
+  endOnWhitespace?: boolean;
 };
 
 export function setupSuggestions(config: SuggestionConfig) {

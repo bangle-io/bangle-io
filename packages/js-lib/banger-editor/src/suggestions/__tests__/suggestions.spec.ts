@@ -19,6 +19,7 @@ import {
   $suggestions,
   $suggestionUi,
   type SuggestionUiHandlers,
+  stripSyntheticSuggestionText,
 } from '../plugin-suggestion';
 
 const slashSuggestions = setupSuggestions({
@@ -26,6 +27,7 @@ const slashSuggestions = setupSuggestions({
   markName: 'slash_command',
   trigger: '/',
   markClassName: 'slash',
+  endOnWhitespace: true,
 });
 const wikiSuggestions = setupSuggestions({
   providerId: 'wiki-link',
@@ -582,6 +584,86 @@ describe('synthetic suggestions and composition', () => {
     expect(onSelect).not.toHaveBeenCalled();
 
     Reflect.deleteProperty(view, 'composing');
+  });
+});
+
+describe('synthetic trigger persistence safety', () => {
+  it('moving the selection away deletes a synthetic trigger', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: 'note', store });
+    slashSuggestions.command.openSuggestion()(view.state, view.dispatch, view);
+    expect(view.state.doc.textContent).toBe('note/');
+
+    view.dispatch(
+      view.state.tr.setSelection(TextSelection.create(view.state.doc, 1)),
+    );
+
+    expect(view.state.doc.textContent).toBe('note');
+    expect(editorStore.get(view.state, $suggestions).get(view)).toBeUndefined();
+  });
+
+  it('moving the selection away keeps a typed trigger as text', () => {
+    const store = createStore();
+    const view = createEditor({ text: '/', markName: 'slash_command', store });
+
+    view.dispatch(
+      view.state.tr.setSelection(TextSelection.create(view.state.doc, 1)),
+    );
+
+    expect(view.state.doc.textContent).toBe('/');
+    const markType = schema.marks.slash_command;
+    if (!markType) throw new Error('missing mark');
+    expect(view.state.doc.rangeHasMark(1, 2, markType)).toBe(false);
+  });
+
+  it('stripSyntheticSuggestionText removes synthetic text and keeps typed text', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: 'note', store });
+    slashSuggestions.command.openSuggestion()(view.state, view.dispatch, view);
+    expect(view.state.doc.textContent).toBe('note/');
+
+    expect(stripSyntheticSuggestionText(view.state.doc).textContent).toBe(
+      'note',
+    );
+
+    const typedView = createEditor({
+      text: '/head',
+      markName: 'slash_command',
+      store: createStore(),
+    });
+    expect(stripSyntheticSuggestionText(typedView.state.doc).textContent).toBe(
+      '/head',
+    );
+  });
+});
+
+describe('endOnWhitespace', () => {
+  it('a space ends the slash query and keeps the typed text', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: 'note ', store });
+    expect(handleTextInput(view, 6, 6, '/')).toBe(true);
+    expect(editorStore.get(view.state, $suggestions).get(view)?.markName).toBe(
+      'slash_command',
+    );
+
+    view.dispatch(view.state.tr.insertText(' '));
+
+    expect(view.state.doc.textContent).toBe('note / ');
+    expect(editorStore.get(view.state, $suggestions).get(view)).toBeUndefined();
+  });
+
+  it('wiki-link queries keep spaces', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: 'note ', store });
+    expect(handleTextInput(view, 6, 6, '[[')).toBe(true);
+
+    view.dispatch(view.state.tr.insertText('my note'));
+
+    expect(view.state.doc.textContent).toBe('note [[my note');
+    expect(editorStore.get(view.state, $suggestions).get(view)).toMatchObject({
+      markName: 'wiki_link_suggestion',
+      text: '[[my note',
+    });
   });
 });
 
