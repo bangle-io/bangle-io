@@ -1,9 +1,9 @@
 ---
 title: Workspace "Locate folder" action for Native FS workspaces
-status: planned
+status: completed
 type: plan
-archived: false
-archived_on:
+archived: true
+archived_on: 2026-07-13
 created: 2026-07-13
 updated: 2026-07-13
 owner: mixed
@@ -11,6 +11,14 @@ related_prs:
   - https://github.com/bangle-io/bangle-io/pull/644
 related_issues: []
 ---
+
+> DONE Completed on 2026-07-13 in PR #644, which carries both this plan and
+> the implementation: `revealDirectoryLocation` in `@bangle.io/native-fs`,
+> `command::ui:locate-native-fs-workspace` (definition + handler), the gated
+> settings-workspaces menu item, and unit + E2E coverage. Final verification
+> passed with `pnpm lint:ci`, `pnpm test:ci`, and `pnpm e2e:ci`. Known caveat
+> (by design): tests assert the picker mechanism, not the OS dialog's path bar,
+> and `startIn` is best-effort when the stored handle is stale.
 
 # Workspace "Locate folder" action for Native FS workspaces
 
@@ -36,7 +44,7 @@ nothing. The web app never learns the path (privacy preserved by the platform),
 but the human does, because the reveal is delegated to the OS chrome.
 
 This is intentionally distinct from the existing Native FS **recovery** flow
-([page-native-fs-recovery.tsx](../packages/core/app/src/pages/page-native-fs-recovery.tsx),
+([page-native-fs-recovery.tsx](../../packages/core/app/src/pages/page-native-fs-recovery.tsx),
 `command::ui:reconnect-native-fs-workspace`), which *rebinds* a lost folder.
 Locate never rebinds, never mutates metadata, never navigates, never touches
 files.
@@ -44,15 +52,15 @@ files.
 ## Mechanism (already mostly plumbed)
 
 - `DirectoryPickerOpts` already declares `startIn?: FileSystemHandle | string`
-  ([native-fs/src/types.ts:17](../packages/js-lib/native-fs/src/types.ts)) and
+  ([native-fs/src/types.ts:17](../../packages/js-lib/native-fs/src/types.ts)) and
   `pickDirectory` already spreads unknown opts into `showDirectoryPicker`
-  ([native-fs/src/picker.ts:33](../packages/js-lib/native-fs/src/picker.ts)).
+  ([native-fs/src/picker.ts:33](../../packages/js-lib/native-fs/src/picker.ts)).
 - `WorkspaceInfo` carries `type: string` and `metadata: Record<string, unknown>`
-  ([shared/types/workspace.ts](../packages/shared/types/workspace.ts)); a
+  ([shared/types/workspace.ts](../../packages/shared/types/workspace.ts)); a
   `nativefs` workspace stores its handle at `metadata.rootDirHandle`
   (see the reconnect handler, which writes it back on recovery).
 - `WORKSPACE_STORAGE_TYPE.NativeFS === 'nativefs'`
-  ([shared/constants/index.ts:86](../packages/shared/constants/index.ts)).
+  ([shared/constants/index.ts:86](../../packages/shared/constants/index.ts)).
 - The settings page's `$workspaces` atom resolves to `WorkspaceInfo[]`
   (`workspaceOps.getAllWorkspaces()`), so the row already has `type` to gate on.
 
@@ -67,7 +75,7 @@ permission prompt for a mere reveal. Locate needs a thin, reveal-only helper.
 Add an exported helper, e.g. `revealDirectoryLocation(anchor: FileSystemHandle)`:
 
 - Feature-detect via the existing `getShowDirectoryPicker()`
-  ([native-fs/src/support.ts](../packages/js-lib/native-fs/src/support.ts)); if
+  ([native-fs/src/support.ts](../../packages/js-lib/native-fs/src/support.ts)); if
   absent, throw the typed `NATIVE_FS_ERROR_CODE.unsupported` `NativeFsError`.
 - Call `showDirectoryPicker({ startIn: anchor, mode: 'read', id: '<stable>' })`.
 - **Discard** the resolved handle; do **not** call `requestPermission` and do
@@ -83,7 +91,7 @@ belongs beside `pickDirectory`, not in a caller. Keep the typed error taxonomy.
 
 Add `command::ui:locate-native-fs-workspace`, mirroring
 `command::ui:reconnect-native-fs-workspace`
-([shared/commands/src/ui-commands.ts:335](../packages/shared/commands/src/ui-commands.ts)):
+([shared/commands/src/ui-commands.ts:335](../../packages/shared/commands/src/ui-commands.ts)):
 
 - `args: { wsName: T.String }`
 - `dependencies.services: ['workspaceOps']` (add `workbenchState` only if we
@@ -94,7 +102,7 @@ Add `command::ui:locate-native-fs-workspace`, mirroring
 ### 3. `@bangle.io/command-handlers` — handler (core)
 
 Add the handler next to `nativeFsRecoveryHandlers`
-([command-handlers/src/ui-handlers/native-fs-recovery.ts](../packages/core/command-handlers/src/ui-handlers/native-fs-recovery.ts)):
+([command-handlers/src/ui-handlers/native-fs-recovery.ts](../../packages/core/command-handlers/src/ui-handlers/native-fs-recovery.ts)):
 
 - `getWorkspaceInfo(wsName, { type: NativeFS })`; if missing → typed
   `error::workspace:not-found`.
@@ -110,7 +118,7 @@ Add the handler next to `nativeFsRecoveryHandlers`
 ### 4. `packages/core/app` — settings UI
 
 In `WorkspaceActionsMenu`
-([page-settings-workspaces.tsx:186](../packages/core/app/src/pages/page-settings-workspaces.tsx)):
+([page-settings-workspaces.tsx:186](../../packages/core/app/src/pages/page-settings-workspaces.tsx)):
 
 - Thread the workspace `type` (or an `onLocate?`/`isNativeFs` prop) into the
   menu.
@@ -144,13 +152,13 @@ In `WorkspaceActionsMenu`
 
 - **Unit — native-fs** (`revealDirectoryLocation`): stub global
   `showDirectoryPicker` (mirror
-  [picker-and-permissions.spec.ts](../packages/js-lib/native-fs/src/__tests__/picker-and-permissions.spec.ts)).
+  [picker-and-permissions.spec.ts](../../packages/js-lib/native-fs/src/__tests__/picker-and-permissions.spec.ts)).
   Assert it is called with `startIn` set to the anchor handle; assert the
   resolved handle is discarded and `requestPermission` is never invoked; assert
   a `userAborted`/AbortError resolves without throwing; assert `unsupported`
   when the picker is absent.
 - **Unit — command-handlers**: real DI container (mirror
-  [native-fs-recovery.spec.ts](../packages/core/command-handlers/src/__tests__/native-fs-recovery.spec.ts)).
+  [native-fs-recovery.spec.ts](../../packages/core/command-handlers/src/__tests__/native-fs-recovery.spec.ts)).
   With a `nativefs` `WorkspaceInfo` carrying a fake `rootDirHandle`, dispatch and
   assert the reveal helper is called with that handle; assert typed errors for
   missing workspace, non-nativefs type, and absent handle; assert no metadata
@@ -158,7 +166,7 @@ In `WorkspaceActionsMenu`
 - **E2E — settings-workspaces** (`*.e2e.ts`, required for release): seed one
   `nativefs` and one `browser` workspace; stub `window.showDirectoryPicker` via
   `addInitScript` (as
-  [native-fs-recovery.e2e.ts](../packages/tooling/e2e-tests/src/native-fs-recovery.e2e.ts)
+  [native-fs-recovery.e2e.ts](../../packages/tooling/e2e-tests/src/native-fs-recovery.e2e.ts)
   does). Assert the **Locate folder** action shows only on the nativefs row;
   clicking calls `showDirectoryPicker` with `startIn` set to a handle whose
   `.name` equals the workspace name; and that both selecting a folder and
