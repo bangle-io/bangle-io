@@ -41,10 +41,10 @@ export const t = {
     },
     editor: {
       fidelityNotice: {
-        label: 'Formatting notice',
-        title: 'Some formatting may change',
+        label: 'Markdown compatibility',
+        title: 'Some Markdown cannot be fully preserved',
         description:
-          'This note contains Markdown this editor cannot fully preserve, so saving an edit will reformat those parts. Your content is safe — no text will be lost.',
+          'This note contains Markdown this editor cannot fully preserve. Opening it is safe and changes nothing, but if you edit and save, the parts it cannot represent are rewritten — some formatting or content may change or be removed.',
       },
       selectionMenu: {
         label: 'Text formatting',

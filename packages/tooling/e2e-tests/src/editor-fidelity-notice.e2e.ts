@@ -37,11 +37,12 @@ test('warns when a note contains Markdown the editor will reformat', async ({
   const notice = page.getByTestId(NOTICE_TEST_ID);
   await expect(notice).toBeVisible();
 
-  // Clicking it opens a calm dialog that reassures no content is lost.
+  // Clicking it opens a calm dialog that honestly warns a save may change or
+  // drop unsupported Markdown — it must not promise the content is safe.
   await notice.click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
-  await expect(dialog).toContainText('no text will be lost');
+  await expect(dialog).toContainText('may change or be removed');
 
   // The gate only warns: merely opening the note must not rewrite storage.
   await expect
