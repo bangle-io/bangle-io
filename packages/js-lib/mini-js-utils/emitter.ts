@@ -5,24 +5,31 @@ export type EventMessage<E extends string, P> = {
   payload: P;
 };
 
-export type AllEventListener<U extends EventMessage<any, any>> = (
+type EventPayload<
+  U extends EventMessage<string, unknown>,
+  E extends U['event'],
+> = string extends U['event']
+  ? U['payload']
+  : Extract<U, { event: E }>['payload'];
+
+export type AllEventListener<U extends EventMessage<string, unknown>> = (
   message: U,
 ) => void;
 
-type EventListeners<U extends EventMessage<any, any>> = {
-  [E in U['event']]?: Set<EventListener<Extract<U, { event: E }>['payload']>>;
+type EventListeners<U extends EventMessage<string, unknown>> = {
+  [E in U['event']]?: Set<EventListener<EventPayload<U, E>>>;
 };
 
-interface EmitterOptions<U extends EventMessage<any, any>> {
+interface EmitterOptions<U extends EventMessage<string, unknown>> {
   paused?: boolean;
   onDestroy?: () => void;
   onEmit?: (message: U) => void;
 }
 
 export class Emitter<
-  U extends EventMessage<any, any> = EventMessage<any, unknown>,
+  U extends EventMessage<string, unknown> = EventMessage<string, unknown>,
 > {
-  static create<U extends EventMessage<string, any>>(
+  static create<U extends EventMessage<string, unknown>>(
     options?: EmitterOptions<U>,
   ) {
     return new Emitter<U>(options);
@@ -41,20 +48,22 @@ export class Emitter<
   }
 
   destroy(): void {
+    if (this.destroyed) {
+      return;
+    }
     this.clearListeners();
     this.destroyed = true;
     this.options?.onDestroy?.();
   }
 
-  emit<E extends U['event']>(
-    event: E,
-    payload: Extract<U, { event: E }>['payload'],
-  ) {
+  emit<E extends U['event']>(event: E, payload: EventPayload<U, E>) {
     if (this.destroyed) {
       return;
     }
 
-    const message = { event, payload: payload } as U;
+    // The event/payload relationship is enforced by EventPayload at the public
+    // boundary; TypeScript cannot reconstruct the generic discriminated union.
+    const message = { event, payload } as unknown as U;
 
     if (this.paused) {
       this.buffer.push(message);
@@ -107,10 +116,10 @@ export class Emitter<
 
   on<E extends U['event']>(
     event: E,
-    fn: EventListener<Extract<U, { event: E }>['payload']>,
+    fn: EventListener<EventPayload<U, E>>,
     signal?: AbortSignal,
   ): () => void {
-    if (this.destroyed) {
+    if (this.destroyed || signal?.aborted) {
       return () => undefined;
     }
 
@@ -125,6 +134,7 @@ export class Emitter<
 
     const cleanup = () => {
       existing?.delete(fn);
+      signal?.removeEventListener('abort', cleanup);
     };
 
     signal?.addEventListener('abort', cleanup, { once: true });

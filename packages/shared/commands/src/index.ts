@@ -67,7 +67,7 @@ function validate(commands: Command[]) {
 
 validate(bangleAppCommands);
 export function areAllValuesOptional(args: {
-  [key: string]: Validator<any>;
+  [key: string]: Validator<unknown>;
 }): boolean {
   return Object.values(args).every(
     (validator) => validator.isOptional === true,

@@ -122,6 +122,20 @@
       }
     },
     {
+      "includes": [
+        "packages/js-lib/mini-js-utils/**",
+        "packages/shared/commands/**",
+        "packages/shared/root-emitter/**"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "error"
+          }
+        }
+      }
+    },
+    {
       "includes": ["**/*.stories.tsx"],
       "linter": {
         "rules": {
