@@ -57,7 +57,12 @@ export const wsCommands = narrow([
     title: 'Rename Directory',
     omniSearch: false,
     dependencies: {
-      services: ['fileSystem', 'navigation', 'workspaceState'],
+      services: [
+        'editorEngine',
+        'fileSystem',
+        'userActivityService',
+        'workspaceState',
+      ],
     },
     args: {
       oldDirWsPath: T.String,
@@ -128,12 +133,7 @@ export const wsCommands = narrow([
     title: 'Rename Note',
     omniSearch: false,
     dependencies: {
-      services: [
-        'editorEngine',
-        'fileSystem',
-        'navigation',
-        'userActivityService',
-      ],
+      services: ['editorEngine', 'fileSystem', 'userActivityService'],
     },
     args: {
       wsPath: T.String,
@@ -145,12 +145,7 @@ export const wsCommands = narrow([
     title: 'Move Note',
     omniSearch: false,
     dependencies: {
-      services: [
-        'editorEngine',
-        'fileSystem',
-        'navigation',
-        'userActivityService',
-      ],
+      services: ['editorEngine', 'fileSystem', 'userActivityService'],
     },
     args: {
       wsPath: T.String,

@@ -167,19 +167,25 @@ export class FileStorageIndexedDB
 
   async writeFile(wsPath: string, file: File): Promise<void> {
     await this.mountPromise;
-
-    if (!(await this.fileExists(wsPath))) {
-      throwAppError(
-        'error::file-storage:file-does-not-exist',
-        'Cannot write file as it does not exist',
-        {
-          wsPath,
-          storage: this.name,
-        },
-      );
-    }
     const fsPath = toFSPathOrThrow(wsPath);
-    await this.idb.writeFile(fsPath, file);
+    try {
+      await this.idb.writeExistingFile(fsPath, file);
+    } catch (error) {
+      if (
+        error instanceof BaseFileSystemError &&
+        error.code === FILE_NOT_FOUND_ERROR
+      ) {
+        throwAppError(
+          'error::file-storage:file-does-not-exist',
+          'Cannot write file as it does not exist',
+          {
+            wsPath,
+            storage: this.name,
+          },
+        );
+      }
+      throw error;
+    }
 
     this.emitChange({
       type: 'update',

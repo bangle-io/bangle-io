@@ -139,6 +139,87 @@ test('rename and move preserve the latest content and starred path across tabs a
     .toBeUndefined();
 });
 
+test('folder rename drains active edits and relocates routes, descendants, and stars', async ({
+  context,
+  page,
+}) => {
+  const workspaceName = 'folder-relocation-workspace';
+  const oldDir = 'folder';
+  const newDir = 'vault';
+  const sourceName = 'source';
+  const oldWsPath = `${workspaceName}:${oldDir}/${sourceName}.md`;
+  const newWsPath = `${workspaceName}:${newDir}/${sourceName}.md`;
+  const latestContent = 'Latest edit immediately before folder rename';
+
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: `${oldDir}/${sourceName}`,
+  });
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    `${oldDir}/nested/other`,
+    'Nested sibling content',
+  );
+  await page.reload({ waitUntil: 'domcontentloaded' });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.type(latestContent);
+  await page.getByRole('button', { name: 'Star this item' }).click();
+  await expect(starredLink(page, `${sourceName}.md`)).toBeVisible();
+
+  const secondPage = await context.newPage();
+  await secondPage.goto(page.url());
+  await expect(secondPage).toHaveURL(
+    `/ws#route=editor&wsPath=${encodeURIComponent(oldWsPath)}`,
+  );
+  await expect(starredLink(secondPage, `${sourceName}.md`)).toBeVisible();
+
+  const explorer = page.getByTestId('bangle-file-explorer');
+  await explorer
+    .getByRole('treeitem', { name: new RegExp(`^${oldDir}$`) })
+    .click({ button: 'right' });
+  await page.getByRole('button', { name: 'Rename' }).click();
+  await page.getByPlaceholder('Provide a new folder name').fill(newDir);
+  await page.getByRole('button', { name: 'Confirm folder rename' }).click();
+
+  const expectedUrl = `/ws#route=editor&wsPath=${encodeURIComponent(newWsPath)}`;
+  await expect(page).toHaveURL(expectedUrl);
+  await expect(secondPage).toHaveURL(expectedUrl);
+  await expect(starredLink(page, `${sourceName}.md`)).toHaveAttribute(
+    'href',
+    expectedUrl,
+  );
+  await expect(starredLink(secondPage, `${sourceName}.md`)).toHaveAttribute(
+    'href',
+    expectedUrl,
+  );
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, `${newDir}/source`))
+    .toContain(latestContent);
+  await expect
+    .poll(() =>
+      readStoredMarkdown(page, workspaceName, `${newDir}/nested/other`),
+    )
+    .toBe('Nested sibling content');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, `${oldDir}/source`))
+    .toBeUndefined();
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page).toHaveURL(expectedUrl);
+  await expect(getEditorLocator(page, {})).toContainText(latestContent);
+  await expect(starredLink(page, `${sourceName}.md`)).toHaveAttribute(
+    'href',
+    expectedUrl,
+  );
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, `${oldDir}/source`))
+    .toBeUndefined();
+});
+
 test('rename conflict reports one expected error and preserves both notes', async ({
   page,
 }) => {

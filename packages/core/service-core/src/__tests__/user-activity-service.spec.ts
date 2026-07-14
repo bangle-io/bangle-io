@@ -334,6 +334,44 @@ describe('UserActivityService', () => {
       ).resolves.not.toHaveProperty('starred-items');
     });
 
+    it('migrates a batch of starred paths in one metadata update', async () => {
+      const { userActivityService, workspaceOps, goWsPath } =
+        await setupUserActivityService({ controller });
+      await goWsPath(TEST_WS_PATH);
+      await userActivityService.toggleStarItem(WsPath.fromString(TEST_WS_PATH));
+      await userActivityService.toggleStarItem(
+        WsPath.fromString(TEST_WS_PATH2),
+      );
+      await vi.waitFor(async () => {
+        await expect(
+          workspaceOps.getWorkspaceMetadata(TEST_WS_NAME),
+        ).resolves.toMatchObject({
+          'starred-items': [TEST_WS_PATH, TEST_WS_PATH2],
+        });
+      });
+      const updateSpy = vi.spyOn(workspaceOps, 'updateWorkspaceMetadata');
+
+      await expect(
+        userActivityService.relocateStarredItems([
+          {
+            oldItem: WsPath.fromString(TEST_WS_PATH),
+            newItem: WsPath.fromString(TEST_WS_RENAMED_PATH),
+          },
+          {
+            oldItem: WsPath.fromString(TEST_WS_PATH2),
+            newItem: WsPath.fromString('test-workspace:renamed-2.md'),
+          },
+        ]),
+      ).resolves.toBe('succeeded');
+
+      expect(updateSpy).toHaveBeenCalledOnce();
+      await expect(
+        workspaceOps.getWorkspaceMetadata(TEST_WS_NAME),
+      ).resolves.toMatchObject({
+        'starred-items': [TEST_WS_RENAMED_PATH, 'test-workspace:renamed-2.md'],
+      });
+    });
+
     it('should record starred ws paths', async () => {
       const { userActivityService, goWsPath } = await setupUserActivityService({
         controller,

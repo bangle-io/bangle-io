@@ -16,8 +16,12 @@ type SaveTask = {
 
 type SaveEntry = {
   active: boolean;
+  activeTask?: SaveTask;
+  blockingFlush?: Promise<void>;
   failedTask?: SaveTask;
+  flushPromise?: Promise<void>;
   pendingTask?: SaveTask;
+  retired: boolean;
   status: EditorSaveStatus;
   wsPath: string;
 };
@@ -61,8 +65,7 @@ export class EditorSaveQueue {
     this.notifySaveStatusChanged(wsPath);
 
     if (!entry.active) {
-      entry.active = true;
-      void this.flush(entry);
+      this.startFlush(entry);
     }
   }
 
@@ -106,10 +109,29 @@ export class EditorSaveQueue {
     if (!entry) {
       return;
     }
-    if (this.store.entries.has(newWsPath)) {
-      throw new Error(
-        `Cannot relocate save queue to occupied path: ${newWsPath}`,
-      );
+    const destinationEntry = this.store.entries.get(newWsPath);
+    if (destinationEntry && destinationEntry !== entry) {
+      // The durable rename makes the source entry authoritative. Retire any
+      // stale destination producer, then replay the latest source task after
+      // its in-flight write settles so that it cannot overwrite the rename.
+      destinationEntry.retired = true;
+      destinationEntry.pendingTask = undefined;
+      destinationEntry.failedTask = undefined;
+      destinationEntry.status = { status: 'clean' };
+      if (destinationEntry.flushPromise) {
+        const destinationFlush = destinationEntry.flushPromise.catch(() => {});
+        entry.blockingFlush = entry.blockingFlush
+          ? Promise.allSettled([entry.blockingFlush, destinationFlush]).then(
+              () => {},
+            )
+          : destinationFlush;
+      }
+      if (entry.activeTask) {
+        entry.pendingTask ??= entry.activeTask;
+      }
+      if (this.store.entries.get(newWsPath) === destinationEntry) {
+        this.store.entries.delete(newWsPath);
+      }
     }
 
     this.store.entries.delete(oldWsPath);
@@ -122,8 +144,7 @@ export class EditorSaveQueue {
       entry.status = { status: 'pending' };
     }
     if (!entry.active && entry.pendingTask) {
-      entry.active = true;
-      void this.flush(entry);
+      this.startFlush(entry);
     }
 
     this.notifySaveStatusChanged(oldWsPath);
@@ -140,8 +161,7 @@ export class EditorSaveQueue {
     entry.failedTask = undefined;
     entry.status = { status: 'pending' };
     this.notifySaveStatusChanged(wsPath);
-    entry.active = true;
-    void this.flush(entry);
+    this.startFlush(entry);
 
     return true;
   }
@@ -154,6 +174,7 @@ export class EditorSaveQueue {
 
     const entry: SaveEntry = {
       active: false,
+      retired: false,
       status: { status: 'clean' },
       wsPath,
     };
@@ -165,11 +186,24 @@ export class EditorSaveQueue {
     while (entry.pendingTask !== undefined) {
       const task = entry.pendingTask;
       entry.pendingTask = undefined;
+      const blockingFlush = entry.blockingFlush;
+      entry.blockingFlush = undefined;
+      if (blockingFlush) {
+        await blockingFlush;
+      }
+      if (entry.retired) {
+        break;
+      }
+
       const writeWsPath = entry.wsPath;
+      entry.activeTask = task;
 
       try {
         await task.writeDoc(writeWsPath, task.doc);
       } catch (cause) {
+        if (entry.retired) {
+          continue;
+        }
         if (writeWsPath !== entry.wsPath) {
           // A durable rename overtook this write. Retry it at the destination
           // unless a newer edit is already pending there.
@@ -196,25 +230,53 @@ export class EditorSaveQueue {
           entry.status = { status: 'pending' };
           this.notifySaveStatusChanged(entry.wsPath);
         }
+      } finally {
+        entry.activeTask = undefined;
       }
     }
 
     entry.active = false;
+    if (entry.retired) {
+      entry.failedTask = undefined;
+      entry.pendingTask = undefined;
+      entry.status = { status: 'clean' };
+      return;
+    }
+
     if (entry.status.status === 'pending') {
       entry.status = { status: 'clean' };
       this.notifySaveStatusChanged(entry.wsPath);
     }
 
     if (entry.pendingTask !== undefined) {
-      entry.active = true;
-      void this.flush(entry);
+      this.startFlush(entry);
       return;
     }
 
     if (entry.status.status === 'clean') {
       entry.failedTask = undefined;
-      this.store.entries.delete(entry.wsPath);
+      if (this.store.entries.get(entry.wsPath) === entry) {
+        this.store.entries.delete(entry.wsPath);
+      }
     }
+  }
+
+  private startFlush(entry: SaveEntry): void {
+    entry.active = true;
+    const flushPromise = this.flush(entry);
+    entry.flushPromise = flushPromise;
+    void flushPromise.then(
+      () => {
+        if (entry.flushPromise === flushPromise) {
+          entry.flushPromise = undefined;
+        }
+      },
+      () => {
+        if (entry.flushPromise === flushPromise) {
+          entry.flushPromise = undefined;
+        }
+      },
+    );
   }
 
   private notifySaveStatusChanged(changedWsPath: string): void {

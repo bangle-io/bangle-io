@@ -137,7 +137,6 @@ export class FileSystemService extends BaseService {
             break;
           }
           case 'file-rename': {
-            this.store.set(this.$fileRenameCount, (c) => c + 1);
             if (event.oldWsPath) {
               this.fileRenameSequence += 1;
               this.store.set(this.$fileRenameEvent, {
@@ -146,6 +145,7 @@ export class FileSystemService extends BaseService {
                 wsPath: event.wsPath,
               });
             }
+            this.store.set(this.$fileRenameCount, (c) => c + 1);
             break;
           }
           default: {

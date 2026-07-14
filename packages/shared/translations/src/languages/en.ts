@@ -592,6 +592,8 @@ export const t = {
       folderRenamed: ({ folderName }: { folderName: string }) =>
         `Renamed to ${folderName}`,
       folderRenameFailed: 'Could not rename folder',
+      folderRenameStarUpdateFailed: ({ folderName }: { folderName: string }) =>
+        `Renamed to ${folderName}, but could not preserve starred notes`,
       openAsset: 'Open',
       pathCopied: 'Path copied',
       pathCopyFailed: 'Could not copy path',

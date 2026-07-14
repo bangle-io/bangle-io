@@ -123,6 +123,47 @@ describe('EditorSaveQueue', () => {
     expect(emitAppError).not.toHaveBeenCalled();
   });
 
+  it('retires a colliding destination queue and replays source content last', async () => {
+    const sourceWrite = createDeferred<void>();
+    const destinationWrite = createDeferred<void>();
+    const writes: Array<{ doc: string; wsPath: string }> = [];
+    const emitAppError = vi.fn();
+    const queue = new EditorSaveQueue((wsPath, doc) => {
+      writes.push({ doc, wsPath });
+      if (wsPath === 'workspace:old.md') {
+        return sourceWrite.promise;
+      }
+      if (doc === 'stale destination content') {
+        return destinationWrite.promise;
+      }
+      return Promise.resolve();
+    }, emitAppError);
+
+    queue.enqueue('workspace:old.md', 'latest source content');
+    queue.enqueue('workspace:new.md', 'stale destination content');
+
+    expect(() => {
+      queue.relocate('workspace:old.md', 'workspace:new.md');
+    }).not.toThrow();
+
+    sourceWrite.resolve();
+    await flushMicrotasks();
+    expect(writes).toHaveLength(2);
+
+    destinationWrite.reject(new Error('destination write lost rename race'));
+    await vi.waitFor(() => {
+      expect(queue.getStatus('workspace:new.md')).toEqual({ status: 'clean' });
+    });
+
+    expect(writes).toEqual([
+      { doc: 'latest source content', wsPath: 'workspace:old.md' },
+      { doc: 'stale destination content', wsPath: 'workspace:new.md' },
+      { doc: 'latest source content', wsPath: 'workspace:new.md' },
+    ]);
+    expect(queue.getStatus('workspace:old.md')).toEqual({ status: 'clean' });
+    expect(emitAppError).not.toHaveBeenCalled();
+  });
+
   it('serializes writes and coalesces rapid edits to the latest pending doc', async () => {
     const firstWrite = createDeferred<void>();
     const writes: Array<{ doc: string; wsPath: string }> = [];

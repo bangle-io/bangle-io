@@ -267,21 +267,11 @@ export class PmEditorService
   private handleFileRename(oldWsPath: string, newWsPath: string): void {
     this.saveQueue.relocate(oldWsPath, newWsPath);
 
-    let renamedOpenEditor = false;
     for (const [domNode, editor] of this.editors) {
       if (editor.wsPath !== oldWsPath) {
         continue;
       }
       this.editors.set(domNode, { ...editor, wsPath: newWsPath });
-      renamedOpenEditor = true;
-    }
-
-    if (
-      renamedOpenEditor &&
-      this.dependencies.navigation.resolveAtoms().activeWsFilePath?.wsPath ===
-        oldWsPath
-    ) {
-      this.dependencies.navigation.goWsPath(newWsPath);
     }
   }
 

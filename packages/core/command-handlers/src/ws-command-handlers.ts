@@ -70,7 +70,7 @@ function rethrowRelocationError(
   throw error;
 }
 
-async function assertSourceSaveDrained(
+async function assertSourceSavesDrained(
   editorEngine: {
     hasPendingOrFailedSave: (wsPath?: string) => boolean;
     subscribeToSaveStatus: (
@@ -78,20 +78,25 @@ async function assertSourceSaveDrained(
       wsPath?: string,
     ) => () => void;
   },
-  oldWsPath: string,
-  newWsPath: string,
+  relocations: readonly { oldWsPath: string; newWsPath: string }[],
   operation: 'move' | 'rename',
 ): Promise<void> {
-  const drained = await waitForSaveQueueToDrain(
-    editorEngine,
-    EDITOR_SAVE_DRAIN_TIMEOUT_MS,
-    oldWsPath,
+  const drainResults = await Promise.all(
+    relocations.map(({ oldWsPath }) =>
+      waitForSaveQueueToDrain(
+        editorEngine,
+        EDITOR_SAVE_DRAIN_TIMEOUT_MS,
+        oldWsPath,
+      ),
+    ),
   );
-  if (!drained) {
+  const blockedIndex = drainResults.findIndex((drained) => !drained);
+  const blockedRelocation = relocations[blockedIndex];
+  if (blockedRelocation) {
     throwAppError(
       'error::file:invalid-operation',
       t.app.errors.file.relocationBlockedByUnsavedChanges,
-      { operation, oldWsPath, newWsPath },
+      { operation, ...blockedRelocation },
     );
   }
 }
@@ -217,7 +222,7 @@ export const wsCommandHandlers = [
   c(
     'command::ws:rename-ws-path',
     async (
-      { editorEngine, fileSystem, navigation, userActivityService },
+      { editorEngine, fileSystem, userActivityService },
       { wsPath, newWsPath },
     ) => {
       const oldPath = WsPath.fromString(wsPath);
@@ -250,14 +255,14 @@ export const wsCommandHandlers = [
         return;
       }
 
-      await assertSourceSaveDrained(editorEngine, wsPath, newWsPath, 'rename');
+      await assertSourceSavesDrained(
+        editorEngine,
+        [{ oldWsPath: wsPath, newWsPath }],
+        'rename',
+      );
 
-      const needsRedirect =
-        navigation.resolveAtoms().activeWsFilePath?.wsPath === wsPath;
-
-      // Keep the open note visible during the rename instead of navigating to
-      // ws-home first (which paints an intermediate screen for the duration of
-      // the async write). Redirect straight to the renamed path once it lands.
+      // Keep the open note visible while the storage write is in flight.
+      // WorkspaceState follows the durable rename event once it lands.
       try {
         await fileSystem.renameFile({
           oldWsPath: wsPath,
@@ -287,16 +292,13 @@ export const wsCommandHandlers = [
           t.app.toasts.fileRenamed({ fileName: newFilePath.fileName }),
         );
       }
-      if (needsRedirect) {
-        navigation.goWsPath(newWsPath);
-      }
     },
   ),
 
   c(
     'command::ws:move-ws-path',
     async (
-      { editorEngine, fileSystem, navigation, userActivityService },
+      { editorEngine, fileSystem, userActivityService },
       { wsPath, destDirWsPath },
     ) => {
       const filePath = WsPath.assertFile(wsPath);
@@ -322,17 +324,14 @@ export const wsCommandHandlers = [
         return;
       }
 
-      await assertSourceSaveDrained(editorEngine, wsPath, newWsPath, 'move');
+      await assertSourceSavesDrained(
+        editorEngine,
+        [{ oldWsPath: wsPath, newWsPath }],
+        'move',
+      );
 
-      const needsRedirect =
-        navigation.resolveAtoms().activeWsFilePath?.wsPath === wsPath;
-
-      // Do not bounce the open note through the workspace-home screen while the
-      // rename is in flight: that navigation happens before the storage write
-      // and paints ws-home for the whole (async) rename. Instead keep showing
-      // the current note until the durable rename lands, then redirect straight
-      // to the new path. The wsPaths update and this redirect settle in the same
-      // microtask, so the moved note never flashes an intermediate screen.
+      // Keep the open note visible while the storage write is in flight.
+      // WorkspaceState follows the durable rename event once it lands.
       try {
         await fileSystem.renameFile({
           oldWsPath: wsPath,
@@ -359,9 +358,6 @@ export const wsCommandHandlers = [
         );
       } else {
         toast.success(t.app.toasts.fileMoved({ fileName: filePath.fileName }));
-      }
-      if (needsRedirect) {
-        navigation.goWsPath(newWsPath);
       }
     },
   ),
@@ -411,7 +407,7 @@ export const wsCommandHandlers = [
   c(
     'command::ws:rename-directory',
     async (
-      { fileSystem, navigation, workspaceState },
+      { editorEngine, fileSystem, userActivityService, workspaceState },
       { oldDirWsPath, newDirWsPath },
       key,
     ) => {
@@ -456,7 +452,6 @@ export const wsCommandHandlers = [
         return;
       }
 
-      const currentWsPath = navigation.resolveAtoms().activeWsFilePath?.wsPath;
       const pairs = descendants.map((path) => {
         const filePath = WsPath.assertFile(path.wsPath);
         const suffix = filePath.path.slice(oldDir.path.length);
@@ -488,22 +483,28 @@ export const wsCommandHandlers = [
         }
       }
 
-      const redirectTarget = pairs.find(
-        (pair) => pair.oldWsPath === currentWsPath,
-      )?.newWsPath;
+      await assertSourceSavesDrained(editorEngine, pairs, 'rename');
 
       try {
         await fileSystem.renameFiles(pairs);
-        toast.success(
-          t.app.toasts.folderRenamed({ folderName: basename(newDir.path) }),
-        );
       } catch (error) {
         toast.error(t.app.toasts.folderRenameFailed);
         throw error;
       }
 
-      if (redirectTarget) {
-        navigation.goWsPath(redirectTarget);
+      const starResult = await userActivityService.relocateStarredItems(
+        pairs.map(({ oldWsPath, newWsPath }) => ({
+          oldItem: WsPath.fromString(oldWsPath),
+          newItem: WsPath.fromString(newWsPath),
+        })),
+      );
+      const folderName = basename(newDir.path);
+      if (starResult === 'failed') {
+        toast.warning(
+          t.app.toasts.folderRenameStarUpdateFailed({ folderName }),
+        );
+      } else {
+        toast.success(t.app.toasts.folderRenamed({ folderName }));
       }
     },
   ),

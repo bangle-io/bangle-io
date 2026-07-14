@@ -8,6 +8,17 @@ import { WsPath } from '@bangle.io/ws-path';
 import { describe, expect, test, vi } from 'vitest';
 import { setupTest } from './test-utils';
 
+function createDeferred<T>() {
+  let resolve!: (value: T | PromiseLike<T>) => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((promiseResolve, promiseReject) => {
+    resolve = promiseResolve;
+    reject = promiseReject;
+  });
+
+  return { promise, reject, resolve };
+}
+
 describe('WS command handlers', () => {
   describe('command::ws:create-note', () => {
     test('reports duplicate note creation as a command failure', async () => {
@@ -289,6 +300,46 @@ describe('WS command handlers', () => {
       });
     });
 
+    test('does not pull the user back after they leave during metadata migration', async () => {
+      const OTHER_WS_PATH = 'test-ws:other.md';
+      const SOURCE_WS_PATH = 'test-ws:source.md';
+      const DESTINATION_WS_PATH = 'test-ws:destination.md';
+      const { dispatch, services, getCommandResults } = await setupTest({
+        targetId: 'command::ws:rename-ws-path',
+        workspaces: [
+          { name: 'test-ws', notes: [OTHER_WS_PATH, SOURCE_WS_PATH] },
+        ],
+        autoNavigate: 'ws-path',
+      });
+      const metadataMigration = createDeferred<'succeeded'>();
+      vi.spyOn(
+        services.userActivityService,
+        'relocateStarredItem',
+      ).mockReturnValueOnce(metadataMigration.promise);
+
+      dispatch('command::ws:rename-ws-path', {
+        wsPath: SOURCE_WS_PATH,
+        newWsPath: DESTINATION_WS_PATH,
+      });
+
+      await vi.waitFor(() => {
+        expect(
+          services.navigation.resolveAtoms().activeWsFilePath?.wsPath,
+        ).toBe(DESTINATION_WS_PATH);
+      });
+      services.navigation.goWsPath(OTHER_WS_PATH);
+      metadataMigration.resolve('succeeded');
+
+      await vi.waitFor(() => {
+        expect(
+          getCommandResults().filter((result) => result.type === 'success'),
+        ).toHaveLength(1);
+      });
+      expect(services.navigation.resolveAtoms().activeWsFilePath?.wsPath).toBe(
+        OTHER_WS_PATH,
+      );
+    });
+
     test('reports the storage-authoritative destination conflict', async () => {
       const SOURCE_WS_PATH = 'test-ws:source.md';
       const DESTINATION_WS_PATH = 'test-ws:destination.md';
@@ -527,6 +578,111 @@ describe('WS command handlers', () => {
       expect(services.navigation.resolveAtoms().wsPath?.wsPath).not.toBe(
         DESTINATION_WS_PATH,
       );
+    });
+  });
+
+  describe('command::ws:rename-directory', () => {
+    test('blocks the batch while any descendant save cannot drain', async () => {
+      const FIRST_WS_PATH = 'test-ws:folder/first.md';
+      const SECOND_WS_PATH = 'test-ws:folder/second.md';
+      const { dispatch, services, getCommandResults } = await setupTest({
+        targetId: 'command::ws:rename-directory',
+        workspaces: [
+          { name: 'test-ws', notes: [FIRST_WS_PATH, SECOND_WS_PATH] },
+        ],
+        autoNavigate: 'ws-path',
+      });
+      const checkedPaths: Array<string | undefined> = [];
+      vi.spyOn(
+        services.editorEngine,
+        'hasPendingOrFailedSave',
+      ).mockImplementation((wsPath) => {
+        checkedPaths.push(wsPath);
+        return wsPath === SECOND_WS_PATH;
+      });
+      vi.spyOn(services.editorEngine, 'subscribeToSaveStatus').mockReturnValue(
+        vi.fn(),
+      );
+      const renameSpy = vi.spyOn(services.fileSystem, 'renameFiles');
+
+      vi.useFakeTimers();
+      try {
+        dispatch('command::ws:rename-directory', {
+          oldDirWsPath: 'test-ws:folder/',
+          newDirWsPath: 'test-ws:vault/',
+        });
+        await vi.advanceTimersByTimeAsync(EDITOR_SAVE_DRAIN_TIMEOUT_MS);
+      } finally {
+        vi.useRealTimers();
+      }
+
+      await vi.waitFor(() => {
+        expect(
+          getCommandResults().filter((result) => result.type === 'failure'),
+        ).toHaveLength(1);
+      });
+      expect(checkedPaths).toEqual(
+        expect.arrayContaining([FIRST_WS_PATH, SECOND_WS_PATH]),
+      );
+      expect(renameSpy).not.toHaveBeenCalled();
+      await expect(
+        services.fileSystem.readFile(SECOND_WS_PATH),
+      ).resolves.toBeDefined();
+    });
+
+    test('relocates descendant stars and follows the active note', async () => {
+      const FIRST_WS_PATH = 'test-ws:folder/first.md';
+      const SECOND_WS_PATH = 'test-ws:folder/nested/second.md';
+      const FIRST_DESTINATION = 'test-ws:vault/first.md';
+      const SECOND_DESTINATION = 'test-ws:vault/nested/second.md';
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ws:rename-directory',
+        workspaces: [
+          { name: 'test-ws', notes: [FIRST_WS_PATH, SECOND_WS_PATH] },
+        ],
+        autoNavigate: 'ws-path',
+      });
+      await services.userActivityService.toggleStarItem(
+        WsPath.fromString(FIRST_WS_PATH),
+      );
+      await services.userActivityService.toggleStarItem(
+        WsPath.fromString(SECOND_WS_PATH),
+      );
+      const relocateStarsSpy = vi.spyOn(
+        services.userActivityService,
+        'relocateStarredItems',
+      );
+
+      dispatch('command::ws:rename-directory', {
+        oldDirWsPath: 'test-ws:folder/',
+        newDirWsPath: 'test-ws:vault/',
+      });
+
+      await vi.waitFor(async () => {
+        await expect(
+          services.fileSystem.readFile(FIRST_DESTINATION),
+        ).resolves.toBeDefined();
+        await expect(
+          services.fileSystem.readFile(SECOND_DESTINATION),
+        ).resolves.toBeDefined();
+        expect(
+          services.userActivityService.resolveAtoms().starredWsPaths,
+        ).toEqual([FIRST_DESTINATION, SECOND_DESTINATION]);
+        expect(
+          services.navigation.resolveAtoms().activeWsFilePath?.wsPath,
+        ).toBe(SECOND_DESTINATION);
+      });
+      expect(relocateStarsSpy).toHaveBeenCalledOnce();
+      expect(relocateStarsSpy).toHaveBeenCalledWith([
+        {
+          oldItem: expect.objectContaining({ wsPath: FIRST_WS_PATH }),
+          newItem: expect.objectContaining({ wsPath: FIRST_DESTINATION }),
+        },
+        {
+          oldItem: expect.objectContaining({ wsPath: SECOND_WS_PATH }),
+          newItem: expect.objectContaining({ wsPath: SECOND_DESTINATION }),
+        },
+      ]);
     });
   });
 
