@@ -102,6 +102,78 @@ describe('WorkspaceStateService $workspaces list', () => {
       expect(names).not.toContain('delete-ws');
     });
   });
+
+  it('preserves the last successful workspace list when a refresh fails', async () => {
+    const testEnv = createTestEnvironment({ controller });
+    const services = testEnv.instantiateAll();
+    await testEnv.mountAll();
+    const store = testEnv.store;
+
+    await services.workspaceOps.createWorkspaceInfo({
+      name: 'keep-ws',
+      type: WORKSPACE_STORAGE_TYPE.Memory,
+      metadata: {},
+    });
+    services.navigation.goWorkspace('keep-ws');
+
+    await vi.waitFor(() => {
+      expect(
+        store.get(services.workspaceState.$workspaceListState),
+      ).toMatchObject({
+        status: 'ready',
+        data: [expect.objectContaining({ name: 'keep-ws' })],
+      });
+      expect(services.workspaceState.resolveAtoms().currentWsName).toBe(
+        'keep-ws',
+      );
+    });
+
+    const lastSuccessfulList = store.get(services.workspaceState.$workspaces);
+    const databaseFailure = new Error('forced workspace refresh failure');
+    const getAllEntriesSpy = vi
+      .spyOn(services.database, 'getAllEntries')
+      .mockImplementation(async () => {
+        throwAppError(
+          'error::database:unknown-error',
+          'Failed to refresh workspace metadata',
+          {
+            error: databaseFailure,
+            databaseName: services.database.name,
+          },
+        );
+      });
+
+    store.set(services.workspaceOps.$workspaceInfoChange, (count) => count + 1);
+
+    await vi.waitFor(() => {
+      expect(store.get(services.workspaceState.$workspaceListState)).toEqual({
+        status: 'error',
+        data: lastSuccessfulList,
+        error: expect.any(Error),
+      });
+    });
+    expect(store.get(services.workspaceState.$workspaces)).toBe(
+      lastSuccessfulList,
+    );
+    expect(services.workspaceState.resolveAtoms().currentWsName).toBe(
+      'keep-ws',
+    );
+    expect(testEnv.commonOpts.emitAppError).toHaveBeenCalledWith(
+      store.get(services.workspaceState.$workspaceListState).error,
+    );
+
+    getAllEntriesSpy.mockRestore();
+    store.set(services.workspaceOps.$workspaceInfoChange, (count) => count + 1);
+
+    await vi.waitFor(() => {
+      expect(
+        store.get(services.workspaceState.$workspaceListState),
+      ).toMatchObject({
+        status: 'ready',
+        data: [expect.objectContaining({ name: 'keep-ws' })],
+      });
+    });
+  });
 });
 
 describe('WorkspaceStateService backlink index', () => {
