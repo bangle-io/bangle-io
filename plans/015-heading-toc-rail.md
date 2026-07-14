@@ -17,7 +17,7 @@ related_issues: []
 
 Add a Notion-style table-of-contents rail to the note editor page. Collapsed,
 it is a quiet vertical stack of small horizontal dashes anchored at the
-left-center of the content area — one dash per heading, indented by heading
+right-center of the content area — one dash per heading, indented by heading
 level, with the dash for the currently visible section highlighted. Hovering
 (or keyboard-focusing) the rail expands it into a panel listing the heading
 texts; clicking an entry smooth-scrolls the document to that heading. The rail
@@ -35,7 +35,8 @@ seam that wordgard can adopt later.
 ## UX behavior
 
 - **Collapsed rail**: fixed at the vertical center of the editor viewport,
-  hugging the left edge of the page content region. Each heading renders as a
+  hugging the right edge of the page content region (matching Notion's
+  placement). Each heading renders as a
   short rounded bar; bar width/indent encodes heading level (h1 widest, h2/h3
   progressively shorter and inset). Muted color; the bar for the heading
   section currently at the top of the viewport uses the foreground/accent
@@ -43,7 +44,8 @@ seam that wordgard can adopt later.
 - **Expanded panel**: on `pointerenter` (with a small open delay, ~150ms) or
   keyboard focus, the dashes cross-fade into a popover panel listing heading
   texts, indented by level, active entry highlighted, long titles truncated
-  with a title attribute. Panel is scrollable (`max-h` + `overflow-y-auto`)
+  with a title attribute. The panel opens leftward (into the content area)
+  from the rail. Panel is scrollable (`max-h` + `overflow-y-auto`)
   for long documents. Closes on `pointerleave` (small close delay so the
   cursor can travel from rail to panel) and on `Escape`.
 - **Click**: smooth-scrolls the heading to the top of the viewport. It does
@@ -91,15 +93,17 @@ React reads it with `useAtomValue`):
   `null` under the visibility rules above.
 - Positioning: `position: fixed` is wrong here (sidebar width varies);
   instead absolutely position within the editor's `relative` wrapper —
-  `left` pinned near the container edge, `top: 50%` with
+  `right` pinned near the container edge, `top: 50%` with
   `translateY(-50%)`, `sticky`-like behavior achieved by using `position:
   fixed` **derived from the wrapper's client rect** is unnecessary: the
   simplest correct approach is a `position: sticky; top: 50%` child inside a
-  full-height, zero-width absolutely-positioned column at the wrapper's left
-  edge. Verify against the real scroll container (the `SidebarInset` main
-  region) during M2 and fall back to `useFloatingPosition` +
-  `@floating-ui/dom` `autoUpdate` if sticky proves fragile.
-- Expanded panel renders adjacent to the rail (opens rightward). Reuse
+  full-height, zero-width absolutely-positioned column at the wrapper's
+  right edge, with a small inset so it does not sit under the scroll
+  container's scrollbar. Verify against the real scroll container (the
+  `SidebarInset` main region) during M2 and fall back to
+  `useFloatingPosition` + `@floating-ui/dom` `autoUpdate` if sticky proves
+  fragile.
+- Expanded panel renders adjacent to the rail (opens leftward). Reuse
   `FLOATING_INITIAL_STYLE` z-index conventions and `bg-popover
   text-popover-foreground ring-foreground/10` styling to match existing
   editor popovers. `B-editor-toc-rail` class prefix for the container.
@@ -130,13 +134,13 @@ React reads it with `useAtomValue`):
 
 ## Design considerations / known risks
 
-- **Block-handle collision**: the left gutter (`pl-10 md:pl-14`) hosts the
-  drag/block handle from plan 014. In wide-editor mode the rail and a
-  hovered block handle near vertical center can overlap. Mitigation: keep
-  the collapsed rail ≤ 12px wide and flush to the container edge (left of
-  the gutter's handle slot); if visual collision remains, suppress the rail
-  while a block handle is being dragged. Validate visually in M2 in both
-  wide and centered modes.
+- **Right-edge overlaps**: the rail must not sit under the scroll
+  container's scrollbar, and in wide-editor mode text runs close to the
+  right edge, so the collapsed rail must stay slim (≤ 12px of dashes plus a
+  wider invisible hover hit-area) with a small inset. The left-gutter
+  block/drag handle from plan 014 is a non-issue on this side. Validate
+  visually in M2 in both wide and centered modes and with the sidebar open
+  and closed.
 - **Collapsed heading sections** (existing collapsible-headings feature): a
   TOC target inside a collapsed region has no visible DOM to scroll to.
   M3 must handle this: either expand ancestor collapsed sections before
