@@ -14,10 +14,7 @@ describe('command::ui:reconnect-native-fs-workspace', () => {
       autoNavigate: false,
     });
     const originalHandle = { name: 'test-ws' };
-    const replacementHandle = {
-      name: 'test-ws',
-      requestPermission: vi.fn().mockResolvedValue('granted'),
-    };
+    const replacementHandle = { name: 'test-ws' };
     await services.workspaceOps.createWorkspaceInfo({
       name: 'test-ws',
       type: WORKSPACE_STORAGE_TYPE.NativeFS,
@@ -55,10 +52,7 @@ describe('command::ui:reconnect-native-fs-workspace', () => {
     });
     vi.stubGlobal(
       'showDirectoryPicker',
-      vi.fn().mockResolvedValue({
-        name: 'different-folder',
-        requestPermission: vi.fn().mockResolvedValue('granted'),
-      }),
+      vi.fn().mockResolvedValue({ name: 'different-folder' }),
     );
     const reloadSpy = vi.spyOn(services.workbenchState, 'reloadUi');
 

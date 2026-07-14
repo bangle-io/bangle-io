@@ -1,13 +1,5 @@
 import { Logger } from '@bangle.io/logger';
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  type Mock,
-  vi,
-} from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   type BroadcastMessage,
   MemoryBroadcastChannel,
@@ -24,14 +16,14 @@ function makeTestLogger() {
     error: vi.fn(),
   };
 
-  return { logger: new Logger('', 'debug', mockLog as any), mockLog: mockLog };
+  return { logger: new Logger('', 'debug', mockLog), mockLog };
 }
 
 describe('TypedBroadcastBus', () => {
   let busA: TypedBroadcastBus<string>;
   let busB: TypedBroadcastBus<string>;
-  let loggerA: { debug: Mock<any>; error: Mock<any> };
-  let loggerB: { debug: Mock<any>; error: Mock<any> };
+  let loggerA: ReturnType<typeof makeTestLogger>['mockLog'];
+  let loggerB: ReturnType<typeof makeTestLogger>['mockLog'];
   let controllerA: AbortController;
   let controllerB: AbortController;
 
@@ -148,6 +140,104 @@ describe('TypedBroadcastBus', () => {
     controllerB.abort(); // abort the bus B
     busA.send('Hello after abort');
     expect(handlerB).toHaveBeenCalledTimes(0);
+  });
+
+  it('should stay closed when constructed with an aborted lifetime', () => {
+    const controller = new AbortController();
+    controller.abort();
+    const bus = new TypedBroadcastBus({
+      name: 'test-channel',
+      senderId: 'closed-sender',
+      signal: controller.signal,
+    });
+    const observer = vi.fn();
+    const closedHandler = vi.fn();
+    busB.subscribe(observer, new AbortController().signal);
+    bus.subscribe(closedHandler, new AbortController().signal);
+
+    bus.send('should not be delivered');
+    expect(observer).not.toHaveBeenCalled();
+
+    busB.send('should not reach the closed bus');
+    expect(closedHandler).not.toHaveBeenCalled();
+  });
+
+  it('should ignore subscriptions whose lifetime is already aborted', () => {
+    const controller = new AbortController();
+    controller.abort();
+    const handler = vi.fn();
+
+    busA.subscribe(handler, controller.signal);
+    busA.send('Hello');
+
+    expect(handler).not.toHaveBeenCalled();
+  });
+
+  it('should isolate mutable payloads between memory-channel recipients', () => {
+    type Payload = { nested: { value: string } };
+    const controllerA = new AbortController();
+    const controllerB = new AbortController();
+    const controllerC = new AbortController();
+    const payloadBusA = new TypedBroadcastBus<Payload>({
+      name: 'payload-channel',
+      senderId: 'payload-senderA',
+      useMemoryChannel: true,
+      signal: controllerA.signal,
+    });
+    const payloadBusB = new TypedBroadcastBus<Payload>({
+      name: 'payload-channel',
+      senderId: 'payload-senderB',
+      useMemoryChannel: true,
+      signal: controllerB.signal,
+    });
+    const busC = new TypedBroadcastBus<Payload>({
+      name: 'payload-channel',
+      senderId: 'payload-senderC',
+      useMemoryChannel: true,
+      signal: controllerC.signal,
+    });
+    const receivedByB: Payload[] = [];
+    const receivedByC: Payload[] = [];
+    payloadBusB.subscribe(
+      (message) => receivedByB.push(message.data),
+      new AbortController().signal,
+    );
+    busC.subscribe(
+      (message) => receivedByC.push(message.data),
+      new AbortController().signal,
+    );
+
+    const payload: Payload = { nested: { value: 'original' } };
+    payloadBusA.send(payload);
+    const firstB = receivedByB[0];
+    const firstC = receivedByC[0];
+
+    expect(firstB).toEqual(payload);
+    expect(firstC).toEqual(payload);
+    expect(firstB).not.toBe(firstC);
+    if (!firstB || !firstC) {
+      throw new Error('Expected both memory-channel recipients to run');
+    }
+    firstB.nested.value = 'mutated';
+    expect(firstC.nested.value).toBe('original');
+    controllerA.abort();
+    controllerB.abort();
+    controllerC.abort();
+  });
+
+  it('should reject non-cloneable memory-channel payloads', () => {
+    const controller = new AbortController();
+    const bus = new TypedBroadcastBus<() => void>({
+      name: 'non-cloneable-payload-channel',
+      senderId: 'sender',
+      useMemoryChannel: true,
+      signal: controller.signal,
+    });
+
+    expect(() => bus.send(() => undefined)).toThrowError(
+      expect.objectContaining({ name: 'DataCloneError' }),
+    );
+    controller.abort();
   });
 
   it('should receive messages from self with native BroadcastChannel', () => {
