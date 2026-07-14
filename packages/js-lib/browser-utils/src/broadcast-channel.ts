@@ -33,11 +33,19 @@ export interface TypedBroadcastBusOptions {
   signal: AbortSignal;
 }
 
+interface BroadcastChannelLike {
+  readonly name: string;
+  onmessage: ((event: MessageEvent) => void) | null;
+  postMessage(message: unknown): void;
+  close(): void;
+}
+
 export class TypedBroadcastBus<T> {
-  _channel: BroadcastChannel;
+  _channel: BroadcastChannelLike;
   private handlers = new Set<MessageHandler<T>>();
   private readonly senderId: string;
   private readonly logger?: Logger;
+  private closed = false;
 
   constructor(options: TypedBroadcastBusOptions) {
     this.senderId = options.senderId;
@@ -60,16 +68,23 @@ export class TypedBroadcastBus<T> {
 
     this._channel.onmessage = this.handleMessage;
 
-    options.signal.addEventListener(
-      'abort',
-      () => {
-        this.handlers.clear();
-        this._channel.onmessage = null;
-        this._channel.close();
-      },
-      { once: true },
-    );
+    if (options.signal.aborted) {
+      this.close();
+    } else {
+      options.signal.addEventListener('abort', this.close, { once: true });
+    }
   }
+
+  private close = () => {
+    if (this.closed) {
+      return;
+    }
+
+    this.closed = true;
+    this.handlers.clear();
+    this._channel.onmessage = null;
+    this._channel.close();
+  };
 
   private handleMessage = (event: MessageEvent) => {
     const rawMessage = event.data as RawBroadcastMessage<T>;
@@ -104,6 +119,10 @@ export class TypedBroadcastBus<T> {
    * Send a message to all listeners on this channel including self.
    */
   send(data: T): void {
+    if (this.closed) {
+      return;
+    }
+
     const rawMessage: RawBroadcastMessage<T> = {
       senderId: this.senderId,
       data,
@@ -122,6 +141,10 @@ export class TypedBroadcastBus<T> {
   }
 
   subscribe(handler: MessageHandler<T>, signal: AbortSignal) {
+    if (this.closed || signal.aborted) {
+      return;
+    }
+
     this.handlers.add(handler);
 
     signal.addEventListener(
@@ -134,7 +157,7 @@ export class TypedBroadcastBus<T> {
   }
 }
 
-export class MemoryBroadcastChannel implements BroadcastChannel {
+export class MemoryBroadcastChannel {
   onmessage: ((event: MessageEvent) => void) | null = null;
   private static channels: Map<string, Set<MemoryBroadcastChannel>> = new Map();
   private closed = false;
@@ -151,13 +174,14 @@ export class MemoryBroadcastChannel implements BroadcastChannel {
   postMessage(data: unknown) {
     if (this.closed) return;
 
-    const event = new MessageEvent('message', { data });
     const channels = MemoryBroadcastChannel.channels.get(this.channelName);
 
     if (channels) {
       for (const channel of channels) {
         if (!channel.closed && channel.onmessage) {
-          channel.onmessage(event);
+          channel.onmessage(
+            new MessageEvent('message', { data: structuredClone(data) }),
+          );
         }
       }
     }
@@ -175,17 +199,4 @@ export class MemoryBroadcastChannel implements BroadcastChannel {
     }
     this.onmessage = null;
   }
-  onmessageerror: ((event: MessageEvent) => void) | null = null;
-
-  addEventListener() {
-    throw new Error('Method not implemented.');
-  }
-
-  removeEventListener() {
-    throw new Error('Method not implemented.');
-  }
-
-  dispatchEvent = () => {
-    throw new Error('Method not implemented.');
-  };
 }

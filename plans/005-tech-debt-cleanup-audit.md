@@ -14,6 +14,8 @@ related_prs:
   - https://github.com/bangle-io/bangle-io/pull/636
   - https://github.com/bangle-io/bangle-io/pull/638
   - https://github.com/bangle-io/bangle-io/pull/639
+  - https://github.com/bangle-io/bangle-io/pull/641
+  - https://github.com/bangle-io/bangle-io/pull/645
 related_issues: []
 ---
 
@@ -138,6 +140,18 @@ cleanup.
   - Focused real-service coverage forces a database failure after a successful
     load, verifies the prior array and current workspace remain available, and
     proves a later refresh returns the resource to `ready`.
+- 2026-07-13 cross-context lifecycle and type-hygiene cleanup:
+  - P5.4 done: `TypedBroadcastBus` now closes immediately for an already-aborted
+    owner, ignores already-aborted subscriptions, and makes sends after disposal
+    a consistent no-op across native and memory channels.
+  - The in-memory channel now structured-clones a payload independently for
+    each recipient, matching the isolation of the browser channel instead of
+    sharing mutable references between services and tests. Its public type now
+    describes the small channel contract it actually implements rather than
+    carrying throwing `BroadcastChannel` stubs.
+  - P5.1 improved: `Logger` now accepts the four-method console surface it uses,
+    and its message boundary uses `unknown[]` instead of five `any[]`
+    signatures. Browser-bus tests no longer need an unsafe logger cast.
 - Findings are grouped by priority and theme below.
 
 ## Scope
@@ -787,6 +801,8 @@ Plan:
 - Add typed wrappers around native browser APIs that currently require casts.
 - [x] Remove avoidable `any` and obsolete prototype fallback logic from the
   foundational `BaseError` and IndexedDB adapter slice.
+- [x] Narrow the logger console adapter and replace its avoidable `any[]`
+  message boundary with `unknown[]`.
 - Keep intentional negative type tests using `@ts-expect-error`.
 
 Verification:
@@ -845,6 +861,46 @@ Plan:
 Verification:
 
 - [x] Unit tests assert error code and cause shape.
+
+### P5.4 Align Cross-Context Messaging Lifetimes And Payload Isolation
+
+Problem:
+
+- A bus created with an already-aborted owner remained connected because an
+  abort listener added after abort never runs.
+- An already-aborted subscription was still registered and could continue
+  receiving messages indefinitely.
+- Sending after disposal was a silent no-op for the memory channel but could
+  throw through a closed native channel.
+- The memory fallback shared the same mutable payload object with every
+  recipient, unlike native `BroadcastChannel` structured-clone isolation.
+- `MemoryBroadcastChannel` claimed the full browser interface while three
+  inherited event methods only threw `Method not implemented`.
+
+Evidence:
+
+- `packages/js-lib/browser-utils/src/broadcast-channel.ts`
+- `packages/js-lib/browser-utils/__tests__/broadcast-channel.spec.ts`
+
+Plan:
+
+- [x] Close immediately when the owner signal is already aborted.
+- [x] Ignore subscriptions whose signal is already aborted.
+- [x] Make post-disposal sends consistently inert.
+- [x] Structured-clone payloads independently for memory-channel recipients.
+- [x] Type the fallback against the minimal channel contract it supports.
+
+Verification:
+
+- [x] Focused tests cover already-aborted owners and subscriptions.
+- [x] Focused tests prove independent mutable payloads for memory recipients.
+- [x] Browser-utils and logger unit suites pass.
+- [x] Repository project-reference typecheck passes.
+- [x] `pnpm lint:ci`, `pnpm test:ci`, `pnpm build`, and `pnpm e2e:ci`
+  pass. The E2E run had one unrelated cursor-restoration retry.
+- [x] `pnpm local-ci-check` passes every root CI script, including E2E,
+  component tests, desktop builds/tests, and the Electron persistence smoke.
+  Its E2E run had one unrelated file-explorer retry.
 
 ## 2026-07-12 Core/App Containment Re-audit
 
