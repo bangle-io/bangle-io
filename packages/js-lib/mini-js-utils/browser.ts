@@ -5,11 +5,11 @@ const getBrowserInfo = () => {
 
   const nAgt = navigator.userAgent;
 
-  let browserName: any;
-  let browserVersion: any;
-  let nameOffset: any;
-  let verOffset: any;
-  let index: any;
+  let browserName = navigator.appName;
+  let browserVersion = navigator.appVersion;
+  let nameOffset = 0;
+  let verOffset = 0;
+  let index = 0;
 
   // In Opera 15+, version is after "OPR/"
   verOffset = nAgt.indexOf('OPR/');
@@ -97,19 +97,13 @@ export const isSafari = browserInfo.includes('safari');
 export const isChrome = browserInfo.includes('chrome');
 
 function testPlatform(re: RegExp) {
-  const target: any =
-    typeof globalThis !== 'undefined'
-      ? globalThis
-      : typeof window !== 'undefined'
-        ? window
-        : typeof global !== 'undefined'
-          ? // eslint-disable-next-line no-undef
-            global
-          : {};
-
-  if (target.navigator != null) {
+  if (typeof navigator !== 'undefined') {
+    const navigatorWithUserAgentData = navigator as Navigator & {
+      userAgentData?: { platform?: string };
+    };
     const platform =
-      target.navigator.userAgentData?.platform || target.navigator.platform;
+      navigatorWithUserAgentData.userAgentData?.platform ||
+      navigatorWithUserAgentData.platform;
 
     return re.test(platform);
   }

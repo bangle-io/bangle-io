@@ -16,6 +16,7 @@ related_prs:
   - https://github.com/bangle-io/bangle-io/pull/639
   - https://github.com/bangle-io/bangle-io/pull/641
   - https://github.com/bangle-io/bangle-io/pull/645
+  - https://github.com/bangle-io/bangle-io/pull/646
 related_issues: []
 ---
 
@@ -152,6 +153,20 @@ cleanup.
   - P5.1 improved: `Logger` now accepts the four-method console surface it uses,
     and its message boundary uses `unknown[]` instead of five `any[]`
     signatures. Browser-bus tests no longer need an unsafe logger cast.
+- 2026-07-13 foundational utility type and lifecycle cleanup (PR #646):
+  - P5.1 improved: mini validators now accept `unknown` at their public
+    boundary, weak caches require object keys, and command validator inspection
+    uses `Validator<unknown>`.
+  - P5.4 improved: generic emitter subscriptions now ignore already-aborted
+    signals, detach their abort listeners during cleanup, and make destruction
+    idempotent. The two-key weak cache now retains cached `undefined` results
+    instead of recomputing them.
+  - P4.5 re-audit: a package-wide `noExplicitAny` ratchet was trialled but not
+    kept because removing type-level wildcards from the generic emitter
+    required conditional types and a double assertion without rejecting more
+    invalid caller behavior. The stale browser-entry `eslint` script and the
+    original command-dialog/radio-control accessibility findings were verified
+    already resolved on `main` and are reconciled below.
 - Findings are grouped by priority and theme below.
 
 ## Scope
@@ -564,16 +579,15 @@ Problem:
 
 Evidence:
 
-- `packages/core/app/src/layout/app-sidebar.tsx`
 - `packages/core/omni-search/src/index.tsx`
-- `packages/core/editor/src/components/slash-command.tsx`
-- `packages/core/editor/src/components/link-menu.tsx`
-- `packages/ui/ui-components/src/star-button.tsx`
 
 Plan:
 
 - Add missing keys to `packages/shared/translations/src/languages/en.ts`.
-- Replace literals with global `t` references.
+- Replace the remaining Omni Search group headings, empty state, accessible
+  dialog name, and input placeholder with global `t` references.
+- [x] Verify the audited app-sidebar, slash-command, link-menu, and star-button
+  strings use the global `t` object.
 - [x] Remove direct `t` imports from the audited production UI components.
 - Extend translation tests to catch imported `t` or common literal patterns.
 
@@ -586,10 +600,8 @@ Verification:
 
 Problem:
 
-- `CommandDialog` title/description wiring can trigger Radix accessibility
-  warnings.
-- Sidebar command search uses `div role="button"` around a read-only input.
-- Workspace dialog custom radio controls need stronger labeling semantics.
+- The original command-dialog, sidebar search, and workspace-storage selector
+  accessibility findings have been resolved on `main`.
 
 Evidence:
 
@@ -599,17 +611,20 @@ Evidence:
 
 Plan:
 
-- Move dialog title/description into `DialogContent` where Radix expects them.
-- Add optional `DialogDescription` support to command dialogs.
+- [x] Keep command-dialog title and description elements inside
+  `DialogContent` where the dialog primitive expects them.
+- [x] Give every command dialog an accessible description.
 - [x] Replace the sidebar pseudo-button with a real button or fully implement
   Space, Enter, focus, and label semantics.
-- Consider Radix RadioGroup for workspace type selection, or add stable
-  `aria-labelledby` and `aria-describedby` wiring.
+- [x] Use native radio inputs in a labeled radiogroup for workspace type
+  selection.
 
 Verification:
 
-- Component tests for keyboard interaction.
-- Playwright accessibility smoke for dialogs.
+- [x] Component tests select workspace storage choices by radio role and
+  accessible name.
+- [x] App E2E opens the workspace dialog by its accessible name and completes
+  the Browser workspace flow.
 
 ### P3.5 Split Overloaded Sidebar Composition
 
@@ -752,11 +767,10 @@ Verification:
 
 Problem:
 
-- `noExplicitAny`, `noFloatingPromises`, and `noUnusedVariables` are warnings.
+- `noExplicitAny` and `noUnusedVariables` remain warnings globally.
 - Tooling disables `noExplicitAny`.
 - CSS and HTML are excluded from Biome file includes, while Tailwind/CSS are
   part of the shipped app.
-- `packages/tooling/browser-entry` has a stale package-local `eslint .` script.
 
 Evidence:
 
@@ -767,7 +781,7 @@ Plan:
 
 - Ratchet lint warnings to errors package by package, starting outside tooling.
 - Add a cleanup budget for real `any` and floating promise violations.
-- Remove or replace stale package-local ESLint scripts.
+- [x] Remove the stale browser-entry package-local ESLint script.
 - Decide whether CSS/HTML formatting is handled by Biome, another formatter, or
   an explicit documented exclusion.
 
@@ -803,6 +817,8 @@ Plan:
   foundational `BaseError` and IndexedDB adapter slice.
 - [x] Narrow the logger console adapter and replace its avoidable `any[]`
   message boundary with `unknown[]`.
+- [x] Move mini validators, weak caches, and command validator inspection to
+  `unknown`/object-constrained boundaries.
 - Keep intentional negative type tests using `@ts-expect-error`.
 
 Verification:
@@ -889,11 +905,15 @@ Plan:
 - [x] Make post-disposal sends consistently inert.
 - [x] Structured-clone payloads independently for memory-channel recipients.
 - [x] Type the fallback against the minimal channel contract it supports.
+- [x] Apply the same already-aborted subscription and idempotent-disposal
+  semantics to the generic emitter used by root events.
 
 Verification:
 
 - [x] Focused tests cover already-aborted owners and subscriptions.
 - [x] Focused tests prove independent mutable payloads for memory recipients.
+- [x] Focused emitter tests cover already-aborted subscriptions and repeated
+  destruction.
 - [x] Browser-utils and logger unit suites pass.
 - [x] Repository project-reference typecheck passes.
 - [x] `pnpm lint:ci`, `pnpm test:ci`, `pnpm build`, and `pnpm e2e:ci`
@@ -1016,8 +1036,6 @@ For data-safety changes, add manual smoke testing:
 - Decide how Bangle.io should treat unsupported Markdown constructs:
   preserve raw regions, warn before edit, or normalize intentionally.
 - Decide whether underline should remain available for Markdown-backed notes.
-- Decide the public API shape for platform test/memory services so package
-  consumers stop importing private `src` paths.
 - Decide whether CSS/HTML linting belongs in Biome or a separate formatter.
 
 ## Audit Notes

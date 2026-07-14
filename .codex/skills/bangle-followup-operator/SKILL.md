@@ -32,6 +32,13 @@ Use this skill to convert short Bangle follow-ups into the next concrete action.
 
 - Re-read the cited code and tests before editing.
 - Implement only fixes that match the user's scope and improve the branch.
+- Prefer changes that reduce total uncertainty and complexity. Type and lint
+  cleanup has strong ROI when it clarifies a real boundary, improves useful
+  caller inference, or makes an invalid state unrepresentable. Reconsider it
+  when satisfying the rule adds conditional type machinery, assertions, or
+  downstream churn without a concrete new guarantee. Type-level wildcards and
+  runtime boundary leaks can look similar in a scan but have different risk;
+  judge the resulting API and implementation, not the warning count alone.
 - After edits, run focused checks first, then the required `AGENTS.md` gates for the changed surface.
 
 ### UI, UX, or Playwright follow-up

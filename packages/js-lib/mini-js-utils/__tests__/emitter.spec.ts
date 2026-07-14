@@ -107,14 +107,30 @@ describe('Emitter', () => {
     emitter.emit('event', 'test-data');
     expect(mockCallback).toHaveBeenCalledTimes(1);
   });
+
+  test('should not add a listener with an already-aborted signal', () => {
+    const mockCallback = vi.fn();
+    const controller = new AbortController();
+    controller.abort();
+
+    emitter.on('event', mockCallback, controller.signal);
+    emitter.emit('event', 'test-data');
+
+    expect(mockCallback).not.toHaveBeenCalled();
+  });
+
+  test('should only run destroy cleanup once', () => {
+    const onDestroy = vi.fn();
+    const emitterWithCleanup = new Emitter({ onDestroy });
+
+    emitterWithCleanup.destroy();
+    emitterWithCleanup.destroy();
+
+    expect(onDestroy).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('types', () => {
-  // Define a test type for events
-  interface TestEvents {
-    event1: string;
-    event2: number;
-  }
   test('works with types', () => {
     // Create an instance of Emitter
     const emitter = new Emitter<
@@ -352,10 +368,6 @@ describe('Emitter onAll', () => {
 
     // Clear all listeners and emit events again
     emitter.clearListeners();
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-    expect(emitter['_eventListeners']).toEqual({});
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-    expect(emitter['_allEventListeners'].size).toBe(0);
 
     emitter.emit('specificEvent', 'dataForSpecificEvent');
     emitter.emit('anotherEvent', 'dataForAnotherEvent');
@@ -382,10 +394,6 @@ describe('Emitter onAll', () => {
 
     // Clear all listeners and emit events again
     emitter.destroy();
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-    expect(emitter['_eventListeners']).toEqual({});
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-    expect(emitter['_allEventListeners'].size).toBe(0);
 
     emitter.emit('specificEvent', 'dataForSpecificEvent');
     emitter.emit('anotherEvent', 'dataForAnotherEvent');

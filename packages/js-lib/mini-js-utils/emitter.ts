@@ -41,6 +41,9 @@ export class Emitter<
   }
 
   destroy(): void {
+    if (this.destroyed) {
+      return;
+    }
     this.clearListeners();
     this.destroyed = true;
     this.options?.onDestroy?.();
@@ -110,7 +113,7 @@ export class Emitter<
     fn: EventListener<Extract<U, { event: E }>['payload']>,
     signal?: AbortSignal,
   ): () => void {
-    if (this.destroyed) {
+    if (this.destroyed || signal?.aborted) {
       return () => undefined;
     }
 
@@ -125,6 +128,7 @@ export class Emitter<
 
     const cleanup = () => {
       existing?.delete(fn);
+      signal?.removeEventListener('abort', cleanup);
     };
 
     signal?.addEventListener('abort', cleanup, { once: true });
