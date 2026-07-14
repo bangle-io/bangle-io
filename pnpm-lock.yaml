@@ -219,6 +219,9 @@ importers:
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
+      jotai:
+        specifier: ^2.20.1
+        version: 2.20.1(@babel/core@7.29.7)(@babel/template@7.29.7)(@types/react@19.2.17)(react@19.2.7)
       react:
         specifier: 19.2.7
         version: 19.2.7
@@ -310,6 +313,9 @@ importers:
       '@types/react':
         specifier: ^19.2.17
         version: 19.2.17
+      jotai:
+        specifier: ^2.20.1
+        version: 2.20.1(@babel/core@7.29.7)(@babel/template@7.29.7)(@types/react@19.2.17)(react@19.2.7)
       react:
         specifier: 19.2.7
         version: 19.2.7

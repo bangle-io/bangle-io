@@ -13,6 +13,7 @@ import { WsPath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue } from 'jotai';
 import { ChevronsRightLeft, Home, MoveHorizontal } from 'lucide-react';
 import React from 'react';
+import { MarkdownFidelityNotice } from '../components/navigation/markdown-fidelity-notice';
 import { NoteBreadcrumb } from '../components/navigation/note-breadcrumb';
 import { WsNameBreadcrumb } from '../components/navigation/ws-name-breadcrumb'; // Import WsNameBreadcrumb
 
@@ -87,22 +88,25 @@ function ToolbarLeftSection({
       <Sidebar.SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="h-4" />
       {showEditorToolbar && currentWsPath ? (
-        <NoteBreadcrumb
-          wsPath={currentWsPath}
-          wsPaths={wsPaths}
-          onNewNote={({ wsPath }) => {
-            const parent = WsPath.fromString(wsPath).getParent();
-            const path = parent?.path;
+        <>
+          <NoteBreadcrumb
+            wsPath={currentWsPath}
+            wsPaths={wsPaths}
+            onNewNote={({ wsPath }) => {
+              const parent = WsPath.fromString(wsPath).getParent();
+              const path = parent?.path;
 
-            coreServices.commandDispatcher.dispatch(
-              'command::ui:create-note-dialog',
-              {
-                prefillName: path || '',
-              },
-              'AppHeader',
-            );
-          }}
-        />
+              coreServices.commandDispatcher.dispatch(
+                'command::ui:create-note-dialog',
+                {
+                  prefillName: path || '',
+                },
+                'AppHeader',
+              );
+            }}
+          />
+          <MarkdownFidelityNotice wsPath={currentWsPath} />
+        </>
       ) : currentWsName ? (
         <WsNameBreadcrumb wsName={currentWsName} />
       ) : (

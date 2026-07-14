@@ -7,6 +7,7 @@ import { type EditorEngineId, SERVICE_NAME } from '@bangle.io/constants';
 import type { EditorEngineContract } from '@bangle.io/context';
 import type { FileSystemService } from '@bangle.io/service-core';
 import { WsPath } from '@bangle.io/ws-path';
+import { atom } from 'jotai';
 
 type EditorEntry = {
   name: string;
@@ -32,6 +33,15 @@ export class EditorWService
   static deps = ['fileSystem'] as const;
 
   public readonly engineId: EditorEngineId = 'wordgard';
+
+  /**
+   * Wordgard renders the note's Markdown source read-only and never rewrites
+   * it, so no note is ever at risk of round-trip reformatting: the fidelity
+   * set is permanently empty.
+   */
+  public readonly $roundTripWarnings = atom<ReadonlySet<string>>(
+    new Set<string>(),
+  );
 
   private editors = new Map<HTMLElement, EditorEntry>();
 

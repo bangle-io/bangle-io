@@ -12,6 +12,7 @@ import type {
   WorkspaceStateService,
 } from '@bangle.io/service-core';
 import type { CommandExcludedServiceSlotId } from '@bangle.io/types';
+import type { Atom } from 'jotai';
 
 /**
  * The engine-agnostic contract of the service powering the note editing
@@ -35,6 +36,13 @@ export type EditorEngineContract = BaseService & {
   /** Stable engine identifier (e.g. 'prosemirror'), exposed on the mounted
    * DOM as `data-editor-engine` for tests and diagnostics. */
   readonly engineId: string;
+  /**
+   * wsPaths whose stored Markdown does not survive this engine's
+   * parse/serialize round trip, so saving an edit reformats content the user
+   * never touched. The title bar surfaces a quiet fidelity notice for the open
+   * note. An engine that always preserves Markdown exposes an always-empty set.
+   */
+  readonly $roundTripWarnings: Atom<ReadonlySet<string>>;
   collapseAllHeadings: (level: number) => boolean;
   focusEditor: () => void;
   getSelectionMarkdown: () => string | null;

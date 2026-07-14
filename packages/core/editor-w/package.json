@@ -35,6 +35,7 @@
     "@bangle.io/service-core": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "@types/react": "^19.2.17",
+    "jotai": "^2.20.1",
     "react": "19.2.7"
   },
   "devDependencies": {
