@@ -5,31 +5,24 @@ export type EventMessage<E extends string, P> = {
   payload: P;
 };
 
-type EventPayload<
-  U extends EventMessage<string, unknown>,
-  E extends U['event'],
-> = string extends U['event']
-  ? U['payload']
-  : Extract<U, { event: E }>['payload'];
-
-export type AllEventListener<U extends EventMessage<string, unknown>> = (
+export type AllEventListener<U extends EventMessage<any, any>> = (
   message: U,
 ) => void;
 
-type EventListeners<U extends EventMessage<string, unknown>> = {
-  [E in U['event']]?: Set<EventListener<EventPayload<U, E>>>;
+type EventListeners<U extends EventMessage<any, any>> = {
+  [E in U['event']]?: Set<EventListener<Extract<U, { event: E }>['payload']>>;
 };
 
-interface EmitterOptions<U extends EventMessage<string, unknown>> {
+interface EmitterOptions<U extends EventMessage<any, any>> {
   paused?: boolean;
   onDestroy?: () => void;
   onEmit?: (message: U) => void;
 }
 
 export class Emitter<
-  U extends EventMessage<string, unknown> = EventMessage<string, unknown>,
+  U extends EventMessage<any, any> = EventMessage<any, unknown>,
 > {
-  static create<U extends EventMessage<string, unknown>>(
+  static create<U extends EventMessage<string, any>>(
     options?: EmitterOptions<U>,
   ) {
     return new Emitter<U>(options);
@@ -56,14 +49,15 @@ export class Emitter<
     this.options?.onDestroy?.();
   }
 
-  emit<E extends U['event']>(event: E, payload: EventPayload<U, E>) {
+  emit<E extends U['event']>(
+    event: E,
+    payload: Extract<U, { event: E }>['payload'],
+  ) {
     if (this.destroyed) {
       return;
     }
 
-    // The event/payload relationship is enforced by EventPayload at the public
-    // boundary; TypeScript cannot reconstruct the generic discriminated union.
-    const message = { event, payload } as unknown as U;
+    const message = { event, payload: payload } as U;
 
     if (this.paused) {
       this.buffer.push(message);
@@ -116,7 +110,7 @@ export class Emitter<
 
   on<E extends U['event']>(
     event: E,
-    fn: EventListener<EventPayload<U, E>>,
+    fn: EventListener<Extract<U, { event: E }>['payload']>,
     signal?: AbortSignal,
   ): () => void {
     if (this.destroyed || signal?.aborted) {

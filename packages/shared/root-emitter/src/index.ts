@@ -171,8 +171,8 @@ export class ScopedEmitter<TScope extends RootEvents['event']> {
   constructor(
     private config: {
       scope: TScope[];
-      publisher: Emitter;
-      subscriber: Emitter;
+      publisher: Emitter<any>;
+      subscriber: Emitter<any>;
       signal: AbortSignal;
     },
   ) {}
@@ -201,7 +201,7 @@ export class ScopedEmitter<TScope extends RootEvents['event']> {
 
     return this.config.subscriber.on(
       event,
-      listener as EventListener<unknown>,
+      listener as EventListener<any>,
       combinedSignal.signal,
     );
   };

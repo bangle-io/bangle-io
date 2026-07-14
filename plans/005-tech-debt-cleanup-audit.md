@@ -155,16 +155,16 @@ cleanup.
     signatures. Browser-bus tests no longer need an unsafe logger cast.
 - 2026-07-13 foundational utility type and lifecycle cleanup (PR #646):
   - P5.1 improved: mini validators now accept `unknown` at their public
-    boundary, weak caches require object keys, generic emitter payloads retain
-    their discriminated event types without `any`, and command validator
-    inspection uses `Validator<unknown>`.
+    boundary, weak caches require object keys, and command validator inspection
+    uses `Validator<unknown>`.
   - P5.4 improved: generic emitter subscriptions now ignore already-aborted
     signals, detach their abort listeners during cleanup, and make destruction
     idempotent. The two-key weak cache now retains cached `undefined` results
     instead of recomputing them.
-  - P4.5 improved: `noExplicitAny` is now an error for
-    `mini-js-utils`, `commands`, and `root-emitter`, preventing regression in
-    the cleaned packages. The stale browser-entry `eslint` script and the
+  - P4.5 re-audit: a package-wide `noExplicitAny` ratchet was trialled but not
+    kept because removing type-level wildcards from the generic emitter
+    required conditional types and a double assertion without rejecting more
+    invalid caller behavior. The stale browser-entry `eslint` script and the
     original command-dialog/radio-control accessibility findings were verified
     already resolved on `main` and are reconciled below.
 - Findings are grouped by priority and theme below.
@@ -780,8 +780,6 @@ Evidence:
 Plan:
 
 - Ratchet lint warnings to errors package by package, starting outside tooling.
-- [x] Make `noExplicitAny` an error in the cleaned `mini-js-utils`, `commands`,
-  and `root-emitter` packages.
 - Add a cleanup budget for real `any` and floating promise violations.
 - [x] Remove the stale browser-entry package-local ESLint script.
 - Decide whether CSS/HTML formatting is handled by Biome, another formatter, or
@@ -819,9 +817,8 @@ Plan:
   foundational `BaseError` and IndexedDB adapter slice.
 - [x] Narrow the logger console adapter and replace its avoidable `any[]`
   message boundary with `unknown[]`.
-- [x] Move mini validators, generic emitters, weak caches, and command validator
-  inspection to `unknown`/object-constrained boundaries and remove avoidable
-  explicit `any` from those packages.
+- [x] Move mini validators, weak caches, and command validator inspection to
+  `unknown`/object-constrained boundaries.
 - Keep intentional negative type tests using `@ts-expect-error`.
 
 Verification:

@@ -3,7 +3,7 @@ import { Emitter } from '../emitter';
 import { expectType } from '../index';
 
 describe('Emitter', () => {
-  let emitter: Emitter;
+  let emitter: Emitter<any>;
 
   beforeEach(() => {
     emitter = new Emitter();
@@ -294,7 +294,7 @@ describe('Emitter with onAll feature', () => {
 });
 
 describe('Emitter onAll', () => {
-  let emitter: Emitter;
+  let emitter: Emitter<any>;
 
   beforeEach(() => {
     emitter = new Emitter();
@@ -405,7 +405,7 @@ describe('Emitter onAll', () => {
 });
 
 describe('Emitter with pause functionality', () => {
-  let emitter: Emitter;
+  let emitter: Emitter<any>;
 
   beforeEach(() => {
     emitter = new Emitter({ paused: true });
