@@ -54,6 +54,16 @@ describe('mathTokenizer inline math', () => {
     expect(token?.content).toBe('$');
     expect(token?.markup).toBe(String.raw`\$`);
   });
+
+  it('parses adjacent expressions while retaining ambiguous-currency guards', () => {
+    expect(
+      collect(parse('$x$+$y$ and $a$foo$b$'), 'math_inline').map(
+        (token) => token.content,
+      ),
+    ).toEqual(['x', 'y', 'a', 'b']);
+    expect(collect(parse('$x$5 and y$'), 'math_inline')).toEqual([]);
+    expect(collect(parse('$a$$b$'), 'math_inline')).toEqual([]);
+  });
 });
 
 describe('mathTokenizer display math', () => {

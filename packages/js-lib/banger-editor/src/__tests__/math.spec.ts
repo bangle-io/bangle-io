@@ -2,25 +2,45 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { setupBase } from '../base';
+import { setupBold } from '../bold';
 import { setupCodeBlock } from '../code-block';
+import { collection } from '../common';
 import { setupHardBreak } from '../hard-break';
 import { setupImage } from '../image';
 import { serializeMathClipboardText, setupMath } from '../math';
 import { setupParagraph } from '../paragraph';
-import { type EditorView, NodeSelection, type PMNode } from '../pm';
+import { type EditorView, NodeSelection, Plugin, type PMNode } from '../pm';
 import { createBangerEditorTestSetup } from '../test-helpers';
 import { setupWikiLink } from '../wiki-link';
 
-const math = setupMath();
+const math = setupMath({ reservedDollarTriggers: ['$date'] });
+const reservedDollarTrigger = collection({
+  id: 'reserved-dollar-trigger-test',
+  plugin: {
+    input: new Plugin({
+      props: {
+        handleTextInput(view, from, to, text) {
+          const $from = view.state.doc.resolve(from);
+          const sourceBefore = $from.parent.textBetween(0, $from.parentOffset);
+          if (text !== 'e' || !sourceBefore.endsWith('$dat')) return false;
+          view.dispatch(view.state.tr.insertText('e!', from, to));
+          return true;
+        },
+      },
+    }),
+  },
+});
 const editorTest = createBangerEditorTestSetup({
   extensions: [
     setupBase(),
     setupParagraph(),
+    setupBold(),
     setupCodeBlock(),
     setupHardBreak(),
     setupImage(),
     setupWikiLink(),
     math,
+    reservedDollarTrigger,
   ],
   builderAliases: {
     codeBlock: { nodeType: 'code_block', language: '' },
@@ -76,11 +96,46 @@ describe('math commands and input rules', () => {
     editor.expectDoc(doc(p('before ', mathInline('x + 1'), ' after')));
   });
 
+  it.each([
+    ['formatting-like TeX', '$a **b**$', 'a **b**'],
+    ['an escaped dollar', String.raw`$x \$ y$`, String.raw`x \$ y`],
+    ['wiki-link-like TeX', '$[[Home]]$', '[[Home]]'],
+  ])('keeps %s raw until the closing delimiter', (_label, source, expected) => {
+    const editor = editorTest.createEditor(doc(p('<cursor>')));
+    typeText(editor.view, source);
+
+    editor.expectDoc(doc(p(mathInline(expected))));
+  });
+
+  it('creates adjacent inline expressions without requiring whitespace', () => {
+    const editor = editorTest.createEditor(doc(p('<cursor>')));
+    typeText(editor.view, '$x$+$y$');
+
+    editor.expectDoc(doc(p(mathInline('x'), '+', mathInline('y'))));
+  });
+
+  it.each([
+    '$x$5',
+    '$x$$y$',
+  ])('restores ambiguous typed delimiters as raw text: %s', (source) => {
+    const editor = editorTest.createEditor(doc(p('<cursor>')));
+    typeText(editor.view, source);
+
+    editor.expectDoc(doc(p(source)));
+  });
+
   it('leaves currency and whitespace-delimited dollars as text', () => {
     const editor = editorTest.createEditor(doc(p('<cursor>')));
     typeText(editor.view, '$5 and $6; $ x $');
 
     editor.expectDoc(doc(p('$5 and $6; $ x $')));
+  });
+
+  it('hands a reserved dollar trigger to the owning editor extension', () => {
+    const editor = editorTest.createEditor(doc(p('<cursor>')));
+    typeText(editor.view, '$date');
+
+    expect(editor.view.state.doc.textContent).toBe('$date!');
   });
 
   it('keeps a typed escaped dollar as ordinary visible text', () => {

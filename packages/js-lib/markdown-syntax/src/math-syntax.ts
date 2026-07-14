@@ -9,25 +9,38 @@ export type InlineMathMatch = {
   start: number;
 };
 
+type InlineMathScan = {
+  match: InlineMathMatch | null;
+  rejectedCloser: number | null;
+};
+
 /** Returns a conservative inline-math match beginning at `start`. */
 export function parseInlineMathAt(
   source: string,
   start: number,
 ): InlineMathMatch | null {
+  const result = scanInlineMathAt(source, start);
+  if (!result.match || isRejectedFormerCloser(source, start)) {
+    return null;
+  }
+  return result.match;
+}
+
+function scanInlineMathAt(source: string, start: number): InlineMathScan {
   if (
     source[start] !== INLINE_DELIMITER ||
     source[start + 1] === INLINE_DELIMITER ||
+    source[start - 1] === INLINE_DELIMITER ||
     isEscaped(source, start) ||
-    isWhitespace(source[start + 1]) ||
-    isAmbiguousFormerCloser(source, start)
+    isWhitespace(source[start + 1])
   ) {
-    return null;
+    return { match: null, rejectedCloser: null };
   }
 
   for (let pos = start + 1; pos < source.length; pos += 1) {
     const char = source[pos];
     if (char === '\n' || char === '\r') {
-      return null;
+      return { match: null, rejectedCloser: null };
     }
     if (char !== INLINE_DELIMITER || isEscaped(source, pos)) {
       continue;
@@ -40,20 +53,28 @@ export function parseInlineMathAt(
       next === INLINE_DELIMITER ||
       (next !== undefined && isAsciiDigit(next))
     ) {
-      return null;
+      return { match: null, rejectedCloser: pos };
     }
 
-    return { content: source.slice(start + 1, pos), end: pos + 1, start };
+    return {
+      match: {
+        content: source.slice(start + 1, pos),
+        end: pos + 1,
+        start,
+      },
+      rejectedCloser: null,
+    };
   }
-  return null;
+  return { match: null, rejectedCloser: null };
 }
 
 /** Finds an inline-math span whose closing delimiter is the end of `source`. */
 export function findInlineMathAtEnd(source: string): InlineMathMatch | null {
-  for (let start = source.length - 2; start >= 0; start -= 1) {
+  for (let start = 0; start < source.length; start += 1) {
     if (source[start] !== INLINE_DELIMITER) continue;
     const match = parseInlineMathAt(source, start);
     if (match?.end === source.length) return match;
+    if (match) start = match.end - 1;
   }
   return null;
 }
@@ -204,20 +225,31 @@ function isAsciiDigit(char: string): boolean {
   return char >= '0' && char <= '9';
 }
 
-function isAmbiguousFormerCloser(source: string, position: number): boolean {
-  if (isWhitespace(source[position - 1])) {
-    return false;
-  }
-  for (let pos = position - 1; pos >= 0; pos -= 1) {
-    const char = source[pos];
-    if (char === '\n' || char === '\r') {
-      return false;
+function isRejectedFormerCloser(source: string, position: number): boolean {
+  const lineStart =
+    Math.max(
+      source.lastIndexOf('\n', position - 1),
+      source.lastIndexOf('\r', position - 1),
+    ) + 1;
+  const rejectedClosers = new Set<number>();
+
+  for (let pos = lineStart; pos < position; pos += 1) {
+    if (
+      source[pos] !== INLINE_DELIMITER ||
+      rejectedClosers.has(pos) ||
+      isEscaped(source, pos)
+    ) {
+      continue;
     }
-    if (char === INLINE_DELIMITER && !isEscaped(source, pos)) {
-      return true;
+    const result = scanInlineMathAt(source, pos);
+    if (result.rejectedCloser !== null) {
+      rejectedClosers.add(result.rejectedCloser);
+    }
+    if (result.match && result.match.end <= position) {
+      pos = result.match.end - 1;
     }
   }
-  return false;
+  return rejectedClosers.has(position);
 }
 
 function isEscaped(source: string, position: number): boolean {

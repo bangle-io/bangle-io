@@ -34,10 +34,11 @@ test('authors, edits, copies, and persists inline and display math', async ({
   await waitForEditorFocus(page, {});
 
   await test.step('type, render, and edit inline math', async () => {
-    await editor.pressSequentially(String.raw`Euler $e^{i\pi} + 1 = 0$`, {
-      delay: 20,
-    });
-    const inlineMath = editor.locator('math-inline');
+    await editor.pressSequentially(
+      String.raw`Euler $e^{i\pi} + 1 = 0$ and $a **b**$`,
+      { delay: 20 },
+    );
+    const inlineMath = editor.locator('math-inline').first();
     await expect(inlineMath.locator('.katex')).toBeVisible();
 
     await inlineMath.locator('.math-render').click();
@@ -47,14 +48,24 @@ test('authors, edits, copies, and persists inline and display math', async ({
     await sourceEditor.fill(String.raw`e^{i\pi} + 1 = 1`);
     await sourceEditor.press('Control+Enter');
 
+    const formattingLikeMath = editor.locator('math-inline').nth(1);
+    await formattingLikeMath.locator('.math-render').click();
+    await expect(
+      formattingLikeMath.locator('.math-src .ProseMirror'),
+    ).toHaveText('a **b**');
+    await formattingLikeMath
+      .locator('.math-src .ProseMirror')
+      .press('Control+Enter');
+
     await expect(inlineMath.locator('.math-render')).toBeVisible();
     await expect
       .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-      .toBe(String.raw`Euler $e^{i\pi} + 1 = 1$`);
+      .toBe(String.raw`Euler $e^{i\pi} + 1 = 1$ and $a **b**$`);
     expect(invalidSelectionWarnings).toEqual([]);
   });
 
   await test.step('insert and edit a display block through the slash menu', async () => {
+    await editor.press('End');
     await page.keyboard.press('Enter');
     await page.keyboard.insertText('/');
     const mathCommand = page.getByText('Math block', { exact: true });
@@ -72,7 +83,7 @@ test('authors, edits, copies, and persists inline and display math', async ({
     await expect
       .poll(() => readStoredMarkdown(page, workspaceName, noteName))
       .toBe(
-        String.raw`Euler $e^{i\pi} + 1 = 1$
+        String.raw`Euler $e^{i\pi} + 1 = 1$ and $a **b**$
 
 $$
 \frac{a}{b} + \sqrt{x}
@@ -109,7 +120,7 @@ $$`,
   });
 
   await test.step('reload with rendered and invalid source persisted', async () => {
-    const expected = String.raw`Euler $e^{i\pi} + 1 = 1$
+    const expected = String.raw`Euler $e^{i\pi} + 1 = 1$ and $a **b**$
 
 $$
 \notacommand{
@@ -120,7 +131,19 @@ $$`;
 
     await page.reload({ waitUntil: 'networkidle' });
     const reloadedEditor = getEditorLocator(page, {});
-    await expect(reloadedEditor.locator('math-inline .katex')).toBeVisible();
+    await expect(
+      reloadedEditor.locator('math-inline .katex').first(),
+    ).toBeVisible();
+    const reloadedFormattingLikeMath = reloadedEditor
+      .locator('math-inline')
+      .nth(1);
+    await reloadedFormattingLikeMath.locator('.math-render').click();
+    await expect(
+      reloadedFormattingLikeMath.locator('.math-src .ProseMirror'),
+    ).toHaveText('a **b**');
+    await reloadedFormattingLikeMath
+      .locator('.math-src .ProseMirror')
+      .press('Control+Enter');
     const reloadedDisplay = reloadedEditor.locator('math-display');
     await expect(reloadedDisplay.locator('.katex-error')).toBeVisible();
     await reloadedDisplay.locator('.math-render').click();

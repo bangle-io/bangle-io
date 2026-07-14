@@ -519,6 +519,14 @@ div.ProseMirror {
   }
 }
 
+/* The upstream math stylesheet contains an unscoped paragraph-selection
+ * rule. Keep its math layout styles, but restore the browser/user selection
+ * color everywhere outside an editor. */
+p:not(div.ProseMirror p)::selection,
+p:not(div.ProseMirror p) > *::selection {
+  background-color: revert;
+}
+
 .prosemirror-flat-list {
   & {
     padding: 0;

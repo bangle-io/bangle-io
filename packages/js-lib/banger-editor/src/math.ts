@@ -27,6 +27,7 @@ import type {
 import {
   InputRule,
   inputRules,
+  Mark,
   NodeSelection,
   Plugin,
   Selection,
@@ -37,12 +38,16 @@ import { getNodeType } from './pm-utils';
 const INLINE_NAME = 'math_inline';
 const DISPLAY_NAME = 'math_display';
 const ESCAPED_DOLLAR_NAME = 'math_escaped_dollar';
+// Tentative TeX must stay raw before every syntax and suggestion transformer.
+const RAW_MATH_INPUT_PRIORITY = 150;
 
 export type MathConfig = {
   /** Maximum KaTeX dimension in em. */
   maxSize?: number;
   /** Maximum number of KaTeX macro expansions per expression. */
   maxExpand?: number;
+  /** Dollar-prefixed triggers that are owned by another editor extension. */
+  reservedDollarTriggers?: readonly string[];
 };
 
 export type InsertMathOptions = {
@@ -54,6 +59,7 @@ type RequiredConfig = Required<MathConfig>;
 const DEFAULT_CONFIG: RequiredConfig = {
   maxSize: 20,
   maxExpand: 1000,
+  reservedDollarTriggers: [],
 };
 
 /**
@@ -76,6 +82,7 @@ export function setupMath(userConfig: MathConfig = {}) {
       boundedMathViews: boundedMathViews(config),
       mathState: mathPlugin,
       mathSelection: mathSelectPlugin,
+      rawInlineInput: rawInlineMathInput(config.reservedDollarTriggers),
       inputRules: mathInputRules(),
       keybindings: keybinding(
         { Backspace: mathBackspaceCmd() },
@@ -343,7 +350,6 @@ function sourceSelectionOffsets(
 
 function mathInputRules() {
   return ({ schema }: { schema: Schema }) => {
-    const inlineType = getNodeType(schema, INLINE_NAME);
     const displayType = getNodeType(schema, DISPLAY_NAME);
     return inputRules({
       rules: [
@@ -361,34 +367,118 @@ function mathInputRules() {
             getNodeType(schema, ESCAPED_DOLLAR_NAME).create(),
           );
         }),
-        new InputRule(/\$$/, (state, match, _start, end) => {
-          const { $from } = state.selection;
-          if (
-            $from.parent.type.spec.code ||
-            $from.marks().some((mark) => mark.type.spec.code)
-          ) {
-            return null;
-          }
-          // Keep text offsets aligned with ProseMirror positions: inline leaf
-          // nodes have size one regardless of their leaf text. A newline also
-          // prevents a delimiter pair from consuming an intervening atom.
-          const textBefore =
-            $from.parent.textBetween(0, $from.parentOffset, null, () => '\n') +
-            match[0];
-          const math = findInlineMathAtEnd(textBefore);
-          if (!math) return null;
-          const from = $from.start() + math.start;
-
-          return state.tr.replaceWith(
-            from,
-            end,
-            inlineType.create(null, schema.text(math.content)),
-          );
-        }),
         makeBlockMathInputRule(/^\$\$\s$/, displayType),
       ],
     });
   };
+}
+
+function rawInlineMathInput(reservedDollarTriggers: readonly string[]) {
+  return ({ schema }: { schema: Schema }) =>
+    setPluginPriority(
+      new Plugin({
+        props: {
+          handleTextInput(view, from, to, text) {
+            const $from = view.state.doc.resolve(from);
+            const $to = view.state.doc.resolve(to);
+            if (
+              !$from.sameParent($to) ||
+              !$from.parent.inlineContent ||
+              $from.parent.type.spec.code ||
+              $from.marks().some((mark) => mark.type.spec.code)
+            ) {
+              return false;
+            }
+
+            const previous = from === to ? $from.nodeBefore : null;
+            const insertionMarks = view.state.storedMarks ?? $from.marks();
+            const sameMarks = previous
+              ? Mark.sameSet(previous.marks, insertionMarks)
+              : false;
+            if (
+              previous?.type.name === INLINE_NAME &&
+              sameMarks &&
+              /^(?:\$|[0-9])/u.test(text)
+            ) {
+              // A following digit cannot legally follow an inline closing
+              // delimiter, and another dollar would make the boundary `$$`.
+              // Restore raw source before the stored Markdown becomes
+              // structurally different from what the user typed.
+              view.dispatch(
+                view.state.tr.replaceWith(
+                  from - previous.nodeSize,
+                  to,
+                  schema.text(
+                    `$${previous.textContent}$${text}`,
+                    previous.marks,
+                  ),
+                ),
+              );
+              return true;
+            }
+
+            // Existing inline nodes are hard math boundaries. The flattened
+            // prefix preserves their full ProseMirror size so a source offset
+            // always maps back to the same document offset.
+            const sourceBefore = inlineInputSource(
+              $from.parent,
+              $from.parentOffset,
+            );
+            const pendingBefore = findTentativeInlineMath(sourceBefore);
+            const sourceAfter = sourceBefore + text;
+            if (
+              reservedDollarTriggers.some((trigger) =>
+                sourceAfter.endsWith(trigger),
+              )
+            ) {
+              // Let the registered suggestion extension consume its complete
+              // trigger. Math still owns the prefix, so no syntax transformer
+              // can rewrite it while the trigger is being typed.
+              return false;
+            }
+            const completed = findInlineMathAtEnd(sourceAfter);
+            const pendingAfter = findTentativeInlineMath(sourceAfter);
+            if (!pendingBefore && !completed && !pendingAfter) {
+              return false;
+            }
+
+            let tr = view.state.tr.insertText(text, from, to);
+            if (completed) {
+              const node = getNodeType(schema, INLINE_NAME).create(
+                null,
+                schema.text(completed.content),
+              );
+              tr = tr.replaceWith(
+                $from.start() + completed.start,
+                from + text.length,
+                node,
+              );
+            }
+            view.dispatch(tr);
+            return true;
+          },
+        },
+      }),
+      RAW_MATH_INPUT_PRIORITY,
+      'raw-inline-math-input',
+    );
+}
+
+function findTentativeInlineMath(source: string) {
+  const probe = findInlineMathAtEnd(`${source}x$`);
+  return probe?.content.endsWith('x') ? probe : null;
+}
+
+function inlineInputSource(parent: PMNode, end: number): string {
+  let source = '';
+  parent.forEach((node, offset) => {
+    if (offset >= end) return;
+    const length = Math.min(node.nodeSize, end - offset);
+    source += node.isText
+      ? (node.text?.slice(0, length) ?? '')
+      : '\n'.repeat(length);
+  });
+  return source;
 }
 
 function insertMath(name: typeof INLINE_NAME | typeof DISPLAY_NAME) {

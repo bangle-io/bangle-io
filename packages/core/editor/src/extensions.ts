@@ -103,7 +103,9 @@ export function setupExtensions(
     blockquote: setupBlockquote(),
     bold: setupBold(),
     list: setupList(),
-    math: setupMath(),
+    math: setupMath({
+      reservedDollarTriggers: [DATE_SUGGESTION.trigger],
+    }),
 
     dragNode: setupDragNode({
       pluginOptions: {
