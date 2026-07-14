@@ -458,6 +458,13 @@ export const t = {
           selectedName: string;
         }) =>
           `Choose the folder named "${expectedName}", not "${selectedName}". Your workspace was not changed.`,
+        locateNotFound: ({ wsName }: { wsName: string }) =>
+          `The workspace "${wsName}" is no longer available.`,
+        locateUnsupported:
+          'This browser cannot show where a workspace folder lives on disk.',
+        locateMissingHandle: ({ wsName }: { wsName: string }) =>
+          `Bangle has lost the link to the folder for "${wsName}". Open the workspace to reconnect it.`,
+        locateFailed: 'Bangle could not open the folder location dialog.',
       },
       file: {
         invalidNotePath: 'Invalid note path provided',
