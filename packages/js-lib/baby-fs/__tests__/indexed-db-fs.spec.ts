@@ -1,17 +1,15 @@
 import { isAbortError } from '@bangle.io/mini-js-utils';
 import { expect, test, vi } from 'vitest';
-import { IndexedDBFileSystem } from '../indexed-db-fs';
+import { FILE_ALREADY_EXISTS_ERROR, UPSTREAM_ERROR } from '../error-codes';
+import {
+  IndexedDBFileSystem,
+  IndexedDBFileSystemError,
+} from '../indexed-db-fs';
 
-const toFile = (str: any) => {
+const toFile = (str: string) => {
   const file = new File([str], 'foo.txt', { type: 'text/plain' });
 
   return file;
-};
-
-const _serializeMap = (map: any) => {
-  return Promise.all(
-    [...map.entries()].map(async (r) => [r[0], await r[1]?.text()]),
-  );
 };
 
 test('writeFile', async () => {
@@ -31,9 +29,16 @@ test('createFile rejects existing files without overwriting', async () => {
   const fs = new IndexedDBFileSystem();
   await fs.createFile('hola/hi', toFile('original'));
 
-  await expect(
-    fs.createFile('hola/hi', toFile('replacement')),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
+  const error = await fs
+    .createFile('hola/hi', toFile('replacement'))
+    .catch((cause: unknown) => cause);
+
+  expect(error).toBeInstanceOf(IndexedDBFileSystemError);
+  expect(error).toMatchObject({
+    code: FILE_ALREADY_EXISTS_ERROR,
+    cause: expect.objectContaining({ name: 'ConstraintError' }),
+  });
+  expect(error).toMatchInlineSnapshot(
     `[IndexedDBFileSystemError: File "hola/hi" already exists]`,
   );
 
@@ -48,6 +53,29 @@ test('readFile', async () => {
 
   const data = await fs.readFileAsText('hola/hi');
   expect(data).toMatchInlineSnapshot(`"my-data"`);
+});
+
+test('readFile preserves the upstream IndexedDB failure as its cause', async () => {
+  const fs = new IndexedDBFileSystem();
+  await fs.writeFile('hola/hi', toFile('my-data'));
+
+  const cause = new Error('forced IndexedDB failure');
+  const transactionSpy = vi
+    .spyOn(IDBDatabase.prototype, 'transaction')
+    .mockImplementationOnce(() => {
+      throw cause;
+    });
+
+  try {
+    const error = await fs
+      .readFile('hola/hi')
+      .catch((readError: unknown) => readError);
+
+    expect(error).toBeInstanceOf(IndexedDBFileSystemError);
+    expect(error).toMatchObject({ code: UPSTREAM_ERROR, cause });
+  } finally {
+    transactionSpy.mockRestore();
+  }
 });
 
 test('stat', async () => {
