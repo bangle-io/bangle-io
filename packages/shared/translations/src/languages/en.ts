@@ -247,6 +247,7 @@ export const t = {
         actionsLabel: ({ wsName }: { wsName: string }) =>
           `Workspace actions for ${wsName}`,
         openWorkspace: 'Open workspace',
+        locateFolder: 'Locate folder',
         deleteWorkspace: 'Delete workspace',
       },
       nav: {
