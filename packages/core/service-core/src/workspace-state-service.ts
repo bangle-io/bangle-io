@@ -3,12 +3,12 @@ import {
   atomWithCompare,
   BaseService,
   type BaseServiceContext,
-  createAsyncAtom,
   getAppErrorCause,
   isAbortError,
   isAppError,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
+import type { WorkspaceInfo } from '@bangle.io/types';
 import {
   createWikiLinkIndex,
   isVisibleWorkspaceFilePath,
@@ -26,6 +26,7 @@ import type { WorkspaceOpsService } from './workspace-ops-service';
 
 const EMPTY_FILE_PATH_ARRAY: WsFilePath[] = [];
 const EMPTY_STRING_ARRAY: string[] = [];
+const EMPTY_WORKSPACE_ARRAY: WorkspaceInfo[] = [];
 const EMPTY_BACKLINKS = new Map<string, readonly WsFilePath[]>();
 const BACKLINK_INDEX_REBUILD_DELAY_MS = 250;
 const EMPTY_BACKLINK_INDEX_STATE: BacklinkIndexState = {
@@ -43,6 +44,18 @@ export type FileTreeListState =
       wsName: string;
     }
   | { status: 'error'; error: unknown };
+
+export type WorkspaceListState =
+  | {
+      status: 'loading' | 'ready';
+      data: WorkspaceInfo[];
+      error?: undefined;
+    }
+  | {
+      status: 'error';
+      data: WorkspaceInfo[];
+      error: unknown;
+    };
 
 export type BacklinkIndexState =
   | {
@@ -107,15 +120,18 @@ function appendSortedUniqueWsPath(paths: string[], wsPath: string): string[] {
 export class WorkspaceStateService extends BaseService {
   static deps = ['navigation', 'fileSystem', 'workspaceOps'] as const;
 
-  $workspaces = createAsyncAtom(
-    async (get) => {
-      get(this.workspaceOps.$workspaceInfoChange);
-      const workspaces = await this.workspaceOps.getAllWorkspaces();
-      return workspaces;
-    },
-    (prev) => prev || [],
-    this.emitAppError,
-  );
+  /**
+   * Tracks workspace metadata refreshes without discarding the last successful
+   * result when a later database read fails.
+   */
+  $workspaceListState = atom<WorkspaceListState>({
+    status: 'loading',
+    data: EMPTY_WORKSPACE_ARRAY,
+  });
+
+  $workspaces = atom<WorkspaceInfo[]>((get) => {
+    return get(this.$workspaceListState).data;
+  });
 
   private $rawWsPaths = atomWithCompare<string[]>(
     EMPTY_STRING_ARRAY,
@@ -246,9 +262,56 @@ export class WorkspaceStateService extends BaseService {
 
   private createdWsPathsBySequence = new Map<number, string>();
   private handledFileCreateSequence = 0;
+  private lastKnownWorkspaces = EMPTY_WORKSPACE_ARRAY;
   private lastListedWsName: string | undefined;
 
   async hookMount(): Promise<void> {
+    this.addCleanup(
+      this.store.sub(
+        atomEffect((get, set) => {
+          const abortController = new AbortController();
+          get(this.workspaceOps.$workspaceInfoChange);
+          set(this.$workspaceListState, {
+            status: 'loading',
+            data: this.lastKnownWorkspaces,
+          });
+
+          this.workspaceOps.getAllWorkspaces().then(
+            (workspaces) => {
+              if (abortController.signal.aborted) {
+                return;
+              }
+              this.lastKnownWorkspaces = workspaces;
+              set(this.$workspaceListState, {
+                status: 'ready',
+                data: workspaces,
+              });
+            },
+            (error: unknown) => {
+              if (abortController.signal.aborted) {
+                return;
+              }
+              set(this.$workspaceListState, {
+                status: 'error',
+                data: this.lastKnownWorkspaces,
+                error,
+              });
+              if (error instanceof Error && isAppError(error)) {
+                this.emitAppError(error);
+              } else {
+                this.logger.error('Failed to list workspaces', error);
+              }
+            },
+          );
+
+          return () => {
+            abortController.abort();
+          };
+        }),
+        () => {},
+      ),
+    );
+
     this.addCleanup(
       this.store.sub(
         atomEffect((get, set) => {

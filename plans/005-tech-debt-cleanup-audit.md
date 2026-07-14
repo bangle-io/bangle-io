@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-06-15
-updated: 2026-07-12
+updated: 2026-07-13
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/631
@@ -27,11 +27,11 @@ preserve Markdown fidelity, keep local-first behavior predictable, and maintain
 clear workspace boundaries.
 
 The most urgent remaining cleanup area is failure-state continuity across
-resource and service lifetimes. Save serialization/coalescing has landed, but
-workspace-list failures can still erase last-good UI state, the module-global
-save store can retain tasks from a disposed service graph, and command/dialog
-workflows can still detach asynchronous completion. Those items should land
-before broader UI or tooling cleanup.
+service lifetimes. Save serialization/coalescing and last-good workspace-list
+retention have landed, but the module-global save store can retain tasks from a
+disposed service graph, and command/dialog workflows can still detach
+asynchronous completion. Those items should land before broader UI or tooling
+cleanup.
 
 ## Current Status
 
@@ -129,6 +129,15 @@ before broader UI or tooling cleanup.
     `any` or the obsolete `__proto__` fallback, and the touched IndexedDB slice
     no longer carries an unsafe array guard, a parameter-assignment lint
     suppression, or dead untyped test helpers.
+- 2026-07-13 workspace refresh continuity cleanup:
+  - C1 done: `WorkspaceStateService` now exposes an explicit
+    `$workspaceListState` resource with `loading`, `ready`, and `error` states.
+    Every state carries the last successful workspace data, so a failed
+    metadata refresh no longer hides the active workspace or clears
+    workspace-driven UI.
+  - Focused real-service coverage forces a database failure after a successful
+    load, verifies the prior array and current workspace remain available, and
+    proves a later refresh returns the resource to `ready`.
 - Findings are grouped by priority and theme below.
 
 ## Scope
@@ -848,7 +857,7 @@ listed so future agents do not rediscover it or accidentally restore it.
 
 | ID | Status | Finding and required boundary | ROI |
 | --- | --- | --- | --- |
-| C1 | Open | `createAsyncAtom` still computes its handled-error fallback with `initialValue()` instead of the previous value. `WorkspaceStateService.$workspaces` therefore resolves a failed refresh to `[]`, which can hide an existing workspace and its tree. Replace fallback-only atoms with an explicit `{ status, data, error }` resource that retains last-good data; test a refresh failure after a successful load. | Critical / medium |
+| C1 | Resolved in 2026-07-13 workspace refresh continuity cleanup | `WorkspaceStateService` now derives `$workspaces` from an explicit `$workspaceListState` resource. Failed refreshes retain the last successful data and error, preserve `$currentWsName`, and can recover to `ready`; real-service coverage forces the full success-failure-recovery sequence. | Critical / medium |
 | C2 | Resolved in PR #631 | `PmEditorService` now caches `markdownLoader` instances per ProseMirror `Schema` in a `WeakMap`. A real two-editor regression proves paste uses the active editor schema. | High / small-medium |
 | C3 | Partial | PR #631 made the Native FS metadata lookup awaitable and report invalid metadata as command failure. `CommandDispatchService.dispatch()` still returns `void`, reports a missing handler as success, converts null args with `args || {}`, releases cycle/focus state before async completion, and detaches non-app async errors. Native FS permission work also occurs later in a dialog callback, outside command completion. Make command completion an awaitable typed result and move callback-owned workflows behind feature controllers. | Critical / medium |
 | C4 | Open | The editor save-queue store remains module-global while each queued task captures the writer and error emitter from the service instance that enqueued it. UI reload rebuilds the service graph, so retrying a retained failure can execute through a disposed graph. Move the store to an explicit root-lifetime coordinator and resolve the current writer at execution time; test a failed save across `event::app:reload-ui`. | Critical data safety / medium |
@@ -900,8 +909,8 @@ listed so future agents do not rediscover it or accidentally restore it.
 
 ### Recommended Next Batches
 
-1. C1 workspace resource state and C4 save-coordinator lifetime, because both
-   can hide or endanger existing user data.
+1. C4 save-coordinator lifetime, because a retained task can outlive its
+   service graph and endanger unsaved user data.
 2. C3 command completion, with real-service failure tests and no detached
    promises. C5 async workspace creation is complete.
 3. C6 asset read/recovery semantics, aligned with plan 006.
