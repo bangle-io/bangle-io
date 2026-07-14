@@ -16,6 +16,7 @@ related_prs:
   - https://github.com/bangle-io/bangle-io/pull/639
   - https://github.com/bangle-io/bangle-io/pull/641
   - https://github.com/bangle-io/bangle-io/pull/645
+  - https://github.com/bangle-io/bangle-io/pull/646
 related_issues: []
 ---
 
@@ -152,7 +153,7 @@ cleanup.
   - P5.1 improved: `Logger` now accepts the four-method console surface it uses,
     and its message boundary uses `unknown[]` instead of five `any[]`
     signatures. Browser-bus tests no longer need an unsafe logger cast.
-- 2026-07-13 foundational utility type and lifecycle cleanup:
+- 2026-07-13 foundational utility type and lifecycle cleanup (PR #646):
   - P5.1 improved: mini validators now accept `unknown` at their public
     boundary, weak caches require object keys, generic emitter payloads retain
     their discriminated event types without `any`, and command validator
