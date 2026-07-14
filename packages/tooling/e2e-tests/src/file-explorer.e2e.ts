@@ -455,8 +455,7 @@ test('collapse-all supports a prototype-key workspace name', async ({
   const otherFolder = explorer.getByRole('treeitem', { name: /^other$/ });
 
   await expect(activeFolder).toHaveAttribute('aria-expanded', 'true');
-  await otherFolder.press('ArrowRight');
-  await expect(otherFolder).toHaveAttribute('aria-expanded', 'true');
+  await expandFileTreeFolder(page, /^other$/);
 
   await explorer.getByRole('button', { name: 'Collapse All Folders' }).click();
 

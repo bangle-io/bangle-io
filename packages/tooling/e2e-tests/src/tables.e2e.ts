@@ -445,12 +445,15 @@ test('deleting a fully selected table removes the whole table', async ({
 
   // Select every cell the way a mouse drag does: anchor in the first cell,
   // extend to the last cell.
-  await editor.locator('table th').first().click();
-  await waitForEditorFocus(page, {});
-  await editor
-    .locator('table td')
-    .last()
-    .click({ modifiers: ['Shift'] });
+  const firstCell = editor.locator('table th').first();
+  const lastCell = editor.locator('table td').last();
+  const selectedCells = editor.locator('table .selectedCell');
+  await expect(async () => {
+    await firstCell.click();
+    await waitForEditorFocus(page, {});
+    await lastCell.click({ modifiers: ['Shift'] });
+    await expect(selectedCells).toHaveCount(4);
+  }).toPass();
   await page.keyboard.press('Backspace');
 
   await expect(editor.locator('table')).toHaveCount(0);

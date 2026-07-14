@@ -14,11 +14,16 @@ export async function expandFileTreeFolder(page: Page, name: string | RegExp) {
   const folder = explorer.getByRole('treeitem', { name });
 
   await expect(folder).toBeVisible();
-  if ((await folder.getAttribute('aria-expanded')) !== 'true') {
-    await folder.focus();
-    await page.keyboard.press('ArrowRight');
-  }
-  await expect(folder).toHaveAttribute('aria-expanded', 'true');
+  await expect(async () => {
+    if ((await folder.getAttribute('aria-expanded')) !== 'true') {
+      await folder.focus();
+      await expect(folder).toBeFocused();
+      await page.keyboard.press('ArrowRight');
+    }
+    await expect(folder).toHaveAttribute('aria-expanded', 'true', {
+      timeout: 1_000,
+    });
+  }).toPass();
 }
 
 /**
@@ -53,6 +58,22 @@ export async function pressAppShortcut(page: Page, key: string) {
     return isMac || isIPhone || isIPad;
   });
   await page.keyboard.press(`${isRuntimeDarwin ? 'Meta' : 'Control'}+${key}`);
+}
+
+export async function openOmniSearch(page: Page): Promise<Locator> {
+  await pressAppShortcut(page, 'k');
+
+  const dialog = page.getByRole('dialog', { name: 'omni command bar' });
+  const input = dialog.getByPlaceholder('Type a command or search...');
+  await expect(dialog).toBeVisible();
+  if (
+    !(await input.evaluate((element) => element === document.activeElement))
+  ) {
+    await input.click();
+  }
+  await expect(input).toBeFocused();
+
+  return input;
 }
 
 function sleep(t = DEFAULT_SLEEP_TIME) {
