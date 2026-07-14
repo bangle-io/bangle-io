@@ -13,7 +13,8 @@ const LOSSY_SOURCE = ['A claim.[^1]', '', '[^1]: The source.'].join('\n');
 // Markdown that serializes back byte-identical.
 const CLEAN_SOURCE = ['# Title', '', 'Some plain text.'].join('\n');
 
-const NOTICE_TEST_ID = 'editor-fidelity-notice';
+// The quiet info button shown next to the note name in the title bar.
+const NOTICE_TEST_ID = 'markdown-fidelity-notice';
 
 async function seedNote(page: Page, noteName: string, source: string) {
   const workspaceName = 'fidelity-notice';
@@ -31,7 +32,17 @@ test('warns when a note contains Markdown the editor will reformat', async ({
 
   const editor = getEditorLocator(page, {});
   await expect(editor.getByText('A claim.')).toBeVisible();
-  await expect(page.getByTestId(NOTICE_TEST_ID)).toBeVisible();
+
+  // The notice is quiet: an info button in the title bar, not a loud banner.
+  const notice = page.getByTestId(NOTICE_TEST_ID);
+  await expect(notice).toBeVisible();
+
+  // Clicking it opens a calm dialog that honestly warns a save may change or
+  // drop unsupported Markdown — it must not promise the content is safe.
+  await notice.click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toContainText('may change or be removed');
 
   // The gate only warns: merely opening the note must not rewrite storage.
   await expect

@@ -105,4 +105,20 @@ describe('round-trip gate against the real serializer', () => {
   ])('flags %s as not preserved', (_label, source) => {
     expect(roundTrip(source)).toBe(false);
   });
+
+  // Not every mismatch is a benign reformat: an unused reference definition is
+  // dropped entirely on save (`Some text.\n\n[u]: https://x` -> `Some text.`),
+  // so the notice must never claim the user's content is safe. This locks in
+  // that the gate still fires for the genuine data-loss case.
+  it('flags an unused reference definition whose content is dropped', () => {
+    const source = 'Some paragraph.\n\n[unused]: https://example.com\n';
+    const markdown = createMarkdown();
+    const doc = markdown.parser.parse(source);
+    if (!doc) {
+      throw new Error('parse returned null');
+    }
+    const serialized = markdown.serializer.serialize(doc);
+    expect(serialized).not.toContain('https://example.com');
+    expect(isMarkdownRoundTripPreserved(source, serialized)).toBe(false);
+  });
 });
