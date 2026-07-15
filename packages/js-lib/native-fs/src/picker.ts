@@ -30,7 +30,14 @@ export async function pickDirectory(
 
   let handle: FileSystemDirectoryHandle;
   try {
-    handle = await showDirectoryPicker({ mode, ...rest });
+    // `mode` is deliberately NOT forwarded to the picker. A picker-time
+    // readwrite grant makes the explicit `requestPermission` below a no-op,
+    // and Chrome has not reliably recorded picker-mode grants as persisted
+    // grants — losing the "Allow on every visit" restore prompt on the next
+    // visit, so users were re-prompted on every return. Picking read-only and
+    // then explicitly requesting `mode` keeps the upfront prompt on the
+    // requestPermission path, which Chrome persists across sessions.
+    handle = await showDirectoryPicker({ ...rest });
   } catch (error) {
     if (isAbortError(error)) {
       throw new NativeFsError({
@@ -57,9 +64,8 @@ export async function pickDirectory(
     });
   }
 
-  // Passing `mode` to the picker already prompts for it in Chrome 105+, in
-  // which case this resolves immediately; older implementations that ignored
-  // the option get the explicit prompt instead.
+  // The explicit permission prompt for `mode`; see the note above on why this
+  // must stay the prompting step rather than the picker's `mode` option.
   let granted: boolean;
   try {
     granted = await requestPermission(handle, mode);

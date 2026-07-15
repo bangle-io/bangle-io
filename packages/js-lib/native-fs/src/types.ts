@@ -12,7 +12,12 @@ export interface DirectoryPickerOpts {
    * reopens the picker where the user left off.
    */
   id?: string;
-  /** Requesting `readwrite` up front avoids a second permission prompt. */
+  /**
+   * Permission mode `pickDirectory` explicitly requests after picking
+   * (defaults to `readwrite`). Requested via `requestPermission`, not the
+   * picker's own `mode` option, so the grant is persisted across sessions —
+   * see the note in `pickDirectory`.
+   */
   mode?: NativeFsPermissionMode;
   startIn?: FileSystemHandle | string;
 }
