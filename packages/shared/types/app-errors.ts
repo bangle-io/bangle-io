@@ -71,6 +71,12 @@ export type AppError =
       };
     }
   | {
+      name: `error::workspace:native-fs-locate-failed`;
+      payload: {
+        wsName: string;
+      };
+    }
+  | {
       name: 'error::workspace:no-notes-found';
       payload: {
         wsName?: string;

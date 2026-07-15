@@ -343,6 +343,20 @@ export const uiCommands = narrow([
     omniSearch: false,
   },
   {
+    // Reveal-only: anchors the OS directory picker at the workspace's stored
+    // handle so the dialog shows its on-disk path. Unlike the reconnect
+    // command above it never rebinds the handle or mutates metadata.
+    id: 'command::ui:locate-native-fs-workspace',
+    dependencies: {
+      services: ['workspaceOps'],
+    },
+    autoFocusEditor: false,
+    args: {
+      wsName: T.String,
+    },
+    omniSearch: false,
+  },
+  {
     id: 'command::ui:toggle-all-files',
     title: 'View All Files',
     keywords: ['files', 'list', 'browse', 'all'],

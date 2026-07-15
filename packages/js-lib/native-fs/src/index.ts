@@ -20,7 +20,7 @@ export {
   queryPermission,
   requestPermission,
 } from './permissions';
-export { pickDirectory } from './picker';
+export { pickDirectory, revealDirectoryLocation } from './picker';
 export {
   isFileSystemDirectoryHandle,
   supportsFileSystemObserver,

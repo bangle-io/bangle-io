@@ -1,8 +1,16 @@
+import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
+import { supportsNativeFs } from '@bangle.io/native-fs';
 import { Button, DropdownMenu } from '@bangle.io/ui-components';
 import { WsPath } from '@bangle.io/ws-path';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { ExternalLink, MoreHorizontal, Plus, Trash2 } from 'lucide-react';
+import {
+  ExternalLink,
+  FolderSearch,
+  MoreHorizontal,
+  Plus,
+  Trash2,
+} from 'lucide-react';
 import React from 'react';
 import { getRelativeTimeOrNull } from '../common/get-relative-time';
 
@@ -75,6 +83,18 @@ export function WorkspacesSettingsPage() {
     commandDispatcher.dispatch(
       'command::ui:create-workspace-dialog',
       null,
+      'ui',
+    );
+  };
+
+  // The picker API existing is what makes a reveal possible at all; on
+  // browsers without it the action is hidden rather than shown-and-failing.
+  const canLocateNativeFs = supportsNativeFs();
+
+  const locateWorkspaceFolder = (wsName: string) => {
+    commandDispatcher.dispatch(
+      'command::ui:locate-native-fs-workspace',
+      { wsName },
       'ui',
     );
   };
@@ -171,6 +191,12 @@ export function WorkspacesSettingsPage() {
 
                 <WorkspaceActionsMenu
                   onDelete={() => requestDeleteWorkspace(workspace.name)}
+                  onLocate={
+                    canLocateNativeFs &&
+                    workspace.type === WORKSPACE_STORAGE_TYPE.NativeFS
+                      ? () => locateWorkspaceFolder(workspace.name)
+                      : undefined
+                  }
                   openHref={workspaceHref}
                   wsName={workspace.name}
                 />
@@ -187,10 +213,13 @@ function WorkspaceActionsMenu({
   wsName,
   openHref,
   onDelete,
+  onLocate,
 }: {
   wsName: string;
   openHref: string;
   onDelete: () => void;
+  /** Present only for Native FS workspaces on browsers with the picker API. */
+  onLocate?: () => void;
 }) {
   return (
     <DropdownMenu.DropdownMenu>
@@ -211,6 +240,12 @@ function WorkspaceActionsMenu({
           <ExternalLink className="mr-2 h-4 w-4" />
           <span>{t.app.settings.workspaces.openWorkspace}</span>
         </DropdownMenu.DropdownMenuItem>
+        {onLocate ? (
+          <DropdownMenu.DropdownMenuItem onClick={onLocate}>
+            <FolderSearch className="mr-2 h-4 w-4" />
+            <span>{t.app.settings.workspaces.locateFolder}</span>
+          </DropdownMenu.DropdownMenuItem>
+        ) : null}
         <DropdownMenu.DropdownMenuSeparator />
         <DropdownMenu.DropdownMenuItem
           className="text-destructive focus:text-destructive"
