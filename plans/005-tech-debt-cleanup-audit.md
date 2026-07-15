@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-06-15
-updated: 2026-07-13
+updated: 2026-07-14
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/631
@@ -167,6 +167,21 @@ cleanup.
     invalid caller behavior. The stale browser-entry `eslint` script and the
     original command-dialog/radio-control accessibility findings were verified
     already resolved on `main` and are reconciled below.
+- 2026-07-14 storage-contract and translation hygiene cleanup (batch 3):
+  - P3.3 done: every Omni Search heading, action, empty state, placeholder, and
+    accessible dialog title now uses the global translation object. English
+    and German carry the complete eight-message surface, and locale E2E opens
+    the German command bar and verifies translated user-visible behavior.
+  - P5.1 improved: `BaseFileStorageProvider` no longer advertises six
+    zero-consumer metadata, capability, and search members. The three concrete
+    storage providers no longer carry the corresponding dead labels or
+    support-probe methods.
+  - The full open-item re-audit kept C3/C4, P0.4, and Native FS work out of this
+    batch because PR #640 owns relocation/save-queue changes, PR #644 owns the
+    Native FS settings command, PR #626 owns external sync, and the existing
+    service-architecture and Knip worktrees cover broader boundary/dead-code
+    changes. C6, C8, P1.3, P4.4, and P5.2 are narrowed below to match current
+    code instead of retaining stale claims.
 - Findings are grouped by priority and theme below.
 
 ## Scope
@@ -405,12 +420,16 @@ Verification:
 
 ### P1.3 Harden List And Task-List Parsing
 
-Problem:
+Current status:
 
-- List parsing ignores `bullet_list` and `ordered_list` tokens and depends on
-  custom token attributes for kind and checked state.
-- Standard task-list Markdown may not round-trip reliably without explicit
-  parser coverage.
+- The shared golden corpus now covers unchecked, checked, uppercase, nested,
+  mixed, linked, marked-up, and empty task items for both editor engines.
+- ProseMirror explicitly ignores wrapper `bullet_list`/`ordered_list` tokens
+  and derives flat list items from the configured kind/checked attributes.
+- Nested content under an ordered parent still has a documented indentation
+  fidelity gap and is deliberately excluded from the passing corpus. That is
+  the remaining correctness item; the original general task-list coverage gap
+  is resolved.
 
 Evidence:
 
@@ -418,10 +437,13 @@ Evidence:
 
 Plan:
 
-- Add tests for `- [ ]`, `- [x]`, nested ordered/bullet lists, and mixed lists.
-- Derive task-list state from standard Markdown tokens or configure the parser
+- [x] Add tests for `- [ ]`, `- [x]`, nested task/bullet lists, and mixed
+  task/plain lists.
+- [x] Derive task-list state from standard Markdown tokens or configure the parser
   explicitly to emit the required attrs.
-- Document list normalization rules in tests.
+- [x] Document task-list normalization rules in tests.
+- Fix or intentionally normalize nested list indentation under ordered parents,
+  then add that case to the golden corpus.
 
 Verification:
 
@@ -583,18 +605,20 @@ Evidence:
 
 Plan:
 
-- Add missing keys to `packages/shared/translations/src/languages/en.ts`.
-- Replace the remaining Omni Search group headings, empty state, accessible
+- [x] Add the complete Omni Search surface to the English and German bundles.
+- [x] Replace the remaining Omni Search group headings, empty state, accessible
   dialog name, and input placeholder with global `t` references.
 - [x] Verify the audited app-sidebar, slash-command, link-menu, and star-button
   strings use the global `t` object.
 - [x] Remove direct `t` imports from the audited production UI components.
-- Extend translation tests to catch imported `t` or common literal patterns.
+- [x] Replace the placeholder translation test with bundle parity coverage and
+  add German-locale browser coverage for the Omni Search surface.
 
 Verification:
 
-- `packages/core/app/src/__tests__/translation.spec.ts`
-- `packages/shared/translations/src/__tests__/translations.spec.ts`
+- [x] `packages/core/app/src/__tests__/translation.spec.ts`
+- [x] `packages/shared/translations/src/__tests__/translations.spec.ts`
+- [x] `packages/tooling/e2e-tests/src/translations-locale.e2e.ts`
 
 ### P3.4 Fix Dialog And Custom Control Accessibility
 
@@ -756,7 +780,7 @@ Plan:
 - Replace broad `skipValidation` with narrow exceptions.
 - Classify test, story, CT, E2E, and config files explicitly.
 - Fix or document import-parser limitations around comments.
-- Add a validation rule for package-private `src` imports.
+- [x] Add a validation rule for package-private `src` imports.
 
 Verification:
 
@@ -819,6 +843,9 @@ Plan:
   message boundary with `unknown[]`.
 - [x] Move mini validators, weak caches, and command validator inspection to
   `unknown`/object-constrained boundaries.
+- [x] Remove the zero-consumer storage-provider labels, hidden/support flags,
+  and optional search methods from the public provider contract and concrete
+  adapters.
 - Keep intentional negative type tests using `@ts-expect-error`.
 
 Verification:
@@ -828,12 +855,14 @@ Verification:
 
 ### P5.2 Standardize File Filtering Across Storage Backends
 
-Problem:
+Current status:
 
-- Native FS uses permissive `allowedFile: () => true` at the adapter boundary.
-- IndexedDB has a TODO for directory filtering.
-- Filtering currently happens later in `FileSystemService.listFiles`, which may
-  be too late for adapter-specific hazards.
+- Shared file and directory visibility policy now lives in `@bangle.io/ws-path`
+  with focused hidden/system-file coverage.
+- Native FS applies the shared directory policy while walking the tree.
+- IndexedDB and memory still return unfiltered adapter listings; the shared
+  file policy is applied later by `FileSystemService.listFiles`. Moving that
+  file filtering to every adapter, with contract coverage, remains open.
 
 Evidence:
 
@@ -844,9 +873,10 @@ Evidence:
 
 Plan:
 
-- Centralize supported file and ignored directory policy in a shared lower-layer
+- [x] Centralize supported file and ignored directory policy in a shared lower-layer
   helper that platform can import.
-- Apply filtering consistently in Native FS, IndexedDB, and memory adapters.
+- Apply file filtering consistently in Native FS, IndexedDB, and memory
+  adapters without changing direct-file access semantics.
 - Add tests for hidden/system/unsupported files.
 
 Verification:
@@ -936,11 +966,11 @@ listed so future agents do not rediscover it or accidentally restore it.
 | C1 | Resolved in 2026-07-13 workspace refresh continuity cleanup | `WorkspaceStateService` now derives `$workspaces` from an explicit `$workspaceListState` resource. Failed refreshes retain the last successful data and error, preserve `$currentWsName`, and can recover to `ready`; real-service coverage forces the full success-failure-recovery sequence. | Critical / medium |
 | C2 | Resolved in PR #631 | `PmEditorService` now caches `markdownLoader` instances per ProseMirror `Schema` in a `WeakMap`. A real two-editor regression proves paste uses the active editor schema. | High / small-medium |
 | C3 | Partial | PR #631 made the Native FS metadata lookup awaitable and report invalid metadata as command failure. `CommandDispatchService.dispatch()` still returns `void`, reports a missing handler as success, converts null args with `args || {}`, releases cycle/focus state before async completion, and detaches non-app async errors. Native FS permission work also occurs later in a dialog callback, outside command completion. Make command completion an awaitable typed result and move callback-owned workflows behind feature controllers. | Critical / medium |
-| C4 | Open | The editor save-queue store remains module-global while each queued task captures the writer and error emitter from the service instance that enqueued it. UI reload rebuilds the service graph, so retrying a retained failure can execute through a disposed graph. Move the store to an explicit root-lifetime coordinator and resolve the current writer at execution time; test a failed save across `event::app:reload-ui`. | Critical data safety / medium |
+| C4 | Open; coordinate after PR #640 | The editor save-queue store remains module-global while each queued task captures the writer and error emitter from the service instance that enqueued it. UI reload rebuilds the service graph, so retrying a retained failure can execute through a disposed graph. PR #640 is actively changing relocation and save-queue behavior but does not own this service-graph lifetime boundary. Move the store to an explicit root-lifetime coordinator and resolve the current writer at execution time; test a failed save across `event::app:reload-ui`. | Critical data safety / medium |
 | C5 | Resolved in 2026-07-12 workspace dialog cleanup | `CreateWorkspaceDialog` now accepts and awaits async durable creation, blocks duplicate submission and dismissal while pending, preserves the dialog with an alert on failure, and permits retry. Component coverage counts one callback for a double-click; app E2E exercises the real duplicate-workspace service rejection. | High / medium |
-| C6 | Open | `PageAsset` catches every storage, permission, decode, and object-URL failure, discards the cause, and renders the same generic copy as a missing file. Preserve missing vs failed states, emit/log the error, expose retry/recovery, and test Native FS permission loss. Plan 006 owns the broader unreadable-asset UX. | High / small-medium |
+| C6 | Partial; plan 006 owns the UX | `PageAsset` now has distinct internal `missing` and `error` states, but its catch still discards storage/permission/decode/object-URL causes and both states render the same generic unavailable copy. Emit/log the retained error, expose retry/recovery, and test Native FS permission loss after PR #626's external-sync work settles. | High / small-medium |
 | C7 | Resolved in PR #631 | Workspace info cache entries are keyed by workspace name and filtered after lookup. Memory storage now compares parsed workspace names exactly and rejects rename over an existing destination, with focused contract regressions. | Medium-high / small |
-| C8 | In PR #632 | Settings return-link validation now rejects both raw scheme-relative inputs and paths that normalize to `//host/...`; the latter previously passed the same-host check and became an external anchor when reserialized. Keep unit and browser E2E coverage for the normalized path. | Security blocker / small |
+| C8 | Resolved in PR #632 | Settings return-link validation rejects both raw scheme-relative inputs and paths that normalize to `//host/...`; unit and browser E2E coverage retain the normalized-path regression. | Security blocker / small |
 
 ### Architecture And Ownership Backlog
 

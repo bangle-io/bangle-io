@@ -174,6 +174,16 @@ export const t = {
       switchEditor: 'Switch editor',
       loadFailed: 'Unable to load this note.',
     },
+    omniSearch: {
+      dialogTitle: 'Omni command bar',
+      inputPlaceholder: 'Type a command or search...',
+      viewAllCommands: 'View All Commands',
+      recentNotesHeading: 'Recent Notes',
+      commandsHeading: '> Commands',
+      allFilesHeading: 'All Files',
+      filteredHeading: 'Filtered',
+      noResults: 'No results found.',
+    },
     sidebar: {
       newLabel: 'New',
       appActionsLabel: 'App Actions',

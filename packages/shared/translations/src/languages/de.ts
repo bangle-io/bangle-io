@@ -142,6 +142,16 @@ export const t = {
         deleteTable: 'Tabelle löschen',
       },
     },
+    omniSearch: {
+      dialogTitle: 'Omni-Befehlsleiste',
+      inputPlaceholder: 'Befehl eingeben oder suchen...',
+      viewAllCommands: 'Alle Befehle anzeigen',
+      recentNotesHeading: 'Letzte Notizen',
+      commandsHeading: '> Befehle',
+      allFilesHeading: 'Alle Dateien',
+      filteredHeading: 'Gefiltert',
+      noResults: 'Keine Ergebnisse gefunden.',
+    },
     sidebar: {
       newLabel: 'Neu',
       appActionsLabel: 'App-Aktionen',

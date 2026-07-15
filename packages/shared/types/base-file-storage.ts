@@ -33,14 +33,8 @@ export type FileStorageChangeEvent =
 type EmptyObject = Record<string, never>;
 
 export interface BaseFileStorageProvider {
-  readonly description: string;
-  readonly displayName: string;
-  // hide creating a workspace of this type
-  readonly hidden?: boolean;
   readonly maxFileSizeBytes: number;
   readonly workspaceType: string;
-
-  isSupported: () => boolean | Promise<boolean>;
 
   /**
    * Creates a new file. Implementations must reject with
@@ -84,13 +78,4 @@ export interface BaseFileStorageProvider {
       sha?: string;
     },
   ) => Promise<void>;
-
-  searchFile?: (
-    abortSignal: AbortSignal,
-    options: {
-      query: { pattern: string };
-    },
-  ) => Promise<WsPath[]>;
-
-  searchText?: () => Promise<void>;
 }

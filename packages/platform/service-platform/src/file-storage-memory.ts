@@ -26,8 +26,6 @@ export class FileStorageMemory
   implements BaseFileStorageProvider
 {
   public readonly workspaceType = WORKSPACE_STORAGE_TYPE.Memory;
-  public readonly displayName = 'Memory Storage';
-  public readonly description = 'Temporarily saves data in memory';
   public readonly maxFileSizeBytes = FILE_STORAGE_MAX_FILE_SIZE_BYTES.memory;
 
   private fileEntries = new Map<string, FileEntry>();
@@ -115,10 +113,6 @@ export class FileStorageMemory
       ctime: entry.ctime,
       mtime: entry.mtime,
     };
-  }
-
-  isSupported() {
-    return true;
   }
 
   async listAllFiles(

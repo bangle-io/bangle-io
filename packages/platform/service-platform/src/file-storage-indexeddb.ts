@@ -29,8 +29,6 @@ export class FileStorageIndexedDB
   implements BaseFileStorageProvider
 {
   public readonly workspaceType = WORKSPACE_STORAGE_TYPE.Browser;
-  public readonly displayName = 'Browser Storage';
-  public readonly description = "Saves data in your browser's local storage";
   public readonly maxFileSizeBytes = FILE_STORAGE_MAX_FILE_SIZE_BYTES.browser;
 
   private idb = new IndexedDBFileSystem();
@@ -107,10 +105,6 @@ export class FileStorageIndexedDB
       ctime: stat.mtimeMs,
       mtime: stat.mtimeMs,
     };
-  }
-
-  isSupported() {
-    return globalThis.indexedDB != null;
   }
 
   async listAllFiles(

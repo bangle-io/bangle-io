@@ -2,7 +2,6 @@ import {
   assertIsDefined,
   BaseService,
   type BaseServiceContext,
-  isWorkerGlobalScope,
   throwAppError,
 } from '@bangle.io/base-utils';
 import {
@@ -15,7 +14,6 @@ import {
   isNativeFsError,
   NATIVE_FS_ERROR_CODE,
   NativeFs,
-  supportsNativeFs,
 } from '@bangle.io/native-fs';
 import type {
   BaseFileStorageProvider,
@@ -35,8 +33,6 @@ export class FileStorageNativeFs
   implements BaseFileStorageProvider
 {
   public readonly workspaceType = WORKSPACE_STORAGE_TYPE.NativeFS;
-  public readonly displayName = 'Native Storage';
-  public readonly description = 'Saves data on your hard drive';
   public readonly maxFileSizeBytes = FILE_STORAGE_MAX_FILE_SIZE_BYTES.nativeFs;
 
   private fsCache: Map<string, NativeFs> = new Map();
@@ -192,14 +188,6 @@ export class FileStorageNativeFs
       }
       throw error;
     }
-  }
-
-  isSupported() {
-    // TODO we donot have a great way to detect if supported in worker
-    if (isWorkerGlobalScope()) {
-      return true;
-    }
-    return supportsNativeFs();
   }
 
   async listAllFiles(
