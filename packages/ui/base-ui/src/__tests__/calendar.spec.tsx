@@ -45,6 +45,30 @@ describe('Calendar', () => {
     expect(selected.getDate()).toBe(24);
   });
 
+  it('keeps a required selected day when it is clicked again', () => {
+    const onSelect = vi.fn();
+    const selected = new Date(2025, 11, 24);
+    render(
+      <Calendar
+        mode="single"
+        required
+        defaultMonth={DECEMBER_2025}
+        selected={selected}
+        onSelect={onSelect}
+      />,
+    );
+
+    const dayButton = document.querySelector(
+      `[data-day="${selected.toLocaleDateString()}"]`,
+    );
+    expect(dayButton).not.toBeNull();
+
+    fireEvent.click(dayButton as Element);
+
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(onSelect.mock.calls[0]?.[0]).toEqual(selected);
+  });
+
   it('marks the selected day with the single-selection data attribute', () => {
     const selected = new Date(2025, 11, 24);
     render(

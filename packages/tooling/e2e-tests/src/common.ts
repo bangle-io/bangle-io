@@ -358,7 +358,15 @@ export async function createBrowserWorkspaceAndNote(
   await page.getByRole('button', { name: 'New Note' }).click();
   await page.getByLabel('Note name').fill(noteName);
   await page.getByRole('button', { name: 'Create' }).click();
-  await expect(getEditorLocator(page, {})).toBeVisible();
+  const editor = getEditorLocator(page, {});
+  const fileName = noteName.endsWith('.md') ? noteName : `${noteName}.md`;
+  await expect(editor).toBeVisible();
+  // A previous note editor can remain visible while navigation mounts the new
+  // one. Waiting for the exact editor identity prevents immediate follow-up
+  // typing or shortcuts from targeting a stale view that is about to unmount.
+  await expect
+    .poll(() => editor.getAttribute('data-editor-name'))
+    .toContain(`${workspaceName}:${fileName}`);
 }
 
 export async function createBrowserWorkspace(
