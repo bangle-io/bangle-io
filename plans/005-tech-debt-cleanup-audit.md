@@ -177,7 +177,14 @@ cleanup.
   - P5.1 improved: `BaseFileStorageProvider` no longer advertises six
     zero-consumer metadata, capability, and search members. The three concrete
     storage providers no longer carry the corresponding dead labels or
-    support-probe methods.
+    support-probe methods. The follow-up removes the unused `sha` create/write
+    option path and narrows provider workspace types to the existing typed
+    storage union.
+  - P4.2 improved: the shared create-workspace/note E2E helper now waits for
+    the exact new editor identity instead of any visible editor, preventing
+    follow-up typing and shortcuts from racing a stale view. The date picker
+    also makes its initial single-day selection required so selecting today
+    commits instead of toggling to an empty selection in UTC CI.
   - The full open-item re-audit kept C3/C4, P0.4, and Native FS work out of this
     batch because PR #640 owns relocation/save-queue changes, PR #644 owns the
     Native FS settings command, PR #626 owns external sync, and the existing
@@ -727,6 +734,8 @@ Plan:
 - [x] Upload `packages/tooling/e2e-tests/playwright-report/` and relevant
   `test-results/` paths.
 - [x] Move component-style tests to CT or import from `@playwright/test`.
+- [x] Wait for the exact newly created note editor before follow-up E2E input,
+  and cover selecting an already-selected current day in the slash date picker.
 
 Verification:
 
@@ -848,6 +857,8 @@ Plan:
 - [x] Remove the zero-consumer storage-provider labels, hidden/support flags,
   and optional search methods from the public provider contract and concrete
   adapters.
+- [x] Remove the zero-consumer `sha` create/write options and constrain provider
+  workspace types to `WorkspaceStorageType`.
 - Keep intentional negative type tests using `@ts-expect-error`.
 
 Verification:
