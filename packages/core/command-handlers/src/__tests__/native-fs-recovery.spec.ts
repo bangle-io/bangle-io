@@ -1,5 +1,7 @@
 // @vitest-environment jsdom
+import { getAppErrorCause } from '@bangle.io/base-utils';
 import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
+import type { BaseError } from '@bangle.io/mini-js-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { setupTest } from './test-utils';
 
@@ -73,18 +75,38 @@ describe('command::ui:reconnect-native-fs-workspace', () => {
 describe('command::ui:locate-native-fs-workspace', () => {
   afterEach(() => {
     vi.unstubAllGlobals();
+    permissionRequests.length = 0;
   });
+
+  const permissionRequests: string[] = [];
 
   // Passes the isFileSystemDirectoryHandle guard the handler applies to
-  // metadata restored from untyped storage.
-  const makeStoredHandle = (name: string) => ({
-    name,
-    kind: 'directory',
-    requestPermission: vi.fn().mockResolvedValue('granted'),
-  });
+  // metadata restored from untyped storage, while staying structured-clone
+  // safe: workspace writes broadcast their change events via structuredClone,
+  // which rejects own function properties (so no vi.fn()/spyOn on instances).
+  // Class methods live on the prototype and survive; calls are tracked in
+  // `permissionRequests` instead.
+  class StoredDirHandle {
+    readonly kind = 'directory';
+    constructor(readonly name: string) {}
+    async requestPermission(): Promise<PermissionState> {
+      permissionRequests.push(this.name);
+      return 'granted';
+    }
+  }
+  const makeStoredHandle = (name: string) => new StoredDirHandle(name);
+
+  // The exact app-error name matters: locate-failed is classified as handled
+  // (non-reportable) by shouldReportAppError, unlike a generic failure.
+  const emittedAppErrorNames = (testEnv: {
+    commonOpts: { emitAppError: (error: BaseError) => void };
+  }) =>
+    vi
+      .mocked(testEnv.commonOpts.emitAppError)
+      .mock.calls.map(([error]) => getAppErrorCause(error)?.name);
 
   it('anchors the picker at the stored handle and leaves everything unchanged', async () => {
-    const { dispatch, services, getCommandResults } = await setupTest({
+    const { dispatch, services, getCommandResults, testEnv } = await setupTest({
       targetId: 'command::ui:locate-native-fs-workspace',
       autoNavigate: false,
     });
@@ -106,17 +128,17 @@ describe('command::ui:locate-native-fs-workspace', () => {
     expect(picker).toHaveBeenCalledWith(
       expect.objectContaining({ mode: 'read', startIn: storedHandle }),
     );
-    // Reveal-only: the selection is discarded, no permission prompt fires,
-    // and the stored metadata is untouched.
-    expect(storedHandle.requestPermission).not.toHaveBeenCalled();
-    expect(pickedHandle.requestPermission).not.toHaveBeenCalled();
+    // Reveal-only: the selection is discarded, requestPermission is never
+    // invoked on either handle, and the stored metadata is untouched.
+    expect(permissionRequests).toEqual([]);
     expect(await services.workspaceOps.getWorkspaceMetadata('test-ws')).toEqual(
       { rootDirHandle: storedHandle },
     );
+    expect(emittedAppErrorNames(testEnv)).toEqual([]);
   });
 
   it('treats cancelling the dialog as a successful reveal', async () => {
-    const { dispatch, services, getCommandResults } = await setupTest({
+    const { dispatch, services, getCommandResults, testEnv } = await setupTest({
       targetId: 'command::ui:locate-native-fs-workspace',
       autoNavigate: false,
     });
@@ -143,10 +165,12 @@ describe('command::ui:locate-native-fs-workspace', () => {
     expect(await services.workspaceOps.getWorkspaceMetadata('test-ws')).toEqual(
       { rootDirHandle: storedHandle },
     );
+    // Cancelling is the expected way to close the reveal: no error surfaces.
+    expect(emittedAppErrorNames(testEnv)).toEqual([]);
   });
 
   it('fails without opening a picker when the workspace does not exist', async () => {
-    const { dispatch, getCommandResults } = await setupTest({
+    const { dispatch, getCommandResults, testEnv } = await setupTest({
       targetId: 'command::ui:locate-native-fs-workspace',
       autoNavigate: false,
     });
@@ -159,10 +183,13 @@ describe('command::ui:locate-native-fs-workspace', () => {
       expect(getCommandResults().at(-1)?.type).toBe('failure');
     });
     expect(picker).not.toHaveBeenCalled();
+    expect(emittedAppErrorNames(testEnv)).toEqual([
+      'error::workspace:not-found',
+    ]);
   });
 
   it('fails without opening a picker for a non-nativefs workspace', async () => {
-    const { dispatch, services, getCommandResults } = await setupTest({
+    const { dispatch, services, getCommandResults, testEnv } = await setupTest({
       targetId: 'command::ui:locate-native-fs-workspace',
       autoNavigate: false,
     });
@@ -182,10 +209,13 @@ describe('command::ui:locate-native-fs-workspace', () => {
       expect(getCommandResults().at(-1)?.type).toBe('failure');
     });
     expect(picker).not.toHaveBeenCalled();
+    expect(emittedAppErrorNames(testEnv)).toEqual([
+      'error::workspace:not-found',
+    ]);
   });
 
   it('fails without opening a picker when the stored handle is missing', async () => {
-    const { dispatch, services, getCommandResults } = await setupTest({
+    const { dispatch, services, getCommandResults, testEnv } = await setupTest({
       targetId: 'command::ui:locate-native-fs-workspace',
       autoNavigate: false,
     });
@@ -206,5 +236,10 @@ describe('command::ui:locate-native-fs-workspace', () => {
     expect(
       await services.workspaceOps.getWorkspaceMetadata('broken-ws'),
     ).toEqual({});
+    // A broken handle is an expected degraded state, surfaced as the handled
+    // locate-failed error rather than a reportable defect.
+    expect(emittedAppErrorNames(testEnv)).toEqual([
+      'error::workspace:native-fs-locate-failed',
+    ]);
   });
 });

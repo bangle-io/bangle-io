@@ -81,14 +81,17 @@ export const nativeFsRecoveryHandlers = [
       if (!isFileSystemDirectoryHandle(rootDirHandle)) {
         // A broken entry has nothing to anchor the dialog at; pointing the
         // user at the reconnect flow beats opening a picker somewhere random.
+        // This is an expected degraded state, so it uses the locate-failed
+        // error (handled, non-reportable) rather than invalid-metadata.
         throwAppError(
-          'error::workspace:invalid-metadata',
+          'error::workspace:native-fs-locate-failed',
           t.app.errors.workspace.locateMissingHandle({ wsName }),
           { wsName },
         );
       }
 
-      // Reveal-only: the OS dialog shows the folder's path, the selection is
+      // Reveal-only and best-effort: the OS dialog shows the folder's path
+      // (when the browser honors the startIn suggestion), the selection is
       // discarded, and cancelling resolves silently. No metadata is written.
       try {
         await revealDirectoryLocation(rootDirHandle);
