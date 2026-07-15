@@ -1,3 +1,5 @@
+import type { WorkspaceStorageType } from '@bangle.io/constants';
+
 type WsPath = string;
 
 interface FileStat {
@@ -34,7 +36,7 @@ type EmptyObject = Record<string, never>;
 
 export interface BaseFileStorageProvider {
   readonly maxFileSizeBytes: number;
-  readonly workspaceType: string;
+  readonly workspaceType: WorkspaceStorageType;
 
   /**
    * Creates a new file. Implementations must reject with
@@ -74,8 +76,6 @@ export interface BaseFileStorageProvider {
   writeFile: (
     wsPath: WsPath,
     file: File,
-    options: {
-      sha?: string;
-    },
+    options: EmptyObject,
   ) => Promise<void>;
 }
