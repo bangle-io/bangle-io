@@ -9,6 +9,7 @@ updated: 2026-07-14
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/631
+  - https://github.com/bangle-io/bangle-io/pull/647
   - https://github.com/bangle-io/bangle-io/pull/632
   - https://github.com/bangle-io/bangle-io/pull/635
   - https://github.com/bangle-io/bangle-io/pull/636
@@ -167,7 +168,8 @@ cleanup.
     invalid caller behavior. The stale browser-entry `eslint` script and the
     original command-dialog/radio-control accessibility findings were verified
     already resolved on `main` and are reconciled below.
-- 2026-07-14 storage-contract and translation hygiene cleanup (batch 3):
+- 2026-07-14 storage-contract and translation hygiene cleanup (batch 3, PR
+  #647):
   - P3.3 done: every Omni Search heading, action, empty state, placeholder, and
     accessible dialog title now uses the global translation object. English
     and German carry the complete eight-message surface, and locale E2E opens
