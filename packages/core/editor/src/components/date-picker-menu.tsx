@@ -131,6 +131,10 @@ export function DatePickerMenu({
     >
       <Calendar
         mode="single"
+        // The highlighted date starts at today. Without `required`, clicking
+        // that already-selected day toggles the selection to `undefined`, so
+        // the trigger is left behind instead of committing today's date.
+        required
         // Move focus to the selected day so arrow keys navigate the grid and
         // Enter commits, without any editor-side key forwarding.
         autoFocus

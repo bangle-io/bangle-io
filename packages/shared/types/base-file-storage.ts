@@ -1,3 +1,5 @@
+import type { WorkspaceStorageType } from '@bangle.io/constants';
+
 type WsPath = string;
 
 interface FileStat {
@@ -33,14 +35,8 @@ export type FileStorageChangeEvent =
 type EmptyObject = Record<string, never>;
 
 export interface BaseFileStorageProvider {
-  readonly description: string;
-  readonly displayName: string;
-  // hide creating a workspace of this type
-  readonly hidden?: boolean;
   readonly maxFileSizeBytes: number;
-  readonly workspaceType: string;
-
-  isSupported: () => boolean | Promise<boolean>;
+  readonly workspaceType: WorkspaceStorageType;
 
   /**
    * Creates a new file. Implementations must reject with
@@ -80,17 +76,6 @@ export interface BaseFileStorageProvider {
   writeFile: (
     wsPath: WsPath,
     file: File,
-    options: {
-      sha?: string;
-    },
+    options: EmptyObject,
   ) => Promise<void>;
-
-  searchFile?: (
-    abortSignal: AbortSignal,
-    options: {
-      query: { pattern: string };
-    },
-  ) => Promise<WsPath[]>;
-
-  searchText?: () => Promise<void>;
 }

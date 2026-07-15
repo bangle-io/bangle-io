@@ -1,4 +1,5 @@
 import { expect, type Page, test } from '@playwright/test';
+import { pressAppShortcut } from './common';
 
 /** Locale bundle filenames (e.g. `['en.js', 'de.js']`) fetched so far, in order. */
 async function loadedLocaleFiles(page: Page): Promise<string[]> {
@@ -57,8 +58,25 @@ test.describe('translations delivery', () => {
       expect(await activeLanguage(page)).toBe('Deutsch');
 
       // English is always loaded first as the fallback base, then German is
-      // merged on top - never every language.
+      // merged on top - never every language. Check this before further UI
+      // activity so the assertion observes bootstrap request order directly.
       expect(await loadedLocaleFiles(page)).toEqual(['en.js', 'de.js']);
+
+      await pressAppShortcut(page, 'k');
+      const omniSearch = page.getByRole('dialog', {
+        name: 'Omni-Befehlsleiste',
+      });
+      const omniInput = omniSearch.getByPlaceholder(
+        'Befehl eingeben oder suchen...',
+      );
+      await expect(omniSearch).toBeVisible();
+      await expect(omniSearch.getByText('> Befehle')).toBeVisible();
+      await expect(omniSearch.getByText('Alle Dateien')).toBeVisible();
+      await expect(omniSearch.getByText('Alle Befehle anzeigen')).toBeVisible();
+      await omniInput.fill('definitely-no-result');
+      await expect(
+        omniSearch.getByText('Keine Ergebnisse gefunden.'),
+      ).toBeVisible();
     });
   });
 });

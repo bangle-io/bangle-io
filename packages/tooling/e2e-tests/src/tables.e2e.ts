@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import {
+  collapseEditorSelectionAfterText,
   createBrowserWorkspaceAndNote,
   getEditorLocator,
   readStoredMarkdown,
@@ -277,13 +278,11 @@ test('arrow keys navigate cell edges and exit the table at its boundaries', asyn
   const editor = getEditorLocator(page, {});
   await expect(editor.locator('table')).toBeVisible();
 
-  // One initial click; everything after navigates by keyboard so the test
-  // exercises the caret behavior users actually rely on.
-  await editor.locator('table td', { hasText: 'c1' }).click();
-  await waitForEditorFocus(page, {});
+  // Place the initial caret deterministically; everything after navigates by
+  // keyboard so the test exercises the caret behavior users actually rely on.
+  await collapseEditorSelectionAfterText(page, 'c1');
 
   // ArrowRight at the end of a cell hops to the start of the next cell.
-  await page.keyboard.press('End');
   await page.keyboard.press('ArrowRight');
   await page.keyboard.insertText('X');
   await expect(editor.locator('table td').nth(1)).toHaveText('Xd1');

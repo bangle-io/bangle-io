@@ -10,11 +10,7 @@ import {
   WORKSPACE_STORAGE_TYPE,
   type WorkspaceStorageType,
 } from '@bangle.io/constants';
-import type {
-  BaseFileStorageService,
-  ScopedEmitter,
-  WorkspaceInfo,
-} from '@bangle.io/types';
+import type { BaseFileStorageService, ScopedEmitter } from '@bangle.io/types';
 import { isVisibleWorkspaceFilePath, WsPath } from '@bangle.io/ws-path';
 import { atom } from 'jotai';
 import type { WorkspaceOpsService } from './workspace-ops-service';
@@ -305,11 +301,7 @@ export class FileSystemService extends BaseService {
     );
   }
 
-  public async createFile(
-    wsPath: string,
-    file: File,
-    _options: { sha?: string } = {},
-  ): Promise<void> {
+  public async createFile(wsPath: string, file: File): Promise<void> {
     await this.mountPromise;
     WsPath.assertFile(wsPath);
 
@@ -333,18 +325,12 @@ export class FileSystemService extends BaseService {
     );
   }
 
-  public async writeFile(
-    wsPath: string,
-    file: File,
-    options: { sha?: string } = {},
-  ): Promise<void> {
+  public async writeFile(wsPath: string, file: File): Promise<void> {
     await this.mountPromise;
     WsPath.assertFile(wsPath);
 
     const storageService = await this.getStorageService({ wsPath });
-    await storageService.writeFile(wsPath, file, {
-      sha: options.sha,
-    });
+    await storageService.writeFile(wsPath, file, {});
     this.onChange({
       type: 'file-content-update',
       payload: { wsPath },

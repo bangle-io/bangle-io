@@ -123,7 +123,7 @@ function HomeRoute({
 
     const viewAllCommand: CommandItemProp = {
       id: 'view-all-commands',
-      title: 'View All Commands',
+      title: t.app.omniSearch.viewAllCommands,
       metadata: { type: 'command', cmd: { id: 'view-all-commands', args: {} } },
       onSelect: goToCommandRoute,
     };
@@ -161,13 +161,22 @@ function HomeRoute({
     <>
       {recentFiles.length > 0 && (
         <>
-          <CommandGroupSection heading="Recent Notes" items={recentFiles} />
+          <CommandGroupSection
+            heading={t.app.omniSearch.recentNotesHeading}
+            items={recentFiles}
+          />
           <CommandSeparator />
         </>
       )}
-      <CommandGroupSection heading="> Commands" items={allCommands} />
+      <CommandGroupSection
+        heading={t.app.omniSearch.commandsHeading}
+        items={allCommands}
+      />
       <CommandSeparator />
-      <CommandGroupSection heading="All Files" items={allFiles} />
+      <CommandGroupSection
+        heading={t.app.omniSearch.allFilesHeading}
+        items={allFiles}
+      />
     </>
   );
 }
@@ -206,7 +215,12 @@ function CommandRoute({
     return searchItems(items, search);
   }, [items, search]);
 
-  return <CommandGroupSection heading="> Commands" items={commands} />;
+  return (
+    <CommandGroupSection
+      heading={t.app.omniSearch.commandsHeading}
+      items={commands}
+    />
+  );
 }
 
 function FilteredRoute({
@@ -245,7 +259,7 @@ function FilteredRoute({
 
   return (
     <CommandGroup
-      heading={'Filtered'}
+      heading={t.app.omniSearch.filteredHeading}
       ref={parentRef}
       style={{ height: '428px', overflowY: 'auto' }}
     >
@@ -380,11 +394,11 @@ export function OmniSearch() {
         }
       }}
       shouldFilter={false}
-      screenReaderTitle="omni command bar"
+      screenReaderTitle={t.app.omniSearch.dialogTitle}
     >
       <CommandInput
         ref={commandInputRef}
-        placeholder="Type a command or search..."
+        placeholder={t.app.omniSearch.inputPlaceholder}
         value={search}
         onValueChange={(value) => {
           updateSearch(value);
@@ -412,7 +426,7 @@ export function OmniSearch() {
         )}
 
         <CommandEmpty>
-          <span>No results found.</span>
+          <span>{t.app.omniSearch.noResults}</span>
         </CommandEmpty>
       </CommandList>
     </CommandDialog>
