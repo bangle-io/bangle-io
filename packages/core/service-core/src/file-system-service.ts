@@ -30,6 +30,12 @@ export type FileCreateEvent = {
   wsPath: string;
 };
 
+export type FileRenameEvent = {
+  oldWsPath: string;
+  sequence: number;
+  wsPath: string;
+};
+
 type FileReadOptions = {
   signal?: AbortSignal;
 };
@@ -58,9 +64,11 @@ export class FileSystemService extends BaseService {
   $fileForceUpdateCount = atom(0);
   $fileCreateEvent = atom<FileCreateEvent | undefined>(undefined);
   $fileContentUpdateEvent = atom<FileContentUpdateEvent | undefined>(undefined);
+  $fileRenameEvent = atom<FileRenameEvent | undefined>(undefined);
 
   private fileCreateSequence = 0;
   private fileContentUpdateSequence = 0;
+  private fileRenameSequence = 0;
 
   $fileTreeChangeCount = atom((get) => {
     return (
@@ -129,6 +137,14 @@ export class FileSystemService extends BaseService {
             break;
           }
           case 'file-rename': {
+            if (event.oldWsPath) {
+              this.fileRenameSequence += 1;
+              this.store.set(this.$fileRenameEvent, {
+                oldWsPath: event.oldWsPath,
+                sequence: this.fileRenameSequence,
+                wsPath: event.wsPath,
+              });
+            }
             this.store.set(this.$fileRenameCount, (c) => c + 1);
             break;
           }

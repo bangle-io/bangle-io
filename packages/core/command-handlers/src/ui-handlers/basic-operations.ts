@@ -2,7 +2,7 @@ import { throwAppError } from '@bangle.io/base-utils';
 import {
   EDITOR_ENGINE_IDS,
   EDITOR_ENGINE_QUERY_PARAM,
-  EDITOR_ENGINE_SWITCH_SAVE_DRAIN_TIMEOUT_MS,
+  EDITOR_SAVE_DRAIN_TIMEOUT_MS,
   isEditorEngineId,
 } from '@bangle.io/constants';
 import { waitForSaveQueueToDrain } from '@bangle.io/service-core';
@@ -109,7 +109,7 @@ export const basicOperationsHandlers = [
             void (async () => {
               const drained = await waitForSaveQueueToDrain(
                 editorEngine,
-                EDITOR_ENGINE_SWITCH_SAVE_DRAIN_TIMEOUT_MS,
+                EDITOR_SAVE_DRAIN_TIMEOUT_MS,
               );
               if (!drained) {
                 toast.error(t.app.toasts.editorEngineSwitchBlockedBySaves);

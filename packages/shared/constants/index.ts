@@ -75,11 +75,11 @@ export function isEditorEngineId(value: unknown): value is EditorEngineId {
 }
 export const EDITOR_ENGINE_QUERY_PARAM = 'editorEngine';
 /**
- * Maximum time an editor-engine switch waits for the current tab's writes.
- * Healthy saves settle quickly; reaching this bound indicates a failed save
- * that must keep the tab mounted so its unsaved content remains recoverable.
+ * Maximum time a destructive editor lifecycle or file relocation waits for
+ * the current tab's writes. Healthy saves settle quickly; reaching this bound
+ * indicates a failed save whose in-memory content must remain recoverable.
  */
-export const EDITOR_ENGINE_SWITCH_SAVE_DRAIN_TIMEOUT_MS = 5_000;
+export const EDITOR_SAVE_DRAIN_TIMEOUT_MS = 5_000;
 
 export const WORKSPACE_STORAGE_TYPE = {
   Help: 'helpfs',

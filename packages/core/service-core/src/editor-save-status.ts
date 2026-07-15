@@ -9,12 +9,18 @@
  */
 export function waitForSaveQueueToDrain(
   engine: {
-    hasPendingOrFailedSave: () => boolean;
-    subscribeToSaveStatus: (listener: () => void) => () => void;
+    hasPendingOrFailedSave: (wsPath?: string) => boolean;
+    subscribeToSaveStatus: (
+      listener: () => void,
+      wsPath?: string,
+    ) => () => void;
   },
   timeoutMs: number,
+  wsPath?: string,
 ): Promise<boolean> {
-  if (!engine.hasPendingOrFailedSave()) {
+  const hasPendingOrFailedSave = () => engine.hasPendingOrFailedSave(wsPath);
+
+  if (!hasPendingOrFailedSave()) {
     return Promise.resolve(true);
   }
 
@@ -36,22 +42,19 @@ export function waitForSaveQueueToDrain(
     };
 
     unsubscribe = engine.subscribeToSaveStatus(() => {
-      if (!engine.hasPendingOrFailedSave()) {
+      if (!hasPendingOrFailedSave()) {
         finish(true);
       }
-    });
+    }, wsPath);
     if (settled) {
       // The listener fired synchronously during subscription.
       unsubscribe();
       return;
     }
-    timer = setTimeout(
-      () => finish(!engine.hasPendingOrFailedSave()),
-      timeoutMs,
-    );
+    timer = setTimeout(() => finish(!hasPendingOrFailedSave()), timeoutMs);
     // The queue may have drained between the caller's first check and the
     // subscription above; without this re-check we would wait out the timeout.
-    if (!engine.hasPendingOrFailedSave()) {
+    if (!hasPendingOrFailedSave()) {
       finish(true);
     }
   });

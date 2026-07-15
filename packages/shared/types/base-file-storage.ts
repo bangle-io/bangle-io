@@ -63,6 +63,11 @@ export interface BaseFileStorageProvider {
     options: EmptyObject,
   ) => Promise<WsPath[]>;
 
+  /**
+   * Renames one file without overwriting an existing destination.
+   * Implementations must reject destination conflicts with
+   * `error::file:already-existing`.
+   */
   renameFile: (
     wsPath: WsPath,
     options: {

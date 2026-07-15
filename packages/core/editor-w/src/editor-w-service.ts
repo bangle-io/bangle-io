@@ -143,7 +143,7 @@ export class EditorWService
     return false;
   }
 
-  subscribeToSaveStatus(_listener: () => void): () => void {
+  subscribeToSaveStatus(_listener: () => void, _wsPath?: string): () => void {
     // Save status can never change; subscribers get a working unsubscribe
     // and no notifications.
     return () => {};

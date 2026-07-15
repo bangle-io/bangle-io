@@ -144,7 +144,19 @@ export class FileStorageIndexedDB
     const oldFsPath = toFSPathOrThrow(wsPath);
     const newFsPath = toFSPathOrThrow(newWsPath);
 
-    await this.idb.rename(oldFsPath, newFsPath);
+    try {
+      await this.idb.rename(oldFsPath, newFsPath);
+    } catch (error) {
+      if (
+        error instanceof BaseFileSystemError &&
+        error.code === FILE_ALREADY_EXISTS_ERROR
+      ) {
+        throwAppError('error::file:already-existing', 'File already exists', {
+          wsPath: newWsPath,
+        });
+      }
+      throw error;
+    }
 
     this.emitChange({
       type: 'rename',
@@ -155,19 +167,25 @@ export class FileStorageIndexedDB
 
   async writeFile(wsPath: string, file: File): Promise<void> {
     await this.mountPromise;
-
-    if (!(await this.fileExists(wsPath))) {
-      throwAppError(
-        'error::file-storage:file-does-not-exist',
-        'Cannot write file as it does not exist',
-        {
-          wsPath,
-          storage: this.name,
-        },
-      );
-    }
     const fsPath = toFSPathOrThrow(wsPath);
-    await this.idb.writeFile(fsPath, file);
+    try {
+      await this.idb.writeExistingFile(fsPath, file);
+    } catch (error) {
+      if (
+        error instanceof BaseFileSystemError &&
+        error.code === FILE_NOT_FOUND_ERROR
+      ) {
+        throwAppError(
+          'error::file-storage:file-does-not-exist',
+          'Cannot write file as it does not exist',
+          {
+            wsPath,
+            storage: this.name,
+          },
+        );
+      }
+      throw error;
+    }
 
     this.emitChange({
       type: 'update',

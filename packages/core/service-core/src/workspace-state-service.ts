@@ -114,6 +114,17 @@ function appendSortedUniqueWsPath(paths: string[], wsPath: string): string[] {
   return [...paths, wsPath].sort((a, b) => a.localeCompare(b));
 }
 
+function relocateSortedUniqueWsPath(
+  paths: string[],
+  oldWsPath: string,
+  newWsPath: string,
+): string[] {
+  return appendSortedUniqueWsPath(
+    paths.filter((wsPath) => wsPath !== oldWsPath),
+    newWsPath,
+  );
+}
+
 /**
  * Manages the state of current and available workspaces
  */
@@ -262,6 +273,7 @@ export class WorkspaceStateService extends BaseService {
 
   private createdWsPathsBySequence = new Map<number, string>();
   private handledFileCreateSequence = 0;
+  private handledFileRenameSequence = 0;
   private lastKnownWorkspaces = EMPTY_WORKSPACE_ARRAY;
   private lastListedWsName: string | undefined;
 
@@ -418,6 +430,57 @@ export class WorkspaceStateService extends BaseService {
             this.$rawWsPaths,
             appendSortedUniqueWsPath(get(this.$rawWsPaths), filePath.wsPath),
           );
+        }),
+        () => {},
+      ),
+    );
+
+    this.addCleanup(
+      this.store.sub(
+        atomEffect((get, set) => {
+          const renameEvent = get(this.fileSystem.$fileRenameEvent);
+          if (
+            !renameEvent ||
+            renameEvent.sequence <= this.handledFileRenameSequence
+          ) {
+            return;
+          }
+          this.handledFileRenameSequence = renameEvent.sequence;
+
+          const oldFilePath = this.getVisibleWorkspaceFilePath(
+            renameEvent.oldWsPath,
+          );
+          const newFilePath = this.getVisibleWorkspaceFilePath(
+            renameEvent.wsPath,
+          );
+          const wsName = get(this.$currentWsName);
+          if (
+            !wsName ||
+            !oldFilePath ||
+            !newFilePath ||
+            oldFilePath.wsName !== wsName ||
+            newFilePath.wsName !== wsName
+          ) {
+            return;
+          }
+
+          // Replace the path before following the route so current-file atoms
+          // never observe the renamed note as missing between those updates.
+          set(
+            this.$rawWsPaths,
+            relocateSortedUniqueWsPath(
+              get(this.$rawWsPaths),
+              oldFilePath.wsPath,
+              newFilePath.wsPath,
+            ),
+          );
+
+          if (
+            get(this.navigation.$activeWsFilePath)?.wsPath ===
+            oldFilePath.wsPath
+          ) {
+            this.navigation.goWsPath(newFilePath.wsPath);
+          }
         }),
         () => {},
       ),

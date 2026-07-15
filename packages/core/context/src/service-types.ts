@@ -63,7 +63,7 @@ export type EditorEngineContract = BaseService & {
     focus?: boolean;
   }) => () => void;
   retryFailedSave: (wsPath: string) => boolean;
-  subscribeToSaveStatus: (listener: () => void) => () => void;
+  subscribeToSaveStatus: (listener: () => void, wsPath?: string) => () => void;
   toggleHeadingCollapse: () => boolean;
   uncollapseAllHeadings: () => boolean;
 };

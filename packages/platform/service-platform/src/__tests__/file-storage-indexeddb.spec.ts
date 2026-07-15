@@ -92,6 +92,31 @@ describe('FileStorageIndexedDB', () => {
     });
   });
 
+  it('provider contract: rename rejects an existing destination with a typed app error', async () => {
+    const { service, onChange } = await setup();
+    const oldPath = 'myWorkspace:source.txt';
+    const newPath = 'myWorkspace:destination.txt';
+
+    await service.createFile(oldPath, new File(['Source'], 'source.txt'));
+    await service.createFile(
+      newPath,
+      new File(['Destination'], 'destination.txt'),
+    );
+    onChange.mockClear();
+
+    await expect(
+      service.renameFile(oldPath, { newWsPath: newPath }),
+    ).rejects.toMatchObject({
+      cause: expect.objectContaining({
+        name: 'error::file:already-existing',
+        payload: { wsPath: newPath },
+      }),
+    });
+    await expect(service.readFile(oldPath)).resolves.toBeDefined();
+    await expect(service.readFile(newPath)).resolves.toBeDefined();
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
   it('should error when writing a non-existent file', async () => {
     const { service } = await setup();
     const wsPath = 'myWorkspace:missingFile.txt';

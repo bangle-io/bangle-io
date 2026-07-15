@@ -429,6 +429,55 @@ describe('WorkspaceStateService file tree updates', () => {
     ).toContain(newWsPath);
   });
 
+  it('replaces a renamed path and follows the active file route', async () => {
+    const { services } = await setupWorkspaceStateService({ controller });
+    const renamedWsPath = `${WS_NAME}:RenamedTarget.md`;
+
+    await services.fileSystem.renameFile({
+      oldWsPath: TARGET,
+      newWsPath: renamedWsPath,
+    });
+
+    await vi.waitFor(() => {
+      expect(services.navigation.resolveAtoms().activeWsFilePath?.wsPath).toBe(
+        renamedWsPath,
+      );
+      expect(
+        services.workspaceState.resolveAtoms().currentWsFilePath?.wsPath,
+      ).toBe(renamedWsPath);
+    });
+    const wsPaths = services.workspaceState
+      .resolveAtoms()
+      .wsPaths.map((path) => path.wsPath);
+    expect(wsPaths).toContain(renamedWsPath);
+    expect(wsPaths).not.toContain(TARGET);
+  });
+
+  it('does not follow a rename when the user is viewing another file', async () => {
+    const { services } = await setupWorkspaceStateService({ controller });
+    const renamedWsPath = `${WS_NAME}:RenamedSource.md`;
+    services.navigation.goWsPath(SOURCE_WIKI);
+
+    await services.fileSystem.renameFile({
+      oldWsPath: TARGET,
+      newWsPath: renamedWsPath,
+    });
+
+    expect(services.navigation.resolveAtoms().activeWsFilePath?.wsPath).toBe(
+      SOURCE_WIKI,
+    );
+    await vi.waitFor(() => {
+      expect(
+        services.workspaceState
+          .resolveAtoms()
+          .wsPaths.map((path) => path.wsPath),
+      ).toContain(renamedWsPath);
+    });
+    expect(services.navigation.resolveAtoms().activeWsFilePath?.wsPath).toBe(
+      SOURCE_WIKI,
+    );
+  });
+
   it('keeps an incremental create when an older full rescan resolves later', async () => {
     const { services, store } = await setupWorkspaceStateService({
       controller,

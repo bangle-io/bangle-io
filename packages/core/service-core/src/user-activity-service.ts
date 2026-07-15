@@ -38,6 +38,8 @@ type ActivityLogEntry<T extends EntityType = EntityType> = {
 const ACTIVITY_LOG_KEY = 'ws-activity';
 const STARRED_ITEMS_KEY = 'starred-items';
 
+export type StarredItemRelocationResult = 'failed' | 'succeeded';
+
 /**
  * Tracks user activities like recent workspaces and commands executed
  */
@@ -144,6 +146,7 @@ export class UserActivityService extends BaseService {
     async (get): Promise<string[]> => {
       await this.mountPromise;
       get(this.$starredItemsChangeCounter);
+      get(this.workspaceOps.$workspaceInfoChange);
       const wsPaths = get(this.workspaceState.$noteWsPaths);
       const wsName = get(this.workspaceState.$currentWsName);
       if (wsPaths.length === 0 || !wsName) {
@@ -400,6 +403,43 @@ export class UserActivityService extends BaseService {
     await this.starredItemManager.toggleStarItem(item, desiredState);
     this.store.set(this.$starredItemsChangeCounter, (c) => c + 1);
   }
+
+  /**
+   * Migrates a starred path after its durable file relocation. Metadata
+   * failures are returned explicitly because the file operation has already
+   * succeeded and must never be reported as though it were rolled back.
+   */
+  public async relocateStarredItem(
+    oldItem: WsPath,
+    newItem: WsPath,
+  ): Promise<StarredItemRelocationResult> {
+    return this.relocateStarredItems([{ oldItem, newItem }]);
+  }
+
+  /** Migrates multiple durable relocations in one atomic metadata update. */
+  public async relocateStarredItems(
+    relocations: readonly { oldItem: WsPath; newItem: WsPath }[],
+  ): Promise<StarredItemRelocationResult> {
+    await this.mountPromise;
+
+    try {
+      const relocated =
+        await this.starredItemManager.relocateStarredItems(relocations);
+      if (relocated) {
+        this.store.set(this.$starredItemsChangeCounter, (c) => c + 1);
+      }
+      return 'succeeded';
+    } catch (error) {
+      this.logger.error('Unable to migrate starred items after relocation', {
+        error,
+        relocations: relocations.map(({ oldItem, newItem }) => ({
+          newWsPath: newItem.wsPath,
+          oldWsPath: oldItem.wsPath,
+        })),
+      });
+      return 'failed';
+    }
+  }
 }
 
 class StarredItemManager {
@@ -461,6 +501,73 @@ class StarredItemManager {
       }
       return Array.from(set);
     });
+  }
+
+  async relocateStarredItems(
+    relocations: readonly { oldItem: WsPath; newItem: WsPath }[],
+  ): Promise<boolean> {
+    if (relocations.length === 0) {
+      return false;
+    }
+
+    const wsName = relocations[0]?.oldItem.wsName;
+    if (!wsName) {
+      return false;
+    }
+    for (const { oldItem, newItem } of relocations) {
+      if (oldItem.wsName !== wsName || newItem.wsName !== wsName) {
+        throwAppError(
+          'error::file:invalid-operation',
+          'Cannot migrate starred notes across workspaces',
+          {
+            operation: 'relocate-starred-items',
+            oldWsPath: oldItem.wsPath,
+            newWsPath: newItem.wsPath,
+          },
+        );
+      }
+    }
+
+    const relocationByOldWsPath = new Map(
+      relocations.map(({ oldItem, newItem }) => [
+        oldItem.wsPath,
+        newItem.wsPath,
+      ]),
+    );
+    let relocated = false;
+    await this.workspaceOps.updateWorkspaceMetadata(
+      wsName,
+      (currentMetadata) => {
+        const currentRawStarredItems = currentMetadata[STARRED_ITEMS_KEY] ?? [];
+        if (!Array.isArray(currentRawStarredItems)) {
+          throwAppError(
+            'error::workspace:invalid-metadata',
+            `Invalid starred items metadata for ${wsName}`,
+            { wsName },
+          );
+        }
+        if (
+          !currentRawStarredItems.some((wsPath) =>
+            relocationByOldWsPath.has(wsPath),
+          )
+        ) {
+          return currentMetadata;
+        }
+
+        relocated = true;
+
+        const relocatedItems = currentRawStarredItems.map(
+          (wsPath) => relocationByOldWsPath.get(wsPath) ?? wsPath,
+        );
+
+        return {
+          ...currentMetadata,
+          [STARRED_ITEMS_KEY]: [...new Set(relocatedItems)],
+        };
+      },
+    );
+
+    return relocated;
   }
 
   async getStarredItems(wsName: string): Promise<string[]> {

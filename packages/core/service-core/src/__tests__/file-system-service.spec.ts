@@ -206,6 +206,10 @@ describe('FileSystemService', () => {
       newWsPath: 'test-workspace:renamed-after-settings.md',
     });
     expect(readRevision()).toBeGreaterThan(afterCreateRevision);
+    expect(store.get(fileSystem.$fileRenameEvent)).toMatchObject({
+      oldWsPath: 'test-workspace:created-after-settings.md',
+      wsPath: 'test-workspace:renamed-after-settings.md',
+    });
 
     const afterRenameRevision = readRevision();
     await fileSystem.deleteFile('test-workspace:renamed-after-settings.md');
