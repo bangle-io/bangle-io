@@ -101,7 +101,26 @@ describe('pickDirectory', () => {
 
     const handle = await pickDirectory({ id: 'bangle-ws' });
     expect(handle).toBe(asRootHandle(dir));
-    expect(picker).toHaveBeenCalledWith({ id: 'bangle-ws', mode: 'readwrite' });
+    expect(picker).toHaveBeenCalledWith({ id: 'bangle-ws' });
+  });
+
+  it('requests readwrite via requestPermission, not the picker mode option', async () => {
+    // Chrome persists explicit requestPermission grants across sessions
+    // (enabling the "Allow on every visit" restore prompt); picker-mode
+    // grants have not reliably been persisted. Keep the upfront prompt on
+    // the requestPermission path.
+    const dir = new FakeDirectoryHandle('picked');
+    dir.permissions = { read: 'granted', readwrite: 'prompt' };
+    const requestPermissionSpy = vi.spyOn(dir, 'requestPermission');
+    const picker = vi.fn(async () => asRootHandle(dir));
+    vi.stubGlobal('showDirectoryPicker', picker);
+
+    await pickDirectory({ id: 'bangle-ws' });
+    expect(picker).toHaveBeenCalledWith(
+      expect.not.objectContaining({ mode: expect.anything() }),
+    );
+    expect(requestPermissionSpy).toHaveBeenCalledWith({ mode: 'readwrite' });
+    expect(dir.permissions.readwrite).toBe('granted');
   });
 
   it('maps user cancellation to userAborted', async () => {
