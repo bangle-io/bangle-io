@@ -137,15 +137,20 @@ div.ProseMirror {
   }
 
   & .math-node .math-src .ProseMirror:focus {
-    border-color: hsl(var(--BV-pop));
-    box-shadow: 0 0 0 2px hsl(var(--BV-pop) / 0.2);
+    border-color: hsl(var(--BV-pop) / 0.6);
+    box-shadow: none;
     outline: none;
   }
 
   & .math-node.ProseMirror-selectednode {
-    background: hsl(var(--BV-muted) / 0.22);
-    box-shadow: 0 0 0 2px hsl(var(--BV-pop));
+    background: hsl(var(--BV-muted) / 0.12);
+    box-shadow: 0 0 0 1px hsl(var(--BV-pop) / 0.45);
     outline: none;
+  }
+
+  & .math-node.ProseMirror-selectednode:focus-within {
+    background: transparent;
+    box-shadow: none;
   }
 
   & .math-node .katex-error,

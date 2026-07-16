@@ -45,6 +45,11 @@ test('authors, edits, copies, and persists inline and display math', async ({
     const sourceEditor = inlineMath.locator('.math-src .ProseMirror');
     await expect(sourceEditor).toBeVisible();
     await expect(sourceEditor).toHaveText(String.raw`e^{i\pi} + 1 = 0`);
+    await expect
+      .poll(() =>
+        inlineMath.evaluate((element) => getComputedStyle(element).boxShadow),
+      )
+      .toBe('none');
     await sourceEditor.fill(String.raw`e^{i\pi} + 1 = 1`);
     await sourceEditor.press('Control+Enter');
 
