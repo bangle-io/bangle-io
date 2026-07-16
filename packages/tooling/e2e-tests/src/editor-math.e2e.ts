@@ -3,6 +3,7 @@ import {
   collapseEditorSelectionAfterText,
   createBrowserWorkspaceAndNote,
   ctrlKey,
+  expectNoPageHorizontalOverflow,
   getEditorLocator,
   readStoredMarkdown,
   waitForEditorFocus,
@@ -245,4 +246,75 @@ test('currency text does not suppress later editor input rules', async ({
   const reloadedEditor = getEditorLocator(page, {});
   await expect(reloadedEditor.locator('strong')).toHaveText('lunch');
   await expect(reloadedEditor.locator('.wiki-link')).toHaveText('Home');
+});
+
+test('contains long inline math overflow on narrow screens', async ({
+  page,
+}) => {
+  const workspaceName = 'editor-math-inline-overflow';
+  const noteName = 'Long inline math';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await editor.pressSequentially('$x$', { delay: 20 });
+
+  const inlineMath = editor.locator('math-inline');
+  await inlineMath.locator('.math-render').click();
+  const longSource = Array.from(
+    { length: 40 },
+    (_, index) => `x_{${index}}^2`,
+  ).join('+');
+  await inlineMath.locator('.math-src .ProseMirror').fill(longSource);
+  await inlineMath.locator('.math-src .ProseMirror').press('Control+Enter');
+
+  await page.setViewportSize({ width: 375, height: 800 });
+  await expectNoPageHorizontalOverflow(page);
+  const widths = await inlineMath.evaluate((node) => ({
+    clientWidth: node.clientWidth,
+    scrollWidth: node.scrollWidth,
+  }));
+  expect(widths.clientWidth).toBeGreaterThan(0);
+  expect(widths.scrollWidth).toBeGreaterThan(widths.clientWidth);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(getEditorLocator(page, {}).locator('math-inline')).toHaveCount(
+    1,
+  );
+  await expectNoPageHorizontalOverflow(page);
+});
+
+test('keeps multiline plain-text paste inside display math', async ({
+  context,
+  page,
+}) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  const workspaceName = 'editor-math-multiline-paste';
+  const noteName = 'Multiline paste';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('/');
+  await page.getByText('Math block', { exact: true }).click();
+
+  const source = editor.locator('math-display .math-src .ProseMirror');
+  await page.evaluate(() => navigator.clipboard.writeText('a\n$$\nb'));
+  await source.press('ControlOrMeta+v');
+
+  await expect(source).toHaveText('a\n$$\nb');
+  await expect(editor.locator('math-display')).toHaveCount(1);
+  await source.press('Control+Enter');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(['```', '$$', 'a', '$$', 'b', '$$', '```'].join('\n'));
+
+  await page.reload({ waitUntil: 'networkidle' });
+  const reloadedEditor = getEditorLocator(page, {});
+  await expect(reloadedEditor.locator('math-display')).toHaveCount(0);
+  await expect(reloadedEditor.locator('pre code')).toContainText(
+    '$$\na\n$$\nb\n$$',
+  );
 });

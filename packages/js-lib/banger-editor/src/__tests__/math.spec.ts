@@ -365,6 +365,35 @@ describe('math interaction', () => {
     editor.expectDoc(doc(p('before ', mathInline('alpha '))));
   });
 
+  it('keeps multiline plain-text paste inside display math source', () => {
+    const editor = editorTest.createEditor(doc(p(), mathDisplay('replace me')));
+    editor.view.dispatch(
+      editor.view.state.tr.setSelection(
+        NodeSelection.create(editor.view.state.doc, 2),
+      ),
+    );
+    const sourceEditor = editor.view.dom.querySelector<HTMLElement>(
+      'math-display .math-src .ProseMirror',
+    );
+    expect(sourceEditor).not.toBeNull();
+    const range = document.createRange();
+    range.selectNodeContents(sourceEditor as HTMLElement);
+    const selection = document.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+    const event = new Event('paste', { bubbles: true, cancelable: true });
+    Object.defineProperty(event, 'clipboardData', {
+      value: {
+        getData: () => 'a\r\n$$\r\nb',
+        types: ['text/plain'],
+      },
+    });
+    sourceEditor?.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(true);
+    editor.expectDoc(doc(p(), mathDisplay('a\n$$\nb')));
+  });
+
   it('keeps invalid TeX source rendered as a visible error', () => {
     const source = String.raw`\notacommand{`;
     const editor = editorTest.createEditor(doc(p(mathInline(source))));

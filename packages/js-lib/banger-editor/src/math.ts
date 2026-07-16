@@ -242,9 +242,41 @@ function installMathViewSafeguards(
     outerView.focus();
   };
   mathView.dom.addEventListener('keydown', handleKeyDown, true);
+  const handlePaste = (event: ClipboardEvent) => {
+    const clipboard = event.clipboardData;
+    if (!clipboard || !Array.from(clipboard.types).includes('text/plain')) {
+      return;
+    }
+    const source = mathView.dom.querySelector<HTMLElement>(
+      '.math-src .ProseMirror',
+    );
+    const offsets = source ? sourceSelectionOffsets(source) : null;
+    const nodePos = getPos();
+    if (!offsets || nodePos === undefined) return;
+    const currentNode = outerView.state.doc.nodeAt(nodePos);
+    if (
+      !currentNode?.type.name.startsWith('math_') ||
+      offsets.to > currentNode.content.size
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const text = clipboard.getData('text/plain').replace(/\r\n?/gu, '\n');
+    outerView.dispatch(
+      outerView.state.tr.insertText(
+        text,
+        nodePos + 1 + offsets.from,
+        nodePos + 1 + offsets.to,
+      ),
+    );
+  };
+  mathView.dom.addEventListener('paste', handlePaste, true);
   const upstreamDestroy = mathView.destroy.bind(mathView);
   mathView.destroy = () => {
     mathView.dom.removeEventListener('keydown', handleKeyDown, true);
+    mathView.dom.removeEventListener('paste', handlePaste, true);
     upstreamDestroy();
   };
 }

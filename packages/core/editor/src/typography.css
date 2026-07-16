@@ -102,6 +102,9 @@ div.ProseMirror {
   }
 
   & math-inline {
+    display: inline-block;
+    max-width: 100%;
+    overflow-x: auto;
     vertical-align: baseline;
   }
 
