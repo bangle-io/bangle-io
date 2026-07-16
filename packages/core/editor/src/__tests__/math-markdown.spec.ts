@@ -1,43 +1,25 @@
-import {
-  markdownLoader,
-  resolve,
-  Schema,
-  setupBase,
-  setupBlockquote,
-  setupBold,
-  setupCode,
-  setupCodeBlock,
-  setupHardBreak,
-  setupItalic,
-  setupLink,
-  setupList,
-  setupMath,
-  setupParagraph,
-} from '@bangle.io/prosemirror-plugins';
+import type { PMNode, Schema } from '@bangle.io/prosemirror-plugins';
 import { describe, expect, it } from 'vitest';
-
-function createMarkdown() {
-  const extensions = [
-    setupBase(),
-    setupBlockquote(),
-    setupBold(),
-    setupList(),
-    setupHardBreak(),
-    setupParagraph(),
-    setupCode(),
-    setupCodeBlock(),
-    setupItalic(),
-    setupLink(),
-    setupMath(),
-  ];
-  const resolved = resolve(extensions);
-  const schema = new Schema({ nodes: resolved.nodes, marks: resolved.marks });
-  return markdownLoader(extensions, schema);
-}
+import { createProductionMarkdown } from './production-markdown-test-helpers';
 
 function roundTrip(source: string): string {
-  const markdown = createMarkdown();
+  const markdown = createProductionMarkdown();
   return markdown.serializer.serialize(markdown.parser.parse(source));
+}
+
+function collectNodeText(document: PMNode, name: string) {
+  const result: string[] = [];
+  document.descendants((node) => {
+    if (node.type.name === name) result.push(node.textContent);
+    return true;
+  });
+  return result;
+}
+
+function getNodeType(schema: Schema, name: string) {
+  const type = schema.nodes[name];
+  if (!type) throw new Error(`Missing schema node: ${name}`);
+  return type;
 }
 
 describe('production math Markdown', () => {
@@ -90,12 +72,90 @@ $$`;
   it('keeps unsupported KaTeX byte-identical and structurally stable', () => {
     const source =
       'valid $x$ invalid $\\unsupported{value}$\n\n$$\n\\begin{unsupported}\nraw & source\n\\end{unsupported}\n$$';
-    const markdown = createMarkdown();
+    const markdown = createProductionMarkdown();
     const first = markdown.parser.parse(source);
     const serialized = markdown.serializer.serialize(first);
     const second = markdown.parser.parse(serialized);
 
     expect(serialized).toBe(source);
     expect(second.eq(first)).toBe(true);
+  });
+
+  it('drops an empty inline node without consuming following blocks', () => {
+    const markdown = createProductionMarkdown();
+    const { schema } = markdown;
+    const document = getNodeType(schema, 'doc').create(null, [
+      getNodeType(schema, 'paragraph').create(
+        null,
+        getNodeType(schema, 'math_inline').create(),
+      ),
+      getNodeType(schema, 'paragraph').create(
+        null,
+        schema.text('important text'),
+      ),
+      getNodeType(schema, 'math_display').create(null, schema.text('z')),
+    ]);
+
+    const serialized = markdown.serializer.serialize(document);
+    const reparsed = markdown.parser.parse(serialized);
+
+    // The now-empty paragraph leaves one harmless leading blank line; most
+    // importantly, it cannot become a display fence or consume later blocks.
+    expect(serialized).toBe('\nimportant text\n\n$$\nz\n$$');
+    expect(collectNodeText(reparsed, 'math_display')).toEqual(['z']);
+    expect(reparsed.textContent).toContain('important text');
+  });
+
+  it.each([
+    ['embedded dollar', 'a$b', '', String.raw`\$a\$b\$`],
+    ['leading whitespace', ' x', '', String.raw`\$ x\$`],
+    ['trailing whitespace', 'x ', '', String.raw`\$x \$`],
+    ['trailing backslash', 'x\\', '', String.raw`\$x\\\$`],
+    ['following digit', 'x', '2', String.raw`\$x\$2`],
+  ])('falls back to non-destructive text for inline math with %s', (_label, content, suffix, expected) => {
+    const markdown = createProductionMarkdown();
+    const { schema } = markdown;
+    const children = [
+      getNodeType(schema, 'math_inline').create(null, schema.text(content)),
+    ];
+    if (suffix) children.push(schema.text(suffix));
+    const document = getNodeType(schema, 'doc').create(
+      null,
+      getNodeType(schema, 'paragraph').create(null, children),
+    );
+
+    const serialized = markdown.serializer.serialize(document);
+    const reparsed = markdown.parser.parse(serialized);
+
+    expect(serialized).toBe(expected);
+    expect(collectNodeText(reparsed, 'math_inline')).toEqual([]);
+    expect(markdown.serializer.serialize(reparsed)).toBe(expected);
+  });
+
+  it('does not close display math on a delimiter line inside its source', () => {
+    const markdown = createProductionMarkdown();
+    const { schema } = markdown;
+    const document = getNodeType(schema, 'doc').create(null, [
+      getNodeType(schema, 'math_display').create(null, schema.text('a\n$$\nb')),
+      getNodeType(schema, 'paragraph').create(
+        null,
+        schema.text('important text'),
+      ),
+    ]);
+
+    const serialized = markdown.serializer.serialize(document);
+    const reparsed = markdown.parser.parse(serialized);
+
+    expect(serialized).toBe(
+      ['```', '$$', 'a', '$$', 'b', '$$', '```', '', 'important text'].join(
+        '\n',
+      ),
+    );
+    expect(collectNodeText(reparsed, 'math_display')).toEqual([]);
+    expect(collectNodeText(reparsed, 'code_block')).toEqual([
+      '$$\na\n$$\nb\n$$',
+    ]);
+    expect(reparsed.textContent).toContain('important text');
+    expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
   });
 });

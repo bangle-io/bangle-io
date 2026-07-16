@@ -1,60 +1,12 @@
-import {
-  markdownLoader,
-  resolve,
-  Schema,
-  setupBase,
-  setupBlockquote,
-  setupBold,
-  setupCode,
-  setupCodeBlock,
-  setupFrontmatter,
-  setupHardBreak,
-  setupHeading,
-  setupHorizontalRule,
-  setupImage,
-  setupItalic,
-  setupLink,
-  setupList,
-  setupMath,
-  setupParagraph,
-  setupStrike,
-  setupTable,
-  setupWikiLink,
-} from '@bangle.io/prosemirror-plugins';
 import { describe, expect, it } from 'vitest';
 import { isMarkdownRoundTripPreserved } from '../round-trip-check';
+import { createProductionMarkdown } from './production-markdown-test-helpers';
 
 // Mirrors the markdown-relevant subset of the app's real extension set, same
 // as markdown-golden-corpus.spec.ts, so the gate is exercised against the
 // serializer behavior the app actually ships.
-function createMarkdown() {
-  const extensions = [
-    setupBase({ docContent: 'frontmatter? block+' }),
-    setupFrontmatter(),
-    setupBlockquote(),
-    setupBold(),
-    setupList(),
-    setupMath(),
-    setupHardBreak(),
-    setupHeading(),
-    setupParagraph(),
-    setupStrike(),
-    setupWikiLink(),
-    setupHorizontalRule(),
-    setupCode(),
-    setupCodeBlock(),
-    setupItalic(),
-    setupLink(),
-    setupImage(),
-    setupTable(),
-  ];
-  const resolved = resolve(extensions);
-  const schema = new Schema({ nodes: resolved.nodes, marks: resolved.marks });
-  return markdownLoader(extensions, schema);
-}
-
 function roundTrip(source: string): boolean {
-  const markdown = createMarkdown();
+  const markdown = createProductionMarkdown();
   const doc = markdown.parser.parse(source);
   if (!doc) {
     throw new Error('parse returned null');
@@ -115,7 +67,7 @@ describe('round-trip gate against the real serializer', () => {
   // that the gate still fires for the genuine data-loss case.
   it('flags an unused reference definition whose content is dropped', () => {
     const source = 'Some paragraph.\n\n[unused]: https://example.com\n';
-    const markdown = createMarkdown();
+    const markdown = createProductionMarkdown();
     const doc = markdown.parser.parse(source);
     if (!doc) {
       throw new Error('parse returned null');

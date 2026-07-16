@@ -16,6 +16,13 @@ import {
   PRIORITY,
   setPluginPriority,
 } from './common';
+import {
+  MATH_DISPLAY_NODE_NAME as DISPLAY_NAME,
+  MATH_ESCAPED_DOLLAR_NODE_NAME as ESCAPED_DOLLAR_NAME,
+  MATH_INLINE_NODE_NAME as INLINE_NAME,
+  mathDisplayToMarkdown,
+  mathInlineToMarkdown,
+} from './math-markdown';
 import type {
   Command,
   NodeSpec,
@@ -35,9 +42,6 @@ import {
 } from './pm';
 import { getNodeType } from './pm-utils';
 
-const INLINE_NAME = 'math_inline';
-const DISPLAY_NAME = 'math_display';
-const ESCAPED_DOLLAR_NAME = 'math_escaped_dollar';
 // Tentative TeX must stay raw before every syntax and suggestion transformer.
 const RAW_MATH_INPUT_PRIORITY = 150;
 
@@ -424,6 +428,9 @@ function rawInlineMathInput(reservedDollarTriggers: readonly string[]) {
               $from.parent,
               $from.parentOffset,
             );
+            if (!sourceBefore.includes('$') && !text.includes('$')) {
+              return false;
+            }
             const pendingBefore = findTentativeInlineMath(sourceBefore);
             const sourceAfter = sourceBefore + text;
             if (
@@ -466,7 +473,17 @@ function rawInlineMathInput(reservedDollarTriggers: readonly string[]) {
 
 function findTentativeInlineMath(source: string) {
   const probe = findInlineMathAtEnd(`${source}x$`);
-  return probe?.content.endsWith('x') ? probe : null;
+  if (!probe?.content.endsWith('x')) return null;
+  const typedContent = probe.content.slice(0, -1);
+  // An unmatched dollar followed by a digit is much more likely to be
+  // currency than unfinished TeX. Do not claim the rest of the paragraph;
+  // a complete `$5$` still converts when its real closer is typed.
+  const first = typedContent[0];
+  return first !== undefined && isAsciiDigit(first) ? null : probe;
+}
+
+function isAsciiDigit(char: string): boolean {
+  return char >= '0' && char <= '9';
 }
 
 function inlineInputSource(parent: PMNode, end: number): string {
@@ -561,9 +578,7 @@ function markdown(
         parseMarkdown: {
           math_inline: { block: INLINE_NAME, noCloseToken: true },
         },
-        toMarkdown(state, node) {
-          state.write(`$${node.textContent}$`);
-        },
+        toMarkdown: mathInlineToMarkdown,
       },
       [ESCAPED_DOLLAR_NAME]: {
         parseMarkdown: {
@@ -577,13 +592,7 @@ function markdown(
         parseMarkdown: {
           math_display: { block: DISPLAY_NAME, noCloseToken: true },
         },
-        toMarkdown(state, node) {
-          state.write('$$\n');
-          state.text(node.textContent, false);
-          state.write('\n');
-          state.write('$$');
-          state.closeBlock(node);
-        },
+        toMarkdown: mathDisplayToMarkdown,
       },
     },
   };

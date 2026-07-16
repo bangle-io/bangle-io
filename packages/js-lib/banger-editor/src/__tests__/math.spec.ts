@@ -53,6 +53,7 @@ const editorTest = createBangerEditorTestSetup({
       title: null,
     },
     p: { nodeType: 'paragraph' },
+    strong: { markType: 'bold' },
     mathInline: { nodeType: 'math_inline' },
     mathDisplay: { nodeType: 'math_display' },
     mathEscapedDollar: { nodeType: 'math_escaped_dollar' },
@@ -66,6 +67,7 @@ const mathEscapedDollar = editorTest.nodeBuilder('mathEscapedDollar');
 const hardBreak = editorTest.nodeBuilder('hardBreak');
 const image = editorTest.nodeBuilder('image');
 const wikiLink = editorTest.nodeBuilder('wikiLink');
+const strong = editorTest.nodeBuilder('strong');
 
 afterEach(() => {
   editorTest.cleanup();
@@ -129,6 +131,31 @@ describe('math commands and input rules', () => {
     typeText(editor.view, '$5 and $6; $ x $');
 
     editor.expectDoc(doc(p('$5 and $6; $ x $')));
+  });
+
+  it('still creates a complete numeric inline expression', () => {
+    const editor = editorTest.createEditor(doc(p('<cursor>')));
+    typeText(editor.view, '$5$');
+
+    editor.expectDoc(doc(p(mathInline('5'))));
+  });
+
+  it('does not suppress later input rules after currency-like text', () => {
+    const editor = editorTest.createEditor(doc(p('<cursor>')));
+    typeText(editor.view, String.raw`Spent $5 on **lunch** [[Home]] \$`);
+
+    editor.expectDoc(
+      doc(
+        p(
+          'Spent $5 on ',
+          strong('lunch'),
+          ' ',
+          wikiLink(),
+          ' ',
+          mathEscapedDollar(),
+        ),
+      ),
+    );
   });
 
   it('hands a reserved dollar trigger to the owning editor extension', () => {

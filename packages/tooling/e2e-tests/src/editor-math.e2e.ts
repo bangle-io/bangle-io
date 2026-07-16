@@ -162,3 +162,87 @@ $$`;
 
   expect(invalidSelectionWarnings).toEqual([]);
 });
+
+test('unsafe edited math cannot consume following note content', async ({
+  page,
+}) => {
+  const workspaceName = 'editor-math-unsafe-source';
+  const noteName = 'Math safety';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await editor.pressSequentially('$x$and $y$', { delay: 20 });
+  await page.keyboard.press('Enter');
+  await page.keyboard.insertText('important text');
+  await page.keyboard.press('Enter');
+  await page.keyboard.insertText('/');
+  await page.getByText('Math block', { exact: true }).click();
+  const displaySource = editor.locator('math-display .math-src .ProseMirror');
+  await displaySource.fill('z');
+  await displaySource.press('Control+Enter');
+
+  const inlineMath = editor.locator('math-inline');
+  await inlineMath.nth(0).locator('.math-render').click();
+  await inlineMath.nth(0).locator('.math-src .ProseMirror').fill('');
+  await inlineMath
+    .nth(0)
+    .locator('.math-src .ProseMirror')
+    .press('Control+Enter');
+  await inlineMath.nth(1).locator('.math-render').click();
+  await inlineMath.nth(1).locator('.math-src .ProseMirror').fill('a$b');
+  await inlineMath
+    .nth(1)
+    .locator('.math-src .ProseMirror')
+    .press('Control+Enter');
+
+  const expected = String.raw`and \$a\$b\$
+
+important text
+
+$$
+z
+$$`;
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(expected);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  const reloadedEditor = getEditorLocator(page, {});
+  await expect(reloadedEditor.locator('math-inline')).toHaveCount(0);
+  await expect(reloadedEditor.locator('math-display')).toHaveCount(1);
+  await expect(reloadedEditor).toContainText('and $a$b$');
+  await expect(reloadedEditor).toContainText('important text');
+  expect(await readStoredMarkdown(page, workspaceName, noteName)).toBe(
+    expected,
+  );
+});
+
+test('currency text does not suppress later editor input rules', async ({
+  page,
+}) => {
+  const workspaceName = 'editor-math-currency-rules';
+  const noteName = 'Currency';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await editor.pressSequentially(
+    String.raw`Spent $5 on **lunch** [[Home]] and \$1`,
+    { delay: 20 },
+  );
+
+  await expect(editor.locator('strong')).toHaveText('lunch');
+  await expect(editor.locator('.wiki-link')).toHaveText('Home');
+  await expect(editor).toContainText('Spent $5 on lunch Home and $1');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(String.raw`Spent $5 on **lunch** [[Home]] and \$1`);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  const reloadedEditor = getEditorLocator(page, {});
+  await expect(reloadedEditor.locator('strong')).toHaveText('lunch');
+  await expect(reloadedEditor.locator('.wiki-link')).toHaveText('Home');
+});
