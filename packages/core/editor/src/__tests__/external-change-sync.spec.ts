@@ -7,6 +7,14 @@ import {
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { toast } from '@bangle.io/ui-components';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { PmEditorService } from '../pm-editor-service';
+
+function asPmEditor(editorEngine: unknown): PmEditorService {
+  if (!(editorEngine instanceof PmEditorService)) {
+    throw new Error('expected the ProseMirror editor engine');
+  }
+  return editorEngine;
+}
 
 const WS_NAME = 'test-ws';
 const NOTE_WS_PATH = `${WS_NAME}:note.md`;
@@ -17,6 +25,14 @@ const EXTERNAL_SENDER = {
 
 let cleanupControllers: AbortController[] = [];
 let cleanupDomNodes: HTMLElement[] = [];
+
+function createDeferred<T>() {
+  let resolve!: (value: T | PromiseLike<T>) => void;
+  const promise = new Promise<T>((promiseResolve) => {
+    resolve = promiseResolve;
+  });
+  return { promise, resolve };
+}
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -411,5 +427,134 @@ describe('editor refresh on external file changes', () => {
       { timeout: 3_000 },
     );
     expect(dismissSpy).toHaveBeenCalledWith(expectedToastId);
+  });
+  it('loading the disk version applies refused content in place without writing back', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      'the original note body',
+    );
+    const dismissSpy = vi.spyOn(toast, 'dismiss');
+
+    // Fidelity-refused external content: the editor keeps the current note.
+    await simulateExternalEdit(
+      testEnv,
+      services,
+      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
+    );
+    await new Promise((resolve) => setTimeout(resolve, 700));
+    expect(editorText(domNode)).toContain('the original note body');
+
+    // The user consents via the toast action: the disk version replaces
+    // only this note's editors — no UI reload, no other editor touched.
+    const writeSpy = vi.spyOn(services.fileSystem, 'writeFile');
+    await asPmEditor(services.editorEngine).loadDiskVersionIntoEditors(
+      NOTE_WS_PATH,
+    );
+
+    expect(editorText(domNode)).toContain('the spec');
+    expect(editorText(domNode)).not.toContain('the original note body');
+    // Consented content equals disk: writing it back would churn mtime.
+    expect(writeSpy).not.toHaveBeenCalled();
+    expect(dismissSpy).toHaveBeenCalledWith(
+      `external-stale-content:${NOTE_WS_PATH}`,
+    );
+  });
+
+  it('loading the disk version refuses to clobber edits made since the refusal', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      'the original note body',
+    );
+
+    await simulateExternalEdit(
+      testEnv,
+      services,
+      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
+    );
+    await new Promise((resolve) => setTimeout(resolve, 700));
+
+    // The user typed after the refusal toast appeared; wedge the save so
+    // the edit stays pending (same module-level queue caveat as above).
+    let releaseSave = () => {};
+    vi.spyOn(services.fileSystem, 'writeFile').mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          releaseSave = resolve;
+        }),
+    );
+    expect(
+      services.editorEngine.insertMarkdownAtSelection('USER-EDIT-AFTER-TOAST'),
+    ).toBe(true);
+    await vi.waitFor(() => {
+      expect(editorText(domNode)).toContain('USER-EDIT-AFTER-TOAST');
+    });
+
+    // Their unsaved edit exists nowhere else: the disk version must lose.
+    await asPmEditor(services.editorEngine).loadDiskVersionIntoEditors(
+      NOTE_WS_PATH,
+    );
+
+    expect(editorText(domNode)).toContain('USER-EDIT-AFTER-TOAST');
+    expect(editorText(domNode)).not.toContain('the spec');
+
+    releaseSave();
+    await vi.waitFor(() => {
+      expect(services.editorEngine.hasPendingOrFailedSave()).toBe(false);
+    });
+  });
+
+  it('loading the disk version refuses edits made while the disk read is pending', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      'the original note body',
+    );
+
+    await simulateExternalEdit(
+      testEnv,
+      services,
+      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
+    );
+    await new Promise((resolve) => setTimeout(resolve, 700));
+
+    const readStarted = createDeferred<void>();
+    const allowRead = createDeferred<void>();
+    const originalRead = services.fileSystem.readFileAsText.bind(
+      services.fileSystem,
+    );
+    vi.spyOn(services.fileSystem, 'readFileAsText').mockImplementation(
+      async (...args) => {
+        readStarted.resolve();
+        await allowRead.promise;
+        return originalRead(...args);
+      },
+    );
+
+    let releaseSave = () => {};
+    vi.spyOn(services.fileSystem, 'writeFile').mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          releaseSave = resolve;
+        }),
+    );
+
+    const loadPromise = asPmEditor(
+      services.editorEngine,
+    ).loadDiskVersionIntoEditors(NOTE_WS_PATH);
+    await readStarted.promise;
+
+    expect(
+      services.editorEngine.insertMarkdownAtSelection('EDIT-DURING-DISK-READ'),
+    ).toBe(true);
+    await vi.waitFor(() => {
+      expect(editorText(domNode)).toContain('EDIT-DURING-DISK-READ');
+    });
+
+    allowRead.resolve();
+    await loadPromise;
+
+    expect(editorText(domNode)).toContain('EDIT-DURING-DISK-READ');
+    expect(editorText(domNode)).not.toContain('the spec');
+
+    releaseSave();
+    await vi.waitFor(() => {
+      expect(services.editorEngine.hasPendingOrFailedSave()).toBe(false);
+    });
   });
 });

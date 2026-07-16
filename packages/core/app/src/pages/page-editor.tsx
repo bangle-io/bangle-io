@@ -25,24 +25,33 @@ export function PageEditor() {
   const $forceReloadCounter = useAtomValue(
     coreServices.editorService.$forceReloadCounter,
   );
+  const routeWsPath = useAtomValue(coreServices.navigation.$wsFilePath);
   const routeWsName = useAtomValue(coreServices.navigation.$wsName);
+  const routeWsPathValue = routeWsPath?.wsPath;
+  const hasPendingSave =
+    routeWsPathValue !== undefined &&
+    coreServices.editorEngine.hasPendingOrFailedSave(routeWsPathValue);
+  // A watcher-driven rename/delete removes the route path from the file tree.
+  // Keep a dirty editor mounted so its only unsaved copy remains recoverable.
+  const editorWsPath =
+    currentWsPath ?? (hasPendingSave ? routeWsPath : undefined);
 
   const editorKey = useMemo(() => {
-    return currentWsPath
-      ? `editor::${MAIN_EDITOR_NAME}:${currentWsPath.wsPath}:${$forceReloadCounter}`
+    return editorWsPath
+      ? `editor::${MAIN_EDITOR_NAME}:${editorWsPath.wsPath}:${$forceReloadCounter}`
       : `${MAIN_EDITOR_NAME}:${$forceReloadCounter}`;
-  }, [currentWsPath, $forceReloadCounter]);
+  }, [editorWsPath, $forceReloadCounter]);
 
   return (
     <>
       <AppHeader />
       <PageContentContainer applyPadding={false}>
-        {currentWsPath && currentWsName ? (
+        {editorWsPath && currentWsName ? (
           <>
             <EditorSurface
               key={editorKey}
               name={editorKey}
-              wsPath={currentWsPath.wsPath}
+              wsPath={editorWsPath.wsPath}
               className={EDITOR_CONTENT_PADDING}
             />
             {/* Clicking the empty space under a short note puts the caret back
@@ -60,7 +69,9 @@ export function PageEditor() {
               tabIndex={-1}
               type="button"
             />
-            <LinkedMentions currentWsPath={currentWsPath} />
+            {/* The editor can outlive the tree entry when a dirty note is
+                externally renamed or deleted, so this has no path to render. */}
+            {currentWsPath && <LinkedMentions currentWsPath={currentWsPath} />}
           </>
         ) : !currentWsName ? (
           <WorkspaceNotFoundView wsName={routeWsName} />

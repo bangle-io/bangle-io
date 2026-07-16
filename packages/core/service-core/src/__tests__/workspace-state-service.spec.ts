@@ -1,5 +1,8 @@
 import { throwAppError } from '@bangle.io/base-utils';
-import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
+import {
+  EXTERNAL_FILE_CHANGE_SENDER_TAG,
+  WORKSPACE_STORAGE_TYPE,
+} from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -271,6 +274,42 @@ describe('WorkspaceStateService backlink index', () => {
     expect(
       new Set(readFileAsText.mock.calls.map(([wsPath]) => wsPath)),
     ).toEqual(new Set([TARGET, SOURCE_MARKDOWN, SOURCE_WIKI, PLAIN_MENTION]));
+  });
+
+  it('rebuilds backlinks when an external create replaces an existing path', async () => {
+    const { rootEmitter, services, store } = await setupWorkspaceStateService({
+      controller,
+    });
+    await vi.waitUntil(() => {
+      const next = store.get(services.workspaceState.$backlinkIndex);
+      const sources = next.byTargetWsPath.get(TARGET) ?? [];
+      return next.status === 'ready' && sources.length > 0 ? next : undefined;
+    });
+
+    // Atomic temp-to-target commits are reported as creates even when they
+    // replace an existing file. Bypass FileSystemService for the disk write,
+    // then emit the watcher shape that must invalidate content indexes.
+    await services.fileStorageMemory.writeFile(
+      SOURCE_WIKI,
+      new File(['No link now'], 'SourceWiki.md', { type: 'text/plain' }),
+    );
+    rootEmitter.emit('event::file:update', {
+      type: 'file-create',
+      wsPath: SOURCE_WIKI,
+      sender: {
+        id: 'external-watcher',
+        tag: EXTERNAL_FILE_CHANGE_SENDER_TAG,
+      },
+    });
+
+    await vi.waitUntil(() => {
+      const next = store.get(services.workspaceState.$backlinkIndex);
+      const sources = next.byTargetWsPath.get(TARGET) ?? [];
+      return next.status === 'ready' &&
+        sources.map((path) => path.wsPath).join(',') === SOURCE_MARKDOWN
+        ? next
+        : undefined;
+    });
   });
 
   it('reports an error without reusing stale backlink data when a rebuild read fails', async () => {

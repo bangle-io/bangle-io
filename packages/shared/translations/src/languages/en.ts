@@ -639,7 +639,7 @@ export const t = {
       }) => `${fileName} is too large. Maximum file size is ${maxFileSize}.`,
       externalChangeNotApplied: ({ fileName }: { fileName: string }) =>
         `${fileName} changed on disk, but the change could not be applied safely. The editor kept the current version.`,
-      reloadToApplyExternalChange: 'Reload',
+      loadDiskVersion: 'Load disk version',
       fileCreated: ({ fileName }: { fileName: string }) =>
         `Created ${fileName}`,
       fileCreateFailed: 'Could not create file',

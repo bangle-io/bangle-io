@@ -337,9 +337,8 @@ export class FileStorageNativeFs
           // Atomic-write pattern (Chromium's own `.crswap` commit, sync
           // tools' write-to-temp-then-rename): content materialized at the
           // visible path from a transient one the app never showed. Treat it
-          // as the visible file appearing rather than refreshing the whole
-          // workspace — with self-writes deliberately unfiltered, a coarse
-          // refresh here would re-list on every local save.
+          // as appearing or replaced. External creates invalidate downstream
+          // content indexes without a coarse re-list on every local save.
           specificEvents.set(`create:${to.wsPath}`, {
             type: 'create',
             wsPath: to.wsPath,

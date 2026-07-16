@@ -49,7 +49,10 @@ import {
   EditorSaveQueue,
 } from './editor-save-queue';
 import { setupExtensions } from './extensions';
-import { ExternalContentSync } from './external-content-sync';
+import {
+  buildExternalDocReplace,
+  ExternalContentSync,
+} from './external-content-sync';
 import { findHeadingIndexBySlug } from './heading-slug';
 import { createLocalImageNodeView } from './local-image-node-view';
 import { createEditor } from './pm-setup';
@@ -591,9 +594,10 @@ export class PmEditorService
    * The external sync confirmed the disk copy of `wsPath` differs but
    * refused to auto-apply it (fidelity, emptied-file, schema, or parse
    * refusal). Without this the user would keep looking at silently stale
-   * content with only a console warning. Reloading the UI sends the note
-   * through the load path, which shows the disk content and surfaces the
-   * fidelity warning when applicable.
+   * content with only a console warning. The offered action loads the disk
+   * version into this note's editors in place — deliberately not a UI reload,
+   * which would tear down every editor and could strand another note's pending
+   * or failed save.
    */
   private showStaleExternalContentToast(wsPath: string): void {
     const fileName = WsPath.safeParseFile(wsPath).data?.fileName ?? wsPath;
@@ -605,12 +609,85 @@ export class PmEditorService
         onClick: () => {},
       },
       action: {
-        label: t.app.toasts.reloadToApplyExternalChange,
+        label: t.app.toasts.loadDiskVersion,
         onClick: () => {
-          this.dependencies.workbenchState.reloadUi();
+          void this.loadDiskVersionIntoEditors(wsPath);
         },
       },
     });
+  }
+
+  /**
+   * User-consented recovery for external changes the automatic sync
+   * refused: replaces only this note's open editors with the current disk
+   * content, then runs the same fidelity check as note loading. Unsaved
+   * local edits still win — a note that became dirty since the refusal is
+   * left alone (its save resolves the divergence).
+   */
+  async loadDiskVersionIntoEditors(wsPath: string): Promise<void> {
+    try {
+      if (this.saveQueue.hasPendingOrFailed(wsPath)) {
+        this.logger.debug(
+          `${wsPath}: not loading the disk version — the user edited since the refusal and their save resolves the divergence`,
+        );
+        toast.dismiss(staleExternalContentToastId(wsPath));
+        return;
+      }
+      const viewsBeforeRead = [...this.readyEditors()]
+        .filter((editor) => editor.wsPath === wsPath)
+        .map((editor) => ({
+          doc: editor.editorView.state.doc,
+          view: editor.editorView,
+        }));
+      const content = await this.dependencies.fileSystem.readFileAsText(
+        wsPath,
+        { signal: this.abortSignal },
+      );
+      if (content === undefined) {
+        this.logger.warn(
+          `Disk version of ${wsPath} could not be read; keeping the editor content`,
+        );
+        return;
+      }
+      // The action does not block input. Re-check after the async read so a
+      // keystroke made while it was in flight cannot be replaced by stale disk
+      // content.
+      if (this.saveQueue.hasPendingOrFailed(wsPath)) {
+        this.logger.debug(
+          `${wsPath}: not loading the disk version — the user edited while it was being read`,
+        );
+        toast.dismiss(staleExternalContentToastId(wsPath));
+        return;
+      }
+      for (const { doc, view } of viewsBeforeRead) {
+        if (view.isDestroyed || view.state.doc !== doc) {
+          continue;
+        }
+        const markdown = this.getMarkdown(view.state.schema);
+        const parsed = markdown.parser.parse(content);
+        const tr = buildExternalDocReplace(view, parsed);
+        if (!tr) {
+          this.logger.error(
+            `Disk version of ${wsPath} produced an empty document from non-empty content; skipping`,
+          );
+          continue;
+        }
+        this.suppressSaveForExternalSync.add(wsPath);
+        try {
+          view.dispatch(tr);
+        } finally {
+          this.suppressSaveForExternalSync.delete(wsPath);
+        }
+        this.logger.info(
+          `${wsPath}: loaded the disk version into the open editor at the user's request (${content.length} chars)`,
+        );
+        this.checkRoundTripFidelity({ content, editorView: view, wsPath });
+      }
+      toast.dismiss(staleExternalContentToastId(wsPath));
+    } catch (error) {
+      // Editor and toast stay as they are; the user can retry.
+      this.logger.warn(`Could not load the disk version of ${wsPath}`, error);
+    }
   }
 
   private setRoundTripWarning(wsPath: string, hasWarning: boolean): void {

@@ -2,6 +2,7 @@ import type {
   EditorView,
   markdownLoader,
   Schema,
+  Transaction,
 } from '@bangle.io/prosemirror-plugins';
 import { TextSelection } from '@bangle.io/prosemirror-plugins';
 import type { ExternalFileChangeEvent } from '@bangle.io/service-core';
@@ -49,6 +50,29 @@ function sleep(ms: number, signal: AbortSignal | undefined): Promise<void> {
     };
     signal?.addEventListener('abort', onAbort, { once: true });
   });
+}
+
+/**
+ * Builds a save-suppressed, non-undoable replacement for externally sourced
+ * content while preserving the selection near its previous position. Returns
+ * undefined when applying a non-empty document would unexpectedly blank it.
+ */
+export function buildExternalDocReplace(
+  view: EditorView,
+  parsedDoc: EditorView['state']['doc'],
+): Transaction | undefined {
+  const { state } = view;
+  const selectionHead = state.selection.head;
+  let tr = state.tr.replaceWith(0, state.doc.content.size, parsedDoc.content);
+  if (parsedDoc.content.size > 0 && tr.doc.content.size === 0) {
+    return undefined;
+  }
+  tr = tr.setSelection(
+    TextSelection.near(
+      tr.doc.resolve(Math.min(selectionHead, tr.doc.content.size)),
+    ),
+  );
+  return tr.setMeta('addToHistory', false);
 }
 
 /**
@@ -324,27 +348,17 @@ export class ExternalContentSync {
         continue;
       }
 
-      const { state } = view;
-      const selectionHead = state.selection.head;
-      let tr = state.tr.replaceWith(0, state.doc.content.size, parsed.content);
-      // Defense in depth: if the replacement lost the parsed content (e.g.
-      // a schema mismatch makes the replace fitting drop foreign nodes),
-      // never apply it — a wrong-but-present note beats a blanked one.
-      if (parsed.content.size > 0 && tr.doc.content.size === 0) {
+      const tr = buildExternalDocReplace(view, parsed);
+      // Defense in depth: if the replacement lost the parsed content (e.g. a
+      // schema mismatch), never apply it — a wrong-but-present note beats a
+      // blanked one.
+      if (!tr) {
         this.host.logger.error(
           `External sync for ${wsPath} produced an empty document from non-empty content; skipping`,
         );
         refused = true;
         continue;
       }
-      tr = tr.setSelection(
-        TextSelection.near(
-          tr.doc.resolve(Math.min(selectionHead, tr.doc.content.size)),
-        ),
-      );
-      // External content is not a user edit: keep it out of the undo stack
-      // (undoing it locally would fight the sync tool).
-      tr = tr.setMeta('addToHistory', false);
 
       this.host.withSaveSuppressed(wsPath, () => {
         view.dispatch(tr);

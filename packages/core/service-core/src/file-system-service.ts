@@ -191,15 +191,16 @@ export class FileSystemService extends BaseService {
               sequence: this.fileCreateSequence,
               wsPath: event.wsPath,
             });
+            // Observers cannot distinguish a new path from an atomic
+            // temp-to-target replacement. External creates therefore also
+            // invalidate indexes derived from file content.
+            if (event.sender.tag === EXTERNAL_FILE_CHANGE_SENDER_TAG) {
+              this.recordFileContentUpdate(event.wsPath);
+            }
             break;
           }
           case 'file-content-update': {
-            this.store.set(this.$fileContentUpdateCount, (c) => c + 1);
-            this.fileContentUpdateSequence += 1;
-            this.store.set(this.$fileContentUpdateEvent, {
-              sequence: this.fileContentUpdateSequence,
-              wsPath: event.wsPath,
-            });
+            this.recordFileContentUpdate(event.wsPath);
             break;
           }
           case 'file-delete': {
@@ -232,6 +233,15 @@ export class FileSystemService extends BaseService {
     this.store.set(this.$externalFileChangeEvent, {
       sequence: this.externalFileChangeSequence,
       ...event,
+    });
+  }
+
+  private recordFileContentUpdate(wsPath: string): void {
+    this.store.set(this.$fileContentUpdateCount, (count) => count + 1);
+    this.fileContentUpdateSequence += 1;
+    this.store.set(this.$fileContentUpdateEvent, {
+      sequence: this.fileContentUpdateSequence,
+      wsPath,
     });
   }
 

@@ -54,6 +54,49 @@ async function externallyWriteFile(
   );
 }
 
+async function externallyDeleteFile(page: Page, relativePath: string) {
+  await page.evaluate(
+    async ({ workspaceDir, relativePath }) => {
+      const root = await navigator.storage.getDirectory();
+      let dir = await root.getDirectoryHandle(workspaceDir);
+      const segments = relativePath.split('/');
+      for (const segment of segments.slice(0, -1)) {
+        dir = await dir.getDirectoryHandle(segment);
+      }
+      const fileName = segments.at(-1);
+      if (!fileName) {
+        throw new Error(`Invalid path: ${relativePath}`);
+      }
+      await dir.removeEntry(fileName);
+    },
+    { workspaceDir: WORKSPACE_DIR, relativePath },
+  );
+}
+
+async function rejectAppWritesToFile(page: Page, fileName: string) {
+  await page.evaluate(
+    async ({ workspaceDir, fileName }) => {
+      const root = await navigator.storage.getDirectory();
+      const dir = await root.getDirectoryHandle(workspaceDir);
+      const handle = await dir.getFileHandle(fileName);
+      const prototype = Object.getPrototypeOf(handle) as {
+        createWritable: FileSystemFileHandle['createWritable'];
+      };
+      const originalCreateWritable = prototype.createWritable;
+      prototype.createWritable = async function createWritable(
+        this: FileSystemFileHandle,
+        options?: FileSystemCreateWritableOptions,
+      ) {
+        if (this.name === fileName) {
+          throw new DOMException('Forced save failure', 'NotAllowedError');
+        }
+        return originalCreateWritable.call(this, options);
+      };
+    },
+    { workspaceDir: WORKSPACE_DIR, fileName },
+  );
+}
+
 async function createNativeFsWorkspace(page: Page) {
   await page.goto('/');
   if (await page.getByRole('dialog').isVisible()) {
@@ -218,7 +261,7 @@ test('page-return revalidation refreshes external changes when FileSystemObserve
   );
 });
 
-test('a refused external change surfaces a toast whose Reload action loads the disk version', async ({
+test('a refused external change surfaces a toast whose action loads the disk version in place', async ({
   page,
   browserName,
 }) => {
@@ -266,8 +309,54 @@ test('a refused external change surfaces a toast whose Reload action loads the d
   // The editor deliberately kept the current version.
   await expect(editor).toContainText('local wording of the note');
 
-  // The offered recovery reloads the app; the note then goes through the
-  // load path, which shows the disk content.
-  await page.getByRole('button', { name: 'Reload' }).click();
-  await expect(getEditorLocator(page, {})).toContainText('the spec');
+  // The offered recovery replaces only this note's content in place — no
+  // app reload that could disturb another editor's unsaved work.
+  await page.getByRole('button', { name: 'Load disk version' }).click();
+  await expect(editor).toContainText('the spec');
+  await expect(editor).not.toContainText('local wording of the note');
+  await expect(conflictToast).not.toBeVisible();
+});
+
+test('an externally deleted note stays mounted while its local save is failed', async ({
+  page,
+  browserName,
+}) => {
+  test.skip(
+    browserName !== 'chromium',
+    'NativeFS workspaces are Chromium-only',
+  );
+
+  await createNativeFsWorkspace(page);
+  const observerSupported = await page.evaluate(
+    () =>
+      typeof (globalThis as { FileSystemObserver?: unknown })
+        .FileSystemObserver === 'function',
+  );
+  test.skip(
+    !observerSupported,
+    'FileSystemObserver is unavailable in this Chromium build',
+  );
+
+  await page.getByRole('button', { name: 'New Note' }).click();
+  await page.getByLabel('Note name').fill('dirty-note');
+  await page.getByRole('button', { name: 'Create' }).click();
+  const editor = getEditorLocator(page, {});
+  await expect(editor).toBeVisible();
+
+  await rejectAppWritesToFile(page, 'dirty-note.md');
+  await editor.click();
+  await page.keyboard.type('local content that has not been saved');
+  await expect(page.getByText(/Changes could not be saved/)).toBeVisible();
+
+  await externallyDeleteFile(page, 'dirty-note.md');
+  await expect(
+    page
+      .getByTestId('bangle-file-explorer')
+      .getByRole('treeitem', { name: /dirty-note/ }),
+  ).not.toBeVisible();
+
+  // The route is now missing from the file tree, but the failed editor is
+  // still the only recoverable copy and must remain available to the user.
+  await expect(editor).toBeVisible();
+  await expect(editor).toContainText('local content that has not been saved');
 });
