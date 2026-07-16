@@ -10,6 +10,9 @@ type ErrorHandler = (error: BaseError) => void;
 
 type SaveTask = {
   doc: string;
+};
+
+type EditorSaveSession = {
   emitAppError: ErrorHandler;
   writeDoc: SaveWriter;
 };
@@ -32,13 +35,19 @@ type SaveStatusSubscription = {
   wsPath?: string;
 };
 
-type EditorSaveQueueStore = {
+/**
+ * Browser-root state shared by each editor service graph created in this tab.
+ * Queued documents can outlive a UI reload, while the current session always
+ * points at the newest graph's writer and error boundary.
+ */
+export type EditorSaveCoordinator = {
+  currentSession?: EditorSaveSession;
   entries: Map<string, SaveEntry>;
   lastHasPendingOrFailed: boolean;
   subscriptions: Set<SaveStatusSubscription>;
 };
 
-export function createEditorSaveQueueStore(): EditorSaveQueueStore {
+export function createEditorSaveCoordinator(): EditorSaveCoordinator {
   return {
     entries: new Map(),
     lastHasPendingOrFailed: false,
@@ -48,19 +57,17 @@ export function createEditorSaveQueueStore(): EditorSaveQueueStore {
 
 export class EditorSaveQueue {
   constructor(
-    private writeDoc: SaveWriter,
-    private emitAppError: ErrorHandler,
-    private store: EditorSaveQueueStore = createEditorSaveQueueStore(),
-  ) {}
+    writeDoc: SaveWriter,
+    emitAppError: ErrorHandler,
+    private coordinator: EditorSaveCoordinator = createEditorSaveCoordinator(),
+  ) {
+    this.coordinator.currentSession = { writeDoc, emitAppError };
+  }
 
   enqueue(wsPath: string, doc: string): void {
     const entry = this.getEntry(wsPath);
     entry.failedTask = undefined;
-    entry.pendingTask = {
-      doc,
-      emitAppError: this.emitAppError,
-      writeDoc: this.writeDoc,
-    };
+    entry.pendingTask = { doc };
     entry.status = { status: 'pending' };
     this.notifySaveStatusChanged(wsPath);
 
@@ -70,7 +77,7 @@ export class EditorSaveQueue {
   }
 
   getStatus(wsPath: string): EditorSaveStatus {
-    return this.store.entries.get(wsPath)?.status ?? { status: 'clean' };
+    return this.coordinator.entries.get(wsPath)?.status ?? { status: 'clean' };
   }
 
   hasPendingOrFailed(wsPath?: string): boolean {
@@ -78,7 +85,7 @@ export class EditorSaveQueue {
       return this.getStatus(wsPath).status !== 'clean';
     }
 
-    for (const entry of this.store.entries.values()) {
+    for (const entry of this.coordinator.entries.values()) {
       if (entry.status.status !== 'clean') {
         return true;
       }
@@ -89,9 +96,9 @@ export class EditorSaveQueue {
 
   subscribe(listener: SaveStatusListener, wsPath?: string): () => void {
     const subscription = { listener, wsPath };
-    this.store.subscriptions.add(subscription);
+    this.coordinator.subscriptions.add(subscription);
     return () => {
-      this.store.subscriptions.delete(subscription);
+      this.coordinator.subscriptions.delete(subscription);
     };
   }
 
@@ -105,11 +112,11 @@ export class EditorSaveQueue {
       return;
     }
 
-    const entry = this.store.entries.get(oldWsPath);
+    const entry = this.coordinator.entries.get(oldWsPath);
     if (!entry) {
       return;
     }
-    const destinationEntry = this.store.entries.get(newWsPath);
+    const destinationEntry = this.coordinator.entries.get(newWsPath);
     if (destinationEntry && destinationEntry !== entry) {
       // The durable rename makes the source entry authoritative. Retire any
       // stale destination producer, then replay the latest source task after
@@ -129,14 +136,14 @@ export class EditorSaveQueue {
       if (entry.activeTask) {
         entry.pendingTask ??= entry.activeTask;
       }
-      if (this.store.entries.get(newWsPath) === destinationEntry) {
-        this.store.entries.delete(newWsPath);
+      if (this.coordinator.entries.get(newWsPath) === destinationEntry) {
+        this.coordinator.entries.delete(newWsPath);
       }
     }
 
-    this.store.entries.delete(oldWsPath);
+    this.coordinator.entries.delete(oldWsPath);
     entry.wsPath = newWsPath;
-    this.store.entries.set(newWsPath, entry);
+    this.coordinator.entries.set(newWsPath, entry);
 
     if (!entry.active && entry.failedTask) {
       entry.pendingTask = entry.failedTask;
@@ -152,7 +159,7 @@ export class EditorSaveQueue {
   }
 
   retryFailed(wsPath: string): boolean {
-    const entry = this.store.entries.get(wsPath);
+    const entry = this.coordinator.entries.get(wsPath);
     if (!entry || entry.active || !entry.failedTask) {
       return false;
     }
@@ -167,7 +174,7 @@ export class EditorSaveQueue {
   }
 
   private getEntry(wsPath: string): SaveEntry {
-    const existing = this.store.entries.get(wsPath);
+    const existing = this.coordinator.entries.get(wsPath);
     if (existing) {
       return existing;
     }
@@ -178,7 +185,7 @@ export class EditorSaveQueue {
       status: { status: 'clean' },
       wsPath,
     };
-    this.store.entries.set(wsPath, entry);
+    this.coordinator.entries.set(wsPath, entry);
     return entry;
   }
 
@@ -199,7 +206,11 @@ export class EditorSaveQueue {
       entry.activeTask = task;
 
       try {
-        await task.writeDoc(writeWsPath, task.doc);
+        const session = this.coordinator.currentSession;
+        if (!session) {
+          throw new Error('Editor save coordinator has no active session');
+        }
+        await session.writeDoc(writeWsPath, task.doc);
       } catch (cause) {
         if (entry.retired) {
           continue;
@@ -219,7 +230,7 @@ export class EditorSaveQueue {
           entry.failedTask = task;
           entry.status = { error, status: 'failed' };
           this.notifySaveStatusChanged(entry.wsPath);
-          task.emitAppError(
+          this.coordinator.currentSession?.emitAppError(
             createAppError('error::editor:save-failed', 'Unable to save note', {
               error,
               wsPath: entry.wsPath,
@@ -255,8 +266,8 @@ export class EditorSaveQueue {
 
     if (entry.status.status === 'clean') {
       entry.failedTask = undefined;
-      if (this.store.entries.get(entry.wsPath) === entry) {
-        this.store.entries.delete(entry.wsPath);
+      if (this.coordinator.entries.get(entry.wsPath) === entry) {
+        this.coordinator.entries.delete(entry.wsPath);
       }
     }
   }
@@ -282,10 +293,10 @@ export class EditorSaveQueue {
   private notifySaveStatusChanged(changedWsPath: string): void {
     const hasPendingOrFailed = this.hasPendingOrFailed();
     const globalStatusChanged =
-      hasPendingOrFailed !== this.store.lastHasPendingOrFailed;
-    this.store.lastHasPendingOrFailed = hasPendingOrFailed;
+      hasPendingOrFailed !== this.coordinator.lastHasPendingOrFailed;
+    this.coordinator.lastHasPendingOrFailed = hasPendingOrFailed;
 
-    for (const subscription of this.store.subscriptions) {
+    for (const subscription of this.coordinator.subscriptions) {
       if (
         subscription.wsPath === changedWsPath ||
         (subscription.wsPath === undefined && globalStatusChanged)

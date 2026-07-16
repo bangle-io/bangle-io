@@ -43,7 +43,7 @@ import {
 import { atom } from 'jotai';
 import type { MarkdownAssetReference } from './asset-file-plugin';
 import {
-  createEditorSaveQueueStore,
+  type EditorSaveCoordinator,
   EditorSaveQueue,
   type EditorSaveStatus,
 } from './editor-save-queue';
@@ -57,9 +57,12 @@ import {
 } from './remembered-cursor';
 import { isMarkdownRoundTripPreserved } from './round-trip-check';
 
-const editorSaveQueueStore = createEditorSaveQueueStore();
 const ASSET_TOAST_FILE_NAME_MAX_LENGTH = 44;
 const EMPTY_WS_PATH_SET: ReadonlySet<string> = new Set();
+
+export type PmEditorServiceConfig = {
+  saveCoordinator: EditorSaveCoordinator;
+};
 
 function formatFileSize(bytes: number): string {
   const units = ['B', 'KB', 'MB', 'GB'];
@@ -156,6 +159,7 @@ export class PmEditorService
       workbenchState: WorkbenchStateService;
       workspaceState: WorkspaceStateService;
     },
+    config: PmEditorServiceConfig,
   ) {
     super(SERVICE_NAME.pmEditorService, context, dependencies);
 
@@ -208,7 +212,7 @@ export class PmEditorService
         );
       },
       this.emitAppError,
-      editorSaveQueueStore,
+      config.saveCoordinator,
     );
   }
 

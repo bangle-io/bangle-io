@@ -1,7 +1,7 @@
 import { type BaseError, getAppErrorCause } from '@bangle.io/base-utils';
 import { describe, expect, it, vi } from 'vitest';
 import {
-  createEditorSaveQueueStore,
+  createEditorSaveCoordinator,
   EditorSaveQueue,
 } from '../editor-save-queue';
 
@@ -376,9 +376,9 @@ describe('EditorSaveQueue', () => {
     expect(queue.getStatus('workspace:note.md')).toEqual({ status: 'clean' });
   });
 
-  it('serializes writes across queue instances that share a store', async () => {
+  it('serializes writes across queue instances that share a coordinator', async () => {
     const firstWrite = createDeferred<void>();
-    const store = createEditorSaveQueueStore();
+    const coordinator = createEditorSaveCoordinator();
     const writes: Array<{ doc: string; source: string }> = [];
     const firstQueue = new EditorSaveQueue(
       vi.fn((_: string, doc: string) => {
@@ -386,18 +386,20 @@ describe('EditorSaveQueue', () => {
         return firstWrite.promise;
       }),
       vi.fn(),
-      store,
+      coordinator,
     );
+
+    firstQueue.enqueue('workspace:note.md', 'old service content');
+
     const secondQueue = new EditorSaveQueue(
       vi.fn((_: string, doc: string) => {
         writes.push({ doc, source: 'second' });
         return Promise.resolve();
       }),
       vi.fn(),
-      store,
+      coordinator,
     );
 
-    firstQueue.enqueue('workspace:note.md', 'old service content');
     secondQueue.enqueue('workspace:note.md', 'new service content');
 
     expect(writes).toEqual([{ doc: 'old service content', source: 'first' }]);
@@ -414,18 +416,64 @@ describe('EditorSaveQueue', () => {
     });
   });
 
-  it('notifies subscribers across queue instances that share a store', async () => {
+  it('retries a retained failure through the current service graph', async () => {
+    const coordinator = createEditorSaveCoordinator();
+    const oldFailure = new Error('old service graph unavailable');
+    const oldWriter = vi.fn(() => Promise.reject(oldFailure));
+    const oldEmitAppError = vi.fn<(error: BaseError) => void>();
+    const oldQueue = new EditorSaveQueue(
+      oldWriter,
+      oldEmitAppError,
+      coordinator,
+    );
+
+    oldQueue.enqueue('workspace:note.md', 'retained unsaved content');
+    await flushMicrotasks();
+
+    expect(oldQueue.getStatus('workspace:note.md')).toEqual({
+      error: oldFailure,
+      status: 'failed',
+    });
+
+    const currentWriter = vi.fn(() => Promise.resolve());
+    const currentEmitAppError = vi.fn<(error: BaseError) => void>();
+    const currentQueue = new EditorSaveQueue(
+      currentWriter,
+      currentEmitAppError,
+      coordinator,
+    );
+
+    // A retry action retained by the previous UI graph still enters through
+    // its old queue facade. The coordinator must resolve the new graph's
+    // writer when the retained document actually executes.
+    expect(oldQueue.retryFailed('workspace:note.md')).toBe(true);
+    await flushMicrotasks();
+
+    expect(oldWriter).toHaveBeenCalledTimes(1);
+    expect(currentWriter).toHaveBeenCalledWith(
+      'workspace:note.md',
+      'retained unsaved content',
+    );
+    expect(currentQueue.getStatus('workspace:note.md')).toEqual({
+      status: 'clean',
+    });
+    expect(currentEmitAppError).not.toHaveBeenCalled();
+  });
+
+  it('notifies subscribers across queue instances that share a coordinator', async () => {
     const firstWrite = createDeferred<void>();
-    const store = createEditorSaveQueueStore();
+    const coordinator = createEditorSaveCoordinator();
     const firstQueue = new EditorSaveQueue(
       vi.fn(() => firstWrite.promise),
       vi.fn(),
-      store,
+      coordinator,
     );
-    const secondQueue = new EditorSaveQueue(vi.fn(), vi.fn(), store);
-    const secondListener = vi.fn();
 
     firstQueue.enqueue('workspace:note.md', 'old service content');
+
+    const secondQueue = new EditorSaveQueue(vi.fn(), vi.fn(), coordinator);
+    const secondListener = vi.fn();
+
     expect(secondQueue.hasPendingOrFailed()).toBe(true);
 
     const unsubscribe = secondQueue.subscribe(secondListener);

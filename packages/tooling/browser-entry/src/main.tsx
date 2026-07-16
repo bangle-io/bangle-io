@@ -4,7 +4,10 @@ import './index.css';
 import { App } from '@bangle.io/app';
 import { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
-import { initializeServices } from '@bangle.io/initialize-services';
+import {
+  createEditorSaveCoordinator,
+  initializeServices,
+} from '@bangle.io/initialize-services';
 import { Logger } from '@bangle.io/logger';
 import { createStore } from 'jotai';
 import React, { StrictMode } from 'react';
@@ -17,6 +20,7 @@ const isDebug =
   window.location.search.includes('debug=true');
 
 const startupLogger = new Logger('', isDebug ? 'debug' : 'info');
+const editorSaveCoordinator = createEditorSaveCoordinator();
 
 void main(startupLogger).catch((error) => {
   handleStartupFailure(error, startupLogger);
@@ -51,6 +55,7 @@ async function main(logger: Logger) {
       store,
       themeManager,
       abortController.signal,
+      editorSaveCoordinator,
     );
   } catch (error) {
     abortController.abort();
