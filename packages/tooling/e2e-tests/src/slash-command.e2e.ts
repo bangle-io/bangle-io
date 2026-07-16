@@ -277,10 +277,9 @@ test('slash date command inserts a day picked from the current month', async ({
   page,
 }) => {
   const workspaceName = 'slash-command-date-picker';
-  // The 15th always exists and needs no navigation, keeping the assertion
-  // deterministic regardless of when the suite runs.
-  const now = new Date();
-  const target = new Date(now.getFullYear(), now.getMonth(), 15);
+  // Today is initially selected. Clicking it must commit instead of toggling
+  // the selection off and leaving the trigger text behind.
+  const target = new Date();
   const targetLabel = formatDateLabel(target);
 
   await createBrowserWorkspaceAndNote(page, {
@@ -358,8 +357,7 @@ test('typing the $date trigger directly opens the calendar and inserts a day', a
   page,
 }) => {
   const workspaceName = 'date-trigger-direct';
-  const now = new Date();
-  const target = new Date(now.getFullYear(), now.getMonth(), 15);
+  const target = new Date();
   const targetLabel = formatDateLabel(target);
 
   await createBrowserWorkspaceAndNote(page, {
