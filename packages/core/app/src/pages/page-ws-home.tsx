@@ -1,113 +1,89 @@
 import { useCoreServices } from '@bangle.io/context';
-import { FunMissing } from '@bangle.io/ui-components';
-import { WsPath } from '@bangle.io/ws-path';
+import { Button, FunMissing } from '@bangle.io/ui-components';
 import { useAtomValue } from 'jotai';
-import { Star as StarIcon } from 'lucide-react';
 import React from 'react';
-import { getRelativeTimeOrNull } from '../common/get-relative-time';
 import { Actions } from '../components/common/actions';
 import { ContentSection } from '../components/common/content-section';
 import { PageHeader } from '../components/common/page-header';
 import { NoticeView } from '../components/feedback/notice-view';
-import { ItemList } from '../components/lists/item-list';
+import {
+  NotesTable,
+  type NotesTableNote,
+} from '../components/notes-table/notes-table';
+import { useNoteFileStats } from '../components/notes-table/use-note-file-stats';
 import { AppHeader } from '../layout/app-header';
 import { PageContentContainer } from '../layout/main-content-container';
 
-const MAX_NOTES_TO_SHOW = 5;
-
 /**
- * This is the home page for a given workspace.
- * It shows the recent notes, and actions to create a new note or switch workspace.
+ * This is the home page for a given workspace. It lists every note in a
+ * sortable, filterable table, alongside actions to create a new note or
+ * switch workspace.
  */
 export function PageWsHome() {
   const coreServices = useCoreServices();
   const currentWsName = useAtomValue(
     coreServices.workspaceState.$currentWsName,
   );
-  const workspaceNotes = useWorkspaceNotes();
-  const starredPaths = useAtomValue(
-    coreServices.userActivityService.$starredWsPaths,
-  );
+  const notes = useNotesTableData();
 
-  const notesWithTimeOrStar = React.useMemo(() => {
-    const starredNotesRaw = workspaceNotes.filter((note) =>
-      starredPaths.includes(note.wsPath),
+  const onNewNote = () =>
+    coreServices.commandDispatcher.dispatch(
+      'command::ui:create-note-dialog',
+      { prefillName: undefined },
+      'ui',
     );
-
-    const recentNotesRaw = workspaceNotes
-      .slice(0, MAX_NOTES_TO_SHOW)
-      .filter((note) => !starredPaths.includes(note.wsPath));
-
-    const starredNotes = starredNotesRaw.map((note) => ({
-      label: note.fileName,
-      href: note.href,
-      rightElement: (
-        <StarIcon className="h-4 w-4 fill-current text-yellow-500" />
-      ),
-    }));
-
-    const recentNotes = recentNotesRaw.map((note) => ({
-      label: note.fileName,
-      href: note.href,
-      rightElement: note.timestamp ? (
-        <span className="text-muted-foreground text-xs">
-          {getRelativeTimeOrNull(note.timestamp)}
-        </span>
-      ) : null,
-    }));
-
-    return [...starredNotes, ...recentNotes];
-  }, [workspaceNotes, starredPaths]);
-
-  const noItemsMessage = t.app.pageWsHome.noNotesMessage;
+  const onSwitchWorkspace = () =>
+    coreServices.commandDispatcher.dispatch(
+      'command::ui:switch-workspace',
+      null,
+      'ui',
+    );
 
   return (
     <>
       <AppHeader />
       <PageContentContainer testId="page-ws-home">
         {currentWsName ? (
-          <ContentSection hasPadding>
-            <PageHeader title={`${currentWsName}`} />
-            <ItemList
-              heading={t.app.pageWsHome.recentNotesHeading}
-              items={notesWithTimeOrStar}
-              emptyMessage={noItemsMessage}
-              showViewMore={workspaceNotes.length > MAX_NOTES_TO_SHOW}
-              onClickViewMore={() =>
-                coreServices.commandDispatcher.dispatch(
-                  'command::ui:toggle-omni-search',
-                  { prefill: undefined },
-                  'ui',
-                )
-              }
-            />
-            {(workspaceNotes.length === 0 ||
-              notesWithTimeOrStar.length > 0) && (
+          notes.length > 0 ? (
+            <ContentSection hasPadding>
+              <div className="mx-auto flex w-full max-w-4xl flex-col gap-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <h2 className="wrap-anywhere min-w-0 font-semibold text-2xl tracking-tight">
+                    {currentWsName}
+                  </h2>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <Button variant="outline" onClick={onSwitchWorkspace}>
+                      {t.app.pageWsHome.switchWorkspaceButton}
+                    </Button>
+                    <Button onClick={onNewNote}>
+                      {t.app.pageWsHome.newNoteButton}
+                    </Button>
+                  </div>
+                </div>
+                <NotesTable notes={notes} />
+              </div>
+            </ContentSection>
+          ) : (
+            <ContentSection hasPadding>
+              <PageHeader title={`${currentWsName}`} />
+              <div className="py-4 text-center text-muted-foreground text-sm">
+                {t.app.pageWsHome.noNotesMessage}
+              </div>
               <Actions
                 actions={[
                   {
                     label: t.app.pageWsHome.newNoteButton,
-                    onClick: () =>
-                      coreServices.commandDispatcher.dispatch(
-                        'command::ui:create-note-dialog',
-                        { prefillName: undefined },
-                        'ui',
-                      ),
+                    onClick: onNewNote,
                   },
                   {
                     label: t.app.pageWsHome.switchWorkspaceButton,
                     variant: 'outline',
-                    onClick: () =>
-                      coreServices.commandDispatcher.dispatch(
-                        'command::ui:switch-workspace',
-                        null,
-                        'ui',
-                      ),
+                    onClick: onSwitchWorkspace,
                   },
                 ]}
               />
-            )}
-          </ContentSection>
+            </ContentSection>
+          )
         ) : (
           <ContentSection hasPadding>
             <NoticeView
@@ -142,36 +118,63 @@ export function PageWsHome() {
   );
 }
 
-/** Returns workspace notes ordered from most to least recently viewed. */
-function useWorkspaceNotes() {
+/**
+ * Assembles table rows from the note listing, user activity (last opened,
+ * starred) and file stats. Rows are pre-ordered by last-opened recency so the
+ * table shows a sensible order even before file stats stream in.
+ */
+function useNotesTableData(): NotesTableNote[] {
   const coreServices = useCoreServices();
-  const allWsPaths = useAtomValue(coreServices.workspaceState.$noteWsPaths);
+  const noteWsPaths = useAtomValue(coreServices.workspaceState.$noteWsPaths);
   const allRecentWsPaths = useAtomValue(
     coreServices.userActivityService.$allRecentWsPaths,
   );
+  const starredPaths = useAtomValue(
+    coreServices.userActivityService.$starredWsPaths,
+  );
+
+  const wsPathStrings = React.useMemo(
+    () => noteWsPaths.map((filePath) => filePath.wsPath),
+    [noteWsPaths],
+  );
+  const stats = useNoteFileStats(wsPathStrings);
 
   return React.useMemo(() => {
-    const timestamps = new Map(
+    const lastOpenedByWsPath = new Map(
       allRecentWsPaths.map(({ wsPath, timestamp }) => [wsPath, timestamp]),
     );
+    const starredSet = new Set(starredPaths);
 
-    return allWsPaths
-      .map((path) => ({
-        wsPath: path.wsPath,
-        timestamp: timestamps.get(path.wsPath) ?? 0,
-      }))
-      .sort((a, b) => b.timestamp - a.timestamp)
-      .map((item) => {
-        const wsPath = WsPath.fromString(item.wsPath);
-        const filePath = wsPath.asFile();
+    return noteWsPaths
+      .map((filePath): NotesTableNote => {
+        const stat = stats.get(filePath.wsPath);
+        const parent = filePath.getParent();
+        const dirPath =
+          parent && !parent.isRoot ? parent.path.replace(/\/$/, '') : '';
         return {
-          ...item,
-          fileName: filePath?.fileName || item.wsPath,
+          wsPath: filePath.wsPath,
+          fileName: filePath.fileNameWithoutExtension,
+          dirPath,
           href: coreServices.navigation.toUri({
             route: 'editor',
-            payload: { wsPath: item.wsPath },
+            payload: { wsPath: filePath.wsPath },
           }),
+          isStarred: starredSet.has(filePath.wsPath),
+          lastOpenedAt: lastOpenedByWsPath.get(filePath.wsPath),
+          createdAt: stat?.ctime,
+          modifiedAt: stat?.mtime,
         };
-      });
-  }, [allWsPaths, allRecentWsPaths, coreServices.navigation]);
+      })
+      .sort(
+        (a, b) =>
+          (b.lastOpenedAt ?? 0) - (a.lastOpenedAt ?? 0) ||
+          a.fileName.localeCompare(b.fileName),
+      );
+  }, [
+    noteWsPaths,
+    allRecentWsPaths,
+    starredPaths,
+    stats,
+    coreServices.navigation,
+  ]);
 }

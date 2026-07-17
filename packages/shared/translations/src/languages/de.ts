@@ -566,7 +566,6 @@ export const t = {
       switchWorkspaceButton: 'Arbeitsbereich wechseln',
     },
     pageWsHome: {
-      recentNotesHeading: 'Zuletzt verwendete Notizen',
       noNotesMessage: 'Keine Notizen in diesem Arbeitsbereich gefunden.',
       newNoteButton: 'Neue Notiz',
       switchWorkspaceButton: 'Arbeitsbereich wechseln',
@@ -623,6 +622,29 @@ export const t = {
         mobileTitle: 'Seitenleiste',
         mobileDescription:
           'Arbeitsbereiche, Notizen und App-Aktionen navigieren.',
+      },
+      notesTable: {
+        searchPlaceholder: 'Notizen filtern',
+        columnsButton: 'Spalten',
+        nameColumn: 'Name',
+        locationColumn: 'Ort',
+        modifiedColumn: 'Geändert',
+        lastOpenedColumn: 'Zuletzt geöffnet',
+        createdColumn: 'Erstellt',
+        noteCount: ({ count }: { count: number }) =>
+          count === 1 ? '1 Notiz' : `${count} Notizen`,
+        noResultsMessage: 'Keine Notizen entsprechen deinem Filter.',
+        starredIndicatorSr: 'Favorit',
+        sortSr: ({ column }: { column: string }) => `Nach ${column} sortieren`,
+        rowActionsSr: ({ fileName }: { fileName: string }) =>
+          `Aktionen für ${fileName}`,
+        openAction: 'Öffnen',
+        starAction: 'Favorit hinzufügen',
+        unstarAction: 'Favorit entfernen',
+        renameAction: 'Umbenennen',
+        moveAction: 'Verschieben',
+        copyPathAction: 'Pfad kopieren',
+        deleteAction: 'Löschen',
       },
       breadcrumb: {
         moreSr: 'Mehr',

@@ -122,6 +122,24 @@ describe('FileSystemService', () => {
     expect(notExistsResult).toBe(false);
   });
 
+  it('fileStat returns timestamps for existing files and rejects for missing ones', async () => {
+    const { fileSystem } = await setupFileSystemTest({ controller });
+
+    const stat = await fileSystem.fileStat(EXISTING_FILE);
+    expect(stat.ctime).toBeGreaterThan(0);
+    expect(stat.mtime).toBeGreaterThanOrEqual(stat.ctime);
+
+    await expect(fileSystem.fileStat(NON_EXISTING_FILE)).rejects.toThrow();
+
+    const abortController = new AbortController();
+    abortController.abort();
+    await expect(
+      fileSystem.fileStat(EXISTING_FILE, {
+        signal: abortController.signal,
+      }),
+    ).rejects.toThrow();
+  });
+
   it('exposes the active storage provider file-size limit', async () => {
     const { fileSystem } = await setupFileSystemTest({ controller });
 

@@ -39,6 +39,21 @@ const AssetLocationPreferenceValidator = {
   typeName: 'asset-location-preference',
 };
 
+/**
+ * Column visibility overrides for the workspace notes table, keyed by column
+ * id. Columns absent from the record use the table's own defaults.
+ */
+export type NotesTableColumnVisibility = Record<string, boolean>;
+
+const NotesTableColumnVisibilityValidator = {
+  validate: (value: unknown): value is NotesTableColumnVisibility =>
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    Object.values(value).every((visible) => typeof visible === 'boolean'),
+  typeName: 'notes-table-column-visibility',
+};
+
 const FileTreeExpandedPathsByWorkspaceValidator = {
   validate: (value: unknown): value is FileTreeExpandedPathsByWorkspace =>
     typeof value === 'object' &&
@@ -96,6 +111,9 @@ export class WorkbenchStateService extends BaseService {
     | undefined;
   private $_assetLocationPreference:
     | PrimitiveAtom<AssetLocationPreference>
+    | undefined;
+  private $_notesTableColumnVisibility:
+    | PrimitiveAtom<NotesTableColumnVisibility>
     | undefined;
 
   $openWsDialog = atom(false);
@@ -327,6 +345,20 @@ export class WorkbenchStateService extends BaseService {
       });
     }
     return this.$_fileTreeExpandedPathsByWorkspace;
+  }
+
+  get $notesTableColumnVisibility() {
+    if (!this.$_notesTableColumnVisibility) {
+      this.$_notesTableColumnVisibility = atomStorage({
+        serviceName: this.name,
+        key: 'notes-table-column-visibility',
+        initValue: {},
+        syncDb: this.dep.syncDatabase,
+        validator: NotesTableColumnVisibilityValidator,
+        logger: this.logger,
+      });
+    }
+    return this.$_notesTableColumnVisibility;
   }
 
   get $assetLocationPreference() {

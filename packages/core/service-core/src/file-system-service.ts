@@ -10,7 +10,11 @@ import {
   WORKSPACE_STORAGE_TYPE,
   type WorkspaceStorageType,
 } from '@bangle.io/constants';
-import type { BaseFileStorageService, ScopedEmitter } from '@bangle.io/types';
+import type {
+  BaseFileStorageService,
+  FileStat,
+  ScopedEmitter,
+} from '@bangle.io/types';
 import { isVisibleWorkspaceFilePath, WsPath } from '@bangle.io/ws-path';
 import { atom } from 'jotai';
 import type { WorkspaceOpsService } from './workspace-ops-service';
@@ -271,6 +275,26 @@ export class FileSystemService extends BaseService {
     const text = await file.text();
     throwIfAborted(options.signal);
     return text;
+  }
+
+  /**
+   * Returns creation/modification timestamps for a file. Read-only: never
+   * writes anything back to storage.
+   */
+  public async fileStat(
+    wsPath: string,
+    options: FileReadOptions = {},
+  ): Promise<FileStat> {
+    throwIfAborted(options.signal);
+    await this.mountPromise;
+    throwIfAborted(options.signal);
+    WsPath.assertFile(wsPath);
+
+    const storageService = await this.getStorageService({ wsPath });
+    throwIfAborted(options.signal);
+    const stat = await storageService.fileStat(wsPath, {});
+    throwIfAborted(options.signal);
+    return stat;
   }
 
   /**

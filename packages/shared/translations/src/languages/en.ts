@@ -634,7 +634,6 @@ export const t = {
       switchWorkspaceButton: 'Switch Workspace',
     },
     pageWsHome: {
-      recentNotesHeading: 'Recent notes',
       noNotesMessage: 'No notes found in this workspace.',
       newNoteButton: 'New Note',
       switchWorkspaceButton: 'Switch Workspace',
@@ -703,6 +702,29 @@ export const t = {
         fileTreeErrorMessage:
           'Could not refresh the file list. Showing the last known files.',
         fileTreeErrorRetry: 'Retry',
+      },
+      notesTable: {
+        searchPlaceholder: 'Filter notes',
+        columnsButton: 'Columns',
+        nameColumn: 'Name',
+        locationColumn: 'Location',
+        modifiedColumn: 'Modified',
+        lastOpenedColumn: 'Last opened',
+        createdColumn: 'Created',
+        noteCount: ({ count }: { count: number }) =>
+          count === 1 ? '1 note' : `${count} notes`,
+        noResultsMessage: 'No notes match your filter.',
+        starredIndicatorSr: 'Starred',
+        sortSr: ({ column }: { column: string }) => `Sort by ${column}`,
+        rowActionsSr: ({ fileName }: { fileName: string }) =>
+          `Actions for ${fileName}`,
+        openAction: 'Open',
+        starAction: 'Star',
+        unstarAction: 'Unstar',
+        renameAction: 'Rename',
+        moveAction: 'Move',
+        copyPathAction: 'Copy path',
+        deleteAction: 'Delete',
       },
       breadcrumb: {
         moreSr: 'More',
