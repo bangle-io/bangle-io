@@ -1,4 +1,4 @@
-import { MARKDOWN_CORPUS } from '@bangle.io/test-utils';
+import { MARKDOWN_CORPUS, MARKDOWN_SPEC_CORPUS } from '@bangle.io/test-utils';
 import { describe, expect, it } from 'vitest';
 import { createNoteMarkdownCodec } from '../codec';
 
@@ -17,8 +17,8 @@ import { createNoteMarkdownCodec } from '../codec';
 describe('golden corpus (wordgard)', () => {
   const codec = createNoteMarkdownCodec();
   const roundTrip = (input: string) => codec.serialize(codec.parse(input));
-  const wordgardFixtures = MARKDOWN_CORPUS.filter((f) =>
-    f.engines.includes('wordgard'),
+  const wordgardFixtures = [...MARKDOWN_CORPUS, ...MARKDOWN_SPEC_CORPUS].filter(
+    (f) => f.engines.includes('wordgard'),
   );
 
   it.each(

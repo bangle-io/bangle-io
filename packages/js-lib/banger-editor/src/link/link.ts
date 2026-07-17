@@ -800,6 +800,12 @@ function markdown(config: RequiredConfig): CollectionType['markdown'] {
             const titleAttr = title ? ` ${quote(title)}` : '';
             return `](${state.esc(href || '')}${titleAttr})`;
           },
+          // Without `mixable`, a mark that opens or closes inside a link
+          // (`[link **bold**](x)`) forces the serializer to close and reopen
+          // the link around it, splitting one link into several. The
+          // Wordgard engine's link spec makes the same choice — see
+          // `@bangle.io/wordgard-markdown`'s default specs.
+          mixable: true,
         },
         parseMarkdown: {
           link: {

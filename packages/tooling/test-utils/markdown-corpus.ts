@@ -279,14 +279,32 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     markdown: 'Three spaces: ` `',
     engines: BOTH_ENGINES,
   },
-  // A code span INSIDE another mark (`**bold `code`**`) has no shared fixed
-  // point: the PM engine's `code` mark excludes all other marks
-  // (banger-editor `excludes: '_'`), so it strips the bold and emits
-  // `**bold** `code``, while the Wordgard engine preserves the combination
-  // byte-for-byte. Wordgard's behavior is the more faithful one (no
-  // information loss), so it is deliberately NOT changed to match; the
-  // construct stays out of the shared corpus until the PM engine drops the
-  // exclusion.
+  // A code span INSIDE another mark used to be excluded here: the PM
+  // engine's `code` mark once carried `excludes: '_'`, which stripped the
+  // surrounding link/bold/italic mark during Markdown parsing (a real
+  // data-loss bug — `[`code` text](url)` lost its link). The exclusion was
+  // removed and the code mark now ranks last in the schema (innermost on
+  // serialize), so both engines preserve these combinations byte-for-byte.
+  {
+    name: 'bold containing a code span',
+    markdown: '**bold `code` bold**',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'italic containing a code span',
+    markdown: '_italic `code`_',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'strike containing a code span',
+    markdown: '~~strike `code`~~',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'code span covered entirely by bold',
+    markdown: '**`code`**',
+    engines: BOTH_ENGINES,
+  },
 
   // --- Escaped constructs that must not be reinterpreted -----------------
   {
@@ -507,13 +525,33 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
   // text nodes in both engines and serializes to an empty string — the href
   // is lost. Both engines agree, but that agreement is data loss, so it is
   // documented here rather than blessed as a fixture.
-  //
+  {
+    // Regression: the PM engine's `code` mark used to exclude all other
+    // marks, so the link mark was silently dropped at parse time and this
+    // serialized to just '`web-code` #53575'.
+    name: 'link whose text starts with a code span',
+    markdown: '[`web-code` #53575](https://google.com)',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'link whose text is exactly one code span',
+    markdown: '[`only-code`](https://example.com)',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'link text mixing plain, bold, and code runs',
+    markdown: 'a [link **with `code` bold**](https://x.com) tail',
+    engines: BOTH_ENGINES,
+  },
   // A link whose text carries a nested mark run (`[link _foo **bar**_](x)`)
-  // has no shared fixed point: the PM engine's link mark is not mixable, so
-  // it splits the link into several adjacent links (output that fails even
-  // its own round trip), while the Wordgard engine keeps the link whole and
-  // converges to `[link _foo _**_bar_**](x)`. Wordgard's lossless behavior
-  // is deliberately kept; excluded from the shared corpus.
+  // now stays a single link in BOTH engines (the PM engine's link mark is
+  // mixable, matching Wordgard), and both serialize it byte-identically. It
+  // is still excluded because the shared output does not converge in one
+  // pass: rank-driven nesting splits the italic around the bold run
+  // (`_foo _**_bar_**`), whose dangling `_` after a space re-parses as
+  // literal text, so pass two escapes it (`\_foo \_**_bar_**`) and the
+  // italic on "foo " is lost. Same bytes from both engines at every pass —
+  // an engine-shared normalization quirk, not a parity gap.
 
   // --- Images ---------------------------------------------------------------
   {

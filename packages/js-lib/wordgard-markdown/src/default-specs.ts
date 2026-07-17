@@ -596,13 +596,13 @@ const linkSpec: MarkMarkdownSpec = {
       const titleAttr = title ? ` ${quote(title)}` : '';
       return `](${state.esc(href)}${titleAttr})`;
     },
-    // Deliberate divergence from the ProseMirror engine, whose link mark is
-    // not mixable: without `mixable`, a mark that opens inside a link
+    // Without `mixable`, a mark that opens inside a link
     // (`[link _foo **bar**_](x)`) forces the serializer to close and reopen
     // the link around it, splitting one link into several — output that is
-    // not even a fixed point of that engine's own round trip. Marking the
-    // link mixable keeps it intact; every shared golden-corpus fixture still
-    // serializes byte-identically in both engines.
+    // not even a fixed point of the round trip. The ProseMirror engine's
+    // link mark is mixable for the same reason (see banger-editor's
+    // `link/link.ts`); every shared golden-corpus fixture serializes
+    // byte-identically in both engines.
     mixable: true,
   },
 };

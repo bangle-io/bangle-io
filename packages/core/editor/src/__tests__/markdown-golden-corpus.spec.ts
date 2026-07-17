@@ -20,7 +20,7 @@ import {
   setupTable,
   setupWikiLink,
 } from '@bangle.io/prosemirror-plugins';
-import { MARKDOWN_CORPUS } from '@bangle.io/test-utils';
+import { MARKDOWN_CORPUS, MARKDOWN_SPEC_CORPUS } from '@bangle.io/test-utils';
 import { describe, expect, it } from 'vitest';
 
 // Mirrors the markdown-relevant subset of the app's real extension set (see
@@ -30,10 +30,12 @@ import { describe, expect, it } from 'vitest';
 // Markdown fidelity of their own.
 //
 // Registration order must match `setupExtensions`' relative order for marks
-// (bold, strike, code, italic, link): PM mark rank follows schema insertion
+// (bold, strike, italic, link): PM mark rank follows schema insertion
 // order, and rank decides delimiter nesting when marks overlap — a different
 // order here would make this test bless canonical forms (`_~~x~~_`) that the
-// real app serializes differently (`~~_x_~~`).
+// real app serializes differently (`~~_x_~~`). The `code` mark is the one
+// exception: `setupCode` pins it to the lowest priority so it always ranks
+// last (innermost on serialize) regardless of registration order.
 function createMarkdown() {
   const extensions = [
     setupBase({ docContent: 'frontmatter? block+' }),
@@ -70,8 +72,8 @@ function createMarkdown() {
  * `packages/js-lib/wordgard-markdown`.
  */
 describe('Markdown golden corpus (ProseMirror engine)', () => {
-  const fixtures = MARKDOWN_CORPUS.filter((fixture) =>
-    fixture.engines.includes('prosemirror'),
+  const fixtures = [...MARKDOWN_CORPUS, ...MARKDOWN_SPEC_CORPUS].filter(
+    (fixture) => fixture.engines.includes('prosemirror'),
   );
 
   it.each(
