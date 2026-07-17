@@ -132,11 +132,17 @@ $$`;
     expect(markdown.serializer.serialize(reparsed)).toBe(expected);
   });
 
-  it('does not close display math on a delimiter line inside its source', () => {
+  it.each([
+    ['unindented', '$$'],
+    ['indented', '  $$'],
+  ])('does not close display math on an %s delimiter line inside its source', (_label, delimiterLine) => {
     const markdown = createProductionMarkdown();
     const { schema } = markdown;
     const document = getNodeType(schema, 'doc').create(null, [
-      getNodeType(schema, 'math_display').create(null, schema.text('a\n$$\nb')),
+      getNodeType(schema, 'math_display').create(
+        null,
+        schema.text(`a\n${delimiterLine}\nb`),
+      ),
       getNodeType(schema, 'paragraph').create(
         null,
         schema.text('important text'),
@@ -147,13 +153,21 @@ $$`;
     const reparsed = markdown.parser.parse(serialized);
 
     expect(serialized).toBe(
-      ['```', '$$', 'a', '$$', 'b', '$$', '```', '', 'important text'].join(
-        '\n',
-      ),
+      [
+        '```',
+        '$$',
+        'a',
+        delimiterLine,
+        'b',
+        '$$',
+        '```',
+        '',
+        'important text',
+      ].join('\n'),
     );
     expect(collectNodeText(reparsed, 'math_display')).toEqual([]);
     expect(collectNodeText(reparsed, 'code_block')).toEqual([
-      '$$\na\n$$\nb\n$$',
+      `$$\na\n${delimiterLine}\nb\n$$`,
     ]);
     expect(reparsed.textContent).toContain('important text');
     expect(markdown.serializer.serialize(reparsed)).toBe(serialized);

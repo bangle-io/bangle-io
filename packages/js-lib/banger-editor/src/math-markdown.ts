@@ -84,7 +84,7 @@ function hasUnsafeInlineSuffix(node: PMNode | null): boolean {
 }
 
 function hasDisplayClosingLine(content: string): boolean {
-  return content.split(/\r\n?|\n/u).some((line) => line.trimEnd() === '$$');
+  return content.split(/\r\n?|\n/u).some((line) => line.trim() === '$$');
 }
 
 function writeDisplayMathFallback(
