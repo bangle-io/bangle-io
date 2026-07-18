@@ -13,6 +13,8 @@ import {
 // below regardless of the host/CI locale.
 test.use({ locale: 'en-US' });
 
+const FIXED_CALENDAR_DATE = new Date('2028-12-15T12:00:00');
+
 test('slash command stays active with multiple suggestion providers registered', async ({
   page,
 }) => {
@@ -277,10 +279,10 @@ test('slash date command inserts a day picked from the current month', async ({
   page,
 }) => {
   const workspaceName = 'slash-command-date-picker';
-  // The 15th always exists and needs no navigation, keeping the assertion
-  // deterministic regardless of when the suite runs.
-  const now = new Date();
-  const target = new Date(now.getFullYear(), now.getMonth(), 15);
+  // Today is initially selected. Clicking it must commit instead of toggling
+  // the selection off and leaving the trigger text behind.
+  await page.clock.setFixedTime(FIXED_CALENDAR_DATE);
+  const target = FIXED_CALENDAR_DATE;
   const targetLabel = formatDateLabel(target);
 
   await createBrowserWorkspaceAndNote(page, {
@@ -322,7 +324,8 @@ test('slash date command inserts a day after navigating months', async ({
   page,
 }) => {
   const workspaceName = 'slash-command-date-nav';
-  const now = new Date();
+  await page.clock.setFixedTime(FIXED_CALENDAR_DATE);
+  const now = FIXED_CALENDAR_DATE;
   // Constructing from month + 1 naturally rolls over year boundaries.
   const target = new Date(now.getFullYear(), now.getMonth() + 1, 10);
   const targetLabel = formatDateLabel(target);
@@ -358,8 +361,8 @@ test('typing the $date trigger directly opens the calendar and inserts a day', a
   page,
 }) => {
   const workspaceName = 'date-trigger-direct';
-  const now = new Date();
-  const target = new Date(now.getFullYear(), now.getMonth(), 15);
+  await page.clock.setFixedTime(FIXED_CALENDAR_DATE);
+  const target = FIXED_CALENDAR_DATE;
   const targetLabel = formatDateLabel(target);
 
   await createBrowserWorkspaceAndNote(page, {

@@ -125,6 +125,8 @@ export const t = {
         heading3Desc: 'Small section heading',
         codeBlock: 'Code block',
         codeBlockDesc: 'Fenced code with highlighting',
+        mathBlock: 'Math block',
+        mathBlockDesc: 'Editable TeX equation',
         table: 'Table',
         tableDesc: 'Insert a simple table',
         frontmatter: 'Frontmatter',

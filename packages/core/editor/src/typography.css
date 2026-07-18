@@ -93,6 +93,87 @@ div.ProseMirror {
     background-color: hsl(var(--BV-wiki-link-missing-hover-background));
   }
 
+  & .math-node {
+    min-width: 0.75em;
+    min-height: 1em;
+    border-radius: 0.3rem;
+    color: hsl(var(--BV-foreground));
+    font-family: inherit;
+  }
+
+  & math-inline {
+    display: inline-block;
+    max-width: 100%;
+    overflow-x: auto;
+    vertical-align: baseline;
+  }
+
+  & math-inline .math-render {
+    padding: 0 0.1em;
+    font-size: 0.95em;
+  }
+
+  & math-display {
+    margin: 0.5rem 0;
+    padding: 0.75rem 1rem;
+    overflow-x: auto;
+    border: 1px solid transparent;
+  }
+
+  & math-display .math-render {
+    min-width: max-content;
+  }
+
+  & .math-node .math-src {
+    color: hsl(var(--BV-foreground));
+  }
+
+  & .math-node .math-src .ProseMirror {
+    border: 1px solid hsl(var(--BV-border));
+    border-radius: 0.3rem;
+    padding: 0.15rem 0.35rem;
+    background: hsl(var(--BV-muted) / 0.35);
+    color: hsl(var(--BV-foreground));
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", monospace;
+    white-space: pre-wrap;
+  }
+
+  & .math-node .math-src .ProseMirror:focus {
+    border-color: hsl(var(--BV-pop) / 0.6);
+    box-shadow: none;
+    outline: none;
+  }
+
+  & .math-node.ProseMirror-selectednode {
+    background: hsl(var(--BV-muted) / 0.12);
+    box-shadow: 0 0 0 1px hsl(var(--BV-pop) / 0.45);
+    outline: none;
+  }
+
+  & .math-node.ProseMirror-selectednode:focus-within {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  & .math-node .katex-error,
+  & .math-node .math-render.parse-error {
+    color: hsl(var(--BV-destructive));
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", monospace;
+    white-space: pre-wrap;
+  }
+
+  & .math-node.empty-math .math-render::before {
+    color: hsl(var(--BV-muted-foreground));
+  }
+
+  & p::selection,
+  & p > *::selection,
+  & .math-node.math-select .math-render {
+    background-color: hsl(var(--BV-pop) / 0.25);
+  }
+
   &.bangle-link-open-modifier a {
     cursor: pointer;
   }
@@ -444,6 +525,14 @@ div.ProseMirror {
   div[data-node-view-root="true"] {
     display: contents;
   }
+}
+
+/* The upstream math stylesheet contains an unscoped paragraph-selection
+ * rule. Keep its math layout styles, but restore the browser/user selection
+ * color everywhere outside an editor. */
+p:not(div.ProseMirror p)::selection,
+p:not(div.ProseMirror p) > *::selection {
+  background-color: revert;
 }
 
 .prosemirror-flat-list {

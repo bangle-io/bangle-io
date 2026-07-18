@@ -103,6 +103,8 @@ export const t = {
         heading3Desc: 'Kleine Abschnittsüberschrift',
         codeBlock: 'Codeblock',
         codeBlockDesc: 'Code mit Syntaxhervorhebung',
+        mathBlock: 'Matheblock',
+        mathBlockDesc: 'Bearbeitbare TeX-Gleichung',
         table: 'Tabelle',
         tableDesc: 'Einfache Tabelle einfügen',
         frontmatter: 'Frontmatter',

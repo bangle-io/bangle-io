@@ -29,6 +29,7 @@
   "scripts": {},
   "dependencies": {
     "@bangle.io/markdown-syntax": "workspace:*",
+    "@benrbray/prosemirror-math": "1.0.0",
     "jotai": "^2.20.1",
     "markdown-it": "14.3.0",
     "orderedmap": "^2.1.1",

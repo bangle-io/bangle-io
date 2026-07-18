@@ -5,6 +5,12 @@ export {
   listTokenizer,
   TASK_CHECKED_ATTR,
 } from './list-syntax';
+export {
+  findInlineMathAtEnd,
+  type InlineMathMatch,
+  mathTokenizer,
+  parseInlineMathAt,
+} from './math-syntax';
 export { tableTokenizer } from './table-syntax';
 export { createBaseMarkdownTokenizer } from './tokenizer';
 export {

@@ -24,6 +24,7 @@ import {
   ListChecks,
   ListOrdered,
   type LucideIcon,
+  Sigma,
   Table,
   Type,
 } from 'lucide-react';
@@ -197,6 +198,13 @@ export function buildSlashMenuGroups(
           description: labels.codeBlockDesc,
           icon: Code,
           onSelect: () => run(ext.codeBlock.command.toggleCodeBlock),
+        },
+        {
+          value: 'math-block equation latex tex',
+          title: labels.mathBlock,
+          description: labels.mathBlockDesc,
+          icon: Sigma,
+          onSelect: () => run(ext.math.command.insertDisplayMath()),
         },
         ...(!ext.frontmatter.query.hasFrontmatter(state)
           ? [
