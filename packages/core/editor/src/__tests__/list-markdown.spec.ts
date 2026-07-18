@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { createProductionMarkdown } from './production-markdown-test-helpers';
 
 describe('ProseMirror list Markdown metadata', () => {
@@ -46,5 +46,19 @@ describe('ProseMirror list Markdown metadata', () => {
     ]);
 
     expect(markdown.serializer.serialize(mixed)).toBe('- one\n\n- two');
+  });
+
+  it('computes list-run tightness in linear work', () => {
+    const markdown = createProductionMarkdown();
+    const itemCount = 300;
+    const parsed = markdown.parser.parse(
+      Array.from({ length: itemCount }, (_, i) => `- item ${i}`).join('\n'),
+    );
+    const child = vi.spyOn(parsed, 'child');
+
+    const serialized = markdown.serializer.serialize(parsed);
+
+    expect(serialized.split('\n')).toHaveLength(itemCount);
+    expect(child.mock.calls.length).toBeLessThan(itemCount * 10);
   });
 });

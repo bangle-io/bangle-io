@@ -712,6 +712,21 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     markdown: '- \n  - nested only',
     engines: BOTH_ENGINES,
   },
+  {
+    name: 'loose list with blockquote-only items remains loose',
+    markdown: '- > a\n\n- > b',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'loose list with fenced-code-only items remains loose',
+    markdown: '- ```\n  a\n  ```\n\n- ```\n  b\n  ```',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'loose list with nested-list-only items remains loose',
+    markdown: '- \n  - a\n\n- \n  - b',
+    engines: BOTH_ENGINES,
+  },
 
   // --- Task lists ----------------------------------------------------------
   {
@@ -776,6 +791,18 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
   {
     name: 'nested ordered tasks use the ordered marker width',
     markdown: '1. [x] outer\n   1. [ ] inner',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'tab after a bullet task marker normalizes to a space',
+    markdown: '- [ ]\ttab task',
+    canonical: '- [ ] tab task',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'tab after an ordered task marker normalizes to a space',
+    markdown: '1. [x]\ttab task',
+    canonical: '1. [x] tab task',
     engines: BOTH_ENGINES,
   },
   {

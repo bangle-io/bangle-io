@@ -68,3 +68,43 @@ test('tight and loose lists survive editing, task toggling, and reload', async (
     .poll(() => readStoredMarkdown(page, workspaceName, noteName))
     .toBe(expected);
 });
+
+test('copy and paste preserves a loose ordered task list', async ({
+  context,
+  page,
+}) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  const workspaceName = 'list-clipboard-fidelity';
+  const noteName = 'ordered-tasks';
+  const source = '1. [x] copied task\n\n1. [ ] copied pending';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(page, workspaceName, noteName, source);
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await page.keyboard.press('ControlOrMeta+a');
+  await page.keyboard.press('ControlOrMeta+c');
+  await page.keyboard.press('Backspace');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('');
+  await page.keyboard.press('ControlOrMeta+v');
+
+  await expect(editor.getByText('copied task', { exact: true })).toBeVisible();
+  await expect(
+    editor.getByText('copied pending', { exact: true }),
+  ).toBeVisible();
+  await expect(editor.getByRole('checkbox').first()).toBeChecked();
+  await expect(editor.getByRole('checkbox').last()).not.toBeChecked();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(source);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(editor.getByRole('checkbox').first()).toBeChecked();
+  await expect(editor.getByRole('checkbox').last()).not.toBeChecked();
+  await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
+    source,
+  );
+});

@@ -87,6 +87,20 @@ describe('listTokenizer tightness', () => {
       { kind: 'bullet', tight: false, taskChecked: null },
     ]);
   });
+
+  it.each([
+    ['tight blockquotes', '- > a\n- > b', true],
+    ['loose blockquotes', '- > a\n\n- > b', false],
+    ['tight fenced code', '- ```\n  a\n  ```\n- ```\n  b\n  ```', true],
+    ['loose fenced code', '- ```\n  a\n  ```\n\n- ```\n  b\n  ```', false],
+    ['tight nested-only items', '- \n  - a\n- \n  - b', true],
+    ['loose nested-only items', '- \n  - a\n\n- \n  - b', false],
+  ])('detects %s without direct paragraphs', (_name, markdown, tight) => {
+    const [outer] = tokenize(markdown).filter(
+      (token) => token.type === 'bullet_list_open' && token.level === 0,
+    );
+    expect(outer?.attrGet(LIST_TIGHT_ATTR)).toBe(String(tight));
+  });
 });
 
 describe('listTokenizer task detection', () => {
@@ -124,6 +138,17 @@ describe('listTokenizer task detection', () => {
     const [item] = listItems(tokens);
     expect(item?.attrGet(LIST_KIND_ATTR)).toBe('ordered');
     expect(item?.attrGet(TASK_CHECKED_ATTR)).toBe('false');
+  });
+
+  it.each([
+    ['bullet', '- [ ]\ttab task', 'bullet', 'false'],
+    ['ordered', '1. [x]\ttab task', 'ordered', 'true'],
+  ])('detects a tab-separated %s task', (_name, markdown, kind, checked) => {
+    const tokens = tokenize(markdown);
+    const [item] = listItems(tokens);
+    expect(item?.attrGet(LIST_KIND_ATTR)).toBe(kind);
+    expect(item?.attrGet(TASK_CHECKED_ATTR)).toBe(checked);
+    expect(inlineContent(tokens)).toEqual(['tab task']);
   });
 
   it('keeps following inline structure intact when stripping the marker', () => {

@@ -24,10 +24,10 @@ export type ListTokenMetadata = {
 
 /**
  * Task markers GFM recognizes at the very start of a list item's first
- * paragraph: `[ ]`, `[x]`, or `[X]`, either followed by a space or ending
- * the paragraph (an empty task). Anywhere else, `[ ]` is literal text.
+ * paragraph: `[ ]`, `[x]`, or `[X]`, followed by spaces/tabs or ending the
+ * paragraph (an empty task). Anywhere else, `[ ]` is literal text.
  */
-const TASK_MARKER = /^\[([ xX])\](?: |$)/;
+const TASK_MARKER = /^\[([ xX])\](?:[ \t]+|$)/;
 
 /**
  * Read the engine-neutral list metadata stamped by {@link listTokenizer}.
@@ -43,12 +43,20 @@ export function readListTokenMetadata(token: Token): ListTokenMetadata {
   };
 }
 
-function listIsTight(tokens: readonly Token[], openIndex: number): boolean {
+function listIsTight(
+  tokens: readonly Token[],
+  openIndex: number,
+  sourceLines: readonly string[],
+): boolean {
   const open = tokens[openIndex];
   if (!open) return true;
 
   const paragraphLevel = open.level + 2;
+  const itemLevel = open.level + 1;
   const closeType = open.type.replace(/_open$/, '_close');
+  let currentItemLevel: number | null = null;
+  let hasDirectChild = false;
+  let hasDirectItem = false;
   for (let i = openIndex + 1; i < tokens.length; i++) {
     const token = tokens[i];
     if (!token || token.level < open.level) break;
@@ -56,8 +64,44 @@ function listIsTight(tokens: readonly Token[], openIndex: number): boolean {
     if (token.type === 'paragraph_open' && token.level === paragraphLevel) {
       return token.hidden;
     }
+    if (token.type === 'list_item_open' && token.level === itemLevel) {
+      if (hasDirectItem && startsAfterBlankLine(token, sourceLines)) {
+        return false;
+      }
+      hasDirectItem = true;
+      currentItemLevel = token.level;
+      hasDirectChild = false;
+      continue;
+    }
+    if (token.type === 'list_item_close' && token.level === itemLevel) {
+      currentItemLevel = null;
+      continue;
+    }
+    if (
+      currentItemLevel !== null &&
+      token.level === currentItemLevel + 1 &&
+      token.nesting !== -1 &&
+      token.map
+    ) {
+      if (hasDirectChild && startsAfterBlankLine(token, sourceLines)) {
+        return false;
+      }
+      hasDirectChild = true;
+    }
   }
   return true;
+}
+
+function startsAfterBlankLine(
+  token: Token,
+  sourceLines: readonly string[],
+): boolean {
+  const startLine = token.map?.[0];
+  return (
+    startLine !== undefined &&
+    startLine > 0 &&
+    /^[ \t]*$/.test(sourceLines[startLine - 1] ?? '')
+  );
 }
 
 /**
@@ -81,6 +125,7 @@ function listIsTight(tokens: readonly Token[], openIndex: number): boolean {
 export function listTokenizer(md: MarkdownIt): void {
   md.core.ruler.after('inline', 'bangle-list-syntax', (state) => {
     const tokens = state.tokens;
+    const sourceLines = state.src.split(/\r?\n/);
 
     // Pass 1: stamp bullet/ordered kinds from the enclosing list.
     const listStack: Array<{ kind: ListKind; tight: boolean }> = [];
@@ -91,7 +136,7 @@ export function listTokenizer(md: MarkdownIt): void {
         case 'bullet_list_open':
         case 'ordered_list_open': {
           const kind = token.type === 'bullet_list_open' ? 'bullet' : 'ordered';
-          const tight = listIsTight(tokens, i);
+          const tight = listIsTight(tokens, i, sourceLines);
           listStack.push({ kind, tight });
           token.attrSet(LIST_KIND_ATTR, kind);
           token.attrSet(LIST_TIGHT_ATTR, String(tight));

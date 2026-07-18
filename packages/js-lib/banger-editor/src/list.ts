@@ -18,18 +18,27 @@ import {
   backspaceCommand,
   createDedentListCommand,
   createIndentListCommand,
-  createListPlugins,
+  createListEventPlugin,
+  createListRenderingPlugin,
   createListSpec,
   createMoveListCommand,
+  createSafariInputMethodWorkaroundPlugin,
   createToggleListCommand,
   createUnwrapListCommand,
+  DOMSerializer,
+  defaultAttributesGetter,
   deleteCommand,
   enterCommand,
   inputRules,
   isListNode,
   isListType,
   type ListAttributes,
+  ListDOMSerializer,
   type ListKind,
+  listToDOM,
+  Plugin,
+  type Schema,
+  unwrapListSlice,
   wrappingListInputRule,
 } from './pm';
 import { findParentNode, getNodeType, type PluginContext } from './pm-utils';
@@ -52,9 +61,12 @@ type MarkdownListAttrs = ListAttributes & {
 };
 
 type ListMarkdownSerializerState = MarkdownSerializerState & {
+  [LIST_TIGHTNESS_CACHE]?: WeakMap<PMNode, readonly boolean[]>;
   flushClose(size?: number): void;
   inTightList: boolean;
 };
+
+const LIST_TIGHTNESS_CACHE = Symbol('listTightnessCache');
 
 function isListMarkdownSerializerState(
   state: MarkdownSerializerState,
@@ -89,6 +101,35 @@ function readListAttrs(node?: PMNode): MarkdownListAttrs | null {
   };
 }
 
+function markdownListDomAttributes(
+  node: PMNode,
+): Record<string, string | undefined> {
+  const attrs = readListAttrs(node);
+  return {
+    ...defaultAttributesGetter(node),
+    'data-list-container-kind': attrs?.listKind,
+    'data-list-tight': String(attrs?.tight ?? true),
+  };
+}
+
+function markdownListToDOM(node: PMNode, nativeList = false): DOMOutputSpec {
+  const output = listToDOM({
+    node,
+    nativeList,
+    getAttributes: markdownListDomAttributes,
+    ...(nativeList ? { getMarkers: () => null } : {}),
+  });
+  if (!nativeList) return output;
+  if (!Array.isArray(output)) {
+    throw new Error('Unexpected flat-list clipboard DOM output');
+  }
+  const attrs = readListAttrs(node);
+  return [
+    attrs?.listKind === LIST_KIND.ORDERED ? 'ol' : 'ul',
+    ...output.slice(1),
+  ];
+}
+
 function createMarkdownListSpec(): NodeSpec {
   const spec = createListSpec();
   return {
@@ -98,27 +139,7 @@ function createMarkdownListSpec(): NodeSpec {
       listKind: { default: null },
       tight: { default: true },
     },
-    toDOM: (node): DOMOutputSpec => {
-      const output = spec.toDOM?.(node);
-      if (
-        !Array.isArray(output) ||
-        typeof output[1] !== 'object' ||
-        output[1] === null ||
-        Array.isArray(output[1])
-      ) {
-        throw new Error('Unexpected flat-list DOM output');
-      }
-      const attrs = readListAttrs(node);
-      return [
-        output[0],
-        {
-          ...output[1],
-          'data-list-container-kind': attrs?.listKind,
-          'data-list-tight': String(attrs?.tight ?? true),
-        },
-        ...output.slice(2),
-      ];
-    },
+    toDOM: markdownListToDOM,
     parseDOM: spec.parseDOM?.map((rule) => ({
       ...rule,
       getAttrs: (dom) => {
@@ -126,8 +147,15 @@ function createMarkdownListSpec(): NodeSpec {
         if (attrs === false) return false;
         if (typeof dom === 'string') return attrs ?? null;
         const kind = dom.getAttribute('data-list-container-kind');
+        const itemKind = dom.getAttribute('data-list-kind');
         return {
           ...(attrs ?? {}),
+          ...(itemKind === LIST_KIND.TASK
+            ? {
+                kind: LIST_KIND.TASK,
+                checked: dom.hasAttribute('data-list-checked'),
+              }
+            : {}),
           ...(kind === LIST_KIND.ORDERED || kind === LIST_KIND.BULLET
             ? { listKind: kind }
             : {}),
@@ -136,6 +164,30 @@ function createMarkdownListSpec(): NodeSpec {
       },
     })),
   };
+}
+
+function createMarkdownListPlugins(
+  schema: Schema,
+  listNodeName: string,
+): Plugin[] {
+  const clipboardSerializer = new ListDOMSerializer(
+    {
+      ...DOMSerializer.nodesFromSchema(schema),
+      [listNodeName]: (node) => markdownListToDOM(node, true),
+    },
+    DOMSerializer.marksFromSchema(schema),
+  );
+  return [
+    createListEventPlugin(),
+    createListRenderingPlugin(),
+    new Plugin({
+      props: {
+        clipboardSerializer,
+        transformCopied: unwrapListSlice,
+      },
+    }),
+    createSafariInputMethodWorkaroundPlugin(),
+  ];
 }
 
 type ListConfig = {
@@ -187,7 +239,8 @@ export function setupList(userConfig: Partial<ListConfig> = {}) {
   const plugin = {
     inputRules: pluginInputRules(config),
     keybindings: pluginKeybindings(config),
-    listPlugins: ({ schema }: PluginContext) => createListPlugins({ schema }),
+    listPlugins: ({ schema }: PluginContext) =>
+      createMarkdownListPlugins(schema, listNodeName),
   };
 
   return collection({
@@ -269,7 +322,6 @@ function toggleBulletList(_config: RequiredConfig): Command {
     return createToggleListCommand({
       kind: LIST_KIND.BULLET,
       listKind: LIST_KIND.BULLET,
-      tight: true,
     })(state, dispatch);
   };
 }
@@ -280,7 +332,6 @@ function toggleOrderedList(_config: RequiredConfig): Command {
       kind: LIST_KIND.ORDERED,
       listKind: LIST_KIND.ORDERED,
       order: 1,
-      tight: true,
     })(state, dispatch);
   };
 }
@@ -291,7 +342,6 @@ function toggleTaskList(_config: RequiredConfig): Command {
       kind: LIST_KIND.TASK,
       listKind: LIST_KIND.BULLET,
       checked: false,
-      tight: true,
     })(state, dispatch);
   };
 }
@@ -503,7 +553,7 @@ function flatListToMarkdown(
   }
   const attrs = readListAttrs(node);
   if (!attrs) return;
-  const tight = listRunIsTight(node, parent, index, attrs.listKind);
+  const tight = listRunIsTight(state, node, parent, index);
   if (
     state.inTightList ||
     (tight && previousSiblingIsSameList(parent, index, attrs.listKind))
@@ -537,28 +587,43 @@ function previousSiblingIsSameList(
 }
 
 function listRunIsTight(
+  state: ListMarkdownSerializerState,
   node: PMNode,
   parent: PMNode | null,
   index: number,
-  kind: MarkdownListKind,
 ): boolean {
   if (!parent) return readListAttrs(node)?.tight ?? true;
-  let start = index;
-  let end = index;
-  while (
-    start > 0 &&
-    readListAttrs(parent.child(start - 1))?.listKind === kind
-  ) {
-    start--;
+  let cache = state[LIST_TIGHTNESS_CACHE];
+  if (!cache) {
+    cache = new WeakMap();
+    state[LIST_TIGHTNESS_CACHE] = cache;
   }
-  while (
-    end + 1 < parent.childCount &&
-    readListAttrs(parent.child(end + 1))?.listKind === kind
-  ) {
-    end++;
+  let tightness = cache.get(parent);
+  if (!tightness) {
+    tightness = listTightnessByChild(parent);
+    cache.set(parent, tightness);
   }
-  for (let i = start; i <= end; i++) {
-    if (readListAttrs(parent.child(i))?.tight === false) return false;
+  return tightness[index] ?? true;
+}
+
+function listTightnessByChild(parent: PMNode): readonly boolean[] {
+  const result = Array.from({ length: parent.childCount }, () => true);
+  for (let start = 0; start < parent.childCount; ) {
+    const first = readListAttrs(parent.child(start));
+    if (!first) {
+      start++;
+      continue;
+    }
+    let end = start + 1;
+    let tight = first.tight;
+    while (end < parent.childCount) {
+      const attrs = readListAttrs(parent.child(end));
+      if (attrs?.listKind !== first.listKind) break;
+      tight = tight && attrs.tight;
+      end++;
+    }
+    result.fill(tight, start, end);
+    start = end;
   }
-  return true;
+  return result;
 }
