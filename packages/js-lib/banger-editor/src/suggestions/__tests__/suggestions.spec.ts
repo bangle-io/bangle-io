@@ -737,4 +737,36 @@ describe('replaceSuggestMarkWith', () => {
     expect(handled).toBe(false);
     expect(view.state.doc.textContent).toBe('/current plain');
   });
+
+  it('refuses provider marks split around unrelated text', () => {
+    const store = createStore();
+    const view = createEditor({
+      text: '/abcd',
+      markName: 'slash_command',
+      store,
+    });
+    const current = editorStore.get(view.state, $suggestions).get(view);
+    if (!current) throw new Error('missing active suggestion');
+    const slashMark = schema.mark('slash_command', { trigger: '/' });
+    const replacement = Fragment.fromArray([
+      schema.text('/a', [slashMark]),
+      schema.text('X'),
+      schema.text('bcd', [slashMark]),
+    ]);
+    const tr = view.state.tr.replaceWith(1, 6, replacement);
+    view.dispatch(tr.setSelection(TextSelection.atEnd(tr.doc)));
+
+    editorStore.set(
+      view.state,
+      $suggestions,
+      new Map([[view, { ...current, position: 1, text: '/abcd' }]]),
+    );
+
+    const handled = slashSuggestions.command.replaceSuggestMarkWith({
+      content: 'replacement',
+    })(view.state, view.dispatch, view);
+
+    expect(handled).toBe(false);
+    expect(view.state.doc.textContent).toBe('/aXbcd');
+  });
 });

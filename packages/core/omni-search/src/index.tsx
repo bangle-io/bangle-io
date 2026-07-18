@@ -339,9 +339,11 @@ export function OmniSearch() {
     editorEngine,
   } = useCoreServices();
   const [open, setOpen] = useAtom(workbenchState.$openOmniSearch);
-  const commands = commandRegistry
-    .getOmniSearchCommands()
-    .filter((command) => isCommandAvailable(command.id, editorEngine));
+  const commands = open
+    ? commandRegistry
+        .getOmniSearchCommands()
+        .filter((command) => isCommandAvailable(command.id, editorEngine))
+    : [];
 
   const commandInputRef = React.useRef<HTMLInputElement>(null);
 
