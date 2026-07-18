@@ -632,6 +632,13 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     engines: BOTH_ENGINES,
   },
   {
+    // Empty nested fence: the closing fence follows the opener directly,
+    // with no spurious blank `> ` line in between.
+    name: 'blockquote containing an empty code block',
+    markdown: '> ```\n> ```',
+    engines: BOTH_ENGINES,
+  },
+  {
     name: 'empty blockquote keeps a marker line',
     markdown: '>',
     canonical: '> ',
@@ -852,6 +859,14 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
   {
     name: 'fenced code block containing backticks, uses a longer fence',
     markdown: '````markdown\n```js\nconst nestedFence = true;\n```\n````',
+    engines: BOTH_ENGINES,
+  },
+  {
+    // Code content ending in a newline holds a trailing blank code line;
+    // it must survive the round trip, not be swallowed as "already at a
+    // line start" when the closing fence is written.
+    name: 'fenced code block with a trailing blank line',
+    markdown: '```\na\n\n```',
     engines: BOTH_ENGINES,
   },
   {

@@ -230,7 +230,12 @@ const codeBlockSpec: NodeMarkdownSpec = {
     // delimiter (`> `, list indentation) at every line, which `write` only
     // does for the first line.
     state.text(text, false);
-    state.ensureNewLine();
+    // Unconditional (not `ensureNewLine`) to stay byte-identical to the
+    // ProseMirror engine: content ending in a newline holds a trailing
+    // blank code line, and `ensureNewLine` would swallow it.
+    if (text) {
+      state.write('\n');
+    }
     state.write(fence);
     state.closeBlock(node);
   },
