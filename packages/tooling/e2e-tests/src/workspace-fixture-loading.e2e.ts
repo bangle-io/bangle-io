@@ -25,10 +25,15 @@ test('loads a workspace directory fixture from raw files', async ({ page }) => {
     workspaceName: 'markdown-loading',
     files: ['nested/checklist.md', 'welcome.md'],
   });
-  await expect(page.getByRole('link', { name: 'welcome.md' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'checklist.md' })).toBeVisible();
+  const notesTable = page.getByTestId('ws-home-notes-table');
+  await expect(
+    notesTable.getByRole('link', { name: 'welcome', exact: true }),
+  ).toBeVisible();
+  await expect(
+    notesTable.getByRole('link', { name: 'checklist', exact: true }),
+  ).toBeVisible();
 
-  await page.getByRole('link', { name: 'welcome.md' }).click();
+  await notesTable.getByRole('link', { name: 'welcome', exact: true }).click();
   const editor = getEditorLocator(page, {});
   await expect(
     editor.getByRole('heading', { name: 'Fixture workspace' }),
@@ -64,7 +69,10 @@ test('discovers a curated multi-file Markdown workspace', async ({ page }) => {
   await expect(
     page.getByRole('heading', { name: 'markdown-edge-cases' }),
   ).toBeVisible();
-  await page.getByRole('link', { name: '00-overview.md' }).click();
+  await page
+    .getByTestId('ws-home-notes-table')
+    .getByRole('link', { name: '00-overview', exact: true })
+    .click();
   await expect(
     getEditorLocator(page, {}).getByRole('heading', {
       name: 'Markdown edge-case workspace',
@@ -142,7 +150,10 @@ test('discovers a curated multi-file Markdown workspace', async ({ page }) => {
 
 test('follows interoperable relative Markdown link forms', async ({ page }) => {
   await loadBrowserWorkspaceFixture(page, edgeCasesFixtureDirectory);
-  await page.getByRole('link', { name: '00-overview.md' }).click();
+  await page
+    .getByTestId('ws-home-notes-table')
+    .getByRole('link', { name: '00-overview', exact: true })
+    .click();
 
   const modifierClick = async (name: string) => {
     await page.keyboard.down(ctrlKey);

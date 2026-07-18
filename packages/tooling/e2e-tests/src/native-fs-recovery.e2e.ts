@@ -115,7 +115,11 @@ test('recovers a missing Native FS workspace without presenting it as empty', as
   await recovery.getByRole('button', { name: 'Locate Folder' }).click();
 
   await expect(recovery).toHaveCount(0);
-  await expect(page.getByRole('link', { name: 'welcome.md' })).toBeVisible();
+  await expect(
+    page
+      .getByTestId('ws-home-notes-table')
+      .getByRole('link', { name: 'welcome', exact: true }),
+  ).toBeVisible();
   await expect(
     page.getByRole('heading', { name: WORKSPACE_NAME }),
   ).toBeVisible();

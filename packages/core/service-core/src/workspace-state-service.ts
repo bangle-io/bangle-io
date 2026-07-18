@@ -8,7 +8,7 @@ import {
   isAppError,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
-import type { WorkspaceInfo } from '@bangle.io/types';
+import type { FileStat, WorkspaceInfo } from '@bangle.io/types';
 import {
   createWikiLinkIndex,
   isVisibleWorkspaceFilePath,
@@ -35,6 +35,10 @@ const EMPTY_BACKLINK_INDEX_STATE: BacklinkIndexState = {
 };
 
 const FILE_TREE_LIST_OK: FileTreeListState = { status: 'ok' };
+
+const EMPTY_NOTE_FILE_STATS: ReadonlyMap<string, FileStat> = new Map();
+const NOTE_STAT_CONCURRENCY = 8;
+const NOTE_STAT_FLUSH_EVERY = 24;
 
 export type FileTreeListState =
   | { status: 'ok'; error?: undefined }
@@ -213,6 +217,148 @@ export class WorkspaceStateService extends BaseService {
     (previous) =>
       previous ?? { status: 'loading', byTargetWsPath: EMPTY_BACKLINKS },
   );
+
+  /**
+   * Per-path stat cache that outlives atom subscriptions, so returning to a
+   * consumer refreshes stats instead of rebuilding them from nothing. Both
+   * the full scan and the targeted patch write into this one map; publishing
+   * immutable snapshots from it means a slower full scan can never overwrite
+   * a newer targeted result.
+   */
+  private noteFileStatsCache = new Map<string, FileStat>();
+  private handledStatContentUpdateSequence = 0;
+
+  private $publishedNoteFileStats = atom<ReadonlyMap<string, FileStat>>(
+    EMPTY_NOTE_FILE_STATS,
+  );
+
+  /**
+   * Full stat scan: runs when the note list changes (workspace switch,
+   * create/delete/rename) or a force-update relists files with possibly new
+   * content on disk (Native FS recovery, external edits). Rows never wait on
+   * it — partial results are flushed as they arrive.
+   */
+  private $noteFileStatsScanEffect = atomEffect((get, set) => {
+    const wsPaths = get(this.$noteWsPaths).map((path) => path.wsPath);
+    get(this.fileSystem.$fileForceUpdateCount);
+    const cache = this.noteFileStatsCache;
+
+    // Drop entries for notes that no longer exist; keep the rest so a
+    // refresh never flashes consumers back to empty timestamps.
+    const livePaths = new Set(wsPaths);
+    for (const knownPath of cache.keys()) {
+      if (!livePaths.has(knownPath)) {
+        cache.delete(knownPath);
+      }
+    }
+
+    if (wsPaths.length === 0) {
+      set(this.$publishedNoteFileStats, EMPTY_NOTE_FILE_STATS);
+      return;
+    }
+
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+    const queue = [...wsPaths];
+    let completedSinceFlush = 0;
+
+    const flush = () => {
+      if (!signal.aborted) {
+        set(this.$publishedNoteFileStats, new Map(cache));
+      }
+    };
+
+    const worker = async () => {
+      while (!signal.aborted) {
+        const wsPath = queue.shift();
+        if (wsPath === undefined) {
+          return;
+        }
+        try {
+          const stat = await this.fileSystem.fileStat(wsPath, { signal });
+          if (!signal.aborted) {
+            cache.set(wsPath, stat);
+          }
+        } catch {
+          // Unreadable/missing file: leave its timestamps blank. The file
+          // listing stays the source of truth for which notes exist.
+          if (!signal.aborted) {
+            cache.delete(wsPath);
+          }
+        }
+        completedSinceFlush += 1;
+        if (completedSinceFlush >= NOTE_STAT_FLUSH_EVERY) {
+          completedSinceFlush = 0;
+          flush();
+        }
+      }
+    };
+
+    const workers = Array.from(
+      { length: Math.min(NOTE_STAT_CONCURRENCY, queue.length) },
+      () => worker(),
+    );
+    void Promise.all(workers).then(flush);
+
+    return () => {
+      abortController.abort();
+    };
+  });
+
+  /**
+   * Targeted refresh: a regular content update (including one delivered from
+   * another tab) re-stats only the updated path instead of restarting the
+   * whole scan.
+   */
+  private $noteFileStatsPatchEffect = atomEffect((get, set) => {
+    const event = get(this.fileSystem.$fileContentUpdateEvent);
+    if (!event || event.sequence <= this.handledStatContentUpdateSequence) {
+      return;
+    }
+    this.handledStatContentUpdateSequence = event.sequence;
+
+    const { wsPath } = event;
+    // peek: membership is checked against the current list without making
+    // every tree change re-run this effect.
+    if (!get.peek(this.$noteWsPaths).some((path) => path.wsPath === wsPath)) {
+      return;
+    }
+
+    const abortController = new AbortController();
+    void this.fileSystem
+      .fileStat(wsPath, { signal: abortController.signal })
+      .then(
+        (stat) => {
+          if (!abortController.signal.aborted) {
+            this.noteFileStatsCache.set(wsPath, stat);
+            set(this.$publishedNoteFileStats, new Map(this.noteFileStatsCache));
+          }
+        },
+        () => {
+          // Keep the last known stat; the note row stays intact either way.
+        },
+      );
+
+    return () => {
+      abortController.abort();
+    };
+  });
+
+  /**
+   * Per-note file timestamps for the current workspace, keyed by wsPath. A
+   * path whose stat read failed is absent from the map.
+   *
+   * Reading this atom is what activates stat loading: the underlying effects
+   * mount only while a consumer (e.g. the workspace home notes table)
+   * subscribes and stop when the last one leaves, so no stat traffic happens
+   * while nothing displays timestamps. Remounting rescans, which also covers
+   * updates missed while unsubscribed.
+   */
+  $noteFileStats: Atom<ReadonlyMap<string, FileStat>> = atom((get) => {
+    get(this.$noteFileStatsScanEffect);
+    get(this.$noteFileStatsPatchEffect);
+    return get(this.$publishedNoteFileStats);
+  });
 
   $activeWsPaths = atom<WsFilePath[]>((get) => {
     const wsPath = get(this.navigation.$activeWsFilePath);
