@@ -10,7 +10,6 @@ import {
   NotesTable,
   type NotesTableNote,
 } from '../components/notes-table/notes-table';
-import { useNoteFileStats } from '../components/notes-table/use-note-file-stats';
 import { AppHeader } from '../layout/app-header';
 import { PageContentContainer } from '../layout/main-content-container';
 
@@ -132,12 +131,7 @@ function useNotesTableData(): NotesTableNote[] {
   const starredPaths = useAtomValue(
     coreServices.userActivityService.$starredWsPaths,
   );
-
-  const wsPathStrings = React.useMemo(
-    () => noteWsPaths.map((filePath) => filePath.wsPath),
-    [noteWsPaths],
-  );
-  const stats = useNoteFileStats(wsPathStrings);
+  const stats = useAtomValue(coreServices.workspaceState.$noteFileStats);
 
   return React.useMemo(() => {
     const lastOpenedByWsPath = new Map(
