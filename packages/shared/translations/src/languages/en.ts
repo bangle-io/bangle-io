@@ -539,8 +539,10 @@ export const t = {
       },
     },
     toasts: {
-      pwaImportFailed: ({ fileName }: { fileName: string }) =>
-        `Could not import ${fileName}`,
+      pwaImportSuccess: ({ count }: { count: number }) =>
+        count === 1 ? 'Imported 1 note' : `Imported ${count} notes`,
+      pwaImportFailed: ({ fileNames }: { fileNames: string }) =>
+        `Could not import ${fileNames}`,
       assetSaveInProgress: ({
         fileName,
         remainingCount,

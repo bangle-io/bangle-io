@@ -29,11 +29,7 @@ async function setupWorkspaces(
     });
     services.commandDispatcher.dispatch(
       'command::ws:create-note',
-      {
-        wsPath: `${WORKSPACE_WITH_NOTE}:note1.md`,
-        navigate: undefined,
-        content: undefined,
-      },
+      { wsPath: `${WORKSPACE_WITH_NOTE}:note1.md`, navigate: undefined },
       'test',
     );
   });

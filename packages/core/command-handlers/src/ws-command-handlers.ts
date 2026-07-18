@@ -124,16 +124,12 @@ export const wsCommandHandlers = [
     }
     const wsPath = WsPath.fromParts(wsName, inputPath).toString();
 
-    dispatch('command::ws:create-note', {
-      wsPath,
-      navigate: true,
-      content: undefined,
-    });
+    dispatch('command::ws:create-note', { wsPath, navigate: true });
   }),
 
   c(
     'command::ws:create-note',
-    async ({ fileSystem, navigation }, { wsPath, navigate, content }) => {
+    async ({ fileSystem, navigation }, { wsPath, navigate }) => {
       const parsedPath = WsPath.fromString(wsPath);
       const wsName = parsedPath.wsName;
 
@@ -153,7 +149,7 @@ export const wsCommandHandlers = [
       try {
         await fileSystem.createFile(
           wsPath,
-          new File([content ?? ''], fileNameWithoutExt, {
+          new File([''], fileNameWithoutExt, {
             type: 'text/plain',
           }),
         );
@@ -670,7 +666,6 @@ export const wsCommandHandlers = [
         dispatch('command::ws:create-note', {
           wsPath: dailyNoteWsPath,
           navigate: true,
-          content: undefined,
         });
       }
     },

@@ -225,6 +225,166 @@ test('opening a Markdown file through the OS imports it into a chosen workspace'
   await expect(editor).toContainText('Brought in from disk.');
 });
 
+type LaunchFilePayload = { name: string; content: string };
+type WindowWithLaunchConsumer = typeof window & {
+  __lqConsumer?: (params: {
+    files: Array<{ name: string; getFile: () => Promise<File> }>;
+  }) => void;
+};
+
+// Installs a launch-queue stub whose consumer is captured for manual firing,
+// so tests can deliver OS file-open launches at any point in the session.
+function stubManualLaunchQueue(page: Page) {
+  return page.addInitScript(() => {
+    Object.defineProperty(window, 'launchQueue', {
+      configurable: true,
+      value: {
+        setConsumer: (
+          consumer: (params: {
+            files: Array<{ name: string; getFile: () => Promise<File> }>;
+          }) => void,
+        ) => {
+          Object.assign(window, { __lqConsumer: consumer });
+        },
+      },
+    });
+  });
+}
+
+async function fireLaunchFiles(page: Page, files: LaunchFilePayload[]) {
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => typeof (window as WindowWithLaunchConsumer).__lqConsumer,
+      ),
+    )
+    .toBe('function');
+
+  await page.evaluate((payloads: LaunchFilePayload[]) => {
+    (window as WindowWithLaunchConsumer).__lqConsumer?.({
+      files: payloads.map((payload) => ({
+        name: payload.name,
+        getFile: () =>
+          Promise.resolve(
+            new File([payload.content], payload.name, {
+              type: 'text/markdown',
+            }),
+          ),
+      })),
+    });
+  }, files);
+}
+
+test('file launches arriving while the import picker is open merge into one batch', async ({
+  page,
+}) => {
+  const workspaceName = 'pwa-merge-ws';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'merge-existing-note',
+  });
+  await stubManualLaunchQueue(page);
+  await page.goto('/');
+
+  await fireLaunchFiles(page, [{ name: 'first-batch.md', content: '# One' }]);
+  await expect(
+    page.getByRole('heading', { name: 'Import into workspace' }),
+  ).toBeVisible();
+
+  // A second OS launch while the picker is open must not replace the first.
+  await fireLaunchFiles(page, [{ name: 'second-batch.md', content: '# Two' }]);
+  await page.getByRole('option', { name: workspaceName }).click();
+
+  await expect(page.getByText('Imported 2 notes')).toBeVisible();
+  const editor = getEditorLocator(page, {});
+  await expect
+    .poll(() => editor.getAttribute('data-editor-name'))
+    .toContain(`${workspaceName}:first-batch.md`);
+});
+
+test('a partial import failure reports the failed file and never touches the existing note', async ({
+  page,
+}) => {
+  const workspaceName = 'pwa-partial-ws';
+  const existingNote = 'partial-existing-note';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: existingNote,
+  });
+  await stubManualLaunchQueue(page);
+  await page.goto('/');
+
+  await fireLaunchFiles(page, [
+    { name: `${existingNote}.md`, content: 'OVERWRITE ATTEMPT' },
+    { name: 'partial-fresh-note.md', content: '# Fresh import' },
+  ]);
+
+  await expect(
+    page.getByRole('heading', { name: 'Import into workspace' }),
+  ).toBeVisible();
+  await page.getByRole('option', { name: workspaceName }).click();
+
+  // Explicit partial outcome: the collision is reported by name, the fresh
+  // file succeeds, and navigation goes to the first *successful* import.
+  await expect(
+    page.getByText(`Could not import ${existingNote}.md`),
+  ).toBeVisible();
+  await expect(
+    page.getByText('Imported 1 note', { exact: true }),
+  ).toBeVisible();
+  const editor = getEditorLocator(page, {});
+  await expect
+    .poll(() => editor.getAttribute('data-editor-name'))
+    .toContain(`${workspaceName}:partial-fresh-note.md`);
+
+  // The pre-existing note keeps its content: never overwritten by an import.
+  await page
+    .getByRole('treeitem', { name: `${existingNote}.md`, exact: true })
+    .click();
+  await expect
+    .poll(() => editor.getAttribute('data-editor-name'))
+    .toContain(`${workspaceName}:${existingNote}.md`);
+  await expect(editor).not.toContainText('OVERWRITE ATTEMPT');
+});
+
+test('dismissing the import picker drops the queued files', async ({
+  page,
+}) => {
+  const workspaceName = 'pwa-dismiss-ws';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'dismiss-existing-note',
+  });
+  await stubManualLaunchQueue(page);
+  await page.goto('/');
+
+  await fireLaunchFiles(page, [
+    { name: 'dropped-note.md', content: '# Dropped' },
+  ]);
+  await expect(
+    page.getByRole('heading', { name: 'Import into workspace' }),
+  ).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(
+    page.getByRole('heading', { name: 'Import into workspace' }),
+  ).toHaveCount(0);
+
+  // A later launch starts a fresh batch: the dismissed file must not revive.
+  await fireLaunchFiles(page, [{ name: 'kept-note.md', content: '# Kept' }]);
+  await expect(
+    page.getByRole('heading', { name: 'Import into workspace' }),
+  ).toBeVisible();
+  await page.getByRole('option', { name: workspaceName }).click();
+
+  await expect(
+    page.getByText('Imported 1 note', { exact: true }),
+  ).toBeVisible();
+  const editor = getEditorLocator(page, {});
+  await expect
+    .poll(() => editor.getAttribute('data-editor-name'))
+    .toContain(`${workspaceName}:kept-note.md`);
+});
+
 test('accepting the open-in-app dialog closes it and keeps the tab usable', async ({
   page,
 }) => {
