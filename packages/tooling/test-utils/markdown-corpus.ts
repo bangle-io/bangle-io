@@ -617,6 +617,28 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     engines: BOTH_ENGINES,
   },
   {
+    // Multi-line content is the regression class: every code line must
+    // re-apply the `> ` delimiter, or lines after the first escape the
+    // blockquote and corrupt the document on the next round trip.
+    name: 'blockquote containing a multi-line code block',
+    markdown: '> ```js\n> const a = 1;\n> const b = 2;\n> ```',
+    engines: BOTH_ENGINES,
+  },
+  {
+    // A blank code line still gets the delimiter (as `> `, with the
+    // trailing space the delimiter carries).
+    name: 'blockquote code block containing a blank line',
+    markdown: '> ```\n> a\n> \n> b\n> ```',
+    engines: BOTH_ENGINES,
+  },
+  {
+    // Empty nested fence: the closing fence follows the opener directly,
+    // with no spurious blank `> ` line in between.
+    name: 'blockquote containing an empty code block',
+    markdown: '> ```\n> ```',
+    engines: BOTH_ENGINES,
+  },
+  {
     name: 'empty blockquote keeps a marker line',
     markdown: '>',
     canonical: '> ',
@@ -651,6 +673,14 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
   {
     name: 'bullet list items carrying inline marks',
     markdown: '- **bold item**\n\n- _italic item_',
+    engines: BOTH_ENGINES,
+  },
+  {
+    // Multi-line code nested in a list item: every code line must re-apply
+    // the item's indentation delimiter, or the lines after the first fall
+    // out of the list on the next round trip.
+    name: 'bullet list item containing a multi-line code block',
+    markdown: '- item\n\n  ```\n  line one\n  line two\n  ```',
     engines: BOTH_ENGINES,
   },
   {
@@ -832,6 +862,14 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     engines: BOTH_ENGINES,
   },
   {
+    // Code content ending in a newline holds a trailing blank code line;
+    // it must survive the round trip, not be swallowed as "already at a
+    // line start" when the closing fence is written.
+    name: 'fenced code block with a trailing blank line',
+    markdown: '```\na\n\n```',
+    engines: BOTH_ENGINES,
+  },
+  {
     name: 'indented code block normalizes to a fenced block',
     markdown: '    indented code',
     canonical: '```\nindented code\n```',
@@ -886,6 +924,14 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
   {
     name: 'empty frontmatter',
     markdown: '---\n---',
+    engines: BOTH_ENGINES,
+  },
+  {
+    // Frontmatter content is raw text to the codec: YAML that would fail a
+    // YAML parser (unclosed flow sequence, dangling key, tab indentation)
+    // must be preserved byte-for-byte, never dropped or "repaired".
+    name: 'malformed YAML frontmatter is preserved verbatim',
+    markdown: '---\ntitle: [unclosed\n: dangling\n\tkey = {broken\n---\n\nbody',
     engines: BOTH_ENGINES,
   },
   {
