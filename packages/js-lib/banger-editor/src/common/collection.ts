@@ -404,6 +404,13 @@ export const PRIORITY = {
   medium: 25,
   low: 10,
 
+  // The schema's mark order defines Markdown serialization nesting
+  // (first = outermost). A mark whose content is not escaped (inline code)
+  // must be innermost, or other marks' delimiters end up inside its
+  // backticks — so it sorts after every other mark regardless of the
+  // order collections are registered in.
+  codeMarkSpec: -100,
+
   // -100 to allow default user keymap with 0 priority to run first
   baseKeymap: -100,
 };

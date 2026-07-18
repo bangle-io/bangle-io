@@ -1,4 +1,10 @@
-import { type CollectionType, collection, keybinding } from './common';
+import {
+  type CollectionType,
+  collection,
+  keybinding,
+  PRIORITY,
+  setPriority,
+} from './common';
 import {
   type Command,
   type EditorState,
@@ -45,11 +51,19 @@ export function setupCode(userConfig?: CodeConfig) {
   const { name } = config;
 
   const marks = {
-    [name]: {
-      excludes: '_', // means all marks are excluded
-      parseDOM: [{ tag: name }],
-      toDOM: () => [name, 0],
-    } satisfies MarkSpec,
+    // Code may coexist with other marks (`[`code`](url)`, `**`code`**` are
+    // valid Markdown) — an `excludes: '_'` here would silently strip the
+    // surrounding link/bold mark during Markdown parsing. The low priority
+    // ranks code last in the schema's mark order, making it the innermost
+    // mark on serialization, which the Markdown serializer requires for
+    // marks whose content is not escaped.
+    [name]: setPriority(
+      {
+        parseDOM: [{ tag: name }],
+        toDOM: () => [name, 0],
+      } satisfies MarkSpec,
+      PRIORITY.codeMarkSpec,
+    ),
   };
 
   const plugin = {
