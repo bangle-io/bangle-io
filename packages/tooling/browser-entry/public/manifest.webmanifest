@@ -10,9 +10,14 @@
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
   "launch_handler": {
-    "client_mode": "navigate-existing"
+    "client_mode": "focus-existing"
   },
   "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://app.bangle.io/manifest.webmanifest",
+      "id": "https://app.bangle.io/"
+    },
     {
       "platform": "webapp",
       "url": "/manifest.webmanifest",

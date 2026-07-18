@@ -29,7 +29,8 @@ Three user-visible surfaces, all driven by one install-state snapshot:
    row. When running standalone, only the version row shows.
 3. A one-time alert dialog ("Open in the app?") on app open when the app is
    installed but being used from a browser tab. Dismissal is persisted, so it
-   shows at most once per device.
+   shows at most once per browser profile. It never displaces an already-open
+   alert dialog; it waits for the shared alert slot to free up.
 
 ## Browser API basis (verified July 2026)
 
@@ -45,17 +46,20 @@ Three user-visible surfaces, all driven by one install-state snapshot:
   installed app registers the scheme at install time, and navigating to
   `web+bangle://open` from the website launches the app (with a one-time
   browser confirmation). Same technique as native-app `figma://`-style links.
-- `launch_handler.client_mode: "navigate-existing"` keeps captured links and
-  protocol launches routing into the existing app window instead of spawning
-  new windows. Chrome 139+ also auto-captures in-scope links into the
-  installed app.
+- `launch_handler.client_mode: "focus-existing"` plus a `launchQueue`
+  consumer routes launches into the existing app window without reloading it:
+  a protocol open-in-app launch only focuses the window (preserving the
+  current note and any unsaved editor state), while a captured in-scope link
+  applies its hash route through the hash router. Chrome 139+ auto-captures
+  in-scope links into the installed app.
 - Safari/Firefox expose none of these APIs; all new UI stays hidden there.
 
 ## Scope
 
-- Manifest: add `id`, `related_applications` (webapp, self), `launch_handler`
-  (`navigate-existing`), and `protocol_handlers` (`web+bangle` →
-  `/?launch=%s`).
+- Manifest: add `id`, `related_applications` (webapp, self — one absolute
+  production entry because desktop Chromium matches the resolved app id, plus
+  a relative fallback entry), `launch_handler` (`focus-existing`), and
+  `protocol_handlers` (`web+bangle` → `/?launch=%s`).
 - Extend `pwa-install.ts` module state with an installed-related-app probe,
   `isInstalledOnDevice` / `canOpenInApp` snapshot fields, `openInApp()`
   (protocol navigation), and boot-time cleanup of the `?launch=` query param.
@@ -86,6 +90,13 @@ Three user-visible surfaces, all driven by one install-state snapshot:
 - Manifest `id` is set to `/`, matching Chrome's computed default for the
   existing manifest (no `id` previously ⇒ default derived from `start_url`
   `/`), so existing installs keep their identity.
+- Installed-app detection (`getInstalledRelatedApps`) can only be truly
+  verified against production with a real Chromium install; the absolute
+  `related_applications` entry targets `https://app.bangle.io/` and must be
+  part of the release smoke. Staging/dev rely on the relative fallback entry
+  and may not detect installs — the UI degrades to install-only there.
+- `promptPwaInstall` is guarded against reentrancy (sidebar pill and settings
+  button share one deferred prompt event).
 - Install pill and dialog only appear when the underlying signal exists, so
   unsupported browsers (Safari/Firefox) and Chromium < 140 degrade to the
   previous quiet behavior.

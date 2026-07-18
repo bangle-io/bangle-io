@@ -26,6 +26,16 @@ type NavigatorWithInstalledRelatedApps = Navigator & {
   getInstalledRelatedApps?: () => Promise<InstalledRelatedApp[]>;
 };
 
+interface PwaLaunchParams {
+  targetURL?: string;
+}
+
+type WindowWithLaunchQueue = Window & {
+  launchQueue?: {
+    setConsumer: (consumer: (params: PwaLaunchParams) => void) => void;
+  };
+};
+
 type DocumentWithSubtitle = Document & {
   subtitle?: string;
 };
@@ -240,6 +250,37 @@ export function initializePwaInstallPromptTracking(
   if (!isStandaloneDisplay(windowRef)) {
     void probeInstalledRelatedApps(windowRef);
   }
+
+  const launchQueue = (windowRef as WindowWithLaunchQueue).launchQueue;
+  launchQueue?.setConsumer((params) => {
+    if (params.targetURL) {
+      handlePwaLaunchTarget(windowRef, params.targetURL);
+    }
+  });
+}
+
+/**
+ * Applies a launch forwarded into an already-open app window by the
+ * `focus-existing` launch handler. A `web+bangle` protocol launch only needs
+ * the window focused (the browser has done that already), so it must not
+ * disturb the current route; a captured in-scope link carries its route in
+ * the hash, which the hash router picks up without a reload.
+ */
+export function handlePwaLaunchTarget(windowRef: Window, targetUrl: string) {
+  let url: URL;
+  try {
+    url = new URL(targetUrl);
+  } catch {
+    return;
+  }
+
+  if (url.searchParams.has(PWA_LAUNCH_QUERY_PARAM)) {
+    return;
+  }
+
+  if (url.hash && url.hash !== windowRef.location.hash) {
+    windowRef.location.hash = url.hash;
+  }
 }
 
 async function probeInstalledRelatedApps(windowRef: Window) {
@@ -250,7 +291,10 @@ async function probeInstalledRelatedApps(windowRef: Window) {
 
   try {
     const relatedApps = await navigatorRef.getInstalledRelatedApps();
-    if (relatedApps.length > 0 && !installedRelatedAppDetected) {
+    const hasInstalledWebApp = relatedApps.some(
+      (app) => app.platform === 'webapp',
+    );
+    if (hasInstalledWebApp && !installedRelatedAppDetected) {
       installedRelatedAppDetected = true;
       emitChange();
     }
@@ -305,7 +349,7 @@ export function subscribePwaInstallPrompt(listener: () => void) {
 
 export async function promptPwaInstall(): Promise<PwaInstallOutcome> {
   const installPrompt = deferredInstallPrompt;
-  if (!installPrompt || getPwaInstallSnapshot().isInstalled) {
+  if (isInstalling || !installPrompt || getPwaInstallSnapshot().isInstalled) {
     return 'unavailable';
   }
 

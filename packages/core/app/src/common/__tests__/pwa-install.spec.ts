@@ -126,6 +126,98 @@ describe('installed related apps detection', () => {
       canOpenInApp: false,
     });
   });
+
+  it('ignores related apps that are not the web app itself', async () => {
+    stubInstalledRelatedApps([{ platform: 'windows' }]);
+
+    pwaInstall.initializePwaInstallPromptTracking(window);
+    await Promise.resolve();
+
+    expect(pwaInstall.getPwaInstallSnapshot().canOpenInApp).toBe(false);
+  });
+
+  it('treats a rejected related-apps probe as not installed', async () => {
+    Object.defineProperty(window.navigator, 'getInstalledRelatedApps', {
+      configurable: true,
+      value: vi.fn(() => Promise.reject(new Error('denied'))),
+    });
+
+    pwaInstall.initializePwaInstallPromptTracking(window);
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(pwaInstall.getPwaInstallSnapshot()).toMatchObject({
+      isInstalled: false,
+      canOpenInApp: false,
+    });
+  });
+});
+
+describe('install prompt reentrancy', () => {
+  it('rejects a second install call while one is already in flight', async () => {
+    pwaInstall.initializePwaInstallPromptTracking(window);
+
+    let resolvePrompt: (() => void) | undefined;
+    const event = new Event('beforeinstallprompt', {
+      cancelable: true,
+    }) as Event & {
+      prompt: () => Promise<void>;
+      userChoice: Promise<{ outcome: 'accepted' }>;
+    };
+    event.prompt = vi.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          resolvePrompt = resolve;
+        }),
+    );
+    event.userChoice = Promise.resolve({ outcome: 'accepted' });
+
+    window.dispatchEvent(event);
+
+    const firstInstall = pwaInstall.promptPwaInstall();
+    await expect(pwaInstall.promptPwaInstall()).resolves.toBe('unavailable');
+    expect(event.prompt).toHaveBeenCalledTimes(1);
+
+    resolvePrompt?.();
+    await expect(firstInstall).resolves.toBe('accepted');
+  });
+});
+
+describe('launch target handling in an open app window', () => {
+  function makeWindowStub(hash: string) {
+    const location = { hash };
+    return { windowStub: { location } as unknown as Window, location };
+  }
+
+  it('ignores a protocol open-in-app launch so the current route stays put', () => {
+    const { windowStub, location } = makeWindowStub('#route=editor');
+
+    pwaInstall.handlePwaLaunchTarget(
+      windowStub,
+      'https://app.example.com/?launch=web%2Bbangle%3A%2F%2Fopen',
+    );
+
+    expect(location.hash).toBe('#route=editor');
+  });
+
+  it('applies the hash route from a captured in-scope link', () => {
+    const { windowStub, location } = makeWindowStub('#route=editor');
+
+    pwaInstall.handlePwaLaunchTarget(
+      windowStub,
+      'https://app.example.com/#route=welcome',
+    );
+
+    expect(location.hash).toBe('#route=welcome');
+  });
+
+  it('keeps the current route when the launch URL has no hash', () => {
+    const { windowStub, location } = makeWindowStub('#route=editor');
+
+    pwaInstall.handlePwaLaunchTarget(windowStub, 'https://app.example.com/');
+
+    expect(location.hash).toBe('#route=editor');
+  });
 });
 
 describe('opening the installed app', () => {
