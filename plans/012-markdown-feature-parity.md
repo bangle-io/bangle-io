@@ -1,14 +1,17 @@
 ---
 title: Markdown feature parity (footnotes, autolinks, math, highlight, raw HTML, reference links, callouts)
-status: planned
+status: active
 type: plan
 archived: false
 archived_on:
 created: 2026-07-07
-updated: 2026-07-07
+updated: 2026-07-18
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/615
+  - https://github.com/bangle-io/bangle-io/pull/637
+  - https://github.com/bangle-io/bangle-io/pull/650
+  - https://github.com/bangle-io/bangle-io/pull/653
 related_issues: []
 ---
 
@@ -32,6 +35,23 @@ architecture proven by the frontmatter work: an engine-neutral tokenizer rule
 in `@bangle.io/markdown-syntax`, a self-contained collection in
 `banger-editor`, wiring in `packages/core/editor/src/extensions.ts`, and
 round-trip tests at every layer.
+
+## Current status
+
+Active and partially implemented:
+
+- Frontmatter support landed in PR #615 before this plan was written.
+- PR #650 fixed a separate high-impact Markdown-fidelity bug where inline code
+  could destroy links and surrounding marks. PR #653 then replaced blessed
+  data-loss corpus entries with a reproducible spec-derived generator and
+  added released-workflow Playwright persistence coverage. These strengthen
+  the safety baseline but do not complete a numbered milestone below.
+- M4 math landed in PR #637: conservative engine-neutral math
+  tokenization, editable inline/display nodes, KaTeX rendering, exact-source
+  safeguards, and Playwright persistence coverage. That PR also added a
+  separate Plan 016 for lazy-loading the renderer after the first release.
+- M1 footnotes, M2 bare-URL autolinks, M3 highlight, and M5-M7 remain
+  unstarted. The plan stays active rather than completed when M4 lands.
 
 ## Current behavior (probe results, 2026-07-07)
 
@@ -171,7 +191,7 @@ notes. Follow the GitLab/Milkdown two-node shape:
 - Input rule for `==…==` while typing; selection-menu button alongside
   bold/italic.
 
-### M4 — Math (inline `$x$`, block `$$…$$`)
+### M4 — Math (inline `$x$`, block `$$…$$`) — completed in PR #637
 
 - Two atom nodes with a `latex`/text content, per tiptap
   `extension-mathematics`; block math is its own node, not a code-block
@@ -244,5 +264,5 @@ spec in `packages/tooling/e2e-tests/src/`.
 
 1. M1 footnotes (fixes the only active corruption).
 2. M2 autolinks.
-3. M3 highlight, then M4 math.
-4. M5/M6 decisions recorded here before any code.
+3. M3 highlight.
+4. M5-M7 decisions recorded here before any code.
