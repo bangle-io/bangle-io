@@ -45,6 +45,7 @@ export function usePierreFileTreeExpansion({
   treePaths,
   directoryPaths,
   expandedPaths,
+  activeFilePath,
   activeAncestorPaths,
   onDirectoryExpansionChange,
   onRevealPaths,
@@ -54,6 +55,7 @@ export function usePierreFileTreeExpansion({
   treePaths: readonly string[];
   directoryPaths: readonly string[];
   expandedPaths: readonly string[];
+  activeFilePath: string | undefined;
   activeAncestorPaths: readonly string[];
   onDirectoryExpansionChange: (path: string, expanded: boolean) => void;
   onRevealPaths: (paths: readonly string[]) => void;
@@ -65,15 +67,23 @@ export function usePierreFileTreeExpansion({
   // the durable expandedPaths alone drive the model, so a user's collapse of
   // an active ancestor sticks instead of being resurrected — and the model can
   // never drift away from the durable state it reports into.
-  const activeAncestorSignature = activeAncestorPaths.join('\0');
-  const appliedAncestorSignatureRef = useRef<string | null>(null);
+  //
+  // The impulse is keyed by the active file, not just its ancestor chain:
+  // navigating to a sibling note in the same (user-collapsed) directory must
+  // re-arm it so the projection expands in the same commit, before the tree's
+  // selection effect issues its one-shot scroll — Pierre drops scroll requests
+  // for rows that are still hidden.
+  const revealSignature = [activeFilePath ?? '', ...activeAncestorPaths].join(
+    '\0',
+  );
+  const appliedRevealSignatureRef = useRef<string | null>(null);
 
   const getProjectionPaths = useCallback(
     (): readonly string[] =>
-      appliedAncestorSignatureRef.current === activeAncestorSignature
+      appliedRevealSignatureRef.current === revealSignature
         ? expandedPaths
         : [...new Set([...expandedPaths, ...activeAncestorPaths])],
-    [activeAncestorPaths, activeAncestorSignature, expandedPaths],
+    [activeAncestorPaths, expandedPaths, revealSignature],
   );
 
   // Jotai owns durable expansion intent; Pierre is its imperative projection.
@@ -143,8 +153,8 @@ export function usePierreFileTreeExpansion({
 
   useEffect(() => {
     applyExpandedPaths(getProjectionPaths());
-    appliedAncestorSignatureRef.current = activeAncestorSignature;
-  }, [activeAncestorSignature, applyExpandedPaths, getProjectionPaths]);
+    appliedRevealSignatureRef.current = revealSignature;
+  }, [applyExpandedPaths, getProjectionPaths, revealSignature]);
 
   useEffect(() => {
     previousExpandedPathsRef.current = readExpandedPaths(model, directoryPaths);

@@ -545,6 +545,83 @@ test('collapsing ancestors of the active note sticks and re-reveals on navigatio
   });
 });
 
+test('navigating to a sibling note in a user-collapsed directory reveals and scrolls to it', async ({
+  page,
+}) => {
+  const workspaceName = `explorer-collapse-sibling-${Date.now()}`;
+  await createBrowserWorkspace(page, { workspaceName });
+  // Enough collapsed root folders that the archived chain sits below the fold.
+  await writeStoredFiles(
+    page,
+    workspaceName,
+    Array.from({ length: 24 }, (_, index) => ({
+      content: `Bulk note ${index}`,
+      relativePath: `a-bulk-${String(index).padStart(2, '0')}/note.md`,
+      type: 'text/markdown',
+    })),
+  );
+  await writeStoredMarkdown(page, workspaceName, 'z-archived/keep', 'Keep');
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'z-archived/nimbus-admin/docs/readme',
+    'Docs',
+  );
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'z-archived/nimbus-admin/tasks/estimate',
+    'Estimate',
+  );
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'z-archived/nimbus-admin/tasks/sibling',
+    'Sibling',
+  );
+
+  await page.goto(
+    `/ws#route=editor&wsPath=${encodeURIComponent(
+      `${workspaceName}:z-archived/nimbus-admin/tasks/estimate.md`,
+    )}`,
+  );
+  await page.reload();
+
+  const explorer = page.getByTestId('bangle-file-explorer');
+  const nimbusFolder = explorer.getByRole('treeitem', {
+    name: /^nimbus-admin$/,
+  });
+  const tasksFolder = explorer.getByRole('treeitem', { name: /^tasks$/ });
+
+  await expect(nimbusFolder).toHaveAttribute('aria-expanded', 'true');
+
+  await nimbusFolder.click();
+  await expect(nimbusFolder).toHaveAttribute('aria-expanded', 'false');
+  await expect
+    .poll(() => readPersistedExpandedPaths(page, workspaceName))
+    .toEqual(['z-archived']);
+  await expect(nimbusFolder).toHaveAttribute('aria-expanded', 'false');
+
+  // Scroll away so only a fresh scroll-to-path can bring the note into view.
+  await setFileExplorerScrollTop(page, 0);
+
+  // Same-document hash navigation, like omni-search or history, to a sibling
+  // of the previously active note: the ancestor chain is identical, so the
+  // reveal impulse must re-arm off the active file for the one-shot scroll to
+  // find a visible row.
+  await page.goto(
+    `/ws#route=editor&wsPath=${encodeURIComponent(
+      `${workspaceName}:z-archived/nimbus-admin/tasks/sibling.md`,
+    )}`,
+  );
+
+  await expect(nimbusFolder).toHaveAttribute('aria-expanded', 'true');
+  await expect(tasksFolder).toHaveAttribute('aria-expanded', 'true');
+  const siblingNote = explorer.getByRole('treeitem', { name: /^sibling\.md$/ });
+  await expect(siblingNote).toBeVisible();
+  await expectFileTreeItemInViewport(siblingNote);
+});
+
 test('file explorer creates folders, opens notes, and survives reload', async ({
   page,
 }) => {

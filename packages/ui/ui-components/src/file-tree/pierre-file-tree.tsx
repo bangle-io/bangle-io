@@ -532,6 +532,7 @@ export function PierreFileTree({
     treePaths,
     directoryPaths,
     expandedPaths,
+    activeFilePath: activeTreePathIsAvailable ? activeTreePath : undefined,
     activeAncestorPaths,
     onDirectoryExpansionChange,
     onRevealPaths,

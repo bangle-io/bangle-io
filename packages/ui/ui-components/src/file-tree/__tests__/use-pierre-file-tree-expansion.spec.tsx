@@ -14,6 +14,7 @@ const TREE_PATHS = [
   'archived/misc/note-3.md',
   'archived/nimbus-admin/docs/note-4.md',
   'archived/nimbus-admin/tasks/note-2.md',
+  'archived/nimbus-admin/tasks/note-2b.md',
   'note-1.md',
 ] as const;
 
@@ -26,6 +27,7 @@ const ALL_DIRECTORIES = [
 ] as const;
 
 const NESTED_NOTE = 'archived/nimbus-admin/tasks/note-2.md';
+const SIBLING_NOTE = 'archived/nimbus-admin/tasks/note-2b.md';
 const ROOT_NOTE = 'note-1.md';
 
 interface HarnessStore {
@@ -49,11 +51,13 @@ function Harness({
   model,
   treePaths,
   activePath,
+  persistReveals,
   store,
 }: {
   model: FileTree;
   treePaths: readonly string[];
   activePath: string | undefined;
+  persistReveals: boolean;
   store: HarnessStore;
 }) {
   const [expandedPaths, setExpandedPaths] = useState<readonly string[]>(
@@ -89,9 +93,11 @@ function Harness({
   const onRevealPaths = useCallback(
     (paths: readonly string[]) => {
       store.revealEvents.push(paths);
-      setExpandedPaths((previous) => [...new Set([...previous, ...paths])]);
+      if (persistReveals) {
+        setExpandedPaths((previous) => [...new Set([...previous, ...paths])]);
+      }
     },
-    [store],
+    [persistReveals, store],
   );
 
   const onCollapseAll = useCallback(
@@ -104,6 +110,7 @@ function Harness({
 
   store.collapseAll = usePierreFileTreeExpansion({
     activeAncestorPaths,
+    activeFilePath: activePath,
     directoryPaths,
     expandedPaths,
     model,
@@ -120,10 +127,12 @@ function mountHarness({
   treePaths = TREE_PATHS,
   activePath,
   initialExpandedPaths,
+  persistReveals = true,
 }: {
   treePaths?: readonly string[];
   activePath: string | undefined;
   initialExpandedPaths: readonly string[];
+  persistReveals?: boolean;
 }) {
   const store: HarnessStore = {
     collapseAll: () => {
@@ -153,6 +162,7 @@ function mountHarness({
     <Harness
       activePath={activePath}
       model={model}
+      persistReveals={persistReveals}
       store={store}
       treePaths={currentTreePaths}
     />,
@@ -167,6 +177,7 @@ function mountHarness({
       <Harness
         activePath={next.activePath}
         model={model}
+        persistReveals={persistReveals}
         store={store}
         treePaths={currentTreePaths}
       />,
@@ -301,6 +312,29 @@ describe('usePierreFileTreeExpansion', () => {
     ]);
     expect(readExpandedDirectories(model, ALL_DIRECTORIES)).toEqual([
       'archived',
+      'archived/nimbus-admin',
+      'archived/nimbus-admin/tasks',
+    ]);
+  });
+
+  it('re-arms the reveal for a sibling note in the same collapsed directory', () => {
+    // Reveals are recorded but NOT persisted here: the expansion must come
+    // from the projection impulse itself in the navigation commit. The tree's
+    // selection effect issues a one-shot scrollToPath in that same commit and
+    // Pierre drops scroll requests for hidden rows, so waiting for the durable
+    // reveal round-trip would leave the newly active note off-screen.
+    const { model, rerenderWith } = mountHarness({
+      activePath: NESTED_NOTE,
+      initialExpandedPaths: ALL_DIRECTORIES,
+      persistReveals: false,
+    });
+
+    userToggleDirectory(model, 'archived/nimbus-admin', false);
+    rerenderWith({ activePath: SIBLING_NOTE });
+
+    expect(readExpandedDirectories(model, ALL_DIRECTORIES)).toEqual([
+      'archived',
+      'archived/misc',
       'archived/nimbus-admin',
       'archived/nimbus-admin/tasks',
     ]);
