@@ -2,18 +2,25 @@ import type MarkdownIt from 'markdown-it';
 import type Token from 'markdown-it/lib/token.mjs';
 
 /**
- * Token attribute carrying a list item's kind. Set on `list_item_open`
- * tokens (and, for `bullet`/`ordered`, on the enclosing `*_list_open`
- * token). This is the engine-neutral meaning of the syntax: both editor
- * engines' codecs read these attributes instead of re-deriving list
- * semantics themselves.
+ * Token attribute carrying the enclosing list container's kind. Set on both
+ * `list_item_open` and the enclosing `*_list_open` token. Task checked state
+ * is intentionally separate: GFM permits task items in ordered containers.
  */
 export const LIST_KIND_ATTR = 'data-bangle-list-kind';
+
+/** Token attribute carrying list tightness (`'true'`/`'false'`). */
+export const LIST_TIGHT_ATTR = 'data-bangle-list-tight';
 
 /** Token attribute carrying a task item's checked state (`'true'`/`'false'`). */
 export const TASK_CHECKED_ATTR = 'data-bangle-task-checked';
 
-export type ListKind = 'bullet' | 'ordered' | 'task';
+export type ListKind = 'bullet' | 'ordered';
+
+export type ListTokenMetadata = {
+  readonly kind: ListKind;
+  readonly tight: boolean;
+  readonly taskChecked: boolean | null;
+};
 
 /**
  * Task markers GFM recognizes at the very start of a list item's first
@@ -23,11 +30,41 @@ export type ListKind = 'bullet' | 'ordered' | 'task';
 const TASK_MARKER = /^\[([ xX])\](?: |$)/;
 
 /**
+ * Read the engine-neutral list metadata stamped by {@link listTokenizer}.
+ */
+export function readListTokenMetadata(token: Token): ListTokenMetadata {
+  return {
+    kind: token.attrGet(LIST_KIND_ATTR) === 'ordered' ? 'ordered' : 'bullet',
+    tight: token.attrGet(LIST_TIGHT_ATTR) !== 'false',
+    taskChecked:
+      token.attrGet(TASK_CHECKED_ATTR) === null
+        ? null
+        : token.attrGet(TASK_CHECKED_ATTR) === 'true',
+  };
+}
+
+function listIsTight(tokens: readonly Token[], openIndex: number): boolean {
+  const open = tokens[openIndex];
+  if (!open) return true;
+
+  const paragraphLevel = open.level + 2;
+  const closeType = open.type.replace(/_open$/, '_close');
+  for (let i = openIndex + 1; i < tokens.length; i++) {
+    const token = tokens[i];
+    if (!token || token.level < open.level) break;
+    if (token.type === closeType && token.level === open.level) return true;
+    if (token.type === 'paragraph_open' && token.level === paragraphLevel) {
+      return token.hidden;
+    }
+  }
+  return true;
+}
+
+/**
  * markdown-it plugin defining what list syntax *means* for every consumer
- * of the shared tokenizer: it stamps {@link LIST_KIND_ATTR} on list tokens
- * and detects GFM task items (`- [ ] …` / `- [x] …`), recording the checked
- * state in {@link TASK_CHECKED_ATTR} and removing the marker from the
- * item's inline content.
+ * of the shared tokenizer: it stamps container kind and tightness on list
+ * tokens and detects GFM task items (`- [ ] …` / `- [x] …`), recording the
+ * checked state separately and removing the marker from inline content.
  *
  * Task detection has to run as a core rule *after* inline parsing — whether
  * `[ ]` is a checkbox or literal text depends on it sitting at the very
@@ -38,33 +75,38 @@ const TASK_MARKER = /^\[([ xX])\](?: |$)/;
  * `text_special` child, so the leading text child no longer starts with
  * `[`.
  *
- * Adapted from a prior in-house ProseMirror-stack plugin, minus behavior no
- * consumer ever read (a `tight` attribute that was always `"false"`, an
- * ordered-list `order` attribute both engines deliberately ignore, and an
- * HTML renderer override).
+ * Tightness comes from markdown-it's hidden paragraph tokens, which already
+ * encode CommonMark's list looseness rules, rather than from source spacing.
  */
 export function listTokenizer(md: MarkdownIt): void {
   md.core.ruler.after('inline', 'bangle-list-syntax', (state) => {
     const tokens = state.tokens;
 
     // Pass 1: stamp bullet/ordered kinds from the enclosing list.
-    const kindStack: Array<'bullet' | 'ordered'> = [];
-    for (const token of tokens) {
+    const listStack: Array<{ kind: ListKind; tight: boolean }> = [];
+    for (let i = 0; i < tokens.length; i++) {
+      const token = tokens[i];
+      if (!token) continue;
       switch (token.type) {
         case 'bullet_list_open':
         case 'ordered_list_open': {
           const kind = token.type === 'bullet_list_open' ? 'bullet' : 'ordered';
-          kindStack.push(kind);
+          const tight = listIsTight(tokens, i);
+          listStack.push({ kind, tight });
           token.attrSet(LIST_KIND_ATTR, kind);
+          token.attrSet(LIST_TIGHT_ATTR, String(tight));
           break;
         }
         case 'bullet_list_close':
         case 'ordered_list_close':
-          kindStack.pop();
+          listStack.pop();
           break;
         case 'list_item_open': {
-          const kind = kindStack[kindStack.length - 1];
-          if (kind) token.attrSet(LIST_KIND_ATTR, kind);
+          const list = listStack[listStack.length - 1];
+          if (list) {
+            token.attrSet(LIST_KIND_ATTR, list.kind);
+            token.attrSet(LIST_TIGHT_ATTR, String(list.tight));
+          }
           break;
         }
         default:
@@ -92,7 +134,6 @@ export function listTokenizer(md: MarkdownIt): void {
       const match = TASK_MARKER.exec(first.content);
       if (!match) continue;
 
-      item.attrSet(LIST_KIND_ATTR, 'task');
       item.attrSet(TASK_CHECKED_ATTR, match[1] === ' ' ? 'false' : 'true');
 
       // Remove the marker from both the child and the inline token's own

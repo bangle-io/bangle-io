@@ -1,6 +1,11 @@
 import type Token from 'markdown-it/lib/token.mjs';
 import { describe, expect, it } from 'vitest';
-import { LIST_KIND_ATTR, TASK_CHECKED_ATTR } from '../list-syntax';
+import {
+  LIST_KIND_ATTR,
+  LIST_TIGHT_ATTR,
+  readListTokenMetadata,
+  TASK_CHECKED_ATTR,
+} from '../list-syntax';
 import { createBaseMarkdownTokenizer } from '../tokenizer';
 
 function tokenize(markdown: string): Token[] {
@@ -41,6 +46,49 @@ describe('listTokenizer kinds', () => {
   });
 });
 
+describe('listTokenizer tightness', () => {
+  it.each([
+    ['tight bullet', '- one\n- two', true],
+    ['loose bullet', '- one\n\n- two', false],
+    ['tight ordered', '1. one\n2. two', true],
+    ['loose ordered', '1. one\n\n2. two', false],
+  ])('%s', (_name, markdown, tight) => {
+    const tokens = tokenize(markdown);
+    const open = tokens.find((token) => /_list_open$/.test(token.type));
+    expect(open?.attrGet(LIST_TIGHT_ATTR)).toBe(String(tight));
+    expect(listItems(tokens).map(readListTokenMetadata)).toEqual(
+      Array.from({ length: 2 }, () => ({
+        kind: markdown.startsWith('1.') ? 'ordered' : 'bullet',
+        tight,
+        taskChecked: null,
+      })),
+    );
+  });
+
+  it('keeps nested list tightness independent from its loose parent', () => {
+    const tokens = tokenize('- outer\n\n  1. inner');
+    expect(listItems(tokens).map(readListTokenMetadata)).toEqual([
+      { kind: 'bullet', tight: false, taskChecked: null },
+      { kind: 'ordered', tight: true, taskChecked: null },
+    ]);
+  });
+
+  it('does not borrow tightness from a following list when an item only contains a nested list', () => {
+    const tokens = tokenize(
+      '- \n  - nested\n\nafter\n\n- loose one\n\n- loose two',
+    );
+    const metadata = listItems(tokens).map(readListTokenMetadata);
+    expect(metadata.slice(0, 2)).toEqual([
+      { kind: 'bullet', tight: true, taskChecked: null },
+      { kind: 'bullet', tight: true, taskChecked: null },
+    ]);
+    expect(metadata.slice(2)).toEqual([
+      { kind: 'bullet', tight: false, taskChecked: null },
+      { kind: 'bullet', tight: false, taskChecked: null },
+    ]);
+  });
+});
+
 describe('listTokenizer task detection', () => {
   it.each([
     ['unchecked', '- [ ] todo', 'false'],
@@ -49,7 +97,7 @@ describe('listTokenizer task detection', () => {
   ])('detects a %s task and strips the marker', (_name, md, checked) => {
     const tokens = tokenize(md);
     const [item] = listItems(tokens);
-    expect(item?.attrGet(LIST_KIND_ATTR)).toBe('task');
+    expect(item?.attrGet(LIST_KIND_ATTR)).toBe('bullet');
     expect(item?.attrGet(TASK_CHECKED_ATTR)).toBe(checked);
     // The marker must be gone from BOTH the child tokens and the inline
     // token's own content — a stale `content` would leak the marker to any
@@ -63,7 +111,7 @@ describe('listTokenizer task detection', () => {
     for (const md of ['- [ ]', '- [x]', '- [ ] ']) {
       const tokens = tokenize(md);
       const [item] = listItems(tokens);
-      expect(item?.attrGet(LIST_KIND_ATTR)).toBe('task');
+      expect(item?.attrGet(LIST_KIND_ATTR)).toBe('bullet');
       expect(inlineContent(tokens)).toEqual(['']);
       // The now-empty text child is removed, not left as an empty token.
       const inline = tokens.find((t) => t.type === 'inline');
@@ -74,7 +122,7 @@ describe('listTokenizer task detection', () => {
   it('detects tasks inside ordered lists (GFM allows `1. [ ] x`)', () => {
     const tokens = tokenize('1. [ ] task');
     const [item] = listItems(tokens);
-    expect(item?.attrGet(LIST_KIND_ATTR)).toBe('task');
+    expect(item?.attrGet(LIST_KIND_ATTR)).toBe('ordered');
     expect(item?.attrGet(TASK_CHECKED_ATTR)).toBe('false');
   });
 

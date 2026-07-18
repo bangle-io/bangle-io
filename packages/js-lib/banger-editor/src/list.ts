@@ -1,4 +1,4 @@
-import { LIST_KIND_ATTR, TASK_CHECKED_ATTR } from '@bangle.io/markdown-syntax';
+import { readListTokenMetadata } from '@bangle.io/markdown-syntax';
 import type { MarkdownSerializerState } from 'prosemirror-markdown';
 import {
   type CollectionType,
@@ -7,7 +7,13 @@ import {
   PRIORITY,
   setPriority,
 } from './common';
-import type { Command, EditorState, PMNode } from './pm';
+import type {
+  Command,
+  DOMOutputSpec,
+  EditorState,
+  NodeSpec,
+  PMNode,
+} from './pm';
 import {
   backspaceCommand,
   createDedentListCommand,
@@ -38,22 +44,97 @@ const LIST_KIND = {
 // Export the type for external use
 export type ListKindType = (typeof LIST_KIND)[keyof typeof LIST_KIND];
 
+type MarkdownListKind = 'bullet' | 'ordered';
+type MarkdownListAttrs = ListAttributes & {
+  kind: ListKindType;
+  listKind: MarkdownListKind;
+  tight: boolean;
+};
+
+type ListMarkdownSerializerState = MarkdownSerializerState & {
+  flushClose(size?: number): void;
+  inTightList: boolean;
+};
+
+function isListMarkdownSerializerState(
+  state: MarkdownSerializerState,
+): state is ListMarkdownSerializerState {
+  return (
+    'inTightList' in state &&
+    typeof state.inTightList === 'boolean' &&
+    'flushClose' in state &&
+    typeof state.flushClose === 'function'
+  );
+}
+
 /**
  * Helper to read typed list attributes from a node
  * Returns null if the node is not a list node
  */
-function readListAttrs(
-  node?: PMNode,
-): (ListAttributes & { kind: ListKindType }) | null {
+function readListAttrs(node?: PMNode): MarkdownListAttrs | null {
   if (!node || !isListNode(node)) {
     return null;
   }
-  const { kind, checked, collapsed, order } = node.attrs;
+  const { kind, checked, collapsed, order, listKind, tight } = node.attrs;
   return {
     kind,
+    listKind:
+      listKind === LIST_KIND.ORDERED || kind === LIST_KIND.ORDERED
+        ? LIST_KIND.ORDERED
+        : LIST_KIND.BULLET,
+    tight: tight !== false,
     ...(kind === LIST_KIND.TASK ? { checked } : {}),
     ...(kind === LIST_KIND.TOGGLE ? { collapsed } : {}),
     ...(kind === LIST_KIND.ORDERED ? { order } : {}),
+  };
+}
+
+function createMarkdownListSpec(): NodeSpec {
+  const spec = createListSpec();
+  return {
+    ...spec,
+    attrs: {
+      ...spec.attrs,
+      listKind: { default: null },
+      tight: { default: true },
+    },
+    toDOM: (node): DOMOutputSpec => {
+      const output = spec.toDOM?.(node);
+      if (
+        !Array.isArray(output) ||
+        typeof output[1] !== 'object' ||
+        output[1] === null ||
+        Array.isArray(output[1])
+      ) {
+        throw new Error('Unexpected flat-list DOM output');
+      }
+      const attrs = readListAttrs(node);
+      return [
+        output[0],
+        {
+          ...output[1],
+          'data-list-container-kind': attrs?.listKind,
+          'data-list-tight': String(attrs?.tight ?? true),
+        },
+        ...output.slice(2),
+      ];
+    },
+    parseDOM: spec.parseDOM?.map((rule) => ({
+      ...rule,
+      getAttrs: (dom) => {
+        const attrs = rule.getAttrs?.(dom);
+        if (attrs === false) return false;
+        if (typeof dom === 'string') return attrs ?? null;
+        const kind = dom.getAttribute('data-list-container-kind');
+        return {
+          ...(attrs ?? {}),
+          ...(kind === LIST_KIND.ORDERED || kind === LIST_KIND.BULLET
+            ? { listKind: kind }
+            : {}),
+          tight: dom.getAttribute('data-list-tight') !== 'false',
+        };
+      },
+    })),
   };
 }
 
@@ -100,7 +181,7 @@ export function setupList(userConfig: Partial<ListConfig> = {}) {
 
   const { listNodeName } = config;
   const nodeSpec = {
-    [listNodeName]: setPriority(createListSpec(), PRIORITY.listSpec),
+    [listNodeName]: setPriority(createMarkdownListSpec(), PRIORITY.listSpec),
   };
 
   const plugin = {
@@ -164,7 +245,7 @@ function pluginInputRules(_config: RequiredConfig) {
 function pluginKeybindings(config: RequiredConfig) {
   return keybinding(
     [
-      ['Enter', enterCommand],
+      ['Enter', enterListCommand(config)],
       [config.keyBackspaceList, backspaceCommand],
       ['Delete', deleteCommand],
       [config.keyDedentList, dedentList(config)],
@@ -185,25 +266,33 @@ function pluginKeybindings(config: RequiredConfig) {
 // COMMANDS
 function toggleBulletList(_config: RequiredConfig): Command {
   return (state, dispatch) => {
-    return createToggleListCommand({ kind: LIST_KIND.BULLET })(state, dispatch);
+    return createToggleListCommand({
+      kind: LIST_KIND.BULLET,
+      listKind: LIST_KIND.BULLET,
+      tight: true,
+    })(state, dispatch);
   };
 }
 
 function toggleOrderedList(_config: RequiredConfig): Command {
   return (state, dispatch) => {
-    return createToggleListCommand({ kind: LIST_KIND.ORDERED, order: 1 })(
-      state,
-      dispatch,
-    );
+    return createToggleListCommand({
+      kind: LIST_KIND.ORDERED,
+      listKind: LIST_KIND.ORDERED,
+      order: 1,
+      tight: true,
+    })(state, dispatch);
   };
 }
 
 function toggleTaskList(_config: RequiredConfig): Command {
   return (state, dispatch) => {
-    return createToggleListCommand({ kind: LIST_KIND.TASK, checked: false })(
-      state,
-      dispatch,
-    );
+    return createToggleListCommand({
+      kind: LIST_KIND.TASK,
+      listKind: LIST_KIND.BULLET,
+      checked: false,
+      tight: true,
+    })(state, dispatch);
   };
 }
 
@@ -214,6 +303,42 @@ function toggleToggleList(_config: RequiredConfig): Command {
       kind: LIST_KIND.TOGGLE,
       collapsed: true,
     })(state, dispatch);
+  };
+}
+
+function enterListCommand(config: RequiredConfig): Command {
+  return (state, dispatch, view) => {
+    const type = getNodeType(state.schema, config.listNodeName);
+    const source = findParentNode(
+      (node: PMNode) => isListNode(node) && node.type === type,
+    )(state.selection);
+
+    return enterCommand(
+      state,
+      dispatch
+        ? (tr) => {
+            const target = findParentNode(
+              (node: PMNode) => isListNode(node) && node.type === type,
+            )(tr.selection);
+            const sourceAttrs = readListAttrs(source?.node);
+            const targetAttrs = readListAttrs(target?.node);
+            if (
+              sourceAttrs &&
+              target &&
+              targetAttrs &&
+              sourceAttrs.kind === targetAttrs.kind
+            ) {
+              tr.setNodeMarkup(target.pos, null, {
+                ...target.node.attrs,
+                listKind: sourceAttrs.listKind,
+                tight: sourceAttrs.tight,
+              });
+            }
+            dispatch(tr);
+          }
+        : undefined,
+      view,
+    );
   };
 }
 
@@ -336,7 +461,7 @@ function markdown(config: RequiredConfig): CollectionType['markdown'] {
       [listNodeName]: {
         // For serialization:
         toMarkdown: (state, node, parent, index) => {
-          flatListToMarkdown(state, node, parent ?? null, index ?? 0, 0, true);
+          flatListToMarkdown(state, node, parent ?? null, index ?? 0);
         },
         // For parsing:
         parseMarkdown: {
@@ -349,16 +474,16 @@ function markdown(config: RequiredConfig): CollectionType['markdown'] {
           list_item: {
             block: listNodeName,
             getAttrs: (tok) => {
-              const kind = tok.attrGet(LIST_KIND_ATTR);
-              if (kind === LIST_KIND.TASK) {
-                const isChecked = tok.attrGet(TASK_CHECKED_ATTR) === 'true';
-                return { kind: LIST_KIND.TASK, checked: isChecked };
+              const { kind, taskChecked, tight } = readListTokenMetadata(tok);
+              if (taskChecked !== null) {
+                return {
+                  kind: LIST_KIND.TASK,
+                  listKind: kind,
+                  checked: taskChecked,
+                  tight,
+                };
               }
-              if (kind === 'ordered') {
-                return { kind: LIST_KIND.ORDERED };
-              }
-
-              return { kind: LIST_KIND.BULLET };
+              return { kind, listKind: kind, tight };
             },
           },
         },
@@ -372,88 +497,68 @@ function flatListToMarkdown(
   node: PMNode,
   parent: PMNode | null,
   index: number,
-  level = 0,
-  tight = false,
 ) {
-  // 1) Possibly add a blank line before this item, depending on tight & previous sibling
-  maybeAddBlankLine(state, node, parent, index, level, tight);
-
-  // 2) Determine bullet/marker
-  let marker = '-';
+  if (!isListMarkdownSerializerState(state)) {
+    throw new Error('Markdown serializer does not support list tightness');
+  }
   const attrs = readListAttrs(node);
-  if (attrs?.kind === LIST_KIND.ORDERED) {
-    marker = '1.';
-  } else if (attrs?.kind === LIST_KIND.TASK) {
-    marker = attrs.checked ? '- [x]' : '- [ ]';
+  if (!attrs) return;
+  const tight = listRunIsTight(node, parent, index, attrs.listKind);
+  if (
+    state.inTightList ||
+    (tight && previousSiblingIsSameList(parent, index, attrs.listKind))
+  ) {
+    state.flushClose(1);
   }
 
-  // 3) Indentation grows with nesting level.
-  //    level=0 => ""; level=1 => "  "; etc.
-  const baseIndent = '  '.repeat(level);
-  const firstDelim = `${baseIndent + marker} `;
-  const continuationDelim = ' '.repeat(firstDelim.length);
-
-  // 4) Wrap each list(...) node as one item.
-  //    "wrapBlock" will prefix the first line with (firstDelim) and subsequent lines with (delim).
-  //    That ensures correct indentation for multiline content inside this item.
-  state.wrapBlock(
-    continuationDelim, // delim => subsequent lines
-    firstDelim, // firstDelim => first line
-    node,
-    () => {
-      // Render normal (non-list) children inside this item
-      node.forEach((child, childOffset) => {
-        if (child.type.name !== node.type.name) {
-          state.render(child, node, childOffset);
-        }
-      });
-    },
-  );
-
-  node.forEach((child, childOffset) => {
-    if (child.type.name === node.type.name) {
-      flatListToMarkdown(state, child, node, childOffset, level + 1, tight);
-    }
+  const containerMarker = attrs.listKind === LIST_KIND.ORDERED ? '1.' : '-';
+  const marker =
+    attrs.kind === LIST_KIND.TASK
+      ? `${containerMarker} [${attrs.checked ? 'x' : ' '}]`
+      : containerMarker;
+  const firstDelim = `${marker} `;
+  const continuationDelim = ' '.repeat(containerMarker.length + 1);
+  const previousTight = state.inTightList;
+  state.inTightList = tight;
+  state.wrapBlock(continuationDelim, firstDelim, node, () => {
+    if (isListNode(node.firstChild)) state.ensureNewLine();
+    state.renderContent(node);
   });
+  state.inTightList = previousTight;
 }
 
-function maybeAddBlankLine(
-  state: MarkdownSerializerState,
+function previousSiblingIsSameList(
+  parent: PMNode | null,
+  index: number,
+  kind: MarkdownListKind,
+): boolean {
+  if (!parent || index === 0) return false;
+  return readListAttrs(parent.child(index - 1))?.listKind === kind;
+}
+
+function listRunIsTight(
   node: PMNode,
   parent: PMNode | null,
   index: number,
-  level: number,
-  tight: boolean,
-) {
-  // 1) If we're "tight," skip extra blank lines altogether
-  if (tight) return;
-
-  // 2) If there's no parent or we're in nested lists (level > 0),
-  //    you may choose not to add blank lines. Adjust as you like.
-  if (!parent || level > 0) return;
-
-  // 3) If this is the first child in the parent, no previous sibling => no blank line
-  if (index === 0) return;
-
-  // 4) Retrieve the *previous* sibling
-  const prevSibling = parent.child(index - 1);
-
-  // 5) Decide if we want a blank line. For example:
-  //    Insert a blank line if it's a "separate block"
-  if (isSeparateBlock(prevSibling, node)) {
-    // "flushClose(1)" ensures exactly one blank line,
-    // "flushClose(2)" can produce 2 blank lines, etc.
-    // Adjust to match your styling preference.
-    (state as any).flushClose(1);
+  kind: MarkdownListKind,
+): boolean {
+  if (!parent) return readListAttrs(node)?.tight ?? true;
+  let start = index;
+  let end = index;
+  while (
+    start > 0 &&
+    readListAttrs(parent.child(start - 1))?.listKind === kind
+  ) {
+    start--;
   }
-}
-
-/**
- * Custom logic to decide if we consider two siblings "separate blocks."
- * You can expand or replace this with checks for paragraph, blockquote,
- * or any other condition where you want a blank line between siblings.
- */
-function isSeparateBlock(prevNode: PMNode, currentNode: PMNode): boolean {
-  // Example: if they're different node types, treat them as separate blocks
-  return prevNode.type.name !== currentNode.type.name;
+  while (
+    end + 1 < parent.childCount &&
+    readListAttrs(parent.child(end + 1))?.listKind === kind
+  ) {
+    end++;
+  }
+  for (let i = start; i <= end; i++) {
+    if (readListAttrs(parent.child(i))?.tight === false) return false;
+  }
+  return true;
 }

@@ -7,10 +7,8 @@
 // parity with the ProseMirror engine's output is the whole point of this
 // file — see the package-level round-trip corpus.
 import {
-  LIST_KIND_ATTR,
-  type ListKind,
+  readListTokenMetadata,
   serializeWikiLinkAttrs,
-  TASK_CHECKED_ATTR,
   type WikiLinkAttrs,
 } from '@bangle.io/markdown-syntax';
 import {
@@ -31,6 +29,7 @@ import {
   Link,
   LinkTitle,
   ListItem,
+  ListTight,
   type Mark,
   type Node,
   OrderedList,
@@ -300,127 +299,98 @@ const textSpec: NodeMarkdownSpec = {
 };
 
 // ---------------------------------------------------------------------------
-// Lists — Wordgard nests BulletList/OrderedList -> ListItem/TaskItem, with a
-// nested list living inside its parent item's content. The ProseMirror
-// engine's `flatListToMarkdown` (banger-editor's list.ts) works over a flat
-// list model instead. Byte parity means reproducing that flat algorithm's
-// output (unconditional tight lists, fixed "1." markers, 2-space nesting
-// indent) on top of the nested structure, which the block content walk
-// gives us for free.
+// Lists — Wordgard keeps its built-in nested list model. The wrapper owns the
+// bullet/ordered marker and list tightness; TaskItem owns only checked state.
 // ---------------------------------------------------------------------------
 
-/**
- * A task item's marker always wins over the enclosing list's own marker:
- * GFM allows `1. [ ] x` (a task inside an ordered list), and both engines
- * normalize that shape to a `- [ ]` bullet on serialize — the ProseMirror
- * flat-list model does this implicitly (item kind beats wrapper kind), so
- * byte parity requires the same here.
- */
 function listItemMarker(node: Plot, parentIsOrdered: boolean): string {
-  if (node.tag.is(TaskItem)) {
-    return node.tag.param ? '- [x]' : '- [ ]';
-  }
-  return parentIsOrdered ? '1.' : '-';
+  const container = parentIsOrdered ? '1.' : '-';
+  if (!node.tag.is(TaskItem)) return container;
+  return `${container} [${node.tag.param ? 'x' : ' '}]`;
 }
 
 function serializeListItem(
   state: MarkdownSerializerState,
   node: Plot,
-  level: number,
   marker: string,
+  continuationWidth: number,
 ): void {
-  const baseIndent = '  '.repeat(level);
-  const firstDelim = `${baseIndent}${marker} `;
-  const continuationDelim = ' '.repeat(firstDelim.length);
-
-  const isNestedList = (child: Node): child is Plot =>
-    child.isPlot &&
-    (child.tag.is(BulletList.type) || child.tag.is(OrderedList));
-
-  // Mirrors `flatListToMarkdown`: non-list children render inside the
-  // item's wrapBlock (keeping their original parent/index so sibling-aware
-  // serializers see the true document shape), nested lists render after it
-  // at the next indent level.
+  const firstDelim = `${marker} `;
+  const continuationDelim = ' '.repeat(continuationWidth);
   state.wrapBlock(continuationDelim, firstDelim, node, () => {
-    for (let i = 0; i < node.content.length; i++) {
-      const child = node.content[i];
-      if (child && !isNestedList(child)) state.render(child, node, i);
+    const first = node.content[0];
+    if (
+      first?.isPlot &&
+      (first.tag.is(BulletList.type) || first.tag.is(OrderedList))
+    ) {
+      state.ensureNewLine();
     }
+    state.renderContent(node);
   });
-
-  for (const child of node.content) {
-    if (isNestedList(child)) serializeList(state, child, level + 1);
-  }
 }
 
-/**
- * Renders a list's items in document order. Unlike prosemirror-markdown's
- * `renderList` (which primes `flushClose(1)` for tight lists to suppress
- * the blank line `write()` would otherwise insert), the ProseMirror engine's
- * `flatListToMarkdown` never primes — its `tight` flag only ever short-
- * circuits `maybeAddBlankLine`, so `write()`'s default `flushClose(2)`
- * always fires between items. The observable (and byte-parity) result is a
- * blank line between every sibling item, and between an item and its nested
- * sub-list — confirmed against the real ProseMirror engine's output, not
- * assumed from reading `list.ts` alone.
- */
-function serializeList(
-  state: MarkdownSerializerState,
-  node: Plot,
-  level: number,
-): void {
+function listIsTight(node: Plot): boolean {
+  return node.mark(ListTight) ?? true;
+}
+
+function serializeList(state: MarkdownSerializerState, node: Plot): void {
   const parentIsOrdered = node.tag.is(OrderedList);
+  const tight = listIsTight(node);
+  if (state.inTightList) state.flushClose(1);
+  const previousTight = state.inTightList;
+  state.inTightList = tight;
   for (let i = 0; i < node.content.length; i++) {
     const child = node.content[i];
     if (!child?.isPlot) continue;
+    if (i > 0 && tight) state.flushClose(1);
     serializeListItem(
       state,
       child,
-      level,
       listItemMarker(child, parentIsOrdered),
+      parentIsOrdered ? 3 : 2,
     );
   }
+  state.inTightList = previousTight;
+}
+
+function listTagMarks(tok: Token): Mark.Set {
+  return readListTokenMetadata(tok).tight ? [] : [ListTight.of(false)];
 }
 
 const bulletListSpec: NodeMarkdownSpec = {
   node: BulletList,
   parse: {
-    bullet_list: { block: BulletList },
+    bullet_list: {
+      block: (tok) => BulletList.withMarks(listTagMarks(tok)),
+    },
   },
   serialize(state, node) {
     assertPlot(node, 'bullet_list');
-    serializeList(state, node, 0);
+    serializeList(state, node);
   },
 };
 
 const orderedListSpec: NodeMarkdownSpec = {
   node: OrderedList,
   parse: {
-    // Markdown-it's `start` attribute is dropped: the ProseMirror engine
-    // normalizes every ordered list to render with `1.` regardless of its
-    // source start value, so parity means never reading `order`/`start`
-    // back in (see `flatListToMarkdown`'s fixed `"1."` marker).
-    ordered_list: { block: () => OrderedList.of(1) },
+    ordered_list: {
+      block: (tok) => OrderedList.of(1, listTagMarks(tok)),
+    },
   },
   serialize(state, node) {
     assertPlot(node, 'ordered_list');
-    serializeList(state, node, 0);
+    serializeList(state, node);
   },
 };
-
-function listItemKind(tok: Token): ListKind {
-  const kind = tok.attrGet(LIST_KIND_ATTR);
-  return kind === 'task' || kind === 'ordered' ? kind : 'bullet';
-}
 
 const listItemSpec: NodeMarkdownSpec = {
   node: ListItem,
   parse: {
     list_item: {
       block: (tok) => {
-        if (listItemKind(tok) === 'task') {
-          const checked = tok.attrGet(TASK_CHECKED_ATTR) === 'true';
-          return TaskItem.of(checked);
+        const { taskChecked } = readListTokenMetadata(tok);
+        if (taskChecked !== null) {
+          return TaskItem.of(taskChecked);
         }
         return ListItem;
       },

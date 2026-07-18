@@ -624,23 +624,19 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
   },
 
   // --- Bullet lists -------------------------------------------------------
-  // The PM serializer always renders lists TIGHT at the item level (see
-  // `packages/js-lib/banger-editor/src/list.ts`'s `toMarkdown`, which calls
-  // `flatListToMarkdown` with `tight` hardcoded to `true`), but a blank line
-  // still separates top-level sibling items because each item's trailing
-  // paragraph closes its own block. So the canonical, stable form for
-  // sibling top-level list items has a blank line between them; this is
-  // NOT "loose list" Markdown semantics reappearing, it is simply how the
-  // block serializer closes each item. Verified empirically against
-  // `packages/core/editor/src/__tests__/copy-selection-markdown.spec.ts`.
   {
-    name: 'flat bullet list, two items',
+    name: 'tight bullet list remains tight',
+    markdown: '- one\n- two',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'loose bullet list remains loose',
     markdown: '- one\n\n- two',
     engines: BOTH_ENGINES,
   },
   {
     name: 'nested bullet list, three levels',
-    markdown: '- level0\n\n  - level1\n\n    - level2',
+    markdown: '- level0\n  - level1\n    - level2',
     engines: BOTH_ENGINES,
   },
   {
@@ -650,7 +646,7 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
   },
   {
     name: 'bullet list items carrying inline marks',
-    markdown: '- **bold item**\n\n- _italic item_',
+    markdown: '- **bold item**\n- _italic item_',
     engines: BOTH_ENGINES,
   },
   {
@@ -678,18 +674,15 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
   },
 
   // --- Ordered lists -------------------------------------------------------
-  // The PM serializer normalizes every ordered-list marker to the literal
-  // `1.` regardless of the source numbering or the node's `order` attribute
-  // (see `flatListToMarkdown` in list.ts: `marker = '1.'`, unconditionally).
   {
     name: 'ordered list, canonical "1." markers',
-    markdown: '1. item one\n\n1. item two\n\n1. item three',
+    markdown: '1. item one\n1. item two\n1. item three',
     engines: BOTH_ENGINES,
   },
   {
     name: 'ordered list numbering normalizes to "1." markers',
     markdown: '3. third\n4. fourth',
-    canonical: '1. third\n\n1. fourth',
+    canonical: '1. third\n1. fourth',
     engines: BOTH_ENGINES,
   },
   {
@@ -703,17 +696,22 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     markdown: '1. one\n\n   two',
     engines: BOTH_ENGINES,
   },
-
-  // A list nested under an ORDERED item does NOT survive round-trip: the
-  // serializer indents nested content by exactly 2 spaces per level
-  // regardless of the parent marker's width (`'  '.repeat(level)`), but a
-  // 2-space indent under a 3-character `1. ` marker does not parse back as
-  // nested content under CommonMark's list-item content-indent rule. Empirically:
-  //   input:  "1. item\n\n  - nested under ordered"
-  //   output: "1. item\n\n- nested under ordered"   (promoted to a sibling
-  //           top-level list, not nested)
-  // This is a known PM engine quirk, not a corpus gap; left out of the
-  // corpus rather than included as a failing fixture.
+  {
+    name: 'nested mixed lists use the ordered marker width',
+    markdown: '1. outer\n   1. nested\n      - deep',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'multi-digit ordered marker normalizes without promoting its child',
+    markdown: '10. outer\n    - nested',
+    canonical: '1. outer\n   - nested',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'list item whose only child is a nested list keeps its structure',
+    markdown: '- \n  - nested only',
+    engines: BOTH_ENGINES,
+  },
 
   // --- Task lists ----------------------------------------------------------
   {
@@ -734,12 +732,12 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
   },
   {
     name: 'nested task list',
-    markdown: '- [ ] task one\n\n  - [x] nested task',
+    markdown: '- [ ] task one\n  - [x] nested task',
     engines: BOTH_ENGINES,
   },
   {
     name: 'task list item mixed with a plain bullet item',
-    markdown: '- [ ] task\n\n- plain item',
+    markdown: '- [ ] task\n- plain item',
     engines: BOTH_ENGINES,
   },
   {
@@ -765,13 +763,19 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     engines: BOTH_ENGINES,
   },
   {
-    // GFM recognizes task markers inside ordered lists; both engines
-    // normalize the item to a `- [ ]` bullet (the checkbox wins over the
-    // ordered marker). Before this was pinned, the Wordgard codec crashed
-    // on this input outright.
-    name: 'task marker inside an ordered list normalizes to a bullet task',
+    name: 'task marker inside an ordered list keeps the ordered container',
     markdown: '1. [ ] task marker in ordered list',
-    canonical: '- [ ] task marker in ordered list',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'ordered container can mix task and plain items',
+    markdown: '1. [ ] task\n2. plain item',
+    canonical: '1. [ ] task\n1. plain item',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'nested ordered tasks use the ordered marker width',
+    markdown: '1. [x] outer\n   1. [ ] inner',
     engines: BOTH_ENGINES,
   },
   {
@@ -798,12 +802,21 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     canonical: '- \\[ \\] escaped bracket',
     engines: BOTH_ENGINES,
   },
-  // A task item with a continuation paragraph has NO stable fixed point in
-  // either engine: the `- [x] ` marker makes the continuation indent six
-  // spaces, which CommonMark reads back as an indented code block. Both
-  // engines agree on the (mangled) output, but it never converges to the
-  // input, so it stays out of the corpus. Fixing this requires a different
-  // continuation-indent rule in both engines, tracked for a later milestone.
+  {
+    name: 'task item continuation uses the structural bullet width',
+    markdown: '- [x] task\n\n  continuation',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'list item containing a blockquote remains nested',
+    markdown: '- quote\n\n  > nested quote',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'list item containing fenced code remains nested',
+    markdown: '- ```js\n  x()\n  ```',
+    engines: BOTH_ENGINES,
+  },
 
   // --- Code blocks -----------------------------------------------------
   {

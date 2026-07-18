@@ -1,8 +1,11 @@
 export { frontmatterTokenizer } from './frontmatter-syntax';
 export {
   LIST_KIND_ATTR,
+  LIST_TIGHT_ATTR,
   type ListKind,
+  type ListTokenMetadata,
   listTokenizer,
+  readListTokenMetadata,
   TASK_CHECKED_ATTR,
 } from './list-syntax';
 export {

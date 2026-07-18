@@ -155,7 +155,7 @@ export const MARKDOWN_SPEC_CORPUS: readonly MarkdownCorpusFixture[] = [
   {
     name: 'commonmark 0.31.2 ex 42 (Precedence)',
     markdown: '- `one\n- two`',
-    canonical: '- \\`one\n\n- two\\`',
+    canonical: '- \\`one\n- two\\`',
     engines: BOTH_ENGINES,
   },
   // --- commonmark 0.31.2 — Thematic breaks ---
@@ -226,6 +226,11 @@ export const MARKDOWN_SPEC_CORPUS: readonly MarkdownCorpusFixture[] = [
   },
   // --- commonmark 0.31.2 — HTML blocks ---
   {
+    name: 'commonmark 0.31.2 ex 177 (HTML blocks)',
+    markdown: '- <div>\n- foo',
+    engines: BOTH_ENGINES,
+  },
+  {
     name: 'commonmark 0.31.2 ex 183 (HTML blocks)',
     markdown: '<!DOCTYPE html>',
     engines: BOTH_ENGINES,
@@ -258,10 +263,30 @@ export const MARKDOWN_SPEC_CORPUS: readonly MarkdownCorpusFixture[] = [
     markdown: '- one\n\n  two',
     engines: BOTH_ENGINES,
   },
+  {
+    name: 'commonmark 0.31.2 ex 296 (List items)',
+    markdown: '- foo\n  - bar\n    - baz\n      - boo',
+    engines: BOTH_ENGINES,
+  },
   // --- commonmark 0.31.2 — Lists ---
+  {
+    name: 'commonmark 0.31.2 ex 310 (Lists)',
+    markdown: '- foo\n- bar\n\n<!-- -->\n\n- baz\n- bim',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'commonmark 0.31.2 ex 321 (Lists)',
+    markdown: '- a\n  - b\n\n    c\n- d',
+    engines: BOTH_ENGINES,
+  },
   {
     name: 'commonmark 0.31.2 ex 324 (Lists)',
     markdown: '- a',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'commonmark 0.31.2 ex 325 (Lists)',
+    markdown: '- a\n  - b',
     engines: BOTH_ENGINES,
   },
   {
@@ -2012,13 +2037,11 @@ export const MARKDOWN_SPEC_CORPUS: readonly MarkdownCorpusFixture[] = [
   {
     name: 'gfm 0.29 ex 279 (Task list items (extension))',
     markdown: '- [ ] foo\n- [x] bar',
-    canonical: '- [ ] foo\n\n- [x] bar',
     engines: BOTH_ENGINES,
   },
   {
     name: 'gfm 0.29 ex 280 (Task list items (extension))',
     markdown: '- [x] foo\n  - [ ] bar\n  - [x] baz\n- [ ] bim',
-    canonical: '- [x] foo\n\n  - [ ] bar\n\n  - [x] baz\n\n- [ ] bim',
     engines: BOTH_ENGINES,
   },
   // --- gfm 0.29 — Entity and numeric character references ---
@@ -2227,7 +2250,7 @@ export const MARKDOWN_SPEC_CORPUS: readonly MarkdownCorpusFixture[] = [
   {
     name: 'gfm extensions ex 21 (Autolinks)',
     markdown: 'These should not link:\n\n* @a.b.c@. x\n* n@.  b',
-    canonical: 'These should not link:\n\n- @a.b.c@. x\n\n- n@.  b',
+    canonical: 'These should not link:\n\n- @a.b.c@. x\n- n@.  b',
     engines: BOTH_ENGINES,
   },
   // --- gfm extensions — Interop ---
@@ -2242,7 +2265,7 @@ export const MARKDOWN_SPEC_CORPUS: readonly MarkdownCorpusFixture[] = [
     markdown:
       '- [x] foo\n  - [ ] bar\n  - [x] baz\n- [ ] bim\n\nShow a regular (non task) list to show that it has the same structure\n- [@] foo\n  - [@] bar\n  - [@] baz\n- [@] bim',
     canonical:
-      '- [x] foo\n\n  - [ ] bar\n\n  - [x] baz\n\n- [ ] bim\n\nShow a regular (non task) list to show that it has the same structure\n\n- \\[@\\] foo\n\n  - \\[@\\] bar\n\n  - \\[@\\] baz\n\n- \\[@\\] bim',
+      '- [x] foo\n  - [ ] bar\n  - [x] baz\n- [ ] bim\n\nShow a regular (non task) list to show that it has the same structure\n\n- \\[@\\] foo\n  - \\[@\\] bar\n  - \\[@\\] baz\n- \\[@\\] bim',
     engines: BOTH_ENGINES,
   },
   {
@@ -2250,7 +2273,7 @@ export const MARKDOWN_SPEC_CORPUS: readonly MarkdownCorpusFixture[] = [
     markdown:
       '- [x] foo\n    - [ ] bar\n    - [x] baz\n- [ ] bim\n\nShow a regular (non task) list to show that it has the same structure\n- [@] foo\n    - [@] bar\n    - [@] baz\n- [@] bim',
     canonical:
-      '- [x] foo\n\n  - [ ] bar\n\n  - [x] baz\n\n- [ ] bim\n\nShow a regular (non task) list to show that it has the same structure\n\n- \\[@\\] foo\n\n  - \\[@\\] bar\n\n  - \\[@\\] baz\n\n- \\[@\\] bim',
+      '- [x] foo\n  - [ ] bar\n  - [x] baz\n- [ ] bim\n\nShow a regular (non task) list to show that it has the same structure\n\n- \\[@\\] foo\n  - \\[@\\] bar\n  - \\[@\\] baz\n- \\[@\\] bim',
     engines: BOTH_ENGINES,
   },
 ];
