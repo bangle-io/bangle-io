@@ -21,6 +21,7 @@ import {
   MATH_ESCAPED_DOLLAR_NODE_NAME as ESCAPED_DOLLAR_NAME,
   MATH_INLINE_NODE_NAME as INLINE_NAME,
   mathDisplayToMarkdown,
+  mathEscapedDollarToMarkdown,
   mathInlineToMarkdown,
 } from './math-markdown';
 import type {
@@ -616,9 +617,7 @@ function markdown(
         parseMarkdown: {
           math_escaped_dollar: { node: ESCAPED_DOLLAR_NAME },
         },
-        toMarkdown(state) {
-          state.write('\\$');
-        },
+        toMarkdown: mathEscapedDollarToMarkdown,
       },
       [DISPLAY_NAME]: {
         parseMarkdown: {
@@ -632,10 +631,14 @@ function markdown(
 
 /** Plain-text clipboard serialization with portable math delimiters. */
 export function serializeMathClipboardText(slice: Slice): string {
-  let text = '';
-  let firstBlock = true;
   const from = 0;
   const to = slice.content.size;
+  if (!sliceContainsMath(slice)) {
+    return slice.content.textBetween(from, to, '\n\n');
+  }
+
+  let text = '';
+  let firstBlock = true;
 
   slice.content.nodesBetween(from, to, (node, pos) => {
     const mathText = mathClipboardNodeText(node);
@@ -655,6 +658,17 @@ export function serializeMathClipboardText(slice: Slice): string {
     return mathText === null;
   });
   return text;
+}
+
+function sliceContainsMath(slice: Slice): boolean {
+  let containsMath = false;
+  slice.content.nodesBetween(0, slice.content.size, (node) => {
+    if (node.type.name === INLINE_NAME || node.type.name === DISPLAY_NAME) {
+      containsMath = true;
+    }
+    return !containsMath;
+  });
+  return containsMath;
 }
 
 function mathClipboardNodeText(node: PMNode): string | null {

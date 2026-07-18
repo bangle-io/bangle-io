@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { mathTokenizer } from '../math-syntax';
+import { mathTokenizer, parseInlineMathAt } from '../math-syntax';
 import { createBaseMarkdownTokenizer } from '../tokenizer';
 
 type Token = ReturnType<
@@ -63,6 +63,26 @@ describe('mathTokenizer inline math', () => {
     ).toEqual(['x', 'y', 'a', 'b']);
     expect(collect(parse('$x$5 and y$'), 'math_inline')).toEqual([]);
     expect(collect(parse('$a$$b$'), 'math_inline')).toEqual([]);
+  });
+
+  it('parses a dollar-dense line without changing expression boundaries', () => {
+    const expressionCount = 2_000;
+    const tokens = collect(
+      parse('$x$+'.repeat(expressionCount)),
+      'math_inline',
+    );
+
+    expect(tokens).toHaveLength(expressionCount);
+    expect(tokens.every((token) => token.content === 'x')).toBe(true);
+  });
+
+  it('keeps explicit overlapping probes independent from sequential parsing', () => {
+    const source = '$a$b$';
+
+    expect(parseInlineMathAt(source, 2)?.content).toBe('b');
+    expect(
+      collect(parse(source), 'math_inline').map((token) => token.content),
+    ).toEqual(['a']);
   });
 });
 

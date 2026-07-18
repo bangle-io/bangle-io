@@ -70,11 +70,8 @@ function scanInlineMathAt(source: string, start: number): InlineMathScan {
 
 /** Finds an inline-math span whose closing delimiter is the end of `source`. */
 export function findInlineMathAtEnd(source: string): InlineMathMatch | null {
-  for (let start = 0; start < source.length; start += 1) {
-    if (source[start] !== INLINE_DELIMITER) continue;
-    const match = parseInlineMathAt(source, start);
+  for (const match of analyzeInlineMath(source).values()) {
     if (match?.end === source.length) return match;
-    if (match) start = match.end - 1;
   }
   return null;
 }
@@ -86,6 +83,11 @@ export function findInlineMathAtEnd(source: string): InlineMathMatch | null {
  * fence into a destructive partial parse.
  */
 export function mathTokenizer(md: MarkdownIt): void {
+  const inlineAnalysisCache = new WeakMap<
+    InlineRule,
+    { matches: ReadonlyMap<number, InlineMathMatch>; source: string }
+  >();
+
   md.inline.ruler.before('escape', 'math_escaped_dollar', (state, silent) => {
     const start = state.pos;
     if (
@@ -106,7 +108,13 @@ export function mathTokenizer(md: MarkdownIt): void {
 
   md.inline.ruler.before('escape', 'math_inline', (state, silent) => {
     const start = state.pos;
-    const match = parseInlineMathAt(state.src.slice(0, state.posMax), start);
+    const source = state.src.slice(0, state.posMax);
+    let analysis = inlineAnalysisCache.get(state);
+    if (!analysis || analysis.source !== source) {
+      analysis = { matches: analyzeInlineMath(source), source };
+      inlineAnalysisCache.set(state, analysis);
+    }
+    const match = analysis.matches.get(start);
     if (!match) {
       return false;
     }
@@ -179,6 +187,10 @@ type BlockRule = Parameters<
   Parameters<MarkdownIt['block']['ruler']['before']>[2]
 >[0];
 
+type InlineRule = Parameters<
+  Parameters<MarkdownIt['inline']['ruler']['before']>[2]
+>[0];
+
 function lineContent(state: BlockRule, line: number): string {
   const start = (state.bMarks[line] ?? 0) + (state.tShift[line] ?? 0);
   const end = state.eMarks[line] ?? start;
@@ -223,6 +235,32 @@ function isWhitespace(char: string | undefined): boolean {
 
 function isAsciiDigit(char: string): boolean {
   return char >= '0' && char <= '9';
+}
+
+function analyzeInlineMath(
+  source: string,
+): ReadonlyMap<number, InlineMathMatch> {
+  const matches = new Map<number, InlineMathMatch>();
+  const rejectedClosers = new Set<number>();
+
+  for (let pos = 0; pos < source.length; pos += 1) {
+    if (
+      source[pos] !== INLINE_DELIMITER ||
+      rejectedClosers.has(pos) ||
+      isEscaped(source, pos)
+    ) {
+      continue;
+    }
+    const result = scanInlineMathAt(source, pos);
+    if (result.rejectedCloser !== null) {
+      rejectedClosers.add(result.rejectedCloser);
+    }
+    if (result.match) {
+      matches.set(pos, result.match);
+      pos = result.match.end - 1;
+    }
+  }
+  return matches;
 }
 
 function isRejectedFormerCloser(source: string, position: number): boolean {

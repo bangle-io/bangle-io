@@ -29,6 +29,11 @@ describe('production math Markdown', () => {
     expect(roundTrip(source)).toBe(source);
   });
 
+  it('only retains a dollar escape when another dollar makes it necessary', () => {
+    expect(roundTrip(String.raw`isolated \$ value`)).toBe('isolated $ value');
+    expect(roundTrip(String.raw`escaped \$x$`)).toBe(String.raw`escaped \$x$`);
+  });
+
   it('normalizes a complete single-line display block to canonical fences', () => {
     expect(roundTrip('$$x^2 + y^2$$')).toBe('$$\nx^2 + y^2\n$$');
   });
@@ -130,6 +135,57 @@ $$`;
     expect(serialized).toBe(expected);
     expect(collectNodeText(reparsed, 'math_inline')).toEqual([]);
     expect(markdown.serializer.serialize(reparsed)).toBe(expected);
+  });
+
+  it('falls back when marked text contributes an earlier dollar on the line', () => {
+    const markdown = createProductionMarkdown();
+    const { schema } = markdown;
+    const bold = schema.marks.bold;
+    const link = schema.marks.link;
+    if (!bold) throw new Error('Missing schema mark: bold');
+    if (!link) throw new Error('Missing schema mark: link');
+    const document = getNodeType(schema, 'doc').create(null, [
+      getNodeType(schema, 'paragraph').create(null, [
+        schema.text('cost$', [bold.create()]),
+        getNodeType(schema, 'math_inline').create(null, schema.text('x')),
+      ]),
+      getNodeType(schema, 'paragraph').create(null, [
+        schema.text('cost$', [
+          link.create({ href: 'https://example.com', title: null }),
+        ]),
+        getNodeType(schema, 'math_inline').create(null, schema.text('y')),
+      ]),
+    ]);
+
+    const serialized = markdown.serializer.serialize(document);
+    const reparsed = markdown.parser.parse(serialized);
+
+    expect(serialized).toBe(
+      String.raw`**cost$**\$x\$
+
+[cost$](https://example.com)\$y\$`,
+    );
+    expect(collectNodeText(reparsed, 'math_inline')).toEqual([]);
+    expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
+  });
+
+  it('falls back when an earlier unmatched dollar would reject the math opener', () => {
+    const markdown = createProductionMarkdown();
+    const { schema } = markdown;
+    const document = getNodeType(schema, 'doc').create(
+      null,
+      getNodeType(schema, 'paragraph').create(null, [
+        schema.text('a$b more '),
+        getNodeType(schema, 'math_inline').create(null, schema.text('x')),
+      ]),
+    );
+
+    const serialized = markdown.serializer.serialize(document);
+    const reparsed = markdown.parser.parse(serialized);
+
+    expect(serialized).toBe(String.raw`a$b more \$x\$`);
+    expect(collectNodeText(reparsed, 'math_inline')).toEqual([]);
+    expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
   });
 
   it.each([

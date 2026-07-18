@@ -440,8 +440,11 @@ describe('math clipboard text', () => {
     expect(serializeMathClipboardText(slice)).toBe(
       'before $x$ after\n\n$$\ny\n$$\n\ntail',
     );
-    expect(serializeMathClipboardText(doc(p('plain text')).slice(0, 12))).toBe(
-      'plain text',
+    const ordinarySlice = doc(p('plain', hardBreak(), 'text'), p('tail')).slice(
+      0,
+    );
+    expect(serializeMathClipboardText(ordinarySlice)).toBe(
+      ordinarySlice.content.textBetween(0, ordinarySlice.content.size, '\n\n'),
     );
   });
 });
