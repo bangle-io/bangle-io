@@ -117,6 +117,11 @@ describe('PmEditorService', () => {
     }
     view.focus();
 
+    expect(
+      service.isActionAvailable({ type: 'toggle-heading', level: 2 }),
+    ).toBe(true);
+    expect(service.isActionAvailable({ type: 'insert-table' })).toBe(true);
+
     expect(service.toggleHeading(2)).toBe(true);
     expect(view.state.doc.firstChild?.type.name).toBe('heading');
     expect(view.state.doc.firstChild?.attrs.level).toBe(2);
@@ -134,6 +139,10 @@ describe('PmEditorService', () => {
       return !hasTable;
     });
     expect(hasTable).toBe(true);
+    expect(
+      service.isActionAvailable({ type: 'toggle-heading', level: 1 }),
+    ).toBe(false);
+    expect(service.isActionAvailable({ type: 'insert-table' })).toBe(false);
 
     unmount();
     await waitForExpect(() => {
@@ -142,6 +151,9 @@ describe('PmEditorService', () => {
     // With no active editor both refuse instead of throwing.
     expect(service.toggleHeading(1)).toBe(false);
     expect(service.insertTable()).toBe(false);
+    expect(
+      service.isActionAvailable({ type: 'toggle-heading', level: 1 }),
+    ).toBe(false);
 
     controller.abort();
     domNode.remove();

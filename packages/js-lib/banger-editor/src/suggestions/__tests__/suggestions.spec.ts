@@ -688,4 +688,53 @@ describe('replaceSuggestMarkWith', () => {
     expect(view.state.doc.textContent).toBe('$date');
     expect(view.state.selection.from).toBe(6);
   });
+
+  it('refuses replacement when the recorded suggestion no longer matches its mark', () => {
+    const store = createStore();
+    const view = createEditor({
+      text: '/current',
+      markName: 'slash_command',
+      store,
+    });
+    const current = editorStore.get(view.state, $suggestions).get(view);
+    if (!current) throw new Error('missing active suggestion');
+
+    editorStore.set(
+      view.state,
+      $suggestions,
+      new Map([[view, { ...current, text: '/stale' }]]),
+    );
+
+    const handled = slashSuggestions.command.replaceSuggestMarkWith({
+      content: 'replacement',
+    })(view.state, view.dispatch, view);
+
+    expect(handled).toBe(false);
+    expect(view.state.doc.textContent).toBe('/current');
+  });
+
+  it('refuses a stale suggestion after the selection moves elsewhere', () => {
+    const store = createStore();
+    const view = createEditor({
+      text: '/current',
+      markName: 'slash_command',
+      store,
+    });
+    const current = editorStore.get(view.state, $suggestions).get(view);
+    if (!current) throw new Error('missing active suggestion');
+
+    const tr = view.state.tr.insert(
+      view.state.doc.content.size,
+      schema.text(' plain'),
+    );
+    view.dispatch(tr.setSelection(TextSelection.atEnd(tr.doc)));
+    editorStore.set(view.state, $suggestions, new Map([[view, current]]));
+
+    const handled = slashSuggestions.command.replaceSuggestMarkWith({
+      content: 'replacement',
+    })(view.state, view.dispatch, view);
+
+    expect(handled).toBe(false);
+    expect(view.state.doc.textContent).toBe('/current plain');
+  });
 });

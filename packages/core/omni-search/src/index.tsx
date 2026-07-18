@@ -1,4 +1,8 @@
-import { useCoreServices } from '@bangle.io/context';
+import {
+  type EditorAction,
+  type EditorEngineContract,
+  useCoreServices,
+} from '@bangle.io/context';
 import {
   defaultFuzzySearch,
   rankedFuzzySearch,
@@ -24,6 +28,30 @@ const MAX_COMMANDS_PER_GROUP = 5;
 const MAX_FILES_GLOBAL = 100;
 const MAX_RECENT_FILES = 5;
 const MAX_RECENT_COMMANDS = 3;
+
+const EDITOR_ACTIONS_BY_COMMAND_ID: Readonly<Record<string, EditorAction>> = {
+  'command::editor:toggle-heading-1': {
+    type: 'toggle-heading',
+    level: 1,
+  },
+  'command::editor:toggle-heading-2': {
+    type: 'toggle-heading',
+    level: 2,
+  },
+  'command::editor:toggle-heading-3': {
+    type: 'toggle-heading',
+    level: 3,
+  },
+  'command::editor:insert-table': { type: 'insert-table' },
+};
+
+function isCommandAvailable(
+  commandId: string,
+  editorEngine: EditorEngineContract,
+): boolean {
+  const editorAction = EDITOR_ACTIONS_BY_COMMAND_ID[commandId];
+  return !editorAction || editorEngine.isActionAvailable(editorAction);
+}
 
 type CommandItemProp = {
   id: string;
@@ -308,12 +336,12 @@ export function OmniSearch() {
     userActivityService,
     workbenchState,
     commandRegistry,
+    editorEngine,
   } = useCoreServices();
-  const commands = useMemo(
-    () => commandRegistry.getOmniSearchCommands(),
-    [commandRegistry],
-  );
   const [open, setOpen] = useAtom(workbenchState.$openOmniSearch);
+  const commands = commandRegistry
+    .getOmniSearchCommands()
+    .filter((command) => isCommandAvailable(command.id, editorEngine));
 
   const commandInputRef = React.useRef<HTMLInputElement>(null);
 

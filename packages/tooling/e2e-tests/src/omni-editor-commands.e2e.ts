@@ -54,7 +54,7 @@ test('omni search runs editor block commands on the active note', async ({
     .toMatch(/^# Make me a heading[\s\S]*\| first cell/);
 });
 
-test('omni editor commands report when they cannot run', async ({ page }) => {
+test('omni search hides editor commands that cannot run', async ({ page }) => {
   const workspaceName = 'omni-editor-commands-unavailable';
   await createBrowserWorkspaceAndNote(page, {
     workspaceName,
@@ -79,11 +79,8 @@ test('omni editor commands report when they cannot run', async ({ page }) => {
   await dialog
     .getByPlaceholder('Type a command or search...')
     .fill('toggle heading 1');
-  await dialog.getByText('Toggle Heading 1').click();
-
-  await expect(
-    page.getByText('That editor command cannot run here', { exact: false }),
-  ).toBeVisible();
+  await expect(dialog.getByText('Toggle Heading 1')).toHaveCount(0);
+  await expect(dialog.getByText('No results found.')).toBeVisible();
   await expect(editor.locator('table')).toHaveCount(1);
   await expect(editor.getByRole('heading')).toHaveCount(0);
 });

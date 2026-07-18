@@ -4,7 +4,7 @@ import {
   createAppError,
 } from '@bangle.io/base-utils';
 import { type EditorEngineId, SERVICE_NAME } from '@bangle.io/constants';
-import type { EditorEngineContract } from '@bangle.io/context';
+import type { EditorAction, EditorEngineContract } from '@bangle.io/context';
 import type { FileSystemService } from '@bangle.io/service-core';
 import { WsPath } from '@bangle.io/ws-path';
 import { atom } from 'jotai';
@@ -131,6 +131,10 @@ export class EditorWService
   }
 
   insertMarkdownAtSelection(_markdownText: string): boolean {
+    return false;
+  }
+
+  isActionAvailable(_action: EditorAction): boolean {
     return false;
   }
 

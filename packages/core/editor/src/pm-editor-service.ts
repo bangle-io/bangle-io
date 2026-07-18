@@ -6,7 +6,7 @@ import {
   isAppError,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
-import type { EditorEngineContract } from '@bangle.io/context';
+import type { EditorAction, EditorEngineContract } from '@bangle.io/context';
 import {
   type EditorView,
   markdownLoader,
@@ -923,6 +923,20 @@ export class PmEditorService
         return;
       }
     }
+  }
+
+  /** Dry-runs app-level editor actions against the live selection. */
+  isActionAvailable(action: EditorAction): boolean {
+    const view = this.getActiveEditorView();
+    if (!view) {
+      return false;
+    }
+    if (action.type === 'insert-table') {
+      return this.extensions.table.command.insertTable()(view.state);
+    }
+    return this.extensions.heading.command.toggleHeading(action.level)(
+      view.state,
+    );
   }
 
   /** Toggles the block at the current selection to/from a heading. */
