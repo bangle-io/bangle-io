@@ -26,6 +26,9 @@ async function openNote(page: Page, fileName: string) {
   await expect(
     page.getByLabel('breadcrumb').getByRole('button', { name: fileName }),
   ).toBeVisible();
+  await expect
+    .poll(() => getEditorLocator(page, {}).getAttribute('data-editor-name'))
+    .toContain(`:${fileName}:`);
   await waitForEditorFocus(page, {});
 }
 
