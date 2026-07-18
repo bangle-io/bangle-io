@@ -17,24 +17,43 @@
     "**/*.spec.{ts,tsx}",
     "**/*.stories.portable.tsx",
     "packages/ui/ui-components/testing.ts",
-    "**/test-helpers/**"
+    "**/test-helpers/**",
+    "packages/tooling/test-utils/scripts/**"
   ],
   "workspaces": {
     ".": {
-      "entry": [".github/scripts/**/*.cjs"],
-      "project": ["*.{js,ts}", ".github/scripts/**/*.cjs"]
+      "entry": [
+        ".github/scripts/**/*.cjs"
+      ],
+      "project": [
+        "*.{js,ts}",
+        ".github/scripts/**/*.cjs"
+      ]
     },
     "packages/tooling/browser-entry": {
-      "entry": ["index.html"],
-      "ignoreFiles": ["src/default-theme.css"],
-      "project": ["src/**/*.{css,ts,tsx}", "translations-plugin.ts"],
+      "entry": [
+        "index.html"
+      ],
+      "ignoreFiles": [
+        "src/default-theme.css"
+      ],
+      "project": [
+        "src/**/*.{css,ts,tsx}",
+        "translations-plugin.ts"
+      ],
       "vite": {
-        "config": ["vite.config.ts"]
+        "config": [
+          "vite.config.ts"
+        ]
       }
     },
     "packages/tooling/custom-scripts": {
-      "entry": ["scripts/*.ts"],
-      "project": ["**/*.ts"]
+      "entry": [
+        "scripts/*.ts"
+      ],
+      "project": [
+        "**/*.ts"
+      ]
     },
     "packages/tooling/desktop-entry": {
       "entry": [
@@ -43,9 +62,14 @@
         "src/main.ts",
         "src/preload.ts"
       ],
-      "project": ["scripts/*.{mjs,ts}", "src/**/*.ts"],
+      "project": [
+        "scripts/*.{mjs,ts}",
+        "src/**/*.ts"
+      ],
       "vite": {
-        "config": ["vite.config.ts"]
+        "config": [
+          "vite.config.ts"
+        ]
       }
     },
     "packages/tooling/e2e-tests": {
@@ -62,20 +86,37 @@
         "scripts/*.ts",
         "src/**/*.{ts,tsx}"
       ],
-      "ignoreFiles": ["playwright/index.css"]
+      "ignoreFiles": [
+        "playwright/index.css"
+      ]
     },
     "packages/tooling/mobile-entry": {
-      "entry": ["babel.config.js", "index.ts", "src/**/*.tsx"],
-      "project": ["*.{js,ts}", "src/**/*.tsx"],
+      "entry": [
+        "babel.config.js",
+        "index.ts",
+        "src/**/*.tsx"
+      ],
+      "project": [
+        "*.{js,ts}",
+        "src/**/*.tsx"
+      ],
       "expo": {
-        "config": ["app.config.ts"]
+        "config": [
+          "app.config.ts"
+        ]
       }
     },
     "packages/tooling/storybook": {
-      "entry": ["src/**/*.stories.{ts,tsx}"],
-      "project": ["**/*.{css,js,ts,tsx}"],
+      "entry": [
+        "src/**/*.stories.{ts,tsx}"
+      ],
+      "project": [
+        "**/*.{css,js,ts,tsx}"
+      ],
       "storybook": {
-        "entry": ["src/**/*.stories.{ts,tsx}"]
+        "entry": [
+          "src/**/*.stories.{ts,tsx}"
+        ]
       }
     }
   },
