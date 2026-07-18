@@ -3,7 +3,7 @@ import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import type { EnabledBangleAppCommand } from '@bangle.io/commands';
 import type { EditorEngineId } from '@bangle.io/constants';
 import type { CoreServices, EditorEngineContract } from '@bangle.io/context';
-import { PmEditorService } from '@bangle.io/editor';
+import { type EditorSaveCoordinator, PmEditorService } from '@bangle.io/editor';
 import { EditorWService } from '@bangle.io/editor-w';
 import {
   type ConstructorConfig,
@@ -227,6 +227,8 @@ export type ServiceSetupOptions<TPlatformMap extends PlatformServiceMap> = {
   fileStorageSlots: ReadonlyArray<FileStorageSlot<TPlatformMap>>;
   /** The editor engine powering the editing surface. */
   editorEngineId: EditorEngineId;
+  /** Browser-root save state retained when the UI service graph reloads. */
+  editorSaveCoordinator: EditorSaveCoordinator;
   /** Optional per-slot decorators over the canonical core configs. */
   coreConfigOverrides?: CoreConfigOverrides;
 };
@@ -287,6 +289,7 @@ export function createServiceSetup<
     shortcutTarget,
     fileStorageSlots,
     editorEngineId,
+    editorSaveCoordinator,
     coreConfigOverrides,
   } = options;
   const platformServices: TPlatformMap = options.platformServices;
@@ -411,9 +414,12 @@ export function createServiceSetup<
         ),
       })),
     ),
-    editorEngine: slot(
-      editorEngineId === 'wordgard' ? EditorWService : PmEditorService,
-    ),
+    editorEngine:
+      editorEngineId === 'wordgard'
+        ? slot(EditorWService)
+        : slot(PmEditorService, () => ({
+            saveCoordinator: editorSaveCoordinator,
+          })),
   } satisfies Record<CoreServiceSlotId, AppServiceMapEntry>;
 
   // Core slots always win the join; the annotation drops any phantom core

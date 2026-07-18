@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-06-15
-updated: 2026-07-14
+updated: 2026-07-15
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/631
@@ -18,6 +18,10 @@ related_prs:
   - https://github.com/bangle-io/bangle-io/pull/641
   - https://github.com/bangle-io/bangle-io/pull/645
   - https://github.com/bangle-io/bangle-io/pull/646
+  - https://github.com/bangle-io/bangle-io/pull/640
+  - https://github.com/bangle-io/bangle-io/pull/644
+  - https://github.com/bangle-io/bangle-io/pull/648
+  - https://github.com/bangle-io/bangle-io/pull/649
 related_issues: []
 ---
 
@@ -54,8 +58,9 @@ cleanup.
   for explicit retry, and `PmEditorService` exposes save status/dirty APIs and
   change subscriptions. Pending or failed saves now activate browser
   navigation/reload protection, failed saves show a persistent translated retry
-  action, and a successful retry clears protection. Store ownership across UI
-  reload/service-graph replacement remains C4 below.
+  action, and a successful retry clears protection. PR #649 resolves the
+  cross-reload lifetime boundary through the explicit browser-root save
+  coordinator described by C4 below.
 - P0.2 started with explicit editor load rejection handling that emits an app
   error instead of leaving the mount promise silently pending. Failed load
   status and a same-node retry API are now exposed. Parse-failure isolation and
@@ -191,6 +196,16 @@ cleanup.
     service-architecture and Knip worktrees cover broader boundary/dead-code
     changes. C6, C8, P1.3, P4.4, and P5.2 are narrowed below to match current
     code instead of retaining stale claims.
+- 2026-07-15 editor save-coordinator lifetime cleanup (PR #649):
+  - C4 resolved: the browser composition root now owns an explicit
+    `EditorSaveCoordinator` and injects it into every replacement UI service
+    graph. Queued and failed tasks retain document state only; execution and
+    error reporting resolve through the newest graph's writer and error
+    boundary instead of callbacks captured from a disposed service.
+  - Focused queue coverage retries a retained failure through the old graph's
+    facade and proves the current graph performs the write. Browser E2E forces
+    a save failure, emits the real `event::app:reload-ui`, retries through the
+    disposed graph, and verifies the edit is durable after a full page reload.
 - Findings are grouped by priority and theme below.
 
 ## Scope
@@ -979,7 +994,7 @@ listed so future agents do not rediscover it or accidentally restore it.
 | C1 | Resolved in 2026-07-13 workspace refresh continuity cleanup | `WorkspaceStateService` now derives `$workspaces` from an explicit `$workspaceListState` resource. Failed refreshes retain the last successful data and error, preserve `$currentWsName`, and can recover to `ready`; real-service coverage forces the full success-failure-recovery sequence. | Critical / medium |
 | C2 | Resolved in PR #631 | `PmEditorService` now caches `markdownLoader` instances per ProseMirror `Schema` in a `WeakMap`. A real two-editor regression proves paste uses the active editor schema. | High / small-medium |
 | C3 | Partial | PR #631 made the Native FS metadata lookup awaitable and report invalid metadata as command failure. `CommandDispatchService.dispatch()` still returns `void`, reports a missing handler as success, converts null args with `args || {}`, releases cycle/focus state before async completion, and detaches non-app async errors. Native FS permission work also occurs later in a dialog callback, outside command completion. Make command completion an awaitable typed result and move callback-owned workflows behind feature controllers. | Critical / medium |
-| C4 | Open; coordinate after PR #640 | The editor save-queue store remains module-global while each queued task captures the writer and error emitter from the service instance that enqueued it. UI reload rebuilds the service graph, so retrying a retained failure can execute through a disposed graph. PR #640 is actively changing relocation and save-queue behavior but does not own this service-graph lifetime boundary. Move the store to an explicit root-lifetime coordinator and resolve the current writer at execution time; test a failed save across `event::app:reload-ui`. | Critical data safety / medium |
+| C4 | Resolved in [PR #649](https://github.com/bangle-io/bangle-io/pull/649) | The module-global save store is replaced by an explicit browser-root `EditorSaveCoordinator` injected into each UI service graph. Retained tasks carry document state but resolve the writer and error boundary from the current graph at execution time. Unit coverage retries through a disposed graph facade, and browser E2E forces a failed save across `event::app:reload-ui` before proving durable recovery after a full reload. | Critical data safety / medium |
 | C5 | Resolved in 2026-07-12 workspace dialog cleanup | `CreateWorkspaceDialog` now accepts and awaits async durable creation, blocks duplicate submission and dismissal while pending, preserves the dialog with an alert on failure, and permits retry. Component coverage counts one callback for a double-click; app E2E exercises the real duplicate-workspace service rejection. | High / medium |
 | C6 | Partial; plan 006 owns the UX | `PageAsset` now has distinct internal `missing` and `error` states, but its catch still discards storage/permission/decode/object-URL causes and both states render the same generic unavailable copy. Emit/log the retained error, expose retry/recovery, and test Native FS permission loss after PR #626's external-sync work settles. | High / small-medium |
 | C7 | Resolved in PR #631 | Workspace info cache entries are keyed by workspace name and filtered after lookup. Memory storage now compares parsed workspace names exactly and rejects rename over an existing destination, with focused contract regressions. | Medium-high / small |
@@ -1028,17 +1043,15 @@ listed so future agents do not rediscover it or accidentally restore it.
 
 ### Recommended Next Batches
 
-1. C4 save-coordinator lifetime, because a retained task can outlive its
-   service graph and endanger unsaved user data.
-2. C3 command completion, with real-service failure tests and no detached
+1. C3 command completion, with real-service failure tests and no detached
    promises. C5 async workspace creation is complete.
-3. C6 asset read/recovery semantics, aligned with plan 006.
-4. A1-A4 boundary work in independently reviewable slices; do not combine the
+2. C6 asset read/recovery semantics, aligned with plan 006.
+3. A1-A4 boundary work in independently reviewable slices; do not combine the
    command kernel, Native FS session provider, and service-graph derivation in
    one PR.
-5. A5, A6, A9, A10, and A11 as code-reduction batches with user-visible E2E
+4. A5, A6, A9, A10, and A11 as code-reduction batches with user-visible E2E
    coverage where navigation or interaction changes.
-6. A8 through plan 007, after correcting the temporary index's failure and
+5. A8 through plan 007, after correcting the temporary index's failure and
    concurrency assumptions.
 
 ## Original 2026-06-15 Suggested Execution Order

@@ -4,5 +4,6 @@
  * loaded.
  */
 
+export { createEditorSaveCoordinator } from '@bangle.io/editor';
 export type { CoreConfigOverrides } from './src/service-setup';
 export { createServiceSetup } from './src/service-setup';

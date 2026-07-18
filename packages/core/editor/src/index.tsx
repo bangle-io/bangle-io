@@ -15,7 +15,14 @@ import {
 } from './components';
 import { useEditorCoreServices } from './use-editor-core-services';
 
-export { PmEditorService } from './pm-editor-service';
+export {
+  createEditorSaveCoordinator,
+  type EditorSaveCoordinator,
+} from './editor-save-queue';
+export {
+  PmEditorService,
+  type PmEditorServiceConfig,
+} from './pm-editor-service';
 export { useEditorCoreServices } from './use-editor-core-services';
 export function Editor({
   wsPath,

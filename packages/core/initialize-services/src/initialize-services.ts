@@ -11,6 +11,7 @@ import {
   type EditorEngineId,
   isEditorEngineId,
 } from '@bangle.io/constants';
+import type { EditorSaveCoordinator } from '@bangle.io/editor';
 import { isFileSystemDirectoryHandle } from '@bangle.io/native-fs';
 import { slot } from '@bangle.io/poor-mans-di';
 import type { WorkspaceOpsService } from '@bangle.io/service-core';
@@ -45,6 +46,7 @@ export function initializeServices(
   commands: EnabledBangleAppCommand[],
   commandHandlers: Array<{ id: string; handler: CommandHandler }>,
   theme: ThemeManager,
+  editorSaveCoordinator: EditorSaveCoordinator,
 ) {
   const editorEngineId = readEditorEngineFromUrl();
   // Native FS root-handle resolution needs workspace metadata, which lives in
@@ -112,6 +114,7 @@ export function initializeServices(
     platformServices: browserPlatformServices,
     fileStorageSlots: ['fileStorageIdb', 'fileStorageNativeFs'],
     editorEngineId,
+    editorSaveCoordinator,
   });
 
   getWorkspaceOps = () => setup.getServices().workspaceOps;

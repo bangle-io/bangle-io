@@ -8,6 +8,7 @@ import {
 import type { CoreServices } from '@bangle.io/context';
 import {
   type CoreConfigOverrides,
+  createEditorSaveCoordinator,
   createServiceSetup,
 } from '@bangle.io/initialize-services/setup';
 import { type ContainerDescription, slot } from '@bangle.io/poor-mans-di';
@@ -94,6 +95,7 @@ function createTestServiceSetup(
     },
     fileStorageSlots: ['fileStorageMemory'],
     editorEngineId,
+    editorSaveCoordinator: createEditorSaveCoordinator(),
     coreConfigOverrides,
   });
 }

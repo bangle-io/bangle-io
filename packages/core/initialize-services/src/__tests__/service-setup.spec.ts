@@ -1,6 +1,7 @@
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { commandHandlers } from '@bangle.io/command-handlers';
 import { getEnabledCommands } from '@bangle.io/commands';
+import { createEditorSaveCoordinator } from '@bangle.io/editor';
 import { slot } from '@bangle.io/poor-mans-di';
 import {
   FileStorageMemory,
@@ -49,6 +50,7 @@ function makeSetup({
     },
     fileStorageSlots: ['fileStorageMemory'],
     editorEngineId: 'prosemirror',
+    editorSaveCoordinator: createEditorSaveCoordinator(),
   });
 
   return { setup, controller };
@@ -90,6 +92,7 @@ describe('createServiceSetup', () => {
       },
       fileStorageSlots: [],
       editorEngineId: 'prosemirror',
+      editorSaveCoordinator: createEditorSaveCoordinator(),
     });
 
     controller.abort();
@@ -120,6 +123,7 @@ describe('createServiceSetup', () => {
       },
       fileStorageSlots: [],
       editorEngineId: 'prosemirror',
+      editorSaveCoordinator: createEditorSaveCoordinator(),
     });
 
     controller.abort();
@@ -177,6 +181,7 @@ describe('createServiceSetup', () => {
       },
       fileStorageSlots: ['fileStorageMemory', 'fileStorageMemoryDuplicate'],
       editorEngineId: 'prosemirror',
+      editorSaveCoordinator: createEditorSaveCoordinator(),
     });
 
     expect(() => setup.instantiate()).toThrow(
@@ -234,6 +239,7 @@ describe('createServiceSetup', () => {
       },
       fileStorageSlots: ['fileStorageMemory'],
       editorEngineId: 'prosemirror',
+      editorSaveCoordinator: createEditorSaveCoordinator(),
       coreConfigOverrides: {
         commandRegistry: (base) => ({
           ...base,
