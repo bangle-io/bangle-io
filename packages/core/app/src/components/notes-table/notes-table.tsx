@@ -12,12 +12,15 @@ import {
   TableRow,
 } from '@bangle.io/ui-components';
 import {
+  type Column,
   type ColumnDef,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
+  type HeaderContext,
   type Row,
+  type RowData,
   type SortingState,
   useReactTable,
   type VisibilityState,
@@ -39,6 +42,13 @@ import {
 } from 'lucide-react';
 import React from 'react';
 import { getTimestampDisplay } from '../../common/get-relative-time';
+
+declare module '@tanstack/react-table' {
+  interface ColumnMeta<TData extends RowData, TValue> {
+    /** Column label shown in the header and the column-visibility menu. */
+    label: () => string;
+  }
+}
 
 export interface NotesTableNote {
   wsPath: string;
@@ -73,31 +83,17 @@ const DEFAULT_SORTING: SortingState = [{ id: 'modifiedAt', desc: true }];
  */
 const ROW_RENDER_CHUNK = 150;
 
-function getColumnLabel(columnId: string): string {
-  switch (columnId) {
-    case 'name':
-      return t.app.components.notesTable.nameColumn;
-    case 'location':
-      return t.app.components.notesTable.locationColumn;
-    case 'modifiedAt':
-      return t.app.components.notesTable.modifiedColumn;
-    case 'lastOpenedAt':
-      return t.app.components.notesTable.lastOpenedColumn;
-    default:
-      return columnId;
-  }
+function getColumnLabel<TValue>(
+  column: Column<NotesTableNote, TValue>,
+): string {
+  return column.columnDef.meta?.label() ?? column.id;
 }
 
-function SortableHeaderButton({
-  columnId,
-  sortDirection,
-  onToggle,
-}: {
-  columnId: string;
-  sortDirection: false | 'asc' | 'desc';
-  onToggle: () => void;
-}) {
-  const label = getColumnLabel(columnId);
+function SortableColumnHeader<TValue>({
+  column,
+}: HeaderContext<NotesTableNote, TValue>) {
+  const label = getColumnLabel(column);
+  const sortDirection = column.getIsSorted();
   const SortIcon =
     sortDirection === 'asc'
       ? ArrowUp
@@ -110,7 +106,7 @@ function SortableHeaderButton({
       size="sm"
       className="-ml-2 h-8 px-2 data-[sorted=true]:text-foreground"
       data-sorted={sortDirection !== false}
-      onClick={onToggle}
+      onClick={() => column.toggleSorting()}
       aria-label={t.app.components.notesTable.sortSr({ column: label })}
     >
       {label}
@@ -231,6 +227,22 @@ function NoteRowActions({ note }: { note: NotesTableNote }) {
   );
 }
 
+function timestampColumn(
+  id: 'modifiedAt' | 'lastOpenedAt',
+  label: () => string,
+): ColumnDef<NotesTableNote> {
+  return {
+    id,
+    accessorFn: (note) => note[id],
+    sortingFn: 'basic',
+    sortUndefined: 'last',
+    sortDescFirst: true,
+    meta: { label },
+    header: SortableColumnHeader,
+    cell: ({ row }) => <TimestampCell timestamp={row.original[id]} />,
+  };
+}
+
 function buildColumns(): ColumnDef<NotesTableNote>[] {
   return [
     {
@@ -238,13 +250,8 @@ function buildColumns(): ColumnDef<NotesTableNote>[] {
       accessorFn: (note) => note.fileName,
       enableHiding: false,
       sortingFn: 'alphanumeric',
-      header: ({ column }) => (
-        <SortableHeaderButton
-          columnId="name"
-          sortDirection={column.getIsSorted()}
-          onToggle={() => column.toggleSorting()}
-        />
-      ),
+      meta: { label: () => t.app.components.notesTable.nameColumn },
+      header: SortableColumnHeader,
       cell: ({ row }) => (
         <a
           href={row.original.href}
@@ -267,13 +274,8 @@ function buildColumns(): ColumnDef<NotesTableNote>[] {
       id: 'location',
       accessorFn: (note) => note.dirPath,
       sortingFn: 'alphanumeric',
-      header: ({ column }) => (
-        <SortableHeaderButton
-          columnId="location"
-          sortDirection={column.getIsSorted()}
-          onToggle={() => column.toggleSorting()}
-        />
-      ),
+      meta: { label: () => t.app.components.notesTable.locationColumn },
+      header: SortableColumnHeader,
       cell: ({ row }) =>
         row.original.dirPath ? (
           <span className="max-w-56 truncate text-muted-foreground">
@@ -283,38 +285,14 @@ function buildColumns(): ColumnDef<NotesTableNote>[] {
           <span className="text-muted-foreground/60">—</span>
         ),
     },
-    {
-      id: 'modifiedAt',
-      accessorFn: (note) => note.modifiedAt,
-      sortingFn: 'basic',
-      sortUndefined: 'last',
-      sortDescFirst: true,
-      header: ({ column }) => (
-        <SortableHeaderButton
-          columnId="modifiedAt"
-          sortDirection={column.getIsSorted()}
-          onToggle={() => column.toggleSorting()}
-        />
-      ),
-      cell: ({ row }) => <TimestampCell timestamp={row.original.modifiedAt} />,
-    },
-    {
-      id: 'lastOpenedAt',
-      accessorFn: (note) => note.lastOpenedAt,
-      sortingFn: 'basic',
-      sortUndefined: 'last',
-      sortDescFirst: true,
-      header: ({ column }) => (
-        <SortableHeaderButton
-          columnId="lastOpenedAt"
-          sortDirection={column.getIsSorted()}
-          onToggle={() => column.toggleSorting()}
-        />
-      ),
-      cell: ({ row }) => (
-        <TimestampCell timestamp={row.original.lastOpenedAt} />
-      ),
-    },
+    timestampColumn(
+      'modifiedAt',
+      () => t.app.components.notesTable.modifiedColumn,
+    ),
+    timestampColumn(
+      'lastOpenedAt',
+      () => t.app.components.notesTable.lastOpenedColumn,
+    ),
     {
       id: 'actions',
       enableHiding: false,
@@ -487,7 +465,7 @@ export function NotesTable({ notes }: NotesTableProps) {
                       column.toggleVisibility(checked)
                     }
                   >
-                    {getColumnLabel(column.id)}
+                    {getColumnLabel(column)}
                   </DropdownMenu.DropdownMenuCheckboxItem>
                 ))}
             </DropdownMenu.DropdownMenuContent>
@@ -522,14 +500,6 @@ export function NotesTable({ notes }: NotesTableProps) {
                   onClick={(event) =>
                     handleRowClick(event, row.original.wsPath)
                   }
-                  onKeyDown={(event) => {
-                    if (
-                      event.key === 'Enter' &&
-                      event.target === event.currentTarget
-                    ) {
-                      openNote(row.original.wsPath);
-                    }
-                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

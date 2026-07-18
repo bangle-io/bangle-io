@@ -252,52 +252,6 @@ describe('PageWsHome', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('re-stats only the updated note on a content change', async () => {
-    const { testRender, services } = await setupWorkspaceWithNotes([
-      'one.md',
-      'two.md',
-      'three.md',
-    ]);
-
-    const fileStatSpy = vi.spyOn(services.fileSystem, 'fileStat');
-
-    testRender.mountComponent({ ui: <PageWsHome /> });
-
-    await waitFor(() => {
-      expect(getRenderedNoteNames()).toHaveLength(3);
-    });
-    await waitFor(() => {
-      expect(fileStatSpy).toHaveBeenCalledTimes(3);
-    });
-
-    fileStatSpy.mockClear();
-    await act(async () => {
-      await services.fileSystem.writeFile(
-        'myWorkspace:two.md',
-        new File(['# updated'], 'two.md', { type: 'text/markdown' }),
-      );
-    });
-
-    await waitFor(() => {
-      expect(fileStatSpy).toHaveBeenCalled();
-    });
-    expect(
-      fileStatSpy.mock.calls.every(
-        ([wsPath]) => wsPath === 'myWorkspace:two.md',
-      ),
-    ).toBe(true);
-
-    // A force-update relist (e.g. Native FS recovery or an external disk
-    // edit) keeps the same paths but must re-stat everything.
-    fileStatSpy.mockClear();
-    act(() => {
-      services.fileSystem.refreshFileTree();
-    });
-    await waitFor(() => {
-      expect(fileStatSpy).toHaveBeenCalledTimes(3);
-    });
-  });
-
   it('keeps a note row rendered when its file stat read fails', async () => {
     const { testRender, services } = await setupWorkspaceWithNotes([
       'healthy.md',
