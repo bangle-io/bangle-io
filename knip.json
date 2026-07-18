@@ -3,29 +3,49 @@
   "treatConfigHintsAsErrors": true,
   "workspaces": {
     ".": {
-      "entry": [".github/scripts/**/*.cjs"],
+      "entry": [
+        ".github/scripts/**/*.cjs"
+      ],
       "ignoreDependencies": [
         "@bangle.io/types",
         "@storybook/react",
         "@storybook/react-vite",
         "storybook"
       ],
-      "project": ["*.{js,ts}", ".github/scripts/**/*.cjs"]
+      "project": [
+        "*.{js,ts}",
+        ".github/scripts/**/*.cjs"
+      ]
     },
     "packages/js-lib/color-scheme-manager": {
-      "ignoreBinaries": ["tsc"]
+      "ignoreBinaries": [
+        "tsc"
+      ]
     },
     "packages/tooling/browser-entry": {
-      "entry": ["index.html"],
-      "ignoreFiles": ["src/default-theme.css"],
-      "project": ["src/**/*.{css,ts,tsx}", "translations-plugin.ts"],
+      "entry": [
+        "index.html"
+      ],
+      "ignoreFiles": [
+        "src/default-theme.css"
+      ],
+      "project": [
+        "src/**/*.{css,ts,tsx}",
+        "translations-plugin.ts"
+      ],
       "vite": {
-        "config": ["vite.config.ts"]
+        "config": [
+          "vite.config.ts"
+        ]
       }
     },
     "packages/tooling/custom-scripts": {
-      "entry": ["scripts/*.ts"],
-      "project": ["**/*.ts"]
+      "entry": [
+        "scripts/*.ts"
+      ],
+      "project": [
+        "**/*.ts"
+      ]
     },
     "packages/tooling/desktop-entry": {
       "entry": [
@@ -34,9 +54,14 @@
         "src/main.ts",
         "src/preload.ts"
       ],
-      "project": ["scripts/*.{mjs,ts}", "src/**/*.ts"],
+      "project": [
+        "scripts/*.{mjs,ts}",
+        "src/**/*.ts"
+      ],
       "vite": {
-        "config": ["vite.config.ts"]
+        "config": [
+          "vite.config.ts"
+        ]
       }
     },
     "packages/tooling/e2e-tests": {
@@ -51,29 +76,60 @@
         "scripts/*.ts",
         "src/**/*.{ts,tsx}"
       ],
-      "ignoreFiles": ["playwright/index.css"]
+      "ignoreFiles": [
+        "playwright/index.css"
+      ]
     },
     "packages/tooling/mobile-entry": {
-      "entry": ["babel.config.js"],
-      "ignoreBinaries": ["eas"],
-      "project": ["*.{js,ts}", "src/**/*.tsx"],
+      "entry": [
+        "babel.config.js"
+      ],
+      "ignoreBinaries": [
+        "eas"
+      ],
+      "project": [
+        "*.{js,ts}",
+        "src/**/*.tsx"
+      ],
       "expo": {
-        "config": ["app.config.ts"]
+        "config": [
+          "app.config.ts"
+        ]
       }
     },
     "packages/tooling/plop-configs": {
-      "ignoreBinaries": ["custom-format"]
+      "ignoreBinaries": [
+        "custom-format"
+      ]
     },
     "packages/tooling/storybook": {
-      "entry": ["src/**/*.stories.{ts,tsx}"],
-      "project": ["**/*.{css,js,ts,tsx}"],
+      "entry": [
+        "src/**/*.stories.{ts,tsx}"
+      ],
+      "project": [
+        "**/*.{css,js,ts,tsx}"
+      ],
       "storybook": {
-        "entry": ["src/**/*.stories.{ts,tsx}"]
+        "entry": [
+          "src/**/*.stories.{ts,tsx}"
+        ]
       }
     },
+    "packages/tooling/test-utils": {
+      "entry": [
+        "scripts/*.ts"
+      ],
+      "project": [
+        "**/*.{ts,tsx}"
+      ]
+    },
     "packages/ui/ui-components": {
-      "entry": ["testing.ts"],
-      "project": ["src/**/*.{ts,tsx}"]
+      "entry": [
+        "testing.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
     }
   },
   "rules": {
