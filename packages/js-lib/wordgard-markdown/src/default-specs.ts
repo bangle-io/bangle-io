@@ -226,10 +226,11 @@ const codeBlockSpec: NodeMarkdownSpec = {
     const text = node.textContent();
     const fence = createCodeFence(text, language);
     state.write(`${fence}${language}\n`);
-    state.write(text);
-    if (text) {
-      state.write('\n');
-    }
+    // `text`, not `write`: multi-line content must re-apply the block
+    // delimiter (`> `, list indentation) at every line, which `write` only
+    // does for the first line.
+    state.text(text, false);
+    state.ensureNewLine();
     state.write(fence);
     state.closeBlock(node);
   },

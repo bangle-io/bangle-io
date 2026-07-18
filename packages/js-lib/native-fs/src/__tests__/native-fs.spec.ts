@@ -162,6 +162,35 @@ describe('createFile and writeFile', () => {
     expect(await fs.readFileText('a.md')).toBe('three');
   });
 
+  it('does not latch the exclusive-unsupported memo on a non-TypeError failure', async () => {
+    const { fs, root, seeded } = setup({ 'a.md': 'old' });
+    await seeded;
+    const handle = getEntry(root, 'a.md') as FakeFileHandle;
+
+    // Hold an exclusive writable so the next exclusive attempt fails with a
+    // NoModificationAllowedError DOMException — a real lock contention, not
+    // the TypeError an engine without `mode` support throws.
+    const held = await handle.createWritable({ mode: 'exclusive' });
+
+    const error = await fs.writeFile('a.md', new Blob(['new'])).catch((e) => e);
+    expect(error).toBeInstanceOf(Error);
+    // A lock error must propagate, not silently retry in siloed mode (which
+    // would defeat the lock): no `undefined`-mode attempt follows.
+    expect(handle.sawWritableModes).toEqual(['exclusive', 'exclusive']);
+    expect(await fs.readFileText('a.md')).toBe('old');
+
+    // The memo stays unset: once the lock is released, the next write asks
+    // for an exclusive writable again and succeeds.
+    await held.abort();
+    await fs.writeFile('a.md', new Blob(['new']));
+    expect(handle.sawWritableModes).toEqual([
+      'exclusive',
+      'exclusive',
+      'exclusive',
+    ]);
+    expect(await fs.readFileText('a.md')).toBe('new');
+  });
+
   it('resolves an existing file once per overwrite (autosave hot path)', async () => {
     const { fs, root, seeded } = setup({ 'a.md': 'old' });
     await seeded;
