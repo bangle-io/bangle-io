@@ -26,6 +26,13 @@ type NavigatorWithInstalledRelatedApps = Navigator & {
   getInstalledRelatedApps?: () => Promise<InstalledRelatedApp[]>;
 };
 
+// Set by the Electron preload script (contextBridge) before any page script
+// runs. Inside the desktop shell every PWA affordance must stay off: the
+// desktop app IS the installed experience.
+type WindowWithDesktopBridge = Window & {
+  bangleDesktop?: unknown;
+};
+
 interface PwaLaunchParams {
   targetURL?: string;
 }
@@ -208,10 +215,18 @@ export function syncWindowControlsOverlayState(input: {
   );
 }
 
+function isDesktopShell(windowRef: Window) {
+  return (windowRef as WindowWithDesktopBridge).bangleDesktop !== undefined;
+}
+
 export function initializePwaInstallPromptTracking(
   windowRef = getCurrentWindow(),
 ) {
   if (!windowRef || initializedWindow === windowRef) {
+    return;
+  }
+
+  if (isDesktopShell(windowRef)) {
     return;
   }
 

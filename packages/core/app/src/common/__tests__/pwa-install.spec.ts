@@ -153,6 +153,40 @@ describe('installed related apps detection', () => {
   });
 });
 
+describe('desktop shell guard', () => {
+  afterEach(() => {
+    Reflect.deleteProperty(window, 'bangleDesktop');
+  });
+
+  it('keeps every PWA affordance off inside the Electron shell', async () => {
+    Object.defineProperty(window, 'bangleDesktop', {
+      configurable: true,
+      value: { platform: 'darwin' },
+    });
+    Object.defineProperty(window.navigator, 'getInstalledRelatedApps', {
+      configurable: true,
+      value: vi.fn(() => Promise.resolve([{ platform: 'webapp' }])),
+    });
+
+    try {
+      pwaInstall.initializePwaInstallPromptTracking(window);
+
+      const event = makeInstallPromptEvent();
+      window.dispatchEvent(event);
+      await Promise.resolve();
+
+      // Neither the install prompt nor the (stubbed, positive) related-apps
+      // probe may surface anything inside the desktop shell.
+      expect(pwaInstall.getPwaInstallSnapshot()).toMatchObject({
+        canInstall: false,
+        canOpenInApp: false,
+      });
+    } finally {
+      Reflect.deleteProperty(window.navigator, 'getInstalledRelatedApps');
+    }
+  });
+});
+
 describe('install prompt reentrancy', () => {
   it('rejects a second install call while one is already in flight', async () => {
     pwaInstall.initializePwaInstallPromptTracking(window);
