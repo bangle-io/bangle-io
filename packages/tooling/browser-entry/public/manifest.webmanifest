@@ -1,4 +1,5 @@
 {
+  "id": "/",
   "name": "Bangle.io",
   "short_name": "Bangle.io",
   "description": "Local-first Markdown notes.",
@@ -8,6 +9,22 @@
   "display_override": ["window-controls-overlay"],
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "/manifest.webmanifest",
+      "id": "/"
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+bangle",
+      "url": "/?launch=%s"
+    }
+  ],
   "icons": [
     {
       "src": "/icons/app-icon-192.png",

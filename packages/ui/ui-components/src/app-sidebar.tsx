@@ -11,6 +11,8 @@ import {
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
 import {
   ChevronsUpDown,
+  Download,
+  ExternalLink,
   GalleryVerticalEnd,
   Plus,
   Search,
@@ -92,6 +94,17 @@ export type AppSidebarProps = {
     message: string;
     retryLabel: string;
     onRetry: () => void;
+  };
+  /**
+   * When set, renders a persistent accent action pill above the sidebar
+   * footer, e.g. "Install app" while the browser offers a PWA install, or
+   * "Open in app" when the installed PWA is available from a browser tab.
+   */
+  pwaAction?: {
+    kind: 'install' | 'open-in-app';
+    label: string;
+    onClick: () => void;
+    disabled?: boolean;
   };
   footerChildren?: React.ReactNode;
   footerTitle?: string;
@@ -219,6 +232,7 @@ export function AppSidebar({
   showNoteFilesOnly,
   onShowNoteFilesOnlyChange,
   fileTreeNotice,
+  pwaAction,
   footerChildren,
   footerTitle,
   footerSubtitle,
@@ -296,6 +310,7 @@ export function AppSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      {pwaAction && <SidebarPwaAction {...pwaAction} />}
       {footerChildren && (
         <AppSidebarFooter
           title={footerTitle}
@@ -401,6 +416,36 @@ function SidebarNavGroup({
         ))}
       </SidebarMenu>
     </SidebarGroup>
+  );
+}
+
+function SidebarPwaAction({
+  kind,
+  label,
+  onClick,
+  disabled,
+}: {
+  kind: 'install' | 'open-in-app';
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+}) {
+  const Icon = kind === 'install' ? Download : ExternalLink;
+
+  return (
+    <div className="px-3 pt-1">
+      <Button
+        variant="outline"
+        size="sm"
+        disabled={disabled}
+        onClick={onClick}
+        data-testid="sidebar-pwa-action"
+        className="w-full justify-center gap-2 border-pop/40 bg-pop/10 font-medium hover:bg-pop/20"
+      >
+        <Icon aria-hidden="true" className="size-3.5 text-pop" />
+        <span>{label}</span>
+      </Button>
+    </div>
   );
 }
 

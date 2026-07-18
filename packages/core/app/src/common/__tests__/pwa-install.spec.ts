@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 type PwaInstallModule = typeof import('../pwa-install');
 
@@ -80,7 +80,107 @@ describe('PWA install prompt tracking', () => {
     expect(pwaInstall.getPwaInstallSnapshot()).toMatchObject({
       canInstall: false,
       isInstalled: true,
+      canOpenInApp: true,
     });
+  });
+});
+
+describe('installed related apps detection', () => {
+  afterEach(() => {
+    Reflect.deleteProperty(window.navigator, 'getInstalledRelatedApps');
+  });
+
+  function stubInstalledRelatedApps(apps: Array<{ platform: string }>) {
+    Object.defineProperty(window.navigator, 'getInstalledRelatedApps', {
+      configurable: true,
+      value: vi.fn(() => Promise.resolve(apps)),
+    });
+  }
+
+  it('reports open-in-app availability when the browser says the PWA is installed', async () => {
+    stubInstalledRelatedApps([{ platform: 'webapp' }]);
+
+    pwaInstall.initializePwaInstallPromptTracking(window);
+
+    await vi.waitFor(() => {
+      expect(pwaInstall.getPwaInstallSnapshot()).toMatchObject({
+        isInstalled: true,
+        canOpenInApp: true,
+        isStandalone: false,
+      });
+    });
+
+    // A deferred install prompt arriving afterwards must not re-offer install.
+    window.dispatchEvent(makeInstallPromptEvent());
+    expect(pwaInstall.getPwaInstallSnapshot().canInstall).toBe(false);
+  });
+
+  it('keeps the app uninstalled when no related apps are reported', async () => {
+    stubInstalledRelatedApps([]);
+
+    pwaInstall.initializePwaInstallPromptTracking(window);
+    await Promise.resolve();
+
+    expect(pwaInstall.getPwaInstallSnapshot()).toMatchObject({
+      isInstalled: false,
+      canOpenInApp: false,
+    });
+  });
+});
+
+describe('opening the installed app', () => {
+  afterEach(() => {
+    Reflect.deleteProperty(window.navigator, 'getInstalledRelatedApps');
+  });
+
+  it('navigates to the protocol URL only when open-in-app is available', async () => {
+    const assign = vi.fn();
+    const windowStub = {
+      location: { assign },
+    } as unknown as Window;
+
+    expect(pwaInstall.openPwaApp(windowStub)).toBe(false);
+    expect(assign).not.toHaveBeenCalled();
+
+    pwaInstall.initializePwaInstallPromptTracking(window);
+    window.dispatchEvent(new Event('appinstalled'));
+
+    expect(pwaInstall.openPwaApp(windowStub)).toBe(true);
+    expect(assign).toHaveBeenCalledWith('web+bangle://open');
+  });
+});
+
+describe('protocol launch query param cleanup', () => {
+  function makeWindowStub(href: string) {
+    const replaceState = vi.fn();
+    const windowStub = {
+      location: { href },
+      history: { state: null, replaceState },
+    } as unknown as Window;
+
+    return { windowStub, replaceState };
+  }
+
+  it('strips the launch param while preserving the hash route', () => {
+    const { windowStub, replaceState } = makeWindowStub(
+      'https://app.example.com/?launch=web%2Bbangle%3A%2F%2Fopen#route=welcome',
+    );
+
+    pwaInstall.consumePwaProtocolLaunch(windowStub);
+
+    expect(replaceState).toHaveBeenCalledTimes(1);
+    const [, , url] = replaceState.mock.calls[0] ?? [];
+    expect(String(url)).toBe('https://app.example.com/#route=welcome');
+  });
+
+  it('does nothing when no launch param is present', () => {
+    const { windowStub, replaceState } = makeWindowStub(
+      'https://app.example.com/#route=welcome',
+    );
+
+    pwaInstall.consumePwaProtocolLaunch(windowStub);
+
+    expect(replaceState).not.toHaveBeenCalled();
   });
 });
 

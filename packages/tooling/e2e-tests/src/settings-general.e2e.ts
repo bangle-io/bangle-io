@@ -156,7 +156,7 @@ test('general settings can install the PWA when the browser exposes an install p
     ),
   ).toBeVisible();
 
-  await page.getByRole('button', { name: 'Install app' }).click();
+  await page.getByTestId('settings-install-app').click();
 
   await expect
     .poll(() =>

@@ -12,12 +12,14 @@ import { Provider, useAtomValue } from 'jotai/react';
 import React from 'react';
 import { AppErrorHandler } from './app-error-handler';
 import {
+  consumePwaProtocolLaunch,
   initializePwaInstallPromptTracking,
   syncAppDocumentTitle,
   syncWindowControlsOverlayState,
 } from './common/pwa-install';
 import { ErrorBoundary } from './components/feedback/error-boundary';
 import { AppDialogs } from './dialogs/app-dialogs';
+import { PwaOpenInAppPrompt } from './dialogs/pwa-open-in-app-prompt';
 import { AppSidebar } from './layout/app-sidebar';
 import {
   PageAsset,
@@ -47,6 +49,7 @@ export function App({
           <ErrorBoundary>
             <BrowserAppDocumentSetup />
             <AppDialogs />
+            <PwaOpenInAppPrompt />
             <OmniSearch />
             <Toaster position="top-right" />
             <AppErrorHandler rootEmitter={rootEmitter} />
@@ -67,6 +70,7 @@ function BrowserAppDocumentSetup() {
 
     syncAppDocumentTitle(document);
     initializePwaInstallPromptTracking(window);
+    consumePwaProtocolLaunch(window);
     syncWindowControlsOverlayState({
       documentRef: document,
       navigatorRef: navigator,

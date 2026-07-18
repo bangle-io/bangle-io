@@ -4,6 +4,8 @@ export interface PwaInstallSnapshot {
   canInstall: boolean;
   isInstalled: boolean;
   isInstalling: boolean;
+  isStandalone: boolean;
+  canOpenInApp: boolean;
 }
 
 interface BeforeInstallPromptEvent extends Event {
@@ -13,6 +15,16 @@ interface BeforeInstallPromptEvent extends Event {
     platform?: string;
   }>;
 }
+
+interface InstalledRelatedApp {
+  platform: string;
+  url?: string;
+  id?: string;
+}
+
+type NavigatorWithInstalledRelatedApps = Navigator & {
+  getInstalledRelatedApps?: () => Promise<InstalledRelatedApp[]>;
+};
 
 type DocumentWithSubtitle = Document & {
   subtitle?: string;
@@ -39,16 +51,23 @@ const WINDOW_CONTROLS_OVERLAY_ATTRIBUTE = 'data-bangle-window-controls-overlay';
 const WINDOW_CONTROLS_OVERLAY_CONTROLS_ATTRIBUTE =
   'data-bangle-window-controls-overlay-controls';
 const TITLEBAR_EDGE_OCCLUSION_EPSILON = 0.5;
+// Registered in manifest.webmanifest `protocol_handlers`; navigating to this
+// scheme from a browser tab launches the installed PWA.
+const PWA_PROTOCOL_LAUNCH_URL = 'web+bangle://open';
+const PWA_LAUNCH_QUERY_PARAM = 'launch';
 
 let initializedWindow: Window | undefined;
 let trackingAbortController: AbortController | undefined;
 let deferredInstallPrompt: BeforeInstallPromptEvent | undefined;
 let installedByAppEvent = false;
+let installedRelatedAppDetected = false;
 let isInstalling = false;
 let currentSnapshot: PwaInstallSnapshot = {
   canInstall: false,
   isInstalled: false,
   isInstalling: false,
+  isStandalone: false,
+  canOpenInApp: false,
 };
 
 const listeners = new Set<() => void>();
@@ -217,18 +236,44 @@ export function initializePwaInstallPromptTracking(
 
   const standaloneQuery = windowRef.matchMedia?.('(display-mode: standalone)');
   standaloneQuery?.addEventListener?.('change', emitChange, { signal });
+
+  if (!isStandaloneDisplay(windowRef)) {
+    void probeInstalledRelatedApps(windowRef);
+  }
+}
+
+async function probeInstalledRelatedApps(windowRef: Window) {
+  const navigatorRef = windowRef.navigator as NavigatorWithInstalledRelatedApps;
+  if (typeof navigatorRef.getInstalledRelatedApps !== 'function') {
+    return;
+  }
+
+  try {
+    const relatedApps = await navigatorRef.getInstalledRelatedApps();
+    if (relatedApps.length > 0 && !installedRelatedAppDetected) {
+      installedRelatedAppDetected = true;
+      emitChange();
+    }
+  } catch {
+    // Detection is best-effort; failures mean we keep treating the app as
+    // not installed on this device.
+  }
 }
 
 function computePwaInstallSnapshot(): PwaInstallSnapshot {
   const windowRef = initializedWindow ?? getCurrentWindow();
+  const isStandalone = Boolean(windowRef && isStandaloneDisplay(windowRef));
   const isInstalled = Boolean(
-    windowRef && (installedByAppEvent || isStandaloneDisplay(windowRef)),
+    windowRef &&
+      (installedByAppEvent || installedRelatedAppDetected || isStandalone),
   );
 
   return {
     canInstall: Boolean(deferredInstallPrompt && !isInstalled && !isInstalling),
     isInstalled,
     isInstalling,
+    isStandalone,
+    canOpenInApp: isInstalled && !isStandalone,
   };
 }
 
@@ -237,7 +282,9 @@ export function getPwaInstallSnapshot(): PwaInstallSnapshot {
   if (
     currentSnapshot.canInstall === nextSnapshot.canInstall &&
     currentSnapshot.isInstalled === nextSnapshot.isInstalled &&
-    currentSnapshot.isInstalling === nextSnapshot.isInstalling
+    currentSnapshot.isInstalling === nextSnapshot.isInstalling &&
+    currentSnapshot.isStandalone === nextSnapshot.isStandalone &&
+    currentSnapshot.canOpenInApp === nextSnapshot.canOpenInApp
   ) {
     return currentSnapshot;
   }
@@ -278,4 +325,45 @@ export async function promptPwaInstall(): Promise<PwaInstallOutcome> {
     isInstalling = false;
     emitChange();
   }
+}
+
+/**
+ * Launches the installed PWA from a browser tab by navigating to the
+ * `web+bangle` protocol registered in the web app manifest. The current tab
+ * stays on the web app; the browser hands the launch off to the installed
+ * app (after a one-time confirmation). Only meaningful when the snapshot
+ * reports `canOpenInApp`.
+ */
+export function openPwaApp(
+  windowRef: Window | undefined = getCurrentWindow(),
+): boolean {
+  if (!windowRef || !getPwaInstallSnapshot().canOpenInApp) {
+    return false;
+  }
+
+  windowRef.location.assign(PWA_PROTOCOL_LAUNCH_URL);
+
+  return true;
+}
+
+/**
+ * Removes the `?launch=` query param that a `web+bangle` protocol launch
+ * appends to the start URL, so the app's visible URL stays canonical. The
+ * payload is intentionally ignored for now; deep-linking through the
+ * protocol is a follow-up.
+ */
+export function consumePwaProtocolLaunch(
+  windowRef: Window | undefined = getCurrentWindow(),
+) {
+  if (!windowRef) {
+    return;
+  }
+
+  const url = new URL(windowRef.location.href);
+  if (!url.searchParams.has(PWA_LAUNCH_QUERY_PARAM)) {
+    return;
+  }
+
+  url.searchParams.delete(PWA_LAUNCH_QUERY_PARAM);
+  windowRef.history.replaceState(windowRef.history.state, '', url);
 }

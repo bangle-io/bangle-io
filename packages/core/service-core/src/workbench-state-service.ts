@@ -106,6 +106,7 @@ export class WorkbenchStateService extends BaseService {
   private $_sidebarWidth: PrimitiveAtom<number> | undefined;
   private $_linkedMentionsCollapsed: PrimitiveAtom<boolean> | undefined;
   private $_showNoteFilesOnlyInSidebar: PrimitiveAtom<boolean> | undefined;
+  private $_pwaOpenInAppPromptSeen: PrimitiveAtom<boolean> | undefined;
   private $_fileTreeExpandedPathsByWorkspace:
     | PrimitiveAtom<FileTreeExpandedPathsByWorkspace>
     | undefined;
@@ -331,6 +332,20 @@ export class WorkbenchStateService extends BaseService {
       });
     }
     return this.$_showNoteFilesOnlyInSidebar;
+  }
+
+  get $pwaOpenInAppPromptSeen() {
+    if (!this.$_pwaOpenInAppPromptSeen) {
+      this.$_pwaOpenInAppPromptSeen = atomStorage({
+        serviceName: this.name,
+        key: 'pwa-open-in-app-prompt-seen',
+        initValue: false,
+        syncDb: this.dep.syncDatabase,
+        validator: T.Boolean,
+        logger: this.logger,
+      });
+    }
+    return this.$_pwaOpenInAppPromptSeen;
   }
 
   get $fileTreeExpandedPathsByWorkspace() {

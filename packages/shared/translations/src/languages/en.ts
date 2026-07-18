@@ -201,6 +201,9 @@ export const t = {
       footerTitle: 'Bangle.io',
       toggleSidebarSr: 'Toggle Sidebar',
       toggleSidebarRailTitle: 'Resize sidebar. Double-click to reset.',
+      installApp: 'Install app',
+      installingApp: 'Installing...',
+      openInApp: 'Open in app',
     },
     settings: {
       title: 'Settings',
@@ -215,6 +218,10 @@ export const t = {
           'Add Bangle.io to this device and open it in its own app window.',
         installPwaButton: 'Install app',
         installingPwa: 'Installing...',
+        openInAppTitle: 'Open in the app',
+        openInAppDescription:
+          'Bangle.io is installed on this device. Switch from the browser tab to the app window.',
+        openInAppButton: 'Open in app',
         appearanceSection: 'Appearance',
         themeTitle: 'Theme',
         themeDescription: 'Choose how Bangle looks on this device.',
@@ -267,6 +274,13 @@ export const t = {
       audioUnsupported: "Your browser can't play this audio format.",
     },
     dialogs: {
+      pwaOpenInApp: {
+        title: 'Open in the app?',
+        description:
+          'Bangle.io is installed on this device. You can keep using this tab, or switch to the app for a cleaner, focused window.',
+        continueText: 'Open in app',
+        cancelText: 'Keep using this tab',
+      },
       changeTheme: {
         searchPlaceholder: 'Select a theme preference',
         title: 'Change Theme',
