@@ -46,11 +46,8 @@ export function mathDisplayToMarkdown(
 
 export function mathEscapedDollarToMarkdown(
   state: MarkdownSerializerState,
-  _node: PMNode,
-  parent: PMNode,
-  index: number,
 ): void {
-  state.write(lineHasAnotherDollar(parent, index) ? '\\$' : '$');
+  state.write('\\$');
 }
 
 function inlineMathMarkdownSource(
@@ -92,28 +89,6 @@ function hasUnsafeInlineSuffix(node: PMNode | null): boolean {
   if (!node.isText || node.marks.length > 0) return false;
   const first = node.text?.[0];
   return first === '$' || (first !== undefined && isAsciiDigit(first));
-}
-
-function lineHasAnotherDollar(parent: PMNode, index: number): boolean {
-  for (let sibling = index - 1; sibling >= 0; sibling -= 1) {
-    const node = parent.child(sibling);
-    if (node.type.name === 'hard_break') break;
-    if (nodeContainsDollarSource(node)) return true;
-  }
-  for (let sibling = index + 1; sibling < parent.childCount; sibling += 1) {
-    const node = parent.child(sibling);
-    if (node.type.name === 'hard_break') break;
-    if (nodeContainsDollarSource(node)) return true;
-  }
-  return false;
-}
-
-function nodeContainsDollarSource(node: PMNode): boolean {
-  return (
-    node.type.name === MATH_INLINE_NODE_NAME ||
-    node.type.name === MATH_ESCAPED_DOLLAR_NODE_NAME ||
-    (node.isText && node.text?.includes('$') === true)
-  );
 }
 
 function hasDisplayClosingLine(content: string): boolean {

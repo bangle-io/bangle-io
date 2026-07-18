@@ -90,10 +90,13 @@ export function mathTokenizer(md: MarkdownIt): void {
 
   md.inline.ruler.before('escape', 'math_escaped_dollar', (state, silent) => {
     const start = state.pos;
+    // Let Markdown-it canonicalize an isolated `\$` as ordinary text. Keep a
+    // dedicated atom only when removing the escape could pair two dollars.
     if (
       state.src[start] !== '\\' ||
       state.src[start + 1] !== INLINE_DELIMITER ||
-      isEscaped(state.src, start)
+      isEscaped(state.src, start) ||
+      !lineHasAnotherDollar(state.src, start + 1)
     ) {
       return false;
     }
@@ -235,6 +238,24 @@ function isWhitespace(char: string | undefined): boolean {
 
 function isAsciiDigit(char: string): boolean {
   return char >= '0' && char <= '9';
+}
+
+function lineHasAnotherDollar(source: string, position: number): boolean {
+  const lineStart =
+    Math.max(
+      source.lastIndexOf('\n', position - 1),
+      source.lastIndexOf('\r', position - 1),
+    ) + 1;
+  const nextLineFeed = source.indexOf('\n', position + 1);
+  const nextCarriageReturn = source.indexOf('\r', position + 1);
+  const lineEnd = Math.min(
+    nextLineFeed < 0 ? source.length : nextLineFeed,
+    nextCarriageReturn < 0 ? source.length : nextCarriageReturn,
+  );
+  return (
+    source.slice(lineStart, position).includes(INLINE_DELIMITER) ||
+    source.slice(position + 1, lineEnd).includes(INLINE_DELIMITER)
+  );
 }
 
 function analyzeInlineMath(

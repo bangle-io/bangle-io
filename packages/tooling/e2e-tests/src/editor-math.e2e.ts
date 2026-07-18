@@ -220,7 +220,7 @@ $$`;
   );
 });
 
-test('currency text does not suppress later editor input rules', async ({
+test('currency and existing shell variables do not suppress input rules', async ({
   page,
 }) => {
   const workspaceName = 'editor-math-currency-rules';
@@ -234,18 +234,39 @@ test('currency text does not suppress later editor input rules', async ({
     String.raw`Spent $5 on **lunch** [[Home]] and \$1`,
     { delay: 20 },
   );
+  await editor.press('Enter');
+  await editor.pressSequentially('Shell $PATH then ', { delay: 20 });
 
   await expect(editor.locator('strong')).toHaveText('lunch');
   await expect(editor.locator('.wiki-link')).toHaveText('Home');
   await expect(editor).toContainText('Spent $5 on lunch Home and $1');
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(String.raw`Spent $5 on **lunch** [[Home]] and \$1`);
+    .toBe(String.raw`Spent $5 on **lunch** [[Home]] and \$1
+
+Shell $PATH then `);
 
   await page.reload({ waitUntil: 'networkidle' });
   const reloadedEditor = getEditorLocator(page, {});
   await expect(reloadedEditor.locator('strong')).toHaveText('lunch');
   await expect(reloadedEditor.locator('.wiki-link')).toHaveText('Home');
+  await reloadedEditor.click();
+  await waitForEditorFocus(page, {});
+  await reloadedEditor.press('End');
+  // Reload canonicalizes the trailing paragraph space, so reintroduce the
+  // word boundary required by the bold input rule.
+  await reloadedEditor.pressSequentially(' **bold** [[Home]]', { delay: 20 });
+
+  await expect(reloadedEditor.locator('strong')).toHaveText(['lunch', 'bold']);
+  await expect(reloadedEditor.locator('.wiki-link')).toHaveText([
+    'Home',
+    'Home',
+  ]);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(String.raw`Spent $5 on **lunch** [[Home]] and \$1
+
+Shell $PATH then **bold** [[Home]]`);
 });
 
 test('contains long inline math overflow on narrow screens', async ({

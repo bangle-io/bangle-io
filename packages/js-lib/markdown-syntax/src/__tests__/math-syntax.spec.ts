@@ -55,6 +55,21 @@ describe('mathTokenizer inline math', () => {
     expect(token?.markup).toBe(String.raw`\$`);
   });
 
+  it('uses ordinary Markdown escaping when no other dollar can pair with it', () => {
+    expect(
+      collect(parse(String.raw`isolated \$ value`), 'math_escaped_dollar'),
+    ).toEqual([]);
+  });
+
+  it('preserves an escape when a link destination contains another dollar', () => {
+    expect(
+      collect(
+        parse(String.raw`\$foo [bar](https://example.com/a$b)`),
+        'math_escaped_dollar',
+      ),
+    ).toHaveLength(1);
+  });
+
   it('parses adjacent expressions while retaining ambiguous-currency guards', () => {
     expect(
       collect(parse('$x$+$y$ and $a$foo$b$'), 'math_inline').map(

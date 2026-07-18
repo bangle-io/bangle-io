@@ -38,6 +38,7 @@ import {
   Mark,
   NodeSelection,
   Plugin,
+  PluginKey,
   Selection,
   TextSelection,
 } from './pm';
@@ -411,9 +412,26 @@ function mathInputRules() {
 }
 
 function rawInlineMathInput(reservedDollarTriggers: readonly string[]) {
-  return ({ schema }: { schema: Schema }) =>
-    setPluginPriority(
+  return ({ schema }: { schema: Schema }) => {
+    type ActiveTentativeMath = { from: number; to: number };
+    const key = new PluginKey<ActiveTentativeMath | null>(
+      'raw-inline-math-input',
+    );
+
+    return setPluginPriority(
       new Plugin({
+        key,
+        state: {
+          init: (): ActiveTentativeMath | null => null,
+          apply(tr, active) {
+            const next = tr.getMeta(key) as
+              | ActiveTentativeMath
+              | null
+              | undefined;
+            if (next !== undefined) return next;
+            return tr.docChanged || tr.selectionSet ? null : active;
+          },
+        },
         props: {
           handleTextInput(view, from, to, text) {
             const $from = view.state.doc.resolve(from);
@@ -482,6 +500,21 @@ function rawInlineMathInput(reservedDollarTriggers: readonly string[]) {
               return false;
             }
 
+            const active = key.getState(view.state);
+            const pendingStart = pendingBefore
+              ? $from.start() + pendingBefore.start
+              : null;
+            const ownsPending =
+              pendingStart !== null &&
+              active?.from === pendingStart &&
+              active.to === from;
+            if (pendingBefore && !completed && !ownsPending) {
+              // Only the typing session that began the unfinished expression
+              // may suppress other input rules. Clicking after pre-existing
+              // `$word` prose must leave suggestions and formatting active.
+              return false;
+            }
+
             let tr = view.state.tr.insertText(text, from, to);
             if (completed) {
               const node = getNodeType(schema, INLINE_NAME).create(
@@ -494,7 +527,13 @@ function rawInlineMathInput(reservedDollarTriggers: readonly string[]) {
                 node,
               );
             }
-            view.dispatch(tr);
+            const nextActive = pendingAfter
+              ? {
+                  from: $from.start() + pendingAfter.start,
+                  to: from + text.length,
+                }
+              : null;
+            view.dispatch(tr.setMeta(key, nextActive));
             return true;
           },
         },
@@ -502,6 +541,7 @@ function rawInlineMathInput(reservedDollarTriggers: readonly string[]) {
       RAW_MATH_INPUT_PRIORITY,
       'raw-inline-math-input',
     );
+  };
 }
 
 function findTentativeInlineMath(source: string) {

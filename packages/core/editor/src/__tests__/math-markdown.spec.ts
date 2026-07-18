@@ -34,6 +34,21 @@ describe('production math Markdown', () => {
     expect(roundTrip(String.raw`escaped \$x$`)).toBe(String.raw`escaped \$x$`);
   });
 
+  it.each([
+    String.raw`\$foo [bar](https://example.com/a$b)`,
+    String.raw`\$foo ![bar](https://example.com/a$b)`,
+  ])('preserves an escaped dollar before a dollar in an attribute: %s', (source) => {
+    expect(roundTrip(source)).toBe(source);
+    expect(roundTrip(roundTrip(source))).toBe(source);
+  });
+
+  it.each([
+    '[$x$](https://example.com)',
+    '[before $x$ after](https://example.com)',
+  ])('preserves inline math nested inside a link: %s', (source) => {
+    expect(roundTrip(source)).toBe(source);
+  });
+
   it('normalizes a complete single-line display block to canonical fences', () => {
     expect(roundTrip('$$x^2 + y^2$$')).toBe('$$\nx^2 + y^2\n$$');
   });

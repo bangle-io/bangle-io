@@ -158,6 +158,15 @@ describe('math commands and input rules', () => {
     );
   });
 
+  it('does not suppress later input rules after a pre-existing shell variable', () => {
+    const editor = editorTest.createEditor(doc(p('Shell $PATH then <cursor>')));
+    typeText(editor.view, '**bold** [[Home]]');
+
+    editor.expectDoc(
+      doc(p('Shell $PATH then ', strong('bold'), ' ', wikiLink())),
+    );
+  });
+
   it('hands a reserved dollar trigger to the owning editor extension', () => {
     const editor = editorTest.createEditor(doc(p('<cursor>')));
     typeText(editor.view, '$date');
