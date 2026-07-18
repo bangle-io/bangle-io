@@ -75,15 +75,32 @@ Three user-visible surfaces, all driven by one install-state snapshot:
   variants, and the one-time dialog (installed state simulated by stubbing
   `navigator.getInstalledRelatedApps`).
 
+## Scope (phase 2 — same branch)
+
+- Protocol deep-linking: `openPwaApp` carries the tab's current hash route in
+  the `web+bangle://open?hash=...` payload; both the boot path and the
+  `focus-existing` launch-queue path apply it, so "Open in app" lands on the
+  same note.
+- Manifest `shortcuts`: "New note" (`/?shortcut=new-note` — lands in the most
+  recently used workspace and opens the create-note dialog; falls back to the
+  welcome page with zero workspaces) and "Search notes" (`/?shortcut=search`
+  — opens omni-search). Unknown shortcut values are stripped and ignored.
+- Manifest `file_handlers` for `.md`/`.markdown`: OS file-open launches are
+  delivered through the launch queue; the app asks which workspace to import
+  into and copies each file in as a note (`command::ws:create-note` gained an
+  optional `content` arg). Source files are never modified; a read failure or
+  name collision only skips that file with a toast.
+- `PwaLaunchActions` (core/app) owns shortcut/file intents; the pwa-install
+  module parses launches and applies deep-link hashes itself.
+
 ## Out of scope (follow-ups)
 
 - Service worker / offline support (largest remaining PWA gap; separate
-  initiative).
-- Manifest `shortcuts`, `file_handlers`, `share_target`, richer install UI
-  screenshots.
-- Deep-linking a specific note through the `web+bangle` protocol payload
-  (current launch lands on the app's default route).
+  initiative; deliberately deferred).
+- Manifest `share_target`, richer install UI screenshots.
 - Safari/iOS manual "Add to Dock / Home Screen" instructions in settings.
+- Opening `.md` files in place (write-back to the source file via the launch
+  queue handle) rather than import-by-copy.
 
 ## Behavior notes and edge cases
 

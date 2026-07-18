@@ -12,6 +12,8 @@ export const wsCommands = narrow([
       wsPath: T.String,
       // whether to navigate to the newly created note
       navigate: T.Optional(T.Boolean),
+      // initial Markdown content; defaults to an empty note
+      content: T.Optional(T.String),
     },
   },
   {

@@ -33,6 +33,7 @@ describe('WS command handlers', () => {
       dispatch('command::ws:create-note', {
         navigate: true,
         wsPath: NOTE_WS_PATH,
+        content: undefined,
       });
 
       await vi.waitFor(() => {

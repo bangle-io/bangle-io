@@ -223,7 +223,7 @@ describe('launch target handling in an open app window', () => {
     return { windowStub: { location } as unknown as Window, location };
   }
 
-  it('ignores a protocol open-in-app launch so the current route stays put', () => {
+  it('ignores a payload-less protocol launch so the current route stays put', () => {
     const { windowStub, location } = makeWindowStub('#route=editor');
 
     pwaInstall.handlePwaLaunchTarget(
@@ -232,6 +232,39 @@ describe('launch target handling in an open app window', () => {
     );
 
     expect(location.hash).toBe('#route=editor');
+  });
+
+  it('navigates to the hash route carried in a protocol launch payload', () => {
+    const { windowStub, location } = makeWindowStub('#route=welcome');
+    const launchValue = encodeURIComponent(
+      `web+bangle://open?hash=${encodeURIComponent(
+        'route=editor&wsPath=my-ws:note.md',
+      )}`,
+    );
+
+    pwaInstall.handlePwaLaunchTarget(
+      windowStub,
+      `https://app.example.com/?launch=${launchValue}`,
+    );
+
+    expect(location.hash).toBe('#route=editor&wsPath=my-ws:note.md');
+  });
+
+  it('queues a shortcut intent from a shortcut launch URL', () => {
+    const { windowStub, location } = makeWindowStub('#route=editor');
+
+    pwaInstall.handlePwaLaunchTarget(
+      windowStub,
+      'https://app.example.com/?shortcut=new-note',
+    );
+
+    expect(location.hash).toBe('#route=editor');
+    const received: unknown[] = [];
+    const unsubscribe = pwaInstall.subscribePwaLaunchIntents((intent) => {
+      received.push(intent);
+    });
+    expect(received).toEqual([{ shortcut: 'new-note' }]);
+    unsubscribe();
   });
 
   it('applies the hash route from a captured in-scope link', () => {
@@ -262,7 +295,7 @@ describe('opening the installed app', () => {
   it('navigates to the protocol URL only when open-in-app is available', async () => {
     const assign = vi.fn();
     const windowStub = {
-      location: { assign },
+      location: { assign, hash: '' },
     } as unknown as Window;
 
     expect(pwaInstall.openPwaApp(windowStub)).toBe(false);
@@ -274,17 +307,35 @@ describe('opening the installed app', () => {
     expect(pwaInstall.openPwaApp(windowStub)).toBe(true);
     expect(assign).toHaveBeenCalledWith('web+bangle://open');
   });
+
+  it('carries the current hash route in the protocol payload', () => {
+    pwaInstall.initializePwaInstallPromptTracking(window);
+    window.dispatchEvent(new Event('appinstalled'));
+
+    const assign = vi.fn();
+    const windowStub = {
+      location: { assign, hash: '#route=editor&wsPath=my-ws:note.md' },
+    } as unknown as Window;
+
+    expect(pwaInstall.openPwaApp(windowStub)).toBe(true);
+    expect(assign).toHaveBeenCalledWith(
+      `web+bangle://open?hash=${encodeURIComponent(
+        'route=editor&wsPath=my-ws:note.md',
+      )}`,
+    );
+  });
 });
 
-describe('protocol launch query param cleanup', () => {
+describe('boot launch param consumption', () => {
   function makeWindowStub(href: string) {
     const replaceState = vi.fn();
+    const location = { href, hash: new URL(href).hash };
     const windowStub = {
-      location: { href },
+      location,
       history: { state: null, replaceState },
     } as unknown as Window;
 
-    return { windowStub, replaceState };
+    return { windowStub, replaceState, location };
   }
 
   it('strips the launch param while preserving the hash route', () => {
@@ -292,21 +343,118 @@ describe('protocol launch query param cleanup', () => {
       'https://app.example.com/?launch=web%2Bbangle%3A%2F%2Fopen#route=welcome',
     );
 
-    pwaInstall.consumePwaProtocolLaunch(windowStub);
+    pwaInstall.consumePwaLaunchParams(windowStub);
 
     expect(replaceState).toHaveBeenCalledTimes(1);
     const [, , url] = replaceState.mock.calls[0] ?? [];
     expect(String(url)).toBe('https://app.example.com/#route=welcome');
   });
 
-  it('does nothing when no launch param is present', () => {
+  it('applies the deep-link hash carried in the protocol payload', () => {
+    const launchValue = encodeURIComponent(
+      `web+bangle://open?hash=${encodeURIComponent(
+        'route=editor&wsPath=my-ws:note.md',
+      )}`,
+    );
+    const { windowStub, replaceState, location } = makeWindowStub(
+      `https://app.example.com/?launch=${launchValue}`,
+    );
+
+    pwaInstall.consumePwaLaunchParams(windowStub);
+
+    expect(replaceState).toHaveBeenCalledTimes(1);
+    expect(location.hash).toBe('#route=editor&wsPath=my-ws:note.md');
+  });
+
+  it('queues a shortcut intent and strips the shortcut param', () => {
+    const { windowStub, replaceState } = makeWindowStub(
+      'https://app.example.com/?shortcut=search',
+    );
+
+    pwaInstall.consumePwaLaunchParams(windowStub);
+
+    expect(replaceState).toHaveBeenCalledTimes(1);
+    const [, , url] = replaceState.mock.calls[0] ?? [];
+    expect(String(url)).toBe('https://app.example.com/');
+
+    const received: unknown[] = [];
+    const unsubscribe = pwaInstall.subscribePwaLaunchIntents((intent) => {
+      received.push(intent);
+    });
+    expect(received).toEqual([{ shortcut: 'search' }]);
+    unsubscribe();
+  });
+
+  it('ignores an unknown shortcut value but still strips it', () => {
+    const { windowStub, replaceState } = makeWindowStub(
+      'https://app.example.com/?shortcut=self-destruct',
+    );
+
+    pwaInstall.consumePwaLaunchParams(windowStub);
+
+    expect(replaceState).toHaveBeenCalledTimes(1);
+    const received: unknown[] = [];
+    const unsubscribe = pwaInstall.subscribePwaLaunchIntents((intent) => {
+      received.push(intent);
+    });
+    expect(received).toEqual([]);
+    unsubscribe();
+  });
+
+  it('does nothing when no launch-related params are present', () => {
     const { windowStub, replaceState } = makeWindowStub(
       'https://app.example.com/#route=welcome',
     );
 
-    pwaInstall.consumePwaProtocolLaunch(windowStub);
+    pwaInstall.consumePwaLaunchParams(windowStub);
 
     expect(replaceState).not.toHaveBeenCalled();
+  });
+});
+
+describe('launch queue file handling', () => {
+  it('delivers markdown file handles as launch intents', async () => {
+    let consumer:
+      | ((params: {
+          targetURL?: string;
+          files?: Array<{ name: string; getFile: () => Promise<File> }>;
+        }) => void)
+      | undefined;
+    const windowStub = {
+      addEventListener: vi.fn(),
+      navigator: {},
+      launchQueue: {
+        setConsumer: (cb: typeof consumer) => {
+          consumer = cb;
+        },
+      },
+    } as unknown as Window;
+
+    pwaInstall.initializePwaInstallPromptTracking(windowStub);
+    expect(consumer).toBeDefined();
+
+    const markdownHandle = {
+      name: 'ideas.md',
+      getFile: () => Promise.resolve(new File(['# hi'], 'ideas.md')),
+    };
+    consumer?.({
+      files: [
+        markdownHandle,
+        {
+          name: 'photo.png',
+          getFile: () => Promise.resolve(new File([], 'photo.png')),
+        },
+      ],
+    });
+
+    const received: Array<{ files?: Array<{ name: string }> }> = [];
+    const unsubscribe = pwaInstall.subscribePwaLaunchIntents((intent) => {
+      received.push(intent);
+    });
+
+    expect(received).toHaveLength(1);
+    expect(received[0]?.files?.map((file) => file.name)).toEqual(['ideas.md']);
+    unsubscribe();
   });
 });
 

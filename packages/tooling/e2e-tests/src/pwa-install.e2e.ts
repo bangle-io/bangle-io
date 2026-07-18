@@ -1,4 +1,5 @@
 import { expect, type Page, test } from '@playwright/test';
+import { createBrowserWorkspaceAndNote, getEditorLocator } from './common';
 
 function dispatchInstallPromptEvent(page: Page) {
   return page.evaluate(() => {
@@ -108,6 +109,120 @@ test('installed app detected from a browser tab shows a one-time open-in-app dia
   await expect(page.getByRole('heading', { name: 'General' })).toBeVisible();
   await expect(page.getByTestId('sidebar-pwa-action')).toBeVisible();
   await expect(page.getByRole('alertdialog')).toHaveCount(0);
+});
+
+test('a protocol launch payload deep-links into the carried note route', async ({
+  page,
+}) => {
+  const workspaceName = 'pwa-deep-link-ws';
+  const noteName = 'deep-link-note';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  const hashRoute = `route=editor&wsPath=${workspaceName}:${noteName}.md`;
+  const launchValue = encodeURIComponent(
+    `web+bangle://open?hash=${encodeURIComponent(hashRoute)}`,
+  );
+
+  await page.goto(`/?launch=${launchValue}`);
+
+  const editor = getEditorLocator(page, {});
+  await expect(editor).toBeVisible();
+  await expect
+    .poll(() => editor.getAttribute('data-editor-name'))
+    .toContain(`${workspaceName}:${noteName}.md`);
+  // The launch param is consumed; the visible URL is the canonical route.
+  await expect.poll(() => page.evaluate(() => window.location.search)).toBe('');
+});
+
+test('the search manifest shortcut opens omni-search on launch', async ({
+  page,
+}) => {
+  await page.goto('/?shortcut=search');
+
+  await expect(
+    page.getByPlaceholder('Type a command or search...'),
+  ).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.location.search)).toBe('');
+});
+
+test('the new-note manifest shortcut lands in the recent workspace and opens the create dialog', async ({
+  page,
+}) => {
+  const workspaceName = 'pwa-shortcut-ws';
+  const noteName = 'shortcut-existing-note';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  await page.goto('/?shortcut=new-note');
+
+  await expect(page.getByLabel('Note name')).toBeVisible();
+  await page.getByLabel('Note name').fill('shortcut-created-note');
+  await page.getByRole('button', { name: 'Create' }).click();
+
+  const editor = getEditorLocator(page, {});
+  await expect(editor).toBeVisible();
+  await expect
+    .poll(() => editor.getAttribute('data-editor-name'))
+    .toContain(`${workspaceName}:shortcut-created-note.md`);
+});
+
+test('opening a Markdown file through the OS imports it into a chosen workspace', async ({
+  page,
+}) => {
+  const workspaceName = 'pwa-file-open-ws';
+  const noteName = 'file-open-existing-note';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  // Simulate Chromium's launch queue delivering an OS file-open launch. The
+  // fake handle only needs the subset of FileSystemFileHandle the app uses.
+  await page.addInitScript(() => {
+    // Chromium exposes a native getter-only window.launchQueue in plain
+    // tabs, so the stub must be installed via defineProperty.
+    Object.defineProperty(window, 'launchQueue', {
+      configurable: true,
+      value: {
+        setConsumer: (
+          consumer: (params: {
+            files: Array<{ name: string; getFile: () => Promise<File> }>;
+          }) => void,
+        ) => {
+          setTimeout(() => {
+            consumer({
+              files: [
+                {
+                  name: 'imported-ideas.md',
+                  getFile: () =>
+                    Promise.resolve(
+                      new File(
+                        ['# Imported ideas\n\nBrought in from disk.'],
+                        'imported-ideas.md',
+                        { type: 'text/markdown' },
+                      ),
+                    ),
+                },
+              ],
+            });
+          }, 0);
+        },
+      },
+    });
+  });
+
+  await page.goto('/');
+
+  await expect(
+    page.getByRole('heading', { name: 'Import into workspace' }),
+  ).toBeVisible();
+  await page.getByRole('option', { name: workspaceName }).click();
+
+  const editor = getEditorLocator(page, {});
+  await expect(editor).toBeVisible();
+  await expect
+    .poll(() => editor.getAttribute('data-editor-name'))
+    .toContain(`${workspaceName}:imported-ideas.md`);
+  await expect(
+    editor.getByRole('heading', { name: 'Imported ideas' }),
+  ).toBeVisible();
+  await expect(editor).toContainText('Brought in from disk.');
 });
 
 test('accepting the open-in-app dialog closes it and keeps the tab usable', async ({

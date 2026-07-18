@@ -30,6 +30,38 @@
       "url": "/?launch=%s"
     }
   ],
+  "shortcuts": [
+    {
+      "name": "New note",
+      "url": "/?shortcut=new-note",
+      "icons": [
+        {
+          "src": "/icons/app-icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Search notes",
+      "url": "/?shortcut=search",
+      "icons": [
+        {
+          "src": "/icons/app-icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/",
+      "accept": {
+        "text/markdown": [".md", ".markdown"]
+      }
+    }
+  ],
   "icons": [
     {
       "src": "/icons/app-icon-192.png",

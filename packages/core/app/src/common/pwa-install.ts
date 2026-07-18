@@ -33,8 +33,30 @@ type WindowWithDesktopBridge = Window & {
   bangleDesktop?: unknown;
 };
 
+/**
+ * Minimal shape of a FileSystemFileHandle delivered through the launch
+ * queue when the installed PWA is registered as an OS file handler.
+ */
+export interface PwaFileHandleLike {
+  name: string;
+  getFile: () => Promise<File>;
+}
+
+export type PwaShortcutAction = 'new-note' | 'search';
+
+/**
+ * A launch that needs application services to act on (manifest shortcut or
+ * OS file-open). Deep-link hashes are applied directly to the URL by this
+ * module and never appear here.
+ */
+export interface PwaLaunchIntent {
+  shortcut?: PwaShortcutAction;
+  files?: PwaFileHandleLike[];
+}
+
 interface PwaLaunchParams {
   targetURL?: string;
+  files?: readonly PwaFileHandleLike[];
 }
 
 type WindowWithLaunchQueue = Window & {
@@ -72,6 +94,8 @@ const TITLEBAR_EDGE_OCCLUSION_EPSILON = 0.5;
 // scheme from a browser tab launches the installed PWA.
 const PWA_PROTOCOL_LAUNCH_URL = 'web+bangle://open';
 const PWA_LAUNCH_QUERY_PARAM = 'launch';
+const PWA_SHORTCUT_QUERY_PARAM = 'shortcut';
+const MARKDOWN_FILE_NAME_PATTERN = /\.(md|markdown)$/i;
 
 let initializedWindow: Window | undefined;
 let trackingAbortController: AbortController | undefined;
@@ -93,6 +117,45 @@ function emitChange() {
   for (const listener of listeners) {
     listener();
   }
+}
+
+let pendingLaunchIntents: PwaLaunchIntent[] = [];
+const launchIntentListeners = new Set<(intent: PwaLaunchIntent) => void>();
+
+function enqueuePwaLaunchIntent(intent: PwaLaunchIntent) {
+  if (!intent.shortcut && !intent.files?.length) {
+    return;
+  }
+
+  if (launchIntentListeners.size === 0) {
+    pendingLaunchIntents.push(intent);
+    return;
+  }
+
+  for (const listener of launchIntentListeners) {
+    listener(intent);
+  }
+}
+
+/**
+ * Delivers manifest-shortcut and OS file-open launches to the app layer.
+ * Intents that arrive before any subscriber (e.g. parsed from the boot URL)
+ * are buffered and flushed to the first subscriber.
+ */
+export function subscribePwaLaunchIntents(
+  listener: (intent: PwaLaunchIntent) => void,
+) {
+  launchIntentListeners.add(listener);
+
+  const buffered = pendingLaunchIntents;
+  pendingLaunchIntents = [];
+  for (const intent of buffered) {
+    listener(intent);
+  }
+
+  return () => {
+    launchIntentListeners.delete(listener);
+  };
 }
 
 function getCurrentWindow() {
@@ -220,7 +283,7 @@ function isDesktopShell(windowRef: Window) {
 }
 
 export function initializePwaInstallPromptTracking(
-  windowRef = getCurrentWindow(),
+  windowRef: Window | undefined = getCurrentWindow(),
 ) {
   if (!windowRef || initializedWindow === windowRef) {
     return;
@@ -271,15 +334,51 @@ export function initializePwaInstallPromptTracking(
     if (params.targetURL) {
       handlePwaLaunchTarget(windowRef, params.targetURL);
     }
+
+    const markdownFiles = (params.files ?? []).filter(
+      (file) =>
+        typeof file.getFile === 'function' &&
+        MARKDOWN_FILE_NAME_PATTERN.test(file.name),
+    );
+    if (markdownFiles.length > 0) {
+      enqueuePwaLaunchIntent({ files: markdownFiles });
+    }
   });
+}
+
+function parseShortcutAction(
+  value: string | null,
+): PwaShortcutAction | undefined {
+  return value === 'new-note' || value === 'search' ? value : undefined;
+}
+
+/**
+ * Extracts the app hash route carried by a `web+bangle://open?hash=...`
+ * protocol payload, e.g. produced by {@link openPwaApp} in a browser tab.
+ */
+function parseProtocolDeepLinkHash(launchValue: string): string | undefined {
+  let url: URL;
+  try {
+    url = new URL(launchValue);
+  } catch {
+    return undefined;
+  }
+
+  if (url.protocol !== 'web+bangle:') {
+    return undefined;
+  }
+
+  const hash = url.searchParams.get('hash');
+  return hash ? `#${hash}` : undefined;
 }
 
 /**
  * Applies a launch forwarded into an already-open app window by the
- * `focus-existing` launch handler. A `web+bangle` protocol launch only needs
- * the window focused (the browser has done that already), so it must not
- * disturb the current route; a captured in-scope link carries its route in
- * the hash, which the hash router picks up without a reload.
+ * `focus-existing` launch handler. A `web+bangle` protocol launch focuses
+ * the window (the browser has done that already) and applies the hash route
+ * carried in its payload, if any; a manifest shortcut URL is queued as a
+ * launch intent; a captured in-scope link carries its route in the hash,
+ * which the hash router picks up without a reload.
  */
 export function handlePwaLaunchTarget(windowRef: Window, targetUrl: string) {
   let url: URL;
@@ -289,7 +388,20 @@ export function handlePwaLaunchTarget(windowRef: Window, targetUrl: string) {
     return;
   }
 
-  if (url.searchParams.has(PWA_LAUNCH_QUERY_PARAM)) {
+  const launchValue = url.searchParams.get(PWA_LAUNCH_QUERY_PARAM);
+  if (launchValue !== null) {
+    const deepLinkHash = parseProtocolDeepLinkHash(launchValue);
+    if (deepLinkHash && deepLinkHash !== windowRef.location.hash) {
+      windowRef.location.hash = deepLinkHash;
+    }
+    return;
+  }
+
+  const shortcut = parseShortcutAction(
+    url.searchParams.get(PWA_SHORTCUT_QUERY_PARAM),
+  );
+  if (shortcut) {
+    enqueuePwaLaunchIntent({ shortcut });
     return;
   }
 
@@ -388,10 +500,11 @@ export async function promptPwaInstall(): Promise<PwaInstallOutcome> {
 
 /**
  * Launches the installed PWA from a browser tab by navigating to the
- * `web+bangle` protocol registered in the web app manifest. The current tab
- * stays on the web app; the browser hands the launch off to the installed
- * app (after a one-time confirmation). Only meaningful when the snapshot
- * reports `canOpenInApp`.
+ * `web+bangle` protocol registered in the web app manifest. The tab's
+ * current hash route travels in the payload so the app can land on the same
+ * note. The current tab stays on the web app; the browser hands the launch
+ * off to the installed app (after a one-time confirmation). Only meaningful
+ * when the snapshot reports `canOpenInApp`.
  */
 export function openPwaApp(
   windowRef: Window | undefined = getCurrentWindow(),
@@ -400,18 +513,25 @@ export function openPwaApp(
     return false;
   }
 
-  windowRef.location.assign(PWA_PROTOCOL_LAUNCH_URL);
+  const currentHash = windowRef.location.hash.replace(/^#/, '');
+  const launchUrl = currentHash
+    ? `${PWA_PROTOCOL_LAUNCH_URL}?hash=${encodeURIComponent(currentHash)}`
+    : PWA_PROTOCOL_LAUNCH_URL;
+
+  windowRef.location.assign(launchUrl);
 
   return true;
 }
 
 /**
- * Removes the `?launch=` query param that a `web+bangle` protocol launch
- * appends to the start URL, so the app's visible URL stays canonical. The
- * payload is intentionally ignored for now; deep-linking through the
- * protocol is a follow-up.
+ * Consumes the launch-related query params a PWA launch appends to the
+ * start URL: `?launch=` (protocol launches, whose payload may carry a hash
+ * route to deep-link into) and `?shortcut=` (manifest shortcuts, queued as
+ * launch intents). Both params are stripped so the visible URL stays
+ * canonical; a deep-link hash is applied via `location.hash` so the running
+ * hash router observes the change.
  */
-export function consumePwaProtocolLaunch(
+export function consumePwaLaunchParams(
   windowRef: Window | undefined = getCurrentWindow(),
 ) {
   if (!windowRef) {
@@ -419,10 +539,27 @@ export function consumePwaProtocolLaunch(
   }
 
   const url = new URL(windowRef.location.href);
-  if (!url.searchParams.has(PWA_LAUNCH_QUERY_PARAM)) {
+  const launchValue = url.searchParams.get(PWA_LAUNCH_QUERY_PARAM);
+  const shortcut = parseShortcutAction(
+    url.searchParams.get(PWA_SHORTCUT_QUERY_PARAM),
+  );
+
+  if (launchValue === null && !url.searchParams.has(PWA_SHORTCUT_QUERY_PARAM)) {
     return;
   }
 
   url.searchParams.delete(PWA_LAUNCH_QUERY_PARAM);
+  url.searchParams.delete(PWA_SHORTCUT_QUERY_PARAM);
   windowRef.history.replaceState(windowRef.history.state, '', url);
+
+  const deepLinkHash = launchValue
+    ? parseProtocolDeepLinkHash(launchValue)
+    : undefined;
+  if (deepLinkHash && deepLinkHash !== windowRef.location.hash) {
+    windowRef.location.hash = deepLinkHash;
+  }
+
+  if (shortcut) {
+    enqueuePwaLaunchIntent({ shortcut });
+  }
 }
