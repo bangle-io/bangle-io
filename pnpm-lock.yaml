@@ -1075,6 +1075,9 @@ importers:
       '@bangle.io/poor-mans-di':
         specifier: workspace:*
         version: link:../../js-lib/poor-mans-di
+      '@bangle.io/prosemirror-plugins':
+        specifier: workspace:*
+        version: link:../../js-lib/prosemirror-plugins
       '@bangle.io/root-emitter':
         specifier: workspace:*
         version: link:../../shared/root-emitter
@@ -1090,6 +1093,9 @@ importers:
       '@bangle.io/ui-components':
         specifier: workspace:*
         version: link:../../ui/ui-components
+      '@bangle.io/wordgard-markdown':
+        specifier: workspace:*
+        version: link:../../js-lib/wordgard-markdown
       '@testing-library/react':
         specifier: ^16.3.2
         version: 16.3.2(@testing-library/dom@10.4.0)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
