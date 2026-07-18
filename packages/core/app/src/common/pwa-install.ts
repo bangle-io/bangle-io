@@ -6,6 +6,13 @@ export interface PwaInstallSnapshot {
   isInstalling: boolean;
   isStandalone: boolean;
   canOpenInApp: boolean;
+  /**
+   * True when the install happened during this page's lifetime (the
+   * `appinstalled` event) rather than being detected from a previous
+   * session. Chrome auto-opens the app window right after installing, so
+   * same-session installs must not additionally prompt "Open in the app?".
+   */
+  installedThisSession: boolean;
 }
 
 interface BeforeInstallPromptEvent extends Event {
@@ -109,6 +116,7 @@ let currentSnapshot: PwaInstallSnapshot = {
   isInstalling: false,
   isStandalone: false,
   canOpenInApp: false,
+  installedThisSession: false,
 };
 
 const listeners = new Set<() => void>();
@@ -445,6 +453,7 @@ function computePwaInstallSnapshot(): PwaInstallSnapshot {
     isInstalling,
     isStandalone,
     canOpenInApp: isInstalled && !isStandalone,
+    installedThisSession: installedByAppEvent,
   };
 }
 
@@ -455,7 +464,8 @@ export function getPwaInstallSnapshot(): PwaInstallSnapshot {
     currentSnapshot.isInstalled === nextSnapshot.isInstalled &&
     currentSnapshot.isInstalling === nextSnapshot.isInstalling &&
     currentSnapshot.isStandalone === nextSnapshot.isStandalone &&
-    currentSnapshot.canOpenInApp === nextSnapshot.canOpenInApp
+    currentSnapshot.canOpenInApp === nextSnapshot.canOpenInApp &&
+    currentSnapshot.installedThisSession === nextSnapshot.installedThisSession
   ) {
     return currentSnapshot;
   }

@@ -81,6 +81,9 @@ describe('PWA install prompt tracking', () => {
       canInstall: false,
       isInstalled: true,
       canOpenInApp: true,
+      // Same-session installs are flagged so the open-in-app prompt stays
+      // quiet while Chrome auto-opens the freshly installed app.
+      installedThisSession: true,
     });
   });
 });
@@ -107,6 +110,7 @@ describe('installed related apps detection', () => {
         isInstalled: true,
         canOpenInApp: true,
         isStandalone: false,
+        installedThisSession: false,
       });
     });
 

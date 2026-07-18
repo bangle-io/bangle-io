@@ -74,6 +74,11 @@ test('sidebar shows a one-click install pill while the browser offers a PWA inst
 
   await expect(pill).toBeVisible();
   await expect(pill).toHaveText(/Open in app/);
+
+  // Installing from this tab must NOT pop the "Open in the app?" dialog:
+  // Chrome auto-opens the freshly installed app window, so prompting here
+  // would be redundant (regression check for the install→prompt race).
+  await expect(page.getByRole('alertdialog')).toHaveCount(0);
 });
 
 test('installed app detected from a browser tab shows a one-time open-in-app dialog', async ({

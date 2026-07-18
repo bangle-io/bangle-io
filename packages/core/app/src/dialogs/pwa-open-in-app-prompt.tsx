@@ -19,15 +19,19 @@ export function PwaOpenInAppPrompt() {
   const [alertDialog, setAlertDialog] = useAtom(workbenchState.$alertDialog);
   const hasShownRef = React.useRef(false);
 
-  const { canOpenInApp, openInApp } = pwaInstall;
+  const { canOpenInApp, installedThisSession, openInApp } = pwaInstall;
 
   React.useEffect(() => {
     // Never displace a dialog that is already open (e.g. a destructive
-    // confirmation); retry when the shared alert slot frees up.
+    // confirmation); retry when the shared alert slot frees up. Skip
+    // entirely when the install just happened in this session — Chrome
+    // auto-opens the app window right after installing, so prompting the
+    // old tab to "open in the app" would be redundant noise.
     if (
       hasShownRef.current ||
       promptSeen ||
       !canOpenInApp ||
+      installedThisSession ||
       alertDialog !== undefined
     ) {
       return;
@@ -49,6 +53,7 @@ export function PwaOpenInAppPrompt() {
   }, [
     promptSeen,
     canOpenInApp,
+    installedThisSession,
     alertDialog,
     openInApp,
     setPromptSeen,
