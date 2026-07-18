@@ -710,10 +710,10 @@ export const t = {
         locationColumn: 'Location',
         modifiedColumn: 'Modified',
         lastOpenedColumn: 'Last opened',
-        createdColumn: 'Created',
         noteCount: ({ count }: { count: number }) =>
           count === 1 ? '1 note' : `${count} notes`,
         noResultsMessage: 'No notes match your filter.',
+        showMoreButton: ({ count }: { count: number }) => `Show ${count} more`,
         starredIndicatorSr: 'Starred',
         sortSr: ({ column }: { column: string }) => `Sort by ${column}`,
         rowActionsSr: ({ fileName }: { fileName: string }) =>

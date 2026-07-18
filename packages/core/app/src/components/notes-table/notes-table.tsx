@@ -49,7 +49,6 @@ export interface NotesTableNote {
   href: string;
   isStarred: boolean;
   lastOpenedAt: number | undefined;
-  createdAt: number | undefined;
   modifiedAt: number | undefined;
 }
 
@@ -63,10 +62,16 @@ export interface NotesTableProps {
  */
 const DEFAULT_COLUMN_VISIBILITY: VisibilityState = {
   lastOpenedAt: false,
-  createdAt: false,
 };
 
 const DEFAULT_SORTING: SortingState = [{ id: 'modifiedAt', desc: true }];
+
+/**
+ * Rows are added to the DOM in chunks so a workspace with thousands of notes
+ * never mounts them all at once. Scrolling to the end of a chunk (or pressing
+ * the show-more button) reveals the next one.
+ */
+const ROW_RENDER_CHUNK = 150;
 
 function getColumnLabel(columnId: string): string {
   switch (columnId) {
@@ -78,8 +83,6 @@ function getColumnLabel(columnId: string): string {
       return t.app.components.notesTable.modifiedColumn;
     case 'lastOpenedAt':
       return t.app.components.notesTable.lastOpenedColumn;
-    case 'createdAt':
-      return t.app.components.notesTable.createdColumn;
     default:
       return columnId;
   }
@@ -313,21 +316,6 @@ function buildColumns(): ColumnDef<NotesTableNote>[] {
       ),
     },
     {
-      id: 'createdAt',
-      accessorFn: (note) => note.createdAt,
-      sortingFn: 'basic',
-      sortUndefined: 'last',
-      sortDescFirst: true,
-      header: ({ column }) => (
-        <SortableHeaderButton
-          columnId="createdAt"
-          sortDirection={column.getIsSorted()}
-          onToggle={() => column.toggleSorting()}
-        />
-      ),
-      cell: ({ row }) => <TimestampCell timestamp={row.original.createdAt} />,
-    },
-    {
       id: 'actions',
       enableHiding: false,
       enableSorting: false,
@@ -339,6 +327,49 @@ function buildColumns(): ColumnDef<NotesTableNote>[] {
       ),
     },
   ];
+}
+
+/**
+ * Sentinel row that reveals the next render chunk. Scrolling it into view
+ * auto-expands; the button covers keyboard use and environments without
+ * IntersectionObserver.
+ */
+function ShowMoreRow({
+  colSpan,
+  remaining,
+  onShowMore,
+}: {
+  colSpan: number;
+  remaining: number;
+  onShowMore: () => void;
+}) {
+  const rowRef = React.useRef<HTMLTableRowElement>(null);
+
+  React.useEffect(() => {
+    const element = rowRef.current;
+    if (!element || typeof IntersectionObserver === 'undefined') {
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        onShowMore();
+      }
+    });
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+    };
+  }, [onShowMore]);
+
+  return (
+    <TableRow ref={rowRef} className="hover:bg-transparent">
+      <TableCell colSpan={colSpan} className="text-center">
+        <Button variant="ghost" size="sm" onClick={onShowMore}>
+          {t.app.components.notesTable.showMoreButton({ count: remaining })}
+        </Button>
+      </TableCell>
+    </TableRow>
+  );
 }
 
 function matchesNote(row: Row<NotesTableNote>, filterValue: string): boolean {
@@ -393,6 +424,12 @@ export function NotesTable({ notes }: NotesTableProps) {
 
   const visibleColumnCount = table.getVisibleLeafColumns().length;
   const rows = table.getRowModel().rows;
+  const [renderLimit, setRenderLimit] = React.useState(ROW_RENDER_CHUNK);
+  const renderedRows = rows.slice(0, renderLimit);
+  const hiddenRowCount = rows.length - renderedRows.length;
+  const showNextChunk = React.useCallback(() => {
+    setRenderLimit((limit) => limit + ROW_RENDER_CHUNK);
+  }, []);
 
   const openNote = (wsPath: string) => {
     coreServices.navigation.goWsPath(wsPath);
@@ -477,7 +514,7 @@ export function NotesTable({ notes }: NotesTableProps) {
           </TableHeader>
           <TableBody>
             {rows.length > 0 ? (
-              rows.map((row) => (
+              renderedRows.map((row) => (
                 <TableRow
                   key={row.original.wsPath}
                   data-wspath={row.original.wsPath}
@@ -513,6 +550,13 @@ export function NotesTable({ notes }: NotesTableProps) {
                   {strings.noResultsMessage}
                 </TableCell>
               </TableRow>
+            )}
+            {hiddenRowCount > 0 && (
+              <ShowMoreRow
+                colSpan={visibleColumnCount}
+                remaining={hiddenRowCount}
+                onShowMore={showNextChunk}
+              />
             )}
           </TableBody>
         </Table>

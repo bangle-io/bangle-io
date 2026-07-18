@@ -630,10 +630,11 @@ export const t = {
         locationColumn: 'Ort',
         modifiedColumn: 'Geändert',
         lastOpenedColumn: 'Zuletzt geöffnet',
-        createdColumn: 'Erstellt',
         noteCount: ({ count }: { count: number }) =>
           count === 1 ? '1 Notiz' : `${count} Notizen`,
         noResultsMessage: 'Keine Notizen entsprechen deinem Filter.',
+        showMoreButton: ({ count }: { count: number }) =>
+          `${count} weitere anzeigen`,
         starredIndicatorSr: 'Favorit',
         sortSr: ({ column }: { column: string }) => `Nach ${column} sortieren`,
         rowActionsSr: ({ fileName }: { fileName: string }) =>

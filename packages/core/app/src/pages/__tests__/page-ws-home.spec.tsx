@@ -44,10 +44,15 @@ async function setupWorkspaceWithNotes(noteNames: string[]) {
 
 function getRenderedNoteNames(): string[] {
   const table = screen.getByTestId('ws-home-notes-table');
+  // Note rows are the ones carrying a link; this skips the header and the
+  // show-more sentinel row.
   return within(table)
     .getAllByRole('row')
     .slice(1)
-    .map((row) => within(row).queryByRole('link')?.textContent ?? '');
+    .flatMap((row) => {
+      const link = within(row).queryByRole('link');
+      return link?.textContent ? [link.textContent] : [];
+    });
 }
 
 describe('PageWsHome', () => {
@@ -182,15 +187,19 @@ describe('PageWsHome', () => {
       expect(getRenderedNoteNames()).toHaveLength(2);
     });
 
-    const table = screen.getByTestId('ws-home-notes-table');
-    const starredRow = within(table)
-      .getAllByRole('row')
-      .find((row) => within(row).queryByText('starred-note'));
-    expect(starredRow).toBeDefined();
-    expect(
-      within(starredRow as HTMLElement).getByText('Starred'),
-    ).toBeInTheDocument();
-    expect(within(starredRow as HTMLElement).getByText('work')).toBeVisible();
+    // The starred atom resolves asynchronously, so the indicator can lag the
+    // row itself.
+    await waitFor(() => {
+      const table = screen.getByTestId('ws-home-notes-table');
+      const starredRow = within(table)
+        .getAllByRole('row')
+        .find((row) => within(row).queryByText('starred-note'));
+      expect(starredRow).toBeDefined();
+      expect(
+        within(starredRow as HTMLElement).getByText('Starred'),
+      ).toBeInTheDocument();
+      expect(within(starredRow as HTMLElement).getByText('work')).toBeVisible();
+    });
   });
 
   it('respects persisted column visibility from workbench state', async () => {
@@ -201,7 +210,7 @@ describe('PageWsHome', () => {
     act(() => {
       testRender.testEnv.commonOpts.store.set(
         services.workbenchState.$notesTableColumnVisibility,
-        { location: false, createdAt: true },
+        { location: false, lastOpenedAt: true },
       );
     });
 
@@ -215,8 +224,78 @@ describe('PageWsHome', () => {
       screen.queryByRole('button', { name: /sort by location/i }),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: /sort by created/i }),
+      screen.getByRole('button', { name: /sort by last opened/i }),
     ).toBeInTheDocument();
+  });
+
+  it('renders large workspaces in chunks behind a show-more control', async () => {
+    const noteNames = Array.from(
+      { length: 160 },
+      (_, index) => `note-${String(index).padStart(3, '0')}.md`,
+    );
+    const { testRender } = await setupWorkspaceWithNotes(noteNames);
+
+    testRender.mountComponent({ ui: <PageWsHome /> });
+
+    await waitFor(() => {
+      expect(getRenderedNoteNames()).toHaveLength(150);
+    });
+
+    const showMore = screen.getByRole('button', { name: /show 10 more/i });
+    fireEvent.click(showMore);
+
+    await waitFor(() => {
+      expect(getRenderedNoteNames()).toHaveLength(160);
+    });
+    expect(
+      screen.queryByRole('button', { name: /show .* more/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('re-stats only the updated note on a content change', async () => {
+    const { testRender, services } = await setupWorkspaceWithNotes([
+      'one.md',
+      'two.md',
+      'three.md',
+    ]);
+
+    const fileStatSpy = vi.spyOn(services.fileSystem, 'fileStat');
+
+    testRender.mountComponent({ ui: <PageWsHome /> });
+
+    await waitFor(() => {
+      expect(getRenderedNoteNames()).toHaveLength(3);
+    });
+    await waitFor(() => {
+      expect(fileStatSpy).toHaveBeenCalledTimes(3);
+    });
+
+    fileStatSpy.mockClear();
+    await act(async () => {
+      await services.fileSystem.writeFile(
+        'myWorkspace:two.md',
+        new File(['# updated'], 'two.md', { type: 'text/markdown' }),
+      );
+    });
+
+    await waitFor(() => {
+      expect(fileStatSpy).toHaveBeenCalled();
+    });
+    expect(
+      fileStatSpy.mock.calls.every(
+        ([wsPath]) => wsPath === 'myWorkspace:two.md',
+      ),
+    ).toBe(true);
+
+    // A force-update relist (e.g. Native FS recovery or an external disk
+    // edit) keeps the same paths but must re-stat everything.
+    fileStatSpy.mockClear();
+    act(() => {
+      services.fileSystem.refreshFileTree();
+    });
+    await waitFor(() => {
+      expect(fileStatSpy).toHaveBeenCalledTimes(3);
+    });
   });
 
   it('keeps a note row rendered when its file stat read fails', async () => {

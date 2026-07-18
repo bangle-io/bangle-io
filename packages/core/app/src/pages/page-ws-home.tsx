@@ -161,7 +161,6 @@ function useNotesTableData(): NotesTableNote[] {
           }),
           isStarred: starredSet.has(filePath.wsPath),
           lastOpenedAt: lastOpenedByWsPath.get(filePath.wsPath),
-          createdAt: stat?.ctime,
           modifiedAt: stat?.mtime,
         };
       })

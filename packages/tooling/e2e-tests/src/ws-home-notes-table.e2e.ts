@@ -65,19 +65,19 @@ test('workspace home lists notes in a sortable, filterable table', async ({
   await filterInput.clear();
   await expect(noteRows(page)).toHaveCount(2);
 
-  // Column visibility: enable the Created column via the columns dropdown
-  // and verify the choice survives a reload.
+  // Column visibility: enable the Last opened column via the columns
+  // dropdown and verify the choice survives a reload.
   await page.getByRole('button', { name: 'Columns' }).click();
-  await page.getByRole('menuitemcheckbox', { name: 'Created' }).click();
+  await page.getByRole('menuitemcheckbox', { name: 'Last opened' }).click();
   await page.keyboard.press('Escape');
   await expect(
-    page.getByRole('button', { name: 'Sort by Created' }),
+    page.getByRole('button', { name: 'Sort by Last opened' }),
   ).toBeVisible();
 
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(notesTable(page)).toBeVisible();
   await expect(
-    page.getByRole('button', { name: 'Sort by Created' }),
+    page.getByRole('button', { name: 'Sort by Last opened' }),
   ).toBeVisible();
   await expect(noteRows(page)).toHaveCount(2);
 
