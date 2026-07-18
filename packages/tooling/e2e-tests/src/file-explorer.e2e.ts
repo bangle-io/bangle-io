@@ -463,6 +463,88 @@ test('collapse-all supports a prototype-key workspace name', async ({
   await expect(otherFolder).toHaveAttribute('aria-expanded', 'false');
 });
 
+test('collapsing ancestors of the active note sticks and re-reveals on navigation', async ({
+  page,
+}) => {
+  const workspaceName = `explorer-collapse-ancestor-${Date.now()}`;
+  await createBrowserWorkspace(page, { workspaceName });
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'archived/nimbus-admin/tasks/estimate',
+    'Estimate note',
+  );
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'archived/nimbus-admin/docs/readme',
+    'Docs note',
+  );
+  await writeStoredMarkdown(page, workspaceName, 'archived/misc/note', 'Misc');
+  await writeStoredMarkdown(page, workspaceName, 'root', 'Root note');
+
+  await page.goto(
+    `/ws#route=editor&wsPath=${encodeURIComponent(
+      `${workspaceName}:archived/nimbus-admin/tasks/estimate.md`,
+    )}`,
+  );
+  await page.reload();
+
+  const explorer = page.getByTestId('bangle-file-explorer');
+  const archivedFolder = explorer.getByRole('treeitem', { name: /^archived$/ });
+  const nimbusFolder = explorer.getByRole('treeitem', {
+    name: /^nimbus-admin$/,
+  });
+  const tasksFolder = explorer.getByRole('treeitem', { name: /^tasks$/ });
+
+  await expect(archivedFolder).toHaveAttribute('aria-expanded', 'true');
+  await expect(nimbusFolder).toHaveAttribute('aria-expanded', 'true');
+  await expect(tasksFolder).toHaveAttribute('aria-expanded', 'true');
+
+  await test.step('collapsing an ancestor of the active note stays collapsed', async () => {
+    await nimbusFolder.click();
+    await expect(nimbusFolder).toHaveAttribute('aria-expanded', 'false');
+    // The regression re-expanded the folder a frame later, after the durable
+    // state had recorded the collapse. Wait for persistence, then re-assert.
+    await expect
+      .poll(() => readPersistedExpandedPaths(page, workspaceName))
+      .toEqual(['archived']);
+    await expect(nimbusFolder).toHaveAttribute('aria-expanded', 'false');
+    await expect(archivedFolder).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  await test.step('collapsing the top ancestor keeps the whole chain collapsed', async () => {
+    await archivedFolder.click();
+    await expect(archivedFolder).toHaveAttribute('aria-expanded', 'false');
+    await expect
+      .poll(() => readPersistedExpandedPaths(page, workspaceName))
+      .toEqual([]);
+    await expect(archivedFolder).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  await test.step('navigating to another note keeps the collapsed tree stable', async () => {
+    await explorer.getByRole('treeitem', { name: /^root\.md$/ }).click();
+    await expect(page).toHaveURL(
+      new RegExp(
+        `ws#route=editor&wsPath=${encodeURIComponent(
+          `${workspaceName}:root.md`,
+        )}$`,
+      ),
+    );
+    await expect(archivedFolder).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  await test.step('navigating back to the nested note re-reveals its ancestors', async () => {
+    await page.goBack();
+    await expect(archivedFolder).toHaveAttribute('aria-expanded', 'true');
+    await expect(nimbusFolder).toHaveAttribute('aria-expanded', 'true');
+    await expect(tasksFolder).toHaveAttribute('aria-expanded', 'true');
+    await expect(
+      explorer.getByRole('treeitem', { name: /^estimate\.md$/ }),
+    ).toBeVisible();
+  });
+});
+
 test('file explorer creates folders, opens notes, and survives reload', async ({
   page,
 }) => {

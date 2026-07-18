@@ -1,5 +1,5 @@
 import type { FileTree as PierreFileTreeModel } from '@pierre/trees';
-import { useCallback, useEffect, useEffectEvent, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useEffectEvent, useRef } from 'react';
 
 function normalizePath(path: string): string {
   return path.replace(/^\/+/, '').replace(/\/+$/, '');
@@ -59,10 +59,23 @@ export function usePierreFileTreeExpansion({
   onRevealPaths: (paths: readonly string[]) => void;
   onCollapseAll: (keepExpandedPaths: readonly string[]) => void;
 }) {
-  const projectedExpandedPaths = useMemo(
-    () => [...new Set([...expandedPaths, ...activeAncestorPaths])],
-    [activeAncestorPaths, expandedPaths],
+  // The active file's ancestors are a reveal impulse, not pinned state: they
+  // are folded into the projection only until they have been applied once for
+  // the current active file (and persisted through onRevealPaths). After that
+  // the durable expandedPaths alone drive the model, so a user's collapse of
+  // an active ancestor sticks instead of being resurrected — and the model can
+  // never drift away from the durable state it reports into.
+  const activeAncestorSignature = activeAncestorPaths.join('\0');
+  const appliedAncestorSignatureRef = useRef<string | null>(null);
+
+  const getProjectionPaths = useCallback(
+    (): readonly string[] =>
+      appliedAncestorSignatureRef.current === activeAncestorSignature
+        ? expandedPaths
+        : [...new Set([...expandedPaths, ...activeAncestorPaths])],
+    [activeAncestorPaths, activeAncestorSignature, expandedPaths],
   );
+
   // Jotai owns durable expansion intent; Pierre is its imperative projection.
   // Controlled projections must never return through the subscription as user
   // expansion deltas.
@@ -119,7 +132,7 @@ export function usePierreFileTreeExpansion({
   const resetModelPaths = useEffectEvent((nextTreePaths: readonly string[]) => {
     projectWithoutReporting(() => {
       model.resetPaths(nextTreePaths, {
-        initialExpandedPaths: projectedExpandedPaths,
+        initialExpandedPaths: getProjectionPaths(),
       });
     });
   });
@@ -129,8 +142,9 @@ export function usePierreFileTreeExpansion({
   }, [treePaths]);
 
   useEffect(() => {
-    applyExpandedPaths(projectedExpandedPaths);
-  }, [applyExpandedPaths, projectedExpandedPaths]);
+    applyExpandedPaths(getProjectionPaths());
+    appliedAncestorSignatureRef.current = activeAncestorSignature;
+  }, [activeAncestorSignature, applyExpandedPaths, getProjectionPaths]);
 
   useEffect(() => {
     previousExpandedPathsRef.current = readExpandedPaths(model, directoryPaths);
