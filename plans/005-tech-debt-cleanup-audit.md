@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-06-15
-updated: 2026-07-15
+updated: 2026-07-18
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/631
@@ -34,12 +34,10 @@ cleanup roadmap. The audit focused on Bangle.io priorities: protect user data,
 preserve Markdown fidelity, keep local-first behavior predictable, and maintain
 clear workspace boundaries.
 
-The most urgent remaining cleanup area is failure-state continuity across
-service lifetimes. Save serialization/coalescing and last-good workspace-list
-retention have landed, but the module-global save store can retain tasks from a
-disposed service graph, and command/dialog workflows can still detach
-asynchronous completion. Those items should land before broader UI or tooling
-cleanup.
+Save serialization/coalescing, relocation safety, last-good workspace-list
+retention, and save retry continuity across UI service-graph replacement have
+landed. The most urgent remaining cleanup areas are detached asynchronous
+workflows, recovery gaps, and the open package-boundary items below.
 
 ## Current Status
 
@@ -191,12 +189,23 @@ cleanup.
     also makes its initial single-day selection required so selecting today
     commits instead of toggling to an empty selection in UTC CI.
   - The full open-item re-audit kept C3/C4, P0.4, and Native FS work out of this
-    batch because PR #640 owns relocation/save-queue changes, PR #644 owns the
+  batch because PR #640 owns relocation/save-queue changes, PR #644 owns the
     Native FS settings command, PR #626 owns external sync, and the existing
     service-architecture and Knip worktrees cover broader boundary/dead-code
     changes. C6, C8, P1.3, P4.4, and P5.2 are narrowed below to match current
     code instead of retaining stale claims.
-- 2026-07-15 editor save-coordinator lifetime cleanup (PR #649):
+- 2026-07-15 relocation safety cleanup (PR #640):
+  - P0.4 substantially complete for ordinary file and directory relocation:
+    pending source saves drain before the durable mutation, queued and mounted
+    writes retarget afterward, IndexedDB rename/update paths are atomic, active
+    routes follow durable rename events, and starred paths migrate in one
+    lifecycle. Unit, race, command-handler, and Playwright coverage includes
+    reload persistence. Cross-workspace moves, empty-folder persistence,
+    journaled startup recovery, and link rewriting remain outside this slice.
+  - The matching project task for preserving stars across rename/move is now
+    complete. Issue #563 remains open because its cross-workspace move UX is
+    explicitly outside PR #640.
+- 2026-07-18 editor save-coordinator lifetime cleanup (PR #649):
   - C4 resolved: the browser composition root now owns an explicit
     `EditorSaveCoordinator` and injects it into every replacement UI service
     graph. Queued and failed tasks retain document state only; execution and
