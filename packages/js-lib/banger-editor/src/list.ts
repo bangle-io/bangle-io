@@ -1,6 +1,8 @@
 import {
+  listItemCanRenderTight,
   readListTokenMetadata,
   resolveListRunTightness,
+  type TightListItemBlockKind,
 } from '@bangle.io/markdown-syntax';
 import type { MarkdownSerializerState } from 'prosemirror-markdown';
 import {
@@ -591,7 +593,20 @@ function flatListToMarkdown(
   const previousTight = state.inTightList;
   state.inTightList = tight;
   state.wrapBlock(continuationDelim, firstDelim, node, () => {
-    if (isListNode(node.firstChild)) state.ensureNewLine();
+    const firstKind = node.firstChild
+      ? listItemBlockKind(node.firstChild)
+      : null;
+    const taskStartsWithBlock =
+      attrs.kind === LIST_KIND.TASK &&
+      firstKind !== null &&
+      firstKind !== 'paragraph';
+    if (taskStartsWithBlock) {
+      // The checkbox is an implicit empty paragraph before the actual block.
+      state.closeBlock(node);
+      state.flushClose(tight ? 1 : 2);
+    } else if (isListNode(node.firstChild) || firstKind === 'thematic-break') {
+      state.ensureNewLine();
+    }
     node.forEach((child, _offset, childIndex) => {
       // Nested list serializers own their run's tightness independently.
       if (childIndex > 0 && tight && !isListNode(child)) state.flushClose(1);
@@ -616,7 +631,10 @@ function listRunIsTight(
   parent: PMNode | null,
   index: number,
 ): boolean {
-  if (!parent) return readListAttrs(node)?.tight ?? true;
+  if (!parent) {
+    const attrs = readListAttrs(node);
+    return attrs ? attrs.tight && flatListItemCanRenderTight(node) : true;
+  }
   let cache = state[LIST_TIGHTNESS_CACHE];
   if (!cache) {
     cache = new WeakMap();
@@ -633,8 +651,51 @@ function listRunIsTight(
 function listTightnessByChild(parent: PMNode): readonly boolean[] {
   return resolveListRunTightness(
     Array.from({ length: parent.childCount }, (_, index) => {
-      const attrs = readListAttrs(parent.child(index));
-      return attrs ? { kind: attrs.listKind, tight: attrs.tight } : null;
+      const child = parent.child(index);
+      const attrs = readListAttrs(child);
+      return attrs
+        ? {
+            kind: attrs.listKind,
+            tight: attrs.tight && flatListItemCanRenderTight(child),
+          }
+        : null;
     }),
   );
+}
+
+function flatListItemCanRenderTight(node: PMNode): boolean {
+  const blocks = listItemBlockKinds(node);
+  const attrs = readListAttrs(node);
+  if (attrs?.kind === LIST_KIND.TASK && blocks[0] !== 'paragraph') {
+    blocks.unshift('paragraph');
+  }
+  return listItemCanRenderTight(blocks);
+}
+
+function listItemBlockKinds(node: PMNode): TightListItemBlockKind[] {
+  const blocks: TightListItemBlockKind[] = [];
+  node.forEach((child) => {
+    blocks.push(listItemBlockKind(child));
+  });
+  return blocks;
+}
+
+function listItemBlockKind(node: PMNode): TightListItemBlockKind {
+  if (isListNode(node)) return 'list';
+  switch (node.type.name) {
+    case 'paragraph':
+      return 'paragraph';
+    case 'blockquote':
+      return 'blockquote';
+    case 'horizontalRule':
+      return 'thematic-break';
+    case 'table':
+      return 'table';
+    case 'code_block':
+    case 'heading':
+    case 'math_display':
+      return 'self-terminating';
+    default:
+      return 'unknown';
+  }
 }

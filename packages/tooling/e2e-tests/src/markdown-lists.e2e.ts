@@ -219,3 +219,33 @@ test('typing a bullet marker inside an ordered item persists as a bullet', async
     '- converted',
   );
 });
+
+test('replacing task text with a thematic break preserves both structures', async ({
+  page,
+}) => {
+  const workspaceName = 'task-thematic-break-fidelity';
+  const noteName = 'task-thematic-break';
+  const source = '- [ ] replace me\n- [ ] second';
+  const expected = '- [ ] \n\n  ---\n\n- [ ] second';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(page, workspaceName, noteName, source);
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await selectEditorText(page, 'replace me');
+  await page.keyboard.press('Backspace');
+  await page.keyboard.type('---');
+
+  await expect(editor.getByRole('checkbox')).toHaveCount(2);
+  await expect(editor.locator('hr')).toHaveCount(1);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(expected);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(editor.getByRole('checkbox')).toHaveCount(2);
+  await expect(editor.locator('hr')).toHaveCount(1);
+  await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
+    expected,
+  );
+});

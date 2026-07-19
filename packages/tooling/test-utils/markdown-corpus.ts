@@ -767,6 +767,11 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     engines: BOTH_ENGINES,
   },
   {
+    name: 'tight list item whose first child is a thematic break stays nested',
+    markdown: '- \n  ---\n- next',
+    engines: BOTH_ENGINES,
+  },
+  {
     name: 'loose list with blockquote-only items remains loose',
     markdown: '- > a\n\n- > b',
     engines: BOTH_ENGINES,
@@ -875,6 +880,16 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
   {
     name: 'nested task list',
     markdown: '- [ ] task one\n  - [x] nested task',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'tight task item can start with a blockquote after its checkbox',
+    markdown: '- [ ] \n  > quote\n- [ ] next',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'ordered task keeps a leading thematic break separate',
+    markdown: '1. [ ] \n\n   ---\n\n1. [ ] next',
     engines: BOTH_ENGINES,
   },
   {

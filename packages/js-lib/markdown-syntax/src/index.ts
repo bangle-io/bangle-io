@@ -5,10 +5,12 @@ export {
   type ListKind,
   type ListRunMetadata,
   type ListTokenMetadata,
+  listItemCanRenderTight,
   listTokenizer,
   readListTokenMetadata,
   resolveListRunTightness,
   TASK_CHECKED_ATTR,
+  type TightListItemBlockKind,
 } from './list-syntax';
 export {
   findInlineMathAtEnd,

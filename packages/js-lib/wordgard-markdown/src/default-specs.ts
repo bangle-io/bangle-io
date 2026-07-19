@@ -7,9 +7,11 @@
 // parity with the ProseMirror engine's output is the whole point of this
 // file — see the package-level round-trip corpus.
 import {
+  listItemCanRenderTight,
   readListTokenMetadata,
   resolveListRunTightness,
   serializeWikiLinkAttrs,
+  type TightListItemBlockKind,
   type WikiLinkAttrs,
 } from '@bangle.io/markdown-syntax';
 import {
@@ -326,9 +328,16 @@ function serializeListItem(
   const continuationDelim = ' '.repeat(continuationWidth);
   state.wrapBlock(continuationDelim, firstDelim, node, () => {
     const first = node.content[0];
-    if (
-      first?.isPlot &&
-      (first.tag.is(BulletList.type) || first.tag.is(OrderedList))
+    const firstKind = first ? wordgardListItemBlockKind(first) : null;
+    const taskStartsWithBlock =
+      node.tag.is(TaskItem) && firstKind !== null && firstKind !== 'paragraph';
+    if (taskStartsWithBlock) {
+      state.closeBlock(node);
+      state.flushClose(state.inTightList ? 1 : 2);
+    } else if (
+      (first?.isPlot &&
+        (first.tag.is(BulletList.type) || first.tag.is(OrderedList))) ||
+      firstKind === 'thematic-break'
     ) {
       state.ensureNewLine();
     }
@@ -366,9 +375,37 @@ function listTightnessByChild(parent: Plot): readonly boolean[] {
   return resolveListRunTightness(
     parent.content.map((node) => {
       const kind = listContainerKind(node);
-      return kind && node?.isPlot ? { kind, tight: listIsTight(node) } : null;
+      return kind && node?.isPlot
+        ? {
+            kind,
+            tight: listIsTight(node) && listCanRenderTight(node),
+          }
+        : null;
     }),
   );
+}
+
+function listCanRenderTight(node: Plot): boolean {
+  return node.content.every((item) => {
+    if (!item.isPlot) return false;
+    const blocks = item.content.map(wordgardListItemBlockKind);
+    if (item.tag.is(TaskItem) && blocks[0] !== 'paragraph') {
+      blocks.unshift('paragraph');
+    }
+    return listItemCanRenderTight(blocks);
+  });
+}
+
+function wordgardListItemBlockKind(node: Node): TightListItemBlockKind {
+  if (node.is(HorizontalRule.type)) return 'thematic-break';
+  if (!node.isPlot) return 'unknown';
+  if (node.tag.is(Paragraph.type)) return 'paragraph';
+  if (node.tag.is(Blockquote.type)) return 'blockquote';
+  if (node.tag.is(BulletList.type) || node.tag.is(OrderedList)) return 'list';
+  if (node.tag.is(CodeBlock.type) || node.tag.is(Heading)) {
+    return 'self-terminating';
+  }
+  return 'unknown';
 }
 
 function listRunIsTight(
@@ -387,7 +424,7 @@ function listRunIsTight(
     tightness = listTightnessByChild(parent);
     cache.set(parent, tightness);
   }
-  return tightness[index] ?? listIsTight(node);
+  return tightness[index] ?? (listIsTight(node) && listCanRenderTight(node));
 }
 
 function serializeList(

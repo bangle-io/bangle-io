@@ -6,6 +6,7 @@ import {
   pressAppShortcut,
   readStoredMarkdown,
   selectEditorText,
+  writeStoredMarkdown,
 } from './common';
 
 async function runCommand(page: Page, title: string) {
@@ -107,4 +108,44 @@ test('pastes Markdown from the clipboard into the editor', async ({
     ).toBeVisible();
     await expect(getEditorLocator(page, {})).toContainText('Pasted body text');
   });
+});
+
+test('multi-block Markdown pasted into a tight list keeps its paragraph boundaries', async ({
+  context,
+  page,
+}) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+
+  const workspaceName = 'paste-list-blocks-workspace';
+  const noteName = 'paste-list-blocks';
+  const source = '- one\n- two';
+  const expected = '- one\n\n- two\n\n  pasted first\n\n  pasted second';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(page, workspaceName, noteName, source);
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await editor.getByText('two', { exact: true }).click();
+  await page.keyboard.press('End');
+  await page.evaluate(() =>
+    navigator.clipboard.writeText('pasted first\n\npasted second'),
+  );
+  await runCommand(page, 'Paste from Markdown');
+
+  await expect(editor.getByText('pasted first', { exact: true })).toBeVisible();
+  await expect(
+    editor.getByText('pasted second', { exact: true }),
+  ).toBeVisible();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(expected);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(editor.getByText('pasted first', { exact: true })).toBeVisible();
+  await expect(
+    editor.getByText('pasted second', { exact: true }),
+  ).toBeVisible();
+  await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
+    expected,
+  );
 });

@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   LIST_KIND_ATTR,
   LIST_TIGHT_ATTR,
+  listItemCanRenderTight,
   readListTokenMetadata,
   resolveListRunTightness,
   TASK_CHECKED_ATTR,
@@ -59,6 +60,34 @@ describe('resolveListRunTightness', () => {
         { kind: 'ordered', tight: true },
       ]),
     ).toEqual([false, false, true, true, false, false]);
+  });
+});
+
+describe('listItemCanRenderTight', () => {
+  it.each([
+    ['adjacent paragraphs', ['paragraph', 'paragraph']],
+    ['paragraph after a blockquote', ['blockquote', 'paragraph']],
+    ['paragraph after a nested list', ['list', 'paragraph']],
+    ['paragraph after a table', ['table', 'paragraph']],
+    ['adjacent blockquotes', ['blockquote', 'blockquote']],
+    ['table after a blockquote', ['blockquote', 'table']],
+    ['table after a nested list', ['list', 'table']],
+    ['adjacent tables', ['table', 'table']],
+    ['thematic break after a paragraph', ['paragraph', 'thematic-break']],
+    ['an unknown block boundary', ['paragraph', 'unknown']],
+  ] as const)('rejects %s', (_name, blocks) => {
+    expect(listItemCanRenderTight(blocks)).toBe(false);
+  });
+
+  it.each([
+    ['blockquote after a paragraph', ['paragraph', 'blockquote']],
+    ['nested list after a paragraph', ['paragraph', 'list']],
+    ['table after a paragraph', ['paragraph', 'table']],
+    ['paragraph after a heading or fence', ['self-terminating', 'paragraph']],
+    ['paragraph after a thematic break', ['thematic-break', 'paragraph']],
+    ['thematic break after a blockquote', ['blockquote', 'thematic-break']],
+  ] as const)('accepts %s', (_name, blocks) => {
+    expect(listItemCanRenderTight(blocks)).toBe(true);
   });
 });
 

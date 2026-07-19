@@ -24,6 +24,48 @@ export type ListTokenMetadata = {
 
 export type ListRunMetadata = Pick<ListTokenMetadata, 'kind' | 'tight'>;
 
+export type TightListItemBlockKind =
+  | 'blockquote'
+  | 'list'
+  | 'paragraph'
+  | 'self-terminating'
+  | 'table'
+  | 'thematic-break'
+  | 'unknown';
+
+/**
+ * Whether direct list-item blocks can be emitted without blank separators.
+ * Some adjacent blocks are valid in the editor model but merge or change
+ * meaning when rendered as tight Markdown.
+ */
+export function listItemCanRenderTight(
+  blocks: readonly TightListItemBlockKind[],
+): boolean {
+  for (let i = 1; i < blocks.length; i++) {
+    const previous = blocks[i - 1];
+    const next = blocks[i];
+    if (!previous || !next) continue;
+    if (previous === 'unknown' || next === 'unknown') return false;
+
+    if (
+      (next === 'paragraph' &&
+        (previous === 'paragraph' ||
+          previous === 'blockquote' ||
+          previous === 'list' ||
+          previous === 'table')) ||
+      (next === 'blockquote' && previous === 'blockquote') ||
+      (next === 'table' &&
+        (previous === 'blockquote' ||
+          previous === 'list' ||
+          previous === 'table')) ||
+      (next === 'thematic-break' && previous === 'paragraph')
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
 /** Resolve one tightness value for each adjacent run of the same list kind. */
 export function resolveListRunTightness(
   items: readonly (ListRunMetadata | null)[],
