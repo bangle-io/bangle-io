@@ -274,14 +274,6 @@ export const t = {
       audioUnsupported: "Your browser can't play this audio format.",
     },
     dialogs: {
-      pwaImportFiles: {
-        title: 'Import into workspace',
-        description:
-          'The opened Markdown files will be copied into the workspace you choose. The original files are not modified.',
-        searchPlaceholder: 'Select a workspace',
-        groupLabel: 'Workspaces',
-        emptyMessage: 'No workspaces available',
-      },
       pwaOpenInApp: {
         title: 'Open in the app?',
         description:
@@ -539,10 +531,6 @@ export const t = {
       },
     },
     toasts: {
-      pwaImportSuccess: ({ count }: { count: number }) =>
-        count === 1 ? 'Imported 1 note' : `Imported ${count} notes`,
-      pwaImportFailed: ({ fileNames }: { fileNames: string }) =>
-        `Could not import ${fileNames}`,
       assetSaveInProgress: ({
         fileName,
         remainingCount,

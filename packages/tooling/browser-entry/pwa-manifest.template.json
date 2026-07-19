@@ -42,14 +42,6 @@
       ]
     }
   ],
-  "file_handlers": [
-    {
-      "action": "/",
-      "accept": {
-        "text/markdown": [".md", ".markdown"]
-      }
-    }
-  ],
   "icons": [
     {
       "src": "/icons/app-icon-192.png",

@@ -437,52 +437,6 @@ describe('boot launch param consumption', () => {
   });
 });
 
-describe('launch queue file handling', () => {
-  it('delivers markdown file handles as launch intents', async () => {
-    let consumer:
-      | ((params: {
-          targetURL?: string;
-          files?: Array<{ name: string; getFile: () => Promise<File> }>;
-        }) => void)
-      | undefined;
-    const windowStub = {
-      addEventListener: vi.fn(),
-      navigator: {},
-      launchQueue: {
-        setConsumer: (cb: typeof consumer) => {
-          consumer = cb;
-        },
-      },
-    } as unknown as Window;
-
-    pwaInstall.initializePwaInstallPromptTracking(windowStub);
-    expect(consumer).toBeDefined();
-
-    const markdownHandle = {
-      name: 'ideas.md',
-      getFile: () => Promise.resolve(new File(['# hi'], 'ideas.md')),
-    };
-    consumer?.({
-      files: [
-        markdownHandle,
-        {
-          name: 'photo.png',
-          getFile: () => Promise.resolve(new File([], 'photo.png')),
-        },
-      ],
-    });
-
-    const received: Array<{ files?: Array<{ name: string }> }> = [];
-    const unsubscribe = pwaInstall.subscribePwaLaunchIntents((intent) => {
-      received.push(intent);
-    });
-
-    expect(received).toHaveLength(1);
-    expect(received[0]?.files?.map((file) => file.name)).toEqual(['ideas.md']);
-    unsubscribe();
-  });
-});
-
 describe('app document title', () => {
   it('sets the browser title and PWA subtitle when the document supports it', () => {
     const documentRef = {

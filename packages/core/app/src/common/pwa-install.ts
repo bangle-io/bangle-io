@@ -40,30 +40,19 @@ type WindowWithDesktopBridge = Window & {
   bangleDesktop?: unknown;
 };
 
-/**
- * Minimal shape of a FileSystemFileHandle delivered through the launch
- * queue when the installed PWA is registered as an OS file handler.
- */
-export interface PwaFileHandleLike {
-  name: string;
-  getFile: () => Promise<File>;
-}
-
 export type PwaShortcutAction = 'new-note' | 'search';
 
 /**
- * A launch that needs application services to act on (manifest shortcut or
- * OS file-open). Deep-link hashes are applied directly to the URL by this
- * module and never appear here.
+ * A launch that needs application services to act on (manifest shortcuts).
+ * Deep-link hashes are applied directly to the URL by this module and never
+ * appear here.
  */
 export interface PwaLaunchIntent {
   shortcut?: PwaShortcutAction;
-  files?: PwaFileHandleLike[];
 }
 
 interface PwaLaunchParams {
   targetURL?: string;
-  files?: readonly PwaFileHandleLike[];
 }
 
 type WindowWithLaunchQueue = Window & {
@@ -102,7 +91,6 @@ const TITLEBAR_EDGE_OCCLUSION_EPSILON = 0.5;
 const PWA_PROTOCOL_LAUNCH_URL = 'web+bangle://open';
 const PWA_LAUNCH_QUERY_PARAM = 'launch';
 const PWA_SHORTCUT_QUERY_PARAM = 'shortcut';
-const MARKDOWN_FILE_NAME_PATTERN = /\.(md|markdown)$/i;
 
 let initializedWindow: Window | undefined;
 let trackingAbortController: AbortController | undefined;
@@ -131,7 +119,7 @@ let pendingLaunchIntents: PwaLaunchIntent[] = [];
 const launchIntentListeners = new Set<(intent: PwaLaunchIntent) => void>();
 
 function enqueuePwaLaunchIntent(intent: PwaLaunchIntent) {
-  if (!intent.shortcut && !intent.files?.length) {
+  if (!intent.shortcut) {
     return;
   }
 
@@ -146,9 +134,9 @@ function enqueuePwaLaunchIntent(intent: PwaLaunchIntent) {
 }
 
 /**
- * Delivers manifest-shortcut and OS file-open launches to the app layer.
- * Intents that arrive before any subscriber (e.g. parsed from the boot URL)
- * are buffered and flushed to the first subscriber.
+ * Delivers manifest-shortcut launches to the app layer. Intents that arrive
+ * before any subscriber (e.g. parsed from the boot URL) are buffered and
+ * flushed to the first subscriber.
  */
 export function subscribePwaLaunchIntents(
   listener: (intent: PwaLaunchIntent) => void,
@@ -341,15 +329,6 @@ export function initializePwaInstallPromptTracking(
   launchQueue?.setConsumer((params) => {
     if (params.targetURL) {
       handlePwaLaunchTarget(windowRef, params.targetURL);
-    }
-
-    const markdownFiles = (params.files ?? []).filter(
-      (file) =>
-        typeof file.getFile === 'function' &&
-        MARKDOWN_FILE_NAME_PATTERN.test(file.name),
-    );
-    if (markdownFiles.length > 0) {
-      enqueuePwaLaunchIntent({ files: markdownFiles });
     }
   });
 }

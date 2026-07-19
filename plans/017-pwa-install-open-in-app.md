@@ -85,13 +85,15 @@ Three user-visible surfaces, all driven by one install-state snapshot:
   recently used workspace and opens the create-note dialog; falls back to the
   welcome page with zero workspaces) and "Search notes" (`/?shortcut=search`
   — opens omni-search). Unknown shortcut values are stripped and ignored.
-- Manifest `file_handlers` for `.md`/`.markdown`: OS file-open launches are
-  delivered through the launch queue; the app asks which workspace to import
-  into and copies each file in as a note (`command::ws:create-note` gained an
-  optional `content` arg). Source files are never modified; a read failure or
-  name collision only skips that file with a toast.
-- `PwaLaunchActions` (core/app) owns shortcut/file intents; the pwa-install
+- `PwaLaunchActions` (core/app) owns shortcut intents; the pwa-install
   module parses launches and applies deep-link hashes itself.
+- REMOVED (was implemented, then dropped by maintainer decision): manifest
+  `file_handlers` with an import-by-copy flow. Copying an OS-opened `.md`
+  file into a workspace is not the product behavior we want — opening the
+  file natively (editing the source file in place, with write-back through
+  the launch-queue `FileSystemFileHandle`) is. In-place editing needs a
+  single-file storage story (adapter + save lifecycle + permission restore),
+  so it is a follow-up, likely alongside the NativeFS provider work.
 
 ## Out of scope (follow-ups)
 
@@ -99,8 +101,9 @@ Three user-visible surfaces, all driven by one install-state snapshot:
   initiative; deliberately deferred).
 - Manifest `share_target`, richer install UI screenshots.
 - Safari/iOS manual "Add to Dock / Home Screen" instructions in settings.
-- Opening `.md` files in place (write-back to the source file via the launch
-  queue handle) rather than import-by-copy.
+- Manifest `file_handlers` with native in-place `.md` editing (write-back to
+  the source file via the launch-queue handle). Requires a single-file
+  storage adapter; see the REMOVED note in phase 2.
 
 ## Behavior notes and edge cases
 
