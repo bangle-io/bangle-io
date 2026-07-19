@@ -326,7 +326,15 @@ function serializeListItem(
     ) {
       state.ensureNewLine();
     }
-    state.renderContent(node);
+    for (let i = 0; i < node.content.length; i++) {
+      const child = node.content[i];
+      if (!child) continue;
+      // Nested list serializers own their run's tightness independently.
+      if (i > 0 && state.inTightList && listContainerKind(child) === null) {
+        state.flushClose(1);
+      }
+      state.render(child, node, i);
+    }
   });
 }
 

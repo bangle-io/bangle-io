@@ -56,38 +56,6 @@ export function resolveListRunTightness(
  */
 const TASK_MARKER = /^\[([ xX\t\n\v\f\r])\](?:[ \t\n\v\f\r]+|$)/u;
 
-function stripInlinePrefix(inline: Token, prefix: string): boolean {
-  const children = inline.children;
-  if (!children) return false;
-
-  let remaining = prefix;
-  while (remaining !== '') {
-    const child = children[0];
-    if (!child) return false;
-    if (child.type === 'softbreak' || child.type === 'hardbreak') {
-      const newline = remaining.indexOf('\n');
-      if (newline === -1) return false;
-      children.shift();
-      remaining = remaining.slice(newline + 1);
-      continue;
-    }
-    if (child.type !== 'text') return false;
-    let consumed = 0;
-    while (
-      consumed < remaining.length &&
-      child.content[consumed] === remaining[consumed]
-    ) {
-      consumed++;
-    }
-    if (consumed === 0) return false;
-    child.content = child.content.slice(consumed);
-    remaining = remaining.slice(consumed);
-    if (child.content === '') children.shift();
-  }
-  inline.content = inline.content.slice(prefix.length);
-  return true;
-}
-
 /**
  * Read the engine-neutral list metadata stamped by {@link listTokenizer}.
  */
@@ -253,10 +221,17 @@ export function listTokenizer(md: MarkdownIt): void {
       ) {
         continue;
       }
-      const first = inline.children?.[0];
-      if (!first || first.type !== 'text') continue;
       const match = TASK_MARKER.exec(inline.content);
-      if (!match || !stripInlinePrefix(inline, match[0])) continue;
+      if (!match) continue;
+
+      // Reparse into a fresh array before mutating the existing token. This
+      // keeps inline.content and children synchronized even when markdown-it
+      // omits continuation indentation from the child token stream.
+      const content = inline.content.slice(match[0].length);
+      const children: Token[] = [];
+      md.inline.parse(content, md, state.env, children);
+      inline.content = content;
+      inline.children = children;
 
       item.attrSet(
         TASK_CHECKED_ATTR,

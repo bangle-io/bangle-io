@@ -748,6 +748,23 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     engines: BOTH_ENGINES,
   },
   {
+    name: 'blockquote marker line before a paragraph item stays tight',
+    markdown: '- > q\n  >\n- b',
+    canonical: '- > q\n- b',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'tight list item keeps an adjacent blockquote tight',
+    markdown: '- paragraph\n  > quote\n- next',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'tight ordered item keeps an adjacent fenced block tight',
+    markdown: '1. paragraph\n   ```\n   code\n   ```\n2. next',
+    canonical: '1. paragraph\n   ```\n   code\n   ```\n1. next',
+    engines: BOTH_ENGINES,
+  },
+  {
     name: 'loose list with fenced-code-only items remains loose',
     markdown: '- ```\n  a\n  ```\n\n- ```\n  b\n  ```',
     engines: BOTH_ENGINES,
@@ -913,6 +930,12 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     name: 'task content on the following line normalizes in one pass',
     markdown: '- [ ]\n  continued task',
     canonical: '- [ ] continued task',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'task continuation with extra source indentation normalizes in one pass',
+    markdown: '- [x]\n    indented continuation',
+    canonical: '- [x] indented continuation',
     engines: BOTH_ENGINES,
   },
   {

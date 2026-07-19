@@ -221,6 +221,17 @@ describe('listTokenizer task detection', () => {
     expect(inline?.children?.[0]?.content).toBe('continued task');
   });
 
+  it('strips source indentation omitted from inline child tokens atomically', () => {
+    const tokens = tokenize('- [x]\n    indented continuation');
+    const [item] = listItems(tokens);
+    const inline = tokens.find((token) => token.type === 'inline');
+
+    expect(item?.attrGet(TASK_CHECKED_ATTR)).toBe('true');
+    expect(inline?.content).toBe('indented continuation');
+    expect(inline?.children?.map((child) => child.type)).toEqual(['text']);
+    expect(inline?.children?.[0]?.content).toBe('indented continuation');
+  });
+
   it.each([
     ['unchecked', '- [ ]  \n  continued task', 'false', 'continued task'],
     [

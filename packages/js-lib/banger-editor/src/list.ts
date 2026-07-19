@@ -592,7 +592,11 @@ function flatListToMarkdown(
   state.inTightList = tight;
   state.wrapBlock(continuationDelim, firstDelim, node, () => {
     if (isListNode(node.firstChild)) state.ensureNewLine();
-    state.renderContent(node);
+    node.forEach((child, _offset, childIndex) => {
+      // Nested list serializers own their run's tightness independently.
+      if (childIndex > 0 && tight && !isListNode(child)) state.flushClose(1);
+      state.render(child, node, childIndex);
+    });
   });
   state.inTightList = previousTight;
 }
