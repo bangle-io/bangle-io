@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import {
+  collapseEditorSelection,
   createBrowserWorkspaceAndNote,
   getEditorLocator,
   readStoredMarkdown,
@@ -106,6 +107,38 @@ test('copy and paste preserves a loose ordered task list', async ({
   await expect(editor.getByRole('checkbox').last()).not.toBeChecked();
   await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
     source,
+  );
+});
+
+test('Enter at the start of a loose ordered task preserves the list on reload', async ({
+  page,
+}) => {
+  const workspaceName = 'list-enter-fidelity';
+  const noteName = 'ordered-task-split';
+  const source = '1. [x] ordered task\n\n1. [ ] sibling task';
+  const expected = '1. [ ] \n\n1. [x] ordered task\n\n1. [ ] sibling task';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(page, workspaceName, noteName, source);
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await expect(editor.getByText('ordered task', { exact: true })).toBeVisible();
+  await collapseEditorSelection(page, 0);
+  await page.keyboard.press('Enter');
+
+  await expect(editor.getByRole('checkbox')).toHaveCount(3);
+  await expect(editor.getByRole('checkbox').nth(0)).not.toBeChecked();
+  await expect(editor.getByRole('checkbox').nth(1)).toBeChecked();
+  await expect(editor.getByRole('checkbox').nth(2)).not.toBeChecked();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(expected);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(editor.getByRole('checkbox')).toHaveCount(3);
+  await expect(editor.getByRole('checkbox').nth(1)).toBeChecked();
+  await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
+    expected,
   );
 });
 

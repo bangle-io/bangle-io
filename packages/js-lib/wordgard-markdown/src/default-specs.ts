@@ -333,10 +333,75 @@ function listIsTight(node: Plot): boolean {
   return node.mark(ListTight) ?? true;
 }
 
-function serializeList(state: MarkdownSerializerState, node: Plot): void {
+const LIST_TIGHTNESS_CACHE = Symbol('listTightnessCache');
+
+type ListMarkdownSerializerState = MarkdownSerializerState & {
+  [LIST_TIGHTNESS_CACHE]?: WeakMap<Plot, readonly boolean[]>;
+};
+
+type ListContainerKind = 'bullet' | 'ordered';
+
+function listContainerKind(node: Node | undefined): ListContainerKind | null {
+  if (!node?.isPlot) return null;
+  if (node.tag.is(OrderedList)) return 'ordered';
+  return node.tag.is(BulletList.type) ? 'bullet' : null;
+}
+
+function listTightnessByChild(parent: Plot): readonly boolean[] {
+  const result = Array.from({ length: parent.content.length }, () => true);
+  for (let start = 0; start < parent.content.length; ) {
+    const first = parent.content[start];
+    const kind = listContainerKind(first);
+    if (!kind || !first?.isPlot) {
+      start++;
+      continue;
+    }
+    let end = start + 1;
+    let tight = listIsTight(first);
+    while (end < parent.content.length) {
+      const sibling = parent.content[end];
+      if (listContainerKind(sibling) !== kind) break;
+      if (sibling?.isPlot) tight = tight && listIsTight(sibling);
+      end++;
+    }
+    result.fill(tight, start, end);
+    start = end;
+  }
+  return result;
+}
+
+function listRunIsTight(
+  state: ListMarkdownSerializerState,
+  node: Plot,
+  parent: Plot,
+  index: number,
+): boolean {
+  let cache = state[LIST_TIGHTNESS_CACHE];
+  if (!cache) {
+    cache = new WeakMap();
+    state[LIST_TIGHTNESS_CACHE] = cache;
+  }
+  let tightness = cache.get(parent);
+  if (!tightness) {
+    tightness = listTightnessByChild(parent);
+    cache.set(parent, tightness);
+  }
+  return tightness[index] ?? listIsTight(node);
+}
+
+function serializeList(
+  state: MarkdownSerializerState,
+  node: Plot,
+  parent: Plot,
+  index: number,
+): void {
   const parentIsOrdered = node.tag.is(OrderedList);
-  const tight = listIsTight(node);
-  if (state.inTightList) state.flushClose(1);
+  const kind = parentIsOrdered ? 'ordered' : 'bullet';
+  const tight = listRunIsTight(state, node, parent, index);
+  const sameList = listContainerKind(parent.content[index - 1]) === kind;
+  if ((state.inTightList && !sameList) || (tight && sameList)) {
+    state.flushClose(1);
+  }
   const previousTight = state.inTightList;
   state.inTightList = tight;
   for (let i = 0; i < node.content.length; i++) {
@@ -364,9 +429,9 @@ const bulletListSpec: NodeMarkdownSpec = {
       block: (tok) => BulletList.withMarks(listTagMarks(tok)),
     },
   },
-  serialize(state, node) {
+  serialize(state, node, parent, index) {
     assertPlot(node, 'bullet_list');
-    serializeList(state, node);
+    serializeList(state, node, parent, index);
   },
 };
 
@@ -377,9 +442,9 @@ const orderedListSpec: NodeMarkdownSpec = {
       block: (tok) => OrderedList.of(1, listTagMarks(tok)),
     },
   },
-  serialize(state, node) {
+  serialize(state, node, parent, index) {
     assertPlot(node, 'ordered_list');
-    serializeList(state, node);
+    serializeList(state, node, parent, index);
   },
 };
 

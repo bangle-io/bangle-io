@@ -101,11 +101,33 @@ describe('listTokenizer tightness', () => {
     );
     expect(outer?.attrGet(LIST_TIGHT_ATTR)).toBe(String(tight));
   });
+
+  it.each([
+    [
+      'fenced-code-only items in a blockquote',
+      '> - ```\n>   a\n>   ```\n>\n> - ```\n>   b\n>   ```',
+    ],
+    [
+      'nested-list-only items in a blockquote',
+      '> - \n>   - a\n>\n> - \n>   - b',
+    ],
+    [
+      'fenced-code-only items in a nested blockquote',
+      '> > 1. ```\n> >    a\n> >    ```\n> >\n> > 2. ```\n> >    b\n> >    ```',
+    ],
+  ])('detects loose %s', (_name, markdown) => {
+    const outer = tokenize(markdown).find((token) =>
+      /_list_open$/.test(token.type),
+    );
+    expect(outer?.attrGet(LIST_TIGHT_ATTR)).toBe('false');
+  });
 });
 
 describe('listTokenizer task detection', () => {
   it.each([
     ['unchecked', '- [ ] todo', 'false'],
+    ['unchecked with a tab', '- [\t] todo', 'false'],
+    ['unchecked with a line break', '- [\n  ] todo', 'false'],
     ['checked lowercase', '- [x] done', 'true'],
     ['checked uppercase', '- [X] done', 'true'],
   ])('detects a %s task and strips the marker', (_name, md, checked) => {
@@ -131,6 +153,11 @@ describe('listTokenizer task detection', () => {
       const inline = tokens.find((t) => t.type === 'inline');
       expect(inline?.children?.length ?? 0).toBe(0);
     }
+  });
+
+  it('requires GFM whitespace rather than Unicode whitespace after a task marker', () => {
+    const [item] = listItems(tokenize('- [ ]\u00a0not a task'));
+    expect(item?.attrGet(TASK_CHECKED_ATTR)).toBeNull();
   });
 
   it('detects tasks inside ordered lists (GFM allows `1. [ ] x`)', () => {

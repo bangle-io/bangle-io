@@ -109,30 +109,91 @@ describe('list Markdown metadata through editing commands', () => {
     expectListShapes(multiple.view.state.doc, [expected, expected, expected]);
   });
 
-  it('splitting a loose ordered task keeps container kind and tightness', () => {
-    const editor = editorTest.createEditor(
-      doc(
-        list(
-          {
-            checked: false,
-            kind: 'task',
-            listKind: 'ordered',
-            tight: false,
-          },
-          p('one<cursor>'),
-        ),
-      ),
-    );
-
-    expect(editor.pressKey('Enter')).toBe(true);
-    expect(editor.view.state.doc.childCount).toBe(2);
-    for (let i = 0; i < 2; i++) {
-      expect(editor.view.state.doc.child(i).attrs).toMatchObject({
+  it.each<{ name: string; source: ListShape }>([
+    {
+      name: 'tight bullet',
+      source: { kind: 'bullet', listKind: 'bullet', tight: true },
+    },
+    {
+      name: 'loose bullet',
+      source: { kind: 'bullet', listKind: 'bullet', tight: false },
+    },
+    {
+      name: 'loose ordered',
+      source: { kind: 'ordered', listKind: 'ordered', tight: false },
+    },
+    {
+      name: 'loose ordered checked task',
+      source: {
+        checked: true,
         kind: 'task',
         listKind: 'ordered',
         tight: false,
-      });
+      },
+    },
+  ])('splitting a $name preserves Markdown attrs at every cursor position', ({
+    source,
+  }) => {
+    const positions = [
+      { content: '<cursor>one', texts: ['', 'one'] },
+      { content: 'o<cursor>ne', texts: ['o', 'ne'] },
+      { content: 'one<cursor>', texts: ['one', ''] },
+    ] as const;
+
+    for (const { content, texts } of positions) {
+      const editor = editorTest.createEditor(doc(list(source, p(content))));
+
+      expect(editor.pressKey('Enter')).toBe(true);
+      const markdownAttrs = {
+        kind: source.kind,
+        listKind: source.listKind,
+        tight: source.tight,
+      };
+      expectListShapes(editor.view.state.doc, [markdownAttrs, markdownAttrs]);
+      expect(
+        Array.from(
+          { length: editor.view.state.doc.childCount },
+          (_, index) => editor.view.state.doc.child(index).textContent,
+        ),
+      ).toEqual(texts);
+
+      if (source.kind === 'task') {
+        const checked = Array.from(
+          { length: editor.view.state.doc.childCount },
+          (_, index) => editor.view.state.doc.child(index).attrs.checked,
+        );
+        expect(checked).toEqual(
+          content.startsWith('<cursor>') ? [false, true] : [true, false],
+        );
+      }
     }
+  });
+
+  it('splitting a nested loose ordered task preserves its parent and both children', () => {
+    const outer = {
+      kind: 'bullet',
+      listKind: 'bullet',
+      tight: true,
+    } as const;
+    const nested = {
+      checked: true,
+      kind: 'task',
+      listKind: 'ordered',
+      tight: false,
+    } as const;
+    const editor = editorTest.createEditor(
+      doc(list(outer, p('outer'), list(nested, p('<cursor>nested')))),
+    );
+
+    expect(editor.pressKey('Enter')).toBe(true);
+    const parent = editor.view.state.doc.firstChild;
+    expect(parent?.attrs).toMatchObject(outer);
+    expect(parent?.childCount).toBe(3);
+    expect(parent?.child(1).attrs).toMatchObject({
+      ...nested,
+      checked: false,
+    });
+    expect(parent?.child(2).attrs).toMatchObject(nested);
   });
 
   it('keeps an ordered input-rule list ordered when converting it to tasks', () => {

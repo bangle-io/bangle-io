@@ -375,18 +375,21 @@ function enterListCommand(config: RequiredConfig): Command {
               (node: PMNode) => isListNode(node) && node.type === type,
             )(tr.selection);
             const sourceAttrs = readListAttrs(source?.node);
-            const targetAttrs = readListAttrs(target?.node);
-            if (
-              sourceAttrs &&
-              target &&
-              targetAttrs &&
-              sourceAttrs.kind === targetAttrs.kind
-            ) {
-              tr.setNodeMarkup(target.pos, null, {
-                ...target.node.attrs,
-                listKind: sourceAttrs.listKind,
-                tight: sourceAttrs.tight,
-              });
+            if (sourceAttrs && source) {
+              const positions = new Set([
+                tr.mapping.map(source.pos, -1),
+                ...(target ? [target.pos] : []),
+              ]);
+              for (const pos of positions) {
+                const node = tr.doc.nodeAt(pos);
+                const attrs = readListAttrs(node ?? undefined);
+                if (!node || attrs?.kind !== sourceAttrs.kind) continue;
+                tr.setNodeMarkup(pos, null, {
+                  ...node.attrs,
+                  listKind: sourceAttrs.listKind,
+                  tight: sourceAttrs.tight,
+                });
+              }
             }
             dispatch(tr);
           }

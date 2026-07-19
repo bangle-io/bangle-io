@@ -667,6 +667,12 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     engines: BOTH_ENGINES,
   },
   {
+    name: 'mixed bullet markers normalize to one tight run',
+    markdown: '- dash\n* star\n+ plus',
+    canonical: '- dash\n- star\n- plus',
+    engines: BOTH_ENGINES,
+  },
+  {
     name: 'wide bullet marker spacing normalizes to one space',
     markdown: '-   wide marker spacing',
     canonical: '- wide marker spacing',
@@ -689,6 +695,12 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     name: 'paren ordered marker normalizes to dot',
     markdown: '1) paren ordered',
     canonical: '1. paren ordered',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'mixed ordered delimiters normalize to one tight run',
+    markdown: '1. dot\n2) paren',
+    canonical: '1. dot\n1. paren',
     engines: BOTH_ENGINES,
   },
   {
@@ -728,6 +740,28 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     engines: BOTH_ENGINES,
   },
   {
+    name: 'blockquote loose list with fenced-code-only items remains loose',
+    markdown: '> - ```\n>   a\n>   ```\n>\n> - ```\n>   b\n>   ```',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'blockquote loose list with nested-list-only items remains loose',
+    markdown: '> - \n>   - a\n>\n> - \n>   - b',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'nested blockquote loose ordered list remains loose',
+    markdown:
+      '> > 1. ```\n> >    a\n> >    ```\n> >\n> > 1. ```\n> >    b\n> >    ```',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'nested list separator placement normalizes in one pass',
+    markdown: '- a\n\n- b\n  - x\n  - y',
+    canonical: '- a\n\n- b\n\n  - x\n  - y',
+    engines: BOTH_ENGINES,
+  },
+  {
     name: 'tight bullet parent keeps a loose nested bullet list',
     markdown: '- outer\n  - nested one\n\n  - nested two',
     engines: BOTH_ENGINES,
@@ -759,6 +793,18 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     name: 'uppercase checked marker normalizes to lowercase',
     markdown: '- [X] uppercase checked',
     canonical: '- [x] uppercase checked',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'tab inside an unchecked marker normalizes to a space',
+    markdown: '- [\t] tab checkbox',
+    canonical: '- [ ] tab checkbox',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'line break inside an unchecked marker normalizes to a space',
+    markdown: '- [\n  ] line-break checkbox',
+    canonical: '- [ ] line-break checkbox',
     engines: BOTH_ENGINES,
   },
   {

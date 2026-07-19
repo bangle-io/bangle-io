@@ -188,6 +188,32 @@ describe('createNoteMarkdownCodec parse shape', () => {
     expect(tight.mark(ListTight)).toBeUndefined();
   });
 
+  it('serializes adjacent same-kind wrappers as one stable logical list run', () => {
+    const loose = codec.parse('- loose one\n\n- loose two').content[0];
+    const tight = codec.parse('- tight one\n- tight two').content[0];
+    if (!loose?.isPlot || !tight?.isPlot) {
+      throw new Error('expected list plots');
+    }
+
+    const mixed = codec.schema.doc([loose, tight]);
+    const serialized = codec.serialize(mixed);
+    expect(serialized).toBe(
+      '- loose one\n\n- loose two\n\n- tight one\n\n- tight two',
+    );
+    expect(codec.serialize(codec.parse(serialized))).toBe(serialized);
+
+    const firstTight = codec.parse('- one\n- two').content[0];
+    const secondTight = codec.parse('- three\n- four').content[0];
+    if (!firstTight?.isPlot || !secondTight?.isPlot) {
+      throw new Error('expected list plots');
+    }
+    const allTight = codec.serialize(
+      codec.schema.doc([firstTight, secondTight]),
+    );
+    expect(allTight).toBe('- one\n- two\n- three\n- four');
+    expect(codec.serialize(codec.parse(allTight))).toBe(allTight);
+  });
+
   it('wiki link target is the leaf param and label is a mark', () => {
     const doc = codec.parse('[[my-target|My Label]]');
     const paragraph = doc.content[0];

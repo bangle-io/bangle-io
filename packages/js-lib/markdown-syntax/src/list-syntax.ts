@@ -24,26 +24,16 @@ export type ListTokenMetadata = {
 
 /**
  * Task markers GFM recognizes at the very start of a list item's first
- * paragraph: `[ ]`, `[x]`, or `[X]`, followed by whitespace or ending the
- * paragraph (an empty task). Anywhere else, `[ ]` is literal text.
+ * paragraph: brackets containing whitespace, `x`, or `X`, followed by GFM
+ * whitespace or ending the paragraph. Anywhere else, the brackets are text.
  */
-const TASK_MARKER = /^\[([ xX])\](?:\s+|$)/u;
+const TASK_MARKER = /^\[([ xX\t\n\v\f\r])\](?:[ \t\n\v\f\r]+|$)/u;
 
 function stripInlinePrefix(inline: Token, prefix: string): boolean {
   const children = inline.children;
-  const first = children?.[0];
-  const marker = prefix.slice(0, 3);
-  if (
-    !children ||
-    first?.type !== 'text' ||
-    !first.content.startsWith(marker)
-  ) {
-    return false;
-  }
-  first.content = first.content.slice(marker.length);
-  if (first.content === '') children.shift();
+  if (!children) return false;
 
-  let remaining = prefix.slice(marker.length);
+  let remaining = prefix;
   while (remaining !== '') {
     const child = children[0];
     if (!child) return false;
@@ -142,7 +132,7 @@ function startsAfterBlankLine(
   return (
     startLine !== undefined &&
     startLine > 0 &&
-    /^[ \t]*$/.test(sourceLines[startLine - 1] ?? '')
+    /^[ \t]*(?:>[ \t]*)*$/.test(sourceLines[startLine - 1] ?? '')
   );
 }
 
@@ -220,7 +210,10 @@ export function listTokenizer(md: MarkdownIt): void {
       const match = TASK_MARKER.exec(inline.content);
       if (!match || !stripInlinePrefix(inline, match[0])) continue;
 
-      item.attrSet(TASK_CHECKED_ATTR, match[1] === ' ' ? 'false' : 'true');
+      item.attrSet(
+        TASK_CHECKED_ATTR,
+        match[1]?.toLowerCase() === 'x' ? 'true' : 'false',
+      );
     }
 
     return false;
