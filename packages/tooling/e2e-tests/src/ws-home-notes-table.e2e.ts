@@ -1,5 +1,8 @@
 import { expect, type Locator, type Page, test } from '@playwright/test';
-import { createBrowserWorkspaceAndNote } from './common';
+import {
+  createBrowserWorkspaceAndNote,
+  expectNoPageHorizontalOverflow,
+} from './common';
 
 function notesTable(page: Page): Locator {
   return page.getByTestId('ws-home-notes-table');
@@ -17,7 +20,7 @@ async function createNoteFromHome(page: Page, noteName: string) {
 }
 
 async function goHome(page: Page) {
-  await page.getByRole('link', { name: 'Home' }).click();
+  await page.getByRole('link', { name: 'Home', exact: true }).click();
   await expect(notesTable(page)).toBeVisible();
 }
 
@@ -127,4 +130,40 @@ test('notes table row actions star and delete a note', async ({ page }) => {
   await expect(
     page.getByText('No notes found in this workspace.'),
   ).toBeVisible();
+});
+
+test('workspace home stays within compact desktop and mobile viewports', async ({
+  page,
+}) => {
+  const noteName =
+    'a-very-long-note-name-that-should-not-expand-the-workspace-home-layout';
+  await page.setViewportSize({ width: 900, height: 800 });
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName: 'responsive-notes-table-ws',
+    noteName,
+  });
+  await goHome(page);
+
+  const tableContainer = notesTable(page).locator(
+    '[data-slot="table-container"]',
+  );
+  await expectNoPageHorizontalOverflow(page);
+  await expect(
+    page.getByRole('button', { name: 'Switch Workspace' }),
+  ).toBeVisible();
+  await expect(page.getByRole('button', { name: 'New Note' })).toBeVisible();
+  await expect
+    .poll(() =>
+      tableContainer.evaluate(
+        (element) => element.scrollWidth - element.clientWidth,
+      ),
+    )
+    .toBeGreaterThan(0);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expectNoPageHorizontalOverflow(page);
+  await expect(
+    notesTable(page).getByRole('link', { name: noteName }),
+  ).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Columns' })).toBeVisible();
 });
