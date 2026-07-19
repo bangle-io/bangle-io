@@ -31,6 +31,13 @@ import {
   PageWsHome,
 } from './pages';
 import { SaveProtection } from './save-protection';
+
+// Re-exported for the bootstrap entry: launch params must be consumed
+// before the router captures `window.location.search`, or every later
+// navigation re-emits (and a reload replays) the consumed shortcut or
+// deep link.
+export { consumePwaLaunchParams } from './common/pwa-install';
+
 export function App({
   logger,
   store,

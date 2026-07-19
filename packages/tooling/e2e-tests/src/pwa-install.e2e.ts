@@ -164,6 +164,14 @@ test('a protocol launch payload deep-links into the carried note route', async (
     .toContain(`${workspaceName}:${noteName}.md`);
   // The launch param is consumed; the visible URL is the canonical route.
   await expect.poll(() => page.evaluate(() => window.location.search)).toBe('');
+
+  // A later router navigation must not resurface the consumed launch param
+  // from the router's captured boot search (it would replay the deep link
+  // on reload).
+  await page.getByRole('button', { name: /Bangle\.io/ }).click();
+  await page.getByRole('menuitem', { name: 'Settings' }).click();
+  await expect(page.getByRole('heading', { name: 'General' })).toBeVisible();
+  expect(new URL(page.url()).search).toBe('');
 });
 
 test('the search manifest shortcut opens omni-search on launch', async ({
@@ -195,6 +203,11 @@ test('the new-note manifest shortcut lands in the recent workspace and opens the
   await expect
     .poll(() => editor.getAttribute('data-editor-name'))
     .toContain(`${workspaceName}:shortcut-created-note.md`);
+
+  // Creating the note navigated through the router. The router re-emits the
+  // search string it captured at boot, so a consumed shortcut param must not
+  // resurface here (it would replay the shortcut on the next reload).
+  expect(new URL(page.url()).search).toBe('');
 });
 
 test('accepting the open-in-app dialog closes it and keeps the tab usable', async ({

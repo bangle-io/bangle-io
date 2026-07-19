@@ -1,7 +1,7 @@
 import './default-theme.processed.css';
 import './index.css';
 
-import { App } from '@bangle.io/app';
+import { App, consumePwaLaunchParams } from '@bangle.io/app';
 import { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
 import {
@@ -27,6 +27,13 @@ void main(startupLogger).catch((error) => {
 });
 
 async function main(logger: Logger) {
+  // Consume PWA launch params (?launch=, ?shortcut=) before any service is
+  // constructed: the router captures `window.location.search` at creation
+  // and re-emits it on every navigation, so a param still present here
+  // would be re-added to the URL and replayed on reload. Idempotent, so the
+  // in-app fallback consumer stays harmless.
+  consumePwaLaunchParams(window);
+
   // Initialize Sentry with privacy protections
   initializeSentry(logger, isDebug);
 
