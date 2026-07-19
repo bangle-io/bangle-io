@@ -16,8 +16,10 @@ import {
   syncAppDocumentTitle,
   syncWindowControlsOverlayState,
 } from './common/pwa-install';
+import { PwaLaunchActions } from './common/pwa-launch-actions';
 import { ErrorBoundary } from './components/feedback/error-boundary';
 import { AppDialogs } from './dialogs/app-dialogs';
+import { PwaOpenInAppPrompt } from './dialogs/pwa-open-in-app-prompt';
 import { AppSidebar } from './layout/app-sidebar';
 import {
   PageAsset,
@@ -47,6 +49,8 @@ export function App({
           <ErrorBoundary>
             <BrowserAppDocumentSetup />
             <AppDialogs />
+            <PwaOpenInAppPrompt />
+            <PwaLaunchActions />
             <OmniSearch />
             <Toaster position="top-right" />
             <AppErrorHandler rootEmitter={rootEmitter} />

@@ -3,6 +3,7 @@ import { Sidebar, AppSidebar as UIAppSidebar } from '@bangle.io/ui-components';
 import { WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import React from 'react';
+import { usePwaInstall } from '../common/use-pwa-install';
 import { SidebarFooterMenu } from './sidebar-footer-menu';
 import { useSidebarFileActions } from './use-sidebar-file-actions';
 
@@ -60,6 +61,34 @@ export const AppSidebar = ({ children }: SidebarProps) => {
     activeWsName,
     commandDispatcher,
   });
+
+  const pwaInstall = usePwaInstall();
+  const pwaAction = React.useMemo(() => {
+    if (pwaInstall.canInstall || pwaInstall.isInstalling) {
+      return {
+        kind: 'install' as const,
+        label: pwaInstall.isInstalling
+          ? t.app.sidebar.installingApp
+          : t.app.sidebar.installApp,
+        disabled: pwaInstall.isInstalling,
+        onClick: () => {
+          void pwaInstall.install();
+        },
+      };
+    }
+
+    if (pwaInstall.canOpenInApp) {
+      return {
+        kind: 'open-in-app' as const,
+        label: t.app.sidebar.openInApp,
+        onClick: () => {
+          pwaInstall.openInApp();
+        },
+      };
+    }
+
+    return undefined;
+  }, [pwaInstall]);
 
   const handleFileTreeDirectoryExpansionChange = React.useCallback(
     (path: string, expanded: boolean) => {
@@ -215,6 +244,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
         sidebarHeaderClassName="desktop-sidebar-titlebar-header desktop-titlebar-drag"
         workspaceSwitcherWrapperClassName="desktop-titlebar-no-drag"
         getActionsForEntry={getActionsForEntry}
+        pwaAction={pwaAction}
         footerTitle={t.app.sidebar.footerTitle}
         footerChildren={<SidebarFooterMenu />}
       />
