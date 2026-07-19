@@ -197,9 +197,6 @@ export class PmEditorService
         resolveAssetReference: (view, target) =>
           this.resolveAssetReference(view, target),
       },
-      {
-        openAssetLink: (view, href) => this.openAssetLink(view, href),
-      },
     );
     this.saveQueue = new EditorSaveQueue(
       async (wsPath, doc) => {
