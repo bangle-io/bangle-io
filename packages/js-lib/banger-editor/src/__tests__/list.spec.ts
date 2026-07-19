@@ -250,6 +250,63 @@ describe('list Markdown metadata through editing commands', () => {
     ]);
   });
 
+  it.each([
+    {
+      container: 'bullet',
+      html: '<ul><li data-list-kind="task" data-checked>done</li></ul>',
+      listKind: 'bullet',
+    },
+    {
+      container: 'ordered',
+      html: '<ol><li data-list-kind="task" data-checked>done</li></ol>',
+      listKind: 'ordered',
+    },
+  ] as const)('preserves data-checked when parsing a $container task list', ({
+    html,
+    listKind,
+  }) => {
+    const host = document.createElement('div');
+    host.innerHTML = html;
+
+    const parsed = DOMParser.fromSchema(editorTest.schema).parse(host);
+
+    expectListShapes(parsed, [
+      { checked: true, kind: 'task', listKind, tight: true },
+    ]);
+  });
+
+  it.each([
+    { checked: false, marker: '[ ]' },
+    { checked: true, marker: '[x]' },
+    { checked: true, marker: '[X]' },
+  ])('creates a checked=$checked task from $marker input', ({
+    checked,
+    marker,
+  }) => {
+    const editor = editorTest.createEditor(doc(p('<cursor>')));
+
+    typeText(editor.view, `${marker} task`);
+
+    expectListShapes(editor.view.state.doc, [
+      {
+        checked,
+        kind: 'task',
+        listKind: 'bullet',
+        tight: true,
+      },
+    ]);
+    expect(editor.view.state.doc.textContent).toBe('task');
+  });
+
+  it('does not create a task from a pipe checkbox marker', () => {
+    const editor = editorTest.createEditor(doc(p('<cursor>')));
+
+    typeText(editor.view, '[|] not a task');
+
+    expect(editor.view.state.doc.firstChild?.type.name).toBe('paragraph');
+    expect(editor.view.state.doc.textContent).toBe('[|] not a task');
+  });
+
   it.each<{
     command: Command;
     expected: ListShape;

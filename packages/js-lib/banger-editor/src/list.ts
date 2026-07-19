@@ -153,7 +153,10 @@ function createMarkdownListSpec(): NodeSpec {
           ...(itemKind === LIST_KIND.TASK
             ? {
                 kind: LIST_KIND.TASK,
-                checked: dom.hasAttribute('data-list-checked'),
+                checked:
+                  attrs?.checked === true ||
+                  dom.hasAttribute('data-list-checked') ||
+                  dom.hasAttribute('data-checked'),
               }
             : {}),
           listKind:
@@ -287,10 +290,10 @@ function pluginInputRules(_config: RequiredConfig) {
           listKind: LIST_KIND.ORDERED,
           order: 1,
         }),
-        wrappingListInputRule(/^\s*(\[([ |x])\])\s$/, {
+        wrappingListInputRule(/^\s*\[([ xX])\]\s$/, ({ match }) => ({
           kind: LIST_KIND.TASK,
-          checked: false,
-        }),
+          checked: match[1]?.toLowerCase() === 'x',
+        })),
         // wrappingListInputRule(/^\s*(>)\s$/, {
         //   kind: LIST_KIND.TOGGLE,
         //   collapsed: true,
