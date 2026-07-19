@@ -43,6 +43,7 @@ export function SlashCommand({
 }): ReactElement | null {
   const suggestions = useAtomValue($suggestions);
   const commandRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const prevSelectedIndexRef = useRef<number>(0);
   const { editorEngine } = useEditorCoreServices();
   const editorView = editorEngine.getEditor(editorName);
@@ -130,8 +131,39 @@ export function SlashCommand({
     })(editorView.state, editorView.dispatch, editorView);
   }, [editorView, active, ext]);
 
+  const openFilePicker = useCallback(() => {
+    if (!editorView || !active) {
+      return;
+    }
+
+    dismissCommandUi();
+    fileInputRef.current?.click();
+  }, [editorView, active, dismissCommandUi]);
+
+  const fileInput = (
+    <input
+      ref={fileInputRef}
+      type="file"
+      multiple
+      className="hidden"
+      aria-hidden="true"
+      tabIndex={-1}
+      onChange={(event) => {
+        const files = Array.from(event.currentTarget.files ?? []);
+        event.currentTarget.value = '';
+        const insertFiles = ext.assetFilePlugin?.command.insertFiles;
+        if (files.length === 0 || !editorView || !insertFiles) {
+          return;
+        }
+
+        insertFiles(files)(editorView.state, editorView.dispatch, editorView);
+        editorView.focus();
+      }}
+    />
+  );
+
   if (!editorView || !active?.show) {
-    return null;
+    return fileInput;
   }
 
   const run = (command: PMCommand, { refocus }: { refocus?: boolean } = {}) => {
@@ -148,68 +180,72 @@ export function SlashCommand({
     run,
     insertText: (text) => run(ext.base.command.insertText({ text })),
     openDatePicker,
+    openFilePicker: ext.assetFilePlugin ? openFilePicker : undefined,
   });
 
   const labels = t.app.editor.slashCommand;
 
   return (
-    // biome-ignore lint/a11y/noStaticElementInteractions: focus guard for a floating menu, not an interactive control.
-    <div
-      ref={slashRef}
-      style={FLOATING_INITIAL_STYLE}
-      onMouseDown={(event) => {
-        // The editor must keep focus and its selection while the menu is
-        // clicked — the menu is an extension of typing, like Notion's. Only
-        // the list element itself is exempt so its scrollbar stays draggable.
-        if (
-          !(event.target instanceof HTMLElement) ||
-          !event.target.hasAttribute('cmdk-list')
-        ) {
-          event.preventDefault();
-        }
-      }}
-    >
-      <Command
-        ref={commandRef}
-        filter={slashMenuFilter}
-        data-testid="slash-command-menu"
-        className="w-72 overflow-hidden rounded-lg border bg-popover text-popover-foreground shadow-lg"
+    <>
+      {fileInput}
+      {/* biome-ignore lint/a11y/noStaticElementInteractions: focus guard for a floating menu, not an interactive control. */}
+      <div
+        ref={slashRef}
+        style={FLOATING_INITIAL_STYLE}
+        onMouseDown={(event) => {
+          // The editor must keep focus and its selection while the menu is
+          // clicked — the menu is an extension of typing, like Notion's. Only
+          // the list element itself is exempt so its scrollbar stays draggable.
+          if (
+            !(event.target instanceof HTMLElement) ||
+            !event.target.hasAttribute('cmdk-list')
+          ) {
+            event.preventDefault();
+          }
+        }}
       >
-        <CommandInput
-          hidden
-          value={active.text.slice(1)}
-          onValueChange={() => {}}
-        />
-        <CommandEmpty>
-          <span className="text-muted-foreground">{labels.empty}</span>
-        </CommandEmpty>
-        <CommandList className="max-h-[330px] overscroll-contain">
-          {groups.map((group, groupIndex) => (
-            <React.Fragment key={group.heading}>
-              {groupIndex > 0 && <CommandSeparator />}
-              <CommandGroup heading={group.heading}>
-                {group.items.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <CommandItem
-                      key={item.value}
-                      value={item.value}
-                      onSelect={item.onSelect}
-                    >
-                      <CommandMenuRow
-                        icon={<Icon aria-hidden />}
-                        title={item.title}
-                        description={item.description}
-                      />
-                    </CommandItem>
-                  );
-                })}
-              </CommandGroup>
-            </React.Fragment>
-          ))}
-        </CommandList>
-        <CommandHints hints={[labels.hintSelect, labels.hintDismiss]} />
-      </Command>
-    </div>
+        <Command
+          ref={commandRef}
+          filter={slashMenuFilter}
+          data-testid="slash-command-menu"
+          className="w-72 overflow-hidden rounded-lg border bg-popover text-popover-foreground shadow-lg"
+        >
+          <CommandInput
+            hidden
+            value={active.text.slice(1)}
+            onValueChange={() => {}}
+          />
+          <CommandEmpty>
+            <span className="text-muted-foreground">{labels.empty}</span>
+          </CommandEmpty>
+          <CommandList className="max-h-[330px] overscroll-contain">
+            {groups.map((group, groupIndex) => (
+              <React.Fragment key={group.heading}>
+                {groupIndex > 0 && <CommandSeparator />}
+                <CommandGroup heading={group.heading}>
+                  {group.items.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <CommandItem
+                        key={item.value}
+                        value={item.value}
+                        onSelect={item.onSelect}
+                      >
+                        <CommandMenuRow
+                          icon={<Icon aria-hidden />}
+                          title={item.title}
+                          description={item.description}
+                        />
+                      </CommandItem>
+                    );
+                  })}
+                </CommandGroup>
+              </React.Fragment>
+            ))}
+          </CommandList>
+          <CommandHints hints={[labels.hintSelect, labels.hintDismiss]} />
+        </Command>
+      </div>
+    </>
   );
 }

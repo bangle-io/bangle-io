@@ -27,6 +27,7 @@ import {
   Sigma,
   Table,
   Type,
+  Upload,
 } from 'lucide-react';
 
 import type { setupExtensions } from '../extensions';
@@ -57,6 +58,7 @@ export type SlashMenuActions = {
   run: (command: PMCommand, opts?: { refocus?: boolean }) => void;
   insertText: (text: string) => void;
   openDatePicker: () => void;
+  openFilePicker?: () => void;
 };
 
 /**
@@ -93,7 +95,7 @@ export function buildSlashMenuGroups(
   state: EditorState,
   actions: SlashMenuActions,
 ): SlashMenuGroup[] {
-  const { run, insertText, openDatePicker } = actions;
+  const { run, insertText, openDatePicker, openFilePicker } = actions;
   const labels = t.app.editor.slashCommand;
 
   const timeGroup: SlashMenuGroup = {
@@ -139,6 +141,23 @@ export function buildSlashMenuGroups(
     ],
   };
 
+  const assetGroups: SlashMenuGroup[] = openFilePicker
+    ? [
+        {
+          heading: labels.groupAssets,
+          items: [
+            {
+              value: 'upload-file asset attachment image media',
+              title: labels.uploadFile,
+              description: labels.uploadFileDesc,
+              icon: Upload,
+              onSelect: openFilePicker,
+            },
+          ],
+        },
+      ]
+    : [];
+
   // Inside a table the block transforms don't apply (cells hold inline
   // content only), so the menu switches to the shared table actions —
   // gated by the same command dry-run the hover table menu uses, so e.g.
@@ -156,6 +175,7 @@ export function buildSlashMenuGroups(
           onSelect: () => run(action.command(ext)),
         })),
       },
+      ...assetGroups,
       timeGroup,
     ];
   }
@@ -260,6 +280,7 @@ export function buildSlashMenuGroups(
         },
       ],
     },
+    ...assetGroups,
     timeGroup,
   ];
 }

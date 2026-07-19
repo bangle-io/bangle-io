@@ -112,6 +112,7 @@ export const t = {
       slashCommand: {
         groupBasic: 'Basic blocks',
         groupLists: 'Lists',
+        groupAssets: 'Assets',
         groupTime: 'Time',
         groupTable: 'Table',
         empty: 'No results',
@@ -137,6 +138,8 @@ export const t = {
         numberedListDesc: 'List with numbering',
         todoList: 'To-do list',
         todoListDesc: 'Track tasks with checkboxes',
+        uploadFile: 'Upload file',
+        uploadFileDesc: 'Insert an image or file',
         date: 'Date',
         dateDesc: 'Pick a date from the calendar',
         today: 'Today',
