@@ -296,3 +296,35 @@ test('literal paren list marker text stays text after save and reload', async ({
     expected,
   );
 });
+
+test('deeply indenting a task does not create another task on reload', async ({
+  page,
+}) => {
+  const workspaceName = 'deep-task-indent-fidelity';
+  const noteName = 'deep-task-indent';
+  const source = '- parent\n  - [ ] child';
+  const expected = '- parent\n\n  - \n    - [ ] child';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(page, workspaceName, noteName, source);
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await expect(editor.getByRole('checkbox')).toHaveCount(1);
+  await expect(editor.getByRole('checkbox')).not.toBeChecked();
+  await collapseEditorSelectionAfterText(page, 'child');
+  await page.keyboard.press('Tab');
+
+  await expect(editor.getByRole('checkbox')).toHaveCount(1);
+  await expect(editor.getByRole('checkbox')).not.toBeChecked();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(expected);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(editor.getByText('child', { exact: true })).toBeVisible();
+  await expect(editor.getByRole('checkbox')).toHaveCount(1);
+  await expect(editor.getByRole('checkbox')).not.toBeChecked();
+  await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
+    expected,
+  );
+});

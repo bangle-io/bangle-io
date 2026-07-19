@@ -782,6 +782,11 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     engines: BOTH_ENGINES,
   },
   {
+    name: 'plain indentation placeholder keeps one deeply nested task',
+    markdown: '- parent\n\n  - \n    - [ ] deeply nested task',
+    engines: BOTH_ENGINES,
+  },
+  {
     name: 'tight list item whose first child is a thematic break stays nested',
     markdown: '- \n  ---\n- next',
     engines: BOTH_ENGINES,

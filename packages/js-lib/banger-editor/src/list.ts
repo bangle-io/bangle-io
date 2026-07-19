@@ -583,9 +583,10 @@ function flatListToMarkdown(
     state.flushClose(1);
   }
 
+  const markerIsHidden = listMarkerIsHidden(node);
   const containerMarker = attrs.listKind === LIST_KIND.ORDERED ? '1.' : '-';
   const marker =
-    attrs.kind === LIST_KIND.TASK
+    attrs.kind === LIST_KIND.TASK && !markerIsHidden
       ? `${containerMarker} [${attrs.checked ? 'x' : ' '}]`
       : containerMarker;
   const firstDelim = `${marker} `;
@@ -598,6 +599,7 @@ function flatListToMarkdown(
     const firstKind = firstChild ? listItemBlockKind(firstChild) : null;
     const taskStartsWithBlock =
       attrs.kind === LIST_KIND.TASK &&
+      !markerIsHidden &&
       firstKind !== null &&
       firstKind !== 'paragraph';
     if (taskStartsWithBlock) {
@@ -670,14 +672,24 @@ function listTightnessByChild(parent: PMNode): readonly boolean[] {
 
 function flatListItemCanRenderTight(node: PMNode): boolean {
   const attrs = readListAttrs(node);
-  const blocks = listItemBlockKinds(
-    node,
-    attrs ? firstRenderedListItemChild(node, attrs) : 0,
-  );
-  if (attrs?.kind === LIST_KIND.TASK && blocks[0] !== 'paragraph') {
+  const firstChildIndex = attrs ? firstRenderedListItemChild(node, attrs) : 0;
+  for (let index = firstChildIndex + 1; index < node.childCount; index++) {
+    const child = node.child(index);
+    if (isListNode(child) && listMarkerIsHidden(child)) return false;
+  }
+  const blocks = listItemBlockKinds(node, firstChildIndex);
+  if (
+    attrs?.kind === LIST_KIND.TASK &&
+    !listMarkerIsHidden(node) &&
+    blocks[0] !== 'paragraph'
+  ) {
     blocks.unshift('paragraph');
   }
   return listItemCanRenderTight(blocks);
+}
+
+function listMarkerIsHidden(node: PMNode): boolean {
+  return isListNode(node.firstChild);
 }
 
 function firstRenderedListItemChild(
