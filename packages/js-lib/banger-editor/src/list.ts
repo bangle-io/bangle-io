@@ -156,9 +156,13 @@ function createMarkdownListSpec(): NodeSpec {
                 checked: dom.hasAttribute('data-list-checked'),
               }
             : {}),
-          ...(kind === LIST_KIND.ORDERED || kind === LIST_KIND.BULLET
-            ? { listKind: kind }
-            : {}),
+          listKind:
+            kind === LIST_KIND.ORDERED || kind === LIST_KIND.BULLET
+              ? kind
+              : attrs?.kind === LIST_KIND.ORDERED ||
+                  dom.parentElement?.tagName === 'OL'
+                ? LIST_KIND.ORDERED
+                : LIST_KIND.BULLET,
           tight: dom.getAttribute('data-list-tight') !== 'false',
         };
       },
@@ -280,6 +284,7 @@ function pluginInputRules(_config: RequiredConfig) {
         }),
         wrappingListInputRule(/^(\d+)\.\s$/, {
           kind: LIST_KIND.ORDERED,
+          listKind: LIST_KIND.ORDERED,
           order: 1,
         }),
         wrappingListInputRule(/^\s*(\[([ |x])\])\s$/, {

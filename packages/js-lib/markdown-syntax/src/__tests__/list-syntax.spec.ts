@@ -170,6 +170,26 @@ describe('listTokenizer task detection', () => {
   });
 
   it.each([
+    ['unchecked', '- [ ]  \n  continued task', 'false', 'continued task'],
+    [
+      'checked with formatting',
+      '- [x]  \n  **continued task**',
+      'true',
+      '**continued task**',
+    ],
+  ])('strips a hard break after a %s task marker', (_name, markdown, checked, content) => {
+    const tokens = tokenize(markdown);
+    const [item] = listItems(tokens);
+    const inline = tokens.find((token) => token.type === 'inline');
+
+    expect(item?.attrGet(TASK_CHECKED_ATTR)).toBe(checked);
+    expect(inline?.content).toBe(content);
+    expect(inline?.children?.some((child) => child.type === 'hardbreak')).toBe(
+      false,
+    );
+  });
+
+  it.each([
     ['no space after bracket', '- [ ]no'],
     ['no space before emphasis', '- [ ]**bold**'],
     ['no space before a link', '- [x][link](https://x)'],

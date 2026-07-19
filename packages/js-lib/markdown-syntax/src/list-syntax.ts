@@ -31,36 +31,40 @@ const TASK_MARKER = /^\[([ xX])\](?:\s+|$)/u;
 
 function stripInlinePrefix(inline: Token, prefix: string): boolean {
   const children = inline.children;
-  if (!children) return false;
-
-  let renderedPrefix = '';
-  for (const child of children) {
-    if (renderedPrefix.length >= prefix.length) break;
-    if (child.type === 'text') {
-      renderedPrefix += child.content.slice(
-        0,
-        prefix.length - renderedPrefix.length,
-      );
-    } else if (child.type === 'softbreak') {
-      renderedPrefix += '\n';
-    } else {
-      break;
-    }
+  const first = children?.[0];
+  const marker = prefix.slice(0, 3);
+  if (
+    !children ||
+    first?.type !== 'text' ||
+    !first.content.startsWith(marker)
+  ) {
+    return false;
   }
-  if (renderedPrefix !== prefix) return false;
+  first.content = first.content.slice(marker.length);
+  if (first.content === '') children.shift();
 
-  let remaining = prefix.length;
-  while (remaining > 0) {
+  let remaining = prefix.slice(marker.length);
+  while (remaining !== '') {
     const child = children[0];
     if (!child) return false;
-    if (child.type === 'softbreak') {
+    if (child.type === 'softbreak' || child.type === 'hardbreak') {
+      const newline = remaining.indexOf('\n');
+      if (newline === -1) return false;
       children.shift();
-      remaining--;
+      remaining = remaining.slice(newline + 1);
       continue;
     }
-    const consumed = Math.min(remaining, child.content.length);
+    if (child.type !== 'text') return false;
+    let consumed = 0;
+    while (
+      consumed < remaining.length &&
+      child.content[consumed] === remaining[consumed]
+    ) {
+      consumed++;
+    }
+    if (consumed === 0) return false;
     child.content = child.content.slice(consumed);
-    remaining -= consumed;
+    remaining = remaining.slice(consumed);
     if (child.content === '') children.shift();
   }
   inline.content = inline.content.slice(prefix.length);

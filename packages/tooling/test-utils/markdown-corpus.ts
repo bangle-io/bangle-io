@@ -852,6 +852,18 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     engines: BOTH_ENGINES,
   },
   {
+    name: 'task content after a hard break normalizes in one pass',
+    markdown: '- [ ]  \n  continued task',
+    canonical: '- [ ] continued task',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'checked task with formatted content after a hard break',
+    markdown: '- [x]  \n  **continued task**',
+    canonical: '- [x] **continued task**',
+    engines: BOTH_ENGINES,
+  },
+  {
     name: 'bracket past the start of the item is not a task marker',
     markdown: '- a [ ] mid-item marker',
     canonical: '- a \\[ \\] mid-item marker',

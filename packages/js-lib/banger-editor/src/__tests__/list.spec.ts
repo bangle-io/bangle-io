@@ -5,7 +5,13 @@ import { setupBase } from '../base';
 import { setupCodeBlock } from '../code-block';
 import { setupList } from '../list';
 import { setupParagraph } from '../paragraph';
-import { type Command, DOMParser, type PMNode } from '../pm';
+import {
+  type Command,
+  DOMParser,
+  type EditorView,
+  type PMNode,
+  TextSelection,
+} from '../pm';
 import { createBangerEditorTestSetup } from '../test-helpers';
 
 const lists = setupList();
@@ -48,6 +54,22 @@ function run(
   editor: ReturnType<typeof editorTest.createEditor>,
 ) {
   expect(command(editor.view.state, editor.view.dispatch)).toBe(true);
+}
+
+function typeText(view: EditorView, text: string) {
+  for (const char of text) {
+    const insertChar = () => view.state.tr.insertText(char);
+    const handled = view.someProp('handleTextInput', (handler) =>
+      handler(
+        view,
+        view.state.selection.from,
+        view.state.selection.to,
+        char,
+        insertChar,
+      ),
+    );
+    if (!handled) view.dispatch(insertChar());
+  }
 }
 
 describe('list Markdown metadata through editing commands', () => {
@@ -111,6 +133,60 @@ describe('list Markdown metadata through editing commands', () => {
         tight: false,
       });
     }
+  });
+
+  it('keeps an ordered input-rule list ordered when converting it to tasks', () => {
+    const editor = editorTest.createEditor(doc(p('<cursor>')));
+    typeText(editor.view, '1. ordered');
+
+    expectListShapes(editor.view.state.doc, [
+      { kind: 'ordered', listKind: 'ordered', tight: true },
+    ]);
+    run(lists.command.toggleTaskList, editor);
+    expectListShapes(editor.view.state.doc, [
+      {
+        checked: false,
+        kind: 'task',
+        listKind: 'ordered',
+        tight: true,
+      },
+    ]);
+    expect(editor.view.state.doc.textContent).toBe('ordered');
+  });
+
+  it('keeps an ordinary HTML ordered list ordered when converting it to tasks', () => {
+    const host = document.createElement('div');
+    host.innerHTML = '<ol><li>pasted one</li><li>pasted two</li></ol>';
+    const parsed = DOMParser.fromSchema(editorTest.schema).parse(host);
+    expectListShapes(parsed, [
+      { kind: 'ordered', listKind: 'ordered', tight: true },
+      { kind: 'ordered', listKind: 'ordered', tight: true },
+    ]);
+
+    const editor = editorTest.createEditor(parsed);
+    editor.view.dispatch(
+      editor.view.state.tr.setSelection(
+        TextSelection.between(
+          editor.view.state.doc.resolve(1),
+          editor.view.state.doc.resolve(editor.view.state.doc.content.size - 1),
+        ),
+      ),
+    );
+    run(lists.command.toggleTaskList, editor);
+    expectListShapes(editor.view.state.doc, [
+      {
+        checked: false,
+        kind: 'task',
+        listKind: 'ordered',
+        tight: true,
+      },
+      {
+        checked: false,
+        kind: 'task',
+        listKind: 'ordered',
+        tight: true,
+      },
+    ]);
   });
 
   it.each<{

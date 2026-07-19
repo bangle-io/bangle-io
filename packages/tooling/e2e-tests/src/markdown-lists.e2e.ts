@@ -136,4 +136,21 @@ test('converting an ordered list to tasks keeps its container and looseness', as
   await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
     expected,
   );
+
+  await editor.click();
+  await page.keyboard.press('ControlOrMeta+a');
+  await page.keyboard.press('Backspace');
+  await page.keyboard.type('1. typed ordered');
+  await page.keyboard.press('ControlOrMeta+Shift+7');
+  const inputRuleExpected = '1. [ ] typed ordered';
+  await expect(editor.getByRole('checkbox')).toHaveCount(1);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(inputRuleExpected);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(editor.getByRole('checkbox')).toHaveCount(1);
+  await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
+    inputRuleExpected,
+  );
 });
