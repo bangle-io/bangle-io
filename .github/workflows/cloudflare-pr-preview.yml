@@ -58,8 +58,10 @@ jobs:
 
       - name: Build app
         env:
+          CF_PAGES: '1'
           CF_PAGES_BRANCH: ${{ env.CLOUDFLARE_PREVIEW_BRANCH }}
           CF_PAGES_COMMIT_SHA: ${{ env.PR_HEAD_SHA }}
+          CF_PAGES_URL: ${{ env.CLOUDFLARE_PREVIEW_URL }}
         run: pnpm build
 
       - name: Validate Cloudflare secrets
