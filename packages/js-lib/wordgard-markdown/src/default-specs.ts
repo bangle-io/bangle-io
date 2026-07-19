@@ -8,6 +8,7 @@
 // file — see the package-level round-trip corpus.
 import {
   readListTokenMetadata,
+  resolveListRunTightness,
   serializeWikiLinkAttrs,
   type WikiLinkAttrs,
 } from '@bangle.io/markdown-syntax';
@@ -348,26 +349,12 @@ function listContainerKind(node: Node | undefined): ListContainerKind | null {
 }
 
 function listTightnessByChild(parent: Plot): readonly boolean[] {
-  const result = Array.from({ length: parent.content.length }, () => true);
-  for (let start = 0; start < parent.content.length; ) {
-    const first = parent.content[start];
-    const kind = listContainerKind(first);
-    if (!kind || !first?.isPlot) {
-      start++;
-      continue;
-    }
-    let end = start + 1;
-    let tight = listIsTight(first);
-    while (end < parent.content.length) {
-      const sibling = parent.content[end];
-      if (listContainerKind(sibling) !== kind) break;
-      if (sibling?.isPlot) tight = tight && listIsTight(sibling);
-      end++;
-    }
-    result.fill(tight, start, end);
-    start = end;
-  }
-  return result;
+  return resolveListRunTightness(
+    parent.content.map((node) => {
+      const kind = listContainerKind(node);
+      return kind && node?.isPlot ? { kind, tight: listIsTight(node) } : null;
+    }),
+  );
 }
 
 function listRunIsTight(

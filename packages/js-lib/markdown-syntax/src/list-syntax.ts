@@ -22,6 +22,33 @@ export type ListTokenMetadata = {
   readonly taskChecked: boolean | null;
 };
 
+export type ListRunMetadata = Pick<ListTokenMetadata, 'kind' | 'tight'>;
+
+/** Resolve one tightness value for each adjacent run of the same list kind. */
+export function resolveListRunTightness(
+  items: readonly (ListRunMetadata | null)[],
+): readonly boolean[] {
+  const result = items.map(() => true);
+  for (let start = 0; start < items.length; ) {
+    const first = items[start];
+    if (!first) {
+      start++;
+      continue;
+    }
+    let end = start + 1;
+    let tight = first.tight;
+    while (end < items.length) {
+      const item = items[end];
+      if (item?.kind !== first.kind) break;
+      tight = tight && item.tight;
+      end++;
+    }
+    result.fill(tight, start, end);
+    start = end;
+  }
+  return result;
+}
+
 /**
  * Task markers GFM recognizes at the very start of a list item's first
  * paragraph: brackets containing whitespace, `x`, or `X`, followed by GFM
@@ -79,6 +106,7 @@ function listIsTight(
   tokens: readonly Token[],
   openIndex: number,
   sourceLines: readonly string[],
+  blockquoteDepth: number,
 ): boolean {
   const open = tokens[openIndex];
   if (!open) return true;
@@ -89,16 +117,22 @@ function listIsTight(
   let currentItemLevel: number | null = null;
   let hasDirectChild = false;
   let hasDirectItem = false;
+  let inferredTight = true;
   for (let i = openIndex + 1; i < tokens.length; i++) {
     const token = tokens[i];
     if (!token || token.level < open.level) break;
-    if (token.type === closeType && token.level === open.level) return true;
+    if (token.type === closeType && token.level === open.level) {
+      return inferredTight;
+    }
     if (token.type === 'paragraph_open' && token.level === paragraphLevel) {
       return token.hidden;
     }
     if (token.type === 'list_item_open' && token.level === itemLevel) {
-      if (hasDirectItem && startsAfterBlankLine(token, sourceLines)) {
-        return false;
+      if (
+        hasDirectItem &&
+        startsAfterBlankLine(token, sourceLines, blockquoteDepth)
+      ) {
+        inferredTight = false;
       }
       hasDirectItem = true;
       currentItemLevel = token.level;
@@ -115,25 +149,32 @@ function listIsTight(
       token.nesting !== -1 &&
       token.map
     ) {
-      if (hasDirectChild && startsAfterBlankLine(token, sourceLines)) {
-        return false;
+      if (
+        hasDirectChild &&
+        startsAfterBlankLine(token, sourceLines, blockquoteDepth)
+      ) {
+        inferredTight = false;
       }
       hasDirectChild = true;
     }
   }
-  return true;
+  return inferredTight;
 }
 
 function startsAfterBlankLine(
   token: Token,
   sourceLines: readonly string[],
+  blockquoteDepth: number,
 ): boolean {
   const startLine = token.map?.[0];
-  return (
-    startLine !== undefined &&
-    startLine > 0 &&
-    /^[ \t]*(?:>[ \t]*)*$/.test(sourceLines[startLine - 1] ?? '')
-  );
+  if (startLine === undefined || startLine === 0) return false;
+  let line = sourceLines[startLine - 1] ?? '';
+  for (let depth = 0; depth < blockquoteDepth; depth++) {
+    const marker = /^[ \t]*>[ \t]?/.exec(line);
+    if (!marker) return false;
+    line = line.slice(marker[0].length);
+  }
+  return /^[ \t]*$/.test(line);
 }
 
 /**
@@ -160,14 +201,21 @@ export function listTokenizer(md: MarkdownIt): void {
 
     // Pass 1: stamp bullet/ordered kinds from the enclosing list.
     const listStack: Array<{ kind: ListKind; tight: boolean }> = [];
+    let blockquoteDepth = 0;
     for (let i = 0; i < tokens.length; i++) {
       const token = tokens[i];
       if (!token) continue;
       switch (token.type) {
+        case 'blockquote_open':
+          blockquoteDepth++;
+          break;
+        case 'blockquote_close':
+          blockquoteDepth--;
+          break;
         case 'bullet_list_open':
         case 'ordered_list_open': {
           const kind = token.type === 'bullet_list_open' ? 'bullet' : 'ordered';
-          const tight = listIsTight(tokens, i, sourceLines);
+          const tight = listIsTight(tokens, i, sourceLines, blockquoteDepth);
           listStack.push({ kind, tight });
           token.attrSet(LIST_KIND_ATTR, kind);
           token.attrSet(LIST_TIGHT_ATTR, String(tight));

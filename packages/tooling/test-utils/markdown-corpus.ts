@@ -730,6 +730,12 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     engines: BOTH_ENGINES,
   },
   {
+    name: 'blockquote marker line does not loosen its containing list',
+    markdown: '- > q\n  >\n- > b',
+    canonical: '- > q\n- > b',
+    engines: BOTH_ENGINES,
+  },
+  {
     name: 'loose list with fenced-code-only items remains loose',
     markdown: '- ```\n  a\n  ```\n\n- ```\n  b\n  ```',
     engines: BOTH_ENGINES,

@@ -51,6 +51,7 @@ export {
   defaultAttributesGetter,
   deleteCommand,
   enterCommand,
+  findCheckboxInListItem,
   isListNode,
   isListType,
   ListDOMSerializer,

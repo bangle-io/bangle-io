@@ -276,6 +276,28 @@ describe('list Markdown metadata through editing commands', () => {
   });
 
   it.each([
+    { checked: false, checkedAttribute: '', label: 'unchecked' },
+    { checked: true, checkedAttribute: ' checked', label: 'checked' },
+  ])('parses a $label checkbox in an ordered list as a task', ({
+    checked,
+    checkedAttribute,
+  }) => {
+    const host = document.createElement('div');
+    host.innerHTML = `<ol><li><input type="checkbox"${checkedAttribute}>task</li></ol>`;
+
+    const parsed = DOMParser.fromSchema(editorTest.schema).parse(host);
+
+    expectListShapes(parsed, [
+      {
+        checked,
+        kind: 'task',
+        listKind: 'ordered',
+        tight: true,
+      },
+    ]);
+  });
+
+  it.each([
     { checked: false, marker: '[ ]' },
     { checked: true, marker: '[x]' },
     { checked: true, marker: '[X]' },
@@ -305,6 +327,33 @@ describe('list Markdown metadata through editing commands', () => {
 
     expect(editor.view.state.doc.firstChild?.type.name).toBe('paragraph');
     expect(editor.view.state.doc.textContent).toBe('[|] not a task');
+  });
+
+  it.each([
+    {
+      name: 'ordered item',
+      source: { kind: 'ordered', listKind: 'ordered', tight: true },
+    },
+    {
+      name: 'loose ordered task',
+      source: {
+        checked: true,
+        kind: 'task',
+        listKind: 'ordered',
+        tight: false,
+      },
+    },
+  ] as const)('turns an existing $name into a bullet from typed input', ({
+    source,
+  }) => {
+    const editor = editorTest.createEditor(doc(list(source, p('<cursor>'))));
+
+    typeText(editor.view, '- converted');
+
+    expectListShapes(editor.view.state.doc, [
+      { kind: 'bullet', listKind: 'bullet', tight: source.tight },
+    ]);
+    expect(editor.view.state.doc.textContent).toBe('converted');
   });
 
   it.each<{

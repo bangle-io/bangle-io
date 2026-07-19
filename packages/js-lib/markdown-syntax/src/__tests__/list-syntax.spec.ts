@@ -4,6 +4,7 @@ import {
   LIST_KIND_ATTR,
   LIST_TIGHT_ATTR,
   readListTokenMetadata,
+  resolveListRunTightness,
   TASK_CHECKED_ATTR,
 } from '../list-syntax';
 import { createBaseMarkdownTokenizer } from '../tokenizer';
@@ -46,6 +47,21 @@ describe('listTokenizer kinds', () => {
   });
 });
 
+describe('resolveListRunTightness', () => {
+  it('makes each adjacent same-kind run loose when any member is loose', () => {
+    expect(
+      resolveListRunTightness([
+        { kind: 'bullet', tight: true },
+        { kind: 'bullet', tight: false },
+        { kind: 'ordered', tight: true },
+        null,
+        { kind: 'ordered', tight: false },
+        { kind: 'ordered', tight: true },
+      ]),
+    ).toEqual([false, false, true, true, false, false]);
+  });
+});
+
 describe('listTokenizer tightness', () => {
   it.each([
     ['tight bullet', '- one\n- two', true],
@@ -71,6 +87,15 @@ describe('listTokenizer tightness', () => {
       { kind: 'bullet', tight: false, taskChecked: null },
       { kind: 'ordered', tight: true, taskChecked: null },
     ]);
+  });
+
+  it.each([
+    ['a paragraph item follows', '- > q\n  >\n- b'],
+    ['all items are blockquotes', '- > q\n  >\n- > b'],
+  ])('does not treat a blockquote marker line as a list separator when %s', (_name, markdown) => {
+    const tokens = tokenize(markdown);
+    const open = tokens.find((token) => token.type === 'bullet_list_open');
+    expect(open?.attrGet(LIST_TIGHT_ATTR)).toBe('true');
   });
 
   it('does not borrow tightness from a following list when an item only contains a nested list', () => {

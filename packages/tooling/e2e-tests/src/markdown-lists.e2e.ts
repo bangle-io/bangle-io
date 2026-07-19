@@ -4,6 +4,7 @@ import {
   createBrowserWorkspaceAndNote,
   getEditorLocator,
   readStoredMarkdown,
+  selectEditorText,
   waitForEditorFocus,
   writeStoredMarkdown,
 } from './common';
@@ -185,5 +186,36 @@ test('converting an ordered list to tasks keeps its container and looseness', as
   await expect(editor.getByRole('checkbox')).toHaveCount(1);
   await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
     inputRuleExpected,
+  );
+});
+
+test('typing a bullet marker inside an ordered item persists as a bullet', async ({
+  page,
+}) => {
+  const workspaceName = 'list-input-rule-fidelity';
+  const noteName = 'ordered-to-bullet';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.type('1. temporary');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('1. temporary');
+
+  await selectEditorText(page, 'temporary');
+  await page.keyboard.press('Backspace');
+  await page.keyboard.type('- converted');
+
+  await expect(editor.getByText('converted', { exact: true })).toBeVisible();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('- converted');
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(editor.getByText('converted', { exact: true })).toBeVisible();
+  await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
+    '- converted',
   );
 });

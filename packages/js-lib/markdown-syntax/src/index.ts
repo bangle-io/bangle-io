@@ -3,9 +3,11 @@ export {
   LIST_KIND_ATTR,
   LIST_TIGHT_ATTR,
   type ListKind,
+  type ListRunMetadata,
   type ListTokenMetadata,
   listTokenizer,
   readListTokenMetadata,
+  resolveListRunTightness,
   TASK_CHECKED_ATTR,
 } from './list-syntax';
 export {

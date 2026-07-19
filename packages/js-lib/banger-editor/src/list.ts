@@ -1,4 +1,7 @@
-import { readListTokenMetadata } from '@bangle.io/markdown-syntax';
+import {
+  readListTokenMetadata,
+  resolveListRunTightness,
+} from '@bangle.io/markdown-syntax';
 import type { MarkdownSerializerState } from 'prosemirror-markdown';
 import {
   type CollectionType,
@@ -29,6 +32,7 @@ import {
   defaultAttributesGetter,
   deleteCommand,
   enterCommand,
+  findCheckboxInListItem,
   inputRules,
   isListNode,
   isListType,
@@ -148,15 +152,22 @@ function createMarkdownListSpec(): NodeSpec {
         if (typeof dom === 'string') return attrs ?? null;
         const kind = dom.getAttribute('data-list-container-kind');
         const itemKind = dom.getAttribute('data-list-kind');
+        const checkbox = findCheckboxInListItem(dom);
+        const isTask =
+          attrs?.kind === LIST_KIND.TASK ||
+          itemKind === LIST_KIND.TASK ||
+          dom.hasAttribute('data-task-list-item') ||
+          checkbox !== undefined;
         return {
           ...(attrs ?? {}),
-          ...(itemKind === LIST_KIND.TASK
+          ...(isTask
             ? {
                 kind: LIST_KIND.TASK,
                 checked:
-                  attrs?.checked === true ||
-                  dom.hasAttribute('data-list-checked') ||
-                  dom.hasAttribute('data-checked'),
+                  checkbox?.hasAttribute('checked') ??
+                  (attrs?.checked === true ||
+                    dom.hasAttribute('data-list-checked') ||
+                    dom.hasAttribute('data-checked')),
               }
             : {}),
           listKind:
@@ -284,6 +295,7 @@ function pluginInputRules(_config: RequiredConfig) {
       rules: [
         wrappingListInputRule(/^\s*([-*])\s$/, {
           kind: LIST_KIND.BULLET,
+          listKind: LIST_KIND.BULLET,
         }),
         wrappingListInputRule(/^(\d+)\.\s$/, {
           kind: LIST_KIND.ORDERED,
@@ -615,23 +627,10 @@ function listRunIsTight(
 }
 
 function listTightnessByChild(parent: PMNode): readonly boolean[] {
-  const result = Array.from({ length: parent.childCount }, () => true);
-  for (let start = 0; start < parent.childCount; ) {
-    const first = readListAttrs(parent.child(start));
-    if (!first) {
-      start++;
-      continue;
-    }
-    let end = start + 1;
-    let tight = first.tight;
-    while (end < parent.childCount) {
-      const attrs = readListAttrs(parent.child(end));
-      if (attrs?.listKind !== first.listKind) break;
-      tight = tight && attrs.tight;
-      end++;
-    }
-    result.fill(tight, start, end);
-    start = end;
-  }
-  return result;
+  return resolveListRunTightness(
+    Array.from({ length: parent.childCount }, (_, index) => {
+      const attrs = readListAttrs(parent.child(index));
+      return attrs ? { kind: attrs.listKind, tight: attrs.tight } : null;
+    }),
+  );
 }
