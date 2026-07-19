@@ -88,33 +88,6 @@ describe('ProseMirror list Markdown metadata', () => {
     expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
   });
 
-  it('does not persist a hidden indentation wrapper as a second task', () => {
-    const markdown = createProductionMarkdown();
-    const parsed = markdown.parser.parse('- parent\n  - [ ] child');
-    const parent = parsed.firstChild;
-    const task = parent?.child(1);
-    if (!parent || !task) throw new Error('expected a nested task');
-
-    const hiddenWrapper = task.type.create(task.attrs, [task]);
-    const editedParent = parent.type.create(parent.attrs, [
-      parent.child(0),
-      hiddenWrapper,
-    ]);
-    const edited = parsed.type.create(parsed.attrs, [editedParent]);
-
-    const serialized = markdown.serializer.serialize(edited);
-    const reparsed = markdown.parser.parse(serialized);
-    const reparsedWrapper = reparsed.firstChild?.child(1);
-    expect(serialized).toBe('- parent\n\n  - \n    - [ ] child');
-    expect(reparsedWrapper?.attrs.kind).toBe('bullet');
-    expect(reparsedWrapper?.firstChild?.attrs).toMatchObject({
-      checked: false,
-      kind: 'task',
-    });
-    expect(reparsedWrapper?.textContent).toBe('child');
-    expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
-  });
-
   it.each([
     ['a bullet', '- nested-looking', '\\- nested-looking'],
     ['a heading', '# heading-looking', '\\# heading-looking'],
@@ -319,6 +292,13 @@ describe('ProseMirror list Markdown metadata', () => {
       source: '***',
       expected: '- [ ] \n\n  ---\n\n- [ ] second',
       expectedType: 'horizontalRule',
+      ordered: false,
+    },
+    {
+      name: 'a nested list',
+      source: '- nested',
+      expected: '- [ ] \n  - nested\n- [ ] second',
+      expectedType: 'list',
       ordered: false,
     },
     {

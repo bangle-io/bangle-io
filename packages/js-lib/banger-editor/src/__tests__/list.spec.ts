@@ -619,6 +619,123 @@ describe('list Markdown metadata through editing commands', () => {
     expect(editor.view.state.doc.child(1).textContent).toBe('child');
   });
 
+  it.each([
+    {
+      child: {
+        checked: false,
+        kind: 'task',
+        listKind: 'bullet',
+        tight: true,
+      },
+      name: 'bullet task',
+      placeholderKind: 'bullet',
+    },
+    {
+      child: {
+        checked: true,
+        kind: 'task',
+        listKind: 'ordered',
+        tight: false,
+      },
+      name: 'ordered task',
+      placeholderKind: 'ordered',
+    },
+  ] as const)('normalizes a deeply indented $name placeholder without changing the task', ({
+    child,
+    placeholderKind,
+  }) => {
+    const outer = {
+      kind: 'bullet',
+      listKind: 'bullet',
+      tight: true,
+    } as const;
+    const editor = editorTest.createEditor(
+      doc(
+        list(
+          outer,
+          p('parent'),
+          list(child, p('child<cursor>')),
+          list(outer, p('sibling')),
+        ),
+      ),
+    );
+
+    run(lists.command.indentList, editor);
+
+    const parent = editor.view.state.doc.firstChild;
+    const placeholder = parent?.child(1);
+    expect(placeholder?.attrs).toMatchObject({
+      checked: false,
+      kind: placeholderKind,
+      listKind: child.listKind,
+    });
+    expect(placeholder?.firstChild?.attrs).toMatchObject(child);
+    expect(placeholder?.firstChild?.textContent).toBe('child');
+  });
+
+  it('does not normalize an existing task whose first block is a list', () => {
+    const outer = {
+      kind: 'bullet',
+      listKind: 'bullet',
+      tight: true,
+    } as const;
+    const task = {
+      checked: true,
+      kind: 'task',
+      listKind: 'bullet',
+      tight: true,
+    } as const;
+    const editor = editorTest.createEditor(
+      doc(
+        list(task, list(outer, p('existing nested block'))),
+        list(outer, p('parent'), list(task, p('child<cursor>'))),
+      ),
+    );
+
+    run(lists.command.indentList, editor);
+
+    expect(editor.view.state.doc.firstChild?.attrs).toMatchObject(task);
+    expect(editor.view.state.doc.firstChild?.firstChild?.textContent).toBe(
+      'existing nested block',
+    );
+  });
+
+  it.each([
+    ['toggle task', lists.command.toggleTaskList],
+    ['unwrap', lists.command.unwrapList],
+  ] as const)('%s targets the real task immediately after deep indentation', (_name, command) => {
+    const outer = {
+      kind: 'bullet',
+      listKind: 'bullet',
+      tight: true,
+    } as const;
+    const task = {
+      checked: false,
+      kind: 'task',
+      listKind: 'bullet',
+      tight: true,
+    } as const;
+    const editor = editorTest.createEditor(
+      doc(
+        list(
+          outer,
+          p('parent'),
+          list(task, p('child<cursor>')),
+          list(outer, p('sibling')),
+        ),
+      ),
+    );
+
+    run(lists.command.indentList, editor);
+    run(command, editor);
+
+    const parent = editor.view.state.doc.firstChild;
+    expect(parent?.child(1).attrs.kind).toBe('bullet');
+    expect(parent?.child(1).firstChild?.type.name).toBe('paragraph');
+    expect(parent?.child(1).textContent).toBe('child');
+    expect(parent?.child(2).textContent).toBe('sibling');
+  });
+
   it('preserves loose ordered task attrs while moving an item', () => {
     const bullet = {
       kind: 'bullet',

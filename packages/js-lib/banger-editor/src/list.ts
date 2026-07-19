@@ -18,6 +18,7 @@ import type {
   EditorState,
   NodeSpec,
   PMNode,
+  Transaction,
 } from './pm';
 import {
   backspaceCommand,
@@ -417,7 +418,55 @@ function enterListCommand(config: RequiredConfig): Command {
 }
 
 function indentList(_config: RequiredConfig): Command {
-  return createIndentListCommand();
+  const command = createIndentListCommand();
+  return (state, dispatch, view) => {
+    if (!dispatch) return command(state, undefined, view);
+
+    const existingListNodes = new WeakSet<PMNode>();
+    state.doc.descendants((node) => {
+      if (isListNode(node)) existingListNodes.add(node);
+    });
+
+    return command(
+      state,
+      (tr) => {
+        normalizeNewIndentationPlaceholders(tr, existingListNodes);
+        dispatch(tr);
+      },
+      view,
+    );
+  };
+}
+
+function normalizeNewIndentationPlaceholders(
+  tr: Transaction,
+  existingListNodes: WeakSet<PMNode>,
+) {
+  // Flat-list copies item attrs onto list-only wrappers used for skipped
+  // indentation levels. Only normalize wrappers created by this transaction.
+  const positions: number[] = [];
+  tr.doc.descendants((node, pos) => {
+    const attrs = readListAttrs(node);
+    if (
+      attrs?.kind === LIST_KIND.TASK &&
+      !existingListNodes.has(node) &&
+      isListNode(node.firstChild)
+    ) {
+      positions.push(pos);
+    }
+  });
+
+  for (const pos of positions) {
+    const node = tr.doc.nodeAt(pos);
+    const attrs = readListAttrs(node ?? undefined);
+    if (!node || !attrs) continue;
+    tr.setNodeMarkup(pos, null, {
+      ...node.attrs,
+      checked: false,
+      kind: attrs.listKind,
+      order: attrs.listKind === LIST_KIND.ORDERED ? 1 : null,
+    });
+  }
 }
 
 function dedentList(_config: RequiredConfig): Command {
@@ -583,10 +632,9 @@ function flatListToMarkdown(
     state.flushClose(1);
   }
 
-  const markerIsHidden = listMarkerIsHidden(node);
   const containerMarker = attrs.listKind === LIST_KIND.ORDERED ? '1.' : '-';
   const marker =
-    attrs.kind === LIST_KIND.TASK && !markerIsHidden
+    attrs.kind === LIST_KIND.TASK
       ? `${containerMarker} [${attrs.checked ? 'x' : ' '}]`
       : containerMarker;
   const firstDelim = `${marker} `;
@@ -599,7 +647,6 @@ function flatListToMarkdown(
     const firstKind = firstChild ? listItemBlockKind(firstChild) : null;
     const taskStartsWithBlock =
       attrs.kind === LIST_KIND.TASK &&
-      !markerIsHidden &&
       firstKind !== null &&
       firstKind !== 'paragraph';
     if (taskStartsWithBlock) {
@@ -678,11 +725,7 @@ function flatListItemCanRenderTight(node: PMNode): boolean {
     if (isListNode(child) && listMarkerIsHidden(child)) return false;
   }
   const blocks = listItemBlockKinds(node, firstChildIndex);
-  if (
-    attrs?.kind === LIST_KIND.TASK &&
-    !listMarkerIsHidden(node) &&
-    blocks[0] !== 'paragraph'
-  ) {
+  if (attrs?.kind === LIST_KIND.TASK && blocks[0] !== 'paragraph') {
     blocks.unshift('paragraph');
   }
   return listItemCanRenderTight(blocks);

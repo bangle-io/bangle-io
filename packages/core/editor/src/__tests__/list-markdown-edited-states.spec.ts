@@ -78,16 +78,9 @@ describe('edited list document states', () => {
                 continue;
               }
               const expectedChildren = [a.node, b.node, c.node];
-              const markerIsHidden = a.node.type.name === 'list';
-              if (task && !markerIsHidden && a.node.type.name !== 'paragraph') {
+              if (task && a.node.type.name !== 'paragraph') {
                 expectedChildren.unshift(paragraph.create());
               }
-              const expectedKind =
-                task && !markerIsHidden
-                  ? 'task'
-                  : ordered
-                    ? 'ordered'
-                    : 'bullet';
               const expected = expectedChildren.map(signature);
               const actual = Array.from(
                 { length: actualItem.childCount },
@@ -97,7 +90,8 @@ describe('edited list document states', () => {
               if (
                 JSON.stringify(actual) !== JSON.stringify(expected) ||
                 fixed !== output ||
-                actualItem.attrs.kind !== expectedKind ||
+                actualItem.attrs.kind !==
+                  (task ? 'task' : ordered ? 'ordered' : 'bullet') ||
                 actualItem.attrs.listKind !== (ordered ? 'ordered' : 'bullet')
               ) {
                 failures.push(
