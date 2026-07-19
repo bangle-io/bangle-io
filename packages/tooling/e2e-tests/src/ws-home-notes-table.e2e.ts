@@ -102,15 +102,38 @@ test('notes table row actions star and delete a note', async ({ page }) => {
   await goHome(page);
 
   // Star through the row menu: the star indicator appears in the row and the
-  // note joins the sidebar starred section.
+  // note joins the sidebar starred section without flashing off and on.
+  const targetRow = noteRows(page).first();
+  await targetRow.evaluate((element) => {
+    const readStarredState = () =>
+      element.textContent?.includes('Starred') ?? false;
+    const history = [readStarredState()];
+    element.dataset.starredStateHistory = JSON.stringify(history);
+
+    new MutationObserver(() => {
+      const nextState = readStarredState();
+      if (history.at(-1) !== nextState) {
+        history.push(nextState);
+        element.dataset.starredStateHistory = JSON.stringify(history);
+      }
+    }).observe(element, { childList: true, subtree: true });
+  });
   await page.getByRole('button', { name: 'Actions for action-target' }).click();
   await page.getByRole('menuitem', { name: 'Star' }).click();
-  await expect(
-    noteRows(page).first().getByText('Starred', { exact: true }),
-  ).toBeAttached();
+  await expect(targetRow.getByText('Starred', { exact: true })).toBeAttached();
   await expect(
     page.getByText('Starred', { exact: true }).first(),
   ).toBeVisible();
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+      }),
+  );
+  await expect(targetRow).toHaveAttribute(
+    'data-starred-state-history',
+    '[false,true]',
+  );
 
   // Delete through the row menu with explicit confirmation.
   await page.getByRole('button', { name: 'Actions for action-target' }).click();

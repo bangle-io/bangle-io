@@ -54,7 +54,6 @@ export class UserActivityService extends BaseService {
   private activityCooldownMs!: number;
   private $refreshActivityCounter = atom(0);
   private $_timesAppLoaded: PrimitiveAtom<number> | undefined;
-  private $starredItemsChangeCounter = atom(0);
   private starredItemManager: StarredItemManager;
 
   $isNewUser = atom((get) => {
@@ -145,7 +144,6 @@ export class UserActivityService extends BaseService {
   $starredWsPaths = createAsyncAtom(
     async (get): Promise<string[]> => {
       await this.mountPromise;
-      get(this.$starredItemsChangeCounter);
       get(this.workspaceOps.$workspaceInfoChange);
       const wsPaths = get(this.workspaceState.$noteWsPaths);
       const wsName = get(this.workspaceState.$currentWsName);
@@ -156,7 +154,7 @@ export class UserActivityService extends BaseService {
         await this.starredItemManager.getStarredItems(wsName);
       return starredWsPaths;
     },
-    () => [],
+    (previous) => previous ?? [],
     this.emitAppError,
   );
 
@@ -401,7 +399,6 @@ export class UserActivityService extends BaseService {
   ): Promise<void> {
     await this.mountPromise;
     await this.starredItemManager.toggleStarItem(item, desiredState);
-    this.store.set(this.$starredItemsChangeCounter, (c) => c + 1);
   }
 
   /**
@@ -423,11 +420,7 @@ export class UserActivityService extends BaseService {
     await this.mountPromise;
 
     try {
-      const relocated =
-        await this.starredItemManager.relocateStarredItems(relocations);
-      if (relocated) {
-        this.store.set(this.$starredItemsChangeCounter, (c) => c + 1);
-      }
+      await this.starredItemManager.relocateStarredItems(relocations);
       return 'succeeded';
     } catch (error) {
       this.logger.error('Unable to migrate starred items after relocation', {
@@ -505,14 +498,14 @@ class StarredItemManager {
 
   async relocateStarredItems(
     relocations: readonly { oldItem: WsPath; newItem: WsPath }[],
-  ): Promise<boolean> {
+  ): Promise<void> {
     if (relocations.length === 0) {
-      return false;
+      return;
     }
 
     const wsName = relocations[0]?.oldItem.wsName;
     if (!wsName) {
-      return false;
+      return;
     }
     for (const { oldItem, newItem } of relocations) {
       if (oldItem.wsName !== wsName || newItem.wsName !== wsName) {
@@ -534,7 +527,6 @@ class StarredItemManager {
         newItem.wsPath,
       ]),
     );
-    let relocated = false;
     await this.workspaceOps.updateWorkspaceMetadata(
       wsName,
       (currentMetadata) => {
@@ -554,8 +546,6 @@ class StarredItemManager {
           return currentMetadata;
         }
 
-        relocated = true;
-
         const relocatedItems = currentRawStarredItems.map(
           (wsPath) => relocationByOldWsPath.get(wsPath) ?? wsPath,
         );
@@ -566,8 +556,6 @@ class StarredItemManager {
         };
       },
     );
-
-    return relocated;
   }
 
   async getStarredItems(wsName: string): Promise<string[]> {
