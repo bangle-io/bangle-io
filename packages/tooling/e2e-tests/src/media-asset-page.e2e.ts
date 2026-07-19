@@ -1,6 +1,7 @@
 import { expect, type Page, test } from '@playwright/test';
 import {
   createBrowserWorkspaceAndNote,
+  ctrlKey,
   getEditorLocator,
   writeStoredFile,
   writeStoredMarkdown,
@@ -121,7 +122,9 @@ test('opens audio and video assets in their native players and survives reload',
 
   const editor = getEditorLocator(page, {});
 
+  await page.keyboard.down(ctrlKey);
   await editor.getByRole('link', { name: 'tone.wav' }).click();
+  await page.keyboard.up(ctrlKey);
   await expect(
     page.getByRole('heading', { name: 'tone.wav', exact: true }),
   ).toBeVisible();
@@ -138,7 +141,9 @@ test('opens audio and video assets in their native players and survives reload',
     .toBeCloseTo(0.1, 2);
 
   await page.goBack();
+  await page.keyboard.down(ctrlKey);
   await editor.getByRole('link', { name: 'clip.webm' }).click();
+  await page.keyboard.up(ctrlKey);
   await expect(
     page.getByRole('heading', { name: 'clip.webm', exact: true }),
   ).toBeVisible();
