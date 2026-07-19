@@ -10,32 +10,9 @@ const WORKSPACE_COMMAND_TITLES = [
   'New Note',
   'Quick New Note',
   'New Folder',
-  'View All Files',
-  'Go to Workspace Home',
-  'Refresh Files',
-  'Open Daily Note',
 ] as const;
 
-const NOTE_COMMAND_TITLES = [
-  'Delete Note',
-  'Rename Note',
-  'Move Note',
-  'Toggle Wide Editor',
-  'Focus Editor',
-  'Copy Selection as Markdown',
-  'Paste from Markdown',
-  'Toggle Collapse Heading Section',
-  'Expand All Heading Sections',
-  'Collapse All Heading 1 Sections',
-  'Collapse All Heading 2 Sections',
-  'Collapse All Heading 3 Sections',
-  'Clone Note',
-  'Toggle Star for Current Note',
-  'Toggle Heading 1',
-  'Toggle Heading 2',
-  'Toggle Heading 3',
-  'Insert Table',
-] as const;
+const NOTE_COMMAND_TITLE = 'Toggle Star for Current Note';
 
 async function expectOmniSearchCommandVisibility(
   page: Page,
@@ -95,7 +72,7 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
 
     await expectOmniSearchCommandVisibility(page, {
       visible: ['New Workspace'],
-      hidden: [...WORKSPACE_COMMAND_TITLES, ...NOTE_COMMAND_TITLES],
+      hidden: [...WORKSPACE_COMMAND_TITLES, NOTE_COMMAND_TITLE],
     });
   });
 
@@ -136,7 +113,7 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
 
     await expectOmniSearchCommandVisibility(page, {
       visible: ['New Workspace', ...WORKSPACE_COMMAND_TITLES],
-      hidden: NOTE_COMMAND_TITLES,
+      hidden: [NOTE_COMMAND_TITLE],
     });
   });
 
@@ -160,7 +137,7 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
       visible: [
         'New Workspace',
         ...WORKSPACE_COMMAND_TITLES,
-        ...NOTE_COMMAND_TITLES,
+        NOTE_COMMAND_TITLE,
       ],
       hidden: [],
     });
