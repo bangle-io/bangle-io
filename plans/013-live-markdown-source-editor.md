@@ -5,11 +5,12 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-12
-updated: 2026-07-12
-owner: agent
+updated: 2026-07-19
+owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/630
-related_issues: []
+related_issues:
+  - https://github.com/bangle-io/bangle-io/issues/527
 ---
 
 # Live Markdown Source Editor

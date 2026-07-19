@@ -5,10 +5,11 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-18
-updated: 2026-07-18
+updated: 2026-07-19
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/652
+  - https://github.com/bangle-io/bangle-io/pull/626
 related_issues:
   - https://github.com/bangle-io/bangle-io/issues/521
 ---
@@ -33,7 +34,9 @@ the actual design should be decided when the work is picked up.
 Documented during the notes-table work (PR #652), which added two more
 consumers (note file stats scan + targeted patch) and hit one of the implicit
 contracts described below as a real bug during review (force-update did not
-refresh stats).
+refresh stats). PR #626 is still open and activates Native FS external-change
+observation, making this consolidation more important, but the consolidation
+itself has not started.
 
 ## The problem
 
