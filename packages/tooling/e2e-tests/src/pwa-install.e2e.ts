@@ -35,6 +35,33 @@ function stubInstalledRelatedApps(page: Page) {
   });
 }
 
+test('the served manifest lists this deployment as an installed-detectable web app', async ({
+  page,
+}) => {
+  await page.goto('/');
+
+  const response = await page.request.get('/manifest.webmanifest');
+  expect(response.status()).toBe(200);
+  expect(response.headers()['content-type']).toContain(
+    'application/manifest+json',
+  );
+
+  const origin = new URL(page.url()).origin;
+  const manifest = (await response.json()) as {
+    id: string;
+    related_applications: Array<{ platform: string; url: string; id: string }>;
+  };
+
+  expect(manifest.id).toBe('/');
+  // The self entry drives getInstalledRelatedApps on this origin; the app's
+  // probe only accepts same-origin entries.
+  expect(manifest.related_applications[0]).toEqual({
+    platform: 'webapp',
+    url: `${origin}/manifest.webmanifest`,
+    id: `${origin}/`,
+  });
+});
+
 test('sidebar shows a one-click install pill while the browser offers a PWA install', async ({
   page,
 }) => {

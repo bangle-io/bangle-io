@@ -93,15 +93,21 @@ describe('installed related apps detection', () => {
     Reflect.deleteProperty(window.navigator, 'getInstalledRelatedApps');
   });
 
-  function stubInstalledRelatedApps(apps: Array<{ platform: string }>) {
+  function stubInstalledRelatedApps(
+    apps: Array<{ platform: string; url?: string }>,
+  ) {
     Object.defineProperty(window.navigator, 'getInstalledRelatedApps', {
       configurable: true,
       value: vi.fn(() => Promise.resolve(apps)),
     });
   }
 
+  function selfManifestUrl() {
+    return `${window.location.origin}/manifest.webmanifest`;
+  }
+
   it('reports open-in-app availability when the browser says the PWA is installed', async () => {
-    stubInstalledRelatedApps([{ platform: 'webapp' }]);
+    stubInstalledRelatedApps([{ platform: 'webapp', url: selfManifestUrl() }]);
 
     pwaInstall.initializePwaInstallPromptTracking(window);
 
@@ -133,6 +139,21 @@ describe('installed related apps detection', () => {
 
   it('ignores related apps that are not the web app itself', async () => {
     stubInstalledRelatedApps([{ platform: 'windows' }]);
+
+    pwaInstall.initializePwaInstallPromptTracking(window);
+    await Promise.resolve();
+
+    expect(pwaInstall.getPwaInstallSnapshot().canOpenInApp).toBe(false);
+  });
+
+  it('ignores an installed web app from a different origin', async () => {
+    // The manifest lists the production app as a related application on
+    // non-production origins; a production install must not surface
+    // open-in-app on this (different-origin) deployment.
+    stubInstalledRelatedApps([
+      { platform: 'webapp', url: 'https://app.bangle.io/manifest.webmanifest' },
+      { platform: 'webapp' },
+    ]);
 
     pwaInstall.initializePwaInstallPromptTracking(window);
     await Promise.resolve();

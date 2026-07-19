@@ -64,27 +64,47 @@ export function getPwaManifestSource(origin: string | undefined): string {
 export function getPwaManifestBuildOrigin(input: {
   appEnv: string;
   cloudflarePagesUrl: string | undefined;
+  isCloudflarePagesBuild: boolean;
 }): string | undefined {
   if (input.appEnv === 'production') {
     return PRODUCTION_ORIGIN;
   }
 
-  return normalizeOrigin(input.cloudflarePagesUrl);
+  const origin = normalizeOrigin(input.cloudflarePagesUrl);
+  if (input.isCloudflarePagesBuild && !origin) {
+    // A deployment built without its origin would silently emit a
+    // production-only manifest and defeat self-detection on that origin.
+    throw new Error(
+      'CF_PAGES_URL must be set for non-production Cloudflare Pages builds.',
+    );
+  }
+
+  return origin;
 }
 
-function getRequestOrigin(input: {
+function firstHeaderValue(
+  value: string | string[] | undefined,
+): string | undefined {
+  const raw = Array.isArray(value) ? value[0] : value;
+  const first = raw?.split(',')[0]?.trim();
+  return first || undefined;
+}
+
+export function getRequestOrigin(input: {
   host: string | undefined;
+  forwardedHost?: string | string[] | undefined;
   forwardedProto: string | string[] | undefined;
 }): string | undefined {
-  if (!input.host) {
+  const host = firstHeaderValue(input.forwardedHost) ?? input.host;
+  if (!host) {
     return undefined;
   }
 
-  const forwardedProto = Array.isArray(input.forwardedProto)
-    ? input.forwardedProto[0]
-    : input.forwardedProto?.split(',')[0]?.trim();
-  const protocol = forwardedProto === 'https' ? 'https' : 'http';
-  return `${protocol}://${input.host}`;
+  const protocol =
+    firstHeaderValue(input.forwardedProto)?.toLowerCase() === 'https'
+      ? 'https'
+      : 'http';
+  return `${protocol}://${host}`;
 }
 
 /** Emits the deployment-specific manifest and serves a port-specific one locally. */
@@ -99,10 +119,22 @@ export function pwaManifestPlugin(buildOrigin: string | undefined): Plugin {
 
       const requestOrigin = getRequestOrigin({
         host: req.headers.host,
+        forwardedHost: req.headers['x-forwarded-host'],
         forwardedProto: req.headers['x-forwarded-proto'],
       });
       res.setHeader('Content-Type', 'application/manifest+json; charset=utf-8');
-      res.end(getPwaManifestSource(requestOrigin));
+      // The body varies with request headers; never let a proxy cache it.
+      res.setHeader('Cache-Control', 'no-store');
+
+      let source: string;
+      try {
+        source = getPwaManifestSource(requestOrigin);
+      } catch {
+        // A malformed authority must not take the endpoint down; fall back
+        // to the origin-less (production-only) manifest.
+        source = getPwaManifestSource(undefined);
+      }
+      res.end(source);
     });
   };
 

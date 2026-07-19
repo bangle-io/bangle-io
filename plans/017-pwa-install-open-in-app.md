@@ -111,6 +111,12 @@ Three user-visible surfaces, all driven by one install-state snapshot:
   real Chromium install. The build emits the canonical `https://app.bangle.io/`
   app id for production and the `CF_PAGES_URL` origin for Cloudflare previews,
   so both production and preview installs can be detected from their own tabs.
+  Non-production Cloudflare builds fail loudly when `CF_PAGES_URL` is missing.
+- The runtime probe only accepts related applications whose URL matches the
+  current origin: a production install never lights up "Open in app" on
+  staging, previews, or a dev server. Known limitation: Cloudflare's unique
+  per-deployment URLs (as opposed to the stable branch aliases baked into the
+  manifest) are not listed, so tabs on those URLs cannot self-detect.
 - `promptPwaInstall` is guarded against reentrancy (sidebar pill and settings
   button share one deferred prompt event).
 - Install pill and dialog only appear when the underlying signal exists, so

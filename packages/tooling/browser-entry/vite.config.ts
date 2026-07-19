@@ -62,6 +62,7 @@ export default defineConfig(async (env) => {
   const pwaManifestBuildOrigin = getPwaManifestBuildOrigin({
     appEnv: envVars.appEnv,
     cloudflarePagesUrl: process.env.CF_PAGES_URL,
+    isCloudflarePagesBuild: process.env.CF_PAGES === '1',
   });
 
   // The placeholder sits inside a JS string literal, so escape the release

@@ -426,16 +426,31 @@ async function probeInstalledRelatedApps(windowRef: Window) {
 
   try {
     const relatedApps = await navigatorRef.getInstalledRelatedApps();
-    const hasInstalledWebApp = relatedApps.some(
-      (app) => app.platform === 'webapp',
+    // Only the deployment's own install counts. The manifest also lists the
+    // production app as a related application on previews/staging/dev, and a
+    // production install must not light up open-in-app on other origins
+    // (e.g. a dev server tab on a machine that has the production app).
+    const hasInstalledSelf = relatedApps.some(
+      (app) =>
+        app.platform === 'webapp' &&
+        app.url !== undefined &&
+        isSameOrigin(app.url, windowRef.location.origin),
     );
-    if (hasInstalledWebApp && !installedRelatedAppDetected) {
+    if (hasInstalledSelf && !installedRelatedAppDetected) {
       installedRelatedAppDetected = true;
       emitChange();
     }
   } catch {
     // Detection is best-effort; failures mean we keep treating the app as
     // not installed on this device.
+  }
+}
+
+function isSameOrigin(url: string, origin: string): boolean {
+  try {
+    return new URL(url).origin === origin;
+  } catch {
+    return false;
   }
 }
 
