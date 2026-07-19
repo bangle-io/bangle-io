@@ -12,18 +12,6 @@
   "launch_handler": {
     "client_mode": "focus-existing"
   },
-  "related_applications": [
-    {
-      "platform": "webapp",
-      "url": "https://app.bangle.io/manifest.webmanifest",
-      "id": "https://app.bangle.io/"
-    },
-    {
-      "platform": "webapp",
-      "url": "/manifest.webmanifest",
-      "id": "/"
-    }
-  ],
   "protocol_handlers": [
     {
       "protocol": "web+bangle",

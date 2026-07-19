@@ -56,10 +56,10 @@ Three user-visible surfaces, all driven by one install-state snapshot:
 
 ## Scope
 
-- Manifest: add `id`, `related_applications` (webapp, self — one absolute
-  production entry because desktop Chromium matches the resolved app id, plus
-  a relative fallback entry), `launch_handler` (`focus-existing`), and
-  `protocol_handlers` (`web+bangle` → `/?launch=%s`).
+- Manifest: add `id`, `related_applications` (webapp, self — generated with the
+  deployment's absolute origin because desktop Chromium matches the resolved
+  app id), `launch_handler` (`focus-existing`), and `protocol_handlers`
+  (`web+bangle` → `/?launch=%s`).
 - Extend `pwa-install.ts` module state with an installed-related-app probe,
   `isInstalledOnDevice` / `canOpenInApp` snapshot fields, `openInApp()`
   (protocol navigation), and boot-time cleanup of the `?launch=` query param.
@@ -107,11 +107,10 @@ Three user-visible surfaces, all driven by one install-state snapshot:
 - Manifest `id` is set to `/`, matching Chrome's computed default for the
   existing manifest (no `id` previously ⇒ default derived from `start_url`
   `/`), so existing installs keep their identity.
-- Installed-app detection (`getInstalledRelatedApps`) can only be truly
-  verified against production with a real Chromium install; the absolute
-  `related_applications` entry targets `https://app.bangle.io/` and must be
-  part of the release smoke. Staging/dev rely on the relative fallback entry
-  and may not detect installs — the UI degrades to install-only there.
+- Installed-app detection (`getInstalledRelatedApps`) must be verified with a
+  real Chromium install. The build emits the canonical `https://app.bangle.io/`
+  app id for production and the `CF_PAGES_URL` origin for Cloudflare previews,
+  so both production and preview installs can be detected from their own tabs.
 - `promptPwaInstall` is guarded against reentrancy (sidebar pill and settings
   button share one deferred prompt event).
 - Install pill and dialog only appear when the underlying signal exists, so

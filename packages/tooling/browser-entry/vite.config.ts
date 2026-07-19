@@ -9,6 +9,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
+import { getPwaManifestBuildOrigin, pwaManifestPlugin } from './pwa-manifest';
 import { translationsPlugin } from './translations-plugin';
 
 // The bootstrap must be built before `getEnvVars` (it is one of the
@@ -58,6 +59,10 @@ export default defineConfig(async (env) => {
     helpDocsVersion: '0.0.0',
     inlinedScripts: [translationInline, themeInline],
   });
+  const pwaManifestBuildOrigin = getPwaManifestBuildOrigin({
+    appEnv: envVars.appEnv,
+    cloudflarePagesUrl: process.env.CF_PAGES_URL,
+  });
 
   // The placeholder sits inside a JS string literal, so escape the release
   // before splicing it in.
@@ -78,6 +83,7 @@ export default defineConfig(async (env) => {
       port: readPortEnv('BANGLE_PREVIEW_PORT'),
     },
     plugins: [
+      pwaManifestPlugin(pwaManifestBuildOrigin),
       translationsPlugin(),
       createHtmlPlugin({
         minify: isProduction,
