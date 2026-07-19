@@ -29,7 +29,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   const fileTreeExpandedPathsByWorkspace = useAtomValue(
     workbenchState.$fileTreeExpandedPathsByWorkspace,
   );
-  const activeWsName = useAtomValue(navigation.$wsName);
+  const activeWsName = useAtomValue(workspaceState.$currentWsName);
   const activeWsPaths = useAtomValue(workspaceState.$activeWsPaths);
   const wsPaths = useAtomValue(workspaceState.$wsPaths);
   const noteWsPaths = useAtomValue(workspaceState.$noteWsPaths);

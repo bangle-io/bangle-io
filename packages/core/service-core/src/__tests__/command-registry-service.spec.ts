@@ -65,34 +65,39 @@ describe('CommandRegistryService', () => {
     expect(retrievedCommand).toEqual(command);
   });
 
-  test('filters workspace-required omni-search commands by availability', async () => {
+  test('filters omni-search commands by active scope', async () => {
     const { service } = await setup();
-    const alwaysAvailable = {
-      id: 'alwaysAvailable',
-      keywords: ['always'],
-      omniSearch: true,
+    const globalCommand = {
+      id: 'globalCommand',
+      keywords: ['global'],
+      omniSearch: 'global',
       args: null,
     } as const satisfies Command;
-    const workspaceRequired = {
-      id: 'workspaceRequired',
+    const workspaceCommand = {
+      id: 'workspaceCommand',
       keywords: ['workspace'],
-      omniSearch: true,
-      requiresWorkspace: true,
+      omniSearch: 'workspace',
       args: null,
     } as const satisfies Command;
-    service.register(alwaysAvailable);
-    service.register(workspaceRequired);
+    const noteCommand = {
+      id: 'noteCommand',
+      keywords: ['note'],
+      omniSearch: 'note',
+      args: null,
+    } as const satisfies Command;
+    service.register(globalCommand);
+    service.register(workspaceCommand);
+    service.register(noteCommand);
 
     expect(
-      service
-        .getOmniSearchCommands({ hasWorkspace: false })
-        .map((command) => command.id),
-    ).toEqual(['alwaysAvailable']);
+      service.getOmniSearchCommands('global').map((command) => command.id),
+    ).toEqual(['globalCommand']);
     expect(
-      service
-        .getOmniSearchCommands({ hasWorkspace: true })
-        .map((command) => command.id),
-    ).toEqual(['alwaysAvailable', 'workspaceRequired']);
+      service.getOmniSearchCommands('workspace').map((command) => command.id),
+    ).toEqual(['globalCommand', 'workspaceCommand']);
+    expect(
+      service.getOmniSearchCommands('note').map((command) => command.id),
+    ).toEqual(['globalCommand', 'workspaceCommand', 'noteCommand']);
   });
 
   test('should throw error when registering a duplicate command', async () => {

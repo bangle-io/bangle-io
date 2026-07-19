@@ -1,10 +1,74 @@
-import { expect, test } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 import {
   clearEditor,
   getEditorLocator,
   getEditorText,
   pressAppShortcut,
 } from './common';
+
+const WORKSPACE_COMMAND_TITLES = [
+  'New Note',
+  'Quick New Note',
+  'New Folder',
+  'View All Files',
+  'Go to Workspace Home',
+  'Refresh Files',
+  'Open Daily Note',
+] as const;
+
+const NOTE_COMMAND_TITLES = [
+  'Delete Note',
+  'Rename Note',
+  'Move Note',
+  'Toggle Wide Editor',
+  'Focus Editor',
+  'Copy Selection as Markdown',
+  'Paste from Markdown',
+  'Toggle Collapse Heading Section',
+  'Expand All Heading Sections',
+  'Collapse All Heading 1 Sections',
+  'Collapse All Heading 2 Sections',
+  'Collapse All Heading 3 Sections',
+  'Clone Note',
+  'Toggle Star for Current Note',
+  'Toggle Heading 1',
+  'Toggle Heading 2',
+  'Toggle Heading 3',
+  'Insert Table',
+] as const;
+
+async function expectOmniSearchCommandVisibility(
+  page: Page,
+  {
+    visible,
+    hidden,
+  }: {
+    visible: readonly string[];
+    hidden: readonly string[];
+  },
+) {
+  await pressAppShortcut(page, 'k');
+  const commandInput = page.getByPlaceholder('Type a command or search...');
+
+  for (const commandTitle of visible) {
+    await commandInput.fill(commandTitle);
+    await expect(
+      page.getByRole('option').filter({
+        has: page.getByText(commandTitle, { exact: true }),
+      }),
+    ).toBeVisible();
+  }
+  for (const commandTitle of hidden) {
+    await commandInput.fill(commandTitle);
+    await expect(
+      page.getByRole('option').filter({
+        has: page.getByText(commandTitle, { exact: true }),
+      }),
+    ).toHaveCount(0);
+  }
+
+  await page.keyboard.press('Escape');
+}
 
 test('Simple Workspace Creation Workflow', async ({ page }) => {
   await page.goto('/');
@@ -29,15 +93,10 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
     ).toBeEnabled();
     await page.keyboard.press('Escape');
 
-    await pressAppShortcut(page, 'k');
-    const commandInput = page.getByPlaceholder('Type a command or search...');
-    for (const commandTitle of ['New Note', 'Quick New Note', 'New Folder']) {
-      await commandInput.fill(commandTitle);
-      await expect(
-        page.getByRole('option', { name: commandTitle, exact: true }),
-      ).toHaveCount(0);
-    }
-    await page.keyboard.press('Escape');
+    await expectOmniSearchCommandVisibility(page, {
+      visible: ['New Workspace'],
+      hidden: [...WORKSPACE_COMMAND_TITLES, ...NOTE_COMMAND_TITLES],
+    });
   });
 
   await test.step('create new workspace', async () => {
@@ -75,15 +134,10 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
     ).toBeEnabled();
     await page.keyboard.press('Escape');
 
-    await pressAppShortcut(page, 'k');
-    const commandInput = page.getByPlaceholder('Type a command or search...');
-    for (const commandTitle of ['New Note', 'Quick New Note', 'New Folder']) {
-      await commandInput.fill(commandTitle);
-      await expect(
-        page.getByRole('option', { name: commandTitle, exact: true }),
-      ).toBeVisible();
-    }
-    await page.keyboard.press('Escape');
+    await expectOmniSearchCommandVisibility(page, {
+      visible: ['New Workspace', ...WORKSPACE_COMMAND_TITLES],
+      hidden: NOTE_COMMAND_TITLES,
+    });
   });
 
   await test.step('create new note', async () => {
@@ -101,6 +155,15 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
         .getByLabel('breadcrumb')
         .getByRole('button', { name: 'test-note-1.md' }),
     ).toBeVisible();
+
+    await expectOmniSearchCommandVisibility(page, {
+      visible: [
+        'New Workspace',
+        ...WORKSPACE_COMMAND_TITLES,
+        ...NOTE_COMMAND_TITLES,
+      ],
+      hidden: [],
+    });
   });
 
   await test.step('verify toolbar', async () => {

@@ -4,7 +4,11 @@ import {
   type BaseServiceContext,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
-import type { Command, CommandHandler } from '@bangle.io/types';
+import type {
+  Command,
+  CommandHandler,
+  OmniSearchScope,
+} from '@bangle.io/types';
 
 export type CommandHandlerConfig = { id: string; handler: CommandHandler };
 
@@ -89,14 +93,18 @@ export class CommandRegistryService extends BaseService {
     return command;
   }
 
-  public getOmniSearchCommands({
-    hasWorkspace,
-  }: {
-    hasWorkspace: boolean;
-  }): Command[] {
-    return this.getCommands().filter(
-      (command) =>
-        command.omniSearch && (!command.requiresWorkspace || hasWorkspace),
-    );
+  public getOmniSearchCommands(activeScope: OmniSearchScope): Command[] {
+    return this.getCommands().filter((command) => {
+      switch (command.omniSearch) {
+        case 'global':
+          return true;
+        case 'workspace':
+          return activeScope !== 'global';
+        case 'note':
+          return activeScope === 'note';
+        default:
+          return false;
+      }
+    });
   }
 }

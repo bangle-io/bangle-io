@@ -22,8 +22,7 @@ export const wsCommands = narrow([
       services: ['workspaceState'],
       commands: ['command::ws:new-note-from-input'],
     },
-    omniSearch: true,
-    requiresWorkspace: true,
+    omniSearch: 'workspace',
     args: {
       pathPrefix: T.Optional(T.String),
     },
@@ -157,7 +156,7 @@ export const wsCommands = narrow([
     id: 'command::ws:go-ws-home',
     title: 'Go to Workspace Home',
     keywords: ['home', 'workspace', 'go'],
-    omniSearch: true,
+    omniSearch: 'workspace',
     dependencies: { services: ['navigation'] },
     args: null,
   },
@@ -165,14 +164,14 @@ export const wsCommands = narrow([
     id: 'command::ws:refresh-file-tree',
     title: 'Refresh Files',
     keywords: ['refresh', 'reload', 'rescan', 'files', 'file tree'],
-    omniSearch: true,
+    omniSearch: 'workspace',
     dependencies: { services: ['fileSystem'] },
     args: null,
   },
   {
     id: 'command::ws:clone-note',
     title: 'Clone Note',
-    omniSearch: true,
+    omniSearch: 'note',
     keywords: ['clone', 'duplicate', 'copy'],
     dependencies: { services: ['workspaceState', 'fileSystem', 'navigation'] },
     args: null,
@@ -181,7 +180,7 @@ export const wsCommands = narrow([
     id: 'command::ws:daily-note',
     title: 'Open Daily Note',
     keywords: ['daily', 'note', 'today', 'journal'],
-    omniSearch: true,
+    omniSearch: 'workspace',
     dependencies: {
       services: ['workspaceState', 'fileSystem', 'navigation'],
       commands: ['command::ws:create-note'],
@@ -197,7 +196,7 @@ export const wsCommands = narrow([
     dependencies: {
       services: ['workspaceState', 'userActivityService'],
     },
-    omniSearch: true,
+    omniSearch: 'note',
     keybindings: ['ctrl', 'shift', 's'],
     args: {
       wsPath: T.Optional(T.String),
