@@ -7,10 +7,12 @@
 // parity with the ProseMirror engine's output is the whole point of this
 // file — see the package-level round-trip corpus.
 import {
-  LIST_KIND_ATTR,
-  type ListKind,
+  escapeMarkdownLineStart,
+  listItemCanRenderTight,
+  readListTokenMetadata,
+  resolveListRunTightness,
   serializeWikiLinkAttrs,
-  TASK_CHECKED_ATTR,
+  type TightListItemBlockKind,
   type WikiLinkAttrs,
 } from '@bangle.io/markdown-syntax';
 import {
@@ -31,6 +33,7 @@ import {
   Link,
   LinkTitle,
   ListItem,
+  ListTight,
   type Mark,
   type Node,
   OrderedList,
@@ -69,7 +72,19 @@ const paragraphSpec: NodeMarkdownSpec = {
   },
   serialize(state, node) {
     assertPlot(node, 'paragraph');
-    state.renderInline(node);
+    // Inline state tracks block starts, but not new lines after a hard break.
+    // Infer the latter from output so typed block syntax stays literal.
+    const originalEsc = state.esc;
+    state.esc = (text, startOfLine = false) => {
+      const atLineStart = startOfLine || state.out.endsWith(`\n${state.delim}`);
+      const escaped = originalEsc.call(state, text, atLineStart);
+      return atLineStart ? escapeMarkdownLineStart(escaped) : escaped;
+    };
+    try {
+      state.renderInline(node);
+    } finally {
+      state.esc = originalEsc;
+    }
     state.closeBlock(node);
   },
 };
@@ -306,127 +321,218 @@ const textSpec: NodeMarkdownSpec = {
 };
 
 // ---------------------------------------------------------------------------
-// Lists — Wordgard nests BulletList/OrderedList -> ListItem/TaskItem, with a
-// nested list living inside its parent item's content. The ProseMirror
-// engine's `flatListToMarkdown` (banger-editor's list.ts) works over a flat
-// list model instead. Byte parity means reproducing that flat algorithm's
-// output (unconditional tight lists, fixed "1." markers, 2-space nesting
-// indent) on top of the nested structure, which the block content walk
-// gives us for free.
+// Lists — Wordgard keeps its built-in nested list model. The wrapper owns the
+// bullet/ordered marker and list tightness; TaskItem owns only checked state.
 // ---------------------------------------------------------------------------
 
-/**
- * A task item's marker always wins over the enclosing list's own marker:
- * GFM allows `1. [ ] x` (a task inside an ordered list), and both engines
- * normalize that shape to a `- [ ]` bullet on serialize — the ProseMirror
- * flat-list model does this implicitly (item kind beats wrapper kind), so
- * byte parity requires the same here.
- */
 function listItemMarker(node: Plot, parentIsOrdered: boolean): string {
-  if (node.tag.is(TaskItem)) {
-    return node.tag.param ? '- [x]' : '- [ ]';
-  }
-  return parentIsOrdered ? '1.' : '-';
+  const container = parentIsOrdered ? '1.' : '-';
+  if (!node.tag.is(TaskItem)) return container;
+  return `${container} [${node.tag.param ? 'x' : ' '}]`;
 }
 
 function serializeListItem(
   state: MarkdownSerializerState,
   node: Plot,
-  level: number,
   marker: string,
+  continuationWidth: number,
 ): void {
-  const baseIndent = '  '.repeat(level);
-  const firstDelim = `${baseIndent}${marker} `;
-  const continuationDelim = ' '.repeat(firstDelim.length);
-
-  const isNestedList = (child: Node): child is Plot =>
-    child.isPlot &&
-    (child.tag.is(BulletList.type) || child.tag.is(OrderedList));
-
-  // Mirrors `flatListToMarkdown`: non-list children render inside the
-  // item's wrapBlock (keeping their original parent/index so sibling-aware
-  // serializers see the true document shape), nested lists render after it
-  // at the next indent level.
+  const firstDelim = `${marker} `;
+  const continuationDelim = ' '.repeat(continuationWidth);
   state.wrapBlock(continuationDelim, firstDelim, node, () => {
-    for (let i = 0; i < node.content.length; i++) {
+    const firstIndex = firstRenderedListItemChild(node);
+    const first = node.content[firstIndex];
+    const firstKind = first ? wordgardListItemBlockKind(first) : null;
+    const taskStartsWithBlock =
+      node.tag.is(TaskItem) && firstKind !== null && firstKind !== 'paragraph';
+    if (taskStartsWithBlock) {
+      state.closeBlock(node);
+      state.flushClose(state.inTightList ? 1 : 2);
+    } else if (
+      (first?.isPlot &&
+        (first.tag.is(BulletList.type) || first.tag.is(OrderedList))) ||
+      firstKind === 'thematic-break'
+    ) {
+      state.ensureNewLine();
+    }
+    let renderedChildCount = 0;
+    for (let i = firstIndex; i < node.content.length; i++) {
       const child = node.content[i];
-      if (child && !isNestedList(child)) state.render(child, node, i);
+      if (!child) continue;
+      // Nested list serializers own their run's tightness independently.
+      if (
+        renderedChildCount > 0 &&
+        state.inTightList &&
+        listContainerKind(child) === null
+      ) {
+        state.flushClose(1);
+      }
+      state.render(child, node, i);
+      renderedChildCount++;
     }
   });
-
-  for (const child of node.content) {
-    if (isNestedList(child)) serializeList(state, child, level + 1);
-  }
 }
 
-/**
- * Renders a list's items in document order. Unlike prosemirror-markdown's
- * `renderList` (which primes `flushClose(1)` for tight lists to suppress
- * the blank line `write()` would otherwise insert), the ProseMirror engine's
- * `flatListToMarkdown` never primes — its `tight` flag only ever short-
- * circuits `maybeAddBlankLine`, so `write()`'s default `flushClose(2)`
- * always fires between items. The observable (and byte-parity) result is a
- * blank line between every sibling item, and between an item and its nested
- * sub-list — confirmed against the real ProseMirror engine's output, not
- * assumed from reading `list.ts` alone.
- */
+function firstRenderedListItemChild(node: Plot): number {
+  if (node.tag.is(TaskItem)) return 0;
+  let index = 0;
+  while (index < node.content.length - 1) {
+    const child = node.content[index];
+    if (
+      !child?.isPlot ||
+      !child.tag.is(Paragraph.type) ||
+      child.content.length > 0
+    ) {
+      break;
+    }
+    index++;
+  }
+  return index;
+}
+
+function listIsTight(node: Plot): boolean {
+  return node.mark(ListTight) ?? true;
+}
+
+const LIST_TIGHTNESS_CACHE = Symbol('listTightnessCache');
+
+type ListMarkdownSerializerState = MarkdownSerializerState & {
+  [LIST_TIGHTNESS_CACHE]?: WeakMap<Plot, readonly boolean[]>;
+};
+
+type ListContainerKind = 'bullet' | 'ordered';
+
+function listContainerKind(node: Node | undefined): ListContainerKind | null {
+  if (!node?.isPlot) return null;
+  if (node.tag.is(OrderedList)) return 'ordered';
+  return node.tag.is(BulletList.type) ? 'bullet' : null;
+}
+
+function listTightnessByChild(parent: Plot): readonly boolean[] {
+  return resolveListRunTightness(
+    parent.content.map((node) => {
+      const kind = listContainerKind(node);
+      return kind && node?.isPlot
+        ? {
+            kind,
+            tight: listIsTight(node) && listCanRenderTight(node),
+          }
+        : null;
+    }),
+  );
+}
+
+function listCanRenderTight(node: Plot): boolean {
+  return node.content.every((item) => {
+    if (!item.isPlot) return false;
+    const blocks = item.content
+      .slice(firstRenderedListItemChild(item))
+      .map(wordgardListItemBlockKind);
+    if (item.tag.is(TaskItem) && blocks[0] !== 'paragraph') {
+      blocks.unshift('paragraph');
+    }
+    return listItemCanRenderTight(blocks);
+  });
+}
+
+function wordgardListItemBlockKind(node: Node): TightListItemBlockKind {
+  if (node.is(HorizontalRule.type)) return 'thematic-break';
+  if (!node.isPlot) return 'unknown';
+  if (node.tag.is(Paragraph.type)) return 'paragraph';
+  if (node.tag.is(Blockquote.type)) return 'blockquote';
+  if (node.tag.is(BulletList.type) || node.tag.is(OrderedList)) return 'list';
+  if (node.tag.is(CodeBlock.type) || node.tag.is(Heading)) {
+    return 'self-terminating';
+  }
+  return 'unknown';
+}
+
+function listRunIsTight(
+  state: ListMarkdownSerializerState,
+  node: Plot,
+  parent: Plot,
+  index: number,
+): boolean {
+  let cache = state[LIST_TIGHTNESS_CACHE];
+  if (!cache) {
+    cache = new WeakMap();
+    state[LIST_TIGHTNESS_CACHE] = cache;
+  }
+  let tightness = cache.get(parent);
+  if (!tightness) {
+    tightness = listTightnessByChild(parent);
+    cache.set(parent, tightness);
+  }
+  return tightness[index] ?? (listIsTight(node) && listCanRenderTight(node));
+}
+
 function serializeList(
   state: MarkdownSerializerState,
   node: Plot,
-  level: number,
+  parent: Plot,
+  index: number,
 ): void {
   const parentIsOrdered = node.tag.is(OrderedList);
+  const kind = parentIsOrdered ? 'ordered' : 'bullet';
+  const tight = listRunIsTight(state, node, parent, index);
+  const sameList = listContainerKind(parent.content[index - 1]) === kind;
+  if ((state.inTightList && !sameList) || (tight && sameList)) {
+    state.flushClose(1);
+  }
+  const previousTight = state.inTightList;
+  state.inTightList = tight;
   for (let i = 0; i < node.content.length; i++) {
     const child = node.content[i];
     if (!child?.isPlot) continue;
+    if (i > 0 && tight) state.flushClose(1);
     serializeListItem(
       state,
       child,
-      level,
       listItemMarker(child, parentIsOrdered),
+      parentIsOrdered ? 3 : 2,
     );
   }
+  state.inTightList = previousTight;
+}
+
+function listTagMarks(tok: Token): Mark.Set {
+  return readListTokenMetadata(tok).tight ? [] : [ListTight.of(false)];
 }
 
 const bulletListSpec: NodeMarkdownSpec = {
   node: BulletList,
   parse: {
-    bullet_list: { block: BulletList },
+    bullet_list: {
+      block: (tok) => BulletList.withMarks(listTagMarks(tok)),
+    },
   },
-  serialize(state, node) {
+  serialize(state, node, parent, index) {
     assertPlot(node, 'bullet_list');
-    serializeList(state, node, 0);
+    serializeList(state, node, parent, index);
   },
 };
 
 const orderedListSpec: NodeMarkdownSpec = {
   node: OrderedList,
   parse: {
-    // Markdown-it's `start` attribute is dropped: the ProseMirror engine
-    // normalizes every ordered list to render with `1.` regardless of its
-    // source start value, so parity means never reading `order`/`start`
-    // back in (see `flatListToMarkdown`'s fixed `"1."` marker).
-    ordered_list: { block: () => OrderedList.of(1) },
+    ordered_list: {
+      block: (tok) => OrderedList.of(1, listTagMarks(tok)),
+    },
   },
-  serialize(state, node) {
+  serialize(state, node, parent, index) {
     assertPlot(node, 'ordered_list');
-    serializeList(state, node, 0);
+    serializeList(state, node, parent, index);
   },
 };
-
-function listItemKind(tok: Token): ListKind {
-  const kind = tok.attrGet(LIST_KIND_ATTR);
-  return kind === 'task' || kind === 'ordered' ? kind : 'bullet';
-}
 
 const listItemSpec: NodeMarkdownSpec = {
   node: ListItem,
   parse: {
     list_item: {
       block: (tok) => {
-        if (listItemKind(tok) === 'task') {
-          const checked = tok.attrGet(TASK_CHECKED_ATTR) === 'true';
-          return TaskItem.of(checked);
+        const { taskChecked } = readListTokenMetadata(tok);
+        if (taskChecked !== null) {
+          return TaskItem.of(taskChecked);
         }
         return ListItem;
       },

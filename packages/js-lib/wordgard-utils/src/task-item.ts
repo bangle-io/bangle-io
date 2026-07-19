@@ -27,10 +27,8 @@ export const TaskItem = Plot.Type.define<boolean>('TaskItem', {
  * Include these alongside `TaskItem` when defining a schema.
  *
  * {@link OrderedList} is included deliberately: GFM recognizes `1. [ ] x` as
- * a task item inside an ordered list, so the Markdown parser can produce
- * that shape — a schema that rejects it would turn a legal note into a load
- * failure. Serialization normalizes such items back to `- [ ]` bullets
- * (matching the ProseMirror engine), so the shape is transient.
+ * a task item inside an ordered list, so the Markdown parser can produce and
+ * serialize that shape without turning a legal note into a load failure.
  */
 export const taskListContentOverrides: readonly Schema.Override[] = [
   Schema.Override.plotContent(BulletList, (content) => [content, TaskItem]),

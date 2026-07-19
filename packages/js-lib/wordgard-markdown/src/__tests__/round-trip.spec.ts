@@ -1,3 +1,4 @@
+import { ListTight } from '@bangle.io/wordgard-utils';
 import { describe, expect, it } from 'vitest';
 import { createNoteMarkdownCodec } from '../codec';
 
@@ -87,16 +88,18 @@ describe('createNoteMarkdownCodec round-trip', () => {
   describe('lists', () => {
     it.each([
       ['bullet list single item', '- one'],
-      ['bullet list multiple items', '- one\n\n- two\n\n- three'],
-      ['ordered list', '1. first\n\n1. second\n\n1. third'],
-      ['task list', '- [ ] todo one\n\n- [x] todo two'],
+      ['tight bullet list', '- one\n- two\n- three'],
+      ['loose bullet list', '- one\n\n- two\n\n- three'],
+      ['tight ordered list', '1. first\n1. second\n1. third'],
+      ['loose ordered list', '1. first\n\n1. second\n\n1. third'],
+      ['task list', '- [ ] todo one\n- [x] todo two'],
       [
         'nested bullet list',
-        '- one\n\n- two\n\n  - nested a\n\n  - nested b\n\n- three',
+        '- one\n- two\n  - nested a\n  - nested b\n- three',
       ],
       [
         'mixed nested list kinds',
-        '- one\n\n  1. nested ordered a\n\n  1. nested ordered b\n\n- two',
+        '- one\n  1. nested ordered a\n  1. nested ordered b\n- two',
       ],
       ['multi-paragraph list item', '- one\n\n  more text\n\n- two'],
     ])('%s', (_name, md) => {
@@ -147,17 +150,16 @@ describe('createNoteMarkdownCodec parse shape', () => {
   });
 
   it('a task item inside an ordered list parses without failing', () => {
-    // GFM allows `1. [ ] x`; the schema admits the transient
+    // GFM allows `1. [ ] x`; the schema admits the
     // OrderedList > TaskItem shape (see `taskListContentOverrides`) so a
-    // legal note never turns into a load failure. Serialization normalizes
-    // the item back to a `- [ ]` bullet, matching the ProseMirror engine.
+    // legal note never turns into a load failure or loses its container.
     const doc = codec.parse('1. [ ] task');
     const list = doc.content[0];
     if (!list?.isPlot) throw new Error('expected a plot');
     expect(list.tag.type.name).toBe('OrderedList');
     const [item] = list.content;
     expect(item?.isPlot && item.name).toBe('TaskItem');
-    expect(codec.serialize(doc)).toBe('- [ ] task');
+    expect(codec.serialize(doc)).toBe('1. [ ] task');
   });
 
   it('task item checked state is stored as the plot tag param', () => {
@@ -174,6 +176,42 @@ describe('createNoteMarkdownCodec parse shape', () => {
         ? notDoneItem.tag.param
         : undefined,
     ).toBe(false);
+  });
+
+  it('stores looseness on the list wrapper and defaults new wrappers to tight', () => {
+    const loose = codec.parse('- one\n\n- two').content[0];
+    const tight = codec.parse('- one\n- two').content[0];
+    if (!loose?.isPlot || !tight?.isPlot) {
+      throw new Error('expected list plots');
+    }
+    expect(loose.mark(ListTight)).toBe(false);
+    expect(tight.mark(ListTight)).toBeUndefined();
+  });
+
+  it('serializes adjacent same-kind wrappers as one stable logical list run', () => {
+    const loose = codec.parse('- loose one\n\n- loose two').content[0];
+    const tight = codec.parse('- tight one\n- tight two').content[0];
+    if (!loose?.isPlot || !tight?.isPlot) {
+      throw new Error('expected list plots');
+    }
+
+    const mixed = codec.schema.doc([loose, tight]);
+    const serialized = codec.serialize(mixed);
+    expect(serialized).toBe(
+      '- loose one\n\n- loose two\n\n- tight one\n\n- tight two',
+    );
+    expect(codec.serialize(codec.parse(serialized))).toBe(serialized);
+
+    const firstTight = codec.parse('- one\n- two').content[0];
+    const secondTight = codec.parse('- three\n- four').content[0];
+    if (!firstTight?.isPlot || !secondTight?.isPlot) {
+      throw new Error('expected list plots');
+    }
+    const allTight = codec.serialize(
+      codec.schema.doc([firstTight, secondTight]),
+    );
+    expect(allTight).toBe('- one\n- two\n- three\n- four');
+    expect(codec.serialize(codec.parse(allTight))).toBe(allTight);
   });
 
   it('wiki link target is the leaf param and label is a mark', () => {
