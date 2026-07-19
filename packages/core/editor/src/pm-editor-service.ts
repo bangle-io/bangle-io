@@ -143,6 +143,7 @@ export class PmEditorService
   private saveQueue: EditorSaveQueue;
   private pendingHeading: { fragment: string; wsPath: string } | undefined;
   private rememberedCursors = new Map<string, number>();
+  private lastActiveEditorView: EditorView | undefined;
 
   private editors = new Map<HTMLElement, EditorEntry>();
 
@@ -225,6 +226,7 @@ export class PmEditorService
         }
       }
       this.editors.clear();
+      this.lastActiveEditorView = undefined;
       this.rememberedCursors.clear();
     });
     this.addCleanup(
@@ -389,6 +391,9 @@ export class PmEditorService
   private unmountEditor(domNode: HTMLElement) {
     const editor = this.editors.get(domNode);
     if (editor && 'editorView' in editor) {
+      if (this.lastActiveEditorView === editor.editorView) {
+        this.lastActiveEditorView = undefined;
+      }
       const position = getRememberedCursorPosition(
         editor.editorView.state.selection,
       );
@@ -913,16 +918,7 @@ export class PmEditorService
   }
 
   focusEditor() {
-    for (const [_, editor] of this.editors) {
-      if (
-        'editorView' in editor &&
-        !editor.editorView.isDestroyed &&
-        !editor.editorView.hasFocus()
-      ) {
-        editor.editorView.focus();
-        return;
-      }
-    }
+    this.getActiveEditorView()?.focus();
   }
 
   /** Dry-runs app-level editor actions against the live selection. */
@@ -1079,14 +1075,20 @@ export class PmEditorService
 
   private getActiveEditorView() {
     let fallback: ReturnType<typeof createEditor> | undefined;
+    let lastActive: ReturnType<typeof createEditor> | undefined;
     for (const editor of this.editors.values()) {
       if ('editorView' in editor && !editor.editorView.isDestroyed) {
         if (editor.editorView.hasFocus()) {
+          this.lastActiveEditorView = editor.editorView;
           return editor.editorView;
+        }
+        if (editor.editorView === this.lastActiveEditorView) {
+          lastActive = editor.editorView;
         }
         fallback ??= editor.editorView;
       }
     }
-    return fallback;
+    this.lastActiveEditorView = lastActive;
+    return lastActive ?? fallback;
   }
 }
