@@ -1,3 +1,4 @@
+import { escapeMarkdownLineStart } from '@bangle.io/markdown-syntax';
 import {
   type CollectionType,
   collection,
@@ -255,6 +256,17 @@ function isTopLevelParagraph(config: RequiredConfig) {
 }
 
 // MARKDOWN
+function serializerIsAtLineStart(
+  state: unknown,
+  declaredStart: boolean,
+): boolean {
+  if (declaredStart) return true;
+  if (!state || typeof state !== 'object') return false;
+  if (!('out' in state) || typeof state.out !== 'string') return false;
+  if (!('delim' in state) || typeof state.delim !== 'string') return false;
+  return state.out.endsWith(`\n${state.delim}`);
+}
+
 function markdown(config: RequiredConfig): CollectionType['markdown'] {
   // Potential improvement: Might want to handle paragraphs that are empty vs. paragraphs with content differently in markdown.
   const { name } = config;
@@ -262,7 +274,20 @@ function markdown(config: RequiredConfig): CollectionType['markdown'] {
     nodes: {
       [name]: {
         toMarkdown(state, node) {
-          state.renderInline(node);
+          // Inline state tracks block starts, but not new lines after a hard
+          // break. Infer the latter from output so typed block syntax stays
+          // literal when the note is reparsed.
+          const originalEsc = state.esc;
+          state.esc = (text, startOfLine = false) => {
+            const atLineStart = serializerIsAtLineStart(state, startOfLine);
+            const escaped = originalEsc.call(state, text, atLineStart);
+            return atLineStart ? escapeMarkdownLineStart(escaped) : escaped;
+          };
+          try {
+            state.renderInline(node);
+          } finally {
+            state.esc = originalEsc;
+          }
           state.closeBlock(node);
         },
         parseMarkdown: {

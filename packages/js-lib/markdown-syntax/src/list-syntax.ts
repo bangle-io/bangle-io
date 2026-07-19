@@ -33,6 +33,13 @@ export type TightListItemBlockKind =
   | 'thematic-break'
   | 'unknown';
 
+/** Preserve literal paragraph text that Markdown would treat as block syntax. */
+export function escapeMarkdownLineStart(text: string): string {
+  if (text.startsWith(' ')) return `&#32;${text.slice(1)}`;
+  if (text.startsWith('\t')) return `&#9;${text.slice(1)}`;
+  return text.replace(/^(\d+)([.)])(?=[ \t]|$)/u, '$1\\$2');
+}
+
 /**
  * Whether direct list-item blocks can be emitted without blank separators.
  * Some adjacent blocks are valid in the editor model but merge or change

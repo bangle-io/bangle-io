@@ -1,3 +1,4 @@
+import { EditorState } from '@bangle.io/prosemirror-plugins';
 import { describe, expect, it, vi } from 'vitest';
 import { createProductionMarkdown } from './production-markdown-test-helpers';
 
@@ -33,6 +34,128 @@ describe('ProseMirror list Markdown metadata', () => {
       tight: true,
     });
     expect(markdown.serializer.serialize(doc)).toBe('1. [x] done');
+  });
+
+  it.each([
+    ['a standalone dot marker', '1.', '- 1\\.\n- sibling'],
+    [
+      'a paren marker',
+      '2) literal ordered',
+      '- 2\\) literal ordered\n- sibling',
+    ],
+    [
+      'a space-prefixed marker',
+      ' - literal bullet',
+      '- &#32;- literal bullet\n- sibling',
+    ],
+    [
+      'a tab-prefixed marker',
+      '\t> literal quote',
+      '- &#9;> literal quote\n- sibling',
+    ],
+  ])('keeps editor-created paragraph text beginning with $name literal', (_name, text, expected) => {
+    const markdown = createProductionMarkdown();
+    const parsed = markdown.parser.parse('- seed\n- sibling');
+    const paragraph = markdown.schema.nodes.paragraph;
+    if (!paragraph) throw new Error('expected paragraph node');
+    const first = parsed.child(0);
+    const edited = parsed.type.create(parsed.attrs, [
+      first.type.create(first.attrs, [
+        paragraph.create(null, markdown.schema.text(text)),
+      ]),
+      parsed.child(1),
+    ]);
+
+    const serialized = markdown.serializer.serialize(edited);
+    const reparsed = markdown.parser.parse(serialized);
+    expect(serialized).toBe(expected);
+    expect(reparsed.child(0).textContent).toBe(text);
+    expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
+  });
+
+  it('keeps continuation content nested when an edit empties its leading paragraph', () => {
+    const markdown = createProductionMarkdown();
+    const parsed = markdown.parser.parse('- one\n\n  after\n\n- sibling');
+    const state = EditorState.create({ doc: parsed });
+    const edited = state.apply(state.tr.delete(2, 5)).doc;
+    expect(edited.child(0).firstChild?.content.size).toBe(0);
+
+    const serialized = markdown.serializer.serialize(edited);
+    const reparsed = markdown.parser.parse(serialized);
+    expect(serialized).toBe('- after\n\n- sibling');
+    expect(reparsed.childCount).toBe(2);
+    expect(reparsed.child(0).textContent).toBe('after');
+    expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
+  });
+
+  it.each([
+    ['a bullet', '- nested-looking', '\\- nested-looking'],
+    ['a heading', '# heading-looking', '\\# heading-looking'],
+    ['a blockquote', '> quote-looking', '\\> quote-looking'],
+    ['a thematic break', '---', '\\---'],
+    ['a fence', '```', '\\`\\`\\`'],
+    ['a dot ordered marker', '1. ordered-looking', '1\\. ordered-looking'],
+    ['a paren ordered marker', '1) ordered-looking', '1\\) ordered-looking'],
+    ['a space-prefixed bullet', ' - nested-looking', '&#32;- nested-looking'],
+    ['a tab-prefixed quote', '\t> quote-looking', '&#9;> quote-looking'],
+  ])('keeps $name literal after an editor-created hard break', (_name, text, escaped) => {
+    const markdown = createProductionMarkdown();
+    const parsed = markdown.parser.parse('- seed\n- sibling');
+    const paragraph = markdown.schema.nodes.paragraph;
+    const hardBreak = markdown.schema.nodes.hard_break;
+    if (!paragraph || !hardBreak) throw new Error('expected paragraph nodes');
+    const first = parsed.child(0);
+    const edited = parsed.type.create(parsed.attrs, [
+      first.type.create(first.attrs, [
+        paragraph.create(null, [
+          markdown.schema.text('before'),
+          hardBreak.create(),
+          markdown.schema.text(text),
+        ]),
+      ]),
+      parsed.child(1),
+    ]);
+
+    const serialized = markdown.serializer.serialize(edited);
+    const reparsed = markdown.parser.parse(serialized);
+    expect(serialized).toBe(`- before\\\n  ${escaped}\n- sibling`);
+    expect(reparsed.child(0).childCount).toBe(1);
+    expect(reparsed.child(0).firstChild?.type.name).toBe('paragraph');
+    expect(reparsed.child(0).firstChild?.child(1).type.name).toBe('hard_break');
+    expect(reparsed.child(0).textContent).toBe(`before${text}`);
+    expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
+  });
+
+  it.each([
+    ['a paragraph', 'after', 'paragraph'],
+    ['a thematic break', '***', 'horizontalRule'],
+    ['a blockquote', '> quote', 'blockquote'],
+    ['a heading', '# heading', 'heading'],
+    ['a fence', '```\ncode\n```', 'code_block'],
+    ['a nested list', '- nested', 'list'],
+  ])('keeps $name nested after leading empty editor paragraphs', (_name, source, expectedType) => {
+    const markdown = createProductionMarkdown();
+    const parsed = markdown.parser.parse('- seed\n- sibling');
+    const paragraph = markdown.schema.nodes.paragraph;
+    const meaningful = markdown.parser.parse(source).firstChild;
+    if (!paragraph || !meaningful) throw new Error('expected block nodes');
+    const first = parsed.child(0);
+    const edited = parsed.type.create(parsed.attrs, [
+      first.type.create(first.attrs, [
+        paragraph.create(),
+        paragraph.create(),
+        meaningful,
+      ]),
+      parsed.child(1),
+    ]);
+
+    const serialized = markdown.serializer.serialize(edited);
+    const reparsed = markdown.parser.parse(serialized);
+    expect(reparsed.childCount).toBe(2);
+    expect(reparsed.child(0).childCount).toBe(1);
+    expect(reparsed.child(0).firstChild?.type.name).toBe(expectedType);
+    expect(reparsed.child(0).textContent).toBe(meaningful.textContent);
+    expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
   });
 
   it('serializes a mixed tightness run as loose', () => {

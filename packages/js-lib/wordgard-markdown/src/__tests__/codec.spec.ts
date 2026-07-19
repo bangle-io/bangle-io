@@ -108,13 +108,18 @@ describe('createNoteMarkdownCodec', () => {
     const lone = schema.doc([
       Paragraph.create([Leaf.text(' bold ', [Strong])]),
     ]);
-    expect(codec.serialize(lone)).toBe(' **bold** ');
+    const loneMarkdown = codec.serialize(lone);
+    expect(loneMarkdown).toBe('&#32;**bold** ');
 
     // With a following sibling, both sides expel.
     const withSibling = schema.doc([
       Paragraph.create([Leaf.text(' bold ', [Strong]), Leaf.text('after')]),
     ]);
-    expect(codec.serialize(withSibling)).toBe(' **bold** after');
+    const withSiblingMarkdown = codec.serialize(withSibling);
+    expect(withSiblingMarkdown).toBe('&#32;**bold** after');
+    expect(codec.serialize(codec.parse(withSiblingMarkdown))).toBe(
+      withSiblingMarkdown,
+    );
   });
 });
 
@@ -198,6 +203,77 @@ describe('serializing constructed documents', () => {
     expect(codec.serialize(reparsed)).toBe(serialized);
   });
 
+  it.each([
+    ['a bullet', '- nested-looking', '\\- nested-looking'],
+    ['a heading', '# heading-looking', '\\# heading-looking'],
+    ['a blockquote', '> quote-looking', '\\> quote-looking'],
+    ['a thematic break', '---', '\\---'],
+    ['a fence', '```', '\\`\\`\\`'],
+    ['a dot ordered marker', '1. ordered-looking', '1\\. ordered-looking'],
+    ['a paren ordered marker', '1) ordered-looking', '1\\) ordered-looking'],
+    ['a space-prefixed bullet', ' - nested-looking', '&#32;- nested-looking'],
+    ['a tab-prefixed quote', '\t> quote-looking', '&#9;> quote-looking'],
+  ])('keeps $name literal after an editor-created hard break', (_name, text, escaped) => {
+    const first = Paragraph.create([
+      Leaf.text('before'),
+      LineBreak,
+      Leaf.text(text),
+    ]);
+    const serialized = codec.serialize(listDocument([first]));
+    const reparsed = codec.parse(serialized);
+    const list = reparsed.content[0];
+    if (!list?.isPlot) throw new Error('expected a list');
+    const item = list.content[0];
+    if (!item?.isPlot) throw new Error('expected a list item');
+    const reparsedParagraph = item.content[0];
+    if (!reparsedParagraph?.isPlot) throw new Error('expected a paragraph');
+
+    expect(serialized).toBe(`- before\\\n  ${escaped}\n- second`);
+    expect(reparsedParagraph.content.map((node) => node.name)).toEqual([
+      'Text',
+      'LineBreak',
+      'Text',
+    ]);
+    expect(item.textContent()).toBe(`before\n${text}`);
+    expect(codec.serialize(reparsed)).toBe(serialized);
+  });
+
+  it.each([
+    ['a paragraph', () => paragraph('after'), 'Paragraph'],
+    ['a thematic break', () => HorizontalRule, 'HorizontalRule'],
+    [
+      'a blockquote',
+      () => Blockquote.create([paragraph('quote')]),
+      'Blockquote',
+    ],
+    [
+      'a heading',
+      () => Heading.of(1).create([Leaf.text('heading')]),
+      'Heading',
+    ],
+    ['a fence', () => CodeBlock.create([Leaf.text('code')]), 'CodeBlock'],
+    [
+      'a nested list',
+      () => BulletList.create([ListItem.create([paragraph('nested')])]),
+      'BulletList',
+    ],
+  ])('keeps $name nested after leading empty editor paragraphs', (_name, block, expectedType) => {
+    const meaningful = block();
+    const serialized = codec.serialize(
+      listDocument([Paragraph.create([]), Paragraph.create([]), meaningful]),
+    );
+    const reparsed = codec.parse(serialized);
+    const list = reparsed.content[0];
+    if (!list?.isPlot) throw new Error('expected a list');
+    const item = list.content[0];
+    if (!item?.isPlot) throw new Error('expected a list item');
+
+    expect(item.content).toHaveLength(1);
+    expect(item.content[0]?.name).toBe(expectedType);
+    expect(list.content).toHaveLength(2);
+    expect(codec.serialize(reparsed)).toBe(serialized);
+  });
+
   it('keeps representable compound items tight and disambiguates a leading thematic break', () => {
     const tight = listDocument([
       paragraph('first'),
@@ -213,6 +289,36 @@ describe('serializing constructed documents', () => {
     );
     expect(rule).toBe('- \n  ---\n  after\n- second');
     expect(codec.serialize(codec.parse(rule))).toBe(rule);
+  });
+
+  it.each([
+    ['a standalone dot marker', '1.', '- 1\\.\n- second'],
+    [
+      'a paren marker',
+      '2) literal ordered',
+      '- 2\\) literal ordered\n- second',
+    ],
+    [
+      'a space-prefixed marker',
+      ' - literal bullet',
+      '- &#32;- literal bullet\n- second',
+    ],
+    [
+      'a tab-prefixed marker',
+      '\t> literal quote',
+      '- &#9;> literal quote\n- second',
+    ],
+  ])('keeps editor-created paragraph text beginning with $name literal', (_name, text, expected) => {
+    const serialized = codec.serialize(listDocument([paragraph(text)]));
+    const reparsed = codec.parse(serialized);
+    const list = reparsed.content[0];
+    if (!list?.isPlot) throw new Error('expected a list');
+    const item = list.content[0];
+    if (!item?.isPlot) throw new Error('expected a list item');
+
+    expect(serialized).toBe(expected);
+    expect(item.textContent()).toBe(text);
+    expect(codec.serialize(reparsed)).toBe(serialized);
   });
 
   it.each([

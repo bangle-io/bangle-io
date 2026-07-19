@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import {
   collapseEditorSelection,
+  collapseEditorSelectionAfterText,
   createBrowserWorkspaceAndNote,
   getEditorLocator,
   readStoredMarkdown,
@@ -245,6 +246,52 @@ test('replacing task text with a thematic break preserves both structures', asyn
   await page.reload({ waitUntil: 'networkidle' });
   await expect(editor.getByRole('checkbox')).toHaveCount(2);
   await expect(editor.locator('hr')).toHaveCount(1);
+  await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
+    expected,
+  );
+});
+
+test('literal paren list marker text stays text after save and reload', async ({
+  page,
+}) => {
+  const workspaceName = 'literal-list-marker-fidelity';
+  const noteName = 'literal-list-marker';
+  const source = '- replace me\n- before break';
+  const expected =
+    '- 2\\) literal ordered\n- before break\\\n  \\- literal bullet';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(page, workspaceName, noteName, source);
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await selectEditorText(page, 'replace me');
+  await page.keyboard.insertText('2) literal ordered');
+
+  await collapseEditorSelectionAfterText(page, 'before break');
+  await page.keyboard.press('Shift+Enter');
+  await page.keyboard.insertText('- literal bullet');
+
+  await expect(
+    editor.getByText('2) literal ordered', { exact: true }),
+  ).toBeVisible();
+  const hardBreakParagraph = editor.locator('p', {
+    hasText: 'before break',
+  });
+  await expect(hardBreakParagraph.locator('br')).toHaveCount(1);
+  await expect(hardBreakParagraph).toContainText('- literal bullet');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(expected);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(
+    editor.getByText('2) literal ordered', { exact: true }),
+  ).toBeVisible();
+  const reloadedHardBreakParagraph = editor.locator('p', {
+    hasText: 'before break',
+  });
+  await expect(reloadedHardBreakParagraph.locator('br')).toHaveCount(1);
+  await expect(reloadedHardBreakParagraph).toContainText('- literal bullet');
   await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
     expected,
   );

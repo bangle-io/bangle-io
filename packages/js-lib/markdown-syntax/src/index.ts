@@ -1,5 +1,6 @@
 export { frontmatterTokenizer } from './frontmatter-syntax';
 export {
+  escapeMarkdownLineStart,
   LIST_KIND_ATTR,
   LIST_TIGHT_ATTR,
   type ListKind,

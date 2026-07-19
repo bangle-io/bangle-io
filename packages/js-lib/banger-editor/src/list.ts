@@ -593,9 +593,9 @@ function flatListToMarkdown(
   const previousTight = state.inTightList;
   state.inTightList = tight;
   state.wrapBlock(continuationDelim, firstDelim, node, () => {
-    const firstKind = node.firstChild
-      ? listItemBlockKind(node.firstChild)
-      : null;
+    const firstChildIndex = firstRenderedListItemChild(node, attrs);
+    const firstChild = node.maybeChild(firstChildIndex);
+    const firstKind = firstChild ? listItemBlockKind(firstChild) : null;
     const taskStartsWithBlock =
       attrs.kind === LIST_KIND.TASK &&
       firstKind !== null &&
@@ -604,13 +604,18 @@ function flatListToMarkdown(
       // The checkbox is an implicit empty paragraph before the actual block.
       state.closeBlock(node);
       state.flushClose(tight ? 1 : 2);
-    } else if (isListNode(node.firstChild) || firstKind === 'thematic-break') {
+    } else if (isListNode(firstChild) || firstKind === 'thematic-break') {
       state.ensureNewLine();
     }
+    let renderedChildCount = 0;
     node.forEach((child, _offset, childIndex) => {
+      if (childIndex < firstChildIndex) return;
       // Nested list serializers own their run's tightness independently.
-      if (childIndex > 0 && tight && !isListNode(child)) state.flushClose(1);
+      if (renderedChildCount > 0 && tight && !isListNode(child)) {
+        state.flushClose(1);
+      }
       state.render(child, node, childIndex);
+      renderedChildCount++;
     });
   });
   state.inTightList = previousTight;
@@ -664,18 +669,40 @@ function listTightnessByChild(parent: PMNode): readonly boolean[] {
 }
 
 function flatListItemCanRenderTight(node: PMNode): boolean {
-  const blocks = listItemBlockKinds(node);
   const attrs = readListAttrs(node);
+  const blocks = listItemBlockKinds(
+    node,
+    attrs ? firstRenderedListItemChild(node, attrs) : 0,
+  );
   if (attrs?.kind === LIST_KIND.TASK && blocks[0] !== 'paragraph') {
     blocks.unshift('paragraph');
   }
   return listItemCanRenderTight(blocks);
 }
 
-function listItemBlockKinds(node: PMNode): TightListItemBlockKind[] {
+function firstRenderedListItemChild(
+  node: PMNode,
+  attrs: MarkdownListAttrs,
+): number {
+  if (attrs.kind === LIST_KIND.TASK) return 0;
+  let index = 0;
+  while (
+    index < node.childCount - 1 &&
+    node.child(index).type.name === 'paragraph' &&
+    node.child(index).content.size === 0
+  ) {
+    index++;
+  }
+  return index;
+}
+
+function listItemBlockKinds(
+  node: PMNode,
+  startIndex: number,
+): TightListItemBlockKind[] {
   const blocks: TightListItemBlockKind[] = [];
-  node.forEach((child) => {
-    blocks.push(listItemBlockKind(child));
+  node.forEach((child, _offset, index) => {
+    if (index >= startIndex) blocks.push(listItemBlockKind(child));
   });
   return blocks;
 }

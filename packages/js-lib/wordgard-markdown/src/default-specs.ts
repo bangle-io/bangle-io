@@ -7,6 +7,7 @@
 // parity with the ProseMirror engine's output is the whole point of this
 // file — see the package-level round-trip corpus.
 import {
+  escapeMarkdownLineStart,
   listItemCanRenderTight,
   readListTokenMetadata,
   resolveListRunTightness,
@@ -71,7 +72,19 @@ const paragraphSpec: NodeMarkdownSpec = {
   },
   serialize(state, node) {
     assertPlot(node, 'paragraph');
-    state.renderInline(node);
+    // Inline state tracks block starts, but not new lines after a hard break.
+    // Infer the latter from output so typed block syntax stays literal.
+    const originalEsc = state.esc;
+    state.esc = (text, startOfLine = false) => {
+      const atLineStart = startOfLine || state.out.endsWith(`\n${state.delim}`);
+      const escaped = originalEsc.call(state, text, atLineStart);
+      return atLineStart ? escapeMarkdownLineStart(escaped) : escaped;
+    };
+    try {
+      state.renderInline(node);
+    } finally {
+      state.esc = originalEsc;
+    }
     state.closeBlock(node);
   },
 };
@@ -327,7 +340,8 @@ function serializeListItem(
   const firstDelim = `${marker} `;
   const continuationDelim = ' '.repeat(continuationWidth);
   state.wrapBlock(continuationDelim, firstDelim, node, () => {
-    const first = node.content[0];
+    const firstIndex = firstRenderedListItemChild(node);
+    const first = node.content[firstIndex];
     const firstKind = first ? wordgardListItemBlockKind(first) : null;
     const taskStartsWithBlock =
       node.tag.is(TaskItem) && firstKind !== null && firstKind !== 'paragraph';
@@ -341,16 +355,39 @@ function serializeListItem(
     ) {
       state.ensureNewLine();
     }
-    for (let i = 0; i < node.content.length; i++) {
+    let renderedChildCount = 0;
+    for (let i = firstIndex; i < node.content.length; i++) {
       const child = node.content[i];
       if (!child) continue;
       // Nested list serializers own their run's tightness independently.
-      if (i > 0 && state.inTightList && listContainerKind(child) === null) {
+      if (
+        renderedChildCount > 0 &&
+        state.inTightList &&
+        listContainerKind(child) === null
+      ) {
         state.flushClose(1);
       }
       state.render(child, node, i);
+      renderedChildCount++;
     }
   });
+}
+
+function firstRenderedListItemChild(node: Plot): number {
+  if (node.tag.is(TaskItem)) return 0;
+  let index = 0;
+  while (index < node.content.length - 1) {
+    const child = node.content[index];
+    if (
+      !child?.isPlot ||
+      !child.tag.is(Paragraph.type) ||
+      child.content.length > 0
+    ) {
+      break;
+    }
+    index++;
+  }
+  return index;
 }
 
 function listIsTight(node: Plot): boolean {
@@ -388,7 +425,9 @@ function listTightnessByChild(parent: Plot): readonly boolean[] {
 function listCanRenderTight(node: Plot): boolean {
   return node.content.every((item) => {
     if (!item.isPlot) return false;
-    const blocks = item.content.map(wordgardListItemBlockKind);
+    const blocks = item.content
+      .slice(firstRenderedListItemChild(item))
+      .map(wordgardListItemBlockKind);
     if (item.tag.is(TaskItem) && blocks[0] !== 'paragraph') {
       blocks.unshift('paragraph');
     }

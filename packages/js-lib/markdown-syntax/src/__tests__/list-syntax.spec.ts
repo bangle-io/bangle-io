@@ -1,6 +1,7 @@
 import type Token from 'markdown-it/lib/token.mjs';
 import { describe, expect, it } from 'vitest';
 import {
+  escapeMarkdownLineStart,
   LIST_KIND_ATTR,
   LIST_TIGHT_ATTR,
   listItemCanRenderTight,
@@ -21,6 +22,22 @@ function listItems(tokens: Token[]): Token[] {
 function inlineContent(tokens: Token[]): string[] {
   return tokens.filter((tok) => tok.type === 'inline').map((t) => t.content);
 }
+
+describe('escapeMarkdownLineStart', () => {
+  it.each([
+    ['1. item', '1\\. item'],
+    ['2) item', '2\\) item'],
+    ['1.', '1\\.'],
+    ['2)', '2\\)'],
+    ['  3) nested-looking text', '&#32; 3) nested-looking text'],
+    [' - nested-looking text', '&#32;- nested-looking text'],
+    ['\t> quoted-looking text', '&#9;> quoted-looking text'],
+    ['2)not a marker', '2)not a marker'],
+    ['ordinary text', 'ordinary text'],
+  ])('escapes %j as %j', (input, expected) => {
+    expect(escapeMarkdownLineStart(input)).toBe(expected);
+  });
+});
 
 describe('listTokenizer kinds', () => {
   it('stamps bullet kind on bullet lists and their items', () => {

@@ -358,8 +358,23 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     engines: BOTH_ENGINES,
   },
   {
+    name: 'escaped paren ordered-list marker is not a list',
+    markdown: '2\\) foo',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'standalone ordered-list markers remain literal paragraphs',
+    markdown: '1\\.\n\n2\\)',
+    engines: BOTH_ENGINES,
+  },
+  {
     name: 'escaped ordered-list marker inside a list item',
     markdown: '- 1\\. hi\n\n- x',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'escaped paren ordered-list marker inside a list item',
+    markdown: '- 2\\) hi\n\n- x',
     engines: BOTH_ENGINES,
   },
   {
@@ -903,6 +918,11 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     engines: BOTH_ENGINES,
   },
   {
+    name: 'task content preserves a leading literal space',
+    markdown: '- [ ] &#32;- literal bullet',
+    engines: BOTH_ENGINES,
+  },
+  {
     name: 'task item containing a link',
     markdown: '- [ ] [a link](https://x)',
     engines: BOTH_ENGINES,
@@ -1177,6 +1197,26 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
   {
     name: 'hard break directly after a bold run',
     markdown: '**foo**\\\nbar',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'hard break before a literal bullet marker',
+    markdown: 'before\\\n\\- literal bullet',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'hard break before a literal bullet marker inside a list',
+    markdown: '- before\\\n  \\- literal bullet\n- sibling',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'hard break before a literal paren marker inside a list',
+    markdown: '- before\\\n  1\\) literal ordered\n- sibling',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'entity-preserved leading space remains literal after a hard break',
+    markdown: '- before\\\n  &#32;- literal bullet\n- sibling',
     engines: BOTH_ENGINES,
   },
 
