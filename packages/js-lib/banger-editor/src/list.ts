@@ -340,7 +340,6 @@ function toggleTaskList(_config: RequiredConfig): Command {
   return (state, dispatch) => {
     return createToggleListCommand({
       kind: LIST_KIND.TASK,
-      listKind: LIST_KIND.BULLET,
       checked: false,
     })(state, dispatch);
   };
@@ -554,10 +553,8 @@ function flatListToMarkdown(
   const attrs = readListAttrs(node);
   if (!attrs) return;
   const tight = listRunIsTight(state, node, parent, index);
-  if (
-    state.inTightList ||
-    (tight && previousSiblingIsSameList(parent, index, attrs.listKind))
-  ) {
+  const sameList = previousSiblingIsSameList(parent, index, attrs.listKind);
+  if ((state.inTightList && !sameList) || (tight && sameList)) {
     state.flushClose(1);
   }
 

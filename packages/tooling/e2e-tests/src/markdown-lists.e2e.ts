@@ -108,3 +108,32 @@ test('copy and paste preserves a loose ordered task list', async ({
     source,
   );
 });
+
+test('converting an ordered list to tasks keeps its container and looseness', async ({
+  page,
+}) => {
+  const workspaceName = 'list-command-fidelity';
+  const noteName = 'ordered-to-task';
+  const source = '1. ordered one\n\n1. ordered two';
+  const expected = '1. [ ] ordered one\n\n1. [ ] ordered two';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(page, workspaceName, noteName, source);
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await editor.getByText('ordered one', { exact: true }).click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.press('ControlOrMeta+a');
+  await page.keyboard.press('ControlOrMeta+Shift+7');
+
+  await expect(editor.getByRole('checkbox')).toHaveCount(2);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(expected);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(editor.getByRole('checkbox')).toHaveCount(2);
+  await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
+    expected,
+  );
+});

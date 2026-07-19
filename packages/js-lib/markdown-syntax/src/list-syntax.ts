@@ -24,10 +24,48 @@ export type ListTokenMetadata = {
 
 /**
  * Task markers GFM recognizes at the very start of a list item's first
- * paragraph: `[ ]`, `[x]`, or `[X]`, followed by spaces/tabs or ending the
+ * paragraph: `[ ]`, `[x]`, or `[X]`, followed by whitespace or ending the
  * paragraph (an empty task). Anywhere else, `[ ]` is literal text.
  */
-const TASK_MARKER = /^\[([ xX])\](?:[ \t]+|$)/;
+const TASK_MARKER = /^\[([ xX])\](?:\s+|$)/u;
+
+function stripInlinePrefix(inline: Token, prefix: string): boolean {
+  const children = inline.children;
+  if (!children) return false;
+
+  let renderedPrefix = '';
+  for (const child of children) {
+    if (renderedPrefix.length >= prefix.length) break;
+    if (child.type === 'text') {
+      renderedPrefix += child.content.slice(
+        0,
+        prefix.length - renderedPrefix.length,
+      );
+    } else if (child.type === 'softbreak') {
+      renderedPrefix += '\n';
+    } else {
+      break;
+    }
+  }
+  if (renderedPrefix !== prefix) return false;
+
+  let remaining = prefix.length;
+  while (remaining > 0) {
+    const child = children[0];
+    if (!child) return false;
+    if (child.type === 'softbreak') {
+      children.shift();
+      remaining--;
+      continue;
+    }
+    const consumed = Math.min(remaining, child.content.length);
+    child.content = child.content.slice(consumed);
+    remaining -= consumed;
+    if (child.content === '') children.shift();
+  }
+  inline.content = inline.content.slice(prefix.length);
+  return true;
+}
 
 /**
  * Read the engine-neutral list metadata stamped by {@link listTokenizer}.
@@ -115,9 +153,8 @@ function startsAfterBlankLine(
  * start of a list item's first paragraph, which the inline tokenizer alone
  * cannot know. Mutating the token stream there is the standard markdown-it
  * technique for GFM task lists (`markdown-it-task-lists` works the same
- * way). An escaped marker (`\[ ]`) never matches: the escape becomes a
- * `text_special` child, so the leading text child no longer starts with
- * `[`.
+ * way). An escaped marker (`\[ ]`) never matches because the inline token's
+ * source content retains the leading backslash.
  *
  * Tightness comes from markdown-it's hidden paragraph tokens, which already
  * encode CommonMark's list looseness rules, rather than from source spacing.
@@ -176,18 +213,10 @@ export function listTokenizer(md: MarkdownIt): void {
       }
       const first = inline.children?.[0];
       if (!first || first.type !== 'text') continue;
-      const match = TASK_MARKER.exec(first.content);
-      if (!match) continue;
+      const match = TASK_MARKER.exec(inline.content);
+      if (!match || !stripInlinePrefix(inline, match[0])) continue;
 
       item.attrSet(TASK_CHECKED_ATTR, match[1] === ' ' ? 'false' : 'true');
-
-      // Remove the marker from both the child and the inline token's own
-      // `content` so the stream stays self-consistent for any consumer.
-      first.content = first.content.slice(match[0].length);
-      inline.content = inline.content.slice(match[0].length);
-      if (first.content === '') {
-        inline.children?.shift();
-      }
     }
 
     return false;

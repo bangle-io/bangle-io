@@ -727,6 +727,22 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     markdown: '- \n  - a\n\n- \n  - b',
     engines: BOTH_ENGINES,
   },
+  {
+    name: 'tight bullet parent keeps a loose nested bullet list',
+    markdown: '- outer\n  - nested one\n\n  - nested two',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'tight bullet parent keeps a loose nested ordered list',
+    markdown: '- outer\n  1. nested one\n\n  2. nested two',
+    canonical: '- outer\n  1. nested one\n\n  1. nested two',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'tight ordered parent keeps a loose nested task list',
+    markdown: '1. outer\n   - [ ] nested one\n\n   - [x] nested two',
+    engines: BOTH_ENGINES,
+  },
 
   // --- Task lists ----------------------------------------------------------
   {
@@ -809,6 +825,30 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     name: 'bracket without a following space is not a task marker',
     markdown: '- [ ]no space after bracket',
     canonical: '- \\[ \\]no space after bracket',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'checkbox-like text next to emphasis is not a task marker',
+    markdown: '- [ ]**bold**',
+    canonical: '- \\[ \\]**bold**',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'checkbox-like text next to a link is not a task marker',
+    markdown: '- [x][link](https://x)',
+    canonical: '- \\[x\\][link](https://x)',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'checkbox-like text next to inline code is not a task marker',
+    markdown: '- [ ]`code`',
+    canonical: '- \\[ \\]`code`',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'task content on the following line normalizes in one pass',
+    markdown: '- [ ]\n  continued task',
+    canonical: '- [ ] continued task',
     engines: BOTH_ENGINES,
   },
   {

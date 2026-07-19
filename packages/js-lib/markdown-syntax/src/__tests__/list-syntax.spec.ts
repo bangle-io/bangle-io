@@ -158,8 +158,22 @@ describe('listTokenizer task detection', () => {
     expect(inline?.children?.some((c) => c.type === 'link_open')).toBe(true);
   });
 
+  it('strips a line break between a task marker and its content', () => {
+    const tokens = tokenize('- [ ]\n  continued task');
+    const [item] = listItems(tokens);
+    const inline = tokens.find((token) => token.type === 'inline');
+
+    expect(item?.attrGet(TASK_CHECKED_ATTR)).toBe('false');
+    expect(inline?.content).toBe('continued task');
+    expect(inline?.children?.map((child) => child.type)).toEqual(['text']);
+    expect(inline?.children?.[0]?.content).toBe('continued task');
+  });
+
   it.each([
     ['no space after bracket', '- [ ]no'],
+    ['no space before emphasis', '- [ ]**bold**'],
+    ['no space before a link', '- [x][link](https://x)'],
+    ['no space before inline code', '- [ ]`code`'],
     ['marker not at item start', '- a [ ] b'],
     ['non-checkbox bracket content', '- [y] no'],
     ['escaped bracket', '- \\[ ] no'],
@@ -170,6 +184,9 @@ describe('listTokenizer task detection', () => {
       expect(item.attrGet(LIST_KIND_ATTR)).not.toBe('task');
       expect(item.attrGet(TASK_CHECKED_ATTR)).toBeNull();
     }
+    expect(inlineContent(tokens)).toContain(
+      md.startsWith('- ') ? md.slice(2) : md,
+    );
   });
 
   it('does not treat a task marker below the first paragraph as a task', () => {
