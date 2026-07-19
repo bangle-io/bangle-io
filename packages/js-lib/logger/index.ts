@@ -71,9 +71,12 @@ export class Logger {
   public error(...message: unknown[]): void {
     this.log('error', ...message);
 
-    // If the first message is an Error instance, send it to the error reporter
-    if (errorReporter && message.length > 0 && message[0] instanceof Error) {
-      errorReporter.captureException(message[0]);
+    // Report the first Error regardless of its position. Callers often lead
+    // with a static diagnostic label; the reporting boundary itself converts
+    // the Error into a privacy-safe allowlisted payload.
+    const error = message.find((item): item is Error => item instanceof Error);
+    if (errorReporter && error) {
+      errorReporter.captureException(error);
     }
   }
 

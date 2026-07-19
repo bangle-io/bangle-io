@@ -34,10 +34,6 @@ export const sentryConfig = {
   environment: APP_ENV,
   dsn: SENTRY_DSN,
   release: RELEASE_ID,
-  tracesSampleRate:
-    APP_ENV === 'production' ? 0.8 : APP_ENV === 'staging' ? 1 : 0,
-  replaysSessionSampleRate: APP_ENV === 'production' ? 0.1 : 1,
-  replaysOnErrorSampleRate: 1.0,
 };
 
 if (config.build.nodeEnv !== 'test') {

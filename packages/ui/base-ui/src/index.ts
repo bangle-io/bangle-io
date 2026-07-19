@@ -97,6 +97,7 @@ export {
   SheetTrigger,
 } from './sheet';
 export { Skeleton } from './skeleton';
+export { Switch } from './switch';
 export {
   Table,
   TableBody,

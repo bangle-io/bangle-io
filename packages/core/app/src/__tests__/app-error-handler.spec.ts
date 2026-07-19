@@ -1,6 +1,6 @@
+import { shouldReportAppError } from '@bangle.io/base-utils';
 import type { AppError } from '@bangle.io/types';
 import { describe, expect, test } from 'vitest';
-import { shouldReportAppError } from '../app-error-handler';
 
 describe('shouldReportAppError', () => {
   test.each([

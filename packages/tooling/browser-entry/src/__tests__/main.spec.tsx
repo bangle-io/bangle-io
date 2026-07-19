@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   consumePwaLaunchParams: vi.fn(),
   initializeSentry: vi.fn(),
   initializeServices: vi.fn(),
+  readAutomaticErrorReportingPreference: vi.fn().mockReturnValue(true),
 }));
 
 vi.mock('@bangle.io/app', () => ({
@@ -23,6 +24,8 @@ vi.mock('@bangle.io/initialize-services', async (importOriginal) => ({
 
 vi.mock('../setup-sentry', () => ({
   initializeSentry: mocks.initializeSentry,
+  readAutomaticErrorReportingPreference:
+    mocks.readAutomaticErrorReportingPreference,
 }));
 
 describe('browser entry startup', () => {

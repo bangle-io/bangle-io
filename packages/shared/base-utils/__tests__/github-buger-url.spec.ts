@@ -3,7 +3,6 @@
 import { makeTestLogger } from '@bangle.io/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getGithubUrl } from '../github-bug-url';
-import { throwAppError } from '../throw-app-error';
 
 describe('getGithubUrl', () => {
   let logger = makeTestLogger().logger;
@@ -13,38 +12,35 @@ describe('getGithubUrl', () => {
     ({ logger } = makeTestLogger());
   });
 
-  it('should generate a GitHub URL with error details', () => {
-    const error = new Error('Test error');
-    error.stack = 'Error stack trace';
+  it('generates a GitHub URL with only privacy-safe diagnostics', () => {
+    const error = new TypeError('PRIVATE_NOTE_CONTENT');
+    error.stack =
+      'TypeError: PRIVATE_NOTE_CONTENT\n    at save (https://app.bangle.io/assets/index-abcdef12.js?wsPath=PRIVATE_WORKSPACE:PRIVATE_NOTE.md:10:20)';
 
     const url = getGithubUrl(error, logger);
 
     const search = new URL(url).searchParams;
-    expect(search.get('body')).toContain('Details');
-    expect(search.get('body')).toContain('Test error');
+    expect(search.get('body')).toContain('Privacy-safe diagnostics');
+    expect(search.get('body')).toContain('TypeError');
+    expect(search.get('body')).toContain('/assets/index.js:10:20');
+    expect(search.get('body')).not.toContain('PRIVATE_NOTE_CONTENT');
+    expect(search.get('body')).not.toContain('PRIVATE_WORKSPACE');
+    expect(search.get('body')).not.toContain('PRIVATE_NOTE.md');
   });
 
-  it('should include app error', () => {
-    let error: Error | undefined;
-
-    try {
-      throwAppError('error::ws-path:invalid-ws-path', 'Test error message', {
-        invalidPath: 'test-path',
-      });
-    } catch (e) {
-      if (e instanceof Error) {
-        error = e;
-      }
-    }
-
-    if (!error) {
-      throw new Error('Failed to throw app error');
-    }
-
+  it('does not include custom error names, causes, or properties', () => {
+    const error = new Error('PRIVATE_MESSAGE', {
+      cause: new Error('PRIVATE_CAUSE'),
+    });
+    error.name = 'PRIVATE_ERROR_NAME';
+    Object.assign(error, { wsPath: 'PRIVATE_WORKSPACE:PRIVATE_NOTE.md' });
     const url = getGithubUrl(error, logger);
     const search = new URL(url).searchParams;
-    expect(search.get('body')).toContain('BaseError: Test error');
-    expect(search.get('body')).toContain('Test error message');
-    expect(search.get('body')).toContain('test-path');
+    const body = search.get('body');
+    expect(body).toContain('**Error type:** Error');
+    expect(body).not.toContain('PRIVATE_MESSAGE');
+    expect(body).not.toContain('PRIVATE_CAUSE');
+    expect(body).not.toContain('PRIVATE_ERROR_NAME');
+    expect(body).not.toContain('PRIVATE_WORKSPACE');
   });
 });

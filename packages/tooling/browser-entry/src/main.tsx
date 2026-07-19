@@ -3,7 +3,10 @@ import './index.css';
 
 import { App, consumePwaLaunchParams } from '@bangle.io/app';
 import { ThemeManager } from '@bangle.io/color-scheme-manager';
-import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
+import {
+  AUTOMATIC_ERROR_REPORTING_STORAGE_KEY,
+  THEME_MANAGER_CONFIG,
+} from '@bangle.io/constants';
 import {
   createEditorSaveCoordinator,
   initializeServices,
@@ -13,7 +16,10 @@ import { createStore } from 'jotai';
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { setupRootEmitter } from './setup-root-emitter';
-import { initializeSentry } from './setup-sentry';
+import {
+  initializeSentry,
+  readAutomaticErrorReportingPreference,
+} from './setup-sentry';
 
 const isDebug =
   window.location.hostname === 'localhost' ||
@@ -34,8 +40,12 @@ async function main(logger: Logger) {
   // in-app fallback consumer stays harmless.
   consumePwaLaunchParams(window);
 
-  // Initialize Sentry with privacy protections
-  initializeSentry(logger, isDebug);
+  const errorReporting = initializeSentry(
+    logger,
+    readAutomaticErrorReportingPreference(
+      AUTOMATIC_ERROR_REPORTING_STORAGE_KEY,
+    ),
+  );
 
   const rootElement = document.getElementById('root');
   if (!rootElement) {
@@ -63,6 +73,7 @@ async function main(logger: Logger) {
       themeManager,
       abortController.signal,
       editorSaveCoordinator,
+      errorReporting,
     );
   } catch (error) {
     abortController.abort();
@@ -106,7 +117,10 @@ async function main(logger: Logger) {
 }
 
 function handleStartupFailure(error: unknown, logger: Logger) {
-  logger.error('Unable to start Bangle', error);
+  logger.error(
+    error instanceof Error ? error : new Error('Unable to start Bangle'),
+    'Unable to start Bangle',
+  );
   renderStartupError(error);
 }
 

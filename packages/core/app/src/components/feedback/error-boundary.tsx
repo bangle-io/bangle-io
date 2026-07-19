@@ -23,7 +23,7 @@ export function ErrorBoundary({ children }: ErrorBoundaryProps) {
   return (
     <ReactErrorBoundary
       onError={(error, errorInfo) => {
-        logger.error('ErrorBoundary caught error:', error, errorInfo);
+        logger.error(error, 'ErrorBoundary caught error:', errorInfo);
       }}
       fallbackRender={({ error }) => {
         const reportError = toError(error);

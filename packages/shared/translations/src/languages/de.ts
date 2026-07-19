@@ -192,6 +192,31 @@ export const t = {
         wideEditorToggle: 'Breiten Editor verwenden',
         defaultWidth: 'Standard',
         wideWidth: 'Breit',
+        privacySection: 'Datenschutz',
+        automaticBugReportsTitle: 'Automatische Fehlerberichte',
+        automaticBugReportsDescription:
+          'Hilf Bangle, Fehler zu beheben, indem datenschutzfreundliche Diagnosedaten automatisch gesendet werden. Berichte enthalten niemals Notizinhalte, Arbeitsbereichs- oder Notiznamen, Seiten-URLs oder Routenparameter, Fehlermeldungen oder Fehlerursachen.',
+        automaticBugReportsToggle: 'Fehlerberichte automatisch senden',
+        disableBugReportsTitle: 'Automatische Fehlerberichte deaktivieren?',
+        disableBugReportsDescription:
+          'Automatische Berichte sind wichtig, um Fehler zu finden und zu beheben. Bangle schließt deine Notizdaten und identifizierende Namen aus. Wenn du dies deaktivierst, bleiben bereinigte Berichte auf diesem Gerät, bis du sie sendest.',
+        keepBugReportsEnabled: 'Automatische Berichte beibehalten',
+        disableBugReportsButton: 'Deaktivieren',
+        pendingBugReportsTitle: 'Ausstehende Fehlerberichte',
+        pendingBugReportsDescription: ({ count }: { count: number }) =>
+          count === 1
+            ? '1 datenschutzfreundlicher Bericht wartet, weil das automatische Senden fehlgeschlagen ist.'
+            : `${count} datenschutzfreundliche Berichte warten, weil das automatische Senden fehlgeschlagen ist.`,
+        manualBugReportsDescription: ({ count }: { count: number }) =>
+          count === 1
+            ? '1 datenschutzfreundlicher Bericht ist nur auf diesem Gerät gespeichert. Sende ihn, wenn du bereit bist.'
+            : `${count} datenschutzfreundliche Berichte sind nur auf diesem Gerät gespeichert. Sende sie, wenn du bereit bist.`,
+        sendBugReports: 'Berichte senden',
+        sendingBugReports: 'Wird gesendet...',
+        deleteBugReports: 'Berichte löschen',
+        pendingBugReportsSent: 'Ausstehende Fehlerberichte wurden gesendet.',
+        pendingBugReportsSendFailed:
+          'Einige Fehlerberichte konnten nicht gesendet werden und verbleiben auf diesem Gerät.',
         enabled: 'Aktiviert',
         disabled: 'Deaktiviert',
       },

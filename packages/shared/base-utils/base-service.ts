@@ -38,6 +38,10 @@ export abstract class BaseService implements Service<BaseServiceCommonOptions> {
     return this.__context.ctx.store;
   }
 
+  protected get commonOptions(): BaseServiceCommonOptions {
+    return this.__context.ctx;
+  }
+
   constructor(
     public name: string,
     private __context: BaseServiceContext,

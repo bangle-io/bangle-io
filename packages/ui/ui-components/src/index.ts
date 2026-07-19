@@ -78,6 +78,7 @@ export {
   SheetTitle,
   SheetTrigger,
   Skeleton,
+  Switch,
   Table,
   TableBody,
   TableCaption,

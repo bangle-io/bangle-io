@@ -21,6 +21,7 @@ import {
   CommandDispatchService,
   CommandRegistryService,
   EditorService,
+  ErrorReportingService,
   FileSystemService,
   NavigationService,
   ShortcutService,
@@ -58,6 +59,7 @@ export const coreServiceClasses = {
   navigation: NavigationService,
   shortcut: ShortcutService,
   editorService: EditorService,
+  errorReporting: ErrorReportingService,
   workbenchState: WorkbenchStateService,
   workspaceOps: WorkspaceOpsService,
   workspaceState: WorkspaceStateService,
@@ -261,6 +263,7 @@ function toCoreServices(s: CoreInstances): CoreServices {
     navigation: s.navigation,
     shortcut: s.shortcut,
     editorService: s.editorService,
+    errorReporting: s.errorReporting,
     workbenchState: s.workbenchState,
     workspaceOps: s.workspaceOps,
     workspaceState: s.workspaceState,
@@ -323,6 +326,7 @@ export function createServiceSetup<
           const {
             commandDispatcher: _commandDispatcher,
             commandRegistry: _commandRegistry,
+            errorReporting: _errorReporting,
             ...exposed
           } = toCoreServices(getCoreInstances());
           return exposed;
@@ -393,6 +397,7 @@ export function createServiceSetup<
         ),
       })),
     ),
+    errorReporting: slot(ErrorReportingService),
     workbenchState: slot(
       WorkbenchStateService,
       withOverride('workbenchState', () => ({
@@ -455,6 +460,7 @@ export function createServiceSetup<
       navigation: s.navigation,
       shortcut: s.shortcut,
       editorService: s.editorService,
+      errorReporting: s.errorReporting,
       workbenchState: s.workbenchState,
       workspaceOps: s.workspaceOps,
       workspaceState: s.workspaceState,

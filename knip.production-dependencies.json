@@ -13,7 +13,6 @@
         "@bangle.io/mini-js-utils",
         "@bangle.io/root-emitter",
         "@bangle.io/translations",
-        "@sentry/browser",
         "@sentry/vite-plugin",
         "@tailwindcss/vite",
         "@vitejs/plugin-react",

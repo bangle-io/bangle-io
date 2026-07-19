@@ -4,6 +4,7 @@ import type { createStore } from 'jotai';
 import type { BaseAppDatabase, BaseAppSyncDatabase } from './base-database';
 import type { BaseFileStorageProvider } from './base-file-storage';
 import type { BaseRouter } from './base-router';
+import type { ErrorReportingController } from './error-reporting';
 
 export type ServiceKind = 'platform' | 'core';
 
@@ -13,6 +14,7 @@ export type BaseServiceCommonOptions = {
   rootAbortSignal: AbortSignal;
   logger: Logger;
   store: Store;
+  errorReporting: ErrorReportingController;
   // for cases where throwing an error is not possible
   emitAppError: (error: BaseError) => void;
 };
@@ -28,6 +30,7 @@ export type CoreServiceSlotId =
   | 'commandRegistry'
   | 'editorEngine'
   | 'editorService'
+  | 'errorReporting'
   | 'fileSystem'
   | 'navigation'
   | 'shortcut'
@@ -49,7 +52,8 @@ export type AllServiceName = CoreServiceSlotId | PlatformServiceSlotId;
 
 export type CommandExcludedServiceSlotId =
   | 'commandDispatcher'
-  | 'commandRegistry';
+  | 'commandRegistry'
+  | 'errorReporting';
 
 export type CommandExposedServiceSlotId = Exclude<
   CoreServiceSlotId,

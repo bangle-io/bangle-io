@@ -60,6 +60,12 @@ export const makeTestCommonOpts = ({
   const commonOpts: BaseServiceCommonOptions = {
     logger,
     store: createStore(),
+    errorReporting: {
+      captureException: vi.fn(),
+      sendReports: vi.fn().mockResolvedValue({ sentReportIds: [] }),
+      setAutomaticReportingEnabled: vi.fn().mockResolvedValue(undefined),
+      setManualReportHandler: vi.fn(),
+    },
     emitAppError: vi.fn(),
     rootAbortSignal: controller.signal,
   };

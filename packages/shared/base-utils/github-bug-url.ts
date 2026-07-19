@@ -1,99 +1,53 @@
 import type { Logger } from '@bangle.io/logger';
-import { getAppErrorCause } from './throw-app-error';
+import { getPrivacySafeStackFrames } from './privacy-safe-error-report';
 
 export function getGithubUrl(error: Error, logger: Logger): string {
   const MAX_URL_LENGTH = 2000;
-  const bodySections: string[] = [];
+  const safeType = getSafeErrorType(error.name);
+  const safeFrames = getPrivacySafeStackFrames(error.stack).slice(-5);
+  const body = `
+## What happened?
+<!-- Please describe what you were doing and what went wrong. Avoid including private note content. -->
 
-  // Add initial details
-  bodySections.push(formatInitialDetails(error));
+## Privacy-safe diagnostics
 
-  try {
-    const appErrorCause = getAppErrorCause(error);
-    if (appErrorCause) {
-      bodySections.push(formatAppError(appErrorCause));
-    } else {
-      bodySections.push(...formatErrorCauses(error));
-    }
-  } catch (e) {
-    logger.error('Error in getGithubUrl', e);
-    if (e instanceof Error) {
-      bodySections.push(formatErrorSection('Error in getGithubUrl', e));
-    }
-  }
+**Error type:** ${safeType}
 
-  const joinedBody = bodySections.join('\n\n');
-  let encodedBody = encodeURIComponent(joinedBody);
+**App code locations:**
+\`\`\`
+${
+  safeFrames
+    .map(
+      (frame) => `${frame.filename}:${frame.lineNumber}:${frame.columnNumber}`,
+    )
+    .join('\n') || 'No app stack frames were available.'
+}
+\`\`\`
 
+Workspace names, note names, note contents, page URLs, route parameters, error messages, and error causes are intentionally excluded.
+  `.trim();
+
+  const encodedBody = encodeURIComponent(body);
   if (encodedBody.length > MAX_URL_LENGTH) {
-    logger.error(
-      `Error report body is too long (${encodedBody.length} characters)`,
-    );
-    const excess = encodedBody.length - MAX_URL_LENGTH;
-    const maxBodyLength = joinedBody.length - excess - 3;
-    const truncatedBody = `${joinedBody.substring(0, maxBodyLength)}...`;
-    encodedBody = encodeURIComponent(truncatedBody);
+    logger.warn('Privacy-safe error report exceeded the GitHub URL limit.');
   }
 
-  return `https://github.com/bangle-io/bangle-io/issues/new?title=Error%20Report&body=${encodedBody}`;
+  return `https://github.com/bangle-io/bangle-io/issues/new?title=Error%20Report&body=${encodedBody.slice(0, MAX_URL_LENGTH)}`;
 }
 
-function getImportantStackLines(stack: string | undefined, lines = 4): string {
-  if (!stack) return '';
-  const stackLines = stack.split('\n');
-  return stackLines.slice(0, lines).join('\n');
-}
-
-function formatInitialDetails(error: Error): string {
-  return `
-## Details
-<!-- Please provide details -->
-## Reproduction
-**User Agent**
-${navigator.userAgent}
-
-**Error**
-  \`\`\`
-  ${error.message}
-  ${getImportantStackLines(error.stack, 5)}
-  \`\`\`
-    `.trim();
-}
-
-function formatAppError(appErrorCause: {
-  name: string;
-  payload: unknown;
-}): string {
-  return `
-**App Error**
-\`\`\`
-${appErrorCause.name}
-${JSON.stringify(appErrorCause.payload)}
-\`\`\`
-    `.trim();
-}
-
-function formatErrorSection(title: string, error: Error): string {
-  return `
-**${title}**
-\`\`\`
-${error.message}
-${getImportantStackLines(error.stack, 3)}
-\`\`\`
-    `.trim();
-}
-
-function formatErrorCauses(error: Error): string[] {
-  const sections: string[] = [];
-  let currentError = error.cause;
-  let level = 1;
-
-  while (currentError instanceof Error && level <= 2) {
-    const title = `Cause ${level}`;
-    sections.push(formatErrorSection(title, currentError));
-    currentError = currentError.cause;
-    level++;
+function getSafeErrorType(name: string): string {
+  switch (name) {
+    case 'AggregateError':
+    case 'DOMException':
+    case 'Error':
+    case 'EvalError':
+    case 'RangeError':
+    case 'ReferenceError':
+    case 'SyntaxError':
+    case 'TypeError':
+    case 'URIError':
+      return name;
+    default:
+      return 'Error';
   }
-
-  return sections;
 }
