@@ -106,10 +106,10 @@ export function SlashCommand({
 
   const dismissCommandUi = useCallback(() => {
     if (!editorView || !active) {
-      return;
+      return false;
     }
 
-    ext.suggestions.command.replaceSuggestMarkWith({
+    return ext.suggestions.command.replaceSuggestMarkWith({
       content: '',
     })(editorView.state, editorView.dispatch, editorView);
   }, [editorView, active, ext]);
@@ -167,7 +167,9 @@ export function SlashCommand({
   }
 
   const run = (command: PMCommand, { refocus }: { refocus?: boolean } = {}) => {
-    dismissCommandUi();
+    if (!dismissCommandUi()) {
+      return;
+    }
     command(editorView.state, editorView.dispatch, editorView);
     if (refocus) {
       // Some inserts replace or move the focused block, dropping DOM focus;

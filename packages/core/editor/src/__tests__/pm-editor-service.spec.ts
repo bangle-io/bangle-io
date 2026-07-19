@@ -117,6 +117,11 @@ describe('PmEditorService', () => {
     }
     view.focus();
 
+    expect(
+      service.isActionAvailable({ type: 'toggle-heading', level: 2 }),
+    ).toBe(true);
+    expect(service.isActionAvailable({ type: 'insert-table' })).toBe(true);
+
     expect(service.toggleHeading(2)).toBe(true);
     expect(view.state.doc.firstChild?.type.name).toBe('heading');
     expect(view.state.doc.firstChild?.attrs.level).toBe(2);
@@ -134,6 +139,10 @@ describe('PmEditorService', () => {
       return !hasTable;
     });
     expect(hasTable).toBe(true);
+    expect(
+      service.isActionAvailable({ type: 'toggle-heading', level: 1 }),
+    ).toBe(false);
+    expect(service.isActionAvailable({ type: 'insert-table' })).toBe(false);
 
     unmount();
     await waitForExpect(() => {
@@ -142,8 +151,83 @@ describe('PmEditorService', () => {
     // With no active editor both refuse instead of throwing.
     expect(service.toggleHeading(1)).toBe(false);
     expect(service.insertTable()).toBe(false);
+    expect(
+      service.isActionAvailable({ type: 'toggle-heading', level: 1 }),
+    ).toBe(false);
 
     controller.abort();
     domNode.remove();
+  });
+
+  test('keeps the last active editor while another surface owns focus', async () => {
+    const controller = new AbortController();
+    const testEnv = createTestEnvironment({ controller });
+    const services = testEnv.instantiateAll();
+    await testEnv.mountAll();
+
+    await services.workspaceOps.createWorkspaceInfo({
+      name: TEST_WS_NAME,
+      type: WORKSPACE_STORAGE_TYPE.Memory,
+      metadata: {},
+    });
+    await services.fileSystem.createTextFile(`${TEST_WS_NAME}:first.md`, '');
+    await services.fileSystem.createTextFile(`${TEST_WS_NAME}:second.md`, '');
+
+    if (!(services.editorEngine instanceof PmEditorService)) {
+      throw new Error('Expected the ProseMirror editor engine');
+    }
+    const service = services.editorEngine;
+    const firstDomNode = document.createElement('div');
+    const secondDomNode = document.createElement('div');
+    const omniInput = document.createElement('input');
+    document.body.append(firstDomNode, secondDomNode, omniInput);
+
+    const unmountFirst = service.mountEditor({
+      domNode: firstDomNode,
+      wsPath: `${TEST_WS_NAME}:first.md`,
+      name: 'first-editor',
+    });
+    const unmountSecond = service.mountEditor({
+      domNode: secondDomNode,
+      wsPath: `${TEST_WS_NAME}:second.md`,
+      name: 'second-editor',
+    });
+    await waitForExpect(() => {
+      expect(service.getEditor('first-editor')).toBeDefined();
+      expect(service.getEditor('second-editor')).toBeDefined();
+    });
+
+    const firstEditor = service.getEditor('first-editor');
+    const secondEditor = service.getEditor('second-editor');
+    if (!firstEditor || !secondEditor) {
+      throw new Error('Expected both ProseMirror editors to be ready');
+    }
+
+    firstEditor.focus();
+    expect(service.insertTable()).toBe(true);
+
+    secondEditor.focus();
+    omniInput.focus();
+
+    // The first service lookup happens only after focus leaves the editor:
+    // availability and execution must still target the editor that opened the
+    // external surface, rather than falling back to mount order.
+    expect(
+      service.isActionAvailable({ type: 'toggle-heading', level: 1 }),
+    ).toBe(true);
+    expect(service.toggleHeading(1)).toBe(true);
+    expect(secondEditor.state.doc.firstChild?.type.name).toBe('heading');
+    expect(firstEditor.state.doc.firstChild?.type.name).toBe('table');
+
+    omniInput.focus();
+    service.focusEditor();
+    expect(secondEditor.hasFocus()).toBe(true);
+
+    unmountSecond();
+    unmountFirst();
+    controller.abort();
+    firstDomNode.remove();
+    secondDomNode.remove();
+    omniInput.remove();
   });
 });

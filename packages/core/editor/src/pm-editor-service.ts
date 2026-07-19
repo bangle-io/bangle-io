@@ -6,7 +6,7 @@ import {
   isAppError,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
-import type { EditorEngineContract } from '@bangle.io/context';
+import type { EditorAction, EditorEngineContract } from '@bangle.io/context';
 import {
   type EditorView,
   markdownLoader,
@@ -104,6 +104,7 @@ type EditorEntry =
   | {
       name: string;
       editorView: ReturnType<typeof createEditor>;
+      removeFocusListener: () => void;
       wsPath: string;
     }
   | { name: string; status: 'failed'; error: Error; wsPath: string }
@@ -143,6 +144,7 @@ export class PmEditorService
   private saveQueue: EditorSaveQueue;
   private pendingHeading: { fragment: string; wsPath: string } | undefined;
   private rememberedCursors = new Map<string, number>();
+  private lastActiveEditorView: EditorView | undefined;
 
   private editors = new Map<HTMLElement, EditorEntry>();
 
@@ -221,10 +223,12 @@ export class PmEditorService
       // Destroy all editor views
       for (const [_domNode, editor] of this.editors) {
         if ('editorView' in editor) {
+          editor.removeFocusListener();
           editor.editorView.destroy();
         }
       }
       this.editors.clear();
+      this.lastActiveEditorView = undefined;
       this.rememberedCursors.clear();
     });
     this.addCleanup(
@@ -342,7 +346,18 @@ export class PmEditorService
         },
       });
 
-      this.editors.set(domNode, { name, editorView, wsPath });
+      const handleFocusIn = () => {
+        this.lastActiveEditorView = editorView;
+      };
+      editorView.dom.addEventListener('focusin', handleFocusIn);
+      this.editors.set(domNode, {
+        name,
+        editorView,
+        removeFocusListener: () => {
+          editorView.dom.removeEventListener('focusin', handleFocusIn);
+        },
+        wsPath,
+      });
       this.checkRoundTripFidelity({
         content: content ?? '',
         editorView,
@@ -389,6 +404,9 @@ export class PmEditorService
   private unmountEditor(domNode: HTMLElement) {
     const editor = this.editors.get(domNode);
     if (editor && 'editorView' in editor) {
+      if (this.lastActiveEditorView === editor.editorView) {
+        this.lastActiveEditorView = undefined;
+      }
       const position = getRememberedCursorPosition(
         editor.editorView.state.selection,
       );
@@ -397,6 +415,7 @@ export class PmEditorService
       } else {
         this.rememberedCursors.set(editor.wsPath, position);
       }
+      editor.removeFocusListener();
       editor.editorView.destroy();
     }
     this.editors.delete(domNode);
@@ -913,16 +932,21 @@ export class PmEditorService
   }
 
   focusEditor() {
-    for (const [_, editor] of this.editors) {
-      if (
-        'editorView' in editor &&
-        !editor.editorView.isDestroyed &&
-        !editor.editorView.hasFocus()
-      ) {
-        editor.editorView.focus();
-        return;
-      }
+    this.getActiveEditorView()?.focus();
+  }
+
+  /** Dry-runs app-level editor actions against the live selection. */
+  isActionAvailable(action: EditorAction): boolean {
+    const view = this.getActiveEditorView();
+    if (!view) {
+      return false;
     }
+    if (action.type === 'insert-table') {
+      return this.extensions.table.command.insertTable()(view.state);
+    }
+    return this.extensions.heading.command.toggleHeading(action.level)(
+      view.state,
+    );
   }
 
   /** Toggles the block at the current selection to/from a heading. */
@@ -1065,14 +1089,20 @@ export class PmEditorService
 
   private getActiveEditorView() {
     let fallback: ReturnType<typeof createEditor> | undefined;
+    let lastActive: ReturnType<typeof createEditor> | undefined;
     for (const editor of this.editors.values()) {
       if ('editorView' in editor && !editor.editorView.isDestroyed) {
         if (editor.editorView.hasFocus()) {
+          this.lastActiveEditorView = editor.editorView;
           return editor.editorView;
+        }
+        if (editor.editorView === this.lastActiveEditorView) {
+          lastActive = editor.editorView;
         }
         fallback ??= editor.editorView;
       }
     }
-    return fallback;
+    this.lastActiveEditorView = lastActive;
+    return lastActive ?? fallback;
   }
 }
