@@ -86,6 +86,47 @@ describe('PWA install prompt tracking', () => {
       installedThisSession: true,
     });
   });
+
+  it('treats window-controls-overlay as an installed app window', () => {
+    const originalMatchMedia = Object.getOwnPropertyDescriptor(
+      window,
+      'matchMedia',
+    );
+    const matchMedia = vi.fn((query: string) => {
+      const mediaQuery = new EventTarget() as EventTarget & {
+        matches: boolean;
+      };
+      mediaQuery.matches = query === '(display-mode: window-controls-overlay)';
+      return mediaQuery as unknown as MediaQueryList;
+    });
+    Object.defineProperty(window, 'matchMedia', {
+      configurable: true,
+      value: matchMedia,
+    });
+
+    try {
+      pwaInstall.initializePwaInstallPromptTracking(window);
+      const event = makeInstallPromptEvent();
+      window.dispatchEvent(event);
+
+      expect(event.defaultPrevented).toBe(false);
+      expect(pwaInstall.getPwaInstallSnapshot()).toMatchObject({
+        canInstall: false,
+        isInstalled: true,
+        isStandalone: true,
+        canOpenInApp: false,
+      });
+      expect(matchMedia).toHaveBeenCalledWith(
+        '(display-mode: window-controls-overlay)',
+      );
+    } finally {
+      if (originalMatchMedia) {
+        Object.defineProperty(window, 'matchMedia', originalMatchMedia);
+      } else {
+        Reflect.deleteProperty(window, 'matchMedia');
+      }
+    }
+  });
 });
 
 describe('installed related apps detection', () => {

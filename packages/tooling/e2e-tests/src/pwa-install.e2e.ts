@@ -108,6 +108,42 @@ test('sidebar shows a one-click install pill while the browser offers a PWA inst
   await expect(page.getByRole('alertdialog')).toHaveCount(0);
 });
 
+test('installed window-controls-overlay mode never offers to install the app', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const nativeMatchMedia = window.matchMedia.bind(window);
+    window.matchMedia = (query) => {
+      const mediaQuery = nativeMatchMedia(query);
+      if (query !== '(display-mode: window-controls-overlay)') {
+        return mediaQuery;
+      }
+
+      return new Proxy(mediaQuery, {
+        get(target, property) {
+          if (property === 'matches') {
+            return true;
+          }
+
+          const value = Reflect.get(target, property, target);
+          return typeof value === 'function' ? value.bind(target) : value;
+        },
+      });
+    };
+  });
+
+  await page.goto('/');
+
+  const defaultPrevented = await page.evaluate(() => {
+    const event = new Event('beforeinstallprompt', { cancelable: true });
+    window.dispatchEvent(event);
+    return event.defaultPrevented;
+  });
+
+  expect(defaultPrevented).toBe(false);
+  await expect(page.getByTestId('sidebar-pwa-action')).toHaveCount(0);
+});
+
 test('installed app detected from a browser tab shows a one-time open-in-app dialog', async ({
   page,
 }) => {
