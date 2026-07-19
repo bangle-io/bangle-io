@@ -5,10 +5,11 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-12
-updated: 2026-07-12
+updated: 2026-07-19
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/633
+  - https://github.com/bangle-io/bangle-io/pull/656
 related_issues: []
 ---
 
@@ -32,8 +33,11 @@ Large / Editor).
 
 ## Current status
 
-Not started. All items are refinements on top of merged behavior; none block
-release of PR #633.
+Partially complete. PR #656 completed item 6 by adding a typed editor-engine
+availability contract, hiding unavailable omni editor commands, retaining the
+last-focused live editor across external-focus handoffs, and revalidating at
+execution. Items 1-5 and 7-8 remain in Backlog; none block release of the
+merged PR #633 behavior.
 
 ## Scope
 
@@ -91,15 +95,11 @@ and encode it in tests before enabling handles on nested structures.
 
 ### 6. Omni editor-command availability
 
-`command::editor:*` commands always appear in omni search; when the engine
-cannot apply them (cursor in a table cell, no mounted editor, read-only
-wordgard engine) the handler now shows an "unavailable" toast
-(`t.app.toasts.editorCommandUnavailable`) instead of failing silently. The
-remaining follow-up is first-class availability: hide or disable commands in
-the omni list based on live engine/selection state, then revalidate at
-execution (PM commands already self-validate). Requires a dynamic
-availability hook on the command registry — design it against more consumers
-than these four commands before building.
+Completed in PR #656. A narrow typed editor-engine availability contract now
+hides unavailable heading and table commands in omni search while handlers
+still revalidate at execution. The implementation also retains the
+last-focused live editor across omni/external focus handoffs and covers the
+multi-editor edge case without adding a generic dynamic command registry.
 
 ### 7. Intentional undo grouping
 
@@ -126,6 +126,8 @@ neither blurs the editor nor selects an item.
   synthetic-marked text on every deactivation path, and the save path
   serializes through `stripSyntheticSuggestionText`, so a "+"-opened `/`
   can never reach storage (navigate-away e2e covers the repro).
+- Omni editor-command availability: PR #656 hides invalid heading/table
+  actions from omni search and retains execution-time validation.
 
 ## Out of scope
 
@@ -160,5 +162,5 @@ None.
 1. Item 1 (mapped positions) first — items 2 and 4 want the same per-view
    state container it introduces.
 2. Items 3 and 4 are small and independent; good warm-ups.
-3. Items 6–8 are behavior decisions; confirm the intended UX (one-line answer
+3. Items 7–8 are behavior decisions; confirm the intended UX (one-line answer
    each) before implementing.

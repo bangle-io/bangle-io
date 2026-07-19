@@ -12,6 +12,7 @@ related_prs:
   - https://github.com/bangle-io/bangle-io/pull/637
   - https://github.com/bangle-io/bangle-io/pull/650
   - https://github.com/bangle-io/bangle-io/pull/653
+  - https://github.com/bangle-io/bangle-io/pull/658
 related_issues: []
 ---
 
@@ -50,6 +51,10 @@ Active and partially implemented:
   tokenization, editable inline/display nodes, KaTeX rendering, exact-source
   safeguards, and Playwright persistence coverage. That PR also added a
   separate Plan 016 for lazy-loading the renderer after the first release.
+- PR #658 is open with a cross-engine list-fidelity slice: tight/loose list
+  semantics, ordered task-list kind, split/input-rule transitions, and stable
+  structural indentation. It strengthens the parity baseline but does not
+  complete one of the numbered milestones below.
 - M1 footnotes, M2 bare-URL autolinks, M3 highlight, and M5-M7 remain
   unstarted. The plan stays active rather than completed when M4 lands.
 

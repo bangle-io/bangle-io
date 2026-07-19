@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-06-15
-updated: 2026-07-18
+updated: 2026-07-19
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/631
@@ -22,6 +22,7 @@ related_prs:
   - https://github.com/bangle-io/bangle-io/pull/644
   - https://github.com/bangle-io/bangle-io/pull/648
   - https://github.com/bangle-io/bangle-io/pull/649
+  - https://github.com/bangle-io/bangle-io/pull/658
 related_issues: []
 ---
 
@@ -215,6 +216,12 @@ workflows, recovery gaps, and the open package-boundary items below.
     facade and proves the current graph performs the write. Browser E2E forces
     a save failure, emits the real `event::app:reload-ui`, retries through the
     disposed graph, and verifies the edit is durable after a full page reload.
+- 2026-07-19 list-fidelity cleanup (PR #658, open):
+  - The pending implementation preserves tight/loose list semantics, ordered
+    task-list container kind, and structural nested-list indentation across
+    both editor engines.
+  - P1.3 remains in progress until the PR merges; its shared corpus, command,
+    codec, DOM, and persistence coverage are already part of the PR.
 - Findings are grouped by priority and theme below.
 
 ## Scope
@@ -459,10 +466,11 @@ Current status:
   mixed, linked, marked-up, and empty task items for both editor engines.
 - ProseMirror explicitly ignores wrapper `bullet_list`/`ordered_list` tokens
   and derives flat list items from the configured kind/checked attributes.
-- Nested content under an ordered parent still has a documented indentation
-  fidelity gap and is deliberately excluded from the passing corpus. That is
-  the remaining correctness item; the original general task-list coverage gap
-  is resolved.
+- The original general task-list coverage gap is resolved.
+- PR #658 is open with the remaining implementation: preserve tight/loose
+  list semantics, keep ordered task lists ordered, and use structural marker
+  widths for stable nested indentation. This section is not complete until
+  that PR merges.
 
 Evidence:
 
@@ -475,8 +483,8 @@ Plan:
 - [x] Derive task-list state from standard Markdown tokens or configure the parser
   explicitly to emit the required attrs.
 - [x] Document task-list normalization rules in tests.
-- Fix or intentionally normalize nested list indentation under ordered parents,
-  then add that case to the golden corpus.
+- [ ] Merge PR #658, including nested ordered-list indentation in the golden
+  corpus and fixed-point coverage.
 
 Verification:
 

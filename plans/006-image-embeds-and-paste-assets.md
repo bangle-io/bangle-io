@@ -4,11 +4,12 @@ status: active
 type: plan
 archived: false
 created: 2026-06-30
-updated: 2026-07-12
+updated: 2026-07-19
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/587
   - https://github.com/bangle-io/bangle-io/pull/610
+  - https://github.com/bangle-io/bangle-io/pull/661
 related_issues: []
 ---
 
@@ -38,6 +39,10 @@ The target behavior is:
   Playwright persistence coverage for images and PDFs.
 - PR #610 fixed duplicate image nodes when browsers surface the same clipboard
   file through multiple transfer-list views.
+- PR #661 added a discoverable **Upload file** slash action that reuses the
+  existing durable asset pipeline for mapped insertion, cancellation, cleanup,
+  and Markdown-backed image/link persistence. This completes the file-picker
+  entry point; image metadata, replacement, sizing, and recovery UI remain.
 - `packages/js-lib/banger-editor/src/image.ts` owns the image schema and
   Markdown parse/serialize behavior; `packages/core/editor/src/asset-file-plugin.ts`
   and `local-image-node-view.ts` own Bangle's durable asset workflow.

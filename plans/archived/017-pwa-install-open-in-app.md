@@ -1,15 +1,24 @@
 ---
 title: PWA install surface and open-in-app routing
-status: active
+status: completed
 type: plan
-archived: false
-archived_on:
+archived: true
+archived_on: 2026-07-19
 created: 2026-07-18
-updated: 2026-07-18
+updated: 2026-07-19
 owner: mixed
-related_prs: []
+related_prs:
+  - https://github.com/bangle-io/bangle-io/pull/657
 related_issues: []
 ---
+
+> DONE (2026-07-19): PR #657 delivered the install/open-in-app surfaces,
+> deployment-aware manifest, protocol deep links, focus-existing launches, and
+> app shortcuts. Native in-place Markdown file handling was deliberately
+> removed from this scope and remains a separate storage initiative. Automated
+> coverage and local browser smoke testing were completed with the
+> implementation; the real installed-PWA check remains part of release-time
+> verification.
 
 # PWA install surface and open-in-app routing
 
@@ -31,6 +40,13 @@ Three user-visible surfaces, all driven by one install-state snapshot:
    installed but being used from a browser tab. Dismissal is persisted, so it
    shows at most once per browser profile. It never displaces an already-open
    alert dialog; it waits for the shared alert slot to free up.
+
+## Completion status
+
+Completed in PR #657. Phase 1 and the retained phase 2 scope shipped. The
+file-handler import experiment was removed before completion because native
+in-place editing needs a separate single-file storage and save-lifecycle
+design. That follow-up is explicitly out of scope for this completed plan.
 
 ## Browser API basis (verified July 2026)
 
@@ -141,5 +157,6 @@ Three user-visible surfaces, all driven by one install-state snapshot:
 
 ## Next steps
 
-- Implement, then PR review (including an external high-effort model review).
-- Follow-up plan for service worker/offline if prioritized.
+- No remaining work is required for this plan.
+- Create separate plans for service worker/offline support or native in-place
+  Markdown file handling if either is prioritized.

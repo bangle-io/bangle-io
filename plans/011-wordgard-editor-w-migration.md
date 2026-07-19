@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-05
-updated: 2026-07-12
+updated: 2026-07-19
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/609
@@ -14,6 +14,8 @@ related_prs:
   - https://github.com/bangle-io/bangle-io/pull/620
   - https://github.com/bangle-io/bangle-io/pull/623
   - https://github.com/bangle-io/bangle-io/pull/630
+  - https://github.com/bangle-io/bangle-io/pull/655
+  - https://github.com/bangle-io/bangle-io/pull/658
 related_issues: []
 ---
 
@@ -50,6 +52,14 @@ Key upstream facts (as of 2026-07-05):
   `wordgard` skill that teaches agents to write idiomatic Wordgard code.
 
 ## Current status
+
+2026-07-19 update:
+
+- PR #655 fixed nested multiline code serialization inside block delimiters in
+  the Wordgard Markdown codec.
+- PR #658 is open with shared list-syntax and codec work that preserves list
+  kind, task state, tightness, and structural indentation across both editor
+  engines. The migration remains in progress while that parity work is pending.
 
 Active. Landed so far (PR #609):
 
