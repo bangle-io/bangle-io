@@ -29,15 +29,12 @@ import {
   ArrowLeft,
   BriefcaseBusiness,
   Download,
+  ExternalLink,
   type LucideIcon,
   Settings2,
 } from 'lucide-react';
 import React from 'react';
-import {
-  getPwaInstallSnapshot,
-  promptPwaInstall,
-  subscribePwaInstallPrompt,
-} from '../common/pwa-install';
+import { usePwaInstall } from '../common/use-pwa-install';
 import { AppHeader } from '../layout/app-header';
 import { PageContentContainer } from '../layout/main-content-container';
 import { WorkspacesSettingsPage } from './page-settings-workspaces';
@@ -162,7 +159,7 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
   const routeInfo = useAtomValue(navigation.$routeInfo);
   const themePref = useAtomValue(workbenchState.$themePref);
   const [wideEditor, setWideEditor] = useAtom(workbenchState.$wideEditor);
-  const pwaInstall = usePwaInstallPrompt();
+  const pwaInstall = usePwaInstall();
   const [assetLocationPreference, setAssetLocationPreference] = useAtom(
     workbenchState.$assetLocationPreference,
   );
@@ -226,6 +223,7 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
                     <SettingsPage.SettingsRow
                       control={
                         <Button
+                          data-testid="settings-install-app"
                           disabled={pwaInstall.isInstalling}
                           onClick={() => {
                             void pwaInstall.install();
@@ -240,6 +238,24 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
                       }
                       description={t.app.settings.general.installPwaDescription}
                       title={t.app.settings.general.installPwaTitle}
+                    />
+                  ) : null}
+                  {pwaInstall.canOpenInApp ? (
+                    <SettingsPage.SettingsRow
+                      control={
+                        <Button
+                          data-testid="settings-open-in-app"
+                          onClick={() => {
+                            pwaInstall.openInApp();
+                          }}
+                          type="button"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                          {t.app.settings.general.openInAppButton}
+                        </Button>
+                      }
+                      description={t.app.settings.general.openInAppDescription}
+                      title={t.app.settings.general.openInAppTitle}
                     />
                   ) : null}
                 </SettingsPage.SettingsSection>
@@ -312,19 +328,6 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
       </PageContentContainer>
     </>
   );
-}
-
-function usePwaInstallPrompt() {
-  const snapshot = React.useSyncExternalStore(
-    subscribePwaInstallPrompt,
-    getPwaInstallSnapshot,
-    getPwaInstallSnapshot,
-  );
-
-  return {
-    ...snapshot,
-    install: promptPwaInstall,
-  };
 }
 
 function AssetLocationSelect({

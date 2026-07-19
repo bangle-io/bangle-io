@@ -1,4 +1,5 @@
 import {
+  type Command,
   closeHistory,
   collection,
   dropPoint,
@@ -484,6 +485,23 @@ export function setupAssetFilePlugin(config: AssetFilePluginConfig) {
 
   return collection({
     id: 'asset-file-plugin',
+    command: {
+      insertFiles:
+        (files: readonly File[]): Command =>
+        (_state, dispatch, view) => {
+          if (!view || files.length === 0) {
+            return false;
+          }
+          if (!dispatch) {
+            return true;
+          }
+
+          return handleFilesAtRange(view, files, {
+            from: view.state.selection.from,
+            to: view.state.selection.to,
+          });
+        },
+    },
     plugin: {
       handleDropPasteFiles: () =>
         setPriority(

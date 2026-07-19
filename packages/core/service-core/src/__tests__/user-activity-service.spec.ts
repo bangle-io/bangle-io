@@ -223,7 +223,7 @@ describe('UserActivityService', () => {
       from: 'test',
       command: {
         id: 'test-command',
-        omniSearch: true,
+        omniSearch: 'global',
         args: {},
       },
     });

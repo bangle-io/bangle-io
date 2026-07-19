@@ -48,6 +48,9 @@ export type EditorEngineContract = BaseService & {
   getSelectionMarkdown: () => string | null;
   hasPendingOrFailedSave: (wsPath?: string) => boolean;
   insertMarkdownAtSelection: (markdownText: string) => boolean;
+  /** Reports whether an app-level editor action can run against the current
+   * active editor and selection. Callers must still revalidate on execution. */
+  isActionAvailable: (action: EditorAction) => boolean;
   /** Inserts a starter table at the current selection in the active editor
    * and focuses its first cell. Returns false when there is no active
    * editor or the position cannot hold a table. */
@@ -67,6 +70,10 @@ export type EditorEngineContract = BaseService & {
   toggleHeadingCollapse: () => boolean;
   uncollapseAllHeadings: () => boolean;
 };
+
+export type EditorAction =
+  | { type: 'insert-table' }
+  | { type: 'toggle-heading'; level: 1 | 2 | 3 };
 
 export type CoreServices<
   TEditorEngine extends EditorEngineContract = EditorEngineContract,

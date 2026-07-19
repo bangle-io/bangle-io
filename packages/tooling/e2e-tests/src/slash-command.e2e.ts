@@ -258,6 +258,39 @@ test('slash command can insert a persisted code block', async ({ page }) => {
     .toBe('```\nconst viaSlash = true;\n```');
 });
 
+test('slash command uploads a file that persists after reload', async ({
+  page,
+}) => {
+  const workspaceName = 'slash-command-upload-file';
+  const noteName = 'Home';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('/');
+  await expect(page.getByTestId('slash-command-menu')).toBeVisible();
+  await page.keyboard.insertText('upload');
+
+  const fileChooserPromise = page.waitForEvent('filechooser');
+  await page.getByTestId('slash-command-menu').getByText('Upload file').click();
+  const fileChooser = await fileChooserPromise;
+  await fileChooser.setFiles({
+    name: 'Slash Upload.pdf',
+    mimeType: 'application/pdf',
+    buffer: Buffer.from('%PDF-1.4\n'),
+  });
+
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toMatch(/^\[Slash Upload\.pdf\]\(assets\/slash-upload-.*\.pdf\)$/);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(
+    editor.getByRole('link', { name: 'Slash Upload.pdf' }),
+  ).toBeVisible();
+});
+
 // Matches the date-fns `PP` format used by the slash command
 // (e.g. "Dec 15, 2028").
 function formatDateLabel(date: Date): string {

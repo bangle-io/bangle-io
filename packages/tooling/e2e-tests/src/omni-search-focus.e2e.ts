@@ -109,7 +109,7 @@ test('command bar and all-commands route stay centered when translate utilities 
   await expectDialogCentered(page);
 });
 
-test('workspace-only command without an open note shows an app error and keeps the app usable', async ({
+test('note-only command stays hidden without an open note', async ({
   page,
 }) => {
   await createBrowserWorkspace(page, {
@@ -124,9 +124,13 @@ test('workspace-only command without an open note shows an app error and keeps t
   await page
     .getByPlaceholder('Type a command or search...')
     .fill('Toggle Star for Current Note');
-  await page.keyboard.press('Enter');
+  await expect(
+    page.getByRole('option').filter({
+      has: page.getByText('Toggle Star for Current Note', { exact: true }),
+    }),
+  ).toHaveCount(0);
+  await page.keyboard.press('Escape');
 
-  await expect(page.getByText('No note is currently open.')).toBeVisible();
   await expect(
     page.getByRole('heading', { name: 'omni-no-open-note' }),
   ).toBeVisible();

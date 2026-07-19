@@ -38,10 +38,6 @@ import {
   type AssetFilePluginConfig,
   setupAssetFilePlugin,
 } from './asset-file-plugin';
-import {
-  type AssetLinkPluginConfig,
-  setupAssetLinkPlugin,
-} from './asset-link-plugin';
 import { setupCodeHighlight } from './code-highlight';
 import { setupFrontmatterActions } from './frontmatter-actions';
 
@@ -60,7 +56,6 @@ export function setupExtensions(
   onOpenLink?: LinkConfig['onOpenLink'],
   wikiLinkConfig?: WikiLinkConfig,
   assetFileConfig?: AssetFilePluginConfig,
-  assetLinkConfig?: AssetLinkPluginConfig,
 ) {
   const link = setupLink({ onOpenLink });
   const frontmatter = setupFrontmatter();
@@ -78,9 +73,6 @@ export function setupExtensions(
     image: setupImage(),
     ...(assetFileConfig
       ? { assetFilePlugin: setupAssetFilePlugin(assetFileConfig) }
-      : {}),
-    ...(assetLinkConfig
-      ? { assetLinkPlugin: setupAssetLinkPlugin(assetLinkConfig) }
       : {}),
     activeNode: setupActiveNode({
       // 'table': the flash animation re-triggers on every cell move and makes

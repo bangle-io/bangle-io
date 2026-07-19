@@ -15,7 +15,7 @@ export const editorCommands = narrow([
     dependencies: {
       services: ['editorEngine'],
     },
-    omniSearch: true,
+    omniSearch: 'note',
     args: null,
   },
   {
@@ -25,7 +25,7 @@ export const editorCommands = narrow([
     dependencies: {
       services: ['editorEngine'],
     },
-    omniSearch: true,
+    omniSearch: 'note',
     args: null,
   },
   {
@@ -35,7 +35,7 @@ export const editorCommands = narrow([
     dependencies: {
       services: ['editorEngine'],
     },
-    omniSearch: true,
+    omniSearch: 'note',
     args: null,
   },
   {
@@ -45,7 +45,7 @@ export const editorCommands = narrow([
     dependencies: {
       services: ['editorEngine'],
     },
-    omniSearch: true,
+    omniSearch: 'note',
     args: null,
   },
 ]);

@@ -558,9 +558,10 @@ export function replaceSuggestMarkWith({
       return false;
     }
 
+    const suggestionEnd = suggestion.position + suggestion.text.length;
     const [scanRangeStart, scanRangeEnd] = clampRange(
-      state.selection.from - MARK_SCAN_RANGE_PADDING,
-      state.selection.to + MARK_SCAN_RANGE_PADDING,
+      suggestion.position,
+      suggestionEnd,
       state.doc.content.size,
     );
 
@@ -571,7 +572,14 @@ export function replaceSuggestMarkWith({
       scanRangeEnd,
     );
 
-    if (!queryMark) {
+    if (
+      !queryMark ||
+      queryMark.start !== suggestion.position ||
+      queryMark.end !== suggestionEnd ||
+      queryMark.text !== suggestion.text ||
+      state.selection.from < queryMark.start ||
+      state.selection.to > queryMark.end
+    ) {
       return false;
     }
 

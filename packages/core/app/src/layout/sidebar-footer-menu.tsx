@@ -24,7 +24,11 @@ import React from 'react';
  * actions, and external links. Extracted from AppSidebar so the sidebar
  * component stays a thin composition layer.
  */
-export function SidebarFooterMenu() {
+export function SidebarFooterMenu({
+  canCreateFiles,
+}: {
+  canCreateFiles: boolean;
+}) {
   const { commandDispatcher, workbenchState } = useCoreServices();
   const setOpenOmniSearch = useSetAtom(workbenchState.$openOmniSearch);
 
@@ -34,15 +38,19 @@ export function SidebarFooterMenu() {
         {t.app.sidebar.newLabel}
       </DropdownMenu.DropdownMenuLabel>
       <DropdownMenu.DropdownMenuItem
-        onClick={() =>
+        disabled={!canCreateFiles}
+        onClick={() => {
+          if (!canCreateFiles) {
+            return;
+          }
           commandDispatcher.dispatch(
             'command::ui:create-note-dialog',
             {
               prefillName: undefined,
             },
             'ui',
-          )
-        }
+          );
+        }}
       >
         <PlusIcon className="mr-2 h-4 w-4" />
         <span>{t.app.common.newNote}</span>

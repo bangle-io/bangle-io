@@ -47,11 +47,12 @@ function createView({
     signal: AbortSignal,
   ) => Promise<StoredMarkdownAsset[]>;
 }) {
-  const pluginFactory = setupAssetFilePlugin({
+  const assetFilePlugin = setupAssetFilePlugin({
     cleanupStoredFiles,
     resolveAssetReference,
     storeFiles,
-  }).plugin?.handleDropPasteFiles;
+  });
+  const pluginFactory = assetFilePlugin.plugin?.handleDropPasteFiles;
   if (!pluginFactory) {
     throw new Error('Expected asset file plugin factory');
   }
@@ -69,7 +70,7 @@ function createView({
   const mount = document.createElement('div');
   document.body.append(mount);
   const view = new EditorView({ mount }, { state });
-  return { view, mount };
+  return { assetFilePlugin, view, mount };
 }
 
 function dispatchPaste(view: EditorView, file: File, text?: string) {
@@ -166,6 +167,57 @@ afterEach(() => {
 });
 
 describe('setupAssetFilePlugin', () => {
+  it('reports selected files as insertable without storing them during a dry run', () => {
+    const storeFiles = vi.fn(async () => []);
+    const { assetFilePlugin, view } = createView({ storeFiles });
+    const file = new File(['%PDF-1.4\n'], 'Picked.pdf', {
+      type: 'application/pdf',
+    });
+
+    expect(
+      assetFilePlugin.command.insertFiles([file])(view.state, undefined, view),
+    ).toBe(true);
+    expect(storeFiles).not.toHaveBeenCalled();
+    view.destroy();
+  });
+
+  it('inserts explicitly selected files through the shared asset lifecycle', async () => {
+    const stored = deferred<StoredMarkdownAsset[]>();
+    const storeFiles = vi.fn(() => stored.promise);
+    const { assetFilePlugin, view } = createView({ storeFiles });
+    const file = new File(['%PDF-1.4\n'], 'Picked.pdf', {
+      type: 'application/pdf',
+    });
+
+    expect(
+      assetFilePlugin.command.insertFiles([file])(
+        view.state,
+        view.dispatch,
+        view,
+      ),
+    ).toBe(true);
+    expect(storeFiles).toHaveBeenCalledWith(
+      view,
+      [file],
+      expect.any(AbortSignal),
+    );
+
+    stored.resolve([
+      {
+        file,
+        wsPath: WsFilePath.fromString('workspace:notes/assets/picked.pdf'),
+        href: 'assets/picked.pdf',
+        label: 'Picked.pdf',
+        isImage: false,
+      },
+    ]);
+
+    await vi.waitFor(() => {
+      expect(view.state.doc.textContent).toBe('Hello Picked.pdf');
+    });
+    view.destroy();
+  });
+
   it('maps delayed asset insertion through edits made while storage is pending', async () => {
     const stored = deferred<StoredMarkdownAsset[]>();
     const storeFiles = vi.fn(() => stored.promise);

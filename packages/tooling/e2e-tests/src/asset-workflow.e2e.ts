@@ -214,7 +214,18 @@ test('pastes workspace-backed image and PDF assets, reloads, and opens asset pag
     editor.getByRole('link', { name: 'Spec Sheet.PDF' }),
   ).toBeVisible();
 
-  await editor.getByRole('link', { name: 'Spec Sheet.PDF' }).click();
+  const assetLink = editor.getByRole('link', { name: 'Spec Sheet.PDF' });
+  const sourceUrl = page.url();
+  await assetLink.click();
+  await expect(page).toHaveURL(sourceUrl);
+  await expect(page.getByRole('textbox', { name: 'Link URL' })).toHaveValue(
+    /assets\/spec-sheet-.*\.pdf/,
+  );
+  await page.getByRole('textbox', { name: 'Link URL' }).press('Escape');
+
+  await page.keyboard.down(ctrlKey);
+  await assetLink.click();
+  await page.keyboard.up(ctrlKey);
   await expect(
     page.getByRole('heading', { name: /spec-sheet-.*\.pdf/i }),
   ).toBeVisible();

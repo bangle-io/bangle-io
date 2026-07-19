@@ -26,9 +26,6 @@ function setup() {
       cleanupStoredFiles: () => {},
       resolveAssetReference: () => undefined,
     },
-    {
-      openAssetLink: () => false,
-    },
   );
   const resolved = resolve(extensions, false, true);
   const schema = new Schema({

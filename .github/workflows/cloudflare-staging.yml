@@ -72,6 +72,7 @@ jobs:
           CF_PAGES: '1'
           CF_PAGES_BRANCH: staging
           CF_PAGES_COMMIT_SHA: ${{ github.sha }}
+          CF_PAGES_URL: https://staging.bangle-io-2.pages.dev
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: pnpm build
 

@@ -16,8 +16,10 @@ import {
   syncAppDocumentTitle,
   syncWindowControlsOverlayState,
 } from './common/pwa-install';
+import { PwaLaunchActions } from './common/pwa-launch-actions';
 import { ErrorBoundary } from './components/feedback/error-boundary';
 import { AppDialogs } from './dialogs/app-dialogs';
+import { PwaOpenInAppPrompt } from './dialogs/pwa-open-in-app-prompt';
 import { AppSidebar } from './layout/app-sidebar';
 import {
   PageAsset,
@@ -29,6 +31,13 @@ import {
   PageWsHome,
 } from './pages';
 import { SaveProtection } from './save-protection';
+
+// Re-exported for the bootstrap entry: launch params must be consumed
+// before the router captures `window.location.search`, or every later
+// navigation re-emits (and a reload replays) the consumed shortcut or
+// deep link.
+export { consumePwaLaunchParams } from './common/pwa-install';
+
 export function App({
   logger,
   store,
@@ -47,6 +56,8 @@ export function App({
           <ErrorBoundary>
             <BrowserAppDocumentSetup />
             <AppDialogs />
+            <PwaOpenInAppPrompt />
+            <PwaLaunchActions />
             <OmniSearch />
             <Toaster position="top-right" />
             <AppErrorHandler rootEmitter={rootEmitter} />

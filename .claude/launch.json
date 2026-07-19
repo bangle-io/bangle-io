@@ -1,0 +1,14 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "bangle-dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["start"],
+      "port": 5225,
+      "env": {
+        "BANGLE_DEV_PORT": "5225"
+      }
+    }
+  ]
+}

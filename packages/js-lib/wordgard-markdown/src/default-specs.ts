@@ -226,9 +226,13 @@ const codeBlockSpec: NodeMarkdownSpec = {
     const text = node.textContent();
     const fence = createCodeFence(text, language);
     state.write(`${fence}${language}\n`);
-    // Unlike write(), text() reapplies the enclosing list/quote delimiter to
-    // every line of a multiline code block.
+    // `text`, not `write`: multi-line content must re-apply the block
+    // delimiter (`> `, list indentation) at every line, which `write` only
+    // does for the first line.
     state.text(text, false);
+    // Unconditional (not `ensureNewLine`) to stay byte-identical to the
+    // ProseMirror engine: content ending in a newline holds a trailing
+    // blank code line, and `ensureNewLine` would swallow it.
     if (text) {
       state.write('\n');
     }
