@@ -184,23 +184,28 @@ export function resolveWikiLinkTarget(
   index: WikiLinkIndex,
 ): WsFilePath | undefined {
   const current = WsPath.safeParse(currentWsPath).data?.asFile();
+  const normalizedTarget = target.trim();
   if (
     !current ||
-    !target ||
-    target.includes('\\') ||
-    target.includes(':') ||
-    hasUnsafeEncoding(target)
+    !normalizedTarget ||
+    normalizedTarget.includes('\\') ||
+    normalizedTarget.includes(':') ||
+    hasUnsafeEncoding(normalizedTarget)
   ) {
     return undefined;
   }
   if (index.wsName !== current.wsName) {
     return undefined;
   }
-  const explicitPath = /^(?:\/|\.\.?\/)/.test(target) || target.includes('/');
+  const explicitPath =
+    /^(?:\/|\.\.?\/)/.test(normalizedTarget) || normalizedTarget.includes('/');
 
   if (explicitPath) {
-    const rootRelative = target.startsWith('/') || !/^\.\.?\//.test(target);
-    const base = rootRelative ? `/${target.replace(/^\//, '')}` : target;
+    const rootRelative =
+      normalizedTarget.startsWith('/') || !/^\.\.?\//.test(normalizedTarget);
+    const base = rootRelative
+      ? `/${normalizedTarget.replace(/^\//, '')}`
+      : normalizedTarget;
     for (const extension of ['', '.md', '.markdown']) {
       const resolved = resolveInternalWsPath(current, `${base}${extension}`);
       if (resolved) {
@@ -211,7 +216,7 @@ export function resolveWikiLinkTarget(
     return undefined;
   }
 
-  const stem = withoutMarkdownExtension(target);
+  const stem = withoutMarkdownExtension(normalizedTarget);
   const exact = index.byStem.get(stem) ?? [];
   const matches = exact.length
     ? exact
@@ -225,21 +230,22 @@ export function createMissingWikiLinkTarget(
   target: string,
 ): WsFilePath | undefined {
   const current = WsPath.safeParse(currentWsPath).data?.asFile();
+  const normalizedTarget = target.trim();
   if (
     !current ||
-    !target ||
-    target.includes('\\') ||
-    target.includes(':') ||
-    target.includes('#') ||
-    target.includes('?') ||
-    hasUnsafeEncoding(target)
+    !normalizedTarget ||
+    normalizedTarget.includes('\\') ||
+    normalizedTarget.includes(':') ||
+    normalizedTarget.includes('#') ||
+    normalizedTarget.includes('?') ||
+    hasUnsafeEncoding(normalizedTarget)
   ) {
     return undefined;
   }
 
-  const targetWithExtension = hasMarkdownExtension(target)
-    ? target
-    : `${target}${WsPath.DEFAULT_NOTE_EXTENSION}`;
+  const targetWithExtension = hasMarkdownExtension(normalizedTarget)
+    ? normalizedTarget
+    : `${normalizedTarget}${WsPath.DEFAULT_NOTE_EXTENSION}`;
   const explicitPath =
     /^(?:\/|\.\.?\/)/.test(targetWithExtension) ||
     targetWithExtension.includes('/');

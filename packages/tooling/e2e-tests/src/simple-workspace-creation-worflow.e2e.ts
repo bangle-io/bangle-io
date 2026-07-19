@@ -5,6 +5,25 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
   await page.goto('/');
 
   const mainContentLocator = page.locator('main.B-app-page-content');
+  const fileExplorer = page.getByTestId('bangle-file-explorer');
+
+  await test.step('disable file creation without a workspace', async () => {
+    await expect(
+      fileExplorer.getByRole('button', { name: 'New File' }),
+    ).toBeDisabled();
+    await expect(
+      fileExplorer.getByRole('button', { name: 'New Folder' }),
+    ).toBeDisabled();
+
+    await page.getByRole('button', { name: /Bangle\.io/ }).click();
+    await expect(
+      page.getByRole('menuitem', { name: 'New Note' }),
+    ).toBeDisabled();
+    await expect(
+      page.getByRole('menuitem', { name: 'New Workspace' }),
+    ).toBeEnabled();
+    await page.keyboard.press('Escape');
+  });
 
   await test.step('create new workspace', async () => {
     await page.getByRole('button', { name: 'Create Workspace' }).click();
@@ -28,6 +47,18 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
     await expect(mainContentLocator).toContainText(
       'No notes found in this workspace.',
     );
+    await expect(
+      fileExplorer.getByRole('button', { name: 'New File' }),
+    ).toBeEnabled();
+    await expect(
+      fileExplorer.getByRole('button', { name: 'New Folder' }),
+    ).toBeEnabled();
+
+    await page.getByRole('button', { name: /Bangle\.io/ }).click();
+    await expect(
+      page.getByRole('menuitem', { name: 'New Note' }),
+    ).toBeEnabled();
+    await page.keyboard.press('Escape');
   });
 
   await test.step('create new note', async () => {

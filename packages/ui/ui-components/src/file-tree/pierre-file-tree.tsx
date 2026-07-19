@@ -244,6 +244,7 @@ function getCurrentSelectedEntries(
 
 export interface PierreFileTreeProps {
   activePaths?: readonly string[];
+  canCreateFiles: boolean;
   className?: string;
   expandedPaths?: readonly string[];
   filePaths: readonly string[];
@@ -267,6 +268,7 @@ export interface PierreFileTreeProps {
 
 export function PierreFileTree({
   activePaths = EMPTY_PATHS,
+  canCreateFiles,
   className,
   expandedPaths = EMPTY_PATHS,
   filePaths,
@@ -677,18 +679,20 @@ export function PierreFileTree({
           </button>
           <button
             type="button"
-            className="inline-flex size-6 items-center justify-center rounded-sm text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            className="inline-flex size-6 items-center justify-center rounded-sm text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-40"
             aria-label={t.app.components.appSidebar.newFileActionTitle}
             title={t.app.components.appSidebar.newFileActionTitle}
+            disabled={!canCreateFiles}
             onClick={() => onCreateNote(undefined)}
           >
             <FilePlus2 className="size-3.5" />
           </button>
           <button
             type="button"
-            className="inline-flex size-6 items-center justify-center rounded-sm text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            className="inline-flex size-6 items-center justify-center rounded-sm text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-40"
             aria-label={t.app.components.appSidebar.newFolderActionTitle}
             title={t.app.components.appSidebar.newFolderActionTitle}
+            disabled={!canCreateFiles}
             onClick={() => onCreateDirectory(undefined)}
           >
             <FolderPlus className="size-3.5" />

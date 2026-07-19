@@ -67,6 +67,9 @@ describe('resolveWikiLinkTarget', () => {
     expect(resolveWikiLinkTarget(home, 'Mixed.md', index)?.wsPath).toBe(
       'notes:folder/Mixed.md',
     );
+    expect(resolveWikiLinkTarget(home, ' home.md ', index)?.wsPath).toBe(
+      'notes:home.md',
+    );
   });
 
   it('prefers exact-case stems over case-insensitive matches', () => {
@@ -180,6 +183,13 @@ describe('createMissingWikiLinkTarget', () => {
     expect(
       createMissingWikiLinkTarget(folderName, 'new note.markdown')?.wsPath,
     ).toBe('notes:new note.markdown');
+    expect(
+      createMissingWikiLinkTarget(folderName, ' new note.md ')?.wsPath,
+    ).toBe('notes:new note.md');
+    expect(
+      createMissingWikiLinkTarget(folderName, ' another note ')?.wsPath,
+    ).toBe('notes:another note.md');
+    expect(createMissingWikiLinkTarget(folderName, '   ')).toBeUndefined();
   });
 
   it('creates explicit targets at root-relative or current-relative paths', () => {
