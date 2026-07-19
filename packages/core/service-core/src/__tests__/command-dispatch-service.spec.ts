@@ -56,6 +56,7 @@ async function setup() {
   });
 
   const dispatchedCommands: CommandDispatchResult[] = [];
+  const focusEditor = vi.fn();
   const exposedServices = {
     fileSystem: new TestService(context, null),
   };
@@ -69,7 +70,7 @@ async function setup() {
       emitResult: (result) => {
         dispatchedCommands.push(result);
       },
-      focusEditor: () => {},
+      focusEditor,
       getExposedServices: () => exposedServices,
     },
   );
@@ -80,6 +81,7 @@ async function setup() {
     logger,
     commandRegistry,
     dispatchService,
+    focusEditor,
     mockLog: mockLog,
     dispatchedCommands,
     controller,
@@ -123,14 +125,19 @@ describe('CommandDispatchService', () => {
     expect(dispatchService.mounted).toBe(false);
   });
 
-  test('should dispatch a command successfully', async () => {
-    const { mockLog, commandRegistry, dispatchService, dispatchedCommands } =
-      await setup();
+  test('should dispatch an omni-search command and focus the editor by default', async () => {
+    const {
+      mockLog,
+      commandRegistry,
+      dispatchService,
+      dispatchedCommands,
+      focusEditor,
+    } = await setup();
     const command = {
       id: 'command::ui:toggle-sidebar',
       keywords: ['test', 'command'],
       dependencies: { services: ['fileSystem'] },
-      omniSearch: true,
+      omniSearch: 'global',
       args: null,
     } as const satisfies Command;
 
@@ -159,6 +166,7 @@ describe('CommandDispatchService', () => {
       command,
       from: 'testSource',
     });
+    expect(focusEditor).toHaveBeenCalledOnce();
 
     () => {
       // type checks
@@ -183,7 +191,7 @@ describe('CommandDispatchService', () => {
       id: 'command::ui:test-no-use',
       keywords: ['new', 'create', 'workspace'],
       dependencies: { services: ['fileSystem'] },
-      omniSearch: true,
+      omniSearch: 'global',
       args: {
         workspaceType: T.String,
       },
@@ -311,7 +319,7 @@ describe('CommandDispatchService', () => {
       id: 'command::ui:toggle-sidebar',
       keywords: ['test', 'command'],
       dependencies: { services: ['fileSystem'] },
-      omniSearch: true,
+      omniSearch: 'global',
       args: null,
     } as const satisfies Command;
 
@@ -330,7 +338,7 @@ describe('CommandDispatchService', () => {
       id: 'command::ui:toggle-sidebar',
       keywords: ['test', 'command'],
       dependencies: { services: [] },
-      omniSearch: true,
+      omniSearch: 'global',
       args: null,
     } as const satisfies Command;
     const handler = vi.fn();
@@ -372,7 +380,7 @@ describe('CommandDispatchService', () => {
       id: 'command::ui:toggle-sidebar',
       keywords: ['test', 'command'],
       dependencies: { services: ['unknown-service'] as any[] },
-      omniSearch: true,
+      omniSearch: 'global',
       args: null,
     } as const satisfies Command;
     const handler = vi.fn();
@@ -400,7 +408,7 @@ describe('CommandDispatchService', () => {
       id: 'command::ui:toggle-sidebar',
       keywords: ['test', 'command'],
       dependencies: { services: ['commandRegistry'] as any[] },
-      omniSearch: true,
+      omniSearch: 'global',
       args: null,
     } as const satisfies Command;
     const handler = vi.fn();

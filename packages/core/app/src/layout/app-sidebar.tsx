@@ -29,7 +29,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   const fileTreeExpandedPathsByWorkspace = useAtomValue(
     workbenchState.$fileTreeExpandedPathsByWorkspace,
   );
-  const activeWsName = useAtomValue(navigation.$wsName);
+  const activeWsName = useAtomValue(workspaceState.$currentWsName);
   const activeWsPaths = useAtomValue(workspaceState.$activeWsPaths);
   const wsPaths = useAtomValue(workspaceState.$wsPaths);
   const noteWsPaths = useAtomValue(workspaceState.$noteWsPaths);
@@ -147,7 +147,11 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             payload: { wsName },
           })
         }
+        canCreateFiles={Boolean(activeWsName)}
         onCreateDirectory={(pathPrefix) => {
+          if (!activeWsName) {
+            return;
+          }
           commandDispatcher.dispatch(
             'command::ui:create-directory-dialog',
             {
@@ -157,6 +161,9 @@ export const AppSidebar = ({ children }: SidebarProps) => {
           );
         }}
         onCreateNote={(pathPrefix) => {
+          if (!activeWsName) {
+            return;
+          }
           commandDispatcher.dispatch(
             'command::ws:quick-new-note',
             {
@@ -246,7 +253,9 @@ export const AppSidebar = ({ children }: SidebarProps) => {
         getActionsForEntry={getActionsForEntry}
         pwaAction={pwaAction}
         footerTitle={t.app.sidebar.footerTitle}
-        footerChildren={<SidebarFooterMenu />}
+        footerChildren={
+          <SidebarFooterMenu canCreateFiles={Boolean(activeWsName)} />
+        }
       />
       <Sidebar.SidebarInset>{children}</Sidebar.SidebarInset>
     </Sidebar.SidebarProvider>

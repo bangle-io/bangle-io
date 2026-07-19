@@ -60,6 +60,7 @@ type Workspace = {
 };
 
 export type AppSidebarProps = {
+  canCreateFiles: boolean;
   onNewWorkspaceClick: () => void;
   onManageWorkspacesClick: () => void;
   workspaces: Workspace[];
@@ -212,6 +213,7 @@ function DropdownButton({
 }
 
 export function AppSidebar({
+  canCreateFiles,
   onNewWorkspaceClick,
   onManageWorkspacesClick,
   workspaces,
@@ -293,6 +295,7 @@ export function AppSidebar({
               </div>
             )}
             <PierreFileTree
+              canCreateFiles={canCreateFiles}
               activePaths={activeFilePaths}
               filePaths={filePaths}
               getActionsForEntry={getActionsForEntry}

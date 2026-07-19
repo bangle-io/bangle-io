@@ -1,10 +1,80 @@
-import { expect, test } from '@playwright/test';
-import { clearEditor, getEditorLocator, getEditorText } from './common';
+import { expect, type Page, test } from '@playwright/test';
+import {
+  clearEditor,
+  getEditorLocator,
+  getEditorText,
+  pressAppShortcut,
+} from './common';
+
+const WORKSPACE_COMMAND_TITLES = [
+  'New Note',
+  'Quick New Note',
+  'New Folder',
+] as const;
+
+const NOTE_COMMAND_TITLE = 'Toggle Star for Current Note';
+
+async function expectOmniSearchCommandVisibility(
+  page: Page,
+  {
+    visible,
+    hidden,
+  }: {
+    visible: readonly string[];
+    hidden: readonly string[];
+  },
+) {
+  await pressAppShortcut(page, 'k');
+  const commandInput = page.getByPlaceholder('Type a command or search...');
+
+  for (const commandTitle of visible) {
+    await commandInput.fill(commandTitle);
+    await expect(
+      page.getByRole('option').filter({
+        has: page.getByText(commandTitle, { exact: true }),
+      }),
+    ).toBeVisible();
+  }
+  for (const commandTitle of hidden) {
+    await commandInput.fill(commandTitle);
+    await expect(
+      page.getByRole('option').filter({
+        has: page.getByText(commandTitle, { exact: true }),
+      }),
+    ).toHaveCount(0);
+  }
+
+  await page.keyboard.press('Escape');
+}
 
 test('Simple Workspace Creation Workflow', async ({ page }) => {
   await page.goto('/');
 
   const mainContentLocator = page.locator('main.B-app-page-content');
+  const fileExplorer = page.getByTestId('bangle-file-explorer');
+
+  await test.step('disable file creation without a workspace', async () => {
+    await expect(
+      fileExplorer.getByRole('button', { name: 'New File' }),
+    ).toBeDisabled();
+    await expect(
+      fileExplorer.getByRole('button', { name: 'New Folder' }),
+    ).toBeDisabled();
+
+    await page.getByRole('button', { name: /Bangle\.io/ }).click();
+    await expect(
+      page.getByRole('menuitem', { name: 'New Note' }),
+    ).toBeDisabled();
+    await expect(
+      page.getByRole('menuitem', { name: 'New Workspace' }),
+    ).toBeEnabled();
+    await page.keyboard.press('Escape');
+
+    await expectOmniSearchCommandVisibility(page, {
+      visible: ['New Workspace'],
+      hidden: [...WORKSPACE_COMMAND_TITLES, NOTE_COMMAND_TITLE],
+    });
+  });
 
   await test.step('create new workspace', async () => {
     await page.getByRole('button', { name: 'Create Workspace' }).click();
@@ -28,6 +98,23 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
     await expect(mainContentLocator).toContainText(
       'No notes found in this workspace.',
     );
+    await expect(
+      fileExplorer.getByRole('button', { name: 'New File' }),
+    ).toBeEnabled();
+    await expect(
+      fileExplorer.getByRole('button', { name: 'New Folder' }),
+    ).toBeEnabled();
+
+    await page.getByRole('button', { name: /Bangle\.io/ }).click();
+    await expect(
+      page.getByRole('menuitem', { name: 'New Note' }),
+    ).toBeEnabled();
+    await page.keyboard.press('Escape');
+
+    await expectOmniSearchCommandVisibility(page, {
+      visible: ['New Workspace', ...WORKSPACE_COMMAND_TITLES],
+      hidden: [NOTE_COMMAND_TITLE],
+    });
   });
 
   await test.step('create new note', async () => {
@@ -45,6 +132,15 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
         .getByLabel('breadcrumb')
         .getByRole('button', { name: 'test-note-1.md' }),
     ).toBeVisible();
+
+    await expectOmniSearchCommandVisibility(page, {
+      visible: [
+        'New Workspace',
+        ...WORKSPACE_COMMAND_TITLES,
+        NOTE_COMMAND_TITLE,
+      ],
+      hidden: [],
+    });
   });
 
   await test.step('verify toolbar', async () => {

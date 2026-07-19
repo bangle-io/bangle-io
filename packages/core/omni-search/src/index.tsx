@@ -339,9 +339,16 @@ export function OmniSearch() {
     editorEngine,
   } = useCoreServices();
   const [open, setOpen] = useAtom(workbenchState.$openOmniSearch);
+  const activeWsName = useAtomValue(workspaceState.$currentWsName);
+  const activeWsPath = useAtomValue(workspaceState.$currentWsPath);
+  const omniSearchScope = activeWsPath
+    ? 'note'
+    : activeWsName
+      ? 'workspace'
+      : 'global';
   const commands = open
     ? commandRegistry
-        .getOmniSearchCommands()
+        .getOmniSearchCommands(omniSearchScope)
         .filter((command) => isCommandAvailable(command.id, editorEngine))
     : [];
 

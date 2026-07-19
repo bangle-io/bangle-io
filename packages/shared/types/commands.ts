@@ -10,6 +10,8 @@ export type AllowedValidator =
   | Validator<string[]>
   | Validator<string | boolean | number | undefined>;
 
+export type OmniSearchScope = 'global' | 'workspace' | 'note';
+
 export type Command = {
   id: string;
   title?: string;
@@ -29,11 +31,10 @@ export type Command = {
      */
     commands?: string[];
   };
-  // whether the command is available in the omni search
-  // default is false
-  omniSearch?: boolean;
+  /** The narrowest app state where omni search should expose this command. */
+  omniSearch?: OmniSearchScope | false;
   // If false, the editor will not be focused after the command is dispatched.
-  // Defaults to true if omniSearch is true.
+  // Defaults to true when omniSearch is enabled.
   autoFocusEditor?: boolean;
   //   the args type info when dispatching this command
   args: {
