@@ -589,6 +589,100 @@ describe('list Markdown metadata through editing commands', () => {
     );
   });
 
+  it('preserves loose ordered task attrs while indenting and dedenting', () => {
+    const parent = {
+      checked: true,
+      kind: 'task',
+      listKind: 'ordered',
+      tight: false,
+    } as const;
+    const child = {
+      checked: false,
+      kind: 'task',
+      listKind: 'ordered',
+      tight: false,
+    } as const;
+    const editor = editorTest.createEditor(
+      doc(list(parent, p('parent')), list(child, p('child<cursor>'))),
+    );
+
+    run(lists.command.indentList, editor);
+    expect(editor.view.state.doc.childCount).toBe(1);
+    expect(editor.view.state.doc.firstChild?.attrs).toMatchObject(parent);
+    expect(editor.view.state.doc.firstChild?.child(1).attrs).toMatchObject(
+      child,
+    );
+
+    run(lists.command.dedentList, editor);
+    expectListShapes(editor.view.state.doc, [parent, child]);
+    expect(editor.view.state.doc.child(0).textContent).toBe('parent');
+    expect(editor.view.state.doc.child(1).textContent).toBe('child');
+  });
+
+  it('preserves loose ordered task attrs while moving an item', () => {
+    const bullet = {
+      kind: 'bullet',
+      listKind: 'bullet',
+      tight: true,
+    } as const;
+    const moving = {
+      checked: true,
+      kind: 'task',
+      listKind: 'ordered',
+      tight: false,
+    } as const;
+    const editor = editorTest.createEditor(
+      doc(
+        list(bullet, p('before')),
+        list(moving, p('moving<cursor>')),
+        list(bullet, p('after')),
+      ),
+    );
+
+    run(lists.command.moveListDown, editor);
+
+    expect(editor.view.state.doc.childCount).toBe(3);
+    expect(editor.view.state.doc.child(0).textContent).toBe('before');
+    expect(editor.view.state.doc.child(1).textContent).toBe('after');
+    expect(editor.view.state.doc.child(2).textContent).toBe('moving');
+    expect(editor.view.state.doc.child(2).attrs).toMatchObject(moving);
+  });
+
+  it('preserves loose ordered task attrs when adjacent items join', () => {
+    const source = {
+      checked: true,
+      kind: 'task',
+      listKind: 'ordered',
+      tight: false,
+    } as const;
+    const editor = editorTest.createEditor(
+      doc(list(source, p('one')), list(source, p('<cursor>two'))),
+    );
+
+    expect(editor.pressKey('Backspace')).toBe(true);
+    expect(editor.pressKey('Backspace')).toBe(true);
+
+    expectListShapes(editor.view.state.doc, [source]);
+    expect(editor.view.state.doc.firstChild?.textContent).toBe('onetwo');
+  });
+
+  it('keeps the text selection stable while changing list kind', () => {
+    const source = {
+      kind: 'bullet',
+      listKind: 'bullet',
+      tight: false,
+    } as const;
+    const editor = editorTest.createEditor(doc(list(source, p('o<cursor>ne'))));
+    const selectionBefore = editor.view.state.selection.toJSON();
+
+    run(lists.command.toggleOrderedList, editor);
+
+    expect(editor.view.state.selection.toJSON()).toEqual(selectionBefore);
+    expectListShapes(editor.view.state.doc, [
+      { kind: 'ordered', listKind: 'ordered', tight: false },
+    ]);
+  });
+
   it('clipboard HTML retains looseness and ordered task containers', () => {
     const editor = editorTest.createEditor(
       doc(

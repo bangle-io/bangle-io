@@ -709,6 +709,18 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     engines: BOTH_ENGINES,
   },
   {
+    name: 'empty ordered list item keeps its place in the run',
+    markdown: '1. foo\n2.\n3. bar',
+    canonical: '1. foo\n1. \n1. bar',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'ordered item combines paragraphs fenced code and a blockquote',
+    markdown: '1.  foo\n\n    ```\n    bar\n    ```\n\n    baz\n\n    > bam',
+    canonical: '1. foo\n\n   ```\n   bar\n   ```\n\n   baz\n\n   > bam',
+    engines: BOTH_ENGINES,
+  },
+  {
     name: 'nested mixed lists use the ordered marker width',
     markdown: '1. outer\n   1. nested\n      - deep',
     engines: BOTH_ENGINES,
