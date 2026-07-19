@@ -4,6 +4,7 @@ export interface PwaInstallSnapshot {
   canInstall: boolean;
   isInstalled: boolean;
   isInstalling: boolean;
+  /** True when this page is running in the installed app's own window. */
   isStandalone: boolean;
   canOpenInApp: boolean;
   /**
@@ -91,6 +92,12 @@ const TITLEBAR_EDGE_OCCLUSION_EPSILON = 0.5;
 const PWA_PROTOCOL_LAUNCH_URL = 'web+bangle://open';
 const PWA_LAUNCH_QUERY_PARAM = 'launch';
 const PWA_SHORTCUT_QUERY_PARAM = 'shortcut';
+const INSTALLED_APP_DISPLAY_MODE_QUERIES = [
+  '(display-mode: standalone)',
+  // Bangle prefers this mode through manifest `display_override`. It is a
+  // distinct active display mode, so the standalone query does not match it.
+  '(display-mode: window-controls-overlay)',
+] as const;
 
 let initializedWindow: Window | undefined;
 let trackingAbortController: AbortController | undefined;
@@ -158,14 +165,15 @@ function getCurrentWindow() {
   return typeof window === 'undefined' ? undefined : window;
 }
 
-function isStandaloneDisplay(windowRef: Window) {
+function isInstalledAppDisplay(windowRef: Window) {
   const navigatorWithStandalone = windowRef.navigator as Navigator & {
     standalone?: boolean;
   };
 
   return (
-    windowRef.matchMedia?.('(display-mode: standalone)').matches === true ||
-    navigatorWithStandalone.standalone === true
+    INSTALLED_APP_DISPLAY_MODE_QUERIES.some(
+      (query) => windowRef.matchMedia?.(query).matches === true,
+    ) || navigatorWithStandalone.standalone === true
   );
 }
 
@@ -297,7 +305,7 @@ export function initializePwaInstallPromptTracking(
   windowRef.addEventListener(
     'beforeinstallprompt',
     (event) => {
-      if (isStandaloneDisplay(windowRef)) {
+      if (isInstalledAppDisplay(windowRef)) {
         return;
       }
 
@@ -318,10 +326,13 @@ export function initializePwaInstallPromptTracking(
     { signal },
   );
 
-  const standaloneQuery = windowRef.matchMedia?.('(display-mode: standalone)');
-  standaloneQuery?.addEventListener?.('change', emitChange, { signal });
+  for (const query of INSTALLED_APP_DISPLAY_MODE_QUERIES) {
+    windowRef.matchMedia?.(query).addEventListener?.('change', emitChange, {
+      signal,
+    });
+  }
 
-  if (!isStandaloneDisplay(windowRef)) {
+  if (!isInstalledAppDisplay(windowRef)) {
     void probeInstalledRelatedApps(windowRef);
   }
 
@@ -435,7 +446,7 @@ function isSameOrigin(url: string, origin: string): boolean {
 
 function computePwaInstallSnapshot(): PwaInstallSnapshot {
   const windowRef = initializedWindow ?? getCurrentWindow();
-  const isStandalone = Boolean(windowRef && isStandaloneDisplay(windowRef));
+  const isStandalone = Boolean(windowRef && isInstalledAppDisplay(windowRef));
   const isInstalled = Boolean(
     windowRef &&
       (installedByAppEvent || installedRelatedAppDetected || isStandalone),
