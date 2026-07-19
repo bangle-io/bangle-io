@@ -139,6 +139,7 @@ export const uiCommands = narrow([
       commands: ['command::ws:new-note-from-input', 'command::ui:focus-editor'],
     },
     omniSearch: true,
+    requiresWorkspace: true,
     autoFocusEditor: false,
     args: {
       prefillName: T.Optional(T.String),
@@ -251,6 +252,7 @@ export const uiCommands = narrow([
       commands: ['command::ws:create-directory'],
     },
     omniSearch: true,
+    requiresWorkspace: true,
     autoFocusEditor: false,
     args: {
       pathPrefix: T.Optional(T.String),

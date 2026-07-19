@@ -24,6 +24,20 @@ function hasUnsafeEncoding(value: string): boolean {
   }
 }
 
+function normalizeWikiLinkTarget(target: string): string | undefined {
+  const normalizedTarget = target.trim();
+  return normalizedTarget &&
+    !normalizedTarget.includes('\\') &&
+    !normalizedTarget.includes(':') &&
+    !hasUnsafeEncoding(normalizedTarget)
+    ? normalizedTarget
+    : undefined;
+}
+
+function toExplicitWikiLinkBase(target: string): string {
+  return /^\.\.?\//.test(target) ? target : `/${target.replace(/^\//, '')}`;
+}
+
 /** Resolves a URL-style path without allowing workspace escape or separators hidden by encoding. */
 export function resolveInternalWsPath(
   currentWsPath: string | WsFilePath,
@@ -184,28 +198,17 @@ export function resolveWikiLinkTarget(
   index: WikiLinkIndex,
 ): WsFilePath | undefined {
   const current = WsPath.safeParse(currentWsPath).data?.asFile();
-  const normalizedTarget = target.trim();
-  if (
-    !current ||
-    !normalizedTarget ||
-    normalizedTarget.includes('\\') ||
-    normalizedTarget.includes(':') ||
-    hasUnsafeEncoding(normalizedTarget)
-  ) {
+  const normalizedTarget = normalizeWikiLinkTarget(target);
+  if (!current || !normalizedTarget) {
     return undefined;
   }
   if (index.wsName !== current.wsName) {
     return undefined;
   }
-  const explicitPath =
-    /^(?:\/|\.\.?\/)/.test(normalizedTarget) || normalizedTarget.includes('/');
+  const explicitPath = normalizedTarget.includes('/');
 
   if (explicitPath) {
-    const rootRelative =
-      normalizedTarget.startsWith('/') || !/^\.\.?\//.test(normalizedTarget);
-    const base = rootRelative
-      ? `/${normalizedTarget.replace(/^\//, '')}`
-      : normalizedTarget;
+    const base = toExplicitWikiLinkBase(normalizedTarget);
     for (const extension of ['', '.md', '.markdown']) {
       const resolved = resolveInternalWsPath(current, `${base}${extension}`);
       if (resolved) {
@@ -230,15 +233,12 @@ export function createMissingWikiLinkTarget(
   target: string,
 ): WsFilePath | undefined {
   const current = WsPath.safeParse(currentWsPath).data?.asFile();
-  const normalizedTarget = target.trim();
+  const normalizedTarget = normalizeWikiLinkTarget(target);
   if (
     !current ||
     !normalizedTarget ||
-    normalizedTarget.includes('\\') ||
-    normalizedTarget.includes(':') ||
     normalizedTarget.includes('#') ||
-    normalizedTarget.includes('?') ||
-    hasUnsafeEncoding(normalizedTarget)
+    normalizedTarget.includes('?')
   ) {
     return undefined;
   }
@@ -246,18 +246,13 @@ export function createMissingWikiLinkTarget(
   const targetWithExtension = hasMarkdownExtension(normalizedTarget)
     ? normalizedTarget
     : `${normalizedTarget}${WsPath.DEFAULT_NOTE_EXTENSION}`;
-  const explicitPath =
-    /^(?:\/|\.\.?\/)/.test(targetWithExtension) ||
-    targetWithExtension.includes('/');
+  const explicitPath = targetWithExtension.includes('/');
 
   if (explicitPath) {
-    const rootRelative =
-      targetWithExtension.startsWith('/') ||
-      !/^\.\.?\//.test(targetWithExtension);
-    const base = rootRelative
-      ? `/${targetWithExtension.replace(/^\//, '')}`
-      : targetWithExtension;
-    return resolveInternalWsPath(current, base);
+    return resolveInternalWsPath(
+      current,
+      toExplicitWikiLinkBase(targetWithExtension),
+    );
   }
 
   return WsPath.safeFromParts(

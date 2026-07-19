@@ -1,5 +1,10 @@
 import { expect, test } from '@playwright/test';
-import { clearEditor, getEditorLocator, getEditorText } from './common';
+import {
+  clearEditor,
+  getEditorLocator,
+  getEditorText,
+  pressAppShortcut,
+} from './common';
 
 test('Simple Workspace Creation Workflow', async ({ page }) => {
   await page.goto('/');
@@ -22,6 +27,16 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
     await expect(
       page.getByRole('menuitem', { name: 'New Workspace' }),
     ).toBeEnabled();
+    await page.keyboard.press('Escape');
+
+    await pressAppShortcut(page, 'k');
+    const commandInput = page.getByPlaceholder('Type a command or search...');
+    for (const commandTitle of ['New Note', 'Quick New Note', 'New Folder']) {
+      await commandInput.fill(commandTitle);
+      await expect(
+        page.getByRole('option', { name: commandTitle, exact: true }),
+      ).toHaveCount(0);
+    }
     await page.keyboard.press('Escape');
   });
 
@@ -58,6 +73,16 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
     await expect(
       page.getByRole('menuitem', { name: 'New Note' }),
     ).toBeEnabled();
+    await page.keyboard.press('Escape');
+
+    await pressAppShortcut(page, 'k');
+    const commandInput = page.getByPlaceholder('Type a command or search...');
+    for (const commandTitle of ['New Note', 'Quick New Note', 'New Folder']) {
+      await commandInput.fill(commandTitle);
+      await expect(
+        page.getByRole('option', { name: commandTitle, exact: true }),
+      ).toBeVisible();
+    }
     await page.keyboard.press('Escape');
   });
 

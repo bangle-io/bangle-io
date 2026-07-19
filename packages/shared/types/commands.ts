@@ -32,6 +32,8 @@ export type Command = {
   // whether the command is available in the omni search
   // default is false
   omniSearch?: boolean;
+  /** Hide this command from global discovery when no workspace is active. */
+  requiresWorkspace?: boolean;
   // If false, the editor will not be focused after the command is dispatched.
   // Defaults to true if omniSearch is true.
   autoFocusEditor?: boolean;

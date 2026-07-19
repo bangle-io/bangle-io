@@ -89,7 +89,14 @@ export class CommandRegistryService extends BaseService {
     return command;
   }
 
-  public getOmniSearchCommands(): Command[] {
-    return this.getCommands().filter((cmd) => cmd.omniSearch);
+  public getOmniSearchCommands({
+    hasWorkspace,
+  }: {
+    hasWorkspace: boolean;
+  }): Command[] {
+    return this.getCommands().filter(
+      (command) =>
+        command.omniSearch && (!command.requiresWorkspace || hasWorkspace),
+    );
   }
 }

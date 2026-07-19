@@ -23,6 +23,7 @@ export const wsCommands = narrow([
       commands: ['command::ws:new-note-from-input'],
     },
     omniSearch: true,
+    requiresWorkspace: true,
     args: {
       pathPrefix: T.Optional(T.String),
     },

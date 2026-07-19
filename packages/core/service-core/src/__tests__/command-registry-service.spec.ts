@@ -65,6 +65,36 @@ describe('CommandRegistryService', () => {
     expect(retrievedCommand).toEqual(command);
   });
 
+  test('filters workspace-required omni-search commands by availability', async () => {
+    const { service } = await setup();
+    const alwaysAvailable = {
+      id: 'alwaysAvailable',
+      keywords: ['always'],
+      omniSearch: true,
+      args: null,
+    } as const satisfies Command;
+    const workspaceRequired = {
+      id: 'workspaceRequired',
+      keywords: ['workspace'],
+      omniSearch: true,
+      requiresWorkspace: true,
+      args: null,
+    } as const satisfies Command;
+    service.register(alwaysAvailable);
+    service.register(workspaceRequired);
+
+    expect(
+      service
+        .getOmniSearchCommands({ hasWorkspace: false })
+        .map((command) => command.id),
+    ).toEqual(['alwaysAvailable']);
+    expect(
+      service
+        .getOmniSearchCommands({ hasWorkspace: true })
+        .map((command) => command.id),
+    ).toEqual(['alwaysAvailable', 'workspaceRequired']);
+  });
+
   test('should throw error when registering a duplicate command', async () => {
     const { service } = await setup();
     const command = {
