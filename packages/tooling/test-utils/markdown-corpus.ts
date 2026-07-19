@@ -617,6 +617,16 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     engines: BOTH_ENGINES,
   },
   {
+    name: 'blockquote containing a multi-line code block',
+    markdown: '> ```js\n> const a = 1;\n> const b = 2;\n> ```',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'blockquote code block containing a blank line',
+    markdown: '> ```\n> a\n> \n> b\n> ```',
+    engines: BOTH_ENGINES,
+  },
+  {
     name: 'empty blockquote keeps a marker line',
     markdown: '>',
     canonical: '> ',
@@ -647,6 +657,11 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
   {
     name: 'bullet list items carrying inline marks',
     markdown: '- **bold item**\n- _italic item_',
+    engines: BOTH_ENGINES,
+  },
+  {
+    name: 'bullet list item containing a multi-line code block',
+    markdown: '- item\n\n  ```\n  line one\n  line two\n  ```',
     engines: BOTH_ENGINES,
   },
   {

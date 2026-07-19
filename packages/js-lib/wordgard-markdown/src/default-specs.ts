@@ -226,7 +226,9 @@ const codeBlockSpec: NodeMarkdownSpec = {
     const text = node.textContent();
     const fence = createCodeFence(text, language);
     state.write(`${fence}${language}\n`);
-    state.write(text);
+    // Unlike write(), text() reapplies the enclosing list/quote delimiter to
+    // every line of a multiline code block.
+    state.text(text, false);
     if (text) {
       state.write('\n');
     }
