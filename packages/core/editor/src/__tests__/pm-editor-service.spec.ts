@@ -207,13 +207,11 @@ describe('PmEditorService', () => {
     expect(service.insertTable()).toBe(true);
 
     secondEditor.focus();
-    expect(
-      service.isActionAvailable({ type: 'toggle-heading', level: 1 }),
-    ).toBe(true);
     omniInput.focus();
 
-    // Availability and execution continue to target the editor that opened
-    // the external surface, rather than falling back to mount order.
+    // The first service lookup happens only after focus leaves the editor:
+    // availability and execution must still target the editor that opened the
+    // external surface, rather than falling back to mount order.
     expect(
       service.isActionAvailable({ type: 'toggle-heading', level: 1 }),
     ).toBe(true);

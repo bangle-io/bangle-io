@@ -104,6 +104,7 @@ type EditorEntry =
   | {
       name: string;
       editorView: ReturnType<typeof createEditor>;
+      removeFocusListener: () => void;
       wsPath: string;
     }
   | { name: string; status: 'failed'; error: Error; wsPath: string }
@@ -222,6 +223,7 @@ export class PmEditorService
       // Destroy all editor views
       for (const [_domNode, editor] of this.editors) {
         if ('editorView' in editor) {
+          editor.removeFocusListener();
           editor.editorView.destroy();
         }
       }
@@ -344,7 +346,18 @@ export class PmEditorService
         },
       });
 
-      this.editors.set(domNode, { name, editorView, wsPath });
+      const handleFocusIn = () => {
+        this.lastActiveEditorView = editorView;
+      };
+      editorView.dom.addEventListener('focusin', handleFocusIn);
+      this.editors.set(domNode, {
+        name,
+        editorView,
+        removeFocusListener: () => {
+          editorView.dom.removeEventListener('focusin', handleFocusIn);
+        },
+        wsPath,
+      });
       this.checkRoundTripFidelity({
         content: content ?? '',
         editorView,
@@ -402,6 +415,7 @@ export class PmEditorService
       } else {
         this.rememberedCursors.set(editor.wsPath, position);
       }
+      editor.removeFocusListener();
       editor.editorView.destroy();
     }
     this.editors.delete(domNode);
