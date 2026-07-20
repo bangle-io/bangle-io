@@ -333,4 +333,29 @@ describe('FileStorageNativeFs', () => {
       newWsPath: 'myWorkspace:sub/b.md',
     });
   });
+
+  it('rejects cross-workspace renames before moving the source or emitting a change', async () => {
+    const { service, onChange } = await setup();
+    const source = 'myWorkspace:a.md';
+    const destination = 'otherWorkspace:b.md';
+
+    await service.createFile(source, new File(['source'], 'a.md'));
+    onChange.mockClear();
+
+    await expect(
+      service.renameFile(source, { newWsPath: destination }),
+    ).rejects.toMatchObject({
+      cause: expect.objectContaining({
+        name: 'error::file:invalid-operation',
+        payload: {
+          operation: 'rename',
+          oldWsPath: source,
+          newWsPath: destination,
+        },
+      }),
+    });
+
+    expect(await (await service.readFile(source))?.text()).toBe('source');
+    expect(onChange).not.toHaveBeenCalled();
+  });
 });

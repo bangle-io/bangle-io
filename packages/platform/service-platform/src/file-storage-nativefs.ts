@@ -247,6 +247,19 @@ export class FileStorageNativeFs
     },
   ): Promise<void> {
     await this.mountPromise;
+    const oldPath = WsPath.assertFile(wsPath);
+    const newPath = WsPath.assertFile(newWsPath);
+    if (oldPath.wsName !== newPath.wsName) {
+      throwAppError(
+        'error::file:invalid-operation',
+        'Cannot rename file across different workspaces',
+        {
+          operation: 'rename',
+          oldWsPath: wsPath,
+          newWsPath,
+        },
+      );
+    }
     const fs = await this.getFs({ wsPath });
     try {
       await fs.moveFile(

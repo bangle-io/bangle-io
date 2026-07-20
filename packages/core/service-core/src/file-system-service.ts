@@ -503,8 +503,20 @@ export class FileSystemService extends BaseService {
 
     await Promise.all(
       pairs.map(async ({ oldWsPath, newWsPath }) => {
-        WsPath.assertFile(oldWsPath);
-        WsPath.assertFile(newWsPath);
+        const oldPath = WsPath.assertFile(oldWsPath);
+        const newPath = WsPath.assertFile(newWsPath);
+
+        if (oldPath.wsName !== newPath.wsName) {
+          throwAppError(
+            'error::file:invalid-operation',
+            'Cannot rename file across different workspaces',
+            {
+              operation: 'rename',
+              oldWsPath,
+              newWsPath,
+            },
+          );
+        }
 
         if (!(await this.exists(oldWsPath))) {
           throwAppError(

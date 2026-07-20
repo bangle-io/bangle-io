@@ -318,6 +318,42 @@ describe('FileSystemService', () => {
     ).resolves.toBeUndefined();
   });
 
+  it('rejects cross-workspace batch renames before mutating storage', async () => {
+    const { fileSystem, storage, workspaceOps } = await setupFileSystemTest({
+      controller,
+    });
+    const destinationWsName = 'other-workspace';
+    const destination = `${destinationWsName}:moved.md`;
+    const renameFile = vi.spyOn(storage, 'renameFile');
+
+    await workspaceOps.createWorkspaceInfo({
+      name: destinationWsName,
+      type: WORKSPACE_STORAGE_TYPE.Memory,
+      metadata: {},
+    });
+
+    await expect(
+      fileSystem.renameFiles([
+        { oldWsPath: EXISTING_FILE, newWsPath: destination },
+      ]),
+    ).rejects.toMatchObject({
+      cause: expect.objectContaining({
+        name: 'error::file:invalid-operation',
+        payload: {
+          operation: 'rename',
+          oldWsPath: EXISTING_FILE,
+          newWsPath: destination,
+        },
+      }),
+    });
+
+    expect(renameFile).not.toHaveBeenCalled();
+    await expect(fileSystem.readFileAsText(EXISTING_FILE)).resolves.toBe(
+      'Test content',
+    );
+    await expect(fileSystem.readFile(destination)).resolves.toBeUndefined();
+  });
+
   it('restores completed batch deletes when a later delete fails', async () => {
     const { fileSystem, storage } = await setupFileSystemTest({ controller });
     const first = `${TEST_WS_NAME}:old/one.md`;
