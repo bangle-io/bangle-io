@@ -38,12 +38,6 @@ import { AppHeader } from '../layout/app-header';
 import { PageContentContainer } from '../layout/main-content-container';
 import { WorkspacesSettingsPage } from './page-settings-workspaces';
 
-const THEME_VALUES = [
-  'system',
-  'light',
-  'dark',
-] as const satisfies readonly ThemePreference[];
-
 const THEME_OPTIONS: Array<{ value: ThemePreference; label: string }> = [
   { value: 'system', label: t.app.dialogs.changeTheme.options.system },
   { value: 'light', label: t.app.dialogs.changeTheme.options.light },
@@ -92,7 +86,7 @@ const SETTINGS_PAGE_META: Record<
 };
 
 function isThemePreference(value: unknown): value is ThemePreference {
-  return THEME_VALUES.some((theme) => theme === value);
+  return THEME_OPTIONS.some((option) => option.value === value);
 }
 
 function hasUnsafeAppHrefCharacter(href: string) {
