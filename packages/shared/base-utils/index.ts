@@ -71,10 +71,3 @@ export function getEventSenderMetadata({
     tag: tag,
   };
 }
-export function isWorkerGlobalScope() {
-  return (
-    typeof WorkerGlobalScope !== 'undefined' &&
-    // eslint-disable-next-line no-restricted-globals, no-undef
-    self instanceof WorkerGlobalScope
-  );
-}
