@@ -48,10 +48,7 @@ export {
   atomWithCompare,
   createAsyncAtom,
 } from './jotai';
-export {
-  checkWidescreen,
-  setRootWidescreenClass,
-} from './misc';
+export { checkWidescreen } from './misc';
 export type { AppErrorName } from './throw-app-error';
 export {
   createAppError,
