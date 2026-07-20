@@ -220,4 +220,49 @@ describe('atomStorage', () => {
     );
     unsubscribe();
   });
+
+  it('installs a detached canonical value in live and persisted state', async () => {
+    const { syncDb, logger, store } = await setup();
+    const atom = atomStorage({
+      serviceName: 'test',
+      key: 'canonicalObject',
+      initValue: { name: 'initial', count: 1 },
+      syncDb,
+      validator: T.Object({ name: T.String, count: T.Number }),
+      logger,
+    });
+    const source = { name: 'stored', count: -0 };
+
+    store.set(atom, source);
+    source.name = 'mutated';
+    source.count = 42;
+
+    expect(store.get(atom)).toEqual({ name: 'stored', count: 0 });
+    expect(
+      syncDb.getEntry('test:canonicalObject', { tableName: 'sync' }),
+    ).toEqual({
+      found: true,
+      value: { name: 'stored', count: 0 },
+    });
+  });
+
+  it('resets live state when a subscribed value is deleted', async () => {
+    const { syncDb, logger, store } = await setup();
+    const atom = atomStorage({
+      serviceName: 'test',
+      key: 'remoteDelete',
+      initValue: false,
+      syncDb,
+      validator: T.Boolean,
+      logger,
+    });
+    const unsubscribe = store.sub(atom, () => undefined);
+    store.set(atom, true);
+    expect(store.get(atom)).toBe(true);
+
+    syncDb.deleteEntry('test:remoteDelete', { tableName: 'sync' });
+
+    expect(store.get(atom)).toBe(false);
+    unsubscribe();
+  });
 });
