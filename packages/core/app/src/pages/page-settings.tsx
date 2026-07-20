@@ -8,7 +8,6 @@ import {
 } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import type {
-  AppRouteInfo,
   AssetLocationPreference,
   ThemePreference,
 } from '@bangle.io/types';
@@ -96,14 +95,6 @@ function isThemePreference(value: unknown): value is ThemePreference {
   return THEME_VALUES.some((theme) => theme === value);
 }
 
-function getSettingsReturnTo(routeInfo: AppRouteInfo) {
-  if (!isSettingsRouteInfo(routeInfo)) {
-    return undefined;
-  }
-
-  return routeInfo.payload.returnTo;
-}
-
 function hasUnsafeAppHrefCharacter(href: string) {
   return [...href].some((character) => {
     const codePoint = character.codePointAt(0) ?? 0;
@@ -163,7 +154,9 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
   const [assetLocationPreference, setAssetLocationPreference] = useAtom(
     workbenchState.$assetLocationPreference,
   );
-  const returnTo = safeAppHref(getSettingsReturnTo(routeInfo));
+  const returnTo = safeAppHref(
+    isSettingsRouteInfo(routeInfo) ? routeInfo.payload.returnTo : undefined,
+  );
 
   const backHref =
     returnTo ??
