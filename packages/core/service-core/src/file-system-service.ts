@@ -161,10 +161,6 @@ export class FileSystemService extends BaseService {
     );
   }
 
-  private isWorkspaceFileVisible(wsPath: string) {
-    return isVisibleWorkspaceFilePath(wsPath);
-  }
-
   /**
    * Triggers a rescan of the workspace file listing without touching open
    * editors. Used to recover after a failed file tree scan.
@@ -182,7 +178,7 @@ export class FileSystemService extends BaseService {
     abortSignal: AbortSignal = new AbortController().signal,
   ): Promise<string[]> {
     return this.listWorkspaceFilesWithFilter(wsName, abortSignal, (filePath) =>
-      this.isWorkspaceFileVisible(filePath.wsPath),
+      isVisibleWorkspaceFilePath(filePath.wsPath),
     );
   }
 
@@ -197,7 +193,7 @@ export class FileSystemService extends BaseService {
       wsName,
       abortSignal,
       (filePath) =>
-        filePath.isNote() && this.isWorkspaceFileVisible(filePath.wsPath),
+        filePath.isNote() && isVisibleWorkspaceFilePath(filePath.wsPath),
     );
   }
 
