@@ -1,7 +1,7 @@
 import {
   BaseService,
   type BaseServiceContext,
-  isJsonValue,
+  createJsonValueSnapshot,
   throwAppError,
 } from '@bangle.io/base-utils';
 import { TypedBroadcastBus } from '@bangle.io/browser-utils';
@@ -13,6 +13,7 @@ import type {
   SyncDatabaseChange,
   SyncDatabaseQueryOptions,
 } from '@bangle.io/types';
+import { parseSyncDatabaseChange } from './sync-database-change';
 
 export class BrowserLocalStorageSyncDatabaseService
   extends BaseService
@@ -99,39 +100,21 @@ export class BrowserLocalStorageSyncDatabaseService
       return { value: undefined, found: false };
     }
 
-    if (!isJsonValue(updateResult.value)) {
-      const error = new Error('Value is not JSON-safe');
-      throwAppError(
-        'error::database:unknown-error',
-        'Cannot store unsupported local storage database value',
-        { error, databaseName: this.name },
-      );
-    }
+    const snapshot = this.snapshot(updateResult.value);
 
-    const serialized = this.stringifyJSON(updateResult.value);
-    if (!serialized.stringified) {
-      throwAppError(
-        'error::database:unknown-error',
-        'Cannot store unsupported local storage database value',
-        {
-          error: serialized.error,
-          databaseName: this.name,
-        },
-      );
-    }
-
-    this.storage.setItem(storageKey, serialized.value);
+    this.storage.setItem(storageKey, snapshot.serialized);
 
     const change: SyncDatabaseChange = {
       type: found ? 'update' : 'create',
       tableName: options.tableName,
       key,
-      value: updateResult.value,
+      value: snapshot.value,
     };
 
     this.syncBus?.send(change);
 
-    return { value: updateResult.value, found: true };
+    const returnSnapshot = this.snapshot(snapshot.value);
+    return { value: returnSnapshot.value, found: true };
   }
 
   deleteEntry(key: string, options: SyncDatabaseQueryOptions): void {
@@ -186,8 +169,13 @@ export class BrowserLocalStorageSyncDatabaseService
     }
 
     this.syncBus?.subscribe((msg) => {
-      if (msg.data.tableName === options.tableName) {
-        callback(msg.data);
+      const change = parseSyncDatabaseChange(msg.data);
+      if (!change) {
+        this.logger.error('Invalid sync database change received', msg.data);
+        return;
+      }
+      if (change.tableName === options.tableName) {
+        callback(change);
       }
     }, signal);
   }
@@ -204,11 +192,11 @@ export class BrowserLocalStorageSyncDatabaseService
     item: string,
   ): { parsed: true; value: JsonValue } | { parsed: false; error: Error } {
     try {
-      const value: unknown = JSON.parse(item);
-      if (!isJsonValue(value)) {
-        throw new Error('Parsed local storage value is not JSON-safe');
+      const snapshot = createJsonValueSnapshot(JSON.parse(item));
+      if (!snapshot.success) {
+        throw snapshot.error;
       }
-      return { parsed: true, value };
+      return { parsed: true, value: snapshot.value };
     } catch (error) {
       this.logger.error('Failed to parse JSON from local storage', error);
       return {
@@ -221,31 +209,15 @@ export class BrowserLocalStorageSyncDatabaseService
     }
   }
 
-  private stringifyJSON(
-    value: JsonValue,
-  ):
-    | { stringified: true; value: string }
-    | { stringified: false; error: Error } {
-    try {
-      const serialized = JSON.stringify(value);
-      if (serialized === undefined) {
-        const error = new Error(
-          'JSON.stringify returned undefined for the provided value',
-        );
-        this.logger.error('Failed to stringify JSON for local storage', error);
-        return { stringified: false, error };
-      }
-
-      return { stringified: true, value: serialized };
-    } catch (error) {
-      this.logger.error('Failed to stringify JSON for local storage', error);
-      return {
-        stringified: false,
-        error:
-          error instanceof Error
-            ? error
-            : new Error('Failed to stringify JSON for local storage'),
-      };
+  private snapshot(value: unknown) {
+    const snapshot = createJsonValueSnapshot(value);
+    if (!snapshot.success) {
+      throwAppError(
+        'error::database:unknown-error',
+        'Cannot store unsupported local storage database value',
+        { error: snapshot.error, databaseName: this.name },
+      );
     }
+    return snapshot;
   }
 }

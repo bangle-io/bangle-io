@@ -6,6 +6,52 @@ export type JsonValue =
   | JsonValue[]
   | { [key: string]: JsonValue };
 
+export type JsonValueSnapshotResult =
+  | { success: true; serialized: string; value: JsonValue }
+  | { success: false; error: Error };
+
+/**
+ * Produces the exact detached value represented by JSON serialization.
+ */
+export function createJsonValueSnapshot(
+  value: unknown,
+): JsonValueSnapshotResult {
+  try {
+    if (!isJsonValue(value)) {
+      return {
+        success: false,
+        error: new Error('Value is not JSON-safe'),
+      };
+    }
+
+    const serialized = JSON.stringify(value);
+    if (serialized === undefined) {
+      return {
+        success: false,
+        error: new Error('JSON.stringify returned undefined'),
+      };
+    }
+
+    const snapshot: unknown = JSON.parse(serialized);
+    if (!isJsonValue(snapshot)) {
+      return {
+        success: false,
+        error: new Error('JSON snapshot is not JSON-safe'),
+      };
+    }
+
+    return { success: true, serialized, value: snapshot };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error
+          : new Error('Failed to create JSON snapshot'),
+    };
+  }
+}
+
 export function isJsonValue(
   value: unknown,
   ancestors = new Set<object>(),

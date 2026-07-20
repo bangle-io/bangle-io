@@ -10,6 +10,7 @@ export type {
   IfEquals,
   InferType,
   JsonValue,
+  JsonValueSnapshotResult,
   Validator,
 } from '@bangle.io/mini-js-utils';
 export {
@@ -17,6 +18,7 @@ export {
   BaseError,
   browserInfo,
   createEmptyArray,
+  createJsonValueSnapshot,
   DuoWeakMap,
   deepMerge,
   difference,

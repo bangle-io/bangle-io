@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 
+import { MemoryBroadcastChannel } from '@bangle.io/browser-utils';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import type { SyncDatabaseQueryOptions } from '@bangle.io/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -93,6 +94,29 @@ describe('BrowserLocalStorageSyncDatabaseService', () => {
     // Try to create an entry
     service.updateEntry('key2', () => ({ value: 'value2' }), options);
     expect(callback).not.toHaveBeenCalled();
+  });
+
+  it('rejects malformed changes from legacy broadcast senders', async () => {
+    const { service } = await setup();
+    const callback = vi.fn();
+    const abortController = new AbortController();
+    service.subscribe(options, callback, abortController.signal);
+
+    const channel = new MemoryBroadcastChannel(service.name);
+    channel.postMessage({
+      senderId: 'legacy-tab',
+      timestamp: Date.now(),
+      data: {
+        type: 'update',
+        tableName: 'sync',
+        key: 'legacy',
+        value: Number.NaN,
+      },
+    });
+
+    expect(callback).not.toHaveBeenCalled();
+    abortController.abort();
+    channel.close();
   });
 
   it('preserves malformed entries without updating or notifying subscribers', async () => {

@@ -16,8 +16,14 @@ export type { AllEventListener, EventListener, EventMessage } from './emitter';
 export { Emitter } from './emitter';
 export { getLast } from './get-last';
 export { isAbortError } from './is-abort-error';
-export type { JsonValue } from './is-json-value';
-export { isJsonValue } from './is-json-value';
+export type {
+  JsonValue,
+  JsonValueSnapshotResult,
+} from './is-json-value';
+export {
+  createJsonValueSnapshot,
+  isJsonValue,
+} from './is-json-value';
 export type { InferType, Validator } from './mini-zod';
 export { T } from './mini-zod';
 export { weakCache } from './weak-cache';

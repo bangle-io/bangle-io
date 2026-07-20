@@ -80,7 +80,10 @@ export function atomStorage<TValue>({
           { tableName: 'sync' },
           (change) => {
             if (change.key === key) {
-              if (validator.validate(change.value)) {
+              if (
+                validator.validate(change.value) &&
+                isJsonValue(change.value)
+              ) {
                 callback(change.value);
               } else {
                 logger.error(
