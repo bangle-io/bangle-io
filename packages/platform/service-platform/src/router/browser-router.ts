@@ -141,12 +141,7 @@ export class BrowserRouterService
     }
 
     const doNavigate = () => {
-      const encoded = this.config.strategy.encodeRouteInfo(to, this.basePath);
-      const searchPart = encoded.search ?? '';
-      const hashPart = encoded.hash ?? '';
-      const url = `${encoded.pathname}${searchPart}${hashPart}`;
-
-      navigate(url, options);
+      navigate(this.toUri(to), options);
     };
 
     if (!this.mounted) {
