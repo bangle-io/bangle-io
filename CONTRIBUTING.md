@@ -281,14 +281,6 @@ bun packages/tooling/custom-scripts/scripts/format-package-json.ts
 
 Standardizes and sorts all package.json files in the workspace according to project conventions.
 
-**Format all files**
-
-```bash
-bun packages/tooling/custom-scripts/scripts/format-all.ts
-```
-
-Runs the package.json formatter across the entire workspace.
-
 **Validate workspace**
 
 ```bash

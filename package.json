@@ -49,7 +49,7 @@
     "cf:pages:list": "wrangler pages project list",
     "cf:whoami": "wrangler whoami",
     "custom-validation": "bun packages/tooling/custom-scripts/scripts/validate-all.ts",
-    "custom-format": "bun packages/tooling/custom-scripts/scripts/format-all.ts",
+    "custom-format": "bun packages/tooling/custom-scripts/scripts/format-package-json.ts",
     "desktop:build": "pnpm run build && pnpm --filter \"@bangle.io/desktop-entry\" run build",
     "desktop:ci": "pnpm --filter \"@bangle.io/desktop-entry\" run ci",
     "desktop:dist": "pnpm --filter \"@bangle.io/desktop-entry\" run dist",
