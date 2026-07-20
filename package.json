@@ -64,7 +64,6 @@
     "e2e-ct-test": "pnpm --filter \"@bangle.io/e2e-tests\" run test-ct",
     "e2e-update-snapshots": "pnpm --filter \"@bangle.io/e2e-tests\" run test --update-snapshots",
     "e2e-ct-update-snapshots": "pnpm --filter \"@bangle.io/e2e-tests\" run test-ct --update-snapshots",
-    "build-color-scheme-manager": "pnpm -r --filter \"@bangle.io/color-scheme-manager\" run build",
     "knip": "knip",
     "knip:ci": "pnpm run knip && pnpm run knip:production && pnpm run knip:production-dependencies && pnpm run knip:production-unlisted",
     "knip:production": "knip -c knip.production.json --production",

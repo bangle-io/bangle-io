@@ -17,11 +17,6 @@
         ".github/scripts/**/*.cjs"
       ]
     },
-    "packages/js-lib/color-scheme-manager": {
-      "ignoreBinaries": [
-        "tsc"
-      ]
-    },
     "packages/tooling/browser-entry": {
       "entry": [
         "index.html"
