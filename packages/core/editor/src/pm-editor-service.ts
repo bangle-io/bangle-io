@@ -496,27 +496,6 @@ export class PmEditorService
     this.store.set(this.$roundTripWarnings, next);
   }
 
-  retryLoadEditor(domNode: HTMLElement, focus = true): boolean {
-    const editor = this.editors.get(domNode);
-    if (!editor || 'editorView' in editor || editor.status !== 'failed') {
-      return false;
-    }
-
-    this.editors.set(domNode, {
-      name: editor.name,
-      status: 'pending',
-      wsPath: editor.wsPath,
-    });
-    void this.loadEditor({
-      domNode,
-      focus,
-      name: editor.name,
-      wsPath: editor.wsPath,
-    });
-
-    return true;
-  }
-
   getEditorLoadStatus(
     name: string,
   ):
