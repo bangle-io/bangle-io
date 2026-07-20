@@ -50,11 +50,9 @@ export {
 } from './jotai';
 export {
   checkWidescreen,
-  listenToResize,
   setRootWidescreenClass,
 } from './misc';
 export {
-  rafSchedule,
   safeCancelAnimationFrame,
   safeCancelIdleCallback,
   safeIdleRefCallback,

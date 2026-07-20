@@ -1,7 +1,6 @@
 import { WIDESCREEN_WIDTH } from '@bangle.io/constants';
 
 import { isMobile } from '@bangle.io/mini-js-utils';
-import { rafSchedule } from './safe-js';
 
 export function setRootWidescreenClass(
   widescreen: boolean = checkWidescreen(),
@@ -36,36 +35,4 @@ export function checkWidescreen(
   }
 
   return width ? WIDESCREEN_WIDTH <= width : false;
-}
-
-export function listenToResize(
-  onResize: (obj: { width: number; height: number }) => void,
-  abortSignal: AbortSignal,
-) {
-  if (typeof window === 'undefined') {
-    return;
-  }
-  // Handler to call on window resize
-  const handleResize = rafSchedule(() => {
-    onResize({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    });
-  });
-
-  // Add event listener
-  window.addEventListener('resize', () => {
-    handleResize();
-  });
-
-  abortSignal.addEventListener(
-    'abort',
-    () => {
-      handleResize.cancel();
-      window.removeEventListener('resize', handleResize);
-    },
-    {
-      once: true,
-    },
-  );
 }
