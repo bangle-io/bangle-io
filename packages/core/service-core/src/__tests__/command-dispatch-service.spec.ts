@@ -188,12 +188,12 @@ describe('CommandDispatchService', () => {
   test('should dispatch a command with args successfully', async () => {
     const { mockLog, commandRegistry, dispatchService } = await setup();
     const command = {
-      id: 'command::ui:test-no-use',
+      id: 'command::ui:native-fs-auth',
       keywords: ['new', 'create', 'workspace'],
       dependencies: { services: ['fileSystem'] },
       omniSearch: 'global',
       args: {
-        workspaceType: T.String,
+        wsName: T.String,
       },
     } as const satisfies Command;
 
@@ -201,14 +201,13 @@ describe('CommandDispatchService', () => {
 
     commandRegistry.register(command);
     commandRegistry.registerHandler({
-      id: 'command::ui:test-no-use',
+      id: 'command::ui:native-fs-auth',
       handler,
     });
 
     dispatchService.dispatch(
-      'command::ui:test-no-use',
+      'command::ui:native-fs-auth',
       {
-        workspaceType: 'browser',
         wsName: 'test-ws',
       },
       'testSource',
@@ -219,7 +218,6 @@ describe('CommandDispatchService', () => {
         fileSystem: expect.any(TestService),
       },
       {
-        workspaceType: 'browser',
         wsName: 'test-ws',
       },
       {
@@ -229,9 +227,8 @@ describe('CommandDispatchService', () => {
 
     expect(mockLog.debug).toBeCalledWith(
       '[command-dispatch]',
-      'Dispatching command::ui:test-no-use from testSource:',
+      'Dispatching command::ui:native-fs-auth from testSource:',
       {
-        workspaceType: 'browser',
         wsName: 'test-ws',
       },
     );
@@ -239,30 +236,30 @@ describe('CommandDispatchService', () => {
     () => {
       // type checks
       dispatchService.dispatch(
-        'command::ui:test-no-use',
+        'command::ui:native-fs-auth',
         // @ts-expect-error missing required arg
         null,
         'testSource',
       );
 
       dispatchService.dispatch(
-        'command::ui:test-no-use',
+        'command::ui:native-fs-auth',
         // @ts-expect-error empty arg
         {},
         'testSource',
       );
 
       dispatchService.dispatch(
-        'command::ui:test-no-use',
+        'command::ui:native-fs-auth',
         // @ts-expect-error incorrect arg type
-        { workspaceType: 3 },
+        { wsName: 3 },
         'testSource',
       );
 
       dispatchService.dispatch(
-        'command::ui:test-no-use',
+        'command::ui:native-fs-auth',
         {
-          workspaceType: 'test-ws',
+          wsName: 'test-ws',
           // @ts-expect-error extra arg that is not specified in the command
           extra: 'extra',
         },

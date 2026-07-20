@@ -15,25 +15,6 @@ const [GENERAL_SETTINGS_PAGE, WORKSPACES_SETTINGS_PAGE] =
 
 // pattern command::ui:{action}-{target}
 export const uiCommands = narrow([
-  // GROUP: TEST
-  {
-    id: 'command::ui:test-no-use',
-    disabled: true,
-    keywords: ['new', 'create', 'workspace'],
-    dependencies: {
-      services: ['workspaceOps'],
-      commands: [
-        'command::ui:delete-note-dialog',
-        'command::ui:create-note-dialog',
-        'command::ws:go-workspace',
-      ],
-    },
-    args: {
-      workspaceType: T.String,
-      wsName: T.String,
-    },
-  },
-
   // GROUP: BASIC UI OPERATIONS
   {
     id: 'command::ui:toggle-sidebar',
