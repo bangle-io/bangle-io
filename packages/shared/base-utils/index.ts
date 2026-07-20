@@ -49,7 +49,6 @@ export {
   createAsyncAtom,
 } from './jotai';
 export {
-  changeColorScheme,
   checkWidescreen,
   listenToResize,
   setRootWidescreenClass,
