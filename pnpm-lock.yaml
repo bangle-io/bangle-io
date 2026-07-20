@@ -862,9 +862,6 @@ importers:
       colord:
         specifier: ^2.9.3
         version: 2.9.3
-      execa:
-        specifier: 9.6.1
-        version: 9.6.1
       fs-extra:
         specifier: ^11.3.6
         version: 11.3.6
