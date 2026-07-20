@@ -55,7 +55,6 @@ export {
   setRootWidescreenClass,
 } from './misc';
 export {
-  acquireLockIfAvailable,
   rafSchedule,
   safeCancelAnimationFrame,
   safeCancelIdleCallback,
