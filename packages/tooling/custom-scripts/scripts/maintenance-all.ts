@@ -1,10 +1,10 @@
 import {
-  collectAllDependencies,
   isAValidBanglePackage,
   makeLogger,
   setDifference,
   setup,
 } from '../lib';
+import { addWorkspaceDep } from './add-workspace-dep';
 import { formatPackageJSON } from './format-package-json';
 import { validate } from './validate-all';
 
@@ -55,80 +55,6 @@ void main();
 const ignoredPackages = ({ depName }: { depName: string }) => {
   return depName.startsWith('@types/') || depName.startsWith('@bangle.dev/');
 };
-
-/**
- * Adds workspace dependencies to package.json if they are not already there.
- */
-async function addWorkspaceDep({
-  packagesMap,
-}: Awaited<ReturnType<typeof setup>>): Promise<void> {
-  const { default: pMap } = await import('p-map');
-
-  const packages = Array.from(packagesMap.values());
-  const allDependencies = await collectAllDependencies(packagesMap);
-
-  await pMap(
-    packagesMap.entries(),
-    async ([name, pkg]) => {
-      const deps = (
-        await pkg.getImportedPackages((file) => file.isTsSrcFile)
-      ).filter((dep) => !dep.startsWith('node:'));
-
-      for (const dep of deps) {
-        if (!pkg.dependencies[dep]) {
-          if (isAValidBanglePackage(dep, packages)) {
-            logger(`Adding workspace dep: ${dep} to pkg:${name}`);
-            await pkg.addDependency({
-              name: dep,
-              version: 'workspace:*',
-              type: 'dependencies',
-            });
-          } else if (allDependencies[dep]) {
-            const versions = allDependencies[dep].versions;
-            const version = versions[0];
-
-            if (!version) {
-              throw new Error(`No version found for ${dep}`);
-            }
-            logger(`Adding external dep: ${dep} to pkg:${name}`);
-            await pkg.addDependency({
-              name: dep,
-              version: version,
-              type: 'dependencies',
-            });
-          }
-        }
-      }
-    },
-    {
-      concurrency: 8,
-    },
-  );
-
-  // Add bangle dev dependencies
-  await pMap(
-    packagesMap.entries(),
-    async ([name, pkg]) => {
-      const deps = (
-        await pkg.getImportedPackages((file) => file.isTsNonSrcFile)
-      ).filter((dep) => !dep.startsWith('node:'));
-
-      for (const dep of deps) {
-        if (!pkg.dependencies[dep] && isAValidBanglePackage(dep, packages)) {
-          logger(`Adding workspace devDep: ${dep} to pkg:${name}`);
-          await pkg.addDependency({
-            name: dep,
-            version: 'workspace:*',
-            type: 'devDependencies',
-          });
-        }
-      }
-    },
-    {
-      concurrency: 8,
-    },
-  );
-}
 
 /**
  * Remove unused "dependencies" from packages, does not run on nodejs type packages
