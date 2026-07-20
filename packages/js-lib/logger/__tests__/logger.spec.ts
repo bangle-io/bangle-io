@@ -2,7 +2,7 @@
 
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
-import { Logger, setGlobalLogLevel } from '../index';
+import { Logger, setErrorReporter, setGlobalLogLevel } from '../index';
 
 describe('Logger', () => {
   function makeLogger(): any {
@@ -16,6 +16,7 @@ describe('Logger', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    setErrorReporter(null);
     setGlobalLogLevel('info');
   });
 
@@ -165,5 +166,18 @@ describe('Logger', () => {
       '[TestLogger]',
       'Info message',
     );
+  });
+
+  test('reports only an Error in the explicit first argument position', () => {
+    const reporter = { captureException: vi.fn() };
+    const logger = new Logger('TestLogger', null, makeLogger());
+    const reportable = new Error('reportable');
+    setErrorReporter(reporter);
+
+    logger.error(reportable, 'diagnostic context');
+    logger.error('diagnostic only', new Error('nested context'));
+
+    expect(reporter.captureException).toHaveBeenCalledOnce();
+    expect(reporter.captureException).toHaveBeenCalledWith(reportable);
   });
 });

@@ -171,6 +171,8 @@ export class BrowserLocalStorageSyncDatabaseService
     try {
       return { parsed: true, value: JSON.parse(item) };
     } catch (error) {
+      // Corrupt external state is handled by each setting's safe fallback. It
+      // is diagnostic context, not an application defect to report/prompt.
       this.logger.error('Failed to parse JSON from local storage', error);
       return { parsed: false };
     }
@@ -180,7 +182,7 @@ export class BrowserLocalStorageSyncDatabaseService
     try {
       return JSON.stringify(value);
     } catch (error) {
-      this.logger.error('Failed to stringify JSON for local storage', error);
+      this.reportError(error, 'Failed to stringify JSON for local storage');
       return null;
     }
   }

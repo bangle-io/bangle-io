@@ -17,7 +17,10 @@ import type {
 } from '@bangle.io/types';
 import { initializeServices as initializeServices2 } from './initialize-services';
 
-export { createPrivacySafeErrorReport } from '@bangle.io/base-utils';
+export {
+  createPrivacySafeErrorReport,
+  getCurrentBuildAssetDebugIds,
+} from '@bangle.io/base-utils';
 export {
   createEditorSaveCoordinator,
   type EditorSaveCoordinator,

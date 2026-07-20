@@ -1,4 +1,8 @@
-import { DATABASE_TABLE_NAME } from '@bangle.io/constants';
+import {
+  AUTOMATIC_ERROR_REPORTING_PREFERENCE_KEY,
+  DATABASE_TABLE_NAME,
+  SERVICE_NAME,
+} from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import type {
   ManualErrorReportHandler,
@@ -7,8 +11,9 @@ import type {
 import { describe, expect, test, vi } from 'vitest';
 
 function makeReport(id = 'fb3b15d4-c536-4bf5-8d06-f328247b9619') {
+  const debugId = '4c346747-7b26-4ea3-9657-1f6776a4e8b2';
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     id,
     capturedAt: '2026-07-19T12:00:00.000Z',
     errorType: 'TypeError',
@@ -17,7 +22,8 @@ function makeReport(id = 'fb3b15d4-c536-4bf5-8d06-f328247b9619') {
     environment: 'production',
     frames: [
       {
-        filename: '/assets/index.js',
+        debugId,
+        filename: `/assets/bangle-${debugId}.js`,
         lineNumber: 10,
         columnNumber: 20,
       },
@@ -85,18 +91,110 @@ describe('ErrorReportingService', () => {
     ).toHaveBeenLastCalledWith(false);
   });
 
-  test('keeps at most 50 local reports', async () => {
+  test('keeps the bootstrap fail-closed state when storage is invalid', async () => {
+    const env = createTestEnvironment();
+    vi.mocked(
+      env.commonOpts.errorReporting.getAutomaticReportingEnabled,
+    ).mockReturnValue(false);
+    const services = env.instantiateAll('errorReporting');
+    services.syncDatabase.updateEntry(
+      `${SERVICE_NAME.errorReportingService}:${AUTOMATIC_ERROR_REPORTING_PREFERENCE_KEY}`,
+      () => ({ value: 'invalid-preference' }),
+      { tableName: 'sync' },
+    );
+
+    await env.mountAll();
+
+    expect(
+      env.store.get(services.errorReporting.$automaticReportingEnabled),
+    ).toBe(false);
+    expect(
+      env.commonOpts.errorReporting.setAutomaticReportingEnabled,
+    ).toHaveBeenLastCalledWith(false);
+  });
+
+  test('prompts with the exact persisted report when automatic sending is off', async () => {
     const { env, services, handler } = await setup();
+    const report = makeReport();
+    await services.errorReporting.setAutomaticReportingEnabled(false);
 
-    for (let index = 0; index < 55; index += 1) {
-      await handler(makeReport(crypto.randomUUID()));
-    }
+    await handler(report);
 
-    expect(env.store.get(services.errorReporting.$pendingReportCount)).toBe(50);
+    expect(env.store.get(services.errorReporting.$manualReportPrompt)).toEqual(
+      report,
+    );
+    services.errorReporting.dismissManualReportPrompt(report.id);
+    expect(
+      env.store.get(services.errorReporting.$manualReportPrompt),
+    ).toBeUndefined();
     expect(
       await services.database.getAllEntries({
         tableName: DATABASE_TABLE_NAME.misc,
       }),
-    ).toHaveLength(50);
+    ).toEqual([report]);
+  });
+
+  test('sends and deletes one approved report from the prompt', async () => {
+    const { env, services, handler } = await setup();
+    const report = makeReport();
+    await services.errorReporting.setAutomaticReportingEnabled(false);
+    await handler(report);
+    vi.mocked(env.commonOpts.errorReporting.sendReports).mockResolvedValueOnce({
+      sentReportIds: [report.id],
+    });
+
+    await expect(
+      services.errorReporting.sendPendingReport(report.id),
+    ).resolves.toBe(true);
+
+    expect(env.commonOpts.errorReporting.sendReports).toHaveBeenCalledWith([
+      report,
+    ]);
+    expect(
+      env.store.get(services.errorReporting.$manualReportPrompt),
+    ).toBeUndefined();
+    expect(env.store.get(services.errorReporting.$pendingReportCount)).toBe(0);
+  });
+
+  test('offers each report for review when several errors arrive together', async () => {
+    const { env, services, handler } = await setup();
+    const first = makeReport();
+    const second = makeReport('ce52fe73-c36c-4f43-b62f-99949acb9c24');
+    await services.errorReporting.setAutomaticReportingEnabled(false);
+
+    await handler(first);
+    await handler(second);
+
+    expect(env.store.get(services.errorReporting.$manualReportPrompt)).toEqual(
+      first,
+    );
+    services.errorReporting.dismissManualReportPrompt(first.id);
+    expect(env.store.get(services.errorReporting.$manualReportPrompt)).toEqual(
+      second,
+    );
+    services.errorReporting.dismissManualReportPrompt(second.id);
+    expect(
+      env.store.get(services.errorReporting.$manualReportPrompt),
+    ).toBeUndefined();
+  });
+
+  test('keeps at most 50 local reports', async () => {
+    const { env, services, handler } = await setup();
+    await services.errorReporting.setAutomaticReportingEnabled(false);
+
+    await Promise.all(
+      Array.from({ length: 55 }, () =>
+        handler(makeReport(crypto.randomUUID())),
+      ),
+    );
+
+    expect(env.store.get(services.errorReporting.$pendingReportCount)).toBe(50);
+    const persisted = await services.database.getAllEntries({
+      tableName: DATABASE_TABLE_NAME.misc,
+    });
+    expect(persisted).toHaveLength(50);
+    expect(persisted).toContainEqual(
+      env.store.get(services.errorReporting.$manualReportPrompt),
+    );
   });
 });

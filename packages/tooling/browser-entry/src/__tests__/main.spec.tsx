@@ -52,6 +52,27 @@ describe('browser entry startup', () => {
     timeout: 30_000,
   }, async () => {
     const error = new Error('database mount failed');
+    const report = {
+      schemaVersion: 2,
+      id: 'fb3b15d4-c536-4bf5-8d06-f328247b9619',
+      capturedAt: '2026-07-19T12:00:00.000Z',
+      errorType: 'Error',
+      route: 'welcome',
+      release: 'bangle.io@1.2.3+abcdef12',
+      environment: 'production',
+      frames: [],
+    } as const;
+    const sendReports = vi.fn().mockResolvedValue({
+      sentReportIds: [report.id],
+    });
+    mocks.readAutomaticErrorReportingPreference.mockReturnValueOnce(false);
+    mocks.initializeSentry.mockReturnValueOnce({
+      captureException: vi.fn().mockReturnValue(report),
+      getAutomaticReportingEnabled: vi.fn().mockReturnValue(false),
+      sendReports,
+      setAutomaticReportingEnabled: vi.fn().mockResolvedValue(undefined),
+      setManualReportHandler: vi.fn(),
+    });
     let startupSignal: AbortSignal | undefined;
     mocks.initializeServices.mockImplementationOnce(
       (
@@ -85,6 +106,16 @@ describe('browser entry startup', () => {
     expect(document.getElementById('root')?.textContent ?? '').toContain(
       error.message,
     );
+    expect(
+      document.querySelector('[data-testid="startup-bug-report-preview"]')
+        ?.textContent ?? '',
+    ).toContain('"schemaVersion": 2');
+    const sendButton = Array.from(document.querySelectorAll('button')).find(
+      (button) => button.textContent === t.app.bugReportPrompt.sendReport,
+    );
+    expect(sendButton).toBeDefined();
+    sendButton?.click();
+    await vi.waitFor(() => expect(sendReports).toHaveBeenCalledWith([report]));
     expect(startupSignal?.aborted).toBe(true);
   });
 });

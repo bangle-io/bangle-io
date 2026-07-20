@@ -12,6 +12,7 @@ export type PrivacySafeErrorType =
   | 'URIError';
 
 export type PrivacySafeStackFrame = {
+  debugId: string;
   filename: string;
   lineNumber: number;
   columnNumber: number;
@@ -25,7 +26,7 @@ export type PrivacySafeStackFrame = {
  * cross this boundary.
  */
 export type PrivacySafeErrorReport = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   id: string;
   capturedAt: string;
   errorType: PrivacySafeErrorType;
@@ -40,7 +41,8 @@ export type ManualErrorReportHandler = (
 ) => Promise<void>;
 
 export type ErrorReportingController = {
-  captureException: (error: Error) => void;
+  captureException: (error: Error) => PrivacySafeErrorReport | undefined;
+  getAutomaticReportingEnabled: () => boolean;
   setAutomaticReportingEnabled: (enabled: boolean) => Promise<void>;
   setManualReportHandler: (
     handler: ManualErrorReportHandler | undefined,

@@ -20,7 +20,7 @@ let errorReporter: ErrorReporter | null = null;
 export function setGlobalLogLevel(level: LogLevelName) {
   GLOBAL_LOG_LEVEL = level;
 }
-export function setErrorReporter(reporter: ErrorReporter) {
+export function setErrorReporter(reporter: ErrorReporter | null) {
   errorReporter = reporter;
 }
 export class Logger {
@@ -71,12 +71,11 @@ export class Logger {
   public error(...message: unknown[]): void {
     this.log('error', ...message);
 
-    // Report the first Error regardless of its position. Callers often lead
-    // with a static diagnostic label; the reporting boundary itself converts
-    // the Error into a privacy-safe allowlisted payload.
-    const error = message.find((item): item is Error => item instanceof Error);
-    if (errorReporter && error) {
-      errorReporter.captureException(error);
+    // Preserve the explicit reporting convention: an Error in the first
+    // position is a report boundary; later Errors are diagnostic context.
+    // App/service boundaries capture their wrapped errors separately.
+    if (errorReporter && message[0] instanceof Error) {
+      errorReporter.captureException(message[0]);
     }
   }
 

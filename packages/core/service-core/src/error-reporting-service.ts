@@ -24,6 +24,11 @@ export class ErrorReportingService extends BaseService {
   static deps = ['database', 'syncDatabase'] as const;
 
   private $_automaticReportingEnabled: PrimitiveAtom<boolean> | undefined;
+  private manualReportPromptQueue: PrivacySafeErrorReport[] = [];
+  private reportPersistenceChain: Promise<void> = Promise.resolve();
+  readonly $manualReportPrompt = atom<PrivacySafeErrorReport | undefined>(
+    undefined,
+  );
   readonly $pendingReportCount = atom(0);
   readonly $sendingReports = atom(false);
 
@@ -39,7 +44,7 @@ export class ErrorReportingService extends BaseService {
 
   async hookMount(): Promise<void> {
     this.commonOptions.errorReporting.setManualReportHandler((report) =>
-      this.persistReport(report),
+      this.queueReportPersistence(report),
     );
     await this.commonOptions.errorReporting.setAutomaticReportingEnabled(
       this.store.get(this.$automaticReportingEnabled),
@@ -71,7 +76,8 @@ export class ErrorReportingService extends BaseService {
       this.$_automaticReportingEnabled = atomStorage({
         serviceName: this.name,
         key: AUTOMATIC_ERROR_REPORTING_PREFERENCE_KEY,
-        initValue: true,
+        initValue:
+          this.commonOptions.errorReporting.getAutomaticReportingEnabled(),
         syncDb: this.dep.syncDatabase,
         validator: T.Boolean,
         logger: this.logger,
@@ -85,6 +91,39 @@ export class ErrorReportingService extends BaseService {
       enabled,
     );
     this.store.set(this.$automaticReportingEnabled, enabled);
+    if (enabled) {
+      this.manualReportPromptQueue = [];
+      this.store.set(this.$manualReportPrompt, undefined);
+    }
+  }
+
+  dismissManualReportPrompt(reportId: string): void {
+    this.clearManualReportPrompt(reportId);
+  }
+
+  async sendPendingReport(reportId: string): Promise<boolean> {
+    if (this.store.get(this.$sendingReports)) {
+      return false;
+    }
+
+    this.store.set(this.$sendingReports, true);
+    try {
+      await this.reportPersistenceChain;
+      const report = await this.getPendingReport(reportId);
+      if (!report) {
+        this.clearManualReportPrompt(reportId);
+        return false;
+      }
+      const { sentReportIds } =
+        await this.commonOptions.errorReporting.sendReports([report]);
+      if (!sentReportIds.includes(reportId)) {
+        return false;
+      }
+      await this.deletePendingReport(reportId);
+      return true;
+    } finally {
+      this.store.set(this.$sendingReports, false);
+    }
   }
 
   async sendPendingReports(): Promise<{ sent: number; remaining: number }> {
@@ -97,6 +136,7 @@ export class ErrorReportingService extends BaseService {
 
     this.store.set(this.$sendingReports, true);
     try {
+      await this.reportPersistenceChain;
       const reports = await this.getPendingReports();
       const { sentReportIds } =
         await this.commonOptions.errorReporting.sendReports(reports);
@@ -107,6 +147,9 @@ export class ErrorReportingService extends BaseService {
           }),
         ),
       );
+      for (const id of sentReportIds) {
+        this.clearManualReportPrompt(id);
+      }
       await this.refreshPendingCount();
       return {
         sent: sentReportIds.length,
@@ -118,6 +161,7 @@ export class ErrorReportingService extends BaseService {
   }
 
   async clearPendingReports(): Promise<void> {
+    await this.reportPersistenceChain;
     const reports = await this.getPendingReports();
     await Promise.all(
       reports.map((report) =>
@@ -126,6 +170,17 @@ export class ErrorReportingService extends BaseService {
         }),
       ),
     );
+    this.manualReportPromptQueue = [];
+    this.store.set(this.$manualReportPrompt, undefined);
+    await this.refreshPendingCount();
+  }
+
+  async deletePendingReport(reportId: string): Promise<void> {
+    await this.reportPersistenceChain;
+    await this.dep.database.deleteEntry(this.getReportKey(reportId), {
+      tableName: DATABASE_TABLE_NAME.misc,
+    });
+    this.clearManualReportPrompt(reportId);
     await this.refreshPendingCount();
   }
 
@@ -141,6 +196,58 @@ export class ErrorReportingService extends BaseService {
     );
     await this.prunePendingReports();
     await this.refreshPendingCount();
+    if (!this.store.get(this.$automaticReportingEnabled)) {
+      this.enqueueManualReportPrompt(report);
+    }
+  }
+
+  private queueReportPersistence(
+    report: PrivacySafeErrorReport,
+  ): Promise<void> {
+    const persistence = this.reportPersistenceChain.then(() =>
+      this.persistReport(report),
+    );
+    this.reportPersistenceChain = persistence.catch(() => {});
+    return persistence;
+  }
+
+  private clearManualReportPrompt(reportId: string): void {
+    if (this.store.get(this.$manualReportPrompt)?.id !== reportId) {
+      this.manualReportPromptQueue = this.manualReportPromptQueue.filter(
+        (report) => report.id !== reportId,
+      );
+      return;
+    }
+    this.store.set(
+      this.$manualReportPrompt,
+      this.manualReportPromptQueue.shift(),
+    );
+  }
+
+  private enqueueManualReportPrompt(report: PrivacySafeErrorReport): void {
+    if (
+      this.store.get(this.$manualReportPrompt)?.id === report.id ||
+      this.manualReportPromptQueue.some((queued) => queued.id === report.id)
+    ) {
+      return;
+    }
+    if (!this.store.get(this.$manualReportPrompt)) {
+      this.store.set(this.$manualReportPrompt, report);
+      return;
+    }
+    this.manualReportPromptQueue.push(report);
+  }
+
+  private async getPendingReport(
+    reportId: string,
+  ): Promise<PrivacySafeErrorReport | undefined> {
+    const entry = await this.dep.database.getEntry(
+      this.getReportKey(reportId),
+      { tableName: DATABASE_TABLE_NAME.misc },
+    );
+    return entry.found && isPrivacySafeErrorReport(entry.value)
+      ? entry.value
+      : undefined;
   }
 
   private async getPendingReports(): Promise<PrivacySafeErrorReport[]> {
@@ -158,13 +265,17 @@ export class ErrorReportingService extends BaseService {
     if (excess <= 0) {
       return;
     }
+    const reportsToPrune = reports.slice(0, excess);
     await Promise.all(
-      reports.slice(0, excess).map((report) =>
+      reportsToPrune.map((report) =>
         this.dep.database.deleteEntry(this.getReportKey(report.id), {
           tableName: DATABASE_TABLE_NAME.misc,
         }),
       ),
     );
+    for (const report of reportsToPrune) {
+      this.clearManualReportPrompt(report.id);
+    }
   }
 
   private async refreshPendingCount(): Promise<void> {

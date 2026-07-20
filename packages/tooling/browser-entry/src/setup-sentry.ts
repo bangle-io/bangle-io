@@ -2,6 +2,7 @@ import { APP_ENV, RELEASE_ID, sentryConfig } from '@bangle.io/config';
 import {
   createPrivacySafeErrorReport,
   type ErrorReportingController,
+  getCurrentBuildAssetDebugIds,
   type ManualErrorReportHandler,
   type PrivacySafeErrorReport,
 } from '@bangle.io/initialize-services';
@@ -21,9 +22,14 @@ export function readAutomaticErrorReportingPreference(
 ): boolean {
   try {
     const stored = storage.getItem(storageKey);
-    return stored === null ? true : JSON.parse(stored) !== false;
+    if (stored === null) {
+      return true;
+    }
+    return JSON.parse(stored) === true;
   } catch {
-    return true;
+    // Consent must fail closed. A stored opt-out cannot be distinguished from
+    // unavailable or corrupted storage, so do not send automatically.
+    return false;
   }
 }
 
@@ -36,6 +42,8 @@ export function initializeSentry(
   let manualReportHandler: ManualErrorReportHandler | undefined;
   const capturedErrors = new WeakSet<Error>();
   const reportsAwaitingStore: PrivacySafeErrorReport[] = [];
+  let reportStoreFlushScheduled = false;
+  let flushingReportStore = false;
 
   const keepAwaitingStoreBounded = (report: PrivacySafeErrorReport) => {
     reportsAwaitingStore.push(report);
@@ -47,18 +55,54 @@ export function initializeSentry(
     }
   };
 
-  const queueLocally = async (report: PrivacySafeErrorReport) => {
-    if (!manualReportHandler) {
-      keepAwaitingStoreBounded(report);
+  const flushReportStore = async () => {
+    if (flushingReportStore || !manualReportHandler) {
       return;
     }
+    flushingReportStore = true;
     try {
-      await manualReportHandler(report);
-    } catch {
-      // Do not log here: reporting a queue failure through the same logger
-      // would recurse. Keep the already-sanitized report in memory instead.
-      keepAwaitingStoreBounded(report);
+      while (reportsAwaitingStore.length > 0) {
+        const currentHandler = manualReportHandler;
+        if (!currentHandler) {
+          return;
+        }
+        const report = reportsAwaitingStore[0];
+        if (!report) {
+          return;
+        }
+        try {
+          await currentHandler(report);
+        } catch {
+          // Do not log here: reporting a queue failure through the same logger
+          // would recurse. A later capture or handler registration retries it.
+          return;
+        }
+        const index = reportsAwaitingStore.findIndex(
+          (candidate) => candidate.id === report.id,
+        );
+        if (index >= 0) {
+          reportsAwaitingStore.splice(index, 1);
+        }
+      }
+    } finally {
+      flushingReportStore = false;
     }
+  };
+
+  const scheduleReportStoreFlush = () => {
+    if (reportStoreFlushScheduled) {
+      return;
+    }
+    reportStoreFlushScheduled = true;
+    queueMicrotask(() => {
+      reportStoreFlushScheduled = false;
+      void flushReportStore();
+    });
+  };
+
+  const queueLocally = (report: PrivacySafeErrorReport) => {
+    keepAwaitingStoreBounded(report);
+    scheduleReportStoreFlush();
   };
 
   const controller: ErrorReportingController = {
@@ -69,8 +113,8 @@ export function initializeSentry(
       capturedErrors.add(error);
       const report = createReport(error);
       if (!automaticEnabled) {
-        void queueLocally(report);
-        return;
+        queueLocally(report);
+        return report;
       }
 
       void sendReport(
@@ -79,9 +123,13 @@ export function initializeSentry(
         automaticAbortController.signal,
       ).then((sent) => {
         if (!sent) {
-          void queueLocally(report);
+          queueLocally(report);
         }
       });
+      return report;
+    },
+    getAutomaticReportingEnabled() {
+      return automaticEnabled;
     },
     async setAutomaticReportingEnabled(enabled) {
       // This flag gates capture synchronously. No Sentry SDK is initialized,
@@ -94,16 +142,8 @@ export function initializeSentry(
     },
     setManualReportHandler(handler) {
       manualReportHandler = handler;
-      if (!handler || reportsAwaitingStore.length === 0) {
-        return;
-      }
-
-      const pending = reportsAwaitingStore.splice(
-        0,
-        reportsAwaitingStore.length,
-      );
-      for (const report of pending) {
-        void queueLocally(report);
+      if (handler) {
+        scheduleReportStoreFlush();
       }
     },
     async sendReports(reports) {
@@ -111,6 +151,18 @@ export function initializeSentry(
       for (const report of reports) {
         if (await sendReport(report, REPORTING_MODE.manual)) {
           sentReportIds.push(report.id);
+        }
+      }
+      if (sentReportIds.length > 0) {
+        const sentIds = new Set(sentReportIds);
+        for (
+          let index = reportsAwaitingStore.length - 1;
+          index >= 0;
+          index -= 1
+        ) {
+          if (sentIds.has(reportsAwaitingStore[index]?.id ?? '')) {
+            reportsAwaitingStore.splice(index, 1);
+          }
         }
       }
       return { sentReportIds };
@@ -130,6 +182,7 @@ function createReport(error: Error): PrivacySafeErrorReport {
     route: route ?? undefined,
     release: RELEASE_ID,
     environment: APP_ENV,
+    buildAssetDebugIds: getCurrentBuildAssetDebugIds(),
   });
 }
 
@@ -184,6 +237,7 @@ export function serializeSentryEnvelope(
           value: 'Bangle application error',
           stacktrace: {
             frames: report.frames.map((frame) => ({
+              abs_path: frame.filename,
               filename: frame.filename,
               lineno: frame.lineNumber,
               colno: frame.columnNumber,
@@ -196,6 +250,9 @@ export function serializeSentryEnvelope(
           },
         },
       ],
+    },
+    debug_meta: {
+      images: uniqueDebugImages(report.frames),
     },
     tags: {
       error_type: report.errorType,
@@ -212,4 +269,22 @@ export function serializeSentryEnvelope(
   return [envelopeHeader, itemHeader, event]
     .map((part) => JSON.stringify(part))
     .join('\n');
+}
+
+function uniqueDebugImages(frames: PrivacySafeErrorReport['frames']): Array<{
+  type: 'sourcemap';
+  code_file: string;
+  debug_id: string;
+}> {
+  const images = new Map<string, { code_file: string; debug_id: string }>();
+  for (const frame of frames) {
+    images.set(frame.debugId, {
+      code_file: frame.filename,
+      debug_id: frame.debugId,
+    });
+  }
+  return [...images.values()].map((image) => ({
+    type: 'sourcemap' as const,
+    ...image,
+  }));
 }

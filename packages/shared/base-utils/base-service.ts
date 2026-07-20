@@ -42,6 +42,16 @@ export abstract class BaseService implements Service<BaseServiceCommonOptions> {
     return this.__context.ctx;
   }
 
+  /** Reports a caught defect that will not reach a global error boundary. */
+  protected reportError(error: unknown, diagnostic: string): Error {
+    const reportableError =
+      error instanceof Error
+        ? error
+        : new Error('Unexpected application error');
+    this.logger.error(reportableError, diagnostic);
+    return reportableError;
+  }
+
   constructor(
     public name: string,
     private __context: BaseServiceContext,

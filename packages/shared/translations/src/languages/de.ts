@@ -31,6 +31,22 @@ export const t = {
       starItem: 'Als Favorit markieren',
       unstarItem: 'Favorit entfernen',
     },
+    bugReportPrompt: {
+      title: 'Hilfst du uns, diesen Fehler zu beheben?',
+      description:
+        'Automatische Fehlerberichte sind deaktiviert. Bangle hat diesen Bericht auf deinem Gerät gespeichert, damit du ihn vor dem Senden prüfen kannst.',
+      reassurance:
+        'Dies ist die vollständige Diagnosenutzlast, die Bangle erstellt. Sie enthält keine Notizinhalte, Arbeitsbereichs- oder Notiznamen, Seiten-URLs, Routenparameter, Fehlermeldungen oder Fehlerursachen. Wie bei jeder direkten Webanfrage kann Sentry Netzwerkmetadaten wie deine IP-Adresse und den User-Agent deines Browsers empfangen.',
+      previewLabel: 'Diagnosenutzlast, die Bangle sendet',
+      keepForLater: 'Für später behalten',
+      deleteReport: 'Bericht löschen',
+      sendReport: 'Bericht senden',
+      sendingReport: 'Wird gesendet...',
+      reportSent: 'Fehlerbericht gesendet. Vielen Dank.',
+      reportSendFailed:
+        'Der Bericht konnte nicht gesendet werden und bleibt auf diesem Gerät.',
+      reportDeleteFailed: 'Der Bericht konnte nicht gelöscht werden.',
+    },
     toolbar: {
       toggleMaxWidth: 'Maximale Breite umschalten',
     },
@@ -199,7 +215,7 @@ export const t = {
         automaticBugReportsToggle: 'Fehlerberichte automatisch senden',
         disableBugReportsTitle: 'Automatische Fehlerberichte deaktivieren?',
         disableBugReportsDescription:
-          'Automatische Berichte sind wichtig, um Fehler zu finden und zu beheben. Bangle schließt deine Notizdaten und identifizierende Namen aus. Wenn du dies deaktivierst, bleiben bereinigte Berichte auf diesem Gerät, bis du sie sendest.',
+          'Automatische Berichte sind wichtig, um Fehler zu finden und zu beheben. Bangle schließt deine Notizdaten und identifizierende Namen aus der Diagnosenutzlast aus. Wenn du dies deaktivierst, zeigt Bangle jeden bereinigten Bericht zur Freigabe an und speichert bis zu 50 aktuelle Berichte auf diesem Gerät.',
         keepBugReportsEnabled: 'Automatische Berichte beibehalten',
         disableBugReportsButton: 'Deaktivieren',
         pendingBugReportsTitle: 'Ausstehende Fehlerberichte',
@@ -210,7 +226,7 @@ export const t = {
         manualBugReportsDescription: ({ count }: { count: number }) =>
           count === 1
             ? '1 datenschutzfreundlicher Bericht ist nur auf diesem Gerät gespeichert. Sende ihn, wenn du bereit bist.'
-            : `${count} datenschutzfreundliche Berichte sind nur auf diesem Gerät gespeichert. Sende sie, wenn du bereit bist.`,
+            : `${count} aktuelle datenschutzfreundliche Berichte sind nur auf diesem Gerät gespeichert. Sende sie, wenn du bereit bist.`,
         sendBugReports: 'Berichte senden',
         sendingBugReports: 'Wird gesendet...',
         deleteBugReports: 'Berichte löschen',

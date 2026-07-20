@@ -18,6 +18,7 @@ const PRIVATE_MARKERS = [
   'PRIVATE_CAUSE',
   'PRIVATE_PROPERTY',
 ];
+const DEBUG_ID = '4c346747-7b26-4ea3-9657-1f6776a4e8b2';
 
 function makePrivateError(): Error {
   const error = new TypeError('SECRET_NOTE_CONTENT', {
@@ -41,6 +42,13 @@ function expectNoPrivateMarkers(value: unknown): void {
 
 describe('privacy-safe Sentry transport', () => {
   beforeEach(() => {
+    (
+      globalThis as typeof globalThis & {
+        _sentryDebugIds?: Record<string, string>;
+      }
+    )._sentryDebugIds = {
+      'Error\n at https://app.bangle.io/assets/index-abcdef12.js:1:1': DEBUG_ID,
+    };
     window.history.replaceState(
       null,
       '',
@@ -53,6 +61,11 @@ describe('privacy-safe Sentry transport', () => {
   });
 
   afterEach(() => {
+    delete (
+      globalThis as typeof globalThis & {
+        _sentryDebugIds?: Record<string, string>;
+      }
+    )._sentryDebugIds;
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
@@ -70,6 +83,9 @@ describe('privacy-safe Sentry transport', () => {
     expect(typeof body).toBe('string');
     expect(body).toContain('Bangle application error');
     expect(body).toContain('"route":"editor"');
+    expect(body).toContain('"debug_meta"');
+    expect(body).toContain(`"debug_id":"${DEBUG_ID}"`);
+    expect(body).toContain(`/assets/bangle-${DEBUG_ID}.js`);
     expectNoPrivateMarkers(body);
     expect(request?.credentials).toBe('omit');
     expect(request?.referrerPolicy).toBe('no-referrer');
@@ -102,6 +118,7 @@ describe('privacy-safe Sentry transport', () => {
     await controller.setAutomaticReportingEnabled(false);
 
     expect(requestSignal?.aborted).toBe(true);
+    expect(controller.getAutomaticReportingEnabled()).toBe(false);
   });
 
   test('bounds reports captured before IndexedDB is ready', async () => {
@@ -116,9 +133,25 @@ describe('privacy-safe Sentry transport', () => {
     await vi.waitFor(() => expect(persist).toHaveBeenCalledTimes(50));
   });
 
+  test('retries a failed local persistence without recursive reporting', async () => {
+    const controller = initializeSentry(new Logger('', 'debug'), false);
+    const persist = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('database unavailable'))
+      .mockResolvedValue(undefined);
+    controller.setManualReportHandler(persist);
+
+    controller.captureException(makePrivateError());
+    await vi.waitFor(() => expect(persist).toHaveBeenCalledTimes(1));
+    controller.captureException(makePrivateError());
+
+    await vi.waitFor(() => expect(persist).toHaveBeenCalledTimes(3));
+    expectNoPrivateMarkers(persist.mock.calls);
+  });
+
   test('manual envelopes do not gain fields from the original error', () => {
     const report: PrivacySafeErrorReport = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       id: 'fb3b15d4-c536-4bf5-8d06-f328247b9619',
       capturedAt: '2026-07-19T12:00:00.000Z',
       errorType: 'TypeError',
@@ -127,7 +160,8 @@ describe('privacy-safe Sentry transport', () => {
       environment: 'production',
       frames: [
         {
-          filename: '/assets/index.js',
+          debugId: DEBUG_ID,
+          filename: `/assets/bangle-${DEBUG_ID}.js`,
           lineNumber: 10,
           columnNumber: 20,
         },
@@ -139,8 +173,8 @@ describe('privacy-safe Sentry transport', () => {
     expectNoPrivateMarkers(envelope);
   });
 
-  test('defaults on and honors only an explicit stored false preference', () => {
-    const getItem = vi.fn();
+  test('defaults on only when missing and fails closed for unreadable values', () => {
+    const getItem = vi.fn().mockReturnValueOnce(null);
     expect(readAutomaticErrorReportingPreference('key', { getItem })).toBe(
       true,
     );
@@ -152,7 +186,14 @@ describe('privacy-safe Sentry transport', () => {
 
     getItem.mockReturnValueOnce('invalid-json');
     expect(readAutomaticErrorReportingPreference('key', { getItem })).toBe(
-      true,
+      false,
+    );
+
+    getItem.mockImplementationOnce(() => {
+      throw new DOMException('blocked', 'SecurityError');
+    });
+    expect(readAutomaticErrorReportingPreference('key', { getItem })).toBe(
+      false,
     );
   });
 });

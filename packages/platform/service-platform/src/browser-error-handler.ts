@@ -64,13 +64,19 @@ export class BrowserErrorHandlerService extends BaseErrorService {
     const isRejection = 'reason' in event;
 
     if (isRejection) {
-      error = event.reason instanceof Error ? event.reason : undefined;
+      error =
+        event.reason instanceof Error
+          ? event.reason
+          : new Error('Unhandled non-Error promise rejection');
     } else {
-      error = event.error instanceof Error ? event.error : undefined;
+      error =
+        event.error instanceof Error
+          ? event.error
+          : new Error('Unhandled browser error');
     }
 
-    if (!error || isAbortError(error)) {
-      this.logger.debug(`AbortError ${error?.message}`);
+    if (isAbortError(error)) {
+      this.logger.debug(`AbortError ${error.message}`);
       event.preventDefault();
       return;
     }

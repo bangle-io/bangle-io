@@ -423,7 +423,11 @@ export class UserActivityService extends BaseService {
       await this.starredItemManager.relocateStarredItems(relocations);
       return 'succeeded';
     } catch (error) {
-      this.logger.error('Unable to migrate starred items after relocation', {
+      this.reportError(
+        error,
+        'Unable to migrate starred items after relocation',
+      );
+      this.logger.debug('Starred item relocation details', {
         error,
         relocations: relocations.map(({ oldItem, newItem }) => ({
           newWsPath: newItem.wsPath,
@@ -462,6 +466,7 @@ class StarredItemManager {
       const rawStarredItems = metadata[STARRED_ITEMS_KEY] ?? [];
       if (!Array.isArray(rawStarredItems)) {
         this.logger.error(
+          new Error('Invalid starred items metadata'),
           `Invalid starred items metadata for ${wsName}. Expected array, got ${typeof rawStarredItems}.`,
         );
       }
@@ -564,6 +569,7 @@ class StarredItemManager {
 
     if (!Array.isArray(rawStarredItems)) {
       this.logger.error(
+        new Error('Invalid starred items metadata'),
         `Invalid starred items metadata for ${wsName}. Expected array, got ${typeof rawStarredItems}.`,
       );
       return [];

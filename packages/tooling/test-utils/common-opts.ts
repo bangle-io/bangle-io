@@ -62,6 +62,7 @@ export const makeTestCommonOpts = ({
     store: createStore(),
     errorReporting: {
       captureException: vi.fn(),
+      getAutomaticReportingEnabled: vi.fn().mockReturnValue(true),
       sendReports: vi.fn().mockResolvedValue({ sentReportIds: [] }),
       setAutomaticReportingEnabled: vi.fn().mockResolvedValue(undefined),
       setManualReportHandler: vi.fn(),

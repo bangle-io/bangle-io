@@ -62,6 +62,7 @@ export {
 } from './misc';
 export {
   createPrivacySafeErrorReport,
+  getCurrentBuildAssetDebugIds,
   getPrivacySafeRoute,
   getPrivacySafeStackFrames,
   isPrivacySafeErrorReport,

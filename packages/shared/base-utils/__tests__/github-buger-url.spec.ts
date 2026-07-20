@@ -1,15 +1,31 @@
 // @vitest-environment happy-dom
 
 import { makeTestLogger } from '@bangle.io/test-utils';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getGithubUrl } from '../github-bug-url';
 
 describe('getGithubUrl', () => {
+  const debugId = '4c346747-7b26-4ea3-9657-1f6776a4e8b2';
   let logger = makeTestLogger().logger;
 
   beforeEach(() => {
     vi.clearAllMocks();
     ({ logger } = makeTestLogger());
+    (
+      globalThis as typeof globalThis & {
+        _sentryDebugIds?: Record<string, string>;
+      }
+    )._sentryDebugIds = {
+      'Error\n at https://app.bangle.io/assets/index-abcdef12.js:1:1': debugId,
+    };
+  });
+
+  afterEach(() => {
+    delete (
+      globalThis as typeof globalThis & {
+        _sentryDebugIds?: Record<string, string>;
+      }
+    )._sentryDebugIds;
   });
 
   it('generates a GitHub URL with only privacy-safe diagnostics', () => {
@@ -22,7 +38,7 @@ describe('getGithubUrl', () => {
     const search = new URL(url).searchParams;
     expect(search.get('body')).toContain('Privacy-safe diagnostics');
     expect(search.get('body')).toContain('TypeError');
-    expect(search.get('body')).toContain('/assets/index.js:10:20');
+    expect(search.get('body')).toContain(`/assets/bangle-${debugId}.js:10:20`);
     expect(search.get('body')).not.toContain('PRIVATE_NOTE_CONTENT');
     expect(search.get('body')).not.toContain('PRIVATE_WORKSPACE');
     expect(search.get('body')).not.toContain('PRIVATE_NOTE.md');
