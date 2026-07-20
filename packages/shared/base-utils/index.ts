@@ -52,14 +52,7 @@ export {
   checkWidescreen,
   setRootWidescreenClass,
 } from './misc';
-export {
-  safeCancelAnimationFrame,
-  safeCancelIdleCallback,
-  safeIdleRefCallback,
-  safeNavigatorStorageGetDirectory,
-  safeRequestAnimationFrame,
-  safeRequestIdleCallback,
-} from './safe-js';
+export { safeNavigatorStorageGetDirectory } from './safe-js';
 export type { AppErrorName } from './throw-app-error';
 export {
   createAppError,
