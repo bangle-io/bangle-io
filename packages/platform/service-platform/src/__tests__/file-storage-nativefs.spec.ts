@@ -7,6 +7,7 @@ import { isAbortError } from '@bangle.io/mini-js-utils';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { FileStorageNativeFs } from '../file-storage-nativefs';
+import { testCrossWorkspaceRenameContract } from './file-storage-rename-contract';
 
 class FakeFileHandle {
   readonly kind = 'file';
@@ -129,6 +130,8 @@ async function setup(onEntryVisited?: () => void, rootName = 'myWorkspace') {
 }
 
 describe('FileStorageNativeFs', () => {
+  testCrossWorkspaceRenameContract(setup);
+
   it('declares a larger native storage file-size limit', async () => {
     const { service } = await setup();
 
@@ -332,30 +335,5 @@ describe('FileStorageNativeFs', () => {
       oldWsPath: 'myWorkspace:a.md',
       newWsPath: 'myWorkspace:sub/b.md',
     });
-  });
-
-  it('rejects cross-workspace renames before moving the source or emitting a change', async () => {
-    const { service, onChange } = await setup();
-    const source = 'myWorkspace:a.md';
-    const destination = 'otherWorkspace:b.md';
-
-    await service.createFile(source, new File(['source'], 'a.md'));
-    onChange.mockClear();
-
-    await expect(
-      service.renameFile(source, { newWsPath: destination }),
-    ).rejects.toMatchObject({
-      cause: expect.objectContaining({
-        name: 'error::file:invalid-operation',
-        payload: {
-          operation: 'rename',
-          oldWsPath: source,
-          newWsPath: destination,
-        },
-      }),
-    });
-
-    expect(await (await service.readFile(source))?.text()).toBe('source');
-    expect(onChange).not.toHaveBeenCalled();
   });
 });
