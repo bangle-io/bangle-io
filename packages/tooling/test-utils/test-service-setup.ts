@@ -11,7 +11,7 @@ import {
   createEditorSaveCoordinator,
   createServiceSetup,
 } from '@bangle.io/initialize-services/setup';
-import { type ContainerDescription, slot } from '@bangle.io/poor-mans-di';
+import { slot } from '@bangle.io/poor-mans-di';
 import {
   FileStorageMemory,
   MemoryDatabaseService,
@@ -56,10 +56,8 @@ type TestServices = CoreServices & {
 
 type TestServiceSetup = {
   instantiate: (focus?: Array<keyof TestServices & string>) => TestServices;
-  getServices: () => TestServices;
   coreServices: () => CoreServices;
   mountAll: () => Promise<void>;
-  describe: () => ContainerDescription;
 };
 
 function createTestServiceSetup(
