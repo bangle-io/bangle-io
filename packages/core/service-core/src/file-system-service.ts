@@ -263,11 +263,6 @@ export class FileSystemService extends BaseService {
     wsPath: string,
     options: FileReadOptions = {},
   ): Promise<string | undefined> {
-    throwIfAborted(options.signal);
-    await this.mountPromise;
-    throwIfAborted(options.signal);
-    WsPath.assertFile(wsPath);
-
     const file = await this.readFile(wsPath, options);
     if (!file) {
       return undefined;
