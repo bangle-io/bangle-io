@@ -94,12 +94,19 @@ export class BrowserLocalStorageSyncDatabaseService
       return { value: undefined, found: false };
     }
 
-    const serializedValue = this.stringifyJSON(updateResult.value);
-    if (serializedValue === null) {
-      return { value: undefined, found: false };
+    const serialized = this.stringifyJSON(updateResult.value);
+    if (!serialized.stringified) {
+      throwAppError(
+        'error::database:unknown-error',
+        'Cannot store unsupported local storage database value',
+        {
+          error: serialized.error,
+          databaseName: this.name,
+        },
+      );
     }
 
-    this.storage.setItem(storageKey, serializedValue);
+    this.storage.setItem(storageKey, serialized.value);
 
     const change: SyncDatabaseChange = {
       type: found ? 'update' : 'create',
@@ -196,12 +203,31 @@ export class BrowserLocalStorageSyncDatabaseService
     }
   }
 
-  private stringifyJSON(value: unknown): string | null {
+  private stringifyJSON(
+    value: unknown,
+  ):
+    | { stringified: true; value: string }
+    | { stringified: false; error: Error } {
     try {
-      return JSON.stringify(value);
+      const serialized = JSON.stringify(value);
+      if (serialized === undefined) {
+        const error = new Error(
+          'JSON.stringify returned undefined for the provided value',
+        );
+        this.logger.error('Failed to stringify JSON for local storage', error);
+        return { stringified: false, error };
+      }
+
+      return { stringified: true, value: serialized };
     } catch (error) {
       this.logger.error('Failed to stringify JSON for local storage', error);
-      return null;
+      return {
+        stringified: false,
+        error:
+          error instanceof Error
+            ? error
+            : new Error('Failed to stringify JSON for local storage'),
+      };
     }
   }
 }

@@ -113,4 +113,28 @@ describe('BrowserLocalStorageSyncDatabaseService', () => {
     expect(window.localStorage.getItem(storageKey)).toBe(rawValue);
     expect(callback).not.toHaveBeenCalled();
   });
+
+  it.each([
+    ['undefined', undefined],
+    ['function', () => undefined],
+    ['symbol', Symbol('unsupported')],
+  ])('preserves raw storage when JSON.stringify cannot represent %s', async (_label, unsupportedValue) => {
+    const { service } = await setup();
+    const key = 'unsupported';
+    const storageKey = `${service.name}.${options.tableName}:${key}`;
+    const rawValue = '"existing value"';
+    const callback = vi.fn();
+    const abortController = new AbortController();
+
+    window.localStorage.setItem(storageKey, rawValue);
+    const setItem = vi.spyOn(window.localStorage, 'setItem');
+    service.subscribe(options, callback, abortController.signal);
+
+    expect(() =>
+      service.updateEntry(key, () => ({ value: unsupportedValue }), options),
+    ).toThrow('Cannot store unsupported local storage database value');
+    expect(setItem).not.toHaveBeenCalled();
+    expect(window.localStorage.getItem(storageKey)).toBe(rawValue);
+    expect(callback).not.toHaveBeenCalled();
+  });
 });
