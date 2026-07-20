@@ -100,12 +100,14 @@ export class NavigationService extends BaseService {
   }
 
   hookMount() {
-    this.syncRouteInfoAtom();
+    this.navigationVersion += 1;
+    this.store.set(this.$routeInfo, this.routerService.routeInfo);
     this.syncPageLifeCycleAtom();
     this.routerService.emitter.on(
       'event::router:route-update',
       () => {
-        this.syncRouteInfoAtom();
+        this.navigationVersion += 1;
+        this.store.set(this.$routeInfo, this.routerService.routeInfo);
       },
       this.abortSignal,
     );
@@ -238,10 +240,5 @@ export class NavigationService extends BaseService {
     const { current, previous } = this.routerService.lifeCycle;
     this.logger.debug(`page lifecycle changed from ${previous} to ${current}`);
     this.store.set(this.$lifeCycle, { current, previous });
-  }
-
-  private syncRouteInfoAtom() {
-    this.navigationVersion += 1;
-    this.store.set(this.$routeInfo, this.routerService.routeInfo);
   }
 }
