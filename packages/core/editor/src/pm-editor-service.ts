@@ -46,7 +46,6 @@ import type { MarkdownAssetReference } from './asset-file-plugin';
 import {
   type EditorSaveCoordinator,
   EditorSaveQueue,
-  type EditorSaveStatus,
 } from './editor-save-queue';
 import { setupExtensions } from './extensions';
 import { findHeadingIndexBySlug } from './heading-slug';
@@ -524,10 +523,6 @@ export class PmEditorService
     }
 
     return { status: 'missing' };
-  }
-
-  getSaveStatus(wsPath: string): EditorSaveStatus {
-    return this.saveQueue.getStatus(wsPath);
   }
 
   hasPendingOrFailedSave(wsPath?: string): boolean {
