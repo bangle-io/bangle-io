@@ -309,7 +309,7 @@ export class UserActivityService extends BaseService {
       });
     }
 
-    const lastSaved = await this.getLastSavedEntity(wsName, entityType);
+    const lastSaved = (await this.getRecent(wsName, entityType))[0];
     const now = Date.now();
 
     if (lastSaved) {
@@ -382,15 +382,6 @@ export class UserActivityService extends BaseService {
         [ACTIVITY_LOG_KEY]: updatedLogs,
       };
     });
-  }
-
-  private async getLastSavedEntity<T extends EntityType>(
-    wsName: string,
-    entityType: T,
-  ): Promise<ActivityLogEntry<T> | undefined> {
-    await this.mountPromise;
-    const recentEntities = await this.getRecent(wsName, entityType);
-    return recentEntities[0];
   }
 
   public async toggleStarItem(
