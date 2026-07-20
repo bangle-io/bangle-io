@@ -35,7 +35,6 @@ export class BrowserRouterService
     dependencies: null,
     private config: {
       basePath?: string;
-      isStatic?: boolean;
       strategy: RouteStrategy;
     },
   ) {
@@ -52,10 +51,6 @@ export class BrowserRouterService
 
   private get basePath() {
     return this.config.basePath ?? '';
-  }
-
-  private get isStatic() {
-    return this.config.isStatic ?? false;
   }
 
   get routeInfo() {
