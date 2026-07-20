@@ -4,8 +4,8 @@ import {
   type BaseServiceContext,
   createAppError,
 } from '@bangle.io/base-utils';
+import { bangleAppCommands } from '@bangle.io/commands';
 import { commandKeyToContext } from '@bangle.io/constants';
-import { T } from '@bangle.io/mini-js-utils';
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import type {
   Command,
@@ -187,38 +187,33 @@ describe('CommandDispatchService', () => {
 
   test('should dispatch a command with args successfully', async () => {
     const { mockLog, commandRegistry, dispatchService } = await setup();
-    const command = {
-      id: 'command::ui:native-fs-auth',
-      keywords: ['new', 'create', 'workspace'],
-      dependencies: { services: ['fileSystem'] },
-      omniSearch: 'global',
-      args: {
-        wsName: T.String,
-      },
-    } as const satisfies Command;
+    const command = bangleAppCommands.find(
+      (candidate) => candidate.id === 'command::ui:copy-workspace-path',
+    );
+    if (!command) {
+      throw new Error('Expected copy-workspace-path command');
+    }
 
     const handler = vi.fn();
 
     commandRegistry.register(command);
     commandRegistry.registerHandler({
-      id: 'command::ui:native-fs-auth',
+      id: 'command::ui:copy-workspace-path',
       handler,
     });
 
     dispatchService.dispatch(
-      'command::ui:native-fs-auth',
+      'command::ui:copy-workspace-path',
       {
-        wsName: 'test-ws',
+        wsPath: 'test-ws:note.md',
       },
       'testSource',
     );
 
     expect(handler).toHaveBeenCalledWith(
+      {},
       {
-        fileSystem: expect.any(TestService),
-      },
-      {
-        wsName: 'test-ws',
+        wsPath: 'test-ws:note.md',
       },
       {
         key: expect.any(String),
@@ -227,39 +222,39 @@ describe('CommandDispatchService', () => {
 
     expect(mockLog.debug).toBeCalledWith(
       '[command-dispatch]',
-      'Dispatching command::ui:native-fs-auth from testSource:',
+      'Dispatching command::ui:copy-workspace-path from testSource:',
       {
-        wsName: 'test-ws',
+        wsPath: 'test-ws:note.md',
       },
     );
 
     () => {
       // type checks
       dispatchService.dispatch(
-        'command::ui:native-fs-auth',
+        'command::ui:copy-workspace-path',
         // @ts-expect-error missing required arg
         null,
         'testSource',
       );
 
       dispatchService.dispatch(
-        'command::ui:native-fs-auth',
+        'command::ui:copy-workspace-path',
         // @ts-expect-error empty arg
         {},
         'testSource',
       );
 
       dispatchService.dispatch(
-        'command::ui:native-fs-auth',
+        'command::ui:copy-workspace-path',
         // @ts-expect-error incorrect arg type
-        { wsName: 3 },
+        { wsPath: 3 },
         'testSource',
       );
 
       dispatchService.dispatch(
-        'command::ui:native-fs-auth',
+        'command::ui:copy-workspace-path',
         {
-          wsName: 'test-ws',
+          wsPath: 'test-ws:note.md',
           // @ts-expect-error extra arg that is not specified in the command
           extra: 'extra',
         },

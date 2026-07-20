@@ -10,11 +10,6 @@ export const bangleAppCommands = [
   ...editorCommands,
 ];
 export type BangleAppCommand = (typeof bangleAppCommands)[number];
-export type EnabledBangleAppCommand = BangleAppCommand & Command;
-export function getEnabledCommands(): EnabledBangleAppCommand[] {
-  const commands: EnabledBangleAppCommand[] = bangleAppCommands;
-  return commands.filter((command) => !command.disabled);
-}
 
 function validate(commands: Command[]) {
   const commandIds = new Set(commands.map((command) => command.id));
