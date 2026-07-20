@@ -41,6 +41,16 @@ describe('getWebViewNavigationAction', () => {
     ).toBe('external');
   });
 
+  it.each([
+    'https://evil.example\\@app.bangle.io/notes',
+    'https://user@app.bangle.io/notes',
+    'https://app.bangle.io:65536/notes',
+  ])('rejects ambiguous or invalid authorities: %s', (requestUrl) => {
+    expect(getWebViewNavigationAction(requestUrl, productionUrl)).toBe(
+      'reject',
+    );
+  });
+
   it('allows an explicitly configured HTTP LAN origin', () => {
     const lanUrl = 'http://192.168.1.20:5173';
 
@@ -52,9 +62,12 @@ describe('getWebViewNavigationAction', () => {
     ).toBe('external');
   });
 
-  it('allows about pages and rejects URLs without an origin', () => {
+  it('only allows about:blank and rejects URLs without a trusted origin', () => {
     expect(getWebViewNavigationAction('about:blank', productionUrl)).toBe(
       'allow',
+    );
+    expect(getWebViewNavigationAction('about:srcdoc', productionUrl)).toBe(
+      'reject',
     );
     expect(
       getWebViewNavigationAction('javascript:alert(1)', productionUrl),

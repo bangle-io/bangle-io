@@ -6,7 +6,14 @@ const DEFAULT_PORTS: Record<string, string> = {
 };
 
 function getWebOrigin(url: string): string | undefined {
-  const match = /^([a-z][a-z0-9+.-]*):\/\/([^/?#]+)/i.exec(url);
+  // Hermes does not provide a reliable WHATWG URL implementation. Keep this
+  // parser deliberately narrower than browser URL syntax so ambiguous input
+  // is rejected instead of being interpreted differently by the WebView.
+  if (url.includes('\\')) {
+    return undefined;
+  }
+
+  const match = /^(https?):\/\/([^/?#]+)(?:[/?#]|$)/i.exec(url);
   if (!match) {
     return undefined;
   }
@@ -16,23 +23,33 @@ function getWebOrigin(url: string): string | undefined {
     return undefined;
   }
 
-  const protocol = `${rawProtocol.toLowerCase()}:`;
-  const authority = rawAuthority.slice(rawAuthority.lastIndexOf('@') + 1);
-  const portSeparator = authority.lastIndexOf(':');
-  const hasPort =
-    !authority.startsWith('[') && portSeparator > -1
-      ? portSeparator > 0
-      : authority.endsWith(']') === false && portSeparator > -1;
-  const host = hasPort ? authority.slice(0, portSeparator) : authority;
-  const port = hasPort ? authority.slice(portSeparator + 1) : undefined;
-
-  if (!host || (port !== undefined && !/^\d+$/.test(port))) {
+  if (rawAuthority.includes('@')) {
     return undefined;
   }
 
-  const effectivePort = port
-    ? String(Number(port))
-    : (DEFAULT_PORTS[protocol] ?? '');
+  const protocol = `${rawProtocol.toLowerCase()}:`;
+  const authorityMatch = rawAuthority.startsWith('[')
+    ? /^(\[[0-9a-f:.]+\])(?::(\d+))?$/i.exec(rawAuthority)
+    : /^([a-z0-9.-]+)(?::(\d+))?$/i.exec(rawAuthority);
+  const host = authorityMatch?.[1];
+  const port = authorityMatch?.[2];
+
+  if (!host) {
+    return undefined;
+  }
+
+  const numericPort = port === undefined ? undefined : Number(port);
+  if (
+    numericPort !== undefined &&
+    (!Number.isInteger(numericPort) || numericPort > 65_535)
+  ) {
+    return undefined;
+  }
+
+  const effectivePort =
+    numericPort === undefined
+      ? (DEFAULT_PORTS[protocol] ?? '')
+      : String(numericPort);
   return `${protocol}//${host.toLowerCase()}:${effectivePort}`;
 }
 
@@ -40,7 +57,7 @@ export function getWebViewNavigationAction(
   requestUrl: string,
   configuredWebUrl: string,
 ): WebViewNavigationAction {
-  if (requestUrl.startsWith('about:')) {
+  if (/^about:blank(?:[?#].*)?$/.test(requestUrl)) {
     return 'allow';
   }
 
