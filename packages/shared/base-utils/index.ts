@@ -62,7 +62,6 @@ export {
   safeNavigatorStorageGetDirectory,
   safeRequestAnimationFrame,
   safeRequestIdleCallback,
-  safeScrollIntoViewIfNeeded,
 } from './safe-js';
 export type { AppErrorName } from './throw-app-error';
 export {
