@@ -31,8 +31,6 @@ export type { Store } from '@bangle.io/types';
 
 export { default as waitForExpect } from 'wait-for-expect';
 
-export * from './test-service-setup';
-
 const themeManager = {
   currentPreference: THEME_MANAGER_CONFIG.defaultPreference,
   onThemeChange: () => () => {},
