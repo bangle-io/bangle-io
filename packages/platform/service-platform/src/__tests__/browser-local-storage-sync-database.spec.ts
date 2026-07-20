@@ -91,4 +91,26 @@ describe('BrowserLocalStorageSyncDatabaseService', () => {
     service.updateEntry('key2', () => ({ value: 'value2' }), options);
     expect(callback).not.toHaveBeenCalled();
   });
+
+  it('preserves malformed entries without updating or notifying subscribers', async () => {
+    const { service } = await setup();
+    const key = 'corrupt';
+    const storageKey = `${service.name}.${options.tableName}:${key}`;
+    const rawValue = '{ malformed json';
+    const update = vi.fn(() => ({ value: 'replacement' }));
+    const callback = vi.fn();
+    const abortController = new AbortController();
+
+    window.localStorage.setItem(storageKey, rawValue);
+    const setItem = vi.spyOn(window.localStorage, 'setItem');
+    service.subscribe(options, callback, abortController.signal);
+
+    expect(() => service.updateEntry(key, update, options)).toThrow(
+      'Cannot update malformed local storage database entry',
+    );
+    expect(update).not.toHaveBeenCalled();
+    expect(setItem).not.toHaveBeenCalled();
+    expect(window.localStorage.getItem(storageKey)).toBe(rawValue);
+    expect(callback).not.toHaveBeenCalled();
+  });
 });

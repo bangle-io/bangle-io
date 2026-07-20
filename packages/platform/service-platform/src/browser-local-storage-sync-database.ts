@@ -1,4 +1,8 @@
-import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
+import {
+  BaseService,
+  type BaseServiceContext,
+  throwAppError,
+} from '@bangle.io/base-utils';
 import { TypedBroadcastBus } from '@bangle.io/browser-utils';
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import { SERVICE_NAME } from '@bangle.io/constants';
@@ -65,10 +69,20 @@ export class BrowserLocalStorageSyncDatabaseService
       if (item === null) {
         return { found: false, value: undefined };
       }
+
       const parsed = this.parseJSON(item);
-      return parsed.parsed
-        ? { found: true, value: parsed.value }
-        : { found: false, value: undefined };
+      if (!parsed.parsed) {
+        throwAppError(
+          'error::database:unknown-error',
+          'Cannot update malformed local storage database entry',
+          {
+            error: parsed.error,
+            databaseName: this.name,
+          },
+        );
+      }
+
+      return { found: true, value: parsed.value };
     })();
 
     const updateResult = updateCallback({
@@ -167,12 +181,18 @@ export class BrowserLocalStorageSyncDatabaseService
 
   private parseJSON(
     item: string,
-  ): { parsed: true; value: unknown } | { parsed: false } {
+  ): { parsed: true; value: unknown } | { parsed: false; error: Error } {
     try {
       return { parsed: true, value: JSON.parse(item) };
     } catch (error) {
       this.logger.error('Failed to parse JSON from local storage', error);
-      return { parsed: false };
+      return {
+        parsed: false,
+        error:
+          error instanceof Error
+            ? error
+            : new Error('Failed to parse JSON from local storage'),
+      };
     }
   }
 
