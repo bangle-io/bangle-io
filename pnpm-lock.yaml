@@ -680,9 +680,6 @@ importers:
 
   packages/shared/base-utils:
     dependencies:
-      '@bangle.io/config':
-        specifier: workspace:*
-        version: link:../config
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../constants
