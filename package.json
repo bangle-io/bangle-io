@@ -41,7 +41,7 @@
   },
   "private": true,
   "scripts": {
-    "build": "pnpm run precursor && pnpm -r --filter \"browser-entry\" run build",
+    "build": "pnpm -r --filter \"browser-entry\" run build",
     "cf:login": "wrangler login",
     "cf:pages:deploy:production": "wrangler pages deploy packages/tooling/browser-entry/dist --branch production",
     "cf:pages:deploy:staging": "wrangler pages deploy packages/tooling/browser-entry/dist --branch staging",
@@ -74,7 +74,6 @@
     "lint": "biome check .",
     "local-ci-check": "bash local-ci-check.sh",
     "plop": "plop",
-    "precursor": "echo \"ok\"",
     "preview-production": "pnpm -r --filter \"browser-entry\" run preview-production",
     "start": "pnpm -r --filter \"browser-entry\" run dev",
     "storybook": "pnpm -r --filter \"storybook\" run storybook",
