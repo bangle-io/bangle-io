@@ -6,9 +6,6 @@ import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import { expect, test } from 'vitest';
 import { initializeServices } from '../index';
 
-test('works', () => {
-  expect(true).toBe(true);
-});
 test('initializeServices returns unique service names', async () => {
   const { commonOpts, rootEmitter, controller } = makeTestCommonOpts();
 
