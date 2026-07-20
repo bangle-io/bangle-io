@@ -106,18 +106,23 @@ export class BrowserLocalStorageSyncDatabaseService
       );
     }
 
+    // Local storage is the durable source of truth. Publish and return the
+    // exact JSON value that a reload will read, rather than a pre-serialization
+    // object that JSON may normalize (for example NaN or nested undefined).
+    const storedValue: unknown = JSON.parse(serialized.value);
+
     this.storage.setItem(storageKey, serialized.value);
 
     const change: SyncDatabaseChange = {
       type: found ? 'update' : 'create',
       tableName: options.tableName,
       key,
-      value: updateResult.value,
+      value: storedValue,
     };
 
     this.syncBus?.send(change);
 
-    return { value: updateResult.value, found: true };
+    return { value: storedValue, found: true };
   }
 
   deleteEntry(key: string, options: SyncDatabaseQueryOptions): void {

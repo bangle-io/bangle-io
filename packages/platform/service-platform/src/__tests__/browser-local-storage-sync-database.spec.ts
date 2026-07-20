@@ -137,4 +137,36 @@ describe('BrowserLocalStorageSyncDatabaseService', () => {
     expect(window.localStorage.getItem(storageKey)).toBe(rawValue);
     expect(callback).not.toHaveBeenCalled();
   });
+
+  it('returns and publishes the exact JSON value stored for a normalized object', async () => {
+    const { service } = await setup();
+    const callback = vi.fn();
+    const abortController = new AbortController();
+    const value = {
+      omitted: undefined,
+      array: [undefined, Number.NaN, Number.POSITIVE_INFINITY],
+      map: new Map([['key', 'value']]),
+    };
+
+    service.subscribe(options, callback, abortController.signal);
+    const result = service.updateEntry(
+      'normalized',
+      () => ({ value }),
+      options,
+    );
+    const stored = service.getEntry('normalized', options);
+    const normalized = {
+      array: [null, null, null],
+      map: {},
+    };
+
+    expect(result).toEqual({ found: true, value: normalized });
+    expect(stored).toEqual({ found: true, value: normalized });
+    expect(callback).toHaveBeenCalledWith({
+      type: 'create',
+      tableName: 'sync',
+      key: 'normalized',
+      value: normalized,
+    });
+  });
 });
