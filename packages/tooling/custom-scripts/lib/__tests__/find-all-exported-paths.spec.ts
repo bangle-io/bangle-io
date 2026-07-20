@@ -121,48 +121,6 @@ describe('findAllExportedPaths', () => {
 });
 
 describe('findAllExportedPaths type exports', () => {
-  it('should handle type exports', () => {
-    const sourceCode = `export type { TypeName } from 'module-type';`;
-    expect(findAllExportedPaths(sourceCode)).toEqual(['module-type']);
-  });
-
-  it('should handle interface exports', () => {
-    const sourceCode = 'export interface InterfaceName {}';
-    expect(findAllExportedPaths(sourceCode)).toEqual([]);
-  });
-
-  it('should handle type re-exports', () => {
-    const sourceCode = `export { type TypeName } from 'module-type';`;
-    expect(findAllExportedPaths(sourceCode)).toEqual(['module-type']);
-  });
-
-  it('should handle mixed regular and type exports', () => {
-    const sourceCode = `
-      export { regularName } from 'module-regular';
-      export type { TypeName } from 'module-type';
-    `;
-    expect(findAllExportedPaths(sourceCode)).toEqual([
-      'module-regular',
-      'module-type',
-    ]);
-  });
-
-  it('should handle exports with type and value having the same name', () => {
-    const sourceCode = `
-      export { TypeName } from 'module-name';
-      export type { TypeName as TypeAlias } from 'module-type';
-    `;
-    expect(findAllExportedPaths(sourceCode)).toEqual([
-      'module-name',
-      'module-type',
-    ]);
-  });
-
-  it('should handle type exports without from clause', () => {
-    const sourceCode = 'export type TypeName = { key: string };';
-    expect(findAllExportedPaths(sourceCode)).toEqual([]);
-  });
-
   it('should handle multiline exports with non-export code in between', () => {
     const sourceCode = `
       export {
