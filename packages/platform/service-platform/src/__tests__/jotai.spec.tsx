@@ -143,7 +143,7 @@ describe('atomStorage', () => {
       // @ts-expect-error -invalid type
       123,
     );
-    expect(store.get(atom)).toBe(123);
+    expect(store.get(atom)).toBe('valid');
     expect(syncDb.getEntry('test:invalidKey', { tableName: 'sync' })).toEqual({
       found: false,
       value: undefined,
@@ -153,6 +153,34 @@ describe('atomStorage', () => {
       'Invalid value for key',
       'test:invalidKey',
       123,
+    );
+  });
+
+  it('rejects non-JSON numbers before changing live or persisted state', async () => {
+    const { syncDb, logger, store, mockLog } = await setup();
+    const atom = atomStorage({
+      serviceName: 'test',
+      key: 'finiteNumber',
+      initValue: 42,
+      syncDb,
+      validator: T.Number,
+      logger,
+    });
+
+    store.set(atom, Number.NaN);
+
+    expect(store.get(atom)).toBe(42);
+    expect(syncDb.getEntry('test:finiteNumber', { tableName: 'sync' })).toEqual(
+      {
+        found: false,
+        value: undefined,
+      },
+    );
+    expect(mockLog.error).toHaveBeenCalledWith(
+      expect.any(String),
+      'Invalid value for key',
+      'test:finiteNumber',
+      Number.NaN,
     );
   });
 });

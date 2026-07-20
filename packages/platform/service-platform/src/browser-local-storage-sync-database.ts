@@ -1,6 +1,7 @@
 import {
   BaseService,
   type BaseServiceContext,
+  isJsonValue,
   throwAppError,
 } from '@bangle.io/base-utils';
 import { TypedBroadcastBus } from '@bangle.io/browser-utils';
@@ -8,6 +9,7 @@ import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import { SERVICE_NAME } from '@bangle.io/constants';
 import type {
   BaseAppSyncDatabase,
+  JsonValue,
   SyncDatabaseChange,
   SyncDatabaseQueryOptions,
 } from '@bangle.io/types';
@@ -39,7 +41,7 @@ export class BrowserLocalStorageSyncDatabaseService
   getEntry(
     key: string,
     options: SyncDatabaseQueryOptions,
-  ): { found: boolean; value: unknown } {
+  ): { found: boolean; value: JsonValue | undefined } {
     const storageKey = this.getStorageKey(key, options.tableName);
     const item = this.storage.getItem(storageKey);
 
@@ -57,11 +59,14 @@ export class BrowserLocalStorageSyncDatabaseService
 
   updateEntry(
     key: string,
-    updateCallback: (options: { value: unknown; found: boolean }) => null | {
-      value: unknown;
+    updateCallback: (options: {
+      value: JsonValue | undefined;
+      found: boolean;
+    }) => null | {
+      value: JsonValue;
     },
     options: SyncDatabaseQueryOptions,
-  ): { value: unknown; found: boolean } {
+  ): { value: JsonValue | undefined; found: boolean } {
     const storageKey = this.getStorageKey(key, options.tableName);
     const item = this.storage.getItem(storageKey);
 
@@ -94,6 +99,15 @@ export class BrowserLocalStorageSyncDatabaseService
       return { value: undefined, found: false };
     }
 
+    if (!isJsonValue(updateResult.value)) {
+      const error = new Error('Value is not JSON-safe');
+      throwAppError(
+        'error::database:unknown-error',
+        'Cannot store unsupported local storage database value',
+        { error, databaseName: this.name },
+      );
+    }
+
     const serialized = this.stringifyJSON(updateResult.value);
     if (!serialized.stringified) {
       throwAppError(
@@ -106,23 +120,18 @@ export class BrowserLocalStorageSyncDatabaseService
       );
     }
 
-    // Local storage is the durable source of truth. Publish and return the
-    // exact JSON value that a reload will read, rather than a pre-serialization
-    // object that JSON may normalize (for example NaN or nested undefined).
-    const storedValue: unknown = JSON.parse(serialized.value);
-
     this.storage.setItem(storageKey, serialized.value);
 
     const change: SyncDatabaseChange = {
       type: found ? 'update' : 'create',
       tableName: options.tableName,
       key,
-      value: storedValue,
+      value: updateResult.value,
     };
 
     this.syncBus?.send(change);
 
-    return { value: storedValue, found: true };
+    return { value: updateResult.value, found: true };
   }
 
   deleteEntry(key: string, options: SyncDatabaseQueryOptions): void {
@@ -145,8 +154,8 @@ export class BrowserLocalStorageSyncDatabaseService
     this.syncBus?.send(change);
   }
 
-  getAllEntries(options: SyncDatabaseQueryOptions): unknown[] {
-    const entries: unknown[] = [];
+  getAllEntries(options: SyncDatabaseQueryOptions): JsonValue[] {
+    const entries: JsonValue[] = [];
     const tablePrefix = this.getTablePrefix(options.tableName);
 
     for (let i = 0; i < this.storage.length; i++) {
@@ -193,9 +202,13 @@ export class BrowserLocalStorageSyncDatabaseService
 
   private parseJSON(
     item: string,
-  ): { parsed: true; value: unknown } | { parsed: false; error: Error } {
+  ): { parsed: true; value: JsonValue } | { parsed: false; error: Error } {
     try {
-      return { parsed: true, value: JSON.parse(item) };
+      const value: unknown = JSON.parse(item);
+      if (!isJsonValue(value)) {
+        throw new Error('Parsed local storage value is not JSON-safe');
+      }
+      return { parsed: true, value };
     } catch (error) {
       this.logger.error('Failed to parse JSON from local storage', error);
       return {
@@ -209,7 +222,7 @@ export class BrowserLocalStorageSyncDatabaseService
   }
 
   private stringifyJSON(
-    value: unknown,
+    value: JsonValue,
   ):
     | { stringified: true; value: string }
     | { stringified: false; error: Error } {

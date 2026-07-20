@@ -1,9 +1,10 @@
 import type { Logger } from '@bangle.io/logger';
 import type { BaseError, Validator } from '@bangle.io/mini-js-utils';
+import { isJsonValue } from '@bangle.io/mini-js-utils';
 import type { BaseAppSyncDatabase } from '@bangle.io/types';
 import type { Atom } from 'jotai';
 import { atom } from 'jotai';
-import { atomWithReducer, atomWithStorage, unwrap } from 'jotai/utils';
+import { atomWithReducer, atomWithStorage, RESET, unwrap } from 'jotai/utils';
 import type { SyncStorage } from 'jotai/vanilla/utils/atomWithStorage';
 import { wrapPromiseInAppErrorHandler } from './throw-app-error';
 
@@ -52,7 +53,7 @@ export function atomStorage<TValue>({
 }) {
   const storageKey = `${serviceName}:${inputKey}`;
 
-  const atom = atomWithStorage<TValue>(
+  const storageAtom = atomWithStorage<TValue>(
     storageKey,
     initValue,
     {
@@ -64,7 +65,7 @@ export function atomStorage<TValue>({
         return validator.validate(result.value) ? result.value : initValue;
       },
       setItem: (key, value) => {
-        if (!validator.validate(value)) {
+        if (!validator.validate(value) || !isJsonValue(value)) {
           logger.error('Invalid value for key', key, value);
           return;
         }
@@ -101,7 +102,34 @@ export function atomStorage<TValue>({
     { getOnInit: true },
   );
 
-  return atom;
+  type Update =
+    | TValue
+    | typeof RESET
+    | ((previous: TValue) => TValue | typeof RESET);
+
+  const isUpdater = (
+    update: Update,
+  ): update is (previous: TValue) => TValue | typeof RESET =>
+    typeof update === 'function';
+
+  return atom(
+    (get) => get(storageAtom),
+    (get, set, update: Update) => {
+      const nextValue = isUpdater(update) ? update(get(storageAtom)) : update;
+
+      if (nextValue === RESET) {
+        set(storageAtom, RESET);
+        return;
+      }
+
+      if (!validator.validate(nextValue) || !isJsonValue(nextValue)) {
+        logger.error('Invalid value for key', storageKey, nextValue);
+        return;
+      }
+
+      set(storageAtom, nextValue);
+    },
+  );
 }
 
 /**

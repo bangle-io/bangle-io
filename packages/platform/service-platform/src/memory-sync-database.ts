@@ -1,10 +1,16 @@
-import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
+import {
+  BaseService,
+  type BaseServiceContext,
+  isJsonValue,
+  throwAppError,
+} from '@bangle.io/base-utils';
 import { TypedBroadcastBus } from '@bangle.io/browser-utils';
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import { SERVICE_NAME } from '@bangle.io/constants';
 
 import type {
   BaseAppSyncDatabase,
+  JsonValue,
   SyncDatabaseChange,
   SyncDatabaseQueryOptions,
 } from '@bangle.io/types';
@@ -13,7 +19,7 @@ export class MemorySyncDatabaseService
   extends BaseService
   implements BaseAppSyncDatabase
 {
-  private storage = new Map<string, unknown>();
+  private storage = new Map<string, JsonValue>();
   private changeBus?: TypedBroadcastBus<SyncDatabaseChange>;
 
   constructor(context: BaseServiceContext, dependencies: null) {
@@ -33,7 +39,7 @@ export class MemorySyncDatabaseService
   getEntry(
     key: string,
     options: SyncDatabaseQueryOptions,
-  ): { found: boolean; value: unknown } {
+  ): { found: boolean; value: JsonValue | undefined } {
     const storageKey = this.getStorageKey(key, options.tableName);
     const value = this.storage.get(storageKey);
     return { found: value !== undefined, value };
@@ -41,11 +47,14 @@ export class MemorySyncDatabaseService
 
   updateEntry(
     key: string,
-    updateCallback: (options: { value: unknown; found: boolean }) => {
-      value: unknown;
+    updateCallback: (options: {
+      value: JsonValue | undefined;
+      found: boolean;
+    }) => {
+      value: JsonValue;
     } | null,
     options: SyncDatabaseQueryOptions,
-  ): { value: unknown; found: boolean } {
+  ): { value: JsonValue | undefined; found: boolean } {
     const storageKey = this.getStorageKey(key, options.tableName);
     const existingValue = this.storage.get(storageKey);
     const found = this.storage.has(storageKey);
@@ -53,6 +62,15 @@ export class MemorySyncDatabaseService
     const updateResult = updateCallback({ value: existingValue, found });
 
     if (updateResult) {
+      if (!isJsonValue(updateResult.value)) {
+        const error = new Error('Value is not JSON-safe');
+        throwAppError(
+          'error::database:unknown-error',
+          'Cannot store unsupported memory sync database value',
+          { error, databaseName: this.name },
+        );
+      }
+
       this.storage.set(storageKey, updateResult.value);
       this.publishChange({
         type: found ? 'update' : 'create',
@@ -80,9 +98,9 @@ export class MemorySyncDatabaseService
     }
   }
 
-  getAllEntries(options: SyncDatabaseQueryOptions): unknown[] {
+  getAllEntries(options: SyncDatabaseQueryOptions): JsonValue[] {
     const tablePrefix = this.getTablePrefix(options.tableName);
-    const entries: unknown[] = [];
+    const entries: JsonValue[] = [];
 
     for (const [key, value] of this.storage.entries()) {
       if (key.startsWith(tablePrefix)) {

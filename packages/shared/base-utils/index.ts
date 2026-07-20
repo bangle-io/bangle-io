@@ -9,6 +9,7 @@ export type {
   EventMessage,
   IfEquals,
   InferType,
+  JsonValue,
   Validator,
 } from '@bangle.io/mini-js-utils';
 export {
@@ -27,6 +28,7 @@ export {
   isChrome,
   isDarwin,
   isFirefox,
+  isJsonValue,
   isMac,
   isMobile,
   isPlainObject,
