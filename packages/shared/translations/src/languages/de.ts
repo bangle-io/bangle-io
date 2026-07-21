@@ -213,9 +213,40 @@ export const t = {
         openWorkspace: 'Arbeitsbereich öffnen',
         deleteWorkspace: 'Arbeitsbereich löschen',
       },
+      recovery: {
+        title: 'Wiederherstellen',
+        description:
+          'Bangle speichert regelmäßig Schnappschüsse Ihrer Notizen während der Bearbeitung. Stellen Sie jeden Schnappschuss als neue Notiz wieder her — Ihre aktuellen Notizen werden nie überschrieben.',
+        searchPlaceholder: 'Notizen durchsuchen...',
+        searchLabel: 'Schnappschüsse durchsuchen',
+        workspaceLabel: 'Arbeitsbereich',
+        allWorkspaces: 'Alle Arbeitsbereiche',
+        emptyTitle: 'Noch keine Schnappschüsse',
+        emptyDescription:
+          'Schnappschüsse werden automatisch erstellt, sobald Sie Notizen in diesem Arbeitsbereich bearbeiten.',
+        noMatches: 'Keine Schnappschüsse entsprechen Ihrer Suche.',
+        noteColumn: 'Notiz',
+        timeColumn: 'Erstellt',
+        wordCountColumn: 'Wörter',
+        actionsColumn: 'Aktionen',
+        viewAction: 'Ansehen',
+        recoverAction: 'Wiederherstellen',
+        loading: 'Schnappschüsse werden geladen...',
+        loadFailed: 'Schnappschüsse konnten nicht geladen werden.',
+        noWorkspaces:
+          'Erstellen Sie einen Arbeitsbereich, um Notiz-Schnappschüsse zu sammeln.',
+        previewTitle: ({ fileName }: { fileName: string }) =>
+          `Schnappschuss von ${fileName}`,
+        previewLoading: 'Schnappschuss wird geladen...',
+        previewUnavailable:
+          'Dieser Schnappschuss ist nicht mehr verfügbar. Er wurde möglicherweise bereinigt.',
+        recoverAsNewNote: 'Als neue Notiz wiederherstellen',
+        closeButton: 'Schließen',
+      },
       nav: {
         general: 'Allgemein',
         workspaces: 'Arbeitsbereiche',
+        recovery: 'Wiederherstellen',
       },
     },
     pageAsset: {
@@ -517,6 +548,12 @@ export const t = {
       fileCreated: ({ fileName }: { fileName: string }) =>
         `${fileName} erstellt`,
       fileCreateFailed: 'Datei konnte nicht erstellt werden',
+      snapshotNotFound:
+        'Schnappschuss nicht gefunden. Er wurde möglicherweise bereinigt.',
+      snapshotRecovered: ({ fileName }: { fileName: string }) =>
+        `Schnappschuss als ${fileName} wiederhergestellt`,
+      snapshotRecoverFailed:
+        'Schnappschuss konnte nicht wiederhergestellt werden',
       fileDeleted: ({ fileName }: { fileName: string }) =>
         `${fileName} geloescht`,
       fileDeleteFailed: 'Datei konnte nicht geloescht werden',

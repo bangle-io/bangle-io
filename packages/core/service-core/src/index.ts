@@ -9,6 +9,16 @@ export type {
 } from './file-system-service';
 export { FileSystemService } from './file-system-service';
 export { NavigationService } from './navigation-service';
+export {
+  computeSnapshotEvictions,
+  NOTE_SNAPSHOT_MAX_PER_WORKSPACE,
+  NOTE_SNAPSHOT_MIN_CAPTURE_INTERVAL_MS,
+} from './note-snapshot-policy';
+export type {
+  NoteSnapshotMetadata,
+  NoteSnapshotRecord,
+} from './note-snapshot-service';
+export { NoteSnapshotService } from './note-snapshot-service';
 export type { ShortcutServiceConfig } from './shortcut-service';
 export { ShortcutService } from './shortcut-service';
 export { UserActivityService } from './user-activity-service';

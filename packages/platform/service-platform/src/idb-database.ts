@@ -21,11 +21,13 @@ import type {
 } from '@bangle.io/types';
 
 export const DB_NAME = 'bangle-io-db';
-export const DB_VERSION = 2;
+// v3 adds the NoteSnapshots table.
+export const DB_VERSION = 3;
 
 export const ALL_TABLES = [
   DATABASE_TABLE_NAME.workspaceInfo,
   DATABASE_TABLE_NAME.misc,
+  DATABASE_TABLE_NAME.noteSnapshots,
 ] as const;
 
 export interface AppDatabase extends BangleDbSchema {
@@ -34,6 +36,10 @@ export interface AppDatabase extends BangleDbSchema {
     value: DbRecord<unknown>;
   };
   [DATABASE_TABLE_NAME.misc]: {
+    key: string;
+    value: DbRecord<unknown>;
+  };
+  [DATABASE_TABLE_NAME.noteSnapshots]: {
     key: string;
     value: DbRecord<unknown>;
   };
@@ -54,11 +60,11 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
       upgrade(db, oldVersion) {
         logger.info('IndexedDB upgrade started', { oldVersion });
 
-        if (oldVersion < 1) {
-          for (const table of ALL_TABLES) {
-            if (!db.objectStoreNames.contains(table)) {
-              db.createObjectStore(table, { keyPath: 'key' });
-            }
+        // Every table shares the same key-value shape, so creating whichever
+        // stores are missing is a complete migration for any older version.
+        for (const table of ALL_TABLES) {
+          if (!db.objectStoreNames.contains(table)) {
+            db.createObjectStore(table, { keyPath: 'key' });
           }
         }
 
@@ -107,6 +113,8 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
         return DATABASE_TABLE_NAME.workspaceInfo;
       case DATABASE_TABLE_NAME.misc:
         return DATABASE_TABLE_NAME.misc;
+      case DATABASE_TABLE_NAME.noteSnapshots:
+        return DATABASE_TABLE_NAME.noteSnapshots;
       default: {
         const _exhaustiveCheck: never = options.tableName;
         throw new Error(`Unknown table name: ${_exhaustiveCheck}`);

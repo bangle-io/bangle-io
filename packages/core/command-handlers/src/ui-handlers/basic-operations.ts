@@ -138,6 +138,10 @@ export const basicOperationsHandlers = [
     navigation.goSettingsPage('settings-workspaces');
   }),
 
+  c('command::ui:open-settings-recovery', ({ navigation }) => {
+    navigation.goSettingsPage('settings-recovery');
+  }),
+
   c(
     'command::ui:toggle-all-files',
     ({ workbenchState }, { prefillInput }, key) => {

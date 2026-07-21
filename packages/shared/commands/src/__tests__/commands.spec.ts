@@ -20,6 +20,7 @@ const expectedOmniSearchCommandIds: Record<OmniSearchScope, string[]> = {
     'command::ui:delete-workspace-dialog',
     'command::ui:open-settings',
     'command::ui:open-settings-general',
+    'command::ui:open-settings-recovery',
     'command::ui:open-settings-workspaces',
     'command::ui:reload-app',
     'command::ui:switch-editor-engine',

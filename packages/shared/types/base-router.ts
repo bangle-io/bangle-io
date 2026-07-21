@@ -45,6 +45,13 @@ export type AppRouteInfo =
       };
     }
   | {
+      route: 'settings-recovery';
+      metadata?: Record<string, string>;
+      payload: {
+        returnTo?: string;
+      };
+    }
+  | {
       route: 'welcome';
       metadata?: Record<string, string>;
       payload: Record<string, never>;

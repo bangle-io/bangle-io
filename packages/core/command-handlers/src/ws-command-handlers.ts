@@ -553,6 +553,59 @@ export const wsCommandHandlers = [
   }),
 
   c(
+    'command::ws:recover-note-snapshot',
+    async ({ noteSnapshot, fileSystem, navigation }, { snapshotId }) => {
+      const snapshot = await noteSnapshot.getSnapshot(snapshotId);
+      if (!snapshot) {
+        toast.error(t.app.toasts.snapshotNotFound);
+        return;
+      }
+
+      const originalPath = WsPath.fromString(snapshot.wsPath).asFile();
+      if (!originalPath) {
+        toast.error(t.app.toasts.snapshotRecoverFailed);
+        return;
+      }
+
+      // Recovery always lands in a fresh note beside the original — the
+      // current note content is never overwritten. Strip a previous
+      // '-recovered-<n>' suffix so recovering a recovered note doesn't stack.
+      const base =
+        originalPath.fileNameWithoutExtension.replace(/-recovered-\d+$/, '') ||
+        originalPath.fileNameWithoutExtension;
+
+      let newWsPath: string | undefined;
+      for (let attempt = 1; attempt <= 100; attempt++) {
+        const candidate = originalPath.replaceFileName(
+          `${base}-recovered-${attempt}${WsPath.DEFAULT_NOTE_EXTENSION}`,
+        ).wsPath;
+        if (!(await fileSystem.exists(candidate))) {
+          newWsPath = candidate;
+          break;
+        }
+      }
+      if (!newWsPath) {
+        toast.error(t.app.toasts.snapshotRecoverFailed);
+        return;
+      }
+
+      try {
+        await fileSystem.createTextFile(newWsPath, snapshot.content);
+      } catch (error) {
+        toast.error(t.app.toasts.snapshotRecoverFailed);
+        throw error;
+      }
+
+      toast.success(
+        t.app.toasts.snapshotRecovered({
+          fileName: WsPath.assertFile(newWsPath).fileName,
+        }),
+      );
+      navigation.goWsPath(newWsPath);
+    },
+  ),
+
+  c(
     'command::ws:clone-note',
     async ({ workspaceState, fileSystem, navigation }, _args, key) => {
       const { store } = getCtx(key);

@@ -23,6 +23,7 @@ import {
   EditorService,
   FileSystemService,
   NavigationService,
+  NoteSnapshotService,
   ShortcutService,
   type ShortcutServiceConfig,
   UserActivityService,
@@ -56,6 +57,7 @@ export const coreServiceClasses = {
   commandRegistry: CommandRegistryService,
   fileSystem: FileSystemService,
   navigation: NavigationService,
+  noteSnapshot: NoteSnapshotService,
   shortcut: ShortcutService,
   editorService: EditorService,
   workbenchState: WorkbenchStateService,
@@ -259,6 +261,7 @@ function toCoreServices(s: CoreInstances): CoreServices {
     commandRegistry: s.commandRegistry,
     fileSystem: s.fileSystem,
     navigation: s.navigation,
+    noteSnapshot: s.noteSnapshot,
     shortcut: s.shortcut,
     editorService: s.editorService,
     workbenchState: s.workbenchState,
@@ -353,6 +356,10 @@ export function createServiceSetup<
       })),
     ),
     navigation: slot(NavigationService),
+    noteSnapshot: slot(
+      NoteSnapshotService,
+      withOverride('noteSnapshot', () => ({})),
+    ),
     shortcut: slot(
       ShortcutService,
       withOverride('shortcut', () => ({
@@ -460,6 +467,7 @@ export function createServiceSetup<
       commandRegistry: s.commandRegistry,
       fileSystem: s.fileSystem,
       navigation: s.navigation,
+      noteSnapshot: s.noteSnapshot,
       shortcut: s.shortcut,
       editorService: s.editorService,
       workbenchState: s.workbenchState,

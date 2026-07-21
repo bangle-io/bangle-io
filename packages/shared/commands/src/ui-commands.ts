@@ -10,8 +10,11 @@ import { narrow } from './common';
 // stable, so the commands are written inline (rather than generated) to keep
 // per-command literal types flowing into `BangleAppCommand` without a cast.
 // The `command.spec` test asserts these stay in sync with SETTINGS_PAGE_DEFINITIONS.
-const [GENERAL_SETTINGS_PAGE, WORKSPACES_SETTINGS_PAGE] =
-  SETTINGS_PAGE_DEFINITIONS;
+const [
+  GENERAL_SETTINGS_PAGE,
+  WORKSPACES_SETTINGS_PAGE,
+  RECOVERY_SETTINGS_PAGE,
+] = SETTINGS_PAGE_DEFINITIONS;
 
 // pattern command::ui:{action}-{target}
 export const uiCommands = narrow([
@@ -102,6 +105,17 @@ export const uiCommands = narrow([
     id: WORKSPACES_SETTINGS_PAGE.commandId,
     title: WORKSPACES_SETTINGS_PAGE.commandTitle,
     keywords: [...WORKSPACES_SETTINGS_PAGE.commandKeywords],
+    omniSearch: 'global',
+    dependencies: {
+      services: ['navigation'],
+    },
+    autoFocusEditor: false,
+    args: null,
+  },
+  {
+    id: RECOVERY_SETTINGS_PAGE.commandId,
+    title: RECOVERY_SETTINGS_PAGE.commandTitle,
+    keywords: [...RECOVERY_SETTINGS_PAGE.commandKeywords],
     omniSearch: 'global',
     dependencies: {
       services: ['navigation'],

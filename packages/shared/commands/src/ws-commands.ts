@@ -177,6 +177,17 @@ export const wsCommands = narrow([
     args: null,
   },
   {
+    id: 'command::ws:recover-note-snapshot',
+    title: 'Recover Note Snapshot',
+    omniSearch: false,
+    dependencies: {
+      services: ['noteSnapshot', 'fileSystem', 'navigation'],
+    },
+    args: {
+      snapshotId: T.String,
+    },
+  },
+  {
     id: 'command::ws:daily-note',
     title: 'Open Daily Note',
     keywords: ['daily', 'note', 'today', 'journal'],

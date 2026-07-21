@@ -32,6 +32,22 @@ export const SETTINGS_PAGE_DEFINITIONS = [
     commandTitle: 'Settings - Workspaces',
     commandKeywords: ['settings', 'preferences', 'workspaces', 'workspace'],
   },
+  {
+    id: 'recovery',
+    route: 'settings-recovery',
+    commandId: 'command::ui:open-settings-recovery',
+    commandTitle: 'Settings - Recover',
+    commandKeywords: [
+      'settings',
+      'recover',
+      'recovery',
+      'snapshot',
+      'snapshots',
+      'history',
+      'backup',
+      'restore',
+    ],
+  },
 ] as const;
 export type SettingsPageDefinition = (typeof SETTINGS_PAGE_DEFINITIONS)[number];
 export type SettingsPageId = SettingsPageDefinition['id'];
@@ -115,6 +131,7 @@ export const SERVICE_NAME = {
   memorySyncDatabaseService: 'memory-sync-database',
   navigationService: 'navigation-service',
   nodeErrorHandlerService: 'node-error-handler',
+  noteSnapshotService: 'note-snapshot',
   shortcutService: 'shortcut',
   testErrorHandlerService: 'test-error-handler',
   userActivityService: 'user-activity',
@@ -142,4 +159,6 @@ export const DATABASE_TABLE_NAME = {
   workspaceInfo: 'WorkspaceInfo',
   // a dump table for all the other information
   misc: 'MiscTable',
+  // point-in-time copies of note content kept for user-driven recovery
+  noteSnapshots: 'NoteSnapshots',
 } as const;

@@ -135,6 +135,13 @@ export function handleRouteInfo(
       };
     }
 
+    case 'settings-recovery': {
+      return {
+        route: 'settings-recovery',
+        payload: params.returnTo ? { returnTo: params.returnTo } : {},
+      };
+    }
+
     default:
       return { route: 'not-found', payload: { path: route } };
   }
