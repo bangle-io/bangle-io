@@ -21,13 +21,14 @@ import type {
 } from '@bangle.io/types';
 
 export const DB_NAME = 'bangle-io-db';
-// v3 adds the NoteSnapshots table.
-export const DB_VERSION = 3;
+// v3/v4 add the note snapshot tables (metadata and content bodies).
+export const DB_VERSION = 4;
 
 export const ALL_TABLES = [
   DATABASE_TABLE_NAME.workspaceInfo,
   DATABASE_TABLE_NAME.misc,
   DATABASE_TABLE_NAME.noteSnapshots,
+  DATABASE_TABLE_NAME.noteSnapshotsContent,
 ] as const;
 
 export interface AppDatabase extends BangleDbSchema {
@@ -40,6 +41,10 @@ export interface AppDatabase extends BangleDbSchema {
     value: DbRecord<unknown>;
   };
   [DATABASE_TABLE_NAME.noteSnapshots]: {
+    key: string;
+    value: DbRecord<unknown>;
+  };
+  [DATABASE_TABLE_NAME.noteSnapshotsContent]: {
     key: string;
     value: DbRecord<unknown>;
   };
@@ -69,6 +74,27 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
         }
 
         logger.info('IndexedDB upgrade completed', { oldVersion });
+      },
+      blocked(currentVersion, blockedVersion) {
+        // A tab running an older app version still holds the database open;
+        // our upgrade (and therefore app init) waits until it lets go.
+        logger.warn('IndexedDB upgrade blocked by another open tab', {
+          currentVersion,
+          blockedVersion,
+        });
+      },
+      blocking: () => {
+        // A newer app version in another tab wants to upgrade. Release our
+        // connection so it can proceed; our subsequent database operations
+        // will fail and surface through the normal error path, which is
+        // preferable to indefinitely blocking the up-to-date tab.
+        logger.warn(
+          'Closing IndexedDB connection so a newer app version can upgrade',
+        );
+        this.db?.close();
+      },
+      terminated: () => {
+        logger.error('IndexedDB connection was unexpectedly terminated');
       },
     });
 
@@ -115,6 +141,8 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
         return DATABASE_TABLE_NAME.misc;
       case DATABASE_TABLE_NAME.noteSnapshots:
         return DATABASE_TABLE_NAME.noteSnapshots;
+      case DATABASE_TABLE_NAME.noteSnapshotsContent:
+        return DATABASE_TABLE_NAME.noteSnapshotsContent;
       default: {
         const _exhaustiveCheck: never = options.tableName;
         throw new Error(`Unknown table name: ${_exhaustiveCheck}`);

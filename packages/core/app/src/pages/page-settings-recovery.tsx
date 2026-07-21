@@ -130,13 +130,18 @@ export function RecoverySettingsPage() {
       record: undefined,
       loading: true,
     });
-    void noteSnapshot.getSnapshot(snapshot.id).then((record) => {
-      setPreview((current) =>
-        current && current.snapshotId === snapshot.id
-          ? { ...current, record, loading: false }
-          : current,
-      );
-    });
+    void noteSnapshot
+      .getSnapshot(snapshot.id)
+      // A failed read falls through to record: undefined, which renders the
+      // "snapshot unavailable" message instead of loading forever.
+      .catch(() => undefined)
+      .then((record) => {
+        setPreview((current) =>
+          current && current.snapshotId === snapshot.id
+            ? { ...current, record, loading: false }
+            : current,
+        );
+      });
   };
 
   const recoverSnapshot = (snapshotId: string) => {

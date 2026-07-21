@@ -1,6 +1,7 @@
 import { assertIsDefined } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import type { BangleAppCommand } from '@bangle.io/commands';
+import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import type { EditorEngineId } from '@bangle.io/constants';
 import type { CoreServices, EditorEngineContract } from '@bangle.io/context';
 import { type EditorSaveCoordinator, PmEditorService } from '@bangle.io/editor';
@@ -358,7 +359,13 @@ export function createServiceSetup<
     navigation: slot(NavigationService),
     noteSnapshot: slot(
       NoteSnapshotService,
-      withOverride('noteSnapshot', () => ({})),
+      withOverride('noteSnapshot', () => ({
+        emitter: rootEmitter.scoped(
+          ['event::file:update'],
+          commonOpts.rootAbortSignal,
+        ),
+        selfSenderId: BROWSING_CONTEXT_ID,
+      })),
     ),
     shortcut: slot(
       ShortcutService,

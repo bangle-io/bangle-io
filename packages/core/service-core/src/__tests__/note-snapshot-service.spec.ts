@@ -168,6 +168,55 @@ describe('NoteSnapshotService', () => {
     controller.abort();
   });
 
+  it('re-captures despite the throttle after another tab updates the note', async () => {
+    const { controller, services, testEnv } = await setup({
+      minCaptureIntervalMs: 60_000,
+    });
+    await services.fileSystem.createTextFile(NOTE_WS_PATH, 'v1');
+
+    await writeNote(services, NOTE_WS_PATH, 'v2');
+    expect(await services.noteSnapshot.listSnapshots()).toHaveLength(1);
+
+    // Simulate another tab's save arriving over the cross-tab event bridge:
+    // same event shape, but a foreign sender id.
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-content-update',
+      wsPath: NOTE_WS_PATH,
+      sender: { id: 'some-other-tab', tag: 'file-system-service' },
+    });
+
+    // The next local save must snapshot the other writer's content even
+    // though this tab captured less than a minute ago. (Both captures fall in
+    // the same 10-minute retention bucket, so the newest one supersedes the
+    // older rather than adding a row — without the foreign event the newest
+    // snapshot would still hold 'v1'.)
+    await writeNote(services, NOTE_WS_PATH, 'v3');
+    const snapshots = await services.noteSnapshot.listSnapshots();
+    const newest = await services.noteSnapshot.getSnapshot(
+      snapshots[0]?.id ?? '',
+    );
+    expect(newest?.content).toBe('v2');
+    controller.abort();
+  });
+
+  it('skips notes larger than the snapshot size limit', async () => {
+    const { controller, services } = await setup();
+    await services.fileSystem.createTextFile(NOTE_WS_PATH, 'small start');
+
+    const huge = `# big\n${'word '.repeat(1_000_000)}`;
+    await services.fileSystem.writeFile(
+      NOTE_WS_PATH,
+      new File([huge], 'note.md', { type: 'text/plain' }),
+    );
+    // First overwrite captured the small pre-edit content.
+    expect(await services.noteSnapshot.listSnapshots()).toHaveLength(1);
+
+    // Overwriting the huge note does not snapshot the huge content.
+    await writeNote(services, NOTE_WS_PATH, 'small again');
+    expect(await services.noteSnapshot.listSnapshots()).toHaveLength(1);
+    controller.abort();
+  });
+
   it('evicts old snapshots beyond the workspace cap, preferring recent ones', async () => {
     vi.useFakeTimers({ toFake: ['Date'] });
     vi.setSystemTime(new Date('2026-07-21T00:00:00Z'));

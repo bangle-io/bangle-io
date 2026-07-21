@@ -159,6 +159,9 @@ export const DATABASE_TABLE_NAME = {
   workspaceInfo: 'WorkspaceInfo',
   // a dump table for all the other information
   misc: 'MiscTable',
-  // point-in-time copies of note content kept for user-driven recovery
+  // metadata of point-in-time note copies kept for user-driven recovery
   noteSnapshots: 'NoteSnapshots',
+  // the (potentially large) content bodies of note snapshots, keyed by the
+  // same snapshot id, so listing/eviction never has to load content
+  noteSnapshotsContent: 'NoteSnapshotsContent',
 } as const;
