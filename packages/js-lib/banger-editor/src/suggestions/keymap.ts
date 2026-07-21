@@ -1,4 +1,5 @@
 import { keybinding, PRIORITY } from '../common';
+import type { EditorView } from '../pm';
 import { store } from '../store';
 import {
   $suggestion,
@@ -20,10 +21,14 @@ export const suggestionKeymap = () =>
           if (suggestion) {
             // removeSuggestMark keeps typed trigger text but deletes
             // synthetic (programmatically opened) triggers entirely.
-            return removeSuggestMark({
+            const handled = removeSuggestMark({
               markName: suggestion.markName,
               selection: state.selection,
             })(state, dispatch, view);
+            if (handled && view) {
+              resyncDOMCursor(view);
+            }
+            return handled;
           }
           return false;
         },
@@ -101,3 +106,19 @@ export const suggestionKeymap = () =>
     'suggestion',
     PRIORITY.suggestionKey,
   );
+
+/**
+ * Removing a suggestion mark unwraps the text node that owns the browser
+ * selection. Safari can leave its native caret associated with that old DOM
+ * shape even though ProseMirror's selection is unchanged. Its next native
+ * Option-Backspace then inserts a paragraph instead of deleting backward.
+ * Explicitly collapsing the DOM selection onto the current document node
+ * keeps the browser and editor selections aligned after Escape.
+ */
+function resyncDOMCursor(view: EditorView) {
+  if (!view.hasFocus() || !view.state.selection.empty) {
+    return;
+  }
+  const { node, offset } = view.domAtPos(view.state.selection.head);
+  view.dom.ownerDocument.getSelection()?.collapse(node, offset);
+}

@@ -3,6 +3,7 @@ import {
   collapseEditorSelectionAfterText,
   createBrowserWorkspaceAndNote,
   getEditorLocator,
+  isDarwin,
   readStoredMarkdown,
   waitForEditorFocus,
   writeStoredMarkdown,
@@ -14,6 +15,36 @@ import {
 test.use({ locale: 'en-US' });
 
 const FIXED_CALENDAR_DATE = new Date('2028-12-15T12:00:00');
+
+test('option backspace deletes a slash query after Escape', async ({
+  page,
+}) => {
+  test.skip(!isDarwin, 'Option+Backspace is a macOS word-delete shortcut');
+
+  const workspaceName = 'slash-command-option-backspace';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('/');
+  await expect(page.getByTestId('slash-command-menu')).toBeVisible();
+  await page.keyboard.insertText('////');
+
+  await page.keyboard.press('Escape');
+  await expect(page.getByTestId('slash-command-menu')).toBeHidden();
+  await page.keyboard.down('Alt');
+  await page.keyboard.press('Backspace');
+  await page.keyboard.up('Alt');
+
+  await expect(editor.locator('p')).toHaveCount(1);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe('');
+});
 
 test('slash command stays active with multiple suggestion providers registered', async ({
   page,
