@@ -140,6 +140,27 @@ export const uiCommands = narrow([
     },
   },
   {
+    id: 'command::ui:recover-note',
+    title: 'Recover Note',
+    omniSearch: 'note',
+    keywords: [
+      'recover',
+      'restore',
+      'snapshot',
+      'history',
+      'version',
+      'versions',
+      'backup',
+    ],
+    dependencies: {
+      services: ['navigation', 'workspaceState'],
+    },
+    autoFocusEditor: false,
+    args: {
+      wsPath: T.Optional(T.String),
+    },
+  },
+  {
     id: 'command::ui:delete-note-dialog',
     title: 'Delete Note',
     omniSearch: 'note',

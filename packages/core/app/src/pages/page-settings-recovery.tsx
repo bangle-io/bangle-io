@@ -64,10 +64,22 @@ function formatDateTime(timestamp: number) {
 }
 
 export function RecoverySettingsPage() {
-  const { commandDispatcher, noteSnapshot, workspaceState } = useCoreServices();
+  const { commandDispatcher, navigation, noteSnapshot, workspaceState } =
+    useCoreServices();
   const workspaces = useAtomValue(workspaceState.$workspaces);
+  const routeInfo = useAtomValue(navigation.$routeInfo);
+  // Commands (e.g. "Recover Note") can deep-link here with a prefilled filter.
+  const routeSearch =
+    routeInfo.route === 'settings-recovery'
+      ? routeInfo.payload.search
+      : undefined;
   const [workspaceFilter, setWorkspaceFilter] = React.useState(ALL_WORKSPACES);
-  const [search, setSearch] = React.useState('');
+  const [search, setSearch] = React.useState(routeSearch ?? '');
+  React.useEffect(() => {
+    if (routeSearch !== undefined) {
+      setSearch(routeSearch);
+    }
+  }, [routeSearch]);
   const [listState, setListState] = React.useState<SnapshotListState>({
     status: 'loading',
   });

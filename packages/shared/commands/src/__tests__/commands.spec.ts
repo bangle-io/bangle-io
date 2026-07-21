@@ -50,6 +50,7 @@ const expectedOmniSearchCommandIds: Record<OmniSearchScope, string[]> = {
     'command::ui:focus-editor',
     'command::ui:move-note-dialog',
     'command::ui:paste-from-markdown',
+    'command::ui:recover-note',
     'command::ui:rename-note-dialog',
     'command::ui:toggle-heading-collapse',
     'command::ui:toggle-wide-editor',

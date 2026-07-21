@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import {
   createBrowserWorkspaceAndNote,
   getEditorLocator,
+  openOmniSearch,
   readStoredMarkdown,
   waitForEditorFocus,
   writeStoredMarkdown,
@@ -45,7 +46,16 @@ test('editing a note captures a snapshot that can be viewed and recovered as a n
     .poll(async () => readStoredMarkdown(page, workspaceName, noteName))
     .toContain('overwritten');
 
-  await openRecoverySettings(page);
+  // The note-scoped "Recover Note" omni command deep-links to the Recover
+  // page with the search prefilled to this note's versions.
+  const commandInput = await openOmniSearch(page);
+  await commandInput.fill('Recover Note');
+  await page.getByRole('option', { name: 'Recover Note' }).click();
+  await expect(
+    page.getByRole('heading', { name: 'Recover' }).first(),
+  ).toBeVisible();
+  const search = page.getByTestId('settings-recovery-search');
+  await expect(search).toHaveValue(`${workspaceName}:draft.md`);
 
   // The snapshot row shows the note, and its word count.
   const row = page.getByTestId('settings-recovery-row').first();
@@ -53,7 +63,6 @@ test('editing a note captures a snapshot that can be viewed and recovered as a n
   await expect(row).toContainText('6');
 
   // Searching narrows the table; a non-matching query shows the empty state.
-  const search = page.getByTestId('settings-recovery-search');
   await search.fill('no-such-note');
   await expect(page.getByTestId('settings-recovery-row')).toHaveCount(0);
   await expect(page.getByText('No snapshots match your search.')).toBeVisible();

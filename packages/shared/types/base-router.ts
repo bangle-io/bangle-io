@@ -49,6 +49,8 @@ export type AppRouteInfo =
       metadata?: Record<string, string>;
       payload: {
         returnTo?: string;
+        /** Prefills the snapshot search filter (e.g. a note's wsPath). */
+        search?: string;
       };
     }
   | {
