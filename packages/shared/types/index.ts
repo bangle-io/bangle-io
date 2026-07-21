@@ -12,6 +12,7 @@ export type * from './base-database';
 export type * from './base-file-storage';
 export type * from './base-router';
 export type * from './commands';
+export type * from './desktop-bridge';
 export type * from './emitter';
 export type * from './services';
 export type * from './workspace';

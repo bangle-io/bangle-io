@@ -1,5 +1,10 @@
 export { BrowserErrorHandlerService } from './browser-error-handler';
 export { BrowserLocalStorageSyncDatabaseService } from './browser-local-storage-sync-database';
+export {
+  containsFileSystemHandle,
+  DesktopHybridDatabaseService,
+} from './desktop-hybrid-database';
+export { DesktopNativeDatabaseService } from './desktop-native-database';
 export { FileStorageIndexedDB } from './file-storage-indexeddb';
 export { FileStorageMemory } from './file-storage-memory';
 export { FileStorageNativeFs } from './file-storage-nativefs';

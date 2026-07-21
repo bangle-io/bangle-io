@@ -45,6 +45,12 @@ for (const requiredPath of [
 const userDataDir = await NodeFSP.mkdtemp(
   NodePath.join(NodeOS.tmpdir(), 'bangle-desktop-smoke-'),
 );
+// The native config store writes one JSON file per table under <userData>/config.
+const configWorkspaceInfoPath = NodePath.join(
+  userDataDir,
+  'config',
+  'WorkspaceInfo.json',
+);
 const workspaceName = `desktop-smoke-${Date.now()}`;
 const noteName = 'smoke-note';
 const noteContent = `Desktop smoke ${Date.now()}`;
@@ -190,6 +196,45 @@ async function waitForEditorText(page, expected, label) {
   );
 }
 
+async function readConfigWorkspaceNames() {
+  let raw;
+  try {
+    raw = await NodeFSP.readFile(configWorkspaceInfoPath, 'utf8');
+  } catch (error) {
+    if (error?.code === 'ENOENT') {
+      return [];
+    }
+    throw error;
+  }
+  const parsed = JSON.parse(raw);
+  return Object.values(parsed)
+    .map((entry) =>
+      entry && typeof entry === 'object' ? entry.name : undefined,
+    )
+    .filter((name) => typeof name === 'string');
+}
+
+async function waitForWorkspaceInConfigFile(label) {
+  const deadline = Date.now() + 10_000;
+  let lastNames = [];
+
+  while (Date.now() < deadline) {
+    lastNames = await readConfigWorkspaceNames();
+    if (lastNames.includes(workspaceName)) {
+      return;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+
+  throw new Error(
+    `[desktop-smoke] Expected workspace ${JSON.stringify(
+      workspaceName,
+    )} in the native config store after ${label} (${configWorkspaceInfoPath}); found ${JSON.stringify(
+      lastNames,
+    )}.`,
+  );
+}
+
 let app = await launchApp();
 let page = await firstWindow(app);
 
@@ -199,6 +244,12 @@ try {
 
   console.log('[desktop-smoke] Creating Browser workspace and note.');
   await createBrowserWorkspaceAndNote(page);
+
+  console.log(
+    '[desktop-smoke] Verifying workspace persisted to the native config store.',
+  );
+  await waitForWorkspaceInConfigFile('create');
+
   await page.locator(editorSelector).click();
   await page.locator(editorSelector).pressSequentially(noteContent, {
     delay: 10,
@@ -216,6 +267,10 @@ try {
   await app.close();
   app = await launchApp();
   page = await firstWindow(app);
+
+  // The workspace list must come back from the native config file, not Chromium.
+  await waitForWorkspaceInConfigFile('restart');
+
   await openNoteRoute(page);
   await page.locator(editorSelector).waitFor();
 

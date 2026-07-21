@@ -104,6 +104,8 @@ export const SERVICE_NAME = {
   browserRouterService: 'browser-router',
   commandDispatchService: 'command-dispatch',
   commandRegistryService: 'command-registry',
+  desktopHybridDatabaseService: 'desktop-hybrid-database',
+  desktopNativeDatabaseService: 'desktop-native-database',
   editorService: 'editor',
   fileStorageIndexedDBService: 'file-storage-indexeddb',
   fileStorageMemoryService: 'file-storage-memory',

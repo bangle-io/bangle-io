@@ -19,6 +19,8 @@ import {
   BrowserErrorHandlerService,
   BrowserLocalStorageSyncDatabaseService,
   BrowserRouterService,
+  DesktopHybridDatabaseService,
+  DesktopNativeDatabaseService,
   FileStorageIndexedDB,
   FileStorageNativeFs,
   HashStrategy,
@@ -27,7 +29,9 @@ import {
 import type {
   BaseServiceCommonOptions,
   CommandHandler,
+  DesktopConfigBridge,
   RootEmitter,
+  WindowWithDesktopBridge,
 } from '@bangle.io/types';
 import { createServiceSetup } from './service-setup';
 
@@ -38,6 +42,18 @@ export function readEditorEngineFromUrl(
     EDITOR_ENGINE_QUERY_PARAM,
   );
   return isEditorEngineId(engineId) ? engineId : DEFAULT_EDITOR_ENGINE;
+}
+
+/**
+ * The native config bridge the Electron preload injects on `window` before any
+ * renderer script runs. Present only inside the desktop shell; `undefined` in a
+ * plain browser, which keeps the browser wiring on IndexedDB.
+ */
+function getDesktopConfigBridge(): DesktopConfigBridge | undefined {
+  if (typeof window === 'undefined') {
+    return undefined;
+  }
+  return (window as WindowWithDesktopBridge).bangleDesktop?.configDb;
 }
 
 export function initializeServices(
@@ -54,7 +70,10 @@ export function initializeServices(
   // setup is created and only runs after services are instantiated.
   let getWorkspaceOps: (() => WorkspaceOpsService) | undefined;
 
-  const browserPlatformServices = {
+  // Platform slots shared by the browser and desktop composition. Only the
+  // `database` seam differs between environments (see below); everything here —
+  // including the localStorage sync database — is identical.
+  const commonPlatformServices = {
     errorService: slot(BrowserErrorHandlerService, () => ({
       onError: (params) => {
         rootEmitter.emit('event::error:uncaught-error', {
@@ -63,7 +82,6 @@ export function initializeServices(
         });
       },
     })),
-    database: IdbDatabaseService,
     syncDatabase: BrowserLocalStorageSyncDatabaseService,
     fileStorageIdb: slot(FileStorageIndexedDB, () => ({
       onChange: (change) => {
@@ -104,21 +122,56 @@ export function initializeServices(
     })),
   };
 
-  const setup = createServiceSetup({
+  const commonSetupOptions = {
     commonOpts,
     rootEmitter,
     commands,
     commandHandlers,
     themeManager: theme,
     shortcutTarget: document,
-    platformServices: browserPlatformServices,
-    fileStorageSlots: ['fileStorageIdb', 'fileStorageNativeFs'],
+    fileStorageSlots: ['fileStorageIdb', 'fileStorageNativeFs'] as const,
     editorEngineId,
     editorSaveCoordinator,
+  };
+
+  const desktopConfigBridge = getDesktopConfigBridge();
+
+  // On desktop the async `database` seam is served by a native, file-backed
+  // store (via IPC). A hybrid fronts it and IndexedDB, keeping records that
+  // carry a non-serializable native-FS handle in IndexedDB. In the browser the
+  // seam stays on IndexedDB directly.
+  if (desktopConfigBridge) {
+    const setup = createServiceSetup({
+      ...commonSetupOptions,
+      platformServices: {
+        ...commonPlatformServices,
+        database: slot(DesktopHybridDatabaseService),
+        nativeConfigDatabase: slot(DesktopNativeDatabaseService, () => ({
+          bridge: desktopConfigBridge,
+        })),
+        idbDatabase: IdbDatabaseService,
+      },
+    });
+
+    getWorkspaceOps = () => setup.getServices().workspaceOps;
+    setup.instantiate();
+
+    return {
+      coreServices: setup.coreServices(),
+      mountAll: setup.mountAll,
+      describe: setup.describe,
+    };
+  }
+
+  const setup = createServiceSetup({
+    ...commonSetupOptions,
+    platformServices: {
+      ...commonPlatformServices,
+      database: IdbDatabaseService,
+    },
   });
 
   getWorkspaceOps = () => setup.getServices().workspaceOps;
-
   setup.instantiate();
 
   return {
