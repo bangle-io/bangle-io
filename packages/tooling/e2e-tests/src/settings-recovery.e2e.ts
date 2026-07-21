@@ -69,8 +69,9 @@ test('editing a note captures a snapshot that can be viewed and recovered as a n
   await search.fill('draft');
   await expect(page.getByTestId('settings-recovery-row').first()).toBeVisible();
 
-  // Read-only preview shows the captured (pre-edit) content.
-  await page.getByTestId('settings-recovery-view').first().click();
+  // Clicking the note name opens the read-only preview of the captured
+  // (pre-edit) content.
+  await page.getByTestId('settings-recovery-note').first().click();
   const previewDialog = page.getByRole('dialog', {
     name: /Snapshot of draft\.md/,
   });

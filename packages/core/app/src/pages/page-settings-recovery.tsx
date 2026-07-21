@@ -244,14 +244,24 @@ export function RecoverySettingsPage() {
                       key={snapshot.id}
                     >
                       <TableCell className="max-w-64">
-                        <div className="min-w-0">
-                          <p className="truncate font-medium">{fileName}</p>
+                        <button
+                          aria-label={t.app.settings.recovery.previewTitle({
+                            fileName,
+                          })}
+                          className="block w-full min-w-0 cursor-pointer text-left"
+                          data-testid="settings-recovery-note"
+                          onClick={() => openPreview(snapshot)}
+                          type="button"
+                        >
+                          <p className="truncate font-medium hover:underline">
+                            {fileName}
+                          </p>
                           {location ? (
                             <p className="truncate text-muted-foreground text-xs">
                               {location}
                             </p>
                           ) : null}
-                        </div>
+                        </button>
                       </TableCell>
                       <TableCell
                         className="whitespace-nowrap text-muted-foreground"
@@ -264,14 +274,6 @@ export function RecoverySettingsPage() {
                         {snapshot.wordCount}
                       </TableCell>
                       <TableCell className="whitespace-nowrap text-right">
-                        <Button
-                          data-testid="settings-recovery-view"
-                          onClick={() => openPreview(snapshot)}
-                          size="sm"
-                          variant="ghost"
-                        >
-                          {t.app.settings.recovery.viewAction}
-                        </Button>
                         <Button
                           data-testid="settings-recovery-recover"
                           onClick={() => recoverSnapshot(snapshot.id)}

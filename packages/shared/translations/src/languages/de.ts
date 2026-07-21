@@ -229,7 +229,6 @@ export const t = {
         timeColumn: 'Erstellt',
         wordCountColumn: 'Wörter',
         actionsColumn: 'Aktionen',
-        viewAction: 'Ansehen',
         recoverAction: 'Wiederherstellen',
         loading: 'Schnappschüsse werden geladen...',
         loadFailed: 'Schnappschüsse konnten nicht geladen werden.',

@@ -278,7 +278,6 @@ export const t = {
         timeColumn: 'Captured',
         wordCountColumn: 'Words',
         actionsColumn: 'Actions',
-        viewAction: 'View',
         recoverAction: 'Recover',
         loading: 'Loading snapshots...',
         loadFailed: 'Could not load snapshots.',
