@@ -36,7 +36,7 @@
   "main": "dist/main.cjs",
   "productName": "Bangle.io",
   "scripts": {
-    "build": "vite build --configLoader runner",
+    "build": "vite build --configLoader runner && BANGLE_DESKTOP_ENTRY=preload vite build --configLoader runner",
     "ci": "pnpm run test && pnpm -w run desktop:build && node scripts/smoke-test.mjs --skip-if-not-darwin",
     "dist": "tsx scripts/dist.ts",
     "release:stable": "tsx scripts/release-stable.ts",
@@ -45,6 +45,7 @@
     "test": "vitest run src --configLoader runner"
   },
   "dependencies": {
+    "@bangle.io/types": "workspace:*",
     "electron": "43.0.0",
     "electron-updater": "^6.8.9",
     "vite": "^8.1.3"

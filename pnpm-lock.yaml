@@ -886,6 +886,9 @@ importers:
 
   packages/tooling/desktop-entry:
     dependencies:
+      '@bangle.io/types':
+        specifier: workspace:*
+        version: link:../../shared/types
       electron:
         specifier: 43.0.0
         version: 43.0.0

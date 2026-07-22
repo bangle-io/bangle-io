@@ -9,18 +9,24 @@ const nodeBuiltins = [
   ...builtinModules.map((id) => `node:${id}`),
 ];
 
+// Build one entry per invocation so each output is a fully self-contained CJS
+// bundle (`codeSplitting: false` requires a single input). This matters for the
+// sandboxed Electron preload: it can only `require` electron/node builtins,
+// never a sibling chunk, so main and preload must not share an emitted chunk.
+// The `build` script runs this twice (main, then preload).
+const entry =
+  process.env.BANGLE_DESKTOP_ENTRY === 'preload' ? 'preload' : 'main';
+
 export default defineConfig({
   ssr: {
     noExternal: ['electron-updater'],
   },
   build: {
-    emptyOutDir: true,
+    // Only the first (main) pass clears dist; the preload pass appends to it.
+    emptyOutDir: entry === 'main',
     ssr: true,
     lib: {
-      entry: {
-        main: resolve(packageDir, 'src/main.ts'),
-        preload: resolve(packageDir, 'src/preload.ts'),
-      },
+      entry: { [entry]: resolve(packageDir, `src/${entry}.ts`) },
       formats: ['cjs'],
     },
     outDir: 'dist',
@@ -28,6 +34,7 @@ export default defineConfig({
       external: ['electron', ...nodeBuiltins],
       output: {
         entryFileNames: '[name].cjs',
+        codeSplitting: false,
       },
     },
     sourcemap: true,

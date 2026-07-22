@@ -1,8 +1,18 @@
 import { access } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { app, BrowserWindow, dialog, net, protocol, shell } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  dialog,
+  ipcMain,
+  net,
+  protocol,
+  shell,
+} from 'electron';
 import { autoUpdater } from 'electron-updater';
+import { registerConfigIpc } from './config-ipc';
+import { ConfigStore } from './config-store';
 import { APP_PROTOCOL, APP_URL } from './protocol';
 import { registerAppProtocol as registerDesktopAppProtocol } from './protocol-handler';
 import { configureAutoUpdater } from './updater';
@@ -14,6 +24,19 @@ import {
 
 const mainDir = dirname(fileURLToPath(import.meta.url));
 let mainWindow: BrowserWindow | null = null;
+
+/**
+ * Registers the native config-store IPC once. The store persists desktop
+ * configuration (workspace list + misc app config, never note content) under
+ * the OS user-data directory, replacing the browser IndexedDB path for the
+ * async `database` seam. Sync UI preferences remain on localStorage.
+ */
+function installConfigStore(): void {
+  const store = new ConfigStore({
+    dir: join(app.getPath('userData'), 'config'),
+  });
+  registerConfigIpc({ ipcMain, store });
+}
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -99,6 +122,7 @@ app.on('activate', () => {
 
 void app.whenReady().then(async () => {
   try {
+    installConfigStore();
     await createMainWindow();
     configureAutoUpdater({
       app,
