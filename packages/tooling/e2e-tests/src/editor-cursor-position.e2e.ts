@@ -14,7 +14,13 @@ async function createNote(page: Page, noteName: string) {
   await page.getByRole('menuitem', { name: 'New Note' }).click();
   await page.getByLabel('Note name').fill(noteName);
   await page.getByRole('button', { name: 'Create' }).click();
-  await expect(getEditorLocator(page, {})).toBeVisible();
+  const fileName = `${noteName}.md`;
+  await expect(
+    page.getByLabel('breadcrumb').getByRole('button', { name: fileName }),
+  ).toBeVisible();
+  await expect
+    .poll(() => getEditorLocator(page, {}).getAttribute('data-editor-name'))
+    .toContain(`:${fileName}:`);
   await waitForEditorFocus(page, {});
 }
 

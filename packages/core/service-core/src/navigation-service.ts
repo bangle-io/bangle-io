@@ -25,6 +25,8 @@ import { atom } from 'jotai';
 export class NavigationService extends BaseService {
   static deps = ['router'] as const;
 
+  private navigationVersion = 0;
+
   $routeInfo!: WritableAtom<AppRouteInfo, [AppRouteInfo], void>;
   $lifeCycle = atom<{
     current: PageLifeCycleState;
@@ -142,7 +144,20 @@ export class NavigationService extends BaseService {
     to: AppRouteInfo,
     options?: { replace?: boolean; state?: RouterState },
   ) {
+    this.navigationVersion += 1;
     this.routerService.navigate(to, options);
+  }
+
+  /**
+   * Captures the current navigation intent so async work can avoid overwriting
+   * a navigation requested or observed before that work completes.
+   */
+  public captureNavigationVersion(): number {
+    return this.navigationVersion;
+  }
+
+  public isNavigationVersionCurrent(version: number): boolean {
+    return version === this.navigationVersion;
   }
 
   public goWsPath(wsPath: string) {
@@ -226,6 +241,7 @@ export class NavigationService extends BaseService {
   }
 
   private syncRouteInfoAtom() {
+    this.navigationVersion += 1;
     this.store.set(this.$routeInfo, this.routerService.routeInfo);
   }
 }

@@ -21,6 +21,51 @@ function createDeferred<T>() {
 
 describe('WS command handlers', () => {
   describe('command::ws:create-note', () => {
+    test('does not overwrite a newer navigation while creation is pending', async () => {
+      const CURRENT_WS_PATH = 'test-ws:current.md';
+      const NEW_WS_PATH = 'test-ws:new.md';
+      const { dispatch, services, getCommandResults } = await setupTest({
+        targetId: 'command::ws:create-note',
+        workspaces: [{ name: 'test-ws', notes: [CURRENT_WS_PATH] }],
+        autoNavigate: 'ws-path',
+      });
+      const createStarted = createDeferred<void>();
+      const allowCreate = createDeferred<void>();
+      const createFile = services.fileSystem.createFile.bind(
+        services.fileSystem,
+      );
+      vi.spyOn(services.fileSystem, 'createFile').mockImplementationOnce(
+        async (...args) => {
+          createStarted.resolve();
+          await allowCreate.promise;
+          return createFile(...args);
+        },
+      );
+
+      dispatch('command::ws:create-note', {
+        navigate: true,
+        wsPath: NEW_WS_PATH,
+      });
+
+      await createStarted.promise;
+      // Re-selecting the current note is still a newer navigation intent even
+      // though comparing the route before and after would show no difference.
+      services.navigation.goWsPath(CURRENT_WS_PATH);
+      allowCreate.resolve();
+
+      await vi.waitFor(async () => {
+        expect(
+          getCommandResults().filter((result) => result.type === 'success'),
+        ).toHaveLength(1);
+        await expect(
+          services.fileSystem.readFile(NEW_WS_PATH),
+        ).resolves.toBeDefined();
+      });
+      expect(services.navigation.resolveAtoms().wsPath?.wsPath).toBe(
+        CURRENT_WS_PATH,
+      );
+    });
+
     test('reports duplicate note creation as a command failure', async () => {
       const NOTE_WS_PATH = 'test-ws:existing.md';
       const { dispatch, services, getCommandResults, testEnv } =

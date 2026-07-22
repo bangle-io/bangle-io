@@ -145,6 +145,7 @@ export const wsCommandHandlers = [
 
       const filePath = WsPath.assertFile(wsPath);
       const fileNameWithoutExt = filePath.fileNameWithoutExtension;
+      const navigationVersion = navigation.captureNavigationVersion();
 
       try {
         await fileSystem.createFile(
@@ -161,7 +162,12 @@ export const wsCommandHandlers = [
         throw error;
       }
 
-      if (navigate) {
+      // A storage write can outlive the dialog. Do not let its completion
+      // overwrite a navigation made while the write was pending.
+      if (
+        navigate &&
+        navigation.isNavigationVersionCurrent(navigationVersion)
+      ) {
         navigation.goWsPath(wsPath);
       }
     },
