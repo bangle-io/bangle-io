@@ -18,6 +18,7 @@ import {
   displayNameForAsset,
   type FileSystemService,
   type NavigationService,
+  type NoteSnapshotService,
   type StoredMarkdownAsset,
   storeWorkspaceAssetFiles,
   type WorkbenchStateService,
@@ -143,6 +144,7 @@ export class PmEditorService
   static deps = [
     'fileSystem',
     'navigation',
+    'noteSnapshot',
     'workbenchState',
     'workspaceState',
   ] as const;
@@ -223,6 +225,11 @@ export class PmEditorService
           signal: this.abortSignal,
         }),
       getMarkdown: (schema) => this.getMarkdown(schema),
+      preserveCurrentContent: (wsPath, content) =>
+        this.dependencies.noteSnapshot.preserveExternalOverwrite(
+          wsPath,
+          content,
+        ),
       withSaveSuppressed: (wsPath, dispatch) => {
         this.suppressSaveForExternalSync.add(wsPath);
         try {
@@ -247,6 +254,7 @@ export class PmEditorService
     private dependencies: {
       fileSystem: FileSystemService;
       navigation: NavigationService;
+      noteSnapshot: NoteSnapshotService;
       workbenchState: WorkbenchStateService;
       workspaceState: WorkspaceStateService;
     },

@@ -163,13 +163,14 @@ export class NoteSnapshotService extends BaseService {
             // twice; reset on storage failure so a later foreign event
             // retries instead of silently dropping the only copy.
             outgoing.preserved = true;
-            void this.preserveContent(event.wsPath, outgoing.content).then(
-              (preserved) => {
-                if (!preserved) {
-                  outgoing.preserved = false;
-                }
-              },
-            );
+            void this.preserveExternalOverwrite(
+              event.wsPath,
+              outgoing.content,
+            ).then((preserved) => {
+              if (!preserved) {
+                outgoing.preserved = false;
+              }
+            });
           }
         }
       },
@@ -372,11 +373,13 @@ export class NoteSnapshotService extends BaseService {
   }
 
   /**
-   * Best-effort preservation of this tab's outgoing content. Never throws.
-   * Returns false only for a storage failure worth retrying; empty content
-   * and invalid paths count as done.
+   * Best-effort preservation of content displaced by a write outside the
+   * normal FileSystemService path. The external-change editor sync calls this
+   * immediately before replacing a clean editor with the new disk version.
+   * Never throws. Returns false only for a storage failure worth retrying;
+   * empty content and invalid paths count as done.
    */
-  private async preserveContent(
+  async preserveExternalOverwrite(
     wsPath: string,
     content: string,
   ): Promise<boolean> {

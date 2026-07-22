@@ -130,6 +130,12 @@ describe('editor refresh on external file changes', () => {
     // Applying external content must not bounce a save back to storage —
     // that write would churn the file's mtime and make sync tools loop.
     expect(writeSpy).not.toHaveBeenCalled();
+
+    const snapshots = await services.noteSnapshot.listSnapshots();
+    expect(snapshots).toHaveLength(1);
+    await expect(
+      services.noteSnapshot.getSnapshot(snapshots[0]?.id ?? ''),
+    ).resolves.toMatchObject({ content: 'the original note body' });
   });
 
   it('also refreshes on an external coarse refresh (force-update) event', async () => {

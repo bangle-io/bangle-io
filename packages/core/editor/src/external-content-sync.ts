@@ -92,6 +92,8 @@ export interface ExternalContentSyncHost {
   hasPendingSaves(wsPath: string): boolean;
   readFileAsText(wsPath: string): Promise<string | undefined>;
   getMarkdown(schema: Schema): ReturnType<typeof markdownLoader>;
+  /** Saves the clean editor content before an external version replaces it. */
+  preserveCurrentContent(wsPath: string, content: string): Promise<void>;
   /**
    * Runs `dispatch` with the editor's save pipeline suppressed for `wsPath`
    * (see `suppressSaveForExternalSync` in the editor service for why the
@@ -284,6 +286,7 @@ export class ExternalContentSync {
     let needsRerun = false;
     let refused = false;
     let reconciled = false;
+    let preservedCurrentContent = false;
     for (const [index, view] of views.entries()) {
       if (view.isDestroyed || view.state.doc !== docsBefore[index]) {
         continue;
@@ -358,6 +361,23 @@ export class ExternalContentSync {
         );
         refused = true;
         continue;
+      }
+
+      if (!preservedCurrentContent) {
+        await this.host.preserveCurrentContent(wsPath, currentSerialized);
+        if (this.aborted) {
+          return false;
+        }
+        // Snapshot storage is asynchronous. A keystroke made while it was in
+        // flight still wins over the external copy.
+        if (
+          this.host.hasPendingSaves(wsPath) ||
+          view.isDestroyed ||
+          view.state.doc !== docsBefore[index]
+        ) {
+          continue;
+        }
+        preservedCurrentContent = true;
       }
 
       this.host.withSaveSuppressed(wsPath, () => {

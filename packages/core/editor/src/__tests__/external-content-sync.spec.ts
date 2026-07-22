@@ -35,6 +35,7 @@ function makeHost(overrides: Partial<ExternalContentSyncHost> = {}) {
     getMarkdown: vi.fn(() => {
       throw new Error('not needed in these tests');
     }),
+    preserveCurrentContent: vi.fn(async () => {}),
     withSaveSuppressed: vi.fn((_wsPath, dispatch) => dispatch()),
     onStaleContentRefused: vi.fn(),
     onContentReconciled: vi.fn(),
@@ -261,6 +262,7 @@ describe('refusal and reconciliation reporting', () => {
     );
     expect(host.onStaleContentRefused).toHaveBeenCalledWith('ws:a.md');
     expect(host.onContentReconciled).not.toHaveBeenCalled();
+    expect(host.preserveCurrentContent).not.toHaveBeenCalled();
     expect(host.withSaveSuppressed).not.toHaveBeenCalled();
   });
 
@@ -292,6 +294,7 @@ describe('refusal and reconciliation reporting', () => {
     );
     expect(host.onContentReconciled).toHaveBeenCalledWith('ws:a.md');
     expect(host.onStaleContentRefused).not.toHaveBeenCalled();
+    expect(host.preserveCurrentContent).not.toHaveBeenCalled();
     expect(host.withSaveSuppressed).not.toHaveBeenCalled();
   });
 });
