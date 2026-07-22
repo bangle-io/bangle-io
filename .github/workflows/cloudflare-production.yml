@@ -22,6 +22,8 @@ jobs:
   deploy-production:
     name: Deploy production
     runs-on: ubuntu-latest
+    env:
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -58,8 +60,8 @@ jobs:
         run: curl -sL https://sentry.io/get-cli/ | bash
 
       - name: Create Sentry release
+        if: env.SENTRY_AUTH_TOKEN != ''
         env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           RELEASE: ${{ steps.release.outputs.release }}
         run: |
           set -euo pipefail
@@ -67,17 +69,20 @@ jobs:
           sentry-cli releases info --project "$SENTRY_PROJECT" "$RELEASE" >/dev/null 2>&1 ||
             sentry-cli releases new --project "$SENTRY_PROJECT" "$RELEASE"
 
+      - name: Report missing Sentry credentials
+        if: env.SENTRY_AUTH_TOKEN == ''
+        run: echo "::notice::SENTRY_AUTH_TOKEN is not configured; deploying without Sentry release metadata or source maps."
+
       - name: Build app
         env:
           CF_PAGES: '1'
           CF_PAGES_BRANCH: production
           CF_PAGES_COMMIT_SHA: ${{ github.sha }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: pnpm build
 
       - name: Finalize Sentry release
+        if: env.SENTRY_AUTH_TOKEN != ''
         env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           RELEASE: ${{ steps.release.outputs.release }}
         run: |
           set -euo pipefail
@@ -112,8 +117,8 @@ jobs:
           packageManager: pnpm
 
       - name: Mark Sentry deploy
+        if: env.SENTRY_AUTH_TOKEN != ''
         env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           RELEASE: ${{ steps.release.outputs.release }}
         run: sentry-cli releases deploys --project "$SENTRY_PROJECT" "$RELEASE" new -e production
 
