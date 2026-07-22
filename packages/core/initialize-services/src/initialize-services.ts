@@ -1,5 +1,6 @@
 import {
   assertIsDefined,
+  captureReportableError,
   getEventSenderMetadata,
   throwAppError,
 } from '@bangle.io/base-utils';
@@ -57,6 +58,7 @@ export function initializeServices(
   const browserPlatformServices = {
     errorService: slot(BrowserErrorHandlerService, () => ({
       onError: (params) => {
+        captureReportableError(commonOpts.errorReporting, params.error);
         rootEmitter.emit('event::error:uncaught-error', {
           ...params,
           sender: getEventSenderMetadata({ tag: 'BrowserErrorHandlerService' }),

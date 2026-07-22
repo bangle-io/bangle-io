@@ -61,6 +61,35 @@ describe('error handler services', () => {
     );
   });
 
+  it('normalizes non-Error promise rejections instead of dropping them', async () => {
+    const { commonOpts } = setup();
+    const onError = vi.fn();
+    const service = new BrowserErrorHandlerService(
+      {
+        ctx: commonOpts,
+        serviceContext: { abortSignal: commonOpts.rootAbortSignal },
+      },
+      null,
+      { onError },
+    );
+    await service.mount();
+
+    const rejectionEvent = new Event('unhandledrejection');
+    Object.defineProperty(rejectionEvent, 'reason', {
+      value: 'private rejection value',
+    });
+    window.dispatchEvent(rejectionEvent);
+
+    expect(onError).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: expect.objectContaining({
+          message: 'Unhandled non-Error promise rejection',
+        }),
+        isRejection: true,
+      }),
+    );
+  });
+
   it('replays node error events queued before mount', async () => {
     const { commonOpts } = setup();
     const onError = vi.fn();

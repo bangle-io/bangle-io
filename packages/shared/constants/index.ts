@@ -105,6 +105,7 @@ export const SERVICE_NAME = {
   commandDispatchService: 'command-dispatch',
   commandRegistryService: 'command-registry',
   editorService: 'editor',
+  errorReportingService: 'error-reporting',
   fileStorageIndexedDBService: 'file-storage-indexeddb',
   fileStorageMemoryService: 'file-storage-memory',
   fileStorageNativeFsService: 'file-storage-nativefs',
@@ -124,6 +125,10 @@ export const SERVICE_NAME = {
   pmEditorService: 'pmEditorService',
   editorWService: 'editor-w',
 } as const;
+
+export const AUTOMATIC_ERROR_REPORTING_PREFERENCE_KEY =
+  'automatic-error-reporting';
+export const AUTOMATIC_ERROR_REPORTING_STORAGE_KEY = `${SERVICE_NAME.browserLocalStorageSyncDatabaseService}.sync:${SERVICE_NAME.errorReportingService}:${AUTOMATIC_ERROR_REPORTING_PREFERENCE_KEY}`;
 export const APP_MAIN_CONTENT_PADDING = 'px-4 py-4 pt-0 md:px-6';
 /**
  * Left gutter for the editor page: wider than the default content padding so

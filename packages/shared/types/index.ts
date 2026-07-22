@@ -13,5 +13,6 @@ export type * from './base-file-storage';
 export type * from './base-router';
 export type * from './commands';
 export type * from './emitter';
+export type * from './error-reporting';
 export type * from './services';
 export type * from './workspace';

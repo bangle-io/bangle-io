@@ -3,6 +3,7 @@ import type {
   CommandDispatchService,
   CommandRegistryService,
   EditorService,
+  ErrorReportingService,
   FileSystemService,
   NavigationService,
   ShortcutService,
@@ -82,6 +83,7 @@ export type CoreServices<
   commandRegistry: CommandRegistryService;
   editorEngine: TEditorEngine;
   editorService: EditorService;
+  errorReporting: ErrorReportingService;
   fileSystem: FileSystemService;
   navigation: NavigationService;
   shortcut: ShortcutService;

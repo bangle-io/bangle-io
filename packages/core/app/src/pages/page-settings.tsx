@@ -23,8 +23,10 @@ import {
   SelectTrigger,
   SelectValue,
   SettingsPage,
+  Switch,
+  toast,
 } from '@bangle.io/ui-components';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
   ArrowLeft,
   BriefcaseBusiness,
@@ -155,7 +157,7 @@ export function PageSettings() {
 }
 
 function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
-  const { navigation, workbenchState } = useCoreServices();
+  const { errorReporting, navigation, workbenchState } = useCoreServices();
   const routeInfo = useAtomValue(navigation.$routeInfo);
   const themePref = useAtomValue(workbenchState.$themePref);
   const [wideEditor, setWideEditor] = useAtom(workbenchState.$wideEditor);
@@ -163,6 +165,12 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
   const [assetLocationPreference, setAssetLocationPreference] = useAtom(
     workbenchState.$assetLocationPreference,
   );
+  const automaticErrorReporting = useAtomValue(
+    errorReporting.$automaticReportingEnabled,
+  );
+  const pendingReportCount = useAtomValue(errorReporting.$pendingReportCount);
+  const sendingReports = useAtomValue(errorReporting.$sendingReports);
+  const setAlertDialog = useSetAtom(workbenchState.$alertDialog);
   const returnTo = safeAppHref(getSettingsReturnTo(routeInfo));
 
   const backHref =
@@ -318,6 +326,112 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
                     description={t.app.settings.general.wideEditorDescription}
                     title={t.app.settings.general.wideEditorTitle}
                   />
+                </SettingsPage.SettingsSection>
+
+                <SettingsPage.SettingsSection
+                  title={t.app.settings.general.privacySection}
+                >
+                  <SettingsPage.SettingsRow
+                    control={
+                      <Switch
+                        aria-label={
+                          t.app.settings.general.automaticBugReportsToggle
+                        }
+                        checked={automaticErrorReporting}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            void errorReporting.setAutomaticReportingEnabled(
+                              true,
+                            );
+                            return;
+                          }
+
+                          setAlertDialog({
+                            dialogId: 'dialog::disable-automatic-bug-reports',
+                            title:
+                              t.app.settings.general.disableBugReportsTitle,
+                            description:
+                              t.app.settings.general
+                                .disableBugReportsDescription,
+                            cancelText:
+                              t.app.settings.general.keepBugReportsEnabled,
+                            continueText:
+                              t.app.settings.general.disableBugReportsButton,
+                            onCancel: () => {},
+                            onContinue: () => {
+                              void errorReporting.setAutomaticReportingEnabled(
+                                false,
+                              );
+                            },
+                          });
+                        }}
+                      />
+                    }
+                    description={
+                      t.app.settings.general.automaticBugReportsDescription
+                    }
+                    title={t.app.settings.general.automaticBugReportsTitle}
+                  />
+                  {!automaticErrorReporting || pendingReportCount > 0 ? (
+                    <SettingsPage.SettingsRow
+                      control={
+                        <div className="flex flex-wrap justify-end gap-2">
+                          <Button
+                            disabled={
+                              pendingReportCount === 0 || sendingReports
+                            }
+                            onClick={() => {
+                              void errorReporting
+                                .sendPendingReports()
+                                .then(({ sent, remaining }) => {
+                                  if (sent > 0 && remaining === 0) {
+                                    toast.success(
+                                      t.app.settings.general
+                                        .pendingBugReportsSent,
+                                    );
+                                  } else if (remaining > 0) {
+                                    toast.error(
+                                      t.app.settings.general
+                                        .pendingBugReportsSendFailed,
+                                    );
+                                  }
+                                });
+                            }}
+                            type="button"
+                            variant="outline"
+                          >
+                            {sendingReports
+                              ? t.app.settings.general.sendingBugReports
+                              : t.app.settings.general.sendBugReports}
+                          </Button>
+                          <Button
+                            disabled={
+                              pendingReportCount === 0 || sendingReports
+                            }
+                            onClick={() => {
+                              void errorReporting.clearPendingReports();
+                            }}
+                            type="button"
+                            variant="ghost"
+                          >
+                            {t.app.settings.general.deleteBugReports}
+                          </Button>
+                        </div>
+                      }
+                      description={
+                        automaticErrorReporting
+                          ? t.app.settings.general.pendingBugReportsDescription(
+                              {
+                                count: pendingReportCount,
+                              },
+                            )
+                          : t.app.settings.general.manualBugReportsDescription({
+                              count: pendingReportCount,
+                            })
+                      }
+                      title={t.app.settings.general.pendingBugReportsTitle}
+                    />
+                  ) : null}
                 </SettingsPage.SettingsSection>
               </>
             ) : (

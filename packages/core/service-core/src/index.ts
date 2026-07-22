@@ -3,6 +3,7 @@ export type { CommandHandlerConfig } from './command-registry-service';
 export { CommandRegistryService } from './command-registry-service';
 export { waitForSaveQueueToDrain } from './editor-save-status';
 export { EditorService } from './editor-service';
+export { ErrorReportingService } from './error-reporting-service';
 export type {
   FileContentUpdateEvent,
   FileCreateEvent,

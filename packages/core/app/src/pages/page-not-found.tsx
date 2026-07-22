@@ -37,9 +37,7 @@ export function PageNotFound() {
                 label: t.app.pageNotFound.reportButton,
                 variant: 'outline',
                 onClick: () => {
-                  const error = new Error(
-                    `404 Page Not Found: ${window.location.href}`,
-                  );
+                  const error = new Error('Bangle route was not found');
                   logger.error(error);
                   window.open(getGithubUrl(error, logger), '_blank');
                 },

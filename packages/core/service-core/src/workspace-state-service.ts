@@ -202,7 +202,7 @@ export class WorkspaceStateService extends BaseService {
           throw error;
         }
 
-        this.logger.error('Failed to build backlink index', error);
+        this.reportError(error, 'Failed to build backlink index');
         return {
           status: 'error',
           byTargetWsPath: EMPTY_BACKLINKS,
@@ -457,7 +457,7 @@ export class WorkspaceStateService extends BaseService {
               if (error instanceof Error && isAppError(error)) {
                 this.emitAppError(error);
               } else {
-                this.logger.error('Failed to list workspaces', error);
+                this.reportError(error, 'Failed to list workspaces');
               }
             },
           );
@@ -535,9 +535,9 @@ export class WorkspaceStateService extends BaseService {
                 if (error instanceof Error && isAppError(error)) {
                   this.emitAppError(error);
                 } else {
-                  this.logger.error(
-                    `Failed to list files for workspace ${wsName}`,
+                  this.reportError(
                     error,
+                    `Failed to list files for workspace ${wsName}`,
                   );
                 }
               },

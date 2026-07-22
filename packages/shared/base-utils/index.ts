@@ -43,6 +43,10 @@ export { BaseErrorService } from './base-error-service';
 export type { BaseServiceContext } from './base-service';
 export { BaseService } from './base-service';
 export { cx } from './cx';
+export {
+  captureReportableError,
+  shouldReportAppError,
+} from './error-reporting-policy';
 export { getGithubUrl } from './github-bug-url';
 export {
   arrayEqual,
@@ -56,6 +60,13 @@ export {
   listenToResize,
   setRootWidescreenClass,
 } from './misc';
+export {
+  createPrivacySafeErrorReport,
+  getCurrentBuildAssetDebugIds,
+  getPrivacySafeRoute,
+  getPrivacySafeStackFrames,
+  isPrivacySafeErrorReport,
+} from './privacy-safe-error-report';
 export {
   acquireLockIfAvailable,
   rafSchedule,

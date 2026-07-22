@@ -20,7 +20,7 @@ let errorReporter: ErrorReporter | null = null;
 export function setGlobalLogLevel(level: LogLevelName) {
   GLOBAL_LOG_LEVEL = level;
 }
-export function setErrorReporter(reporter: ErrorReporter) {
+export function setErrorReporter(reporter: ErrorReporter | null) {
   errorReporter = reporter;
 }
 export class Logger {
@@ -71,8 +71,10 @@ export class Logger {
   public error(...message: unknown[]): void {
     this.log('error', ...message);
 
-    // If the first message is an Error instance, send it to the error reporter
-    if (errorReporter && message.length > 0 && message[0] instanceof Error) {
+    // Preserve the explicit reporting convention: an Error in the first
+    // position is a report boundary; later Errors are diagnostic context.
+    // App/service boundaries capture their wrapped errors separately.
+    if (errorReporter && message[0] instanceof Error) {
       errorReporter.captureException(message[0]);
     }
   }

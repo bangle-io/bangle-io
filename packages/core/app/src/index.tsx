@@ -19,6 +19,7 @@ import {
 import { PwaLaunchActions } from './common/pwa-launch-actions';
 import { ErrorBoundary } from './components/feedback/error-boundary';
 import { AppDialogs } from './dialogs/app-dialogs';
+import { ManualBugReportDialog } from './dialogs/manual-bug-report-dialog';
 import { PwaOpenInAppPrompt } from './dialogs/pwa-open-in-app-prompt';
 import { AppSidebar } from './layout/app-sidebar';
 import {
@@ -53,6 +54,7 @@ export function App({
     <LoggerProvider logger={logger}>
       <Provider store={store}>
         <CoreServiceProvider services={services.core}>
+          <ManualBugReportDialog />
           <ErrorBoundary>
             <BrowserAppDocumentSetup />
             <AppDialogs />

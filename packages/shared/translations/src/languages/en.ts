@@ -36,6 +36,22 @@ export const t = {
       starItem: 'Star this item',
       unstarItem: 'Unstar this item',
     },
+    bugReportPrompt: {
+      title: 'Help us fix this bug?',
+      description:
+        'Automatic bug reports are off. Bangle saved this report on your device so you can review it before deciding whether to send it.',
+      reassurance:
+        'This is the complete diagnostic payload Bangle creates. It contains no note contents, workspace or note names, page URLs, route parameters, error messages, or error causes. Like any direct web request, Sentry may receive network metadata such as your IP address and browser User-Agent.',
+      previewLabel: 'Diagnostic payload Bangle sends',
+      keepForLater: 'Keep for later',
+      deleteReport: 'Delete report',
+      sendReport: 'Send report',
+      sendingReport: 'Sending...',
+      reportSent: 'Bug report sent. Thank you.',
+      reportSendFailed:
+        'The report could not be sent and remains on this device.',
+      reportDeleteFailed: 'The report could not be deleted.',
+    },
     toolbar: {
       toggleMaxWidth: 'Toggle Max Width',
     },
@@ -241,6 +257,31 @@ export const t = {
         wideEditorToggle: 'Use wide editor',
         defaultWidth: 'Default',
         wideWidth: 'Wide',
+        privacySection: 'Privacy',
+        automaticBugReportsTitle: 'Automatic bug reports',
+        automaticBugReportsDescription:
+          'Help improve Bangle by automatically sending privacy-safe diagnostics when something breaks. Reports never include note contents, workspace or note names, page URLs or route parameters, error messages, or error causes.',
+        automaticBugReportsToggle: 'Automatically send bug reports',
+        disableBugReportsTitle: 'Turn off automatic bug reports?',
+        disableBugReportsDescription:
+          'Automatic reports are vital for finding and fixing failures. Bangle excludes your note data and identifying names from the diagnostic payload. If you turn this off, Bangle will show each sanitized report for your approval and keep up to 50 recent reports on this device.',
+        keepBugReportsEnabled: 'Keep automatic reports',
+        disableBugReportsButton: 'Turn off',
+        pendingBugReportsTitle: 'Pending bug reports',
+        pendingBugReportsDescription: ({ count }: { count: number }) =>
+          count === 1
+            ? '1 privacy-safe report is waiting because an automatic send failed.'
+            : `${count} privacy-safe reports are waiting because automatic sends failed.`,
+        manualBugReportsDescription: ({ count }: { count: number }) =>
+          count === 1
+            ? '1 privacy-safe report is stored only on this device. Send it when you are ready.'
+            : `${count} recent privacy-safe reports are stored only on this device. Send them when you are ready.`,
+        sendBugReports: 'Send reports',
+        sendingBugReports: 'Sending...',
+        deleteBugReports: 'Delete reports',
+        pendingBugReportsSent: 'Pending bug reports sent.',
+        pendingBugReportsSendFailed:
+          'Some bug reports could not be sent and remain on this device.',
         enabled: 'Enabled',
         disabled: 'Disabled',
       },
