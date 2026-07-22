@@ -39,12 +39,22 @@ const CONTENT_TABLE = {
  */
 export const NOTE_SNAPSHOT_MAX_CONTENT_BYTES = 4 * 1024 * 1024;
 
+/**
+ * How many notes' outgoing content one tab keeps in memory to protect the
+ * "losing writer" in a cross-tab overwrite race (see recordOutgoingWrite).
+ */
+const OUTGOING_WRITE_CACHE_SIZE = 32;
+
 export function countWords(content: string): number {
   const words = content.match(/\S+/g);
   return words ? words.length : 0;
 }
 
-/** Cheap content fingerprint (djb2 + length) used to skip duplicate snapshots. */
+/**
+ * Cheap content fingerprint (djb2 + length). Collisions are possible, so a
+ * matching hash is only a hint — equality must be confirmed against the
+ * actual stored body before skipping a snapshot.
+ */
 function hashContent(content: string): string {
   let hash = 5381;
   for (let i = 0; i < content.length; i++) {
@@ -53,12 +63,26 @@ function hashContent(content: string): string {
   return `${content.length}:${hash}`;
 }
 
+function byNewestMetaFirst(
+  a: NoteSnapshotMetadata,
+  b: NoteSnapshotMetadata,
+): number {
+  return b.createdAt - a.createdAt || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+}
+
 /**
  * Keeps point-in-time copies of note content in the app database so users can
  * recover overwritten or lost edits (for example when two tabs write to the
  * same note). Snapshots are captured from the content a note had on storage
  * right before it gets overwritten, throttled per note, and thinned with a
  * recency-biased retention policy (see note-snapshot-policy.ts).
+ *
+ * Two cross-tab protections close the concurrent-writer races:
+ * - a content update from another tab clears the local capture throttle, so
+ *   the next local save re-captures the foreign content it overwrites;
+ * - every save's outgoing content is remembered in memory, and when a
+ *   foreign update arrives it is snapshotted directly, so a "losing writer"
+ *   preserves its own version without any storage read or lock.
  *
  * Metadata and content bodies live in separate tables so listing and eviction
  * never load snapshot bodies.
@@ -70,6 +94,8 @@ export class NoteSnapshotService extends BaseService {
   static deps = ['database'] as const;
 
   private lastCaptureAt = new Map<string, number>();
+  private lastWrittenContent = new Map<string, string>();
+  private lastIssuedCreatedAt = 0;
 
   constructor(
     context: BaseServiceContext,
@@ -97,23 +123,71 @@ export class NoteSnapshotService extends BaseService {
     );
   }
 
+  /**
+   * Snapshot timestamps are strictly monotonic within a tab, so two captures
+   * in the same millisecond (e.g. a save racing an outgoing-write
+   * preservation) still have a deterministic order everywhere they are
+   * sorted or thinned.
+   */
+  private nextCreatedAt(): number {
+    const createdAt = Math.max(Date.now(), this.lastIssuedCreatedAt + 1);
+    this.lastIssuedCreatedAt = createdAt;
+    return createdAt;
+  }
+
   async hookMount(): Promise<void> {
     this.config.emitter.on(
       'event::file:update',
       (event) => {
-        // Another tab changed this note. Drop the local throttle so this
-        // tab's next save re-captures the content it is about to overwrite —
-        // otherwise the other tab's version could be lost inside the
-        // throttle window.
         if (
-          event.type === 'file-content-update' &&
-          event.sender.id !== this.config.selfSenderId
+          event.type !== 'file-content-update' ||
+          event.sender.id === this.config.selfSenderId
         ) {
-          this.lastCaptureAt.delete(event.wsPath);
+          return;
+        }
+        // Another tab changed this note. Drop the local throttle so this
+        // tab's next save re-captures the content it is about to overwrite.
+        this.lastCaptureAt.delete(event.wsPath);
+        // And preserve what this tab last wrote: if that write just lost the
+        // race, its content only exists in this map now.
+        const outgoing = this.lastWrittenContent.get(event.wsPath);
+        if (outgoing !== undefined) {
+          void this.preserveContent(event.wsPath, outgoing);
         }
       },
       this.abortSignal,
     );
+  }
+
+  /**
+   * Called by the file system after every successful note write. Remembers
+   * the outgoing content in memory (no storage cost) so it can be preserved
+   * if another tab overwrites it. Never throws.
+   */
+  recordOutgoingWrite(wsPath: string, file: File): void {
+    const filePath = WsPath.fromString(wsPath).asFile();
+    if (
+      !filePath?.isMarkdown() ||
+      file.size > NOTE_SNAPSHOT_MAX_CONTENT_BYTES
+    ) {
+      return;
+    }
+    void file
+      .text()
+      .then((content) => {
+        // Re-insert to refresh LRU order, then trim the oldest entry.
+        this.lastWrittenContent.delete(wsPath);
+        this.lastWrittenContent.set(wsPath, content);
+        if (this.lastWrittenContent.size > OUTGOING_WRITE_CACHE_SIZE) {
+          const oldest = this.lastWrittenContent.keys().next().value;
+          if (oldest !== undefined) {
+            this.lastWrittenContent.delete(oldest);
+          }
+        }
+      })
+      .catch((error) => {
+        this.logger.warn(`could not read outgoing write for ${wsPath}`, error);
+      });
   }
 
   /**
@@ -172,58 +246,107 @@ export class NoteSnapshotService extends BaseService {
       return;
     }
 
+    const stored = await this.storeSnapshot(wsPath, content);
+    if (stored !== 'failed') {
+      this.lastCaptureAt.set(wsPath, now);
+    }
+  }
+
+  /** Best-effort preservation of this tab's outgoing content. Never throws. */
+  private async preserveContent(
+    wsPath: string,
+    content: string,
+  ): Promise<void> {
+    try {
+      if (content.trim() === '') {
+        return;
+      }
+      await this.storeSnapshot(wsPath, content);
+    } catch (error) {
+      this.logger.warn(
+        `could not preserve outgoing content for ${wsPath}`,
+        error,
+      );
+    }
+  }
+
+  /**
+   * Stores one snapshot (deduped against the newest stored snapshot of the
+   * note) and runs eviction. Returns 'stored', 'duplicate', or throws.
+   */
+  private async storeSnapshot(
+    wsPath: string,
+    content: string,
+  ): Promise<'stored' | 'duplicate' | 'failed'> {
+    const filePath = WsPath.fromString(wsPath).asFile();
+    if (!filePath) {
+      return 'failed';
+    }
     const wsName = filePath.wsName;
     const contentHash = hashContent(content);
     const existing = await this.getWorkspaceMetas(wsName);
     const latestForNote = existing
       .filter((meta) => meta.wsPath === wsPath)
-      .sort((a, b) => b.createdAt - a.createdAt)[0];
+      .sort(byNewestMetaFirst)[0];
 
+    // The hash is only a fast negative check; on a match, confirm against
+    // the stored body so a hash collision can never silently drop a
+    // distinct version.
     if (latestForNote && latestForNote.contentHash === contentHash) {
-      // Unchanged since the last snapshot; refresh the throttle so identical
-      // content is not re-read on every save.
-      this.lastCaptureAt.set(wsPath, now);
-      return;
+      const latestBody = await this.getSnapshotContent(latestForNote.id);
+      if (latestBody === content) {
+        return 'duplicate';
+      }
     }
 
+    const createdAt = this.nextCreatedAt();
     const meta: NoteSnapshotMetadata = {
-      id: `${now.toString(36)}-${Math.random().toString(36).slice(2, 10)}`,
+      id: `${createdAt.toString(36)}-${Math.random().toString(36).slice(2, 10)}`,
       wsName,
       wsPath,
       wordCount: countWords(content),
-      createdAt: now,
+      createdAt,
       contentHash,
     };
 
-    // Content first, then metadata: a failure in between leaves an invisible
-    // orphaned body (rare, bounded) instead of a listed snapshot whose
-    // content is missing. Both writes are awaited by the caller before the
-    // overwrite, so the pre-overwrite content is durable before it
-    // disappears from storage.
+    // Content first, then metadata, with a compensating delete: a snapshot
+    // is either fully present or invisible. Both writes are awaited by the
+    // caller before the overwrite proceeds.
     await this.dependencies.database.updateEntry(
       meta.id,
       () => ({ value: { id: meta.id, content } }),
       CONTENT_TABLE,
     );
-    await this.dependencies.database.updateEntry(
-      meta.id,
-      () => ({ value: meta }),
-      META_TABLE,
-    );
-    this.lastCaptureAt.set(wsPath, now);
+    try {
+      await this.dependencies.database.updateEntry(
+        meta.id,
+        () => ({ value: meta }),
+        META_TABLE,
+      );
+    } catch (error) {
+      try {
+        await this.dependencies.database.deleteEntry(meta.id, CONTENT_TABLE);
+      } catch {
+        // The orphaned body is invisible (no metadata row) and bounded by
+        // how often metadata writes fail; nothing further to do here.
+      }
+      throw error;
+    }
 
     const evictIds = computeSnapshotEvictions([...existing, meta], {
-      now,
+      now: createdAt,
       maxPerWorkspace: this.maxSnapshotsPerWorkspace,
     });
-    // Deleting an id another tab already removed is a no-op, so concurrent
-    // eviction across tabs is safe.
+    // Per id: body first, then metadata. If either delete fails the
+    // metadata row survives, so the next eviction round retries the pair;
+    // deleting an id another tab already removed is a no-op.
     await Promise.all(
-      evictIds.flatMap((id) => [
-        this.dependencies.database.deleteEntry(id, META_TABLE),
-        this.dependencies.database.deleteEntry(id, CONTENT_TABLE),
-      ]),
+      evictIds.map(async (id) => {
+        await this.dependencies.database.deleteEntry(id, CONTENT_TABLE);
+        await this.dependencies.database.deleteEntry(id, META_TABLE);
+      }),
     );
+    return 'stored';
   }
 
   /** Lists snapshots (without content), newest first. */
@@ -236,26 +359,41 @@ export class NoteSnapshotService extends BaseService {
         (meta) =>
           options?.wsName === undefined || meta.wsName === options.wsName,
       )
-      .sort((a, b) => b.createdAt - a.createdAt);
+      .sort(byNewestMetaFirst);
   }
 
   /** Reads one full snapshot, including its content. */
   async getSnapshot(
     snapshotId: string,
   ): Promise<NoteSnapshotRecord | undefined> {
-    const [metaResult, contentResult] = await Promise.all([
-      this.dependencies.database.getEntry(snapshotId, META_TABLE),
-      this.dependencies.database.getEntry(snapshotId, CONTENT_TABLE),
-    ]);
+    const metaResult = await this.dependencies.database.getEntry(
+      snapshotId,
+      META_TABLE,
+    );
     if (
       !metaResult.found ||
-      !NoteSnapshotMetaValidator.validate(metaResult.value) ||
-      !contentResult.found ||
-      !NoteSnapshotContentValidator.validate(contentResult.value)
+      !NoteSnapshotMetaValidator.validate(metaResult.value)
     ) {
       return undefined;
     }
-    return { ...metaResult.value, content: contentResult.value.content };
+    const content = await this.getSnapshotContent(snapshotId);
+    if (content === undefined) {
+      return undefined;
+    }
+    return { ...metaResult.value, content };
+  }
+
+  private async getSnapshotContent(
+    snapshotId: string,
+  ): Promise<string | undefined> {
+    const result = await this.dependencies.database.getEntry(
+      snapshotId,
+      CONTENT_TABLE,
+    );
+    if (!result.found || !NoteSnapshotContentValidator.validate(result.value)) {
+      return undefined;
+    }
+    return result.value.content;
   }
 
   private async getWorkspaceMetas(

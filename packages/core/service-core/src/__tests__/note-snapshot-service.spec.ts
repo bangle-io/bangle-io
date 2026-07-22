@@ -199,6 +199,62 @@ describe('NoteSnapshotService', () => {
     controller.abort();
   });
 
+  it("preserves this tab's outgoing content when another tab overwrites it", async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-07-21T00:00:00Z'));
+    const { controller, services, testEnv } = await setup({
+      minCaptureIntervalMs: 60_000,
+    });
+    await services.fileSystem.createTextFile(NOTE_WS_PATH, 'v1');
+    await writeNote(services, NOTE_WS_PATH, 'v2 from this tab');
+    // Let the async outgoing-write recording settle.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    // Different retention bucket, so the preserved snapshot adds a row
+    // instead of superseding the v1 capture.
+    vi.advanceTimersByTime(11 * 60_000);
+
+    // Another tab overwrote the note. This tab's write lost the race: its
+    // content exists nowhere on storage anymore.
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-content-update',
+      wsPath: NOTE_WS_PATH,
+      sender: { id: 'some-other-tab', tag: 'file-system-service' },
+    });
+
+    await vi.waitFor(async () => {
+      const snapshots = await services.noteSnapshot.listSnapshots();
+      expect(snapshots).toHaveLength(2);
+      const newest = await services.noteSnapshot.getSnapshot(
+        snapshots[0]?.id ?? '',
+      );
+      expect(newest?.content).toBe('v2 from this tab');
+    });
+    controller.abort();
+  });
+
+  it('stores a distinct version even when its hash collides with the latest snapshot', async () => {
+    // '0000000r' and '00000020' collide in the djb2 fingerprint.
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-07-21T00:00:00Z'));
+    const { controller, services } = await setup();
+    await services.fileSystem.createTextFile(NOTE_WS_PATH, '0000000r');
+    await writeNote(services, NOTE_WS_PATH, '00000020');
+    // Separate retention buckets so both captures survive thinning.
+    vi.advanceTimersByTime(11 * 60_000);
+    await writeNote(services, NOTE_WS_PATH, 'final content');
+
+    const snapshots = await services.noteSnapshot.listSnapshots();
+    const contents = await Promise.all(
+      snapshots.map(
+        async (meta) =>
+          (await services.noteSnapshot.getSnapshot(meta.id))?.content,
+      ),
+    );
+    expect(contents).toContain('0000000r');
+    expect(contents).toContain('00000020');
+    controller.abort();
+  });
+
   it('skips notes larger than the snapshot size limit', async () => {
     const { controller, services } = await setup();
     await services.fileSystem.createTextFile(NOTE_WS_PATH, 'small start');

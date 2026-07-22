@@ -372,6 +372,9 @@ export class FileSystemService extends BaseService {
       storageService.readFile(wsPath, {}),
     );
     await storageService.writeFile(wsPath, file, {});
+    // Remember what this tab wrote (in memory only) so the content can be
+    // preserved as a snapshot if another tab overwrites it.
+    this.dependencies.noteSnapshot.recordOutgoingWrite(wsPath, file);
     this.onChange({
       type: 'file-content-update',
       payload: { wsPath },
