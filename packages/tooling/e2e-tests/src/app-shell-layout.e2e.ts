@@ -58,6 +58,37 @@ test('app shell: full-height flush sidebar, thin titlebar, collapse/expand', asy
     .toBeGreaterThanOrEqual(0);
 });
 
+test('app shell: keeps a nested note breadcrumb on one mobile titlebar line', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const noteName =
+    'Novo folder de teste/Com anexo generico com um nome muito longo';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName: 'mobile-titlebar-ws',
+    noteName,
+  });
+
+  const titlebar = page.locator('header.desktop-titlebar-surface').first();
+  const breadcrumb = titlebar.getByRole('navigation', { name: 'breadcrumb' });
+  await expect(breadcrumb).toBeVisible();
+  await expectNoPageHorizontalOverflow(page);
+  await expect
+    .poll(async () => {
+      const titlebarBox = await titlebar.boundingBox();
+      const breadcrumbBox = await breadcrumb.boundingBox();
+      if (!titlebarBox || !breadcrumbBox) {
+        return false;
+      }
+      return (
+        breadcrumbBox.y >= titlebarBox.y &&
+        breadcrumbBox.y + breadcrumbBox.height <=
+          titlebarBox.y + titlebarBox.height
+      );
+    })
+    .toBe(true);
+});
+
 test('app shell: resize the sidebar with pointer or keyboard and persist its width', async ({
   page,
 }) => {

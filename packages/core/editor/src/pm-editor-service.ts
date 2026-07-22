@@ -29,13 +29,14 @@ import {
   createWikiLinkIndex,
   getEmbeddableWorkspaceAssetKind,
   getInternalLinkHeading,
+  normalizeLinkTarget,
   normalizeStoredMarkdownLinkTarget,
   relativeMarkdownAssetHref,
   resolveInternalLink,
-  resolveLocalMarkdownAsset,
   resolveWikiLinkTarget,
   resolveWorkspaceMarkdownAssetReferenceCandidates,
   type WikiLinkIndex,
+  type WsFilePath,
   WsPath,
   workspaceRootMarkdownAssetHref,
 } from '@bangle.io/ws-path';
@@ -738,15 +739,7 @@ export class PmEditorService
       return undefined;
     }
 
-    const existingWsPaths = new Set(
-      this.store
-        .get(this.dependencies.workspaceState.$wsPaths)
-        .map((path) => path.wsPath),
-    );
-    const assetWsPath = resolveWorkspaceMarkdownAssetReferenceCandidates(
-      currentWsPath,
-      target,
-    ).find((candidate) => existingWsPaths.has(candidate.wsPath));
+    const assetWsPath = this.resolveExistingAssetWsPath(currentWsPath, target);
     if (!assetWsPath) {
       return undefined;
     }
@@ -763,6 +756,21 @@ export class PmEditorService
       isImage: getEmbeddableWorkspaceAssetKind(assetWsPath) === 'image',
       label: assetWsPath.fileName,
     };
+  }
+
+  private resolveExistingAssetWsPath(
+    currentWsPath: WsFilePath,
+    target: string,
+  ): WsFilePath | undefined {
+    const existingWsPaths = new Set(
+      this.store
+        .get(this.dependencies.workspaceState.$wsPaths)
+        .map((path) => path.wsPath),
+    );
+    return resolveWorkspaceMarkdownAssetReferenceCandidates(
+      currentWsPath,
+      target,
+    ).find((candidate) => existingWsPaths.has(candidate.wsPath));
   }
 
   /** Opens a web link externally or routes a relative Markdown link in-app. */
@@ -793,8 +801,10 @@ export class PmEditorService
       return;
     }
 
-    if (target?.kind === 'external') {
-      window.open(target.href, '_blank', 'noopener,noreferrer');
+    const externalTarget =
+      target?.kind === 'external' ? target : normalizeLinkTarget(href);
+    if (externalTarget?.kind === 'external') {
+      window.open(externalTarget.href, '_blank', 'noopener,noreferrer');
     }
   }
 
@@ -808,7 +818,12 @@ export class PmEditorService
       return false;
     }
 
-    const assetWsPath = resolveLocalMarkdownAsset(editor.wsPath, href);
+    const currentWsPath = WsPath.safeParse(editor.wsPath).data?.asFile();
+    if (!currentWsPath) {
+      return false;
+    }
+
+    const assetWsPath = this.resolveExistingAssetWsPath(currentWsPath, href);
     if (!assetWsPath) {
       return false;
     }

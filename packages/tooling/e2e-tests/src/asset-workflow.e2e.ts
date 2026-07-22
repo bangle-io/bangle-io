@@ -180,7 +180,7 @@ test('pastes workspace-backed image and PDF assets, reloads, and opens asset pag
   page,
 }, testInfo) => {
   const workspaceName = `asset-workflow-${testInfo.workerIndex}-${Date.now()}`;
-  const noteName = 'source';
+  const noteName = 'nested/source';
   await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
 
   const editor = getEditorLocator(page, {});
@@ -221,11 +221,7 @@ test('pastes workspace-backed image and PDF assets, reloads, and opens asset pag
   await expect(page.getByRole('textbox', { name: 'Link URL' })).toHaveValue(
     /assets\/spec-sheet-.*\.pdf/,
   );
-  await page.getByRole('textbox', { name: 'Link URL' }).press('Escape');
-
-  await page.keyboard.down(ctrlKey);
-  await assetLink.click();
-  await page.keyboard.up(ctrlKey);
+  await page.getByRole('button', { name: 'Open link' }).click();
   await expect(
     page.getByRole('heading', { name: /spec-sheet-.*\.pdf/i }),
   ).toBeVisible();

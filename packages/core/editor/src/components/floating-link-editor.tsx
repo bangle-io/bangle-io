@@ -190,7 +190,7 @@ function LinkEditor({
               <LinkEditorButton
                 disabled={!valid}
                 label={t.app.editor.linkEditor.open}
-                onClick={() => normalizedValue && onOpen(normalizedValue)}
+                onClick={() => normalizedValue && onOpen(value.trim())}
                 onPointerDown={preserveSelection}
                 type="button"
               >
