@@ -6,7 +6,7 @@ import { DATABASE_TABLE_NAME } from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import type { DatabaseQueryOptions } from '@bangle.io/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { IdbDatabaseService } from '../idb-database';
+import { DB_NAME, DB_VERSION, IdbDatabaseService } from '../idb-database';
 
 async function setup() {
   const { commonOpts } = createTestEnvironment();
@@ -96,5 +96,32 @@ describe('IdbDatabaseService', () => {
 
     await service.updateEntry(key, () => ({ value: 'v3' }), options);
     expect(callback).not.toHaveBeenCalled();
+  });
+
+  it('reports a stale tab and releases the connection when a newer version opens', async () => {
+    const { commonOpts } = createTestEnvironment();
+    const context = {
+      ctx: commonOpts,
+      serviceContext: {
+        abortSignal: commonOpts.rootAbortSignal,
+      },
+    };
+    const onStaleTab = vi.fn();
+    const service = new IdbDatabaseService(context, null, { onStaleTab });
+    await service.mount();
+
+    // Simulate a tab running a newer app version requesting an upgrade.
+    // (Other tests in this file may hold their own connections, so this
+    // test asserts only this service's behavior: it reports staleness and
+    // releases its connection instead of blocking the upgrade.)
+    indexedDB.open(DB_NAME, DB_VERSION + 1);
+
+    await vi.waitFor(() => {
+      expect(onStaleTab).toHaveBeenCalledTimes(1);
+    });
+
+    // The stale connection is closed: operations fail loudly instead of
+    // silently blocking the newer tab.
+    await expect(service.getEntry('any-key', options)).rejects.toThrow();
   });
 });

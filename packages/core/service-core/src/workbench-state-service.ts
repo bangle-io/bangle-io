@@ -120,6 +120,12 @@ export class WorkbenchStateService extends BaseService {
   $openWsDialog = atom(false);
   $openOmniSearch = atom(false);
   $themePref = atom<ThemeConfig['defaultPreference']>('system');
+  /**
+   * True once this tab is known to run an older app version than another tab
+   * (storage schema handshake). The app blocks the tab behind a reload
+   * dialog; there is deliberately no way to unset it short of reloading.
+   */
+  $staleTab = atom(false);
   $singleInputDialog = atom<
     | undefined
     | ({
@@ -161,7 +167,7 @@ export class WorkbenchStateService extends BaseService {
     },
     private config: {
       themeManager: ThemeManager;
-      emitter: ScopedEmitter<'event::app:reload-ui'>;
+      emitter: ScopedEmitter<'event::app:reload-ui' | 'event::app:stale-tab'>;
     },
   ) {
     super(SERVICE_NAME.workbenchStateService, context, dep);
@@ -169,6 +175,13 @@ export class WorkbenchStateService extends BaseService {
   }
 
   hookMount() {
+    this.config.emitter.on(
+      'event::app:stale-tab',
+      () => {
+        this.store.set(this.$staleTab, true);
+      },
+      this.abortSignal,
+    );
     this.addCleanup(
       this.config.themeManager.onThemeChange(({ preference }) => {
         this.store.set(this.$themePref, preference);

@@ -419,7 +419,7 @@ export function createServiceSetup<
       withOverride('workbenchState', () => ({
         themeManager,
         emitter: rootEmitter.scoped(
-          ['event::app:reload-ui'],
+          ['event::app:reload-ui', 'event::app:stale-tab'],
           commonOpts.rootAbortSignal,
         ),
       })),

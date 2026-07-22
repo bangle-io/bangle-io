@@ -54,7 +54,18 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
   db!: idb.IDBPDatabase<AppDatabase>;
   private changeBus!: TypedBroadcastBus<DatabaseChange>;
 
-  constructor(context: BaseServiceContext, dependencies: null) {
+  constructor(
+    context: BaseServiceContext,
+    dependencies: null,
+    private config: {
+      /**
+       * Called when a newer app version in another tab requests a database
+       * upgrade, i.e. this tab is outdated. The app should block further use
+       * of this tab and ask the user to reload it.
+       */
+      onStaleTab?: () => void;
+    } = {},
+  ) {
     super(SERVICE_NAME.idbDatabaseService, context, dependencies);
   }
 
@@ -85,13 +96,14 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
       },
       blocking: () => {
         // A newer app version in another tab wants to upgrade. Release our
-        // connection so it can proceed; our subsequent database operations
-        // will fail and surface through the normal error path, which is
-        // preferable to indefinitely blocking the up-to-date tab.
+        // connection so it can proceed, and tell the app this tab is stale
+        // so it can show a blocking reload prompt instead of failing on the
+        // next database operation.
         logger.warn(
           'Closing IndexedDB connection so a newer app version can upgrade',
         );
         this.db?.close();
+        this.config.onStaleTab?.();
       },
       terminated: () => {
         logger.error('IndexedDB connection was unexpectedly terminated');

@@ -258,6 +258,12 @@ export const t = {
       audioUnsupported: 'Ihr Browser kann dieses Audioformat nicht abspielen.',
     },
     dialogs: {
+      staleTab: {
+        title: 'Eine neuere Version von Bangle läuft',
+        description:
+          'Ein anderer Tab hat eine neuere Version von Bangle geöffnet. Laden Sie diesen Tab neu, um alles synchron zu halten — Ihre Notizen sind sicher.',
+        reloadButton: 'Tab neu laden',
+      },
       changeTheme: {
         searchPlaceholder: 'Wählen Sie eine Theme-Einstellung',
         title: 'Theme ändern',

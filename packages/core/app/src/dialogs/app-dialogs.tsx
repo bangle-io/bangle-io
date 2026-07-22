@@ -8,6 +8,7 @@ import { useAtom } from 'jotai';
 import React from 'react';
 import { AllFilesDialog } from './all-files-dialog';
 import { CreateWorkspaceDialog } from './create-workspace-dialog';
+import { StaleTabDialog } from './stale-tab-dialog';
 
 export function AppDialogs() {
   const coreServices = useCoreServices();
@@ -24,6 +25,7 @@ export function AppDialogs() {
 
   return (
     <>
+      <StaleTabDialog />
       <AllFilesDialog />
       <CreateWorkspaceDialog />
       <AppAlertDialog

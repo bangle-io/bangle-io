@@ -63,7 +63,13 @@ export function initializeServices(
         });
       },
     })),
-    database: IdbDatabaseService,
+    database: slot(IdbDatabaseService, () => ({
+      onStaleTab: () => {
+        rootEmitter.emit('event::app:stale-tab', {
+          sender: getEventSenderMetadata({ tag: 'IdbDatabaseService' }),
+        });
+      },
+    })),
     syncDatabase: BrowserLocalStorageSyncDatabaseService,
     fileStorageIdb: slot(FileStorageIndexedDB, () => ({
       onChange: (change) => {

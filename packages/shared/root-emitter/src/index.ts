@@ -27,6 +27,15 @@ export type RootEvents =
         sender: EventSenderMetadata;
       };
     }
+  // This tab is running an older app version than another tab (detected via
+  // the storage layer's version-upgrade handshake) and must be reloaded.
+  // Local-only: each stale tab discovers this through its own connection.
+  | {
+      event: 'event::app:stale-tab';
+      payload: {
+        sender: EventSenderMetadata;
+      };
+    }
   | {
       event: 'event::editor:reload-editor';
       payload: {

@@ -306,6 +306,12 @@ export const t = {
       audioUnsupported: "Your browser can't play this audio format.",
     },
     dialogs: {
+      staleTab: {
+        title: 'A newer version of Bangle is running',
+        description:
+          'Another tab has opened a newer version of Bangle. Reload this tab to keep everything in sync — your notes are safe.',
+        reloadButton: 'Reload tab',
+      },
       pwaOpenInApp: {
         title: 'Open in the app?',
         description:
