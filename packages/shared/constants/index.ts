@@ -32,6 +32,22 @@ export const SETTINGS_PAGE_DEFINITIONS = [
     commandTitle: 'Settings - Workspaces',
     commandKeywords: ['settings', 'preferences', 'workspaces', 'workspace'],
   },
+  {
+    id: 'recovery',
+    route: 'settings-recovery',
+    commandId: 'command::ui:open-settings-recovery',
+    commandTitle: 'Settings - Recover',
+    commandKeywords: [
+      'settings',
+      'recover',
+      'recovery',
+      'snapshot',
+      'snapshots',
+      'history',
+      'backup',
+      'restore',
+    ],
+  },
 ] as const;
 export type SettingsPageDefinition = (typeof SETTINGS_PAGE_DEFINITIONS)[number];
 export type SettingsPageId = SettingsPageDefinition['id'];
@@ -115,6 +131,7 @@ export const SERVICE_NAME = {
   memorySyncDatabaseService: 'memory-sync-database',
   navigationService: 'navigation-service',
   nodeErrorHandlerService: 'node-error-handler',
+  noteSnapshotService: 'note-snapshot',
   shortcutService: 'shortcut',
   testErrorHandlerService: 'test-error-handler',
   userActivityService: 'user-activity',
@@ -142,4 +159,9 @@ export const DATABASE_TABLE_NAME = {
   workspaceInfo: 'WorkspaceInfo',
   // a dump table for all the other information
   misc: 'MiscTable',
+  // metadata of point-in-time note copies kept for user-driven recovery
+  noteSnapshots: 'NoteSnapshots',
+  // the (potentially large) content bodies of note snapshots, keyed by the
+  // same snapshot id, so listing/eviction never has to load content
+  noteSnapshotsContent: 'NoteSnapshotsContent',
 } as const;

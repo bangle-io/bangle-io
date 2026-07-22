@@ -262,9 +262,38 @@ export const t = {
         locateFolder: 'Locate folder',
         deleteWorkspace: 'Delete workspace',
       },
+      recovery: {
+        title: 'Recover',
+        description:
+          'Bangle keeps periodic snapshots of your notes as you edit them. Restore any snapshot as a new note — your current notes are never overwritten.',
+        searchPlaceholder: 'Search notes...',
+        searchLabel: 'Search snapshots',
+        workspaceLabel: 'Workspace',
+        allWorkspaces: 'All workspaces',
+        emptyTitle: 'No snapshots yet',
+        emptyDescription:
+          'Snapshots are captured automatically once you edit notes in this workspace.',
+        noMatches: 'No snapshots match your search.',
+        noteColumn: 'Note',
+        timeColumn: 'Captured',
+        wordCountColumn: 'Words',
+        actionsColumn: 'Actions',
+        recoverAction: 'Recover',
+        loading: 'Loading snapshots...',
+        loadFailed: 'Could not load snapshots.',
+        noWorkspaces: 'Create a workspace to collect note snapshots.',
+        previewTitle: ({ fileName }: { fileName: string }) =>
+          `Snapshot of ${fileName}`,
+        previewLoading: 'Loading snapshot...',
+        previewUnavailable:
+          'This snapshot is no longer available. It may have been cleaned up.',
+        recoverAsNewNote: 'Recover as new note',
+        closeButton: 'Close',
+      },
       nav: {
         general: 'General',
         workspaces: 'Workspaces',
+        recovery: 'Recover',
       },
     },
     pageAsset: {
@@ -277,6 +306,16 @@ export const t = {
       audioUnsupported: "Your browser can't play this audio format.",
     },
     dialogs: {
+      staleTab: {
+        title: 'A newer version of Bangle is running',
+        description:
+          'Another tab has opened a newer version of Bangle. Reload this tab to keep everything in sync — your notes are safe.',
+        reloadButton: 'Reload tab',
+        retryButton: 'Retry save',
+        saveBlocked:
+          'This tab was not reloaded because some changes are still saving or could not be saved. Retry to keep your latest edits.',
+        savingButton: 'Saving changes…',
+      },
       pwaOpenInApp: {
         title: 'Open in the app?',
         description:
@@ -590,6 +629,10 @@ export const t = {
       fileCreated: ({ fileName }: { fileName: string }) =>
         `Created ${fileName}`,
       fileCreateFailed: 'Could not create file',
+      snapshotNotFound: 'Snapshot not found. It may have been cleaned up.',
+      snapshotRecovered: ({ fileName }: { fileName: string }) =>
+        `Recovered snapshot as ${fileName}`,
+      snapshotRecoverFailed: 'Could not recover snapshot',
       fileDeleted: ({ fileName }: { fileName: string }) =>
         `Deleted ${fileName}`,
       fileDeleteFailed: 'Could not delete file',

@@ -45,6 +45,15 @@ export type AppRouteInfo =
       };
     }
   | {
+      route: 'settings-recovery';
+      metadata?: Record<string, string>;
+      payload: {
+        returnTo?: string;
+        /** Prefills the snapshot search filter (e.g. a note's wsPath). */
+        search?: string;
+      };
+    }
+  | {
       route: 'welcome';
       metadata?: Record<string, string>;
       payload: Record<string, never>;

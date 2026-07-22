@@ -1,9 +1,5 @@
-import {
-  MemoryBroadcastChannel,
-  type TypedBroadcastBus,
-} from '@bangle.io/browser-utils';
+import { MemoryBroadcastChannel } from '@bangle.io/browser-utils';
 import { Logger } from '@bangle.io/logger';
-import type { Emitter } from '@bangle.io/mini-js-utils';
 import { CROSS_TAB_EVENTS } from '@bangle.io/root-emitter';
 import { describe, expect, test, vi } from 'vitest';
 import { setupCrossTabComms } from '../setup-root-emitter';
@@ -12,11 +8,7 @@ import { setupCrossTabComms } from '../setup-root-emitter';
 vi.stubGlobal('BroadcastChannel', MemoryBroadcastChannel);
 
 interface TestSetup {
-  pubSub: {
-    publisher: Emitter;
-    subscriber: Emitter;
-    broadcastBus: TypedBroadcastBus<any>;
-  };
+  pubSub: ReturnType<typeof setupCrossTabComms>;
   abortController: AbortController;
   logger: Logger;
   tabId: string;

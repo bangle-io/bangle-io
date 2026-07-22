@@ -5,6 +5,7 @@ import type {
   EditorService,
   FileSystemService,
   NavigationService,
+  NoteSnapshotService,
   ShortcutService,
   UserActivityService,
   WorkbenchStateService,
@@ -13,6 +14,11 @@ import type {
 } from '@bangle.io/service-core';
 import type { CommandExcludedServiceSlotId } from '@bangle.io/types';
 import type { Atom } from 'jotai';
+
+export type {
+  NoteSnapshotMetadata,
+  NoteSnapshotRecord,
+} from '@bangle.io/service-core';
 
 /**
  * The engine-agnostic contract of the service powering the note editing
@@ -65,7 +71,8 @@ export type EditorEngineContract = BaseService & {
     name: string;
     focus?: boolean;
   }) => () => void;
-  retryFailedSave: (wsPath: string) => boolean;
+  /** Retries one failed save, or every failed save when no path is given. */
+  retryFailedSave: (wsPath?: string) => boolean;
   subscribeToSaveStatus: (listener: () => void, wsPath?: string) => () => void;
   toggleHeadingCollapse: () => boolean;
   uncollapseAllHeadings: () => boolean;
@@ -84,6 +91,7 @@ export type CoreServices<
   editorService: EditorService;
   fileSystem: FileSystemService;
   navigation: NavigationService;
+  noteSnapshot: NoteSnapshotService;
   shortcut: ShortcutService;
   userActivityService: UserActivityService;
   workbenchState: WorkbenchStateService;

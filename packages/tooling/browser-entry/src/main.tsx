@@ -3,6 +3,7 @@ import './index.css';
 
 import { App, consumePwaLaunchParams } from '@bangle.io/app';
 import { ThemeManager } from '@bangle.io/color-scheme-manager';
+import { APP_BUILD_ID, APP_BUILD_TIME } from '@bangle.io/config';
 import { THEME_MANAGER_CONFIG } from '@bangle.io/constants';
 import {
   createEditorSaveCoordinator,
@@ -12,6 +13,7 @@ import { Logger } from '@bangle.io/logger';
 import { createStore } from 'jotai';
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { setupAppBuildGuard } from './app-build-guard';
 import { setupRootEmitter } from './setup-root-emitter';
 import { initializeSentry } from './setup-sentry';
 
@@ -51,6 +53,13 @@ async function main(logger: Logger) {
     logger,
     abortController.signal,
   );
+  const appBuildGuard = setupAppBuildGuard({
+    rootEmitter,
+    appBuild: { id: APP_BUILD_ID, builtAt: APP_BUILD_TIME },
+    tabId,
+    logger: logger.child('app-build-guard'),
+    abortSignal: abortController.signal,
+  });
 
   const store = createStore();
   const themeManager = new ThemeManager(THEME_MANAGER_CONFIG);
@@ -81,6 +90,10 @@ async function main(logger: Logger) {
       />
     </StrictMode>,
   );
+
+  // Services (including the stale-tab listener) must be mounted before a
+  // running tab can reply to this announcement.
+  appBuildGuard.start();
 
   if (isDebug) {
     (window as any).services = services;

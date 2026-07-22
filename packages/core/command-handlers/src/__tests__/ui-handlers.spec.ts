@@ -133,6 +133,40 @@ describe('UI command handlers', () => {
       });
     });
 
+    it('recover-note opens the recovery settings prefilled with the current note', async () => {
+      const NOTE_WS_PATH = 'test-ws:daily/journal.md';
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ui:recover-note',
+        workspaces: [{ name: 'test-ws', notes: [NOTE_WS_PATH] }],
+        autoNavigate: 'ws-path',
+      });
+
+      dispatch('command::ui:recover-note', { wsPath: undefined });
+
+      await vi.waitFor(() => {
+        expect(services.navigation.resolveAtoms().routeInfo).toEqual({
+          route: 'settings-recovery',
+          payload: expect.objectContaining({ search: NOTE_WS_PATH }),
+        });
+      });
+    });
+
+    it('recover-note without an open note reports a handled app error', async () => {
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ui:recover-note',
+        workspaces: [{ name: 'test-ws' }],
+        autoNavigate: 'workspace',
+      });
+
+      expect(() =>
+        dispatch('command::ui:recover-note', { wsPath: undefined }),
+      ).toThrowError(/No workspace open/);
+      // Navigation stays put; the settings page is not opened.
+      expect(services.navigation.resolveAtoms().routeInfo.route).not.toBe(
+        'settings-recovery',
+      );
+    });
+
     it('should preserve returnTo while navigating between settings pages', async () => {
       const { dispatch, services } = await setupTest({
         targetId: 'command::ui:open-settings-general',

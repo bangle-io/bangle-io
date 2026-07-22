@@ -511,6 +511,25 @@ describe('EditorSaveQueue', () => {
     });
   });
 
+  it('retries every failed save when no path is specified', async () => {
+    const writer = vi
+      .fn<(wsPath: string, doc: string) => Promise<void>>()
+      .mockRejectedValueOnce(new Error('first failed'))
+      .mockRejectedValueOnce(new Error('second failed'))
+      .mockResolvedValue(undefined);
+    const queue = new EditorSaveQueue(writer, vi.fn());
+
+    queue.enqueue('workspace:first.md', 'first');
+    queue.enqueue('workspace:second.md', 'second');
+    await flushMicrotasks();
+
+    expect(queue.retryFailed()).toBe(true);
+    await vi.waitFor(() => {
+      expect(queue.hasPendingOrFailed()).toBe(false);
+    });
+    expect(writer).toHaveBeenCalledTimes(4);
+  });
+
   it('wraps non-error writer failures before emitting app errors', async () => {
     const writer = vi.fn(async () => {
       throw 'sync unavailable';

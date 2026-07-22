@@ -17,6 +17,7 @@ import type {
 } from '@bangle.io/types';
 import { isVisibleWorkspaceFilePath, WsPath } from '@bangle.io/ws-path';
 import { atom } from 'jotai';
+import type { NoteSnapshotService } from './note-snapshot-service';
 import type { WorkspaceOpsService } from './workspace-ops-service';
 
 type ChangeEvent = {
@@ -59,7 +60,7 @@ function throwIfAborted(signal: AbortSignal | undefined): void {
  * Provides file system operations (list, read, write, rename, delete files)
  */
 export class FileSystemService extends BaseService {
-  static deps = ['workspaceOps'] as const;
+  static deps = ['workspaceOps', 'noteSnapshot'] as const;
 
   $fileCreateCount = atom(0);
   $fileContentUpdateCount = atom(0);
@@ -87,7 +88,10 @@ export class FileSystemService extends BaseService {
 
   constructor(
     context: BaseServiceContext,
-    private dependencies: { workspaceOps: WorkspaceOpsService },
+    private dependencies: {
+      workspaceOps: WorkspaceOpsService;
+      noteSnapshot: NoteSnapshotService;
+    },
     private config: {
       emitter: ScopedEmitter<'event::file:update' | 'event::file:force-update'>;
       getFileStorageServices: () => Record<string, BaseFileStorageService>;
@@ -361,7 +365,20 @@ export class FileSystemService extends BaseService {
     WsPath.assertFile(wsPath);
 
     const storageService = await this.getStorageService({ wsPath });
+    // Preserve a recovery copy of the content that is about to be replaced.
+    // Throttled internally (usually a no-op) and never throws. When capture
+    // is due, it finishes before the overwrite so the recovery copy cannot
+    // race the destructive write.
+    const [outgoingContent] = await Promise.all([
+      this.dependencies.noteSnapshot.prepareOutgoingWrite(wsPath, file),
+      this.dependencies.noteSnapshot.captureBeforeOverwrite(wsPath, () =>
+        storageService.readFile(wsPath, {}),
+      ),
+    ]);
     await storageService.writeFile(wsPath, file, {});
+    // Remember what this tab wrote (in memory only) so the content can be
+    // preserved as a snapshot if another tab overwrites it.
+    this.dependencies.noteSnapshot.recordOutgoingWrite(wsPath, outgoingContent);
     this.onChange({
       type: 'file-content-update',
       payload: { wsPath },

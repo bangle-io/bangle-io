@@ -1,3 +1,4 @@
+import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import type { EventSenderMetadata } from '@bangle.io/types';
 
 export type { ErrorReporter } from '@bangle.io/logger';
@@ -67,8 +68,10 @@ export function getEventSenderMetadata({
 }: {
   tag?: undefined | string;
 }): EventSenderMetadata {
+  // The per-browsing-context id lets cross-tab event listeners tell their own
+  // tab's events apart from another tab's (e.g. note snapshot throttling).
   return {
-    id: 'bangle-app',
+    id: BROWSING_CONTEXT_ID,
     tag: tag,
   };
 }

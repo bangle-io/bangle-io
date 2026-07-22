@@ -31,6 +31,38 @@ export const noteManagementHandlers = [
   ),
 
   c(
+    'command::ui:recover-note',
+    ({ navigation, workspaceState }, { wsPath }, key) => {
+      const { store } = getCtx(key);
+      const targetWsPath = wsPath || store.get(workspaceState.$currentWsPath);
+
+      if (!targetWsPath) {
+        throwAppError(
+          'error::workspace:not-opened',
+          t.app.errors.workspace.notOpened,
+          { wsPath },
+        );
+      }
+
+      const filePath = WsPath.safeParse(targetWsPath).data?.asFile();
+
+      if (!filePath) {
+        throwAppError(
+          'error::file:invalid-note-path',
+          t.app.errors.file.invalidNotePath,
+          {
+            invalidWsPath: targetWsPath.toString(),
+          },
+        );
+      }
+
+      // Prefill the Recover page's search with the full wsPath so the table
+      // shows exactly this note's snapshots.
+      navigation.goRecoverySettings({ search: filePath.wsPath });
+    },
+  ),
+
+  c(
     'command::ui:delete-note-dialog',
     ({ workbenchState, workspaceState }, { wsPath }, key) => {
       const { store, dispatch } = getCtx(key);

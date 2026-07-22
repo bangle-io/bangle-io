@@ -533,7 +533,7 @@ export class PmEditorService
     return this.saveQueue.subscribe(listener, wsPath);
   }
 
-  retryFailedSave(wsPath: string): boolean {
+  retryFailedSave(wsPath?: string): boolean {
     return this.saveQueue.retryFailed(wsPath);
   }
 

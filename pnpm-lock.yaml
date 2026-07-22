@@ -124,6 +124,9 @@ importers:
       '@bangle.io/omni-search':
         specifier: workspace:*
         version: link:../omni-search
+      '@bangle.io/service-core':
+        specifier: workspace:*
+        version: link:../service-core
       '@bangle.io/types':
         specifier: workspace:*
         version: link:../../shared/types
@@ -347,6 +350,9 @@ importers:
       '@bangle.io/commands':
         specifier: workspace:*
         version: link:../../shared/commands
+      '@bangle.io/config':
+        specifier: workspace:*
+        version: link:../../shared/config
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../../shared/constants
@@ -680,6 +686,9 @@ importers:
 
   packages/shared/base-utils:
     dependencies:
+      '@bangle.io/config':
+        specifier: workspace:*
+        version: link:../config
       '@bangle.io/constants':
         specifier: workspace:*
         version: link:../constants

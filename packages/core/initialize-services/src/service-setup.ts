@@ -1,6 +1,7 @@
 import { assertIsDefined } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import type { BangleAppCommand } from '@bangle.io/commands';
+import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import type { EditorEngineId } from '@bangle.io/constants';
 import type { CoreServices, EditorEngineContract } from '@bangle.io/context';
 import { type EditorSaveCoordinator, PmEditorService } from '@bangle.io/editor';
@@ -23,6 +24,7 @@ import {
   EditorService,
   FileSystemService,
   NavigationService,
+  NoteSnapshotService,
   ShortcutService,
   type ShortcutServiceConfig,
   UserActivityService,
@@ -56,6 +58,7 @@ export const coreServiceClasses = {
   commandRegistry: CommandRegistryService,
   fileSystem: FileSystemService,
   navigation: NavigationService,
+  noteSnapshot: NoteSnapshotService,
   shortcut: ShortcutService,
   editorService: EditorService,
   workbenchState: WorkbenchStateService,
@@ -259,6 +262,7 @@ function toCoreServices(s: CoreInstances): CoreServices {
     commandRegistry: s.commandRegistry,
     fileSystem: s.fileSystem,
     navigation: s.navigation,
+    noteSnapshot: s.noteSnapshot,
     shortcut: s.shortcut,
     editorService: s.editorService,
     workbenchState: s.workbenchState,
@@ -353,6 +357,16 @@ export function createServiceSetup<
       })),
     ),
     navigation: slot(NavigationService),
+    noteSnapshot: slot(
+      NoteSnapshotService,
+      withOverride('noteSnapshot', () => ({
+        emitter: rootEmitter.scoped(
+          ['event::file:update'],
+          commonOpts.rootAbortSignal,
+        ),
+        selfSenderId: BROWSING_CONTEXT_ID,
+      })),
+    ),
     shortcut: slot(
       ShortcutService,
       withOverride('shortcut', () => ({
@@ -405,7 +419,7 @@ export function createServiceSetup<
       withOverride('workbenchState', () => ({
         themeManager,
         emitter: rootEmitter.scoped(
-          ['event::app:reload-ui'],
+          ['event::app:reload-ui', 'event::app:stale-tab'],
           commonOpts.rootAbortSignal,
         ),
       })),
@@ -460,6 +474,7 @@ export function createServiceSetup<
       commandRegistry: s.commandRegistry,
       fileSystem: s.fileSystem,
       navigation: s.navigation,
+      noteSnapshot: s.noteSnapshot,
       shortcut: s.shortcut,
       editorService: s.editorService,
       workbenchState: s.workbenchState,

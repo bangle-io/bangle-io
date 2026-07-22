@@ -143,7 +143,7 @@ export class EditorWService
     return false;
   }
 
-  retryFailedSave(_wsPath: string): boolean {
+  retryFailedSave(_wsPath?: string): boolean {
     return false;
   }
 

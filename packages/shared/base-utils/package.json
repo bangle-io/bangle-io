@@ -25,6 +25,7 @@
   "module": "index.ts",
   "scripts": {},
   "dependencies": {
+    "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/logger": "workspace:*",
     "@bangle.io/mini-js-utils": "workspace:*",

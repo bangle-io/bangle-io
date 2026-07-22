@@ -221,15 +221,33 @@ export class NavigationService extends BaseService {
   }
 
   public goSettingsPage(route: SettingsRoute) {
-    const currentRoute = this.store.get(this.$routeInfo);
-    const returnTo = isSettingsRouteInfo(currentRoute)
-      ? currentRoute.payload.returnTo
-      : this.toUri(currentRoute);
-
+    const returnTo = this.settingsReturnTo();
     this.go({
       route,
       payload: returnTo ? { returnTo } : {},
     });
+  }
+
+  /**
+   * Opens the settings Recover page, optionally prefilling the snapshot
+   * search filter (e.g. with a note's wsPath to show only its versions).
+   */
+  public goRecoverySettings(options: { search?: string } = {}) {
+    const returnTo = this.settingsReturnTo();
+    this.go({
+      route: 'settings-recovery',
+      payload: {
+        ...(returnTo ? { returnTo } : {}),
+        ...(options.search ? { search: options.search } : {}),
+      },
+    });
+  }
+
+  private settingsReturnTo(): string | undefined {
+    const currentRoute = this.store.get(this.$routeInfo);
+    return isSettingsRouteInfo(currentRoute)
+      ? currentRoute.payload.returnTo
+      : this.toUri(currentRoute);
   }
 
   private get routerService() {

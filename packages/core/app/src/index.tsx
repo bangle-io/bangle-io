@@ -102,6 +102,7 @@ function routeUsesWorkspaceFileTree(route: AppRouteInfo['route']): boolean {
     case 'not-found':
     case 'settings-general':
     case 'settings-workspaces':
+    case 'settings-recovery':
       return false;
     default: {
       const _exhaustiveCheck: never = route;
@@ -137,6 +138,7 @@ function AppRoutes() {
       return <PageNotFound />;
     case 'settings-general':
     case 'settings-workspaces':
+    case 'settings-recovery':
       return <PageSettings />;
 
     default: {
