@@ -366,15 +366,19 @@ export class FileSystemService extends BaseService {
 
     const storageService = await this.getStorageService({ wsPath });
     // Preserve a recovery copy of the content that is about to be replaced.
-    // Throttled internally (usually a no-op) and never throws, so saves are
-    // never blocked by snapshotting.
-    await this.dependencies.noteSnapshot.captureBeforeOverwrite(wsPath, () =>
-      storageService.readFile(wsPath, {}),
-    );
+    // Throttled internally (usually a no-op) and never throws. When capture
+    // is due, it finishes before the overwrite so the recovery copy cannot
+    // race the destructive write.
+    const [outgoingContent] = await Promise.all([
+      this.dependencies.noteSnapshot.prepareOutgoingWrite(wsPath, file),
+      this.dependencies.noteSnapshot.captureBeforeOverwrite(wsPath, () =>
+        storageService.readFile(wsPath, {}),
+      ),
+    ]);
     await storageService.writeFile(wsPath, file, {});
     // Remember what this tab wrote (in memory only) so the content can be
     // preserved as a snapshot if another tab overwrites it.
-    this.dependencies.noteSnapshot.recordOutgoingWrite(wsPath, file);
+    this.dependencies.noteSnapshot.recordOutgoingWrite(wsPath, outgoingContent);
     this.onChange({
       type: 'file-content-update',
       payload: { wsPath },

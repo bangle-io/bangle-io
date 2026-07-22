@@ -19,7 +19,7 @@ const OLD_TABLES = [
 ];
 
 describe('IdbDatabaseService blocked upgrade', () => {
-  it('fails every queued current tab instead of hanging, then recovers after the old tab closes', async () => {
+  it('bounds queued opens without failing immediately on blocked, then recovers', async () => {
     // Simulate a tab running an already-deployed old app version: it holds a
     // v2 connection and has no cooperative versionchange handling at all.
     const oldTabDb = await new Promise<IDBDatabase>((resolve, reject) => {
@@ -37,37 +37,68 @@ describe('IdbDatabaseService blocked upgrade', () => {
     // Deliberately keep the connection open on versionchange.
     oldTabDb.onversionchange = () => {};
 
-    const createService = () => {
-      const { commonOpts } = createTestEnvironment();
+    const createService = (openTimeoutMs = 20) => {
+      const { commonOpts, controller } = createTestEnvironment();
       const context = {
         ctx: commonOpts,
         serviceContext: {
           abortSignal: commonOpts.rootAbortSignal,
         },
       };
-      return new IdbDatabaseService(context, null, { openTimeoutMs: 20 });
+      return {
+        controller,
+        service: new IdbDatabaseService(context, null, { openTimeoutMs }),
+      };
     };
 
-    // The first request receives `blocked`; the second sits behind that
-    // uncancellable request and is bounded by the timeout. Neither can hang.
-    await expect(createService().mount()).rejects.toThrow(
+    // A blocked signal is informational, not terminal: a cooperative old tab
+    // may still close before the timeout. This genuinely stuck tab does not,
+    // so queued requests fail only after their bounded wait.
+    const first = createService();
+    const firstMount = first.service.mount();
+    let firstSettled = false;
+    void firstMount.then(
+      () => {
+        firstSettled = true;
+      },
+      () => {
+        firstSettled = true;
+      },
+    );
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    expect(firstSettled).toBe(false);
+    await expect(firstMount).rejects.toThrow(
       'Close or reload other Bangle tabs',
     );
-    await expect(createService().mount()).rejects.toThrow(
-      'Close or reload other Bangle tabs',
+
+    // Aborting a later mount stops waiting immediately. Its uncancellable
+    // open request remains queued, but closes itself if it eventually succeeds.
+    const aborted = createService(1_000);
+    const abortedMount = aborted.service.mount();
+    aborted.controller.abort(new Error('mount stopped'));
+    await expect(abortedMount).rejects.toThrow('mount stopped');
+
+    const second = createService();
+    await expect(second.service.mount()).rejects.toThrow(
+      'could not open its database in time',
     );
 
     // IndexedDB completes the queued requests after the blocker closes. The
     // failed services close their late connections, so a reload can recover.
     oldTabDb.close();
     const recovered = createService();
-    await recovered.mount();
+    await recovered.service.mount();
     const snapshots = { tableName: DATABASE_TABLE_NAME.noteSnapshots } as const;
-    await recovered.updateEntry('snap', () => ({ value: 'x' }), snapshots);
-    expect(await recovered.getEntry('snap', snapshots)).toEqual({
+    await recovered.service.updateEntry(
+      'snap',
+      () => ({ value: 'x' }),
+      snapshots,
+    );
+    expect(await recovered.service.getEntry('snap', snapshots)).toEqual({
       found: true,
       value: 'x',
     });
+    recovered.controller.abort();
   });
 
   it('upgrades a fresh database without an extra roundtrip hanging boot', async () => {

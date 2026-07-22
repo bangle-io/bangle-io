@@ -311,6 +311,10 @@ export const t = {
         description:
           'Another tab has opened a newer version of Bangle. Reload this tab to keep everything in sync — your notes are safe.',
         reloadButton: 'Reload tab',
+        retryButton: 'Retry save',
+        saveBlocked:
+          'This tab was not reloaded because some changes are still saving or could not be saved. Retry to keep your latest edits.',
+        savingButton: 'Saving changes…',
       },
       pwaOpenInApp: {
         title: 'Open in the app?',

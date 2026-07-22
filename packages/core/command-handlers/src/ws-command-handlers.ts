@@ -574,34 +574,34 @@ export const wsCommandHandlers = [
         originalPath.fileNameWithoutExtension.replace(/-recovered-\d+$/, '') ||
         originalPath.fileNameWithoutExtension;
 
-      let newWsPath: string | undefined;
-      for (let attempt = 1; attempt <= 100; attempt++) {
-        const candidate = originalPath.replaceFileName(
-          `${base}-recovered-${attempt}${WsPath.DEFAULT_NOTE_EXTENSION}`,
-        ).wsPath;
-        if (!(await fileSystem.exists(candidate))) {
-          newWsPath = candidate;
-          break;
-        }
-      }
-      if (!newWsPath) {
-        toast.error(t.app.toasts.snapshotRecoverFailed);
-        return;
-      }
-
       try {
+        let newWsPath: string | undefined;
+        for (let attempt = 1; attempt <= 100; attempt++) {
+          const candidate = originalPath.replaceFileName(
+            `${base}-recovered-${attempt}${WsPath.DEFAULT_NOTE_EXTENSION}`,
+          ).wsPath;
+          if (!(await fileSystem.exists(candidate))) {
+            newWsPath = candidate;
+            break;
+          }
+        }
+        if (!newWsPath) {
+          toast.error(t.app.toasts.snapshotRecoverFailed);
+          return;
+        }
+
         await fileSystem.createTextFile(newWsPath, snapshot.content);
+
+        toast.success(
+          t.app.toasts.snapshotRecovered({
+            fileName: WsPath.assertFile(newWsPath).fileName,
+          }),
+        );
+        navigation.goWsPath(newWsPath);
       } catch (error) {
         toast.error(t.app.toasts.snapshotRecoverFailed);
         throw error;
       }
-
-      toast.success(
-        t.app.toasts.snapshotRecovered({
-          fileName: WsPath.assertFile(newWsPath).fileName,
-        }),
-      );
-      navigation.goWsPath(newWsPath);
     },
   ),
 

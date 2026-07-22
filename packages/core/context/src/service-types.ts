@@ -71,7 +71,8 @@ export type EditorEngineContract = BaseService & {
     name: string;
     focus?: boolean;
   }) => () => void;
-  retryFailedSave: (wsPath: string) => boolean;
+  /** Retries one failed save, or every failed save when no path is given. */
+  retryFailedSave: (wsPath?: string) => boolean;
   subscribeToSaveStatus: (listener: () => void, wsPath?: string) => () => void;
   toggleHeadingCollapse: () => boolean;
   uncollapseAllHeadings: () => boolean;

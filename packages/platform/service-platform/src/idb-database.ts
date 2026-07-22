@@ -94,10 +94,7 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
       this.config.onDatabaseInvalidated?.();
     };
     let gaveUp = false;
-    let reportBlocked: () => void = () => undefined;
-    const blocked = new Promise<'blocked'>((resolve) => {
-      reportBlocked = () => resolve('blocked');
-    });
+    let blockedByOtherTab = false;
     const openPromise = idb.openDB<AppDatabase>(DB_NAME, DB_VERSION, {
       upgrade(db, oldVersion) {
         logger.info('IndexedDB upgrade started', { oldVersion });
@@ -111,11 +108,11 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
         logger.info('IndexedDB upgrade completed', { oldVersion });
       },
       blocked(currentVersion, blockedVersion) {
+        blockedByOtherTab = true;
         logger.warn('IndexedDB upgrade blocked by another open tab', {
           currentVersion,
           blockedVersion,
         });
-        reportBlocked();
       },
       blocking(currentVersion, blockedVersion) {
         logger.warn('Closing IndexedDB for a newer schema', {
@@ -126,6 +123,7 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
       },
       terminated: () => {
         logger.error('IndexedDB connection was unexpectedly terminated');
+        reportInvalidation();
       },
     });
     const opened = openPromise.then(
@@ -145,15 +143,32 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
         this.config.openTimeoutMs ?? DEFAULT_OPEN_TIMEOUT_MS,
       );
     });
-    const result = await Promise.race([opened, blocked, timedOut]);
-    clearTimeout(timeoutId);
+    let reportAbort: () => void = () => undefined;
+    const aborted = new Promise<'aborted'>((resolve) => {
+      reportAbort = () => resolve('aborted');
+    });
+    const onAbort = () => reportAbort();
+    this.abortSignal.addEventListener('abort', onAbort, { once: true });
+    if (this.abortSignal.aborted) {
+      onAbort();
+    }
 
-    if (result === 'blocked' || result === 'timed-out') {
+    const result = await Promise.race([opened, timedOut, aborted]);
+    clearTimeout(timeoutId);
+    this.abortSignal.removeEventListener('abort', onAbort);
+
+    if (result === 'aborted') {
+      gaveUp = true;
+      throw this.abortSignal.reason ?? new Error('Database open aborted');
+    }
+    if (result === 'timed-out') {
       gaveUp = true;
       // IndexedDB open requests cannot be cancelled. Close any connection
       // that arrives after startup has failed so a queued request never leaks.
       throw new Error(
-        'Bangle could not upgrade its database. Close or reload other Bangle tabs, then reload this tab.',
+        blockedByOtherTab
+          ? 'Bangle could not upgrade its database. Close or reload other Bangle tabs, then reload this tab.'
+          : 'Bangle could not open its database in time. Reload this tab and try again.',
       );
     }
     if (result.type === 'failed') {

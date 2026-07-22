@@ -158,7 +158,15 @@ export class EditorSaveQueue {
     this.notifySaveStatusChanged(newWsPath);
   }
 
-  retryFailed(wsPath: string): boolean {
+  retryFailed(wsPath?: string): boolean {
+    if (wsPath === undefined) {
+      let retried = false;
+      for (const path of [...this.coordinator.entries.keys()]) {
+        retried = this.retryFailed(path) || retried;
+      }
+      return retried;
+    }
+
     const entry = this.coordinator.entries.get(wsPath);
     if (!entry || entry.active || !entry.failedTask) {
       return false;

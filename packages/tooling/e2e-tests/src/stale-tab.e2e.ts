@@ -44,5 +44,20 @@ test('an outdated tab is blocked with a reload prompt when a newer version runs'
   // The dialog is non-dismissable: Escape must not close it.
   await page.keyboard.press('Escape');
   await expect(dialog).toBeVisible();
-  // The reload button is a plain window.location.reload().
+
+  await Promise.all([
+    page.waitForEvent('load'),
+    dialog.getByRole('button', { name: 'Reload tab' }).click(),
+  ]);
+  expect(
+    await page.evaluate(
+      () =>
+        (
+          performance.getEntriesByType('navigation')[0] as
+            | PerformanceNavigationTiming
+            | undefined
+        )?.type,
+    ),
+  ).toBe('reload');
+  await expect(page.getByTestId('stale-tab-dialog')).toBeVisible();
 });

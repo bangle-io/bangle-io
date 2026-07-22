@@ -207,8 +207,6 @@ describe('NoteSnapshotService', () => {
     });
     await services.fileSystem.createTextFile(NOTE_WS_PATH, 'v1');
     await writeNote(services, NOTE_WS_PATH, 'v2 from this tab');
-    // Let the async outgoing-write recording settle.
-    await new Promise((resolve) => setTimeout(resolve, 0));
     // Different retention bucket, so the preserved snapshot adds a row
     // instead of superseding the v1 capture.
     vi.advanceTimersByTime(11 * 60_000);
@@ -229,6 +227,146 @@ describe('NoteSnapshotService', () => {
       );
       expect(newest?.content).toBe('v2 from this tab');
     });
+    controller.abort();
+  });
+
+  it('preserves each cached outgoing version only once', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-07-21T00:00:00Z'));
+    const { controller, services, testEnv } = await setup();
+    await services.fileSystem.createTextFile(NOTE_WS_PATH, 'v1');
+    await writeNote(services, NOTE_WS_PATH, 'v2 from this tab');
+    vi.advanceTimersByTime(11 * 60_000);
+
+    const emitForeignUpdate = () => {
+      testEnv.rootEmitter.emit('event::file:update', {
+        type: 'file-content-update',
+        wsPath: NOTE_WS_PATH,
+        sender: { id: 'some-other-tab', tag: 'file-system-service' },
+      });
+    };
+    emitForeignUpdate();
+    await services.noteSnapshot.captureBeforeOverwrite(
+      `${TEST_WS_NAME}:first-barrier.md`,
+      async () => new File(['first barrier'], 'first-barrier.md'),
+    );
+
+    vi.advanceTimersByTime(11 * 60_000);
+    await services.noteSnapshot.captureBeforeOverwrite(
+      NOTE_WS_PATH,
+      async () => new File(['newer foreign content'], 'note.md'),
+    );
+    vi.advanceTimersByTime(11 * 60_000);
+    emitForeignUpdate();
+    await services.noteSnapshot.captureBeforeOverwrite(
+      `${TEST_WS_NAME}:second-barrier.md`,
+      async () => new File(['second barrier'], 'second-barrier.md'),
+    );
+
+    const snapshots = await services.noteSnapshot.listSnapshots();
+    const contents = await Promise.all(
+      snapshots.map(
+        async ({ id }) =>
+          (await services.noteSnapshot.getSnapshot(id))?.content,
+      ),
+    );
+    expect(
+      contents.filter((content) => content === 'v2 from this tab'),
+    ).toHaveLength(1);
+    controller.abort();
+  });
+
+  it('serializes concurrent duplicate captures', async () => {
+    const { controller, services } = await setup();
+
+    await Promise.all([
+      services.noteSnapshot.captureBeforeOverwrite(
+        NOTE_WS_PATH,
+        async () => new File(['shared content'], 'note.md'),
+      ),
+      services.noteSnapshot.captureBeforeOverwrite(
+        NOTE_WS_PATH,
+        async () => new File(['shared content'], 'note.md'),
+      ),
+    ]);
+
+    expect(await services.noteSnapshot.listSnapshots()).toHaveLength(1);
+    controller.abort();
+  });
+
+  it('keeps the workspace cap under concurrent captures', async () => {
+    const { controller, services } = await setup({
+      maxSnapshotsPerWorkspace: 3,
+    });
+
+    await Promise.all(
+      Array.from({ length: 8 }, (_, index) =>
+        services.noteSnapshot.captureBeforeOverwrite(
+          `${TEST_WS_NAME}:note-${index}.md`,
+          async () => new File([`content ${index}`], `note-${index}.md`),
+        ),
+      ),
+    );
+
+    expect(await services.noteSnapshot.listSnapshots()).toHaveLength(3);
+    controller.abort();
+  });
+
+  it('resets capture throttling when a deleted path is recreated', async () => {
+    const { controller, services } = await setup({
+      minCaptureIntervalMs: 60_000,
+    });
+    await services.fileSystem.createTextFile(NOTE_WS_PATH, 'old original');
+    await writeNote(services, NOTE_WS_PATH, 'old outgoing');
+
+    await services.fileSystem.deleteFile(NOTE_WS_PATH);
+    await services.fileSystem.createTextFile(
+      NOTE_WS_PATH,
+      'replacement original',
+    );
+    await writeNote(services, NOTE_WS_PATH, 'replacement edited');
+
+    const snapshots = await services.noteSnapshot.listSnapshots();
+    const contents = await Promise.all(
+      snapshots.map(
+        async ({ id }) =>
+          (await services.noteSnapshot.getSnapshot(id))?.content,
+      ),
+    );
+    expect(contents).toContain('replacement original');
+    controller.abort();
+  });
+
+  it('does not preserve cached content after its path is deleted', async () => {
+    const { controller, services, testEnv } = await setup();
+    await services.fileSystem.createTextFile(NOTE_WS_PATH, 'old original');
+    await writeNote(services, NOTE_WS_PATH, 'old outgoing');
+    await services.fileSystem.deleteFile(NOTE_WS_PATH);
+    await services.fileSystem.createTextFile(
+      NOTE_WS_PATH,
+      'replacement original',
+    );
+
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-content-update',
+      wsPath: NOTE_WS_PATH,
+      sender: { id: 'some-other-tab', tag: 'file-system-service' },
+    });
+    // This capture shares the workspace lock, so when it finishes any
+    // preservation triggered by the event above has also finished.
+    await services.noteSnapshot.captureBeforeOverwrite(
+      `${TEST_WS_NAME}:barrier.md`,
+      async () => new File(['barrier content'], 'barrier.md'),
+    );
+
+    const snapshots = await services.noteSnapshot.listSnapshots();
+    const contents = await Promise.all(
+      snapshots.map(
+        async ({ id }) =>
+          (await services.noteSnapshot.getSnapshot(id))?.content,
+      ),
+    );
+    expect(contents).not.toContain('old outgoing');
     controller.abort();
   });
 

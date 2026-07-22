@@ -99,4 +99,20 @@ describe('command::ws:recover-note-snapshot', () => {
       ).toEqual([]);
     });
   });
+
+  test('shows the recovery error when the snapshot workspace was deleted', async () => {
+    const { dispatch, services, snapshot } = await setupWithSnapshot();
+    const errorToast = vi.spyOn(toast, 'error');
+    await services.workspaceOps.deleteWorkspaceInfo('test-ws');
+
+    dispatch('command::ws:recover-note-snapshot', {
+      snapshotId: snapshot.id,
+    });
+
+    await vi.waitFor(() => {
+      expect(errorToast).toHaveBeenCalledWith(
+        t.app.toasts.snapshotRecoverFailed,
+      );
+    });
+  });
 });
