@@ -24,10 +24,8 @@ const IGNORED_FILE_NAMES = new Set(['desktop.ini', 'thumbs.db']);
  * as workspace content.
  *
  * Deliberately narrow: broader temp suffixes like `.tmp`/`.swp` can be
- * legitimate pre-existing user files (and the asset pipeline accepts them),
- * so hiding them here would silently remove them from every listing.
- * Watcher-only noise suppression for such suffixes belongs in the watcher
- * (see `TRANSIENT_WATCH_SUFFIXES` in the native FS storage provider).
+ * legitimate user files (and the asset pipeline accepts them), so hiding or
+ * suppressing their changes would leave visible workspace content stale.
  */
 const IGNORED_FILE_SUFFIXES = ['.crswap'];
 

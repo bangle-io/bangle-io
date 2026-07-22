@@ -384,7 +384,12 @@ export class NoteSnapshotService extends BaseService {
     content: string,
   ): Promise<boolean> {
     try {
-      if (content.trim() === '') {
+      const filePath = WsPath.fromString(wsPath).asFile();
+      if (
+        !filePath?.isMarkdown() ||
+        content.trim() === '' ||
+        new Blob([content]).size > NOTE_SNAPSHOT_MAX_CONTENT_BYTES
+      ) {
         return true;
       }
       await this.storeSnapshot(wsPath, content);

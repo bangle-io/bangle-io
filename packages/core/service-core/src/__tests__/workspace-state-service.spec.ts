@@ -25,10 +25,24 @@ function createDeferred<T>() {
 
 async function setupWorkspaceStateService({
   controller = new AbortController(),
+  hasPendingOrFailedSave,
 }: {
   controller?: AbortController;
+  hasPendingOrFailedSave?: (wsPath: string) => boolean;
 } = {}) {
-  const testEnv = createTestEnvironment({ controller });
+  const testEnv = createTestEnvironment({
+    controller,
+    ...(hasPendingOrFailedSave
+      ? {
+          coreConfigOverrides: {
+            workspaceState: (base) => ({
+              ...base,
+              hasPendingOrFailedSave,
+            }),
+          },
+        }
+      : {}),
+  });
   const services = testEnv.instantiateAll();
   await testEnv.mountAll();
 
@@ -514,6 +528,32 @@ describe('WorkspaceStateService file tree updates', () => {
     });
     expect(services.navigation.resolveAtoms().activeWsFilePath?.wsPath).toBe(
       SOURCE_WIKI,
+    );
+  });
+
+  it('does not follow an external rename while the active path has an unsaved editor', async () => {
+    const { rootEmitter, services } = await setupWorkspaceStateService({
+      controller,
+      hasPendingOrFailedSave: (wsPath) => wsPath === TARGET,
+    });
+    const renamedWsPath = `${WS_NAME}:ExternallyRenamed.md`;
+
+    rootEmitter.emit('event::file:update', {
+      type: 'file-rename',
+      oldWsPath: TARGET,
+      wsPath: renamedWsPath,
+      sender: { id: 'another-tab', tag: 'file-system' },
+    });
+
+    await vi.waitFor(() => {
+      expect(
+        services.workspaceState
+          .resolveAtoms()
+          .wsPaths.map((path) => path.wsPath),
+      ).toContain(renamedWsPath);
+    });
+    expect(services.navigation.resolveAtoms().activeWsFilePath?.wsPath).toBe(
+      TARGET,
     );
   });
 

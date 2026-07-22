@@ -250,11 +250,8 @@ test('page-return revalidation refreshes external changes when FileSystemObserve
     'external-note.md',
     '# External Note\n\nedited again while away\n',
   );
-  // Page-return notifications collapse a single return's transition burst
-  // within a 1s window; a genuinely separate leave→edit→return cycle must
-  // sit outside it (not a sleep-for-sync — the window is the semantics
-  // under test).
-  await page.waitForTimeout(1_100);
+  // A real departure starts a new return cycle immediately, even when it
+  // follows the prior return by less than the burst-dedupe window.
   await simulateLeaveAndReturn(page);
   await expect(getEditorLocator(page, {})).toContainText(
     'edited again while away',

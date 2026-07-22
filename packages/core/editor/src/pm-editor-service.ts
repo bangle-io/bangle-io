@@ -124,6 +124,9 @@ type EditorEntry =
   | {
       name: string;
       editorView: ReturnType<typeof createEditor>;
+      /** Exact source retained while the loaded document remains unchanged. */
+      loadedDoc: EditorView['state']['doc'];
+      loadedMarkdown: string;
       removeFocusListener: () => void;
       wsPath: string;
     }
@@ -225,10 +228,10 @@ export class PmEditorService
           signal: this.abortSignal,
         }),
       getMarkdown: (schema) => this.getMarkdown(schema),
-      preserveCurrentContent: (wsPath, content) =>
+      preserveCurrentContent: (wsPath, content, view) =>
         this.dependencies.noteSnapshot.preserveExternalOverwrite(
           wsPath,
-          content,
+          this.getExactPreservableContent(view, content),
         ),
       withSaveSuppressed: (wsPath, dispatch) => {
         this.suppressSaveForExternalSync.add(wsPath);
@@ -360,7 +363,7 @@ export class PmEditorService
           this.dependencies.fileSystem.$fileRenameEvent,
         );
         if (event) {
-          this.handleFileRename(event.oldWsPath, event.wsPath);
+          this.handleFileRename(event.oldWsPath, event.wsPath, event.external);
         }
       }),
     );
@@ -381,7 +384,18 @@ export class PmEditorService
     );
   }
 
-  private handleFileRename(oldWsPath: string, newWsPath: string): void {
+  private handleFileRename(
+    oldWsPath: string,
+    newWsPath: string,
+    external: boolean,
+  ): void {
+    // A local rename drains this queue before moving the file. A rename from
+    // another tab has no such guarantee: keep a pending/failed editor on its
+    // old path so its only unsaved body stays mounted and fails visibly rather
+    // than being retargeted over the renamed file.
+    if (external && this.saveQueue.hasPendingOrFailed(oldWsPath)) {
+      return;
+    }
     this.saveQueue.relocate(oldWsPath, newWsPath);
 
     for (const [domNode, editor] of this.editors) {
@@ -467,6 +481,8 @@ export class PmEditorService
       this.editors.set(domNode, {
         name,
         editorView,
+        loadedDoc: editorView.state.doc,
+        loadedMarkdown: content ?? '',
         removeFocusListener: () => {
           editorView.dom.removeEventListener('focusin', handleFocusIn);
         },
@@ -710,6 +726,23 @@ export class PmEditorService
       next.delete(wsPath);
     }
     this.store.set(this.$roundTripWarnings, next);
+  }
+
+  /**
+   * A freshly loaded note may contain Markdown the editor cannot serialize
+   * byte-for-byte. Until its document changes, preserve that exact source
+   * rather than a normalized serialization when external content replaces it.
+   */
+  private getExactPreservableContent(
+    view: EditorView,
+    serialized: string,
+  ): string {
+    for (const editor of this.readyEditors()) {
+      if (editor.editorView === view && editor.loadedDoc === view.state.doc) {
+        return editor.loadedMarkdown;
+      }
+    }
+    return serialized;
   }
 
   getEditorLoadStatus(

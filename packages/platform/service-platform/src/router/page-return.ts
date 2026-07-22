@@ -72,6 +72,10 @@ export function onPageReturn(
     'event::router:page-lifecycle-state',
     ({ current, previous }) => {
       if (!isPageReturnTransition(current, previous)) {
+        // A real departure starts a new return cycle immediately. Keep the
+        // clock only for adjacent transitions within one browser-generated
+        // hidden → passive → active burst.
+        lastNotified = 0;
         return;
       }
       const now = Date.now();

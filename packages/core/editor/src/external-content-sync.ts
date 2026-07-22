@@ -93,7 +93,11 @@ export interface ExternalContentSyncHost {
   readFileAsText(wsPath: string): Promise<string | undefined>;
   getMarkdown(schema: Schema): ReturnType<typeof markdownLoader>;
   /** Saves the clean editor content before an external version replaces it. */
-  preserveCurrentContent(wsPath: string, content: string): Promise<void>;
+  preserveCurrentContent(
+    wsPath: string,
+    content: string,
+    view: EditorView,
+  ): Promise<void>;
   /**
    * Runs `dispatch` with the editor's save pipeline suppressed for `wsPath`
    * (see `suppressSaveForExternalSync` in the editor service for why the
@@ -364,7 +368,7 @@ export class ExternalContentSync {
       }
 
       if (!preservedCurrentContent) {
-        await this.host.preserveCurrentContent(wsPath, currentSerialized);
+        await this.host.preserveCurrentContent(wsPath, currentSerialized, view);
         if (this.aborted) {
           return false;
         }

@@ -67,16 +67,6 @@ type Config = {
   ) => void;
 };
 
-/**
- * Transient-file suffixes suppressed from WATCHER events only: other
- * software's scratch files churn constantly next to real content and would
- * otherwise spam per-path refreshes. Unlike the shared workspace file policy
- * (which hides `.crswap` everywhere), these stay visible in listings — a
- * pre-existing `export.tmp` can be a legitimate user file; only its change
- * noise is unwanted.
- */
-const TRANSIENT_WATCH_SUFFIXES = ['.tmp', '.swp'];
-
 /** How the watcher should treat a path from an observer record. */
 type WatchPathClass =
   | { kind: 'file'; wsPath: string }
@@ -245,7 +235,7 @@ export class FileStorageNativeFs
    *
    * - `file`: a visible workspace file — emit a targeted per-path event.
    * - `ignored`: invisible to the app (dotfiles, ignored directories,
-   *   `.crswap`, transient watch suffixes) — drop the record entirely.
+   *   `.crswap`) — drop the record entirely.
    * - `coarse`: directory-shaped or unparseable — the record cannot be
    *   mapped to per-path events; only a workspace re-list reconciles it.
    *   Deleted entries carry no handle (`kind` is unknowable for
@@ -267,10 +257,6 @@ export class FileStorageNativeFs
       return { kind: 'coarse' };
     }
     if (!isVisibleWorkspaceFilePath(wsPath)) {
-      return { kind: 'ignored' };
-    }
-    const lowerPath = relativePath.toLowerCase();
-    if (TRANSIENT_WATCH_SUFFIXES.some((suffix) => lowerPath.endsWith(suffix))) {
       return { kind: 'ignored' };
     }
     return { kind: 'file', wsPath };
@@ -328,15 +314,16 @@ export class FileStorageNativeFs
         if (from.kind === 'coarse' || to.kind === 'coarse') {
           needsRefresh = true;
         } else if (from.kind === 'file' && to.kind === 'file') {
-          specificEvents.set(`rename:${from.wsPath}->${to.wsPath}`, {
-            type: 'rename',
-            oldWsPath: from.wsPath,
-            newWsPath: to.wsPath,
-          });
+          // A watcher `moved` record does not prove a user-visible rename: it
+          // can also be an atomic replacement of an existing target. Sending
+          // it through the app's rename pipeline would retarget pending saves
+          // from the source and leave an open target stale. Re-list and
+          // revalidate open notes instead; watcher moves are infrequent and
+          // correctness matters more than a speculative per-path shortcut.
+          needsRefresh = true;
         } else if (to.kind === 'file') {
-          // Atomic-write pattern (Chromium's own `.crswap` commit, sync
-          // tools' write-to-temp-then-rename): content materialized at the
-          // visible path from a transient one the app never showed. Treat it
+          // Atomic-write pattern (Chromium's own `.crswap` commit): content
+          // materialized at the visible path from one the app never showed. Treat it
           // as appearing or replaced. External creates invalidate downstream
           // content indexes without a coarse re-list on every local save.
           specificEvents.set(`create:${to.wsPath}`, {
@@ -344,16 +331,15 @@ export class FileStorageNativeFs
             wsPath: to.wsPath,
           });
         } else if (from.kind === 'file') {
-          // Visible file moved to an invisible path — gone as far as the
-          // app is concerned.
+          // Visible file moved to an invisible path — gone as far as the app
+          // is concerned.
           specificEvents.set(`delete:${from.wsPath}`, {
             type: 'delete',
             wsPath: from.wsPath,
           });
         }
-        // Both endpoints invisible: a transient-to-transient shuffle the
-        // app never shows — drop it like the equivalent appeared/disappeared
-        // records.
+        // Both endpoints invisible: drop the move like the equivalent
+        // appeared/disappeared records.
         continue;
       }
 
@@ -363,8 +349,7 @@ export class FileStorageNativeFs
         continue;
       }
       if (classified.kind === 'ignored') {
-        // Hidden/system/transient paths (sync temp files, dotfiles) are
-        // invisible to the app; ignore them entirely.
+        // Hidden/system paths are invisible to the app; ignore them entirely.
         continue;
       }
       const wsPath = classified.wsPath;

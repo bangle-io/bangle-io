@@ -1,3 +1,4 @@
+import { getEventSenderMetadata } from '@bangle.io/base-utils';
 import {
   EXTERNAL_FILE_CHANGE_SENDER_TAG,
   FILE_STORAGE_MAX_FILE_SIZE_BYTES,
@@ -443,15 +444,51 @@ describe('external file change events', () => {
     // indexes react to them like any other change.
     expect(store.get(fileSystem.$fileContentUpdateCount)).toBe(1);
 
-    // Events from the app's own writes never mark the external atom.
+    // Events from this browsing context's own writes never mark the external
+    // atom.
     testEnv.rootEmitter.emit('event::file:update', {
       type: 'file-content-update',
       wsPath: 'some-ws:two.md',
-      sender: { id: 'bangle-app', tag: 'file-system' },
+      sender: getEventSenderMetadata({ tag: 'file-system' }),
     });
     expect(store.get(fileSystem.$externalFileChangeEvent)).toMatchObject({
       sequence: 1,
       wsPath: 'some-ws:one.md',
+    });
+
+    // A normal app write broadcast from another browsing context is just as
+    // external to this editor as a storage-watcher event.
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-content-update',
+      wsPath: 'some-ws:from-other-tab.md',
+      sender: { id: 'other-tab', tag: 'file-system' },
+    });
+    expect(store.get(fileSystem.$externalFileChangeEvent)).toEqual({
+      sequence: 2,
+      type: 'file-content-update',
+      wsPath: 'some-ws:from-other-tab.md',
+    });
+
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-rename',
+      oldWsPath: 'some-ws:old.md',
+      wsPath: 'some-ws:new.md',
+      sender: { id: 'other-tab', tag: 'file-system' },
+    });
+    expect(store.get(fileSystem.$externalFileChangeEvent)).toEqual({
+      sequence: 3,
+      type: 'file-rename',
+      oldWsPath: 'some-ws:old.md',
+      wsPath: 'some-ws:new.md',
+    });
+    // The tree re-lists, but this tab's editors are not sent through the
+    // rename event without being told the source is external.
+    expect(store.get(fileSystem.$fileRenameCount)).toBe(1);
+    expect(store.get(fileSystem.$fileRenameEvent)).toEqual({
+      external: true,
+      oldWsPath: 'some-ws:old.md',
+      sequence: 1,
+      wsPath: 'some-ws:new.md',
     });
 
     // An externally tagged force-update maps to a coarse refresh, keeping
@@ -461,7 +498,7 @@ describe('external file change events', () => {
       sender: EXTERNAL_SENDER,
     });
     expect(store.get(fileSystem.$externalFileChangeEvent)).toEqual({
-      sequence: 2,
+      sequence: 4,
       type: 'refresh',
       wsName: 'some-ws',
     });

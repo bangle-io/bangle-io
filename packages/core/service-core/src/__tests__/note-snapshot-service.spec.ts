@@ -411,6 +411,16 @@ describe('NoteSnapshotService', () => {
     controller.abort();
   });
 
+  it('applies the snapshot size limit to externally displaced editor content', async () => {
+    const { controller, services } = await setup();
+    const huge = `# big\n${'word '.repeat(1_000_000)}`;
+
+    await services.noteSnapshot.preserveExternalOverwrite(NOTE_WS_PATH, huge);
+
+    expect(await services.noteSnapshot.listSnapshots()).toEqual([]);
+    controller.abort();
+  });
+
   it('evicts old snapshots beyond the workspace cap, preferring recent ones', async () => {
     vi.useFakeTimers({ toFake: ['Date'] });
     vi.setSystemTime(new Date('2026-07-21T00:00:00Z'));

@@ -412,7 +412,7 @@ describe('FileStorageNativeFs', () => {
 });
 
 describe('external change watching', () => {
-  it('maps observer records for visible files to external change events', async () => {
+  it('maps visible file records and degrades ambiguous moves to a refresh', async () => {
     const observer = stubFileSystemObserver();
     const { service, onExternalChange } = await setup(
       undefined,
@@ -445,6 +445,16 @@ describe('external change watching', () => {
         type: 'disappeared',
         relativePathComponents: ['gone.md'],
       },
+    ]);
+
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'create', wsPath: 'myWorkspace:sub/new.md' },
+      { type: 'update', wsPath: 'myWorkspace:existing.md' },
+      { type: 'delete', wsPath: 'myWorkspace:gone.md' },
+    ]);
+
+    onExternalChange.mockClear();
+    await observer.emitRecords([
       {
         type: 'moved',
         relativePathComponents: ['renamed.md'],
@@ -452,17 +462,10 @@ describe('external change watching', () => {
         changedHandle: { kind: 'file' },
       },
     ]);
-
-    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
-      { type: 'create', wsPath: 'myWorkspace:sub/new.md' },
-      { type: 'update', wsPath: 'myWorkspace:existing.md' },
-      { type: 'delete', wsPath: 'myWorkspace:gone.md' },
-      {
-        type: 'rename',
-        oldWsPath: 'myWorkspace:old-name.md',
-        newWsPath: 'myWorkspace:renamed.md',
-      },
-    ]);
+    expect(onExternalChange).toHaveBeenCalledWith({
+      type: 'refresh',
+      wsName: 'myWorkspace',
+    });
   });
 
   it('coalesces one observer burst: duplicates collapse, a coarse record wins alone', async () => {
@@ -620,7 +623,7 @@ describe('external change watching', () => {
     ]);
   });
 
-  it('degrades atomic-write moves to per-path events instead of workspace refreshes', async () => {
+  it('keeps invisible-to-visible atomic writes targeted but refreshes ambiguous visible moves', async () => {
     const observer = stubFileSystemObserver();
     const { service, onExternalChange } = await setup(
       undefined,
@@ -645,15 +648,22 @@ describe('external change watching', () => {
         relativePathMovedFrom: ['note.md.crswap'],
         changedHandle: { kind: 'file' },
       },
-      // Visible file moved onto a transient path: gone as far as the app
-      // is concerned.
+    ]);
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'create', wsPath: 'myWorkspace:note.md' },
+    ]);
+
+    onExternalChange.mockClear();
+    await observer.emitRecords([
+      // `.tmp` is visible workspace content. A visible-to-visible watcher
+      // move can be either a rename or an atomic target replacement, so the
+      // safe interpretation is a workspace refresh.
       {
         type: 'moved',
         relativePathComponents: ['trash.md.tmp'],
         relativePathMovedFrom: ['trash.md'],
         changedHandle: { kind: 'file' },
       },
-      // Transient-to-transient shuffle: never shown, fully ignored.
       {
         type: 'moved',
         relativePathComponents: ['b.md.tmp'],
@@ -663,12 +673,11 @@ describe('external change watching', () => {
     ]);
 
     expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
-      { type: 'create', wsPath: 'myWorkspace:note.md' },
-      { type: 'delete', wsPath: 'myWorkspace:trash.md' },
+      { type: 'refresh', wsName: 'myWorkspace' },
     ]);
   });
 
-  it('suppresses transient temp-suffix churn without hiding those files from listings', async () => {
+  it('reports changes to visible temp-suffix files', async () => {
     const observer = stubFileSystemObserver();
     const { service, onExternalChange } = await setup(
       undefined,
@@ -682,9 +691,8 @@ describe('external change watching', () => {
       expect(observer.observe).toHaveBeenCalledTimes(1);
     });
 
-    // Editors/sync tools churn `.tmp`/`.swp` scratch files constantly; the
-    // watcher drops them (the shared listing policy deliberately does NOT —
-    // a pre-existing `export.tmp` can be a legitimate user file).
+    // The listing policy deliberately treats `.tmp`/`.swp` as legitimate
+    // user files, so their watcher updates must not be silently dropped.
     await observer.emitRecords([
       {
         type: 'modified',
@@ -704,6 +712,8 @@ describe('external change watching', () => {
     ]);
 
     expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'update', wsPath: 'myWorkspace:export.tmp' },
+      { type: 'create', wsPath: 'myWorkspace:recovered.swp' },
       { type: 'update', wsPath: 'myWorkspace:real-note.md' },
     ]);
   });

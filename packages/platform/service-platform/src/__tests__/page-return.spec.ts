@@ -90,7 +90,7 @@ describe('onPageReturn', () => {
     // A genuinely separate leave→return cycle moments later must fire —
     // consumers without an observer rely on returns as their only
     // reconciliation, so this must be a burst dedupe, not a throttle.
-    vi.advanceTimersByTime(1_500);
+    vi.advanceTimersByTime(100);
     emit('active', 'hidden');
     emit('hidden', 'active');
     expect(fired).toEqual([

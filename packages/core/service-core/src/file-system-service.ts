@@ -37,16 +37,17 @@ export type FileCreateEvent = {
 };
 
 export type FileRenameEvent = {
+  external: boolean;
   oldWsPath: string;
   sequence: number;
   wsPath: string;
 };
 
 /**
- * A file change that did NOT originate from this app's own writes — detected
+ * A file change that did NOT originate from this browsing context — detected
  * by a storage watcher (e.g. a sync tool editing a Native FS workspace) or
- * broadcast from another tab's watcher. `refresh` means "something changed,
- * re-read what you depend on" without a specific path.
+ * broadcast from another tab. `refresh` means "something changed, re-read
+ * what you depend on" without a specific path.
  */
 type ExternalFileChangePayload =
   | {
@@ -128,6 +129,8 @@ export class FileSystemService extends BaseService {
     private config: {
       emitter: ScopedEmitter<'event::file:update' | 'event::file:force-update'>;
       getFileStorageServices: () => Record<string, BaseFileStorageService>;
+      /** This browsing context's event-sender id (BROWSING_CONTEXT_ID). */
+      selfSenderId: string;
     },
   ) {
     super(SERVICE_NAME.fileSystemService, context, dependencies);
@@ -147,7 +150,7 @@ export class FileSystemService extends BaseService {
         this.store.set(this.$fileDeleteCount, (c) => c + 1);
         this.store.set(this.$fileRenameCount, (c) => c + 1);
         this.store.set(this.$fileForceUpdateCount, (c) => c + 1);
-        if (event.sender.tag === EXTERNAL_FILE_CHANGE_SENDER_TAG) {
+        if (this.isExternalSender(event.sender)) {
           this.setExternalFileChangeEvent({
             type: 'refresh',
             wsName: event.wsName,
@@ -160,7 +163,8 @@ export class FileSystemService extends BaseService {
     this.config.emitter.on(
       'event::file:update',
       (event) => {
-        if (event.sender.tag === EXTERNAL_FILE_CHANGE_SENDER_TAG) {
+        const isExternal = this.isExternalSender(event.sender);
+        if (isExternal) {
           if (event.type === 'file-rename') {
             if (event.oldWsPath !== undefined) {
               this.setExternalFileChangeEvent({
@@ -194,7 +198,7 @@ export class FileSystemService extends BaseService {
             // Observers cannot distinguish a new path from an atomic
             // temp-to-target replacement. External creates therefore also
             // invalidate indexes derived from file content.
-            if (event.sender.tag === EXTERNAL_FILE_CHANGE_SENDER_TAG) {
+            if (isExternal) {
               this.recordFileContentUpdate(event.wsPath);
             }
             break;
@@ -211,6 +215,7 @@ export class FileSystemService extends BaseService {
             if (event.oldWsPath) {
               this.fileRenameSequence += 1;
               this.store.set(this.$fileRenameEvent, {
+                external: isExternal,
                 oldWsPath: event.oldWsPath,
                 sequence: this.fileRenameSequence,
                 wsPath: event.wsPath,
@@ -225,6 +230,13 @@ export class FileSystemService extends BaseService {
         }
       },
       this.abortSignal,
+    );
+  }
+
+  private isExternalSender(sender: { id: string; tag?: string }): boolean {
+    return (
+      sender.tag === EXTERNAL_FILE_CHANGE_SENDER_TAG ||
+      sender.id !== this.config.selfSenderId
     );
   }
 

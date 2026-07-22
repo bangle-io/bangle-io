@@ -138,6 +138,34 @@ describe('editor refresh on external file changes', () => {
     ).resolves.toMatchObject({ content: 'the original note body' });
   });
 
+  it('snapshots the exact loaded Markdown when external content replaces a lossy clean document', async () => {
+    const originalSource =
+      'the original note body\n\n[unused]: https://example.com/original\n';
+    const { testEnv, services, domNode } =
+      await setupEditorWithNote(originalSource);
+
+    await simulateExternalEdit(
+      testEnv,
+      services,
+      'updated by a sync tool elsewhere',
+    );
+
+    await vi.waitFor(
+      () => {
+        expect(editorText(domNode)).toContain(
+          'updated by a sync tool elsewhere',
+        );
+      },
+      { timeout: 3_000 },
+    );
+
+    const snapshots = await services.noteSnapshot.listSnapshots();
+    expect(snapshots).toHaveLength(1);
+    await expect(
+      services.noteSnapshot.getSnapshot(snapshots[0]?.id ?? ''),
+    ).resolves.toMatchObject({ content: originalSource });
+  });
+
   it('also refreshes on an external coarse refresh (force-update) event', async () => {
     const { testEnv, services, domNode } = await setupEditorWithNote(
       'the original note body',
@@ -204,6 +232,63 @@ describe('editor refresh on external file changes', () => {
 
     // Unwedge the save so the shared queue store returns to clean.
     releaseSave();
+    await vi.waitFor(() => {
+      expect(services.editorEngine.hasPendingOrFailedSave()).toBe(false);
+    });
+  });
+
+  it('keeps pending editor content on its original path across a foreign-tab rename', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      'the original note body',
+    );
+    const renamedWsPath = `${WS_NAME}:renamed.md`;
+    const pendingWrites: Array<() => void> = [];
+    const writeSpy = vi
+      .spyOn(services.fileSystem, 'writeFile')
+      .mockImplementation(
+        () =>
+          new Promise<void>((resolve) => {
+            pendingWrites.push(resolve);
+          }),
+      );
+
+    expect(
+      services.editorEngine.insertMarkdownAtSelection('FIRST-LOCAL-EDIT'),
+    ).toBe(true);
+    await vi.waitFor(() => {
+      expect(writeSpy).toHaveBeenCalledTimes(1);
+    });
+
+    await services.fileStorageMemory.renameFile(NOTE_WS_PATH, {
+      newWsPath: renamedWsPath,
+    });
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-rename',
+      oldWsPath: NOTE_WS_PATH,
+      wsPath: renamedWsPath,
+      sender: { id: 'another-tab', tag: 'file-system' },
+    });
+
+    expect(
+      asPmEditor(services.editorEngine).getEditorLoadStatus('main-test-editor'),
+    ).toMatchObject({ status: 'ready', wsPath: NOTE_WS_PATH });
+    const editorView = asPmEditor(services.editorEngine).getEditor(
+      'main-test-editor',
+    );
+    expect(editorView).toBeDefined();
+    editorView?.dispatch(editorView.state.tr.insertText('SECOND-LOCAL-EDIT'));
+    expect(editorText(domNode)).toContain('FIRST-LOCAL-EDIT');
+    expect(editorText(domNode)).toContain('SECOND-LOCAL-EDIT');
+
+    pendingWrites.shift()?.();
+    await vi.waitFor(() => {
+      expect(writeSpy).toHaveBeenCalledTimes(2);
+    });
+    expect(writeSpy.mock.calls.map(([wsPath]) => wsPath)).toEqual([
+      NOTE_WS_PATH,
+      NOTE_WS_PATH,
+    ]);
+    pendingWrites.shift()?.();
     await vi.waitFor(() => {
       expect(services.editorEngine.hasPendingOrFailedSave()).toBe(false);
     });
