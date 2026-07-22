@@ -460,6 +460,86 @@ describe('NoteSnapshotService', () => {
     controller.abort();
   });
 
+  it('retries preserving outgoing content after a transient storage failure', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-07-21T00:00:00Z'));
+    const { controller, services, testEnv } = await setup();
+    await services.fileSystem.createTextFile(NOTE_WS_PATH, 'v1');
+    await writeNote(services, NOTE_WS_PATH, 'v2 from this tab');
+    // Different retention bucket, so the preserved snapshot adds a row.
+    vi.advanceTimersByTime(11 * 60_000);
+
+    const originalUpdateEntry = services.database.updateEntry.bind(
+      services.database,
+    );
+    const failingUpdateEntry = vi
+      .spyOn(services.database, 'updateEntry')
+      .mockImplementation(async (key, callback, options) => {
+        if (options.tableName === DATABASE_TABLE_NAME.noteSnapshotsContent) {
+          throw new Error('database exploded');
+        }
+        return originalUpdateEntry(key, callback, options);
+      });
+
+    const emitForeignUpdate = () => {
+      testEnv.rootEmitter.emit('event::file:update', {
+        type: 'file-content-update',
+        wsPath: NOTE_WS_PATH,
+        sender: { id: 'some-other-tab', tag: 'file-system-service' },
+      });
+    };
+    // This preservation attempt fails in storage; the capture below shares
+    // the workspace lock, so once it finishes the failure has completed.
+    emitForeignUpdate();
+    await services.noteSnapshot.captureBeforeOverwrite(
+      `${TEST_WS_NAME}:barrier.md`,
+      async () => new File(['barrier content'], 'barrier.md'),
+    );
+    failingUpdateEntry.mockRestore();
+
+    // Storage works again: a later foreign event must retry the preservation
+    // instead of treating the lost content as already handled.
+    await vi.waitFor(async () => {
+      emitForeignUpdate();
+      const snapshots = await services.noteSnapshot.listSnapshots();
+      const contents = await Promise.all(
+        snapshots.map(
+          async ({ id }) =>
+            (await services.noteSnapshot.getSnapshot(id))?.content,
+        ),
+      );
+      expect(contents).toContain('v2 from this tab');
+    });
+    controller.abort();
+  });
+
+  it('keeps snapshot history attached to a note across a rename', async () => {
+    const { controller, services } = await setup();
+    await services.fileSystem.createTextFile(NOTE_WS_PATH, 'original');
+    await writeNote(services, NOTE_WS_PATH, 'edited');
+    expect(await services.noteSnapshot.listSnapshots()).toHaveLength(1);
+
+    const renamedWsPath = `${TEST_WS_NAME}:renamed.md`;
+    await services.fileSystem.renameFile({
+      oldWsPath: NOTE_WS_PATH,
+      newWsPath: renamedWsPath,
+    });
+
+    await vi.waitFor(async () => {
+      const snapshots = await services.noteSnapshot.listSnapshots();
+      expect(snapshots).toHaveLength(1);
+      expect(snapshots[0]?.wsPath).toBe(renamedWsPath);
+    });
+    // The re-keyed row still resolves to its content.
+    const snapshots = await services.noteSnapshot.listSnapshots();
+    const full = await services.noteSnapshot.getSnapshot(
+      snapshots[0]?.id ?? '',
+    );
+    expect(full?.content).toBe('original');
+    expect(full?.wsName).toBe(TEST_WS_NAME);
+    controller.abort();
+  });
+
   it('lists snapshots per workspace, newest first', async () => {
     const OTHER_WS = 'other-ws';
     const { controller, services } = await setup();

@@ -148,6 +148,9 @@ export class NoteSnapshotService extends BaseService {
           this.clearPathState(event.wsPath);
         } else if (event.type === 'file-rename') {
           this.relocatePathState(event.oldWsPath, event.wsPath);
+          if (event.oldWsPath) {
+            void this.migratePersistedSnapshots(event.oldWsPath, event.wsPath);
+          }
         } else if (event.sender.id !== this.config.selfSenderId) {
           // Another tab changed this note. Drop the local throttle so this
           // tab's next save re-captures the content it is about to overwrite.
@@ -156,8 +159,17 @@ export class NoteSnapshotService extends BaseService {
           // race, its content only exists in this map now.
           const outgoing = this.lastWrittenContent.get(event.wsPath);
           if (outgoing && !outgoing.preserved) {
+            // Marked eagerly so overlapping foreign events do not preserve
+            // twice; reset on storage failure so a later foreign event
+            // retries instead of silently dropping the only copy.
             outgoing.preserved = true;
-            void this.preserveContent(event.wsPath, outgoing.content);
+            void this.preserveContent(event.wsPath, outgoing.content).then(
+              (preserved) => {
+                if (!preserved) {
+                  outgoing.preserved = false;
+                }
+              },
+            );
           }
         }
       },
@@ -184,6 +196,43 @@ export class NoteSnapshotService extends BaseService {
     }
     if (lastWrittenContent !== undefined) {
       this.lastWrittenContent.set(wsPath, lastWrittenContent);
+    }
+  }
+
+  /**
+   * Re-keys persisted snapshot metadata after a rename so the note keeps its
+   * history and a new note later created at the old path does not inherit it.
+   * Renames never cross workspaces, so only wsPath changes. Best-effort and
+   * idempotent: every tab observes the rename event, but under the workspace
+   * lock later runs find nothing left to migrate. Never throws.
+   */
+  private async migratePersistedSnapshots(
+    oldWsPath: string,
+    wsPath: string,
+  ): Promise<void> {
+    try {
+      const oldFilePath = WsPath.fromString(oldWsPath).asFile();
+      if (!oldFilePath || !WsPath.fromString(wsPath).asFile()) {
+        return;
+      }
+      await this.withWorkspaceSnapshotLock(oldFilePath.wsName, async () => {
+        const metas = await this.getWorkspaceMetas(oldFilePath.wsName);
+        for (const meta of metas) {
+          if (meta.wsPath !== oldWsPath) {
+            continue;
+          }
+          await this.dependencies.database.updateEntry(
+            meta.id,
+            () => ({ value: { ...meta, wsPath } }),
+            META_TABLE,
+          );
+        }
+      });
+    } catch (error) {
+      this.logger.warn(
+        `could not migrate snapshots of ${oldWsPath} to ${wsPath}`,
+        error,
+      );
     }
   }
 
@@ -322,21 +371,27 @@ export class NoteSnapshotService extends BaseService {
     }
   }
 
-  /** Best-effort preservation of this tab's outgoing content. Never throws. */
+  /**
+   * Best-effort preservation of this tab's outgoing content. Never throws.
+   * Returns false only for a storage failure worth retrying; empty content
+   * and invalid paths count as done.
+   */
   private async preserveContent(
     wsPath: string,
     content: string,
-  ): Promise<void> {
+  ): Promise<boolean> {
     try {
       if (content.trim() === '') {
-        return;
+        return true;
       }
       await this.storeSnapshot(wsPath, content);
+      return true;
     } catch (error) {
       this.logger.warn(
         `could not preserve outgoing content for ${wsPath}`,
         error,
       );
+      return false;
     }
   }
 
