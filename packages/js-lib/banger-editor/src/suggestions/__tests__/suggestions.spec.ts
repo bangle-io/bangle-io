@@ -546,10 +546,13 @@ describe('synthetic suggestions and composition', () => {
 
     expect(handleTextInput(view, 6, 6, '/')).toBe(true);
     expect(view.state.doc.textContent).toBe('note /');
+    view.focus();
+    const domAtPos = vi.spyOn(view, 'domAtPos');
 
     expect(pressKey(view, 'Escape')).toBe(true);
     expect(view.state.doc.textContent).toBe('note /');
     expect(editorStore.get(view.state, $suggestions).get(view)).toBeUndefined();
+    expect(domAtPos).toHaveBeenCalledWith(view.state.selection.head);
   });
 
   it('ignores menu keys while an IME composition is active', () => {
