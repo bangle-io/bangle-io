@@ -14,7 +14,7 @@ import React from 'react';
 
 /**
  * Blocks a tab that is known to run an older app version than another tab
- * (detected through the storage version handshake). The only way forward is a
+ * (detected through the app build handshake). The only way forward is a
  * reload, which loads the current app version; the dialog is deliberately
  * non-dismissable.
  */

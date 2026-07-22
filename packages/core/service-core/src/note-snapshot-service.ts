@@ -37,7 +37,7 @@ const CONTENT_TABLE = {
  * Notes larger than this are not snapshotted: the recovery value of a huge
  * generated/imported file is low compared to the storage and read cost.
  */
-export const NOTE_SNAPSHOT_MAX_CONTENT_BYTES = 4 * 1024 * 1024;
+const NOTE_SNAPSHOT_MAX_CONTENT_BYTES = 4 * 1024 * 1024;
 
 /**
  * How many notes' outgoing content one tab keeps in memory to protect the

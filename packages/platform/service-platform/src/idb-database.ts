@@ -23,6 +23,7 @@ import type {
 export const DB_NAME = 'bangle-io-db';
 // v3/v4 add the note snapshot tables (metadata and content bodies).
 export const DB_VERSION = 4;
+const DEFAULT_OPEN_TIMEOUT_MS = 5_000;
 
 export const ALL_TABLES = [
   DATABASE_TABLE_NAME.workspaceInfo,
@@ -58,12 +59,8 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
     context: BaseServiceContext,
     dependencies: null,
     private config: {
-      /**
-       * Called when a newer app version in another tab requests a database
-       * upgrade, i.e. this tab is outdated. The app should block further use
-       * of this tab and ask the user to reload it.
-       */
-      onStaleTab?: () => void;
+      openTimeoutMs?: number;
+      onDatabaseInvalidated?: () => void;
     } = {},
   ) {
     super(SERVICE_NAME.idbDatabaseService, context, dependencies);
@@ -86,67 +83,22 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
     });
   }
 
-  /**
-   * Opens the database, upgrading to DB_VERSION only when the schema is
-   * incomplete. The first open is versionless, which can never block, so app
-   * startup never hangs — even when a tab running an already-deployed old
-   * app version (without cooperative upgrade handling) holds the database.
-   *
-   * If such an old tab blocks the upgrade, this tab still boots: database
-   * operations fail fast until the old tab goes away, at which point the
-   * pending upgrade completes and is adopted transparently mid-session.
-   * (Note content lives in a separate database and is unaffected.)
-   */
   private async openDatabase(): Promise<idb.IDBPDatabase<AppDatabase>> {
     const logger = this.logger;
-
-    // While our own upgrade is pending, a versionchange on the initial
-    // connection is that upgrade taking over — not a newer app version — so
-    // it must not trigger the stale-tab flow.
-    let ownUpgradePending = false;
-
-    const watchVersionChange = (db: idb.IDBPDatabase<AppDatabase>) => {
-      db.addEventListener('versionchange', () => {
-        // Release the connection so the requesting upgrade can proceed.
-        db.close();
-        if (ownUpgradePending) {
-          logger.info('Released initial connection for the schema upgrade');
-        } else {
-          // A newer app version in another tab wants to upgrade. Tell the
-          // app this tab is stale so it shows a blocking reload prompt
-          // instead of failing on the next database operation.
-          logger.warn(
-            'Closing IndexedDB connection so a newer app version can upgrade',
-          );
-          this.config.onStaleTab?.();
-        }
-      });
+    let invalidated = false;
+    const reportInvalidation = () => {
+      if (invalidated) {
+        return;
+      }
+      invalidated = true;
+      this.config.onDatabaseInvalidated?.();
     };
-
-    const initialDb = await idb.openDB<AppDatabase>(DB_NAME, undefined, {
-      terminated: () => {
-        logger.error('IndexedDB connection was unexpectedly terminated');
-      },
-    });
-    watchVersionChange(initialDb);
-
-    const schemaComplete = ALL_TABLES.every((table) =>
-      initialDb.objectStoreNames.contains(table),
-    );
-    if (schemaComplete && initialDb.version >= DB_VERSION) {
-      return initialDb;
-    }
-
-    // The schema needs an upgrade. Our initial connection yields via its
-    // versionchange handler above; other tabs on current app versions yield
-    // the same way (and show the stale-tab prompt).
-    ownUpgradePending = true;
-    let reportBlocked: () => void = () => {};
-    const blockedSignal = new Promise<'blocked'>((resolve) => {
+    let gaveUp = false;
+    let reportBlocked: () => void = () => undefined;
+    const blocked = new Promise<'blocked'>((resolve) => {
       reportBlocked = () => resolve('blocked');
     });
-
-    const upgradedPromise = idb.openDB<AppDatabase>(DB_NAME, DB_VERSION, {
+    const openPromise = idb.openDB<AppDatabase>(DB_NAME, DB_VERSION, {
       upgrade(db, oldVersion) {
         logger.info('IndexedDB upgrade started', { oldVersion });
         // Every table shares the same key-value shape, so creating whichever
@@ -165,44 +117,54 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
         });
         reportBlocked();
       },
+      blocking(currentVersion, blockedVersion) {
+        logger.warn('Closing IndexedDB for a newer schema', {
+          currentVersion,
+          blockedVersion,
+        });
+        reportInvalidation();
+      },
       terminated: () => {
         logger.error('IndexedDB connection was unexpectedly terminated');
       },
     });
-
-    const adopt = (db: idb.IDBPDatabase<AppDatabase>) => {
-      ownUpgradePending = false;
-      watchVersionChange(db);
-      return db;
-    };
-
-    const first = await Promise.race([
-      upgradedPromise.then(() => 'upgraded' as const),
-      blockedSignal,
-    ]);
-
-    if (first === 'upgraded') {
-      return adopt(await upgradedPromise);
-    }
-
-    // A tab running an old app version (deployed before cooperative upgrade
-    // handling existed) holds the database and will not release it. Boot
-    // anyway: operations fail fast on the released initial connection, and
-    // the moment the old tab closes or reloads, the pending upgrade
-    // completes and is adopted below.
-    logger.warn(
-      'IndexedDB unavailable until other Bangle tabs running an older version are closed or reloaded',
+    const opened = openPromise.then(
+      (db) => {
+        if (gaveUp) {
+          db.close();
+        }
+        return { type: 'opened' as const, db };
+      },
+      (error: unknown) => ({ type: 'failed' as const, error }),
     );
-    void upgradedPromise
-      .then((db) => {
-        this.db = adopt(db);
-        logger.info('Adopted upgraded IndexedDB connection');
-      })
-      .catch((error) => {
-        logger.error('Deferred IndexedDB upgrade failed', error);
-      });
 
-    return initialDb;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    const timedOut = new Promise<'timed-out'>((resolve) => {
+      timeoutId = setTimeout(
+        () => resolve('timed-out'),
+        this.config.openTimeoutMs ?? DEFAULT_OPEN_TIMEOUT_MS,
+      );
+    });
+    const result = await Promise.race([opened, blocked, timedOut]);
+    clearTimeout(timeoutId);
+
+    if (result === 'blocked' || result === 'timed-out') {
+      gaveUp = true;
+      // IndexedDB open requests cannot be cancelled. Close any connection
+      // that arrives after startup has failed so a queued request never leaks.
+      throw new Error(
+        'Bangle could not upgrade its database. Close or reload other Bangle tabs, then reload this tab.',
+      );
+    }
+    if (result.type === 'failed') {
+      throw result.error;
+    }
+    result.db.addEventListener('versionchange', () => {
+      logger.warn('Closing IndexedDB connection for a newer schema');
+      result.db.close();
+      reportInvalidation();
+    });
+    return result.db;
   }
 
   private throwError(error: unknown): never {

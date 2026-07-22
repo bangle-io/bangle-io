@@ -98,7 +98,7 @@ describe('IdbDatabaseService', () => {
     expect(callback).not.toHaveBeenCalled();
   });
 
-  it('reports a stale tab and releases the connection when a newer version opens', async () => {
+  it('reports and releases a database invalidated by a newer schema', async () => {
     const { commonOpts } = createTestEnvironment();
     const context = {
       ctx: commonOpts,
@@ -106,22 +106,17 @@ describe('IdbDatabaseService', () => {
         abortSignal: commonOpts.rootAbortSignal,
       },
     };
-    const onStaleTab = vi.fn();
-    const service = new IdbDatabaseService(context, null, { onStaleTab });
+    const onDatabaseInvalidated = vi.fn();
+    const service = new IdbDatabaseService(context, null, {
+      onDatabaseInvalidated,
+    });
     await service.mount();
 
-    // Simulate a tab running a newer app version requesting an upgrade.
-    // (Other tests in this file may hold their own connections, so this
-    // test asserts only this service's behavior: it reports staleness and
-    // releases its connection instead of blocking the upgrade.)
     indexedDB.open(DB_NAME, DB_VERSION + 1);
 
     await vi.waitFor(() => {
-      expect(onStaleTab).toHaveBeenCalledTimes(1);
+      expect(onDatabaseInvalidated).toHaveBeenCalledTimes(1);
     });
-
-    // The stale connection is closed: operations fail loudly instead of
-    // silently blocking the newer tab.
     await expect(service.getEntry('any-key', options)).rejects.toThrow();
   });
 });

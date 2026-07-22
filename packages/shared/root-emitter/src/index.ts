@@ -27,12 +27,21 @@ export type RootEvents =
         sender: EventSenderMetadata;
       };
     }
-  // This tab is running an older app version than another tab (detected via
-  // the storage layer's version-upgrade handshake) and must be reloaded.
-  // Local-only: each stale tab discovers this through its own connection.
+  // This tab is running an older app build than another tab and must reload.
+  // Local-only: the browser-entry build handshake emits it in the stale tab.
   | {
       event: 'event::app:stale-tab';
       payload: {
+        sender: EventSenderMetadata;
+      };
+    }
+  | {
+      event: 'event::app:build-presence';
+      payload: {
+        protocol: 1;
+        buildId: string;
+        builtAt: number;
+        reply: boolean;
         sender: EventSenderMetadata;
       };
     }
@@ -76,6 +85,7 @@ export const CROSS_TAB_EVENTS = [
   'event::file:update',
   'event::file:force-update',
   'event::app:reload-ui',
+  'event::app:build-presence',
 ] as const satisfies RootEvents['event'][];
 export type CrossTabEvent = (typeof CROSS_TAB_EVENTS)[number];
 export class RootEmitter {

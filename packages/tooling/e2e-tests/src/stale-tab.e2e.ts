@@ -1,17 +1,40 @@
 import { expect, test } from '@playwright/test';
-import { createBrowserWorkspace } from './common';
 
 test('an outdated tab is blocked with a reload prompt when a newer version runs', async ({
   page,
 }) => {
-  // Creating a workspace guarantees the app database connection is open.
-  await createBrowserWorkspace(page, { workspaceName: 'stale-tab-ws' });
-
-  // Simulate a tab running a newer app version: opening the app database
-  // with a higher version fires `versionchange` on this tab's connection.
-  await page.evaluate(() => {
-    indexedDB.open('bangle-io-db', 99);
+  // Install a newer-build participant before the app loads. It answers the
+  // app's hello through the same RootEvents envelope used by real tabs.
+  await page.addInitScript(() => {
+    const channel = new BroadcastChannel('bangle_io_channel');
+    channel.addEventListener('message', (event) => {
+      const message = event.data as {
+        data?: { event?: string; payload?: { reply?: boolean } };
+      };
+      if (
+        message.data?.event !== 'event::app:build-presence' ||
+        message.data.payload?.reply !== false
+      ) {
+        return;
+      }
+      channel.postMessage({
+        senderId: 'future-build-tab',
+        data: {
+          event: 'event::app:build-presence',
+          payload: {
+            protocol: 1,
+            buildId: 'future-build',
+            builtAt: Date.parse('9999-12-31T23:59:59.999Z'),
+            reply: true,
+            sender: { id: 'future-build-tab', tag: 'e2e-build' },
+          },
+        },
+        timestamp: Date.now(),
+      });
+    });
+    window.addEventListener('unload', () => channel.close(), { once: true });
   });
+  await page.goto('/');
 
   const dialog = page.getByTestId('stale-tab-dialog');
   await expect(dialog).toBeVisible();
@@ -21,7 +44,5 @@ test('an outdated tab is blocked with a reload prompt when a newer version runs'
   // The dialog is non-dismissable: Escape must not close it.
   await page.keyboard.press('Escape');
   await expect(dialog).toBeVisible();
-  // Not clicking reload here: the test bumped the database to a fake version
-  // 99, so a reloaded app in this browser context could not reopen it. The
-  // reload button is a plain window.location.reload().
+  // The reload button is a plain window.location.reload().
 });

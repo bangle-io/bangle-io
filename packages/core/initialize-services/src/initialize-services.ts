@@ -64,7 +64,7 @@ export function initializeServices(
       },
     })),
     database: slot(IdbDatabaseService, () => ({
-      onStaleTab: () => {
+      onDatabaseInvalidated: () => {
         rootEmitter.emit('event::app:stale-tab', {
           sender: getEventSenderMetadata({ tag: 'IdbDatabaseService' }),
         });

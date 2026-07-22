@@ -9,7 +9,7 @@
 
 import { DATABASE_TABLE_NAME } from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { DB_NAME, IdbDatabaseService } from '../idb-database';
 
 const OLD_VERSION = 2;
@@ -19,7 +19,7 @@ const OLD_TABLES = [
 ];
 
 describe('IdbDatabaseService blocked upgrade', () => {
-  it('boots at the existing version when an old tab blocks the upgrade, then adopts it', async () => {
+  it('fails every queued current tab instead of hanging, then recovers after the old tab closes', async () => {
     // Simulate a tab running an already-deployed old app version: it holds a
     // v2 connection and has no cooperative versionchange handling at all.
     const oldTabDb = await new Promise<IDBDatabase>((resolve, reject) => {
@@ -37,47 +37,37 @@ describe('IdbDatabaseService blocked upgrade', () => {
     // Deliberately keep the connection open on versionchange.
     oldTabDb.onversionchange = () => {};
 
-    const { commonOpts } = createTestEnvironment();
-    const context = {
-      ctx: commonOpts,
-      serviceContext: {
-        abortSignal: commonOpts.rootAbortSignal,
-      },
+    const createService = () => {
+      const { commonOpts } = createTestEnvironment();
+      const context = {
+        ctx: commonOpts,
+        serviceContext: {
+          abortSignal: commonOpts.rootAbortSignal,
+        },
+      };
+      return new IdbDatabaseService(context, null, { openTimeoutMs: 20 });
     };
-    const onStaleTab = vi.fn();
-    const service = new IdbDatabaseService(context, null, { onStaleTab });
 
-    // Mount must complete despite the old tab: no indefinite blank screen.
-    await service.mount();
+    // The first request receives `blocked`; the second sits behind that
+    // uncancellable request and is bounded by the timeout. Neither can hang.
+    await expect(createService().mount()).rejects.toThrow(
+      'Close or reload other Bangle tabs',
+    );
+    await expect(createService().mount()).rejects.toThrow(
+      'Close or reload other Bangle tabs',
+    );
 
-    // While the old tab blocks the upgrade, operations fail fast instead of
-    // hanging the caller.
-    const workspaceInfo = {
-      tableName: DATABASE_TABLE_NAME.workspaceInfo,
-    } as const;
-    const snapshots = { tableName: DATABASE_TABLE_NAME.noteSnapshots } as const;
-    await expect(
-      service.updateEntry('snap', () => ({ value: 'x' }), snapshots),
-    ).rejects.toThrow();
-
-    // Once the old tab goes away, the pending upgrade completes and is
-    // adopted: everything starts working mid-session.
+    // IndexedDB completes the queued requests after the blocker closes. The
+    // failed services close their late connections, so a reload can recover.
     oldTabDb.close();
-    await vi.waitFor(async () => {
-      await service.updateEntry('snap', () => ({ value: 'x' }), snapshots);
-    });
-    expect(await service.getEntry('snap', snapshots)).toEqual({
+    const recovered = createService();
+    await recovered.mount();
+    const snapshots = { tableName: DATABASE_TABLE_NAME.noteSnapshots } as const;
+    await recovered.updateEntry('snap', () => ({ value: 'x' }), snapshots);
+    expect(await recovered.getEntry('snap', snapshots)).toEqual({
       found: true,
       value: 'x',
     });
-    await service.updateEntry('ws', () => ({ value: 'data' }), workspaceInfo);
-    expect(await service.getEntry('ws', workspaceInfo)).toEqual({
-      found: true,
-      value: 'data',
-    });
-
-    // The yield-then-adopt flow is not a stale-tab situation.
-    expect(onStaleTab).not.toHaveBeenCalled();
   });
 
   it('upgrades a fresh database without an extra roundtrip hanging boot', async () => {
