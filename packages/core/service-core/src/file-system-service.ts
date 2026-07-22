@@ -161,10 +161,6 @@ export class FileSystemService extends BaseService {
     );
   }
 
-  private isWorkspaceFileVisible(wsPath: string) {
-    return isVisibleWorkspaceFilePath(wsPath);
-  }
-
   /**
    * Triggers a rescan of the workspace file listing without touching open
    * editors. Used to recover after a failed file tree scan.
@@ -182,7 +178,7 @@ export class FileSystemService extends BaseService {
     abortSignal: AbortSignal = new AbortController().signal,
   ): Promise<string[]> {
     return this.listWorkspaceFilesWithFilter(wsName, abortSignal, (filePath) =>
-      this.isWorkspaceFileVisible(filePath.wsPath),
+      isVisibleWorkspaceFilePath(filePath.wsPath),
     );
   }
 
@@ -197,7 +193,7 @@ export class FileSystemService extends BaseService {
       wsName,
       abortSignal,
       (filePath) =>
-        filePath.isNote() && this.isWorkspaceFileVisible(filePath.wsPath),
+        filePath.isNote() && isVisibleWorkspaceFilePath(filePath.wsPath),
     );
   }
 
@@ -263,11 +259,6 @@ export class FileSystemService extends BaseService {
     wsPath: string,
     options: FileReadOptions = {},
   ): Promise<string | undefined> {
-    throwIfAborted(options.signal);
-    await this.mountPromise;
-    throwIfAborted(options.signal);
-    WsPath.assertFile(wsPath);
-
     const file = await this.readFile(wsPath, options);
     if (!file) {
       return undefined;
@@ -503,8 +494,20 @@ export class FileSystemService extends BaseService {
 
     await Promise.all(
       pairs.map(async ({ oldWsPath, newWsPath }) => {
-        WsPath.assertFile(oldWsPath);
-        WsPath.assertFile(newWsPath);
+        const oldPath = WsPath.assertFile(oldWsPath);
+        const newPath = WsPath.assertFile(newWsPath);
+
+        if (oldPath.wsName !== newPath.wsName) {
+          throwAppError(
+            'error::file:invalid-operation',
+            'Cannot rename file across different workspaces',
+            {
+              operation: 'rename',
+              oldWsPath,
+              newWsPath,
+            },
+          );
+        }
 
         if (!(await this.exists(oldWsPath))) {
           throwAppError(

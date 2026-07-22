@@ -206,10 +206,6 @@ export class WorkbenchStateService extends BaseService {
     this.config.themeManager.setPreference(preference);
   }
 
-  public updateOmniSearchInput(input: string) {
-    this.store.set(this.$omniSearchInput, input);
-  }
-
   public resetOmniSearch() {
     this.store.set(this.$omniSearchInput, '');
     this.store.set(this.$omniSearchRoute, 'omni-home');

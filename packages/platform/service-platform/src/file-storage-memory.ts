@@ -14,6 +14,7 @@ import type {
   FileStorageChangeEvent,
 } from '@bangle.io/types';
 import { toFSPathOrThrow, WsPath } from '@bangle.io/ws-path';
+import { assertSameWorkspaceRename } from './file-storage-utils';
 
 interface FileEntry {
   file: File;
@@ -143,6 +144,7 @@ export class FileStorageMemory
     { newWsPath }: { newWsPath: string },
   ): Promise<void> {
     await this.mountPromise;
+    assertSameWorkspaceRename(wsPath, newWsPath);
     const oldPath = toFSPathOrThrow(wsPath);
     const newPath = toFSPathOrThrow(newWsPath);
     const entry = this.fileEntries.get(oldPath);

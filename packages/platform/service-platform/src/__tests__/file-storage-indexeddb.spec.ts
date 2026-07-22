@@ -6,6 +6,7 @@ import { FILE_STORAGE_MAX_FILE_SIZE_BYTES } from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { FileStorageIndexedDB } from '../file-storage-indexeddb';
+import { testCrossWorkspaceRenameContract } from './file-storage-rename-contract';
 
 async function setup() {
   const { commonOpts } = createTestEnvironment();
@@ -25,6 +26,8 @@ async function setup() {
 }
 
 describe('FileStorageIndexedDB', () => {
+  testCrossWorkspaceRenameContract(setup);
+
   beforeEach(() => {
     // indexedDB gets cleared in between tests by happy-dom
   });

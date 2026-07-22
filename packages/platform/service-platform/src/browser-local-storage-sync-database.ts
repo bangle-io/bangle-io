@@ -1,12 +1,19 @@
-import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
+import {
+  BaseService,
+  type BaseServiceContext,
+  createJsonValueSnapshot,
+  throwAppError,
+} from '@bangle.io/base-utils';
 import { TypedBroadcastBus } from '@bangle.io/browser-utils';
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import { SERVICE_NAME } from '@bangle.io/constants';
 import type {
   BaseAppSyncDatabase,
+  JsonValue,
   SyncDatabaseChange,
   SyncDatabaseQueryOptions,
 } from '@bangle.io/types';
+import { parseSyncDatabaseChange } from './sync-database-change';
 
 export class BrowserLocalStorageSyncDatabaseService
   extends BaseService
@@ -35,7 +42,7 @@ export class BrowserLocalStorageSyncDatabaseService
   getEntry(
     key: string,
     options: SyncDatabaseQueryOptions,
-  ): { found: boolean; value: unknown } {
+  ): { found: boolean; value: JsonValue | undefined } {
     const storageKey = this.getStorageKey(key, options.tableName);
     const item = this.storage.getItem(storageKey);
 
@@ -53,11 +60,14 @@ export class BrowserLocalStorageSyncDatabaseService
 
   updateEntry(
     key: string,
-    updateCallback: (options: { value: unknown; found: boolean }) => null | {
-      value: unknown;
+    updateCallback: (options: {
+      value: JsonValue | undefined;
+      found: boolean;
+    }) => null | {
+      value: JsonValue;
     },
     options: SyncDatabaseQueryOptions,
-  ): { value: unknown; found: boolean } {
+  ): { value: JsonValue | undefined; found: boolean } {
     const storageKey = this.getStorageKey(key, options.tableName);
     const item = this.storage.getItem(storageKey);
 
@@ -65,10 +75,20 @@ export class BrowserLocalStorageSyncDatabaseService
       if (item === null) {
         return { found: false, value: undefined };
       }
+
       const parsed = this.parseJSON(item);
-      return parsed.parsed
-        ? { found: true, value: parsed.value }
-        : { found: false, value: undefined };
+      if (!parsed.parsed) {
+        throwAppError(
+          'error::database:unknown-error',
+          'Cannot update malformed local storage database entry',
+          {
+            error: parsed.error,
+            databaseName: this.name,
+          },
+        );
+      }
+
+      return { found: true, value: parsed.value };
     })();
 
     const updateResult = updateCallback({
@@ -80,23 +100,21 @@ export class BrowserLocalStorageSyncDatabaseService
       return { value: undefined, found: false };
     }
 
-    const serializedValue = this.stringifyJSON(updateResult.value);
-    if (serializedValue === null) {
-      return { value: undefined, found: false };
-    }
+    const snapshot = this.snapshot(updateResult.value);
 
-    this.storage.setItem(storageKey, serializedValue);
+    this.storage.setItem(storageKey, snapshot.serialized);
 
     const change: SyncDatabaseChange = {
       type: found ? 'update' : 'create',
       tableName: options.tableName,
       key,
-      value: updateResult.value,
+      value: snapshot.value,
     };
 
     this.syncBus?.send(change);
 
-    return { value: updateResult.value, found: true };
+    const returnSnapshot = this.snapshot(snapshot.value);
+    return { value: returnSnapshot.value, found: true };
   }
 
   deleteEntry(key: string, options: SyncDatabaseQueryOptions): void {
@@ -119,8 +137,8 @@ export class BrowserLocalStorageSyncDatabaseService
     this.syncBus?.send(change);
   }
 
-  getAllEntries(options: SyncDatabaseQueryOptions): unknown[] {
-    const entries: unknown[] = [];
+  getAllEntries(options: SyncDatabaseQueryOptions): JsonValue[] {
+    const entries: JsonValue[] = [];
     const tablePrefix = this.getTablePrefix(options.tableName);
 
     for (let i = 0; i < this.storage.length; i++) {
@@ -151,8 +169,13 @@ export class BrowserLocalStorageSyncDatabaseService
     }
 
     this.syncBus?.subscribe((msg) => {
-      if (msg.data.tableName === options.tableName) {
-        callback(msg.data);
+      const change = parseSyncDatabaseChange(msg.data);
+      if (!change) {
+        this.logger.error('Invalid sync database change received', msg.data);
+        return;
+      }
+      if (change.tableName === options.tableName) {
+        callback(change);
       }
     }, signal);
   }
@@ -167,21 +190,34 @@ export class BrowserLocalStorageSyncDatabaseService
 
   private parseJSON(
     item: string,
-  ): { parsed: true; value: unknown } | { parsed: false } {
+  ): { parsed: true; value: JsonValue } | { parsed: false; error: Error } {
     try {
-      return { parsed: true, value: JSON.parse(item) };
+      const snapshot = createJsonValueSnapshot(JSON.parse(item));
+      if (!snapshot.success) {
+        throw snapshot.error;
+      }
+      return { parsed: true, value: snapshot.value };
     } catch (error) {
       this.logger.error('Failed to parse JSON from local storage', error);
-      return { parsed: false };
+      return {
+        parsed: false,
+        error:
+          error instanceof Error
+            ? error
+            : new Error('Failed to parse JSON from local storage'),
+      };
     }
   }
 
-  private stringifyJSON(value: unknown): string | null {
-    try {
-      return JSON.stringify(value);
-    } catch (error) {
-      this.logger.error('Failed to stringify JSON for local storage', error);
-      return null;
+  private snapshot(value: unknown) {
+    const snapshot = createJsonValueSnapshot(value);
+    if (!snapshot.success) {
+      throwAppError(
+        'error::database:unknown-error',
+        'Cannot store unsupported local storage database value',
+        { error: snapshot.error, databaseName: this.name },
+      );
     }
+    return snapshot;
   }
 }

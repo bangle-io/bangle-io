@@ -4,7 +4,7 @@ import {
   throwAppError,
 } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
-import type { EnabledBangleAppCommand } from '@bangle.io/commands';
+import type { BangleAppCommand } from '@bangle.io/commands';
 import {
   DEFAULT_EDITOR_ENGINE,
   EDITOR_ENGINE_QUERY_PARAM,
@@ -43,7 +43,7 @@ export function readEditorEngineFromUrl(
 export function initializeServices(
   commonOpts: BaseServiceCommonOptions,
   rootEmitter: RootEmitter,
-  commands: EnabledBangleAppCommand[],
+  commands: BangleAppCommand[],
   commandHandlers: Array<{ id: string; handler: CommandHandler }>,
   theme: ThemeManager,
   editorSaveCoordinator: EditorSaveCoordinator,

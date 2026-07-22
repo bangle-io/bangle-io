@@ -1,19 +1,26 @@
-import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
+import {
+  BaseService,
+  type BaseServiceContext,
+  createJsonValueSnapshot,
+  throwAppError,
+} from '@bangle.io/base-utils';
 import { TypedBroadcastBus } from '@bangle.io/browser-utils';
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import { SERVICE_NAME } from '@bangle.io/constants';
 
 import type {
   BaseAppSyncDatabase,
+  JsonValue,
   SyncDatabaseChange,
   SyncDatabaseQueryOptions,
 } from '@bangle.io/types';
+import { parseSyncDatabaseChange } from './sync-database-change';
 
 export class MemorySyncDatabaseService
   extends BaseService
   implements BaseAppSyncDatabase
 {
-  private storage = new Map<string, unknown>();
+  private storage = new Map<string, JsonValue>();
   private changeBus?: TypedBroadcastBus<SyncDatabaseChange>;
 
   constructor(context: BaseServiceContext, dependencies: null) {
@@ -33,34 +40,43 @@ export class MemorySyncDatabaseService
   getEntry(
     key: string,
     options: SyncDatabaseQueryOptions,
-  ): { found: boolean; value: unknown } {
+  ): { found: boolean; value: JsonValue | undefined } {
     const storageKey = this.getStorageKey(key, options.tableName);
     const value = this.storage.get(storageKey);
-    return { found: value !== undefined, value };
+    return {
+      found: value !== undefined,
+      value: value === undefined ? undefined : this.snapshot(value),
+    };
   }
 
   updateEntry(
     key: string,
-    updateCallback: (options: { value: unknown; found: boolean }) => {
-      value: unknown;
+    updateCallback: (options: {
+      value: JsonValue | undefined;
+      found: boolean;
+    }) => {
+      value: JsonValue;
     } | null,
     options: SyncDatabaseQueryOptions,
-  ): { value: unknown; found: boolean } {
+  ): { value: JsonValue | undefined; found: boolean } {
     const storageKey = this.getStorageKey(key, options.tableName);
-    const existingValue = this.storage.get(storageKey);
+    const storedValue = this.storage.get(storageKey);
+    const existingValue =
+      storedValue === undefined ? undefined : this.snapshot(storedValue);
     const found = this.storage.has(storageKey);
 
     const updateResult = updateCallback({ value: existingValue, found });
 
     if (updateResult) {
-      this.storage.set(storageKey, updateResult.value);
+      const storedSnapshot = this.snapshot(updateResult.value);
+      this.storage.set(storageKey, storedSnapshot);
       this.publishChange({
         type: found ? 'update' : 'create',
         tableName: options.tableName,
         key,
-        value: updateResult.value,
+        value: storedSnapshot,
       });
-      return { value: updateResult.value, found: true };
+      return { value: this.snapshot(storedSnapshot), found: true };
     }
 
     return { value: undefined, found: false };
@@ -80,13 +96,13 @@ export class MemorySyncDatabaseService
     }
   }
 
-  getAllEntries(options: SyncDatabaseQueryOptions): unknown[] {
+  getAllEntries(options: SyncDatabaseQueryOptions): JsonValue[] {
     const tablePrefix = this.getTablePrefix(options.tableName);
-    const entries: unknown[] = [];
+    const entries: JsonValue[] = [];
 
     for (const [key, value] of this.storage.entries()) {
       if (key.startsWith(tablePrefix)) {
-        entries.push(value);
+        entries.push(this.snapshot(value));
       }
     }
 
@@ -102,8 +118,13 @@ export class MemorySyncDatabaseService
       return;
     }
     this.changeBus.subscribe((msg) => {
-      if (msg.data.tableName === options.tableName) {
-        callback(msg.data);
+      const change = parseSyncDatabaseChange(msg.data);
+      if (!change) {
+        this.logger.error('Invalid sync database change received', msg.data);
+        return;
+      }
+      if (change.tableName === options.tableName) {
+        callback(change);
       }
     }, signal);
   }
@@ -117,6 +138,22 @@ export class MemorySyncDatabaseService
   }
 
   private publishChange(change: SyncDatabaseChange) {
-    this.changeBus?.send(change);
+    const snapshot = parseSyncDatabaseChange(change);
+    if (!snapshot) {
+      throw new Error('Cannot publish invalid sync database change');
+    }
+    this.changeBus?.send(snapshot);
+  }
+
+  private snapshot(value: unknown): JsonValue {
+    const snapshot = createJsonValueSnapshot(value);
+    if (!snapshot.success) {
+      throwAppError(
+        'error::database:unknown-error',
+        'Cannot store unsupported memory sync database value',
+        { error: snapshot.error, databaseName: this.name },
+      );
+    }
+    return snapshot.value;
   }
 }

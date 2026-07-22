@@ -114,11 +114,6 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
     }
   }
 
-  private getTableStore(options: DatabaseQueryOptions) {
-    const table = this.getTableName(options);
-    return getTable(DB_NAME, table, async () => this.db);
-  }
-
   subscribe(
     options: DatabaseQueryOptions,
     callback: (change: DatabaseChange) => void,
@@ -235,8 +230,9 @@ export class IdbDatabaseService extends BaseService implements BaseAppDatabase {
 
   async getAllEntries(options: DatabaseQueryOptions): Promise<unknown[]> {
     await this.mountPromise;
+    const table = this.getTableName(options);
     try {
-      return await this.getTableStore(options).getAll();
+      return await getTable(DB_NAME, table, async () => this.db).getAll();
     } catch (error) {
       this.throwError(error);
     }

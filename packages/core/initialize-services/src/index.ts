@@ -1,7 +1,7 @@
 import { getEventSenderMetadata, type Logger } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { commandHandlers } from '@bangle.io/command-handlers';
-import { getEnabledCommands } from '@bangle.io/commands';
+import { bangleAppCommands } from '@bangle.io/commands';
 import type { Services } from '@bangle.io/context';
 import type { EditorSaveCoordinator } from '@bangle.io/editor';
 
@@ -44,7 +44,7 @@ export function initializeServices(
   const services = initializeServices2(
     commonOpts,
     rootEmitter,
-    getEnabledCommands(),
+    bangleAppCommands,
     commandHandlers,
     theme,
     editorSaveCoordinator,

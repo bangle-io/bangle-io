@@ -46,7 +46,6 @@ import type { MarkdownAssetReference } from './asset-file-plugin';
 import {
   type EditorSaveCoordinator,
   EditorSaveQueue,
-  type EditorSaveStatus,
 } from './editor-save-queue';
 import { setupExtensions } from './extensions';
 import { findHeadingIndexBySlug } from './heading-slug';
@@ -496,27 +495,6 @@ export class PmEditorService
     this.store.set(this.$roundTripWarnings, next);
   }
 
-  retryLoadEditor(domNode: HTMLElement, focus = true): boolean {
-    const editor = this.editors.get(domNode);
-    if (!editor || 'editorView' in editor || editor.status !== 'failed') {
-      return false;
-    }
-
-    this.editors.set(domNode, {
-      name: editor.name,
-      status: 'pending',
-      wsPath: editor.wsPath,
-    });
-    void this.loadEditor({
-      domNode,
-      focus,
-      name: editor.name,
-      wsPath: editor.wsPath,
-    });
-
-    return true;
-  }
-
   getEditorLoadStatus(
     name: string,
   ):
@@ -545,10 +523,6 @@ export class PmEditorService
     }
 
     return { status: 'missing' };
-  }
-
-  getSaveStatus(wsPath: string): EditorSaveStatus {
-    return this.saveQueue.getStatus(wsPath);
   }
 
   hasPendingOrFailedSave(wsPath?: string): boolean {

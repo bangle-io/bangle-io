@@ -1,6 +1,6 @@
 import { assertIsDefined } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
-import type { EnabledBangleAppCommand } from '@bangle.io/commands';
+import type { BangleAppCommand } from '@bangle.io/commands';
 import type { EditorEngineId } from '@bangle.io/constants';
 import type { CoreServices, EditorEngineContract } from '@bangle.io/context';
 import { type EditorSaveCoordinator, PmEditorService } from '@bangle.io/editor';
@@ -198,7 +198,7 @@ type FileStorageSlot<TPlatformMap extends PlatformServiceMap> = {
 export type ServiceSetupOptions<TPlatformMap extends PlatformServiceMap> = {
   commonOpts: BaseServiceCommonOptions;
   rootEmitter: RootEmitter;
-  commands: EnabledBangleAppCommand[];
+  commands: BangleAppCommand[];
   commandHandlers: Array<{ id: string; handler: CommandHandler }>;
   themeManager: ThemeManager;
   /**
@@ -358,9 +358,15 @@ export function createServiceSetup<
       withOverride('shortcut', () => ({
         target: shortcutTarget,
         shortcuts: commands
-          .filter((command) => command.keybindings)
+          .filter(
+            (
+              command,
+            ): command is Extract<
+              BangleAppCommand,
+              { keybindings: string[] }
+            > => 'keybindings' in command && command.keybindings !== undefined,
+          )
           .map((command): ShortcutServiceConfig => {
-            assertIsDefined(command.keybindings);
             const keys = command.keybindings.join('-');
             return {
               keyBinding: {
@@ -375,7 +381,8 @@ export function createServiceSetup<
                 );
               },
               options: {
-                ...(command.allowShortcutInInputs
+                ...('allowShortcutInInputs' in command &&
+                command.allowShortcutInInputs
                   ? { allowInInput: true }
                   : {}),
                 unique: true,

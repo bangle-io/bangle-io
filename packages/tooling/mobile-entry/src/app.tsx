@@ -15,15 +15,9 @@ import type {
   ShouldStartLoadRequest,
   WebViewErrorEvent,
 } from 'react-native-webview/lib/WebViewTypes';
+import { getWebViewNavigationAction } from './webview-navigation';
 
 const FALLBACK_WEB_URL = 'https://app.bangle.io';
-
-// React Native's Hermes URL polyfill is incomplete (no reliable `.host`),
-// so extract the host with a scheme-aware regex instead of `new URL`.
-function getUrlHost(url: string): string | undefined {
-  const match = /^[a-z][a-z0-9+.-]*:\/\/([^/?#]+)/i.exec(url);
-  return match?.[1]?.toLowerCase();
-}
 
 function resolveWebUrl(): string {
   const extra = Constants.expoConfig?.extra;
@@ -44,18 +38,13 @@ export function App() {
   const webViewRef = useRef<WebView<object>>(null);
   const [loadError, setLoadError] = useState<string | undefined>(undefined);
 
-  const appHost = useMemo(() => getUrlHost(webUrl), [webUrl]);
-
   const handleShouldStartLoad = useCallback(
     (request: ShouldStartLoadRequest): boolean => {
-      if (request.url.startsWith('about:')) {
+      const action = getWebViewNavigationAction(request.url, webUrl);
+      if (action === 'allow') {
         return true;
       }
-      const host = getUrlHost(request.url);
-      if (host !== undefined && host === appHost) {
-        return true;
-      }
-      if (host === undefined) {
+      if (action === 'reject') {
         return false;
       }
       // External links leave the shell and open in the system browser so
@@ -63,7 +52,7 @@ export function App() {
       void Linking.openURL(request.url);
       return false;
     },
-    [appHost],
+    [webUrl],
   );
 
   const handleError = useCallback((event: WebViewErrorEvent) => {

@@ -17,7 +17,6 @@ export type Command = {
   title?: string;
   description?: string;
   icon?: string;
-  disabled?: boolean;
   keywords?: string[];
   keybindings?: string[];
   allowShortcutInInputs?: boolean;

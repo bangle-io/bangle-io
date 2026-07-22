@@ -7,6 +7,7 @@ import { isAbortError } from '@bangle.io/mini-js-utils';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { FileStorageNativeFs } from '../file-storage-nativefs';
+import { testCrossWorkspaceRenameContract } from './file-storage-rename-contract';
 
 class FakeFileHandle {
   readonly kind = 'file';
@@ -129,6 +130,8 @@ async function setup(onEntryVisited?: () => void, rootName = 'myWorkspace') {
 }
 
 describe('FileStorageNativeFs', () => {
+  testCrossWorkspaceRenameContract(setup);
+
   it('declares a larger native storage file-size limit', async () => {
     const { service } = await setup();
 

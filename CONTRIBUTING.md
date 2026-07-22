@@ -271,14 +271,6 @@ bun packages/tooling/custom-scripts/scripts/add-workspace-dep.ts
 
 Automatically adds missing workspace dependencies to package.json files based on actual imports in TypeScript source files.
 
-**Add miscellaneous dependencies**
-
-```bash
-bun packages/tooling/custom-scripts/scripts/add-misc-dep.ts
-```
-
-Adds whitelisted dependencies to packages that import them but don't have them declared in package.json.
-
 ### Code Formatting and Validation
 
 **Format all package.json files**
@@ -288,14 +280,6 @@ bun packages/tooling/custom-scripts/scripts/format-package-json.ts
 ```
 
 Standardizes and sorts all package.json files in the workspace according to project conventions.
-
-**Format all files**
-
-```bash
-bun packages/tooling/custom-scripts/scripts/format-all.ts
-```
-
-Runs the package.json formatter across the entire workspace.
 
 **Validate workspace**
 

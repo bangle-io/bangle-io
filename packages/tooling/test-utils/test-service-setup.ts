@@ -1,6 +1,6 @@
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { commandHandlers as defaultCommandHandlers } from '@bangle.io/command-handlers';
-import { getEnabledCommands } from '@bangle.io/commands';
+import { type BangleAppCommand, bangleAppCommands } from '@bangle.io/commands';
 import {
   type EditorEngineId,
   THEME_MANAGER_CONFIG,
@@ -11,7 +11,7 @@ import {
   createEditorSaveCoordinator,
   createServiceSetup,
 } from '@bangle.io/initialize-services/setup';
-import { type ContainerDescription, slot } from '@bangle.io/poor-mans-di';
+import { slot } from '@bangle.io/poor-mans-di';
 import {
   FileStorageMemory,
   MemoryDatabaseService,
@@ -30,8 +30,6 @@ import { type MockLog, makeTestCommonOpts } from './common-opts';
 export type { Store } from '@bangle.io/types';
 
 export { default as waitForExpect } from 'wait-for-expect';
-
-export * from './test-service-setup';
 
 const themeManager = {
   currentPreference: THEME_MANAGER_CONFIG.defaultPreference,
@@ -58,16 +56,14 @@ type TestServices = CoreServices & {
 
 type TestServiceSetup = {
   instantiate: (focus?: Array<keyof TestServices & string>) => TestServices;
-  getServices: () => TestServices;
   coreServices: () => CoreServices;
   mountAll: () => Promise<void>;
-  describe: () => ContainerDescription;
 };
 
 function createTestServiceSetup(
   commonOpts: BaseServiceCommonOptions,
   rootEmitter: ReturnType<typeof makeTestCommonOpts>['rootEmitter'],
-  commands: ReturnType<typeof getEnabledCommands>,
+  commands: BangleAppCommand[],
   commandHandlers: Array<{ id: string; handler: CommandHandler }>,
   coreConfigOverrides: CoreConfigOverrides | undefined,
   editorEngineId: EditorEngineId,
@@ -122,13 +118,13 @@ export type TestEnvironment = {
  */
 export function createTestEnvironment({
   controller = new AbortController(),
-  commands = getEnabledCommands(),
+  commands = bangleAppCommands,
   commandHandlers = defaultCommandHandlers,
   coreConfigOverrides,
   editorEngineId = 'prosemirror',
 }: {
   controller?: AbortController;
-  commands?: ReturnType<typeof getEnabledCommands>;
+  commands?: BangleAppCommand[];
   commandHandlers?: Array<{ id: string; handler: CommandHandler }>;
   coreConfigOverrides?: CoreConfigOverrides;
   editorEngineId?: EditorEngineId;

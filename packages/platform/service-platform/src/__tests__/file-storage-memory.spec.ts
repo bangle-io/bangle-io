@@ -7,6 +7,7 @@ import { FILE_STORAGE_MAX_FILE_SIZE_BYTES } from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { FileStorageMemory } from '../file-storage-memory';
+import { testCrossWorkspaceRenameContract } from './file-storage-rename-contract';
 
 async function setup() {
   const { commonOpts } = createTestEnvironment();
@@ -26,6 +27,8 @@ async function setup() {
 }
 
 describe('FileStorageMemory', () => {
+  testCrossWorkspaceRenameContract(setup);
+
   beforeEach(() => {
     // Clear internal state if needed
   });

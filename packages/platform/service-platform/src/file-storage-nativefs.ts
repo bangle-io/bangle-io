@@ -20,6 +20,7 @@ import type {
   FileStorageChangeEvent,
 } from '@bangle.io/types';
 import { isVisibleWorkspaceDirectoryName, WsPath } from '@bangle.io/ws-path';
+import { assertSameWorkspaceRename } from './file-storage-utils';
 
 type Config = {
   getRootDirHandle: (
@@ -247,6 +248,7 @@ export class FileStorageNativeFs
     },
   ): Promise<void> {
     await this.mountPromise;
+    assertSameWorkspaceRename(wsPath, newWsPath);
     const fs = await this.getFs({ wsPath });
     try {
       await fs.moveFile(

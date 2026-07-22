@@ -8,7 +8,6 @@ import {
 } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import type {
-  AppRouteInfo,
   AssetLocationPreference,
   ThemePreference,
 } from '@bangle.io/types';
@@ -38,12 +37,6 @@ import { usePwaInstall } from '../common/use-pwa-install';
 import { AppHeader } from '../layout/app-header';
 import { PageContentContainer } from '../layout/main-content-container';
 import { WorkspacesSettingsPage } from './page-settings-workspaces';
-
-const THEME_VALUES = [
-  'system',
-  'light',
-  'dark',
-] as const satisfies readonly ThemePreference[];
 
 const THEME_OPTIONS: Array<{ value: ThemePreference; label: string }> = [
   { value: 'system', label: t.app.dialogs.changeTheme.options.system },
@@ -93,15 +86,7 @@ const SETTINGS_PAGE_META: Record<
 };
 
 function isThemePreference(value: unknown): value is ThemePreference {
-  return THEME_VALUES.some((theme) => theme === value);
-}
-
-function getSettingsReturnTo(routeInfo: AppRouteInfo) {
-  if (!isSettingsRouteInfo(routeInfo)) {
-    return undefined;
-  }
-
-  return routeInfo.payload.returnTo;
+  return THEME_OPTIONS.some((option) => option.value === value);
 }
 
 function hasUnsafeAppHrefCharacter(href: string) {
@@ -163,7 +148,9 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
   const [assetLocationPreference, setAssetLocationPreference] = useAtom(
     workbenchState.$assetLocationPreference,
   );
-  const returnTo = safeAppHref(getSettingsReturnTo(routeInfo));
+  const returnTo = safeAppHref(
+    isSettingsRouteInfo(routeInfo) ? routeInfo.payload.returnTo : undefined,
+  );
 
   const backHref =
     returnTo ??

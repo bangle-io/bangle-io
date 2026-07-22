@@ -1,6 +1,4 @@
-import { isPlainObject } from '@bangle.io/mini-js-utils';
 import type { EventSenderMetadata } from '@bangle.io/types';
-import { BaseService } from './base-service';
 
 export type { ErrorReporter } from '@bangle.io/logger';
 export { Logger, setErrorReporter, setGlobalLogLevel } from '@bangle.io/logger';
@@ -11,6 +9,8 @@ export type {
   EventMessage,
   IfEquals,
   InferType,
+  JsonValue,
+  JsonValueSnapshotResult,
   Validator,
 } from '@bangle.io/mini-js-utils';
 export {
@@ -18,6 +18,7 @@ export {
   BaseError,
   browserInfo,
   createEmptyArray,
+  createJsonValueSnapshot,
   DuoWeakMap,
   deepMerge,
   difference,
@@ -29,6 +30,7 @@ export {
   isChrome,
   isDarwin,
   isFirefox,
+  isJsonValue,
   isMac,
   isMobile,
   isPlainObject,
@@ -50,23 +52,7 @@ export {
   atomWithCompare,
   createAsyncAtom,
 } from './jotai';
-export {
-  changeColorScheme,
-  checkWidescreen,
-  listenToResize,
-  setRootWidescreenClass,
-} from './misc';
-export {
-  acquireLockIfAvailable,
-  rafSchedule,
-  safeCancelAnimationFrame,
-  safeCancelIdleCallback,
-  safeIdleRefCallback,
-  safeNavigatorStorageGetDirectory,
-  safeRequestAnimationFrame,
-  safeRequestIdleCallback,
-  safeScrollIntoViewIfNeeded,
-} from './safe-js';
+export { checkWidescreen } from './misc';
 export type { AppErrorName } from './throw-app-error';
 export {
   createAppError,
@@ -85,24 +71,4 @@ export function getEventSenderMetadata({
     id: 'bangle-app',
     tag: tag,
   };
-}
-export function isWorkerGlobalScope() {
-  return (
-    typeof WorkerGlobalScope !== 'undefined' &&
-    // eslint-disable-next-line no-restricted-globals, no-undef
-    self instanceof WorkerGlobalScope
-  );
-}
-export function flatServices(services: Record<string, unknown>): BaseService[] {
-  return Object.values(services).flatMap((service): BaseService[] => {
-    if (service instanceof BaseService) {
-      return [service];
-    }
-
-    if (isPlainObject(service)) {
-      return flatServices(service as Record<string, unknown>);
-    }
-
-    return [];
-  });
 }

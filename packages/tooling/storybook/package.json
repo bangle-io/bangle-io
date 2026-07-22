@@ -31,8 +31,7 @@
   "scripts": {
     "build-chromatic": "pnpm chromatic --project-token $CHROMATIC_PROJECT_TOKEN",
     "build-storybook": "storybook build",
-    "storybook": "storybook dev --port ${BANGLE_STORYBOOK_PORT:-6006}",
-    "test-storybook": "test-storybook"
+    "storybook": "storybook dev --port ${BANGLE_STORYBOOK_PORT:-6006}"
   },
   "dependencies": {
     "react": "19.2.7",
@@ -49,7 +48,6 @@
     "@storybook/addon-onboarding": "^10.4.6",
     "@storybook/react": "^10.4.6",
     "@storybook/react-vite": "^10.4.6",
-    "@storybook/test-runner": "^0.24.4",
     "@tailwindcss/postcss": "^4.3.2",
     "autoprefixer": "^10.5.2",
     "chromatic": "^18.0.1",

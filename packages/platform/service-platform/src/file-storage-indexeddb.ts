@@ -19,6 +19,7 @@ import type {
   FileStorageChangeEvent,
 } from '@bangle.io/types';
 import { toFSPathOrThrow, WsPath } from '@bangle.io/ws-path';
+import { assertSameWorkspaceRename } from './file-storage-utils';
 
 type Config = {
   onChange: (event: FileStorageChangeEvent) => void;
@@ -141,6 +142,7 @@ export class FileStorageIndexedDB
     { newWsPath }: { newWsPath: string },
   ): Promise<void> {
     await this.mountPromise;
+    assertSameWorkspaceRename(wsPath, newWsPath);
     const oldFsPath = toFSPathOrThrow(wsPath);
     const newFsPath = toFSPathOrThrow(newWsPath);
 

@@ -1,6 +1,6 @@
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { commandHandlers } from '@bangle.io/command-handlers';
-import { getEnabledCommands } from '@bangle.io/commands';
+import { bangleAppCommands } from '@bangle.io/commands';
 import { createEditorSaveCoordinator } from '@bangle.io/editor';
 import { slot } from '@bangle.io/poor-mans-di';
 import {
@@ -34,7 +34,7 @@ function makeSetup({
   const setup = createServiceSetup({
     commonOpts,
     rootEmitter,
-    commands: getEnabledCommands(),
+    commands: bangleAppCommands,
     commandHandlers,
     themeManager,
     shortcutTarget: {
@@ -160,7 +160,7 @@ describe('createServiceSetup', () => {
     const setup = createServiceSetup({
       commonOpts,
       rootEmitter,
-      commands: getEnabledCommands(),
+      commands: bangleAppCommands,
       commandHandlers,
       themeManager,
       shortcutTarget: {
@@ -213,7 +213,7 @@ describe('createServiceSetup', () => {
     const controller = new AbortController();
     const { commonOpts, rootEmitter } = makeTestCommonOpts({ controller });
 
-    const [excludedCommand] = getEnabledCommands();
+    const [excludedCommand] = bangleAppCommands;
     if (!excludedCommand) {
       throw new Error('Expected at least one enabled command.');
     }
@@ -221,7 +221,7 @@ describe('createServiceSetup', () => {
     const setup = createServiceSetup({
       commonOpts,
       rootEmitter,
-      commands: getEnabledCommands(),
+      commands: bangleAppCommands,
       commandHandlers,
       themeManager,
       shortcutTarget: {
