@@ -1,4 +1,4 @@
-import { collection, keybinding } from './common';
+import { collection, keybinding, PRIORITY } from './common';
 import {
   type Command,
   Decoration,
@@ -11,9 +11,11 @@ import {
   PluginKey,
   type PMNode,
   Selection,
+  TextSelection,
 } from './pm';
 import {
   findParentNodeOfType,
+  findSelectedNodeOfType,
   getNodeType,
   isNodeSelection,
   type KeyCode,
@@ -34,6 +36,8 @@ export type CollapsibleHeadingConfig = {
   /** Node name of the heading this plugin folds. Defaults to `heading`. */
   headingName?: string;
   keyToggleCollapse?: KeyCode;
+  keyMoveDown?: KeyCode;
+  keyMoveUp?: KeyCode;
   /** Accessible label for the fold toggle when the section is expanded. */
   collapseLabel?: string;
   /** Accessible label for the fold toggle when the section is folded. */
@@ -45,6 +49,8 @@ type RequiredConfig = Required<CollapsibleHeadingConfig>;
 const DEFAULT_CONFIG: RequiredConfig = {
   headingName: 'heading',
   keyToggleCollapse: false,
+  keyMoveDown: 'Alt-ArrowDown',
+  keyMoveUp: 'Alt-ArrowUp',
   collapseLabel: 'Collapse section',
   expandLabel: 'Expand section',
 };
@@ -112,6 +118,49 @@ export function getHeadingFoldRange(
   }
 
   return to === from ? null : { headingPos, from, to };
+}
+
+function findAdjacentSectionDropPos(
+  doc: PMNode,
+  headingPos: number,
+  headingName: string,
+  direction: 'up' | 'down',
+): number | null {
+  const heading = doc.nodeAt(headingPos);
+  const range = getHeadingFoldRange(doc, headingPos, headingName);
+  if (
+    !heading ||
+    heading.type.name !== headingName ||
+    !range ||
+    doc.resolve(headingPos).depth !== 0
+  ) {
+    return null;
+  }
+
+  if (direction === 'down') {
+    const nextHeading = doc.nodeAt(range.to);
+    if (!nextHeading || nextHeading.type.name !== headingName) {
+      return null;
+    }
+    return (
+      getHeadingFoldRange(doc, range.to, headingName)?.to ??
+      range.to + nextHeading.nodeSize
+    );
+  }
+
+  const $heading = doc.resolve(headingPos);
+  let siblingPos = headingPos;
+  for (let index = $heading.index() - 1; index >= 0; index--) {
+    const sibling = $heading.parent.child(index);
+    siblingPos -= sibling.nodeSize;
+    if (
+      sibling.type.name === headingName &&
+      sibling.attrs.level <= heading.attrs.level
+    ) {
+      return siblingPos;
+    }
+  }
+  return null;
 }
 
 export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
@@ -258,6 +307,56 @@ export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
     return true;
   };
 
+  const moveFoldedSectionByDirection = (direction: 'up' | 'down'): Command => {
+    return (state, dispatch) => {
+      const headingType = getNodeType(state.schema, config.headingName);
+      const found =
+        findSelectedNodeOfType(headingType)(state.selection) ??
+        findParentNodeOfType(headingType)(state.selection);
+      const pluginState = key.getState(state);
+      if (!found || !pluginState?.folded.includes(found.pos)) {
+        return false;
+      }
+
+      const dropPos = findAdjacentSectionDropPos(
+        state.doc,
+        found.pos,
+        config.headingName,
+        direction,
+      );
+      // Do not fall through to the ordinary heading keymap: it would move
+      // only the heading and tear apart the folded section at the boundary.
+      if (dropPos == null) {
+        return true;
+      }
+
+      const cursorOffset = isNodeSelection(state.selection)
+        ? 0
+        : Math.max(0, state.selection.head - found.pos - 1);
+      const move = moveFoldedSection(found.pos, dropPos);
+      if (!dispatch) {
+        move(state);
+        return true;
+      }
+      move(state, (tr) => {
+        const movedHeadingPos = tr.selection.from;
+        const movedHeading = tr.doc.nodeAt(movedHeadingPos);
+        if (movedHeading?.type === headingType) {
+          tr.setSelection(
+            TextSelection.create(
+              tr.doc,
+              movedHeadingPos +
+                1 +
+                Math.min(cursorOffset, movedHeading.content.size),
+            ),
+          );
+        }
+        dispatch(tr);
+      });
+      return true;
+    };
+  };
+
   const listCollapsedHeadings = (state: EditorState) => {
     const pluginState = key.getState(state);
     if (!pluginState) {
@@ -288,7 +387,12 @@ export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
 
   const plugin = {
     fold: pluginFold(config, key, toggleAtPos, moveFoldedSection),
-    keybindings: pluginKeybindings(config, toggleAtSelection),
+    keybindings: pluginKeybindings(
+      config,
+      toggleAtSelection,
+      moveFoldedSectionByDirection('up'),
+      moveFoldedSectionByDirection('down'),
+    ),
   };
 
   return collection({
@@ -308,11 +412,21 @@ export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
   });
 }
 
-function pluginKeybindings(config: RequiredConfig, toggleAtSelection: Command) {
+function pluginKeybindings(
+  config: RequiredConfig,
+  toggleAtSelection: Command,
+  moveUp: Command,
+  moveDown: Command,
+) {
   return () => {
     return keybinding(
-      [[config.keyToggleCollapse, toggleAtSelection]],
+      [
+        [config.keyToggleCollapse, toggleAtSelection],
+        [config.keyMoveUp, moveUp],
+        [config.keyMoveDown, moveDown],
+      ],
       'collapsible-heading',
+      PRIORITY.high,
     );
   };
 }

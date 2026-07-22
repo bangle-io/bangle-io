@@ -24,6 +24,22 @@ const SOURCE = [
   'gamma',
 ].join('\n');
 
+const MOVED_SOURCE = [
+  '# Two',
+  '',
+  'gamma',
+  '',
+  '# One',
+  '',
+  'alpha',
+  '',
+  'beta',
+  '',
+  '## Sub',
+  '',
+  'nested content',
+].join('\n');
+
 async function openSeededNote(page: Page) {
   const workspaceName = 'collapsible-headings';
   const noteName = 'Home';
@@ -192,6 +208,45 @@ test('dragging a folded heading moves the whole section without losing content',
   for (const line of ['alpha', 'beta', '## Sub', 'nested content', 'gamma']) {
     expect(movedMarkdown).toContain(line);
   }
+
+  await editor.getByRole('button', { name: 'Expand section' }).click();
+  await expect(editor.getByText('alpha')).toBeVisible();
+  await expect(editor.getByText('nested content')).toBeVisible();
+});
+
+test('moving a folded heading with option arrow moves the whole folded section', async ({
+  page,
+}) => {
+  const { editor, noteName, workspaceName } = await openSeededNote(page);
+
+  await editor
+    .getByRole('button', { name: 'Collapse section' })
+    .first()
+    .click();
+  await expect(editor.getByText('alpha')).toBeHidden();
+
+  await editor.getByText('One').click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.press('Alt+ArrowDown');
+
+  // The full section moves past "Two" and remains folded at its new location.
+  await expect(editor.getByText('alpha')).toBeHidden();
+  await expect(editor.getByText('nested content')).toBeHidden();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(MOVED_SOURCE);
+
+  // The reverse shortcut treats the folded section as the same complete unit.
+  await page.keyboard.press('Alt+ArrowUp');
+  await expect(editor.getByText('alpha')).toBeHidden();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(SOURCE);
+
+  await page.keyboard.press('Alt+ArrowDown');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(MOVED_SOURCE);
 
   await editor.getByRole('button', { name: 'Expand section' }).click();
   await expect(editor.getByText('alpha')).toBeVisible();

@@ -618,6 +618,49 @@ describe('nested folds', () => {
 });
 
 describe('moving folded sections', () => {
+  it('moves a folded section down and up with Alt Arrow shortcuts', () => {
+    const original = doc(
+      h1('One<cursor>'),
+      p('a'),
+      h2('Sub'),
+      p('b'),
+      h1('Two'),
+      p('c'),
+    );
+    const editor = editorTest.createEditor(original);
+    const { view } = editor;
+    collapsible.command.toggleHeadingCollapseAtPos(
+      headingPos(view.state.doc, 'One'),
+    )(view.state, view.dispatch);
+
+    expect(editor.pressKey('ArrowDown', { altKey: true })).toBe(true);
+    editor.expectDoc(
+      doc(h1('Two'), p('c'), h1('One<cursor>'), p('a'), h2('Sub'), p('b')),
+    );
+    expect(hiddenTexts(view)).toEqual(['a', 'Sub', 'b']);
+
+    expect(editor.pressKey('ArrowUp', { altKey: true })).toBe(true);
+    editor.expectDoc(original);
+    expect(hiddenTexts(view)).toEqual(['a', 'Sub', 'b']);
+  });
+
+  it('keeps a folded section intact when there is no adjacent section', () => {
+    const original = doc(p('intro'), h1('One<cursor>'), p('a'));
+    const editor = editorTest.createEditor(original);
+    const { view } = editor;
+    collapsible.command.toggleHeadingCollapseAtPos(
+      headingPos(view.state.doc, 'One'),
+    )(view.state, view.dispatch);
+
+    expect(editor.pressKey('ArrowUp', { altKey: true })).toBe(true);
+    editor.expectDoc(original);
+    expect(hiddenTexts(view)).toEqual(['a']);
+
+    expect(editor.pressKey('ArrowDown', { altKey: true })).toBe(true);
+    editor.expectDoc(original);
+    expect(hiddenTexts(view)).toEqual(['a']);
+  });
+
   it('moves the heading together with its hidden section to the end', () => {
     const editor = editorTest.createEditor(
       doc(h1('One'), p('a'), p('b'), h1('Two'), p('c')),
