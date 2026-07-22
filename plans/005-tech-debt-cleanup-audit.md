@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-06-15
-updated: 2026-07-19
+updated: 2026-07-21
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/631
@@ -23,6 +23,7 @@ related_prs:
   - https://github.com/bangle-io/bangle-io/pull/648
   - https://github.com/bangle-io/bangle-io/pull/649
   - https://github.com/bangle-io/bangle-io/pull/658
+  - https://github.com/bangle-io/bangle-io/pull/667
 related_issues: []
 ---
 
@@ -216,12 +217,20 @@ workflows, recovery gaps, and the open package-boundary items below.
     facade and proves the current graph performs the write. Browser E2E forces
     a save failure, emits the real `event::app:reload-ui`, retries through the
     disposed graph, and verifies the edit is durable after a full page reload.
-- 2026-07-19 list-fidelity cleanup (PR #658, open):
-  - The pending implementation preserves tight/loose list semantics, ordered
+- 2026-07-19 list-fidelity cleanup (PR #658):
+  - The merged implementation preserves tight/loose list semantics, ordered
     task-list container kind, and structural nested-list indentation across
     both editor engines.
-  - P1.3 remains in progress until the PR merges; its shared corpus, command,
-    codec, DOM, and persistence coverage are already part of the PR.
+  - P1.3 is complete. Shared corpus, command, codec, DOM, persistence, and
+    reload coverage protect the cross-engine behavior.
+- 2026-07-21 broad cleanup continuation (PR #667, open):
+  - The review-ready sweep removes dead code and obsolete tooling, consolidates
+    repeated editor/router/service/script behavior behind existing owners, and
+    hardens Native FS rename, sync-value, malformed-state, and mobile-origin
+    boundaries.
+  - The plan remains active after this sweep because the command-completion,
+    asset-recovery, package-boundary, and workspace-index items below are still
+    separate follow-ups.
 - Findings are grouped by priority and theme below.
 
 ## Scope
@@ -467,10 +476,9 @@ Current status:
 - ProseMirror explicitly ignores wrapper `bullet_list`/`ordered_list` tokens
   and derives flat list items from the configured kind/checked attributes.
 - The original general task-list coverage gap is resolved.
-- PR #658 is open with the remaining implementation: preserve tight/loose
-  list semantics, keep ordered task lists ordered, and use structural marker
-  widths for stable nested indentation. This section is not complete until
-  that PR merges.
+- PR #658 merged with the remaining implementation: tight/loose list semantics,
+  ordered task-list containers, and structural marker widths for stable nested
+  indentation across both editor engines.
 
 Evidence:
 
@@ -483,7 +491,7 @@ Plan:
 - [x] Derive task-list state from standard Markdown tokens or configure the parser
   explicitly to emit the required attrs.
 - [x] Document task-list normalization rules in tests.
-- [ ] Merge PR #658, including nested ordered-list indentation in the golden
+- [x] Merge PR #658, including nested ordered-list indentation in the golden
   corpus and fixed-point coverage.
 
 Verification:

@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-05
-updated: 2026-07-19
+updated: 2026-07-21
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/609
@@ -53,13 +53,14 @@ Key upstream facts (as of 2026-07-05):
 
 ## Current status
 
-2026-07-19 update:
+2026-07-21 update:
 
 - PR #655 fixed nested multiline code serialization inside block delimiters in
   the Wordgard Markdown codec.
-- PR #658 is open with shared list-syntax and codec work that preserves list
+- PR #658 merged with shared list-syntax and codec work that preserves list
   kind, task state, tightness, and structural indentation across both editor
-  engines. The migration remains in progress while that parity work is pending.
+  engines. The migration remains active; M2 real-editor wiring is the next
+  documented milestone.
 
 Active. Landed so far (PR #609):
 

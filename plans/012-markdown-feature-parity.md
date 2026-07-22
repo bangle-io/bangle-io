@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-07
-updated: 2026-07-18
+updated: 2026-07-21
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/615
@@ -51,7 +51,7 @@ Active and partially implemented:
   tokenization, editable inline/display nodes, KaTeX rendering, exact-source
   safeguards, and Playwright persistence coverage. That PR also added a
   separate Plan 016 for lazy-loading the renderer after the first release.
-- PR #658 is open with a cross-engine list-fidelity slice: tight/loose list
+- PR #658 merged with a cross-engine list-fidelity slice: tight/loose list
   semantics, ordered task-list kind, split/input-rule transitions, and stable
   structural indentation. It strengthens the parity baseline but does not
   complete one of the numbered milestones below.

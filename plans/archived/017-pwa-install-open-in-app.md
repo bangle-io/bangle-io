@@ -5,16 +5,18 @@ type: plan
 archived: true
 archived_on: 2026-07-19
 created: 2026-07-18
-updated: 2026-07-19
+updated: 2026-07-21
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/657
+  - https://github.com/bangle-io/bangle-io/pull/665
 related_issues: []
 ---
 
 > DONE (2026-07-19): PR #657 delivered the install/open-in-app surfaces,
 > deployment-aware manifest, protocol deep links, focus-existing launches, and
-> app shortcuts. Native in-place Markdown file handling was deliberately
+> app shortcuts. PR #665 then fixed installed-state detection for standalone
+> overlay windows. Native in-place Markdown file handling was deliberately
 > removed from this scope and remains a separate storage initiative. Automated
 > coverage and local browser smoke testing were completed with the
 > implementation; the real installed-PWA check remains part of release-time
@@ -43,10 +45,11 @@ Three user-visible surfaces, all driven by one install-state snapshot:
 
 ## Completion status
 
-Completed in PR #657. Phase 1 and the retained phase 2 scope shipped. The
-file-handler import experiment was removed before completion because native
-in-place editing needs a separate single-file storage and save-lifecycle
-design. That follow-up is explicitly out of scope for this completed plan.
+Completed in PR #657, with installed overlay-window detection corrected in PR
+#665. Phase 1 and the retained phase 2 scope shipped. The file-handler import
+experiment was removed before completion because native in-place editing needs
+a separate single-file storage and save-lifecycle design. That follow-up is
+explicitly out of scope for this completed plan.
 
 ## Browser API basis (verified July 2026)
 
