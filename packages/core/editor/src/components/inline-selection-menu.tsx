@@ -1,6 +1,8 @@
 import {
   $selectionMenu,
   type Command,
+  chainCommands,
+  lift,
   type SelectionMenuState,
 } from '@bangle.io/prosemirror-plugins';
 import {
@@ -120,6 +122,15 @@ function InlineSelectionMenuContent({
     onOutside: dismiss,
   });
 
+  // "Turn into paragraph" for any block: convert a heading/code block, lift a
+  // list item out of its list, or lift out of a blockquote. `convertToParagraph`
+  // alone no-ops inside a list because the list item already wraps a paragraph.
+  const setParagraph = chainCommands(
+    ext.paragraph.command.convertToParagraph,
+    ext.list.command.unwrapList,
+    lift,
+  );
+
   return linkSession ? (
     <FloatingLinkEditor
       anchorEl={anchorEl}
@@ -141,7 +152,10 @@ function InlineSelectionMenuContent({
     >
       <div
         aria-label={t.app.editor.selectionMenu.label}
-        className="flex items-center gap-0.5 rounded-md border bg-popover p-0.5 shadow-xs"
+        // Wrap rather than overflow: on a narrow viewport the max-width clamp
+        // (see the wrapper's `max-w-[calc(100vw-1rem)]`) would otherwise push
+        // the trailing controls off-screen and force horizontal page scroll.
+        className="flex flex-wrap items-center gap-0.5 rounded-md border bg-popover p-0.5 shadow-xs"
         onKeyDown={(event) => {
           if (event.key === 'Escape') {
             event.preventDefault();
@@ -222,11 +236,12 @@ function InlineSelectionMenuContent({
             // matches the paragraph nested inside a list item or blockquote,
             // which would light this up alongside the list/quote control.
             active={ext.paragraph.query.isTopLevelParagraph(editorView.state)}
-            disabled={false}
+            // Disabled only when there is genuinely nothing to convert (already
+            // a plain paragraph), so the control never looks actionable while
+            // no-oping.
+            disabled={!setParagraph(editorView.state)}
             label={t.app.editor.selectionMenu.paragraph}
-            onToggle={() =>
-              runCommand(editorView, ext.paragraph.command.convertToParagraph)
-            }
+            onToggle={() => runCommand(editorView, setParagraph)}
           >
             <Pilcrow />
           </FormatToggle>

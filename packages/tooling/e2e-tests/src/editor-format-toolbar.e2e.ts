@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import {
   createBrowserWorkspaceAndNote,
+  expectNoPageHorizontalOverflow,
   getEditorLocator,
   readStoredMarkdown,
   selectEditorText,
@@ -33,10 +34,13 @@ test('selection toolbar converts block types and reflects the active block', asy
   const heading1 = toolbar.getByRole('button', { name: 'Heading 1' });
   const bulletList = toolbar.getByRole('button', { name: 'Bullet list' });
 
-  // A plain paragraph reports itself as the active block.
+  // A plain paragraph reports itself as the active block. Paragraph is
+  // disabled here because there is nothing to convert — so it never looks
+  // actionable while no-oping.
   await selectEditorText(page, 'alpha');
   await expect(toolbar).toBeVisible();
   await expect(paragraph).toHaveAttribute('aria-pressed', 'true');
+  await expect(paragraph).toBeDisabled();
   await expect(heading1).toHaveAttribute('aria-pressed', 'false');
 
   // Convert to a heading: the active state moves to Heading 1 and the
@@ -70,6 +74,24 @@ test('selection toolbar converts block types and reflects the active block', asy
     .poll(() => readStoredMarkdown(page, workspaceName, noteName))
     .toBe('line alpha\n\n- line bravo\n\nline charlie');
 
+  // Paragraph must be actionable inside a list and lift the item back out to a
+  // plain paragraph — `convertToParagraph` alone no-ops there because the list
+  // item already wraps a paragraph.
+  await expect(paragraph).toBeEnabled();
+  await paragraph.click();
+  await expect(paragraph).toHaveAttribute('aria-pressed', 'true');
+  await expect(bulletList).toHaveAttribute('aria-pressed', 'false');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('line alpha\n\nline bravo\n\nline charlie');
+
+  // Re-apply the list so the reload below exercises list persistence.
+  await bulletList.click();
+  await expect(bulletList).toHaveAttribute('aria-pressed', 'true');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('line alpha\n\n- line bravo\n\nline charlie');
+
   // The block conversions survive a reload: the stored Markdown is unchanged
   // and the reloaded editor still reports the list as the active block.
   await page.reload({ waitUntil: 'networkidle' });
@@ -80,4 +102,33 @@ test('selection toolbar converts block types and reflects the active block', asy
   await expect(toolbar).toBeVisible();
   await expect(bulletList).toHaveAttribute('aria-pressed', 'true');
   await expect(paragraph).toHaveAttribute('aria-pressed', 'false');
+});
+
+// The toolbar now carries enough controls that it can be wider than a phone
+// viewport. It must wrap within the viewport rather than overflow the page.
+test('selection toolbar wraps instead of overflowing a narrow viewport', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 720 });
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName: 'format-toolbar-narrow',
+    noteName: 'narrow',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await page.keyboard.insertText('some selectable body text');
+
+  const toolbar = page.getByRole('toolbar', { name: 'Text formatting' });
+  await selectEditorText(page, 'selectable');
+  await expect(toolbar).toBeVisible();
+
+  // Every control stays reachable (the row wraps, nothing is clipped away).
+  await expect(toolbar.getByRole('button', { name: 'Bold' })).toBeVisible();
+  await expect(
+    toolbar.getByRole('button', { name: 'Task list' }),
+  ).toBeVisible();
+
+  // The page itself must not gain horizontal scroll from the wide toolbar.
+  await expectNoPageHorizontalOverflow(page);
 });
