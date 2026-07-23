@@ -5,6 +5,7 @@ import {
 } from '@bangle.io/prosemirror-plugins';
 import {
   Button,
+  Separator,
   Toggle,
   Tooltip,
   TooltipContent,
@@ -15,8 +16,15 @@ import { useAtomValue } from 'jotai';
 import {
   Bold,
   Code,
+  Heading1,
+  Heading2,
+  Heading3,
   Italic,
   Link as LinkIcon,
+  List,
+  ListChecks,
+  ListOrdered,
+  Pilcrow,
   Strikethrough,
 } from 'lucide-react';
 import React, { useRef, useState } from 'react';
@@ -144,15 +152,15 @@ function InlineSelectionMenuContent({
         role="toolbar"
       >
         <TooltipProvider delay={300}>
-          <MarkToggle
+          <FormatToggle
             active={ext.bold.query.isBoldActive(editorView.state)}
             disabled={!ext.bold.command.toggleBold(editorView.state)}
             label={t.app.editor.selectionMenu.bold}
             onToggle={() => runCommand(editorView, ext.bold.command.toggleBold)}
           >
             <Bold />
-          </MarkToggle>
-          <MarkToggle
+          </FormatToggle>
+          <FormatToggle
             active={ext.italic.query.isItalicActive(editorView.state)}
             disabled={!ext.italic.command.toggleItalic(editorView.state)}
             label={t.app.editor.selectionMenu.italic}
@@ -161,8 +169,8 @@ function InlineSelectionMenuContent({
             }
           >
             <Italic />
-          </MarkToggle>
-          <MarkToggle
+          </FormatToggle>
+          <FormatToggle
             active={ext.strike.query.isStrikeActive(editorView.state)}
             disabled={!ext.strike.command.toggleStrike(editorView.state)}
             label={t.app.editor.selectionMenu.strike}
@@ -171,15 +179,15 @@ function InlineSelectionMenuContent({
             }
           >
             <Strikethrough />
-          </MarkToggle>
-          <MarkToggle
+          </FormatToggle>
+          <FormatToggle
             active={ext.code.query.isCodeActive(editorView.state)}
             disabled={!ext.code.command.toggleCode(editorView.state)}
             label={t.app.editor.selectionMenu.inlineCode}
             onToggle={() => runCommand(editorView, ext.code.command.toggleCode)}
           >
             <Code />
-          </MarkToggle>
+          </FormatToggle>
           <ToolbarButton
             disabled={
               !ext.link.query.linkAllowedInRange(
@@ -208,6 +216,80 @@ function InlineSelectionMenuContent({
           >
             <LinkIcon />
           </ToolbarButton>
+          <Separator className="mx-0.5 h-6" orientation="vertical" />
+          <FormatToggle
+            // Highlight only a plain top-level paragraph. `isParagraph` also
+            // matches the paragraph nested inside a list item or blockquote,
+            // which would light this up alongside the list/quote control.
+            active={ext.paragraph.query.isTopLevelParagraph(editorView.state)}
+            disabled={false}
+            label={t.app.editor.selectionMenu.paragraph}
+            onToggle={() =>
+              runCommand(editorView, ext.paragraph.command.convertToParagraph)
+            }
+          >
+            <Pilcrow />
+          </FormatToggle>
+          <FormatToggle
+            active={ext.heading.query.isHeadingActive(editorView.state, 1)}
+            disabled={!ext.heading.command.toggleHeading(1)(editorView.state)}
+            label={t.app.editor.selectionMenu.heading1}
+            onToggle={() =>
+              runCommand(editorView, ext.heading.command.toggleHeading(1))
+            }
+          >
+            <Heading1 />
+          </FormatToggle>
+          <FormatToggle
+            active={ext.heading.query.isHeadingActive(editorView.state, 2)}
+            disabled={!ext.heading.command.toggleHeading(2)(editorView.state)}
+            label={t.app.editor.selectionMenu.heading2}
+            onToggle={() =>
+              runCommand(editorView, ext.heading.command.toggleHeading(2))
+            }
+          >
+            <Heading2 />
+          </FormatToggle>
+          <FormatToggle
+            active={ext.heading.query.isHeadingActive(editorView.state, 3)}
+            disabled={!ext.heading.command.toggleHeading(3)(editorView.state)}
+            label={t.app.editor.selectionMenu.heading3}
+            onToggle={() =>
+              runCommand(editorView, ext.heading.command.toggleHeading(3))
+            }
+          >
+            <Heading3 />
+          </FormatToggle>
+          <FormatToggle
+            active={ext.list.query.isBulletListActive(editorView.state)}
+            disabled={!ext.list.command.toggleBulletList(editorView.state)}
+            label={t.app.editor.selectionMenu.bulletList}
+            onToggle={() =>
+              runCommand(editorView, ext.list.command.toggleBulletList)
+            }
+          >
+            <List />
+          </FormatToggle>
+          <FormatToggle
+            active={ext.list.query.isOrderedListActive(editorView.state)}
+            disabled={!ext.list.command.toggleOrderedList(editorView.state)}
+            label={t.app.editor.selectionMenu.orderedList}
+            onToggle={() =>
+              runCommand(editorView, ext.list.command.toggleOrderedList)
+            }
+          >
+            <ListOrdered />
+          </FormatToggle>
+          <FormatToggle
+            active={ext.list.query.isTaskListActive(editorView.state)}
+            disabled={!ext.list.command.toggleTaskList(editorView.state)}
+            label={t.app.editor.selectionMenu.taskList}
+            onToggle={() =>
+              runCommand(editorView, ext.list.command.toggleTaskList)
+            }
+          >
+            <ListChecks />
+          </FormatToggle>
         </TooltipProvider>
       </div>
     </div>
@@ -219,7 +301,7 @@ function runCommand(editorView: EditorView, command: Command) {
   editorView.focus();
 }
 
-function MarkToggle({
+function FormatToggle({
   active,
   children,
   disabled,
