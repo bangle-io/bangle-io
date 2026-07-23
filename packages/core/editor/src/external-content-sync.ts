@@ -92,18 +92,21 @@ export interface ExternalContentSyncHost {
   hasPendingSaves(wsPath: string): boolean;
   readFileAsText(wsPath: string): Promise<string | undefined>;
   getMarkdown(schema: Schema): ReturnType<typeof markdownLoader>;
-  /** Saves the clean editor content before an external version replaces it. */
-  preserveCurrentContent(
-    wsPath: string,
-    content: string,
-    view: EditorView,
-  ): Promise<void>;
+  /** Exact disk source retained while this view's document is unchanged. */
+  getRetainedSource(view: EditorView): string | undefined;
   /**
-   * Runs `dispatch` with the editor's save pipeline suppressed for `wsPath`
-   * (see `suppressSaveForExternalSync` in the editor service for why the
-   * write-back must not happen).
+   * Preserves the current source, re-checks that the editor is still safe to
+   * replace, applies the transaction without re-saving it, and records the
+   * newly loaded source baseline.
    */
-  withSaveSuppressed(wsPath: string, dispatch: () => void): void;
+  replaceContent(args: {
+    currentSerialized: string;
+    expectedDoc: EditorView['state']['doc'];
+    sourceMarkdown: string;
+    transaction: Transaction;
+    view: EditorView;
+    wsPath: string;
+  }): Promise<'applied' | 'retry' | 'skipped'>;
   /**
    * The disk copy of `wsPath` was confirmed stable and different, but was
    * refused (fidelity, emptied-file, schema, or parse refusal) — the open
@@ -290,7 +293,6 @@ export class ExternalContentSync {
     let needsRerun = false;
     let refused = false;
     let reconciled = false;
-    let preservedCurrentContent = false;
     for (const [index, view] of views.entries()) {
       if (view.isDestroyed || view.state.doc !== docsBefore[index]) {
         continue;
@@ -325,7 +327,15 @@ export class ExternalContentSync {
         refused = true;
         continue;
       }
-      if (currentSerialized === diskSerialized) {
+      // A coarse refresh also visits unchanged notes. Lossy Markdown cannot
+      // equal its serializer output, so recognize the exact retained source
+      // before treating serializer-equal content as a changed lossy source.
+      const retainedSource = this.host.getRetainedSource(view);
+      if (
+        currentSerialized === diskSerialized &&
+        retainedSource !== undefined &&
+        isMarkdownRoundTripPreserved(diskText, retainedSource)
+      ) {
         reconciled = true;
         continue;
       }
@@ -340,6 +350,10 @@ export class ExternalContentSync {
           `External change to ${wsPath} does not round-trip through the editor; not auto-applying`,
         );
         refused = true;
+        continue;
+      }
+      if (currentSerialized === diskSerialized) {
+        reconciled = true;
         continue;
       }
       // Two agreeing reads can still both land inside a truncate-then-write
@@ -367,27 +381,22 @@ export class ExternalContentSync {
         continue;
       }
 
-      if (!preservedCurrentContent) {
-        await this.host.preserveCurrentContent(wsPath, currentSerialized, view);
-        if (this.aborted) {
-          return false;
-        }
-        // Snapshot storage is asynchronous. A keystroke made while it was in
-        // flight still wins over the external copy.
-        if (
-          this.host.hasPendingSaves(wsPath) ||
-          view.isDestroyed ||
-          view.state.doc !== docsBefore[index]
-        ) {
-          continue;
-        }
-        preservedCurrentContent = true;
-      }
-
-      this.host.withSaveSuppressed(wsPath, () => {
-        view.dispatch(tr);
+      const result = await this.host.replaceContent({
+        currentSerialized,
+        expectedDoc: docsBefore[index],
+        sourceMarkdown: diskText,
+        transaction: tr,
+        view,
+        wsPath,
       });
-      reconciled = true;
+      if (this.aborted) {
+        return false;
+      }
+      if (result === 'retry') {
+        needsRerun = true;
+      } else if (result === 'applied') {
+        reconciled = true;
+      }
     }
 
     // One outcome per pass: a refusal outranks a reconciliation (the user

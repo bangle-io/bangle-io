@@ -13,6 +13,7 @@ import {
   type PMNode,
   type Schema,
   TextSelection,
+  type Transaction,
 } from '@bangle.io/prosemirror-plugins';
 import {
   displayNameForAsset,
@@ -194,7 +195,7 @@ export class PmEditorService
    *
    * Contract: this only works because the saveDoc plugin's `view.update`
    * (and therefore `onDocChange`) runs synchronously inside
-   * `view.dispatch`, which `withSaveSuppressed` wraps. If the save pipeline
+   * `view.dispatch`, which `replaceEditorContent` wraps. If the save pipeline
    * ever defers off the dispatch (debounce, microtask), this flag must move
    * onto the transaction itself (a meta read from plugin state).
    */
@@ -228,19 +229,8 @@ export class PmEditorService
           signal: this.abortSignal,
         }),
       getMarkdown: (schema) => this.getMarkdown(schema),
-      preserveCurrentContent: (wsPath, content, view) =>
-        this.dependencies.noteSnapshot.preserveExternalOverwrite(
-          wsPath,
-          this.getExactPreservableContent(view, content),
-        ),
-      withSaveSuppressed: (wsPath, dispatch) => {
-        this.suppressSaveForExternalSync.add(wsPath);
-        try {
-          dispatch();
-        } finally {
-          this.suppressSaveForExternalSync.delete(wsPath);
-        }
-      },
+      getRetainedSource: (view) => this.getRetainedSource(view),
+      replaceContent: (args) => this.replaceEditorContent(args),
       onStaleContentRefused: (wsPath) => {
         this.showStaleExternalContentToast(wsPath);
       },
@@ -683,12 +673,14 @@ export class PmEditorService
         toast.dismiss(staleExternalContentToastId(wsPath));
         return;
       }
+      let compositionBlocked = false;
       for (const { doc, view } of viewsBeforeRead) {
         if (view.isDestroyed || view.state.doc !== doc) {
           continue;
         }
         const markdown = this.getMarkdown(view.state.schema);
         const parsed = markdown.parser.parse(content);
+        const currentSerialized = markdown.serializer.serialize(view.state.doc);
         const tr = buildExternalDocReplace(view, parsed);
         if (!tr) {
           this.logger.error(
@@ -696,18 +688,29 @@ export class PmEditorService
           );
           continue;
         }
-        this.suppressSaveForExternalSync.add(wsPath);
-        try {
-          view.dispatch(tr);
-        } finally {
-          this.suppressSaveForExternalSync.delete(wsPath);
+        const result = await this.replaceEditorContent({
+          currentSerialized,
+          expectedDoc: doc,
+          sourceMarkdown: content,
+          transaction: tr,
+          view,
+          wsPath,
+        });
+        if (result === 'retry') {
+          compositionBlocked = true;
+          continue;
+        }
+        if (result !== 'applied') {
+          continue;
         }
         this.logger.info(
           `${wsPath}: loaded the disk version into the open editor at the user's request (${content.length} chars)`,
         );
         this.checkRoundTripFidelity({ content, editorView: view, wsPath });
       }
-      toast.dismiss(staleExternalContentToastId(wsPath));
+      if (!compositionBlocked) {
+        toast.dismiss(staleExternalContentToastId(wsPath));
+      }
     } catch (error) {
       // Editor and toast stay as they are; the user can retry.
       this.logger.warn(`Could not load the disk version of ${wsPath}`, error);
@@ -737,12 +740,82 @@ export class PmEditorService
     view: EditorView,
     serialized: string,
   ): string {
+    return this.getRetainedSource(view) ?? serialized;
+  }
+
+  private getRetainedSource(view: EditorView): string | undefined {
     for (const editor of this.readyEditors()) {
       if (editor.editorView === view && editor.loadedDoc === view.state.doc) {
         return editor.loadedMarkdown;
       }
     }
-    return serialized;
+    return undefined;
+  }
+
+  /**
+   * The single lifecycle for replacing a mounted editor from disk. Snapshot
+   * storage is asynchronous, so every safety condition is checked both before
+   * and after it; in particular an IME composition that begins while the
+   * snapshot is being stored must never be destroyed by the replacement.
+   */
+  private async replaceEditorContent({
+    currentSerialized,
+    expectedDoc,
+    sourceMarkdown,
+    transaction,
+    view,
+    wsPath,
+  }: {
+    currentSerialized: string;
+    expectedDoc: EditorView['state']['doc'];
+    sourceMarkdown: string;
+    transaction: Transaction;
+    view: EditorView;
+    wsPath: string;
+  }): Promise<'applied' | 'retry' | 'skipped'> {
+    if (
+      this.saveQueue.hasPendingOrFailed(wsPath) ||
+      view.isDestroyed ||
+      view.state.doc !== expectedDoc ||
+      this.getEditorEntryByView(view)?.wsPath !== wsPath
+    ) {
+      return 'skipped';
+    }
+    if (view.composing) {
+      return 'retry';
+    }
+
+    await this.dependencies.noteSnapshot.preserveExternalOverwrite(
+      wsPath,
+      this.getExactPreservableContent(view, currentSerialized),
+    );
+
+    if (
+      this.abortSignal.aborted ||
+      this.saveQueue.hasPendingOrFailed(wsPath) ||
+      view.isDestroyed ||
+      view.state.doc !== expectedDoc ||
+      this.getEditorEntryByView(view)?.wsPath !== wsPath
+    ) {
+      return 'skipped';
+    }
+    if (view.composing) {
+      return 'retry';
+    }
+
+    this.suppressSaveForExternalSync.add(wsPath);
+    try {
+      view.dispatch(transaction);
+    } finally {
+      this.suppressSaveForExternalSync.delete(wsPath);
+    }
+
+    const editor = this.getEditorEntryByView(view);
+    if (editor?.wsPath === wsPath) {
+      editor.loadedDoc = view.state.doc;
+      editor.loadedMarkdown = sourceMarkdown;
+    }
+    return 'applied';
   }
 
   getEditorLoadStatus(

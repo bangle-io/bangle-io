@@ -1,5 +1,9 @@
 import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
-import { DATABASE_TABLE_NAME, SERVICE_NAME } from '@bangle.io/constants';
+import {
+  DATABASE_TABLE_NAME,
+  EXTERNAL_FILE_CHANGE_SENDER_TAG,
+  SERVICE_NAME,
+} from '@bangle.io/constants';
 import { type InferType, T } from '@bangle.io/mini-js-utils';
 import type { BaseDatabaseService, ScopedEmitter } from '@bangle.io/types';
 import { WsPath } from '@bangle.io/ws-path';
@@ -144,8 +148,17 @@ export class NoteSnapshotService extends BaseService {
     this.config.emitter.on(
       'event::file:update',
       (event) => {
-        if (event.type === 'file-create' || event.type === 'file-delete') {
+        if (event.type === 'file-delete') {
           this.clearPathState(event.wsPath);
+        } else if (event.type === 'file-create') {
+          // A watcher can report our own atomic replace as a visible create
+          // after the temporary file is renamed. Reset capture throttling,
+          // but retain the just-written outgoing version so a later foreign
+          // overwrite can still preserve it.
+          this.lastCaptureAt.delete(event.wsPath);
+          if (event.sender.tag !== EXTERNAL_FILE_CHANGE_SENDER_TAG) {
+            this.lastWrittenContent.delete(event.wsPath);
+          }
         } else if (event.type === 'file-rename') {
           this.relocatePathState(event.oldWsPath, event.wsPath);
           if (event.oldWsPath) {

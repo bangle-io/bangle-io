@@ -35,8 +35,8 @@ function makeHost(overrides: Partial<ExternalContentSyncHost> = {}) {
     getMarkdown: vi.fn(() => {
       throw new Error('not needed in these tests');
     }),
-    preserveCurrentContent: vi.fn(async () => {}),
-    withSaveSuppressed: vi.fn((_wsPath, dispatch) => dispatch()),
+    getRetainedSource: vi.fn(() => undefined),
+    replaceContent: vi.fn(async (): Promise<'applied'> => 'applied'),
     onStaleContentRefused: vi.fn(),
     onContentReconciled: vi.fn(),
     logger: { warn: vi.fn(), error: vi.fn() },
@@ -169,7 +169,7 @@ describe('coalescing and stability', () => {
       expect.stringContaining('kept changing'),
     );
     // Nothing was ever applied.
-    expect(host.withSaveSuppressed).not.toHaveBeenCalled();
+    expect(host.replaceContent).not.toHaveBeenCalled();
   }, 20_000);
 
   it('content that settles after the pass bound is still applied by the trailing pass', async () => {
@@ -225,7 +225,7 @@ describe('coalescing and stability', () => {
     // Stable reads but a composing view: the pass keeps retrying (bounded)
     // instead of dispatching into the live composition.
     await waitUntil(() => reads >= 4, 10_000);
-    expect(host.withSaveSuppressed).not.toHaveBeenCalled();
+    expect(host.replaceContent).not.toHaveBeenCalled();
     expect(host.getMarkdown).not.toHaveBeenCalled();
   });
 });
@@ -262,8 +262,7 @@ describe('refusal and reconciliation reporting', () => {
     );
     expect(host.onStaleContentRefused).toHaveBeenCalledWith('ws:a.md');
     expect(host.onContentReconciled).not.toHaveBeenCalled();
-    expect(host.preserveCurrentContent).not.toHaveBeenCalled();
-    expect(host.withSaveSuppressed).not.toHaveBeenCalled();
+    expect(host.replaceContent).not.toHaveBeenCalled();
   });
 
   it('an echo (serializer-equal content) reports reconciliation, clearing stale notices', async () => {
@@ -274,6 +273,7 @@ describe('refusal and reconciliation reporting', () => {
     } as never;
     const host = makeHost({
       getViews: vi.fn(() => [view]),
+      readFileAsText: vi.fn(async () => 'same output'),
       getMarkdown: vi.fn(
         () =>
           ({
@@ -294,8 +294,7 @@ describe('refusal and reconciliation reporting', () => {
     );
     expect(host.onContentReconciled).toHaveBeenCalledWith('ws:a.md');
     expect(host.onStaleContentRefused).not.toHaveBeenCalled();
-    expect(host.preserveCurrentContent).not.toHaveBeenCalled();
-    expect(host.withSaveSuppressed).not.toHaveBeenCalled();
+    expect(host.replaceContent).not.toHaveBeenCalled();
   });
 });
 

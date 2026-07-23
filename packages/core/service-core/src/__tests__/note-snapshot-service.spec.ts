@@ -1,5 +1,6 @@
 import {
   DATABASE_TABLE_NAME,
+  EXTERNAL_FILE_CHANGE_SENDER_TAG,
   WORKSPACE_STORAGE_TYPE,
 } from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
@@ -226,6 +227,45 @@ describe('NoteSnapshotService', () => {
         snapshots[0]?.id ?? '',
       );
       expect(newest?.content).toBe('v2 from this tab');
+    });
+    controller.abort();
+  });
+
+  it('retains outgoing content across a watcher create echo', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-07-21T00:00:00Z'));
+    const { controller, services, testEnv } = await setup({
+      minCaptureIntervalMs: 60_000,
+    });
+    await services.fileSystem.createTextFile(NOTE_WS_PATH, 'v1');
+    await writeNote(services, NOTE_WS_PATH, 'v2 from this tab');
+    vi.advanceTimersByTime(11 * 60_000);
+
+    // NativeFS atomic replacement can surface as temp-file -> visible-file,
+    // which the watcher reports as a create even though this was our write.
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-create',
+      wsPath: NOTE_WS_PATH,
+      sender: {
+        id: 'storage-watcher',
+        tag: EXTERNAL_FILE_CHANGE_SENDER_TAG,
+      },
+    });
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-content-update',
+      wsPath: NOTE_WS_PATH,
+      sender: { id: 'some-other-tab', tag: 'file-system-service' },
+    });
+
+    await vi.waitFor(async () => {
+      const snapshots = await services.noteSnapshot.listSnapshots();
+      const contents = await Promise.all(
+        snapshots.map(
+          async ({ id }) =>
+            (await services.noteSnapshot.getSnapshot(id))?.content,
+        ),
+      );
+      expect(contents).toContain('v2 from this tab');
     });
     controller.abort();
   });

@@ -392,6 +392,159 @@ describe('editor refresh on external file changes', () => {
     expect(editorText(domNode)).not.toContain('the spec');
   });
 
+  it('refuses lossy source even when it serializes like the open document', async () => {
+    const { testEnv, services } = await setupEditorWithNote(
+      'the original note body with [the spec](https://example.com/spec)',
+    );
+    const warningSpy = vi.spyOn(toast, 'warning');
+
+    // This parses to the same editor document as the inline link above, but
+    // its reference definition would be normalized away by the next save.
+    await simulateExternalEdit(
+      testEnv,
+      services,
+      'the original note body with [the spec][1]\n\n[1]: https://example.com/spec\n',
+    );
+
+    await vi.waitFor(
+      () => {
+        expect(warningSpy).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            id: `external-stale-content:${NOTE_WS_PATH}`,
+          }),
+        );
+      },
+      { timeout: 3_000 },
+    );
+  });
+
+  it('does not report unchanged lossy source as a coarse-refresh conflict', async () => {
+    const { testEnv } = await setupEditorWithNote(
+      'the original note body with [the spec][1]\n\n[1]: https://example.com/spec\n',
+    );
+    const warningSpy = vi.spyOn(toast, 'warning');
+
+    testEnv.rootEmitter.emit('event::file:force-update', {
+      sender: EXTERNAL_SENDER,
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 700));
+    expect(warningSpy).not.toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        id: `external-stale-content:${NOTE_WS_PATH}`,
+      }),
+    );
+  });
+
+  it('does not replace an editor when IME composition starts during preservation', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      'the original note body',
+    );
+    const editorView = asPmEditor(services.editorEngine).getEditor(
+      'main-test-editor',
+    );
+    expect(editorView).toBeDefined();
+    if (!editorView) {
+      throw new Error('expected mounted editor');
+    }
+
+    const preservationStarted = createDeferred<void>();
+    const allowPreservation = createDeferred<void>();
+    const originalPreserve =
+      services.noteSnapshot.preserveExternalOverwrite.bind(
+        services.noteSnapshot,
+      );
+    let firstCall = true;
+    vi.spyOn(
+      services.noteSnapshot,
+      'preserveExternalOverwrite',
+    ).mockImplementation(async (...args) => {
+      if (firstCall) {
+        firstCall = false;
+        preservationStarted.resolve();
+        await allowPreservation.promise;
+      }
+      await originalPreserve(...args);
+    });
+
+    await simulateExternalEdit(
+      testEnv,
+      services,
+      'updated while composition begins',
+    );
+    await preservationStarted.promise;
+    let composing = true;
+    Object.defineProperty(editorView, 'composing', {
+      configurable: true,
+      get: () => composing,
+    });
+    allowPreservation.resolve();
+
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    expect(editorText(domNode)).toContain('the original note body');
+    expect(editorText(domNode)).not.toContain(
+      'updated while composition begins',
+    );
+
+    composing = false;
+    await vi.waitFor(
+      () => {
+        expect(editorText(domNode)).toContain(
+          'updated while composition begins',
+        );
+      },
+      { timeout: 4_000 },
+    );
+    Reflect.deleteProperty(editorView, 'composing');
+  });
+
+  it('does not replace or save a view renamed during preservation', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      'the original note body',
+    );
+    const preservationStarted = createDeferred<void>();
+    const allowPreservation = createDeferred<void>();
+    const originalPreserve =
+      services.noteSnapshot.preserveExternalOverwrite.bind(
+        services.noteSnapshot,
+      );
+    vi.spyOn(
+      services.noteSnapshot,
+      'preserveExternalOverwrite',
+    ).mockImplementation(async (...args) => {
+      preservationStarted.resolve();
+      await allowPreservation.promise;
+      await originalPreserve(...args);
+    });
+    const writeSpy = vi.spyOn(services.fileSystem, 'writeFile');
+
+    await simulateExternalEdit(
+      testEnv,
+      services,
+      'external content from the old path',
+    );
+    await preservationStarted.promise;
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-rename',
+      oldWsPath: NOTE_WS_PATH,
+      wsPath: `${WS_NAME}:renamed.md`,
+      sender: EXTERNAL_SENDER,
+    });
+    allowPreservation.resolve();
+
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    expect(editorText(domNode)).toContain('the original note body');
+    expect(editorText(domNode)).not.toContain(
+      'external content from the old path',
+    );
+    expect(writeSpy).not.toHaveBeenCalled();
+    expect(
+      asPmEditor(services.editorEngine).getEditorLoadStatus('main-test-editor'),
+    ).toMatchObject({ wsPath: `${WS_NAME}:renamed.md` });
+  });
+
   it('never blanks a non-empty note from an external truncation', async () => {
     const { testEnv, services, domNode } = await setupEditorWithNote(
       'the original note body',
@@ -526,11 +679,9 @@ describe('editor refresh on external file changes', () => {
     const dismissSpy = vi.spyOn(toast, 'dismiss');
 
     // Fidelity-refused external content: the editor keeps the current note.
-    await simulateExternalEdit(
-      testEnv,
-      services,
-      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
-    );
+    const refusedSource =
+      'see [the spec][1]\n\n[1]: https://example.com/spec\n';
+    await simulateExternalEdit(testEnv, services, refusedSource);
     await new Promise((resolve) => setTimeout(resolve, 700));
     expect(editorText(domNode)).toContain('the original note body');
 
@@ -548,6 +699,39 @@ describe('editor refresh on external file changes', () => {
     expect(dismissSpy).toHaveBeenCalledWith(
       `external-stale-content:${NOTE_WS_PATH}`,
     );
+
+    const snapshotsAfterManualLoad =
+      await services.noteSnapshot.listSnapshots();
+    const originalSnapshot = await services.noteSnapshot.getSnapshot(
+      snapshotsAfterManualLoad[0]?.id ?? '',
+    );
+    expect(originalSnapshot?.content).toBe('the original note body');
+
+    // The accepted disk source becomes the new exact baseline. A later
+    // external replacement must preserve the reference-style Markdown, not
+    // the editor's normalized inline-link serialization.
+    await simulateExternalEdit(
+      testEnv,
+      services,
+      'clean content after manual recovery',
+    );
+    await vi.waitFor(
+      () => {
+        expect(editorText(domNode)).toContain(
+          'clean content after manual recovery',
+        );
+      },
+      { timeout: 3_000 },
+    );
+    const snapshotsAfterExternalReplace =
+      await services.noteSnapshot.listSnapshots();
+    const snapshotContents = await Promise.all(
+      snapshotsAfterExternalReplace.map(
+        async ({ id }) =>
+          (await services.noteSnapshot.getSnapshot(id))?.content,
+      ),
+    );
+    expect(snapshotContents).toContain(refusedSource);
   });
 
   it('loading the disk version refuses to clobber edits made since the refusal', async () => {
