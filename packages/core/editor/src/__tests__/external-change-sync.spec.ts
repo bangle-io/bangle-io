@@ -180,6 +180,29 @@ describe('editor refresh on external file changes', () => {
     ).resolves.toMatchObject({ content: originalSource });
   });
 
+  it('retries the replacement when snapshot preservation fails', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      'the original note body',
+    );
+    const preserveSpy = vi
+      .spyOn(services.noteSnapshot, 'preserveExternalOverwrite')
+      .mockResolvedValueOnce(false);
+
+    await simulateExternalEdit(testEnv, services, 'externally updated');
+
+    await vi.waitFor(
+      () => {
+        expect(preserveSpy.mock.calls.length).toBeGreaterThanOrEqual(2);
+        expect(editorText(domNode)).toContain('externally updated');
+      },
+      { timeout: 4_000 },
+    );
+    const snapshots = await services.noteSnapshot.listSnapshots();
+    await expect(
+      services.noteSnapshot.getSnapshot(snapshots[0]?.id ?? ''),
+    ).resolves.toMatchObject({ content: 'the original note body' });
+  });
+
   it('also refreshes on an external coarse refresh (force-update) event', async () => {
     const { testEnv, services, domNode } = await setupEditorWithNote(
       'the original note body',

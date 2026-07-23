@@ -762,10 +762,14 @@ export class PmEditorService
       return 'retry';
     }
 
-    await this.dependencies.noteSnapshot.preserveExternalOverwrite(
-      wsPath,
-      this.getExactPreservableContent(view, currentSerialized),
-    );
+    const preserved =
+      await this.dependencies.noteSnapshot.preserveExternalOverwrite(
+        wsPath,
+        this.getExactPreservableContent(view, currentSerialized),
+      );
+    if (!preserved) {
+      return 'retry';
+    }
 
     if (
       this.abortSignal.aborted ||
