@@ -298,6 +298,9 @@ export const t = {
     },
     pageAsset: {
       downloadButton: 'Download',
+      openExternallyButton: 'Open in another app',
+      openExternallyFailed:
+        "Couldn't open the system app chooser. Download the file instead.",
       loading: 'Loading asset...',
       unavailable: 'Unable to load this asset.',
       noPreview:

@@ -250,6 +250,9 @@ export const t = {
     },
     pageAsset: {
       downloadButton: 'Download',
+      openExternallyButton: 'In einer anderen App öffnen',
+      openExternallyFailed:
+        'Die App-Auswahl konnte nicht geöffnet werden. Laden Sie die Datei stattdessen herunter.',
       loading: 'Asset wird geladen...',
       unavailable: 'Dieses Asset kann nicht geladen werden.',
       noPreview:
