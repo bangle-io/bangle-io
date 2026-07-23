@@ -76,11 +76,11 @@ type WatchPathClass =
 type FsCacheEntry = {
   fs: NativeFs;
   /**
-   * Whether a watch is (believed to be) armed for this workspace. Set
-   * optimistically when a watch starts; cleared when starting fails or the
-   * observer reports an `errored` record, so the next page return re-arms.
+   * Only `armed` is healthy enough to skip page-return revalidation.
+   * `starting` prevents duplicate observer setup without pretending the
+   * workspace is already protected from missed changes.
    */
-  watching: boolean;
+  watchState: 'idle' | 'starting' | 'armed';
 };
 
 export class FileStorageNativeFs
@@ -161,7 +161,7 @@ export class FileStorageNativeFs
         // The lock scope is the workspace name (not the folder basename) so
         // cross-tab write serialization stays keyed to the workspace identity.
         const fs = new NativeFs({ rootHandle: handle, lockScope: wsName });
-        const entry: FsCacheEntry = { fs, watching: false };
+        const entry: FsCacheEntry = { fs, watchState: 'idle' };
         this.fsCache.set(wsName, entry);
         this.startWatching(wsName, entry);
         return entry;
@@ -182,7 +182,7 @@ export class FileStorageNativeFs
   private startWatching(wsName: string, entry: FsCacheEntry): void {
     if (
       !this.config.onExternalChange ||
-      entry.watching ||
+      entry.watchState !== 'idle' ||
       // Without the observer API, watching can never arm; leaving the entry
       // unmarked keeps page-return revalidation as the refresh path (and
       // avoids arming optimistically only to fail asynchronously each time).
@@ -190,7 +190,7 @@ export class FileStorageNativeFs
     ) {
       return;
     }
-    entry.watching = true;
+    entry.watchState = 'starting';
 
     // Watching is best-effort: a failure to observe must never break file
     // operations, so errors are logged rather than propagated. A failed
@@ -199,8 +199,11 @@ export class FileStorageNativeFs
       .watch((changes) => this.handleWatchChanges(wsName, changes), {
         signal: this.abortSignal,
       })
+      .then((armed) => {
+        entry.watchState = armed ? 'armed' : 'idle';
+      })
       .catch((error) => {
-        entry.watching = false;
+        entry.watchState = 'idle';
         this.logger.warn(
           `Unable to watch native FS workspace "${wsName}" for external changes`,
           error,
@@ -216,24 +219,28 @@ export class FileStorageNativeFs
    * filesystems where OS watching is unreliable — and the only refresh
    * mechanism at all when `FileSystemObserver` is unsupported.
    *
-   * A return from a hidden/frozen tab refreshes every opened workspace: the
-   * browser may have starved the observer while the tab was away. A mere
-   * window refocus (the page stayed visible throughout) misses nothing while
-   * a watcher is armed, so only workspaces without a live watcher — observer
-   * unsupported, or the watch died — are refreshed; anything else would
-   * re-list every workspace and re-read every open note on each alt-tab.
+   * A return from a hidden/frozen tab refreshes if any workspace has been
+   * opened: the browser may have starved observers while the tab was away. A
+   * mere window refocus (the page stayed visible throughout) misses nothing
+   * while every watcher is armed, so it refreshes only when at least one
+   * watcher is unavailable. One app-wide event covers all qualifying
+   * workspaces without repeatedly invalidating global consumers.
    */
   private revalidateOnPageReturn(info: PageReturnInfo): void {
     const onExternalChange = this.config.onExternalChange;
     if (!onExternalChange || this.fsCache.size === 0) {
       return;
     }
+    let shouldRefresh = false;
     for (const [wsName, entry] of this.fsCache) {
-      const wasWatching = entry.watching;
+      const wasArmed = entry.watchState === 'armed';
       this.startWatching(wsName, entry);
-      if (info.returnedFromHidden || !wasWatching) {
-        onExternalChange({ type: 'refresh', wsName });
+      if (info.returnedFromHidden || !wasArmed) {
+        shouldRefresh = true;
       }
+    }
+    if (shouldRefresh) {
+      onExternalChange({ type: 'refresh' });
     }
   }
 
@@ -290,7 +297,7 @@ export class FileStorageNativeFs
       if (change.type === 'errored') {
         const entry = this.fsCache.get(wsName);
         if (entry) {
-          entry.watching = false;
+          entry.watchState = 'idle';
         }
         needsRefresh = true;
         continue;

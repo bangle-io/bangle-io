@@ -37,13 +37,14 @@ export type FileStorageChangeEvent =
  * (a sync tool, another editor, a shell command), detected by a storage
  * provider's watcher. Per-path changes reuse the mutation event shape;
  * `refresh` is the coarse fallback when the watcher only knows "something
- * under this workspace changed".
+ * changed". A workspace name scopes the refresh when known; absent means
+ * app-wide.
  */
 export type FileStorageExternalChangeEvent =
   | FileStorageChangeEvent
   | {
       type: 'refresh';
-      wsName: string;
+      wsName?: string;
     };
 
 type EmptyObject = Record<string, never>;

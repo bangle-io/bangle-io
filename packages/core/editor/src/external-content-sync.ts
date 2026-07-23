@@ -175,10 +175,10 @@ export class ExternalContentSync {
         break;
       }
       default: {
-        // Deletes/renames change the tree, not the open document's content.
-        // An open editor on the removed path keeps the user's content; its
-        // next save fails visibly through the save-error surface rather
-        // than silently recreating the file here.
+        // Deletes change the tree, not the open document's content. An open
+        // editor on the removed path keeps the user's content; its next save
+        // fails visibly through the save-error surface rather than silently
+        // recreating the file here.
         targets = [];
       }
     }

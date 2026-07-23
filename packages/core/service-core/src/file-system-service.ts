@@ -55,13 +55,6 @@ type ExternalFileChangePayload =
       wsPath: string;
     }
   | {
-      type: 'file-rename';
-      /** The path the file now lives at. */
-      wsPath: string;
-      /** The path the file was renamed away from. */
-      oldWsPath: string;
-    }
-  | {
       type: 'refresh';
       /** The workspace the refresh concerns; absent = app-wide. */
       wsName?: string;
@@ -164,28 +157,11 @@ export class FileSystemService extends BaseService {
       'event::file:update',
       (event) => {
         const isExternal = this.isExternalSender(event.sender);
-        if (isExternal) {
-          if (event.type === 'file-rename') {
-            if (event.oldWsPath !== undefined) {
-              this.setExternalFileChangeEvent({
-                type: 'file-rename',
-                wsPath: event.wsPath,
-                oldWsPath: event.oldWsPath,
-              });
-            } else {
-              // A rename without its origin cannot be acted on per-path;
-              // degrade to a workspace-scoped refresh.
-              this.setExternalFileChangeEvent({
-                type: 'refresh',
-                wsName: WsPath.safeParse(event.wsPath).data?.wsName,
-              });
-            }
-          } else {
-            this.setExternalFileChangeEvent({
-              type: event.type,
-              wsPath: event.wsPath,
-            });
-          }
+        if (isExternal && event.type !== 'file-rename') {
+          this.setExternalFileChangeEvent({
+            type: event.type,
+            wsPath: event.wsPath,
+          });
         }
         switch (event.type) {
           case 'file-create': {
@@ -222,6 +198,15 @@ export class FileSystemService extends BaseService {
               });
             }
             this.store.set(this.$fileRenameCount, (c) => c + 1);
+            if (isExternal) {
+              // $fileRenameEvent retargets editors when the origin is known.
+              // A coarse refresh then reconciles their content and also
+              // covers origin-less rename events.
+              this.setExternalFileChangeEvent({
+                type: 'refresh',
+                wsName: WsPath.safeParse(event.wsPath).data?.wsName,
+              });
+            }
             break;
           }
           default: {

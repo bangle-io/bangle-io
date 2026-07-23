@@ -18,7 +18,6 @@ function makeEvent(
         type: 'file-create' | 'file-content-update' | 'file-delete';
         wsPath: string;
       }
-    | { type: 'file-rename'; wsPath: string; oldWsPath: string }
     | { type: 'refresh'; wsName?: string },
 ): ExternalFileChangeEvent {
   return { sequence: 1, ...payload };
@@ -72,15 +71,8 @@ describe('target selection', () => {
     sync.handleEvent(
       makeEvent({ type: 'file-content-update', wsPath: 'ws:open.md' }),
     );
-    // Deletes and renames never reconcile content.
+    // Deletes never reconcile content.
     sync.handleEvent(makeEvent({ type: 'file-delete', wsPath: 'ws:open.md' }));
-    sync.handleEvent(
-      makeEvent({
-        type: 'file-rename',
-        wsPath: 'ws:open.md',
-        oldWsPath: 'ws:old.md',
-      }),
-    );
 
     expect(getViews).toHaveBeenCalledWith('ws:closed.md');
     expect(getViews).toHaveBeenCalledWith('ws:open.md');

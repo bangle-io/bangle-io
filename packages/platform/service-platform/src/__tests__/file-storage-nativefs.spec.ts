@@ -4,6 +4,7 @@
 
 import { FILE_STORAGE_MAX_FILE_SIZE_BYTES } from '@bangle.io/constants';
 import { isAbortError } from '@bangle.io/mini-js-utils';
+import { NativeFs } from '@bangle.io/native-fs';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { FileStorageNativeFs } from '../file-storage-nativefs';
@@ -107,6 +108,7 @@ class FakeDirectoryHandle {
 }
 
 afterEach(() => {
+  vi.restoreAllMocks();
   vi.unstubAllGlobals();
 });
 
@@ -752,19 +754,18 @@ describe('external change watching', () => {
     triggerPageReturn();
     expect(onExternalChange).not.toHaveBeenCalled();
 
-    await service.fileExists('myWorkspace:seed.md');
+    await Promise.all([
+      service.fileExists('myWorkspace:seed.md'),
+      service.fileExists('secondWorkspace:seed.md'),
+    ]);
     triggerPageReturn({ returnedFromHidden: true });
-    expect(onExternalChange).toHaveBeenCalledWith({
-      type: 'refresh',
-      wsName: 'myWorkspace',
-    });
+    expect(onExternalChange).toHaveBeenCalledTimes(1);
+    expect(onExternalChange).toHaveBeenCalledWith({ type: 'refresh' });
 
     onExternalChange.mockClear();
     triggerPageReturn({ returnedFromHidden: false });
-    expect(onExternalChange).toHaveBeenCalledWith({
-      type: 'refresh',
-      wsName: 'myWorkspace',
-    });
+    expect(onExternalChange).toHaveBeenCalledTimes(1);
+    expect(onExternalChange).toHaveBeenCalledWith({ type: 'refresh' });
   });
 
   it('skips the refresh on plain refocus while a watcher is armed and healthy', async () => {
@@ -790,10 +791,61 @@ describe('external change watching', () => {
     // A return from a hidden/frozen tab refreshes even with a live watcher:
     // the browser may have starved the observer while the tab was away.
     triggerPageReturn({ returnedFromHidden: true });
-    expect(onExternalChange).toHaveBeenCalledWith({
-      type: 'refresh',
-      wsName: 'myWorkspace',
+    expect(onExternalChange).toHaveBeenCalledWith({ type: 'refresh' });
+  });
+
+  it('retries when NativeFs reports that a watcher did not arm', async () => {
+    stubFileSystemObserver();
+    const watchSpy = vi
+      .spyOn(NativeFs.prototype, 'watch')
+      .mockResolvedValue(false);
+    const { service, onExternalChange, triggerPageReturn } = await setup(
+      undefined,
+      'myWorkspace',
+      {
+        withExternalChange: true,
+      },
+    );
+
+    await service.fileExists('myWorkspace:seed.md');
+    await vi.waitFor(() => {
+      expect(watchSpy).toHaveBeenCalledTimes(1);
     });
+
+    triggerPageReturn({ returnedFromHidden: false });
+    expect(onExternalChange).toHaveBeenCalledWith({ type: 'refresh' });
+    await vi.waitFor(() => {
+      expect(watchSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  it('refreshes on refocus while a watcher is still starting', async () => {
+    stubFileSystemObserver();
+    let resolveWatch!: (armed: boolean) => void;
+    const watchResult = new Promise<boolean>((resolve) => {
+      resolveWatch = resolve;
+    });
+    const watchSpy = vi
+      .spyOn(NativeFs.prototype, 'watch')
+      .mockReturnValue(watchResult);
+    const { service, onExternalChange, triggerPageReturn } = await setup(
+      undefined,
+      'myWorkspace',
+      {
+        withExternalChange: true,
+      },
+    );
+
+    await service.fileExists('myWorkspace:seed.md');
+    expect(watchSpy).toHaveBeenCalledTimes(1);
+
+    // Starting prevents duplicate setup, but is not yet healthy enough to
+    // assume that the observer saw everything before this refocus.
+    triggerPageReturn({ returnedFromHidden: false });
+    expect(onExternalChange).toHaveBeenCalledWith({ type: 'refresh' });
+    expect(watchSpy).toHaveBeenCalledTimes(1);
+
+    resolveWatch(true);
   });
 
   it('re-arms a dead watcher on page return after the observer errored', async () => {
@@ -822,10 +874,7 @@ describe('external change watching', () => {
     // the watcher dead, anything could have been missed meanwhile.
     onExternalChange.mockClear();
     triggerPageReturn({ returnedFromHidden: false });
-    expect(onExternalChange).toHaveBeenCalledWith({
-      type: 'refresh',
-      wsName: 'myWorkspace',
-    });
+    expect(onExternalChange).toHaveBeenCalledWith({ type: 'refresh' });
     await vi.waitFor(() => {
       expect(observer.observe).toHaveBeenCalledTimes(2);
     });

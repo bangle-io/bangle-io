@@ -475,11 +475,12 @@ describe('external file change events', () => {
       wsPath: 'some-ws:new.md',
       sender: { id: 'other-tab', tag: 'file-system' },
     });
+    // Renames have their own typed atom; content reconciliation only needs a
+    // coarse refresh after the editor has been retargeted.
     expect(store.get(fileSystem.$externalFileChangeEvent)).toEqual({
       sequence: 3,
-      type: 'file-rename',
-      oldWsPath: 'some-ws:old.md',
-      wsPath: 'some-ws:new.md',
+      type: 'refresh',
+      wsName: 'some-ws',
     });
     // The tree re-lists, but this tab's editors are not sent through the
     // rename event without being told the source is external.

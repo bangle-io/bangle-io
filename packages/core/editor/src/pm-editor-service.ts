@@ -200,6 +200,7 @@ export class PmEditorService
    * onto the transaction itself (a meta read from plugin state).
    */
   private suppressSaveForExternalSync = new Set<string>();
+  private staleExternalContentWsPaths = new Set<string>();
 
   /**
    * Reconciles open editors with externally changed files. Owns sequencing,
@@ -235,7 +236,7 @@ export class PmEditorService
         this.showStaleExternalContentToast(wsPath);
       },
       onContentReconciled: (wsPath) => {
-        toast.dismiss(staleExternalContentToastId(wsPath));
+        this.dismissStaleExternalContentToast(wsPath);
       },
       logger: this.logger,
     },
@@ -299,6 +300,7 @@ export class PmEditorService
             type: 'text/plain',
           }),
         );
+        this.dismissStaleExternalContentToast(wsPath);
       },
       this.emitAppError,
       config.saveCoordinator,
@@ -317,6 +319,9 @@ export class PmEditorService
       this.editors.clear();
       this.lastActiveEditorView = undefined;
       this.rememberedCursors.clear();
+      for (const wsPath of [...this.staleExternalContentWsPaths]) {
+        this.dismissStaleExternalContentToast(wsPath);
+      }
     });
     this.addCleanup(
       this.store.sub(this.dependencies.navigation.$routeInfo, () => {
@@ -368,6 +373,9 @@ export class PmEditorService
             return;
           }
           this.handledExternalChangeSequence = event.sequence;
+          if (event.type === 'file-delete') {
+            this.dismissStaleExternalContentToast(event.wsPath);
+          }
           this.externalContentSync.handleEvent(event);
         },
       ),
@@ -379,6 +387,7 @@ export class PmEditorService
     newWsPath: string,
     external: boolean,
   ): void {
+    this.dismissStaleExternalContentToast(oldWsPath);
     // A local rename drains this queue before moving the file. A rename from
     // another tab has no such guarantee: keep a pending/failed editor on its
     // old path so its only unsaved body stays mounted and fails visibly rather
@@ -541,6 +550,14 @@ export class PmEditorService
     this.editors.delete(domNode);
     if (editor) {
       this.setRoundTripWarning(editor.wsPath, false);
+      if (
+        'editorView' in editor &&
+        ![...this.readyEditors()].some(
+          (mountedEditor) => mountedEditor.wsPath === editor.wsPath,
+        )
+      ) {
+        this.dismissStaleExternalContentToast(editor.wsPath);
+      }
     }
   }
 
@@ -615,6 +632,7 @@ export class PmEditorService
    */
   private showStaleExternalContentToast(wsPath: string): void {
     const fileName = WsPath.safeParseFile(wsPath).data?.fileName ?? wsPath;
+    this.staleExternalContentWsPaths.add(wsPath);
     toast.warning(t.app.toasts.externalChangeNotApplied({ fileName }), {
       id: staleExternalContentToastId(wsPath),
       duration: Number.POSITIVE_INFINITY,
@@ -631,6 +649,13 @@ export class PmEditorService
     });
   }
 
+  private dismissStaleExternalContentToast(wsPath: string): void {
+    if (!this.staleExternalContentWsPaths.delete(wsPath)) {
+      return;
+    }
+    toast.dismiss(staleExternalContentToastId(wsPath));
+  }
+
   /**
    * User-consented recovery for external changes the automatic sync
    * refused: replaces only this note's open editors with the current disk
@@ -644,7 +669,7 @@ export class PmEditorService
         this.logger.debug(
           `${wsPath}: not loading the disk version — the user edited since the refusal and their save resolves the divergence`,
         );
-        toast.dismiss(staleExternalContentToastId(wsPath));
+        this.dismissStaleExternalContentToast(wsPath);
         return;
       }
       const viewsBeforeRead = [...this.readyEditors()]
@@ -661,6 +686,9 @@ export class PmEditorService
         this.logger.warn(
           `Disk version of ${wsPath} could not be read; keeping the editor content`,
         );
+        this.dismissStaleExternalContentToast(wsPath);
+        const fileName = WsPath.safeParseFile(wsPath).data?.fileName ?? wsPath;
+        toast.error(t.app.toasts.externalDiskVersionUnavailable({ fileName }));
         return;
       }
       // The action does not block input. Re-check after the async read so a
@@ -670,7 +698,7 @@ export class PmEditorService
         this.logger.debug(
           `${wsPath}: not loading the disk version — the user edited while it was being read`,
         );
-        toast.dismiss(staleExternalContentToastId(wsPath));
+        this.dismissStaleExternalContentToast(wsPath);
         return;
       }
       let compositionBlocked = false;
@@ -709,7 +737,7 @@ export class PmEditorService
         this.checkRoundTripFidelity({ content, editorView: view, wsPath });
       }
       if (!compositionBlocked) {
-        toast.dismiss(staleExternalContentToastId(wsPath));
+        this.dismissStaleExternalContentToast(wsPath);
       }
     } catch (error) {
       // Editor and toast stay as they are; the user can retry.

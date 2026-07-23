@@ -64,7 +64,7 @@ async function setupEditorWithNote(initialContent: string) {
   document.body.append(domNode);
   cleanupDomNodes.push(domNode);
 
-  services.editorEngine.mountEditor({
+  const unmountEditor = services.editorEngine.mountEditor({
     domNode,
     wsPath: NOTE_WS_PATH,
     name: 'main-test-editor',
@@ -74,7 +74,7 @@ async function setupEditorWithNote(initialContent: string) {
     expect(editorText(domNode)).toContain('the original note body');
   });
 
-  return { testEnv, services, domNode };
+  return { controller, testEnv, services, domNode, unmountEditor };
 }
 
 // `mountEditor` turns the passed node itself into the contenteditable
@@ -672,6 +672,184 @@ describe('editor refresh on external file changes', () => {
     );
     expect(dismissSpy).toHaveBeenCalledWith(expectedToastId);
   });
+
+  it('withdraws a stale-content warning when the file is externally deleted', async () => {
+    const { testEnv, services } = await setupEditorWithNote(
+      'the original note body',
+    );
+    const warningSpy = vi.spyOn(toast, 'warning');
+    const dismissSpy = vi.spyOn(toast, 'dismiss');
+    const expectedToastId = `external-stale-content:${NOTE_WS_PATH}`;
+
+    await simulateExternalEdit(
+      testEnv,
+      services,
+      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
+    );
+    await vi.waitFor(
+      () => {
+        expect(warningSpy).toHaveBeenCalled();
+      },
+      { timeout: 3_000 },
+    );
+
+    dismissSpy.mockClear();
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-delete',
+      wsPath: NOTE_WS_PATH,
+      sender: EXTERNAL_SENDER,
+    });
+
+    expect(dismissSpy).toHaveBeenCalledWith(expectedToastId);
+  });
+
+  it('withdraws a stale-content warning when the file is externally renamed', async () => {
+    const { testEnv, services } = await setupEditorWithNote(
+      'the original note body',
+    );
+    const warningSpy = vi.spyOn(toast, 'warning');
+    const dismissSpy = vi.spyOn(toast, 'dismiss');
+    const expectedToastId = `external-stale-content:${NOTE_WS_PATH}`;
+
+    await simulateExternalEdit(
+      testEnv,
+      services,
+      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
+    );
+    await vi.waitFor(
+      () => {
+        expect(warningSpy).toHaveBeenCalled();
+      },
+      { timeout: 3_000 },
+    );
+
+    dismissSpy.mockClear();
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-rename',
+      oldWsPath: NOTE_WS_PATH,
+      wsPath: `${WS_NAME}:renamed.md`,
+      sender: EXTERNAL_SENDER,
+    });
+
+    expect(dismissSpy).toHaveBeenCalledWith(expectedToastId);
+  });
+
+  it('reports when a requested disk version is no longer readable', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      'the original note body',
+    );
+    const warningSpy = vi.spyOn(toast, 'warning');
+    const dismissSpy = vi.spyOn(toast, 'dismiss');
+    const errorSpy = vi.spyOn(toast, 'error');
+    const expectedToastId = `external-stale-content:${NOTE_WS_PATH}`;
+
+    await simulateExternalEdit(
+      testEnv,
+      services,
+      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
+    );
+    await vi.waitFor(
+      () => {
+        expect(warningSpy).toHaveBeenCalled();
+      },
+      { timeout: 3_000 },
+    );
+
+    vi.spyOn(services.fileSystem, 'readFileAsText').mockResolvedValue(
+      undefined,
+    );
+    dismissSpy.mockClear();
+    await asPmEditor(services.editorEngine).loadDiskVersionIntoEditors(
+      NOTE_WS_PATH,
+    );
+
+    expect(dismissSpy).toHaveBeenCalledWith(expectedToastId);
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Could not read note.md'),
+    );
+    expect(editorText(domNode)).toContain('the original note body');
+  });
+
+  it('withdraws a stale-content warning after a successful local save', async () => {
+    const { testEnv, services } = await setupEditorWithNote(
+      'the original note body',
+    );
+    const warningSpy = vi.spyOn(toast, 'warning');
+    const dismissSpy = vi.spyOn(toast, 'dismiss');
+    const expectedToastId = `external-stale-content:${NOTE_WS_PATH}`;
+
+    await simulateExternalEdit(
+      testEnv,
+      services,
+      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
+    );
+    await vi.waitFor(
+      () => {
+        expect(warningSpy).toHaveBeenCalled();
+      },
+      { timeout: 3_000 },
+    );
+
+    dismissSpy.mockClear();
+    expect(
+      services.editorEngine.insertMarkdownAtSelection('LOCAL-VERSION-WINS'),
+    ).toBe(true);
+    await vi.waitFor(() => {
+      expect(services.editorEngine.hasPendingOrFailedSave()).toBe(false);
+      expect(dismissSpy).toHaveBeenCalledWith(expectedToastId);
+    });
+  });
+
+  it('withdraws a stale-content warning when its last editor unmounts', async () => {
+    const { testEnv, services, unmountEditor } = await setupEditorWithNote(
+      'the original note body',
+    );
+    const warningSpy = vi.spyOn(toast, 'warning');
+    const dismissSpy = vi.spyOn(toast, 'dismiss');
+    const expectedToastId = `external-stale-content:${NOTE_WS_PATH}`;
+
+    await simulateExternalEdit(
+      testEnv,
+      services,
+      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
+    );
+    await vi.waitFor(
+      () => {
+        expect(warningSpy).toHaveBeenCalled();
+      },
+      { timeout: 3_000 },
+    );
+
+    dismissSpy.mockClear();
+    unmountEditor();
+    expect(dismissSpy).toHaveBeenCalledWith(expectedToastId);
+  });
+
+  it('withdraws tracked stale-content warnings during service cleanup', async () => {
+    const { controller, testEnv, services } = await setupEditorWithNote(
+      'the original note body',
+    );
+    const warningSpy = vi.spyOn(toast, 'warning');
+    const dismissSpy = vi.spyOn(toast, 'dismiss');
+    const expectedToastId = `external-stale-content:${NOTE_WS_PATH}`;
+
+    await simulateExternalEdit(
+      testEnv,
+      services,
+      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
+    );
+    await vi.waitFor(
+      () => {
+        expect(warningSpy).toHaveBeenCalled();
+      },
+      { timeout: 3_000 },
+    );
+
+    dismissSpy.mockClear();
+    controller.abort();
+    expect(dismissSpy).toHaveBeenCalledWith(expectedToastId);
+  });
+
   it('loading the disk version applies refused content in place without writing back', async () => {
     const { testEnv, services, domNode } = await setupEditorWithNote(
       'the original note body',
