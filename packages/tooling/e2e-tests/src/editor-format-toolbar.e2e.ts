@@ -5,6 +5,7 @@ import {
   getEditorLocator,
   readStoredMarkdown,
   selectEditorText,
+  writeStoredMarkdown,
 } from './common';
 
 // The selection toolbar exposes block-type controls (paragraph, headings,
@@ -102,6 +103,55 @@ test('selection toolbar converts block types and reflects the active block', asy
   await expect(toolbar).toBeVisible();
   await expect(bulletList).toHaveAttribute('aria-pressed', 'true');
   await expect(paragraph).toHaveAttribute('aria-pressed', 'false');
+});
+
+// "Turn into paragraph" is whole-selection aware: it converts every block in
+// the selection, not just the one under the caret, and flattens nested blocks
+// in a single click.
+test('Paragraph converts an entire mixed or nested selection in one click', async ({
+  page,
+}) => {
+  const workspaceName = 'format-toolbar-paragraph';
+  const noteName = 'para';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  const toolbar = page.getByRole('toolbar', { name: 'Text formatting' });
+  const paragraph = toolbar.getByRole('button', { name: 'Paragraph' });
+
+  // A selection spanning a paragraph and a following heading is not "all
+  // paragraphs", so the control stays actionable and one click converts the
+  // heading too (the caret-block alone would report an already-a-paragraph
+  // no-op).
+  await writeStoredMarkdown(page, workspaceName, noteName, 'alpha\n\n## bravo');
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('alpha\n\n## bravo');
+  await selectEditorText(page, 'alphabravo');
+  await expect(toolbar).toBeVisible();
+  await expect(paragraph).toBeEnabled();
+  await expect(paragraph).toHaveAttribute('aria-pressed', 'false');
+  await paragraph.click();
+  await expect(paragraph).toHaveAttribute('aria-pressed', 'true');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('alpha\n\nbravo');
+
+  // A list nested inside a blockquote flattens to a plain paragraph in a single
+  // click (both the list and the blockquote are peeled off).
+  await writeStoredMarkdown(page, workspaceName, noteName, '> - item');
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('> - item');
+  await selectEditorText(page, 'item');
+  await expect(toolbar).toBeVisible();
+  await expect(paragraph).toBeEnabled();
+  await paragraph.click();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('item');
+  await expect(paragraph).toHaveAttribute('aria-pressed', 'true');
 });
 
 // The toolbar now carries enough controls that it can be wider than a phone

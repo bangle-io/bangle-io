@@ -4,6 +4,7 @@ import {
   chainCommands,
   lift,
   type SelectionMenuState,
+  setBlockType,
 } from '@bangle.io/prosemirror-plugins';
 import {
   Button,
@@ -44,10 +45,45 @@ import { useOutsidePointer } from './use-outside-pointer';
 
 type Extensions = PmEditorService['extensions'];
 type EditorView = NonNullable<ReturnType<PmEditorService['getEditor']>>;
+type EditorState = EditorView['state'];
 type LinkSession = {
   editingLink: boolean;
   initialHref: string;
 };
+
+// A single "turn into paragraph" click may need to peel off several nesting
+// levels (e.g. a list inside a blockquote); this bounds the flatten loop well
+// above any realistic nesting depth.
+const MAX_PARAGRAPH_FLATTEN_STEPS = 8;
+
+/**
+ * Whether every block touched by the selection is a paragraph sitting directly
+ * under the document. This is the goal state of "turn into paragraph", so it
+ * drives both the Paragraph control's active state and its availability. A
+ * mixed selection (e.g. a paragraph plus a following heading) is not all
+ * top-level paragraphs, so the control stays actionable there.
+ */
+function isSelectionAllTopLevelParagraphs(state: EditorState): boolean {
+  const paragraph = state.schema.nodes.paragraph;
+  if (!paragraph) {
+    return false;
+  }
+  const topType = state.schema.topNodeType;
+  const { from, to } = state.selection;
+  let sawTextblock = false;
+  let allTopLevel = true;
+  state.doc.nodesBetween(from, to, (node, _pos, parent) => {
+    if (node.isTextblock) {
+      sawTextblock = true;
+      if (node.type !== paragraph || parent?.type !== topType) {
+        allTopLevel = false;
+      }
+      return false;
+    }
+    return allTopLevel;
+  });
+  return sawTextblock && allTopLevel;
+}
 
 export function InlineSelectionMenu({ editorName }: { editorName: string }) {
   const selectionMenus = useAtomValue($selectionMenu);
@@ -122,14 +158,44 @@ function InlineSelectionMenuContent({
     onOutside: dismiss,
   });
 
-  // "Turn into paragraph" for any block: convert a heading/code block, lift a
-  // list item out of its list, or lift out of a blockquote. `convertToParagraph`
-  // alone no-ops inside a list because the list item already wraps a paragraph.
-  const setParagraph = chainCommands(
-    ext.paragraph.command.convertToParagraph,
-    ext.list.command.unwrapList,
-    lift,
-  );
+  // "Turn into paragraph", whole-selection aware. One flatten step converts
+  // every block in the range to a paragraph (`setBlockType` is range-aware, so
+  // a mixed paragraph+heading selection is handled in one transaction), then
+  // lifts out of an enclosing list or blockquote. Re-running the step against
+  // the live view until the whole selection sits at the top level means a
+  // single click also flattens nested blocks like `> - item`. `dispatch` is
+  // absent for the availability dry-run, where we only report whether anything
+  // is left to convert.
+  const paragraphType = editorView.state.schema.nodes.paragraph;
+  const flattenStep = paragraphType
+    ? chainCommands(
+        setBlockType(paragraphType),
+        ext.list.command.unwrapList,
+        lift,
+      )
+    : undefined;
+  const setParagraph: Command = (state, dispatch, view) => {
+    if (!flattenStep) {
+      return false;
+    }
+    if (!dispatch) {
+      return !isSelectionAllTopLevelParagraphs(state);
+    }
+    if (!view) {
+      return flattenStep(state, dispatch);
+    }
+    let changed = false;
+    for (let step = 0; step < MAX_PARAGRAPH_FLATTEN_STEPS; step += 1) {
+      if (isSelectionAllTopLevelParagraphs(view.state)) {
+        break;
+      }
+      if (!flattenStep(view.state, view.dispatch, view)) {
+        break;
+      }
+      changed = true;
+    }
+    return changed;
+  };
 
   return linkSession ? (
     <FloatingLinkEditor
@@ -232,13 +298,12 @@ function InlineSelectionMenuContent({
           </ToolbarButton>
           <Separator className="mx-0.5 h-6" orientation="vertical" />
           <FormatToggle
-            // Highlight only a plain top-level paragraph. `isParagraph` also
-            // matches the paragraph nested inside a list item or blockquote,
-            // which would light this up alongside the list/quote control.
-            active={ext.paragraph.query.isTopLevelParagraph(editorView.state)}
-            // Disabled only when there is genuinely nothing to convert (already
-            // a plain paragraph), so the control never looks actionable while
-            // no-oping.
+            // Pressed only when the whole selection is already made of
+            // top-level paragraphs; a mixed selection (e.g. a paragraph plus a
+            // following heading) is not, so the control stays actionable.
+            active={isSelectionAllTopLevelParagraphs(editorView.state)}
+            // Disabled only when there is genuinely nothing to convert, so the
+            // control never looks actionable while no-oping.
             disabled={!setParagraph(editorView.state)}
             label={t.app.editor.selectionMenu.paragraph}
             onToggle={() => runCommand(editorView, setParagraph)}
