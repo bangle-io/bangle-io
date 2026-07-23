@@ -1,3 +1,4 @@
+import { getEventSenderMetadata } from '@bangle.io/base-utils';
 import {
   DATABASE_TABLE_NAME,
   EXTERNAL_FILE_CHANGE_SENDER_TAG,
@@ -9,6 +10,9 @@ import { countWords } from '../note-snapshot-service';
 
 const TEST_WS_NAME = 'test-ws';
 const NOTE_WS_PATH = `${TEST_WS_NAME}:note.md`;
+const SELF_WATCHER_SENDER = getEventSenderMetadata({
+  tag: EXTERNAL_FILE_CHANGE_SENDER_TAG,
+});
 
 async function setup({
   minCaptureIntervalMs = 0,
@@ -246,10 +250,7 @@ describe('NoteSnapshotService', () => {
     testEnv.rootEmitter.emit('event::file:update', {
       type: 'file-create',
       wsPath: NOTE_WS_PATH,
-      sender: {
-        id: 'storage-watcher',
-        tag: EXTERNAL_FILE_CHANGE_SENDER_TAG,
-      },
+      sender: SELF_WATCHER_SENDER,
     });
     testEnv.rootEmitter.emit('event::file:update', {
       type: 'file-content-update',
@@ -267,6 +268,56 @@ describe('NoteSnapshotService', () => {
       );
       expect(contents).toContain('v2 from this tab');
     });
+    controller.abort();
+  });
+
+  it('re-captures same-tab watcher content despite the throttle', async () => {
+    const { controller, services, testEnv } = await setup({
+      minCaptureIntervalMs: 60_000,
+    });
+    await services.fileSystem.createTextFile(NOTE_WS_PATH, 'v1');
+    await writeNote(services, NOTE_WS_PATH, 'v2 from this tab');
+
+    // Production watcher events carry this browsing context's id plus the
+    // external-change tag. Write storage directly to model the external edit.
+    await services.fileStorageMemory.writeFile(
+      NOTE_WS_PATH,
+      new File(['external disk content'], 'note.md'),
+    );
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-content-update',
+      wsPath: NOTE_WS_PATH,
+      sender: SELF_WATCHER_SENDER,
+    });
+
+    await writeNote(services, NOTE_WS_PATH, 'v3 local overwrite');
+    const snapshots = await services.noteSnapshot.listSnapshots();
+    const newest = await services.noteSnapshot.getSnapshot(
+      snapshots[0]?.id ?? '',
+    );
+    expect(newest?.content).toBe('external disk content');
+    controller.abort();
+  });
+
+  it('does not snapshot a same-tab watcher echo as external content', async () => {
+    const { controller, services, testEnv } = await setup({
+      minCaptureIntervalMs: 60_000,
+    });
+    await services.fileSystem.createTextFile(NOTE_WS_PATH, 'v1');
+    await writeNote(services, NOTE_WS_PATH, 'v2 from this tab');
+
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-content-update',
+      wsPath: NOTE_WS_PATH,
+      sender: SELF_WATCHER_SENDER,
+    });
+    await writeNote(services, NOTE_WS_PATH, 'v3 from this tab');
+
+    const snapshots = await services.noteSnapshot.listSnapshots();
+    expect(snapshots).toHaveLength(1);
+    await expect(
+      services.noteSnapshot.getSnapshot(snapshots[0]?.id ?? ''),
+    ).resolves.toMatchObject({ content: 'v1' });
     controller.abort();
   });
 

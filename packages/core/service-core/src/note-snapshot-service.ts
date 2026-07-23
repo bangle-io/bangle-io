@@ -103,6 +103,8 @@ export class NoteSnapshotService extends BaseService {
     string,
     { content: string; preserved: boolean }
   >();
+  /** Paths whose next capture must distinguish a watcher echo from a change. */
+  private watcherUpdatePending = new Set<string>();
   private lastIssuedCreatedAt = 0;
   private localSnapshotLockTails = new Map<string, Promise<void>>();
 
@@ -158,32 +160,42 @@ export class NoteSnapshotService extends BaseService {
           this.lastCaptureAt.delete(event.wsPath);
           if (event.sender.tag !== EXTERNAL_FILE_CHANGE_SENDER_TAG) {
             this.lastWrittenContent.delete(event.wsPath);
+            this.watcherUpdatePending.delete(event.wsPath);
+          } else {
+            this.watcherUpdatePending.add(event.wsPath);
           }
         } else if (event.type === 'file-rename') {
           this.relocatePathState(event.oldWsPath, event.wsPath);
           if (event.oldWsPath) {
             void this.migratePersistedSnapshots(event.oldWsPath, event.wsPath);
           }
-        } else if (event.sender.id !== this.config.selfSenderId) {
-          // Another tab changed this note. Drop the local throttle so this
-          // tab's next save re-captures the content it is about to overwrite.
+        } else if (
+          event.sender.tag === EXTERNAL_FILE_CHANGE_SENDER_TAG ||
+          event.sender.id !== this.config.selfSenderId
+        ) {
+          // A watcher or another tab changed this note. Drop the local
+          // throttle so the next save re-captures external disk content it is
+          // about to overwrite. `capture` filters watcher echoes by content.
           this.lastCaptureAt.delete(event.wsPath);
-          // And preserve what this tab last wrote: if that write just lost the
-          // race, its content only exists in this map now.
-          const outgoing = this.lastWrittenContent.get(event.wsPath);
-          if (outgoing && !outgoing.preserved) {
-            // Marked eagerly so overlapping foreign events do not preserve
-            // twice; reset on storage failure so a later foreign event
-            // retries instead of silently dropping the only copy.
-            outgoing.preserved = true;
-            void this.preserveExternalOverwrite(
-              event.wsPath,
-              outgoing.content,
-            ).then((preserved) => {
-              if (!preserved) {
-                outgoing.preserved = false;
-              }
-            });
+          if (event.sender.tag === EXTERNAL_FILE_CHANGE_SENDER_TAG) {
+            this.watcherUpdatePending.add(event.wsPath);
+          }
+          if (event.sender.id !== this.config.selfSenderId) {
+            // Preserve what this tab last wrote when a foreign tab wins the
+            // race. Same-tab watcher events may be our own echo, so their
+            // outgoing content is preserved by editor reconciliation instead.
+            const outgoing = this.lastWrittenContent.get(event.wsPath);
+            if (outgoing && !outgoing.preserved) {
+              outgoing.preserved = true;
+              void this.preserveExternalOverwrite(
+                event.wsPath,
+                outgoing.content,
+              ).then((preserved) => {
+                if (!preserved) {
+                  outgoing.preserved = false;
+                }
+              });
+            }
           }
         }
       },
@@ -194,6 +206,7 @@ export class NoteSnapshotService extends BaseService {
   private clearPathState(wsPath: string): void {
     this.lastCaptureAt.delete(wsPath);
     this.lastWrittenContent.delete(wsPath);
+    this.watcherUpdatePending.delete(wsPath);
   }
 
   private relocatePathState(oldWsPath: string | undefined, wsPath: string) {
@@ -204,12 +217,16 @@ export class NoteSnapshotService extends BaseService {
 
     const lastCaptureAt = this.lastCaptureAt.get(oldWsPath);
     const lastWrittenContent = this.lastWrittenContent.get(oldWsPath);
+    const watcherUpdatePending = this.watcherUpdatePending.has(oldWsPath);
     this.clearPathState(oldWsPath);
     if (lastCaptureAt !== undefined) {
       this.lastCaptureAt.set(wsPath, lastCaptureAt);
     }
     if (lastWrittenContent !== undefined) {
       this.lastWrittenContent.set(wsPath, lastWrittenContent);
+    }
+    if (watcherUpdatePending) {
+      this.watcherUpdatePending.add(wsPath);
     }
   }
 
@@ -373,6 +390,18 @@ export class NoteSnapshotService extends BaseService {
       return;
     }
     const content = await file.text();
+    // A tagged watcher also observes this tab's own writes. Its event clears
+    // the throttle so a genuine external overwrite is recoverable, but the
+    // next save must not snapshot our unchanged outgoing version as if it
+    // were foreign content.
+    const watcherUpdatePending = this.watcherUpdatePending.delete(wsPath);
+    if (
+      watcherUpdatePending &&
+      this.lastWrittenContent.get(wsPath)?.content === content
+    ) {
+      this.lastCaptureAt.set(wsPath, now);
+      return;
+    }
     // A note that was created but never given content has nothing worth
     // recovering; skip it instead of storing an empty snapshot.
     if (content.trim() === '') {

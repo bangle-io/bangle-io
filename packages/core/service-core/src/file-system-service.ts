@@ -257,10 +257,6 @@ export class FileSystemService extends BaseService {
     });
   }
 
-  private isWorkspaceFileVisible(wsPath: string) {
-    return isVisibleWorkspaceFilePath(wsPath);
-  }
-
   /**
    * Triggers a rescan of the workspace file listing without touching open
    * editors. Used to recover after a failed file tree scan.

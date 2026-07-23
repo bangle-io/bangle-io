@@ -91,6 +91,7 @@ export class FileStorageNativeFs
   public readonly maxFileSizeBytes = FILE_STORAGE_MAX_FILE_SIZE_BYTES.nativeFs;
 
   private fsCache: Map<string, FsCacheEntry> = new Map();
+  private fsLoads: Map<string, Promise<FsCacheEntry>> = new Map();
 
   constructor(
     context: BaseServiceContext,
@@ -110,6 +111,7 @@ export class FileStorageNativeFs
     }
     this.addCleanup(() => {
       this.fsCache.clear();
+      this.fsLoads.clear();
     });
   }
 
@@ -153,21 +155,26 @@ export class FileStorageNativeFs
     if (cached) {
       return cached.fs;
     }
-
-    const { handle: rootDirHandle } =
-      await this.config.getRootDirHandle(wsName);
-
-    // The lock scope is the workspace name (not the folder basename) so
-    // cross-tab write serialization stays keyed to the workspace identity.
-    const fs = new NativeFs({
-      rootHandle: rootDirHandle,
-      lockScope: wsName,
-    });
-
-    const entry: FsCacheEntry = { fs, watching: false };
-    this.fsCache.set(wsName, entry);
-    this.startWatching(wsName, entry);
-    return fs;
+    let load = this.fsLoads.get(wsName);
+    if (!load) {
+      load = this.config.getRootDirHandle(wsName).then(({ handle }) => {
+        // The lock scope is the workspace name (not the folder basename) so
+        // cross-tab write serialization stays keyed to the workspace identity.
+        const fs = new NativeFs({ rootHandle: handle, lockScope: wsName });
+        const entry: FsCacheEntry = { fs, watching: false };
+        this.fsCache.set(wsName, entry);
+        this.startWatching(wsName, entry);
+        return entry;
+      });
+      this.fsLoads.set(wsName, load);
+    }
+    try {
+      return (await load).fs;
+    } finally {
+      if (this.fsLoads.get(wsName) === load) {
+        this.fsLoads.delete(wsName);
+      }
+    }
   }
 
   // ---- external change watching ----

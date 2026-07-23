@@ -412,6 +412,22 @@ describe('FileStorageNativeFs', () => {
 });
 
 describe('external change watching', () => {
+  it('arms one observer for concurrent first access to a workspace', async () => {
+    const observer = stubFileSystemObserver();
+    const { service } = await setup(undefined, 'myWorkspace', {
+      withExternalChange: true,
+    });
+
+    await Promise.all([
+      service.fileExists('myWorkspace:first.md'),
+      service.readFile('myWorkspace:second.md'),
+    ]);
+
+    await vi.waitFor(() => {
+      expect(observer.observe).toHaveBeenCalledTimes(1);
+    });
+  });
+
   it('maps visible file records and degrades ambiguous moves to a refresh', async () => {
     const observer = stubFileSystemObserver();
     const { service, onExternalChange } = await setup(
