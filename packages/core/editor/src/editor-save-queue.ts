@@ -43,13 +43,27 @@ type SaveStatusSubscription = {
 export type EditorSaveCoordinator = {
   currentSession?: EditorSaveSession;
   entries: Map<string, SaveEntry>;
+  hasPendingOrFailedSave(wsPath?: string): boolean;
   lastHasPendingOrFailed: boolean;
   subscriptions: Set<SaveStatusSubscription>;
 };
 
 export function createEditorSaveCoordinator(): EditorSaveCoordinator {
+  const entries = new Map<string, SaveEntry>();
   return {
-    entries: new Map(),
+    entries,
+    hasPendingOrFailedSave: (wsPath) => {
+      if (wsPath !== undefined) {
+        const entry = entries.get(wsPath);
+        return entry !== undefined && entry.status.status !== 'clean';
+      }
+      for (const entry of entries.values()) {
+        if (entry.status.status !== 'clean') {
+          return true;
+        }
+      }
+      return false;
+    },
     lastHasPendingOrFailed: false,
     subscriptions: new Set(),
   };
@@ -81,17 +95,7 @@ export class EditorSaveQueue {
   }
 
   hasPendingOrFailed(wsPath?: string): boolean {
-    if (wsPath !== undefined) {
-      return this.getStatus(wsPath).status !== 'clean';
-    }
-
-    for (const entry of this.coordinator.entries.values()) {
-      if (entry.status.status !== 'clean') {
-        return true;
-      }
-    }
-
-    return false;
+    return this.coordinator.hasPendingOrFailedSave(wsPath);
   }
 
   subscribe(listener: SaveStatusListener, wsPath?: string): () => void {

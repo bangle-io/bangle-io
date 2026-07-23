@@ -18,6 +18,8 @@ function asPmEditor(editorEngine: unknown): PmEditorService {
 
 const WS_NAME = 'test-ws';
 const NOTE_WS_PATH = `${WS_NAME}:note.md`;
+const REFUSED_SOURCE = 'see [the spec][1]\n\n[1]: https://example.com/spec\n';
+const STALE_TOAST_ID = `external-stale-content:${NOTE_WS_PATH}`;
 const EXTERNAL_SENDER = {
   id: 'other-source',
   tag: EXTERNAL_FILE_CHANGE_SENDER_TAG,
@@ -102,6 +104,18 @@ async function simulateExternalEdit(
     wsPath: NOTE_WS_PATH,
     sender: EXTERNAL_SENDER,
   });
+}
+
+async function simulateRefusedExternalEdit(
+  testEnv: Awaited<ReturnType<typeof setupEditorWithNote>>['testEnv'],
+  services: Awaited<ReturnType<typeof setupEditorWithNote>>['services'],
+) {
+  const warningSpy = vi.spyOn(toast, 'warning');
+  await simulateExternalEdit(testEnv, services, REFUSED_SOURCE);
+  await vi.waitFor(() => expect(warningSpy).toHaveBeenCalled(), {
+    timeout: 3_000,
+  });
+  return warningSpy;
 }
 
 describe('editor refresh on external file changes', () => {
@@ -381,13 +395,7 @@ describe('editor refresh on external file changes', () => {
     // serializing rewrites the source — exactly the lossy shape the load
     // path refuses. The external sync must refuse it too: applying it would
     // let the user's next keystroke save the rewritten note.
-    await simulateExternalEdit(
-      testEnv,
-      services,
-      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
-    );
-
-    await new Promise((resolve) => setTimeout(resolve, 700));
+    await simulateRefusedExternalEdit(testEnv, services);
     expect(editorText(domNode)).toContain('the original note body');
     expect(editorText(domNode)).not.toContain('the spec');
   });
@@ -466,7 +474,7 @@ describe('editor refresh on external file changes', () => {
         preservationStarted.resolve();
         await allowPreservation.promise;
       }
-      await originalPreserve(...args);
+      return originalPreserve(...args);
     });
 
     await simulateExternalEdit(
@@ -516,7 +524,7 @@ describe('editor refresh on external file changes', () => {
     ).mockImplementation(async (...args) => {
       preservationStarted.resolve();
       await allowPreservation.promise;
-      await originalPreserve(...args);
+      return originalPreserve(...args);
     });
     const writeSpy = vi.spyOn(services.fileSystem, 'writeFile');
 
@@ -632,26 +640,14 @@ describe('editor refresh on external file changes', () => {
     const { testEnv, services, domNode } = await setupEditorWithNote(
       'the original note body',
     );
-    const warningSpy = vi.spyOn(toast, 'warning');
     const dismissSpy = vi.spyOn(toast, 'dismiss');
-    const expectedToastId = `external-stale-content:${NOTE_WS_PATH}`;
 
     // Content the fidelity gate refuses: without a user-visible surface the
     // editor would silently show older content than disk forever.
-    await simulateExternalEdit(
-      testEnv,
-      services,
-      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
-    );
-    await vi.waitFor(
-      () => {
-        expect(warningSpy).toHaveBeenCalled();
-      },
-      { timeout: 3_000 },
-    );
+    const warningSpy = await simulateRefusedExternalEdit(testEnv, services);
     const [message, options] = warningSpy.mock.calls[0] ?? [];
     expect(String(message)).toContain('note.md');
-    expect(options?.id).toBe(expectedToastId);
+    expect(options?.id).toBe(STALE_TOAST_ID);
     // The refusal itself still holds — the editor keeps the current note.
     expect(editorText(domNode)).toContain('the original note body');
 
@@ -670,28 +666,16 @@ describe('editor refresh on external file changes', () => {
       },
       { timeout: 3_000 },
     );
-    expect(dismissSpy).toHaveBeenCalledWith(expectedToastId);
+    expect(dismissSpy).toHaveBeenCalledWith(STALE_TOAST_ID);
   });
 
   it('withdraws a stale-content warning when the file is externally deleted', async () => {
     const { testEnv, services } = await setupEditorWithNote(
       'the original note body',
     );
-    const warningSpy = vi.spyOn(toast, 'warning');
     const dismissSpy = vi.spyOn(toast, 'dismiss');
-    const expectedToastId = `external-stale-content:${NOTE_WS_PATH}`;
 
-    await simulateExternalEdit(
-      testEnv,
-      services,
-      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
-    );
-    await vi.waitFor(
-      () => {
-        expect(warningSpy).toHaveBeenCalled();
-      },
-      { timeout: 3_000 },
-    );
+    await simulateRefusedExternalEdit(testEnv, services);
 
     dismissSpy.mockClear();
     testEnv.rootEmitter.emit('event::file:update', {
@@ -700,28 +684,16 @@ describe('editor refresh on external file changes', () => {
       sender: EXTERNAL_SENDER,
     });
 
-    expect(dismissSpy).toHaveBeenCalledWith(expectedToastId);
+    expect(dismissSpy).toHaveBeenCalledWith(STALE_TOAST_ID);
   });
 
   it('withdraws a stale-content warning when the file is externally renamed', async () => {
     const { testEnv, services } = await setupEditorWithNote(
       'the original note body',
     );
-    const warningSpy = vi.spyOn(toast, 'warning');
     const dismissSpy = vi.spyOn(toast, 'dismiss');
-    const expectedToastId = `external-stale-content:${NOTE_WS_PATH}`;
 
-    await simulateExternalEdit(
-      testEnv,
-      services,
-      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
-    );
-    await vi.waitFor(
-      () => {
-        expect(warningSpy).toHaveBeenCalled();
-      },
-      { timeout: 3_000 },
-    );
+    await simulateRefusedExternalEdit(testEnv, services);
 
     dismissSpy.mockClear();
     testEnv.rootEmitter.emit('event::file:update', {
@@ -731,29 +703,17 @@ describe('editor refresh on external file changes', () => {
       sender: EXTERNAL_SENDER,
     });
 
-    expect(dismissSpy).toHaveBeenCalledWith(expectedToastId);
+    expect(dismissSpy).toHaveBeenCalledWith(STALE_TOAST_ID);
   });
 
   it('reports when a requested disk version is no longer readable', async () => {
     const { testEnv, services, domNode } = await setupEditorWithNote(
       'the original note body',
     );
-    const warningSpy = vi.spyOn(toast, 'warning');
     const dismissSpy = vi.spyOn(toast, 'dismiss');
     const errorSpy = vi.spyOn(toast, 'error');
-    const expectedToastId = `external-stale-content:${NOTE_WS_PATH}`;
 
-    await simulateExternalEdit(
-      testEnv,
-      services,
-      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
-    );
-    await vi.waitFor(
-      () => {
-        expect(warningSpy).toHaveBeenCalled();
-      },
-      { timeout: 3_000 },
-    );
+    await simulateRefusedExternalEdit(testEnv, services);
 
     vi.spyOn(services.fileSystem, 'readFileAsText').mockResolvedValue(
       undefined,
@@ -763,7 +723,7 @@ describe('editor refresh on external file changes', () => {
       NOTE_WS_PATH,
     );
 
-    expect(dismissSpy).toHaveBeenCalledWith(expectedToastId);
+    expect(dismissSpy).toHaveBeenCalledWith(STALE_TOAST_ID);
     expect(errorSpy).toHaveBeenCalledWith(
       expect.stringContaining('Could not read note.md'),
     );
@@ -774,21 +734,9 @@ describe('editor refresh on external file changes', () => {
     const { testEnv, services } = await setupEditorWithNote(
       'the original note body',
     );
-    const warningSpy = vi.spyOn(toast, 'warning');
     const dismissSpy = vi.spyOn(toast, 'dismiss');
-    const expectedToastId = `external-stale-content:${NOTE_WS_PATH}`;
 
-    await simulateExternalEdit(
-      testEnv,
-      services,
-      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
-    );
-    await vi.waitFor(
-      () => {
-        expect(warningSpy).toHaveBeenCalled();
-      },
-      { timeout: 3_000 },
-    );
+    await simulateRefusedExternalEdit(testEnv, services);
 
     dismissSpy.mockClear();
     expect(
@@ -796,7 +744,7 @@ describe('editor refresh on external file changes', () => {
     ).toBe(true);
     await vi.waitFor(() => {
       expect(services.editorEngine.hasPendingOrFailedSave()).toBe(false);
-      expect(dismissSpy).toHaveBeenCalledWith(expectedToastId);
+      expect(dismissSpy).toHaveBeenCalledWith(STALE_TOAST_ID);
     });
   });
 
@@ -804,50 +752,26 @@ describe('editor refresh on external file changes', () => {
     const { testEnv, services, unmountEditor } = await setupEditorWithNote(
       'the original note body',
     );
-    const warningSpy = vi.spyOn(toast, 'warning');
     const dismissSpy = vi.spyOn(toast, 'dismiss');
-    const expectedToastId = `external-stale-content:${NOTE_WS_PATH}`;
 
-    await simulateExternalEdit(
-      testEnv,
-      services,
-      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
-    );
-    await vi.waitFor(
-      () => {
-        expect(warningSpy).toHaveBeenCalled();
-      },
-      { timeout: 3_000 },
-    );
+    await simulateRefusedExternalEdit(testEnv, services);
 
     dismissSpy.mockClear();
     unmountEditor();
-    expect(dismissSpy).toHaveBeenCalledWith(expectedToastId);
+    expect(dismissSpy).toHaveBeenCalledWith(STALE_TOAST_ID);
   });
 
   it('withdraws tracked stale-content warnings during service cleanup', async () => {
     const { controller, testEnv, services } = await setupEditorWithNote(
       'the original note body',
     );
-    const warningSpy = vi.spyOn(toast, 'warning');
     const dismissSpy = vi.spyOn(toast, 'dismiss');
-    const expectedToastId = `external-stale-content:${NOTE_WS_PATH}`;
 
-    await simulateExternalEdit(
-      testEnv,
-      services,
-      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
-    );
-    await vi.waitFor(
-      () => {
-        expect(warningSpy).toHaveBeenCalled();
-      },
-      { timeout: 3_000 },
-    );
+    await simulateRefusedExternalEdit(testEnv, services);
 
     dismissSpy.mockClear();
     controller.abort();
-    expect(dismissSpy).toHaveBeenCalledWith(expectedToastId);
+    expect(dismissSpy).toHaveBeenCalledWith(STALE_TOAST_ID);
   });
 
   it('loading the disk version applies refused content in place without writing back', async () => {
@@ -857,10 +781,7 @@ describe('editor refresh on external file changes', () => {
     const dismissSpy = vi.spyOn(toast, 'dismiss');
 
     // Fidelity-refused external content: the editor keeps the current note.
-    const refusedSource =
-      'see [the spec][1]\n\n[1]: https://example.com/spec\n';
-    await simulateExternalEdit(testEnv, services, refusedSource);
-    await new Promise((resolve) => setTimeout(resolve, 700));
+    await simulateRefusedExternalEdit(testEnv, services);
     expect(editorText(domNode)).toContain('the original note body');
 
     // The user consents via the toast action: the disk version replaces
@@ -874,9 +795,7 @@ describe('editor refresh on external file changes', () => {
     expect(editorText(domNode)).not.toContain('the original note body');
     // Consented content equals disk: writing it back would churn mtime.
     expect(writeSpy).not.toHaveBeenCalled();
-    expect(dismissSpy).toHaveBeenCalledWith(
-      `external-stale-content:${NOTE_WS_PATH}`,
-    );
+    expect(dismissSpy).toHaveBeenCalledWith(STALE_TOAST_ID);
 
     const snapshotsAfterManualLoad =
       await services.noteSnapshot.listSnapshots();
@@ -909,7 +828,7 @@ describe('editor refresh on external file changes', () => {
           (await services.noteSnapshot.getSnapshot(id))?.content,
       ),
     );
-    expect(snapshotContents).toContain(refusedSource);
+    expect(snapshotContents).toContain(REFUSED_SOURCE);
   });
 
   it('loading the disk version refuses to clobber edits made since the refusal', async () => {
@@ -917,12 +836,7 @@ describe('editor refresh on external file changes', () => {
       'the original note body',
     );
 
-    await simulateExternalEdit(
-      testEnv,
-      services,
-      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
-    );
-    await new Promise((resolve) => setTimeout(resolve, 700));
+    await simulateRefusedExternalEdit(testEnv, services);
 
     // The user typed after the refusal toast appeared; wedge the save so
     // the edit stays pending (same module-level queue caveat as above).
@@ -946,63 +860,6 @@ describe('editor refresh on external file changes', () => {
     );
 
     expect(editorText(domNode)).toContain('USER-EDIT-AFTER-TOAST');
-    expect(editorText(domNode)).not.toContain('the spec');
-
-    releaseSave();
-    await vi.waitFor(() => {
-      expect(services.editorEngine.hasPendingOrFailedSave()).toBe(false);
-    });
-  });
-
-  it('loading the disk version refuses edits made while the disk read is pending', async () => {
-    const { testEnv, services, domNode } = await setupEditorWithNote(
-      'the original note body',
-    );
-
-    await simulateExternalEdit(
-      testEnv,
-      services,
-      'see [the spec][1]\n\n[1]: https://example.com/spec\n',
-    );
-    await new Promise((resolve) => setTimeout(resolve, 700));
-
-    const readStarted = createDeferred<void>();
-    const allowRead = createDeferred<void>();
-    const originalRead = services.fileSystem.readFileAsText.bind(
-      services.fileSystem,
-    );
-    vi.spyOn(services.fileSystem, 'readFileAsText').mockImplementation(
-      async (...args) => {
-        readStarted.resolve();
-        await allowRead.promise;
-        return originalRead(...args);
-      },
-    );
-
-    let releaseSave = () => {};
-    vi.spyOn(services.fileSystem, 'writeFile').mockImplementation(
-      () =>
-        new Promise<void>((resolve) => {
-          releaseSave = resolve;
-        }),
-    );
-
-    const loadPromise = asPmEditor(
-      services.editorEngine,
-    ).loadDiskVersionIntoEditors(NOTE_WS_PATH);
-    await readStarted.promise;
-
-    expect(
-      services.editorEngine.insertMarkdownAtSelection('EDIT-DURING-DISK-READ'),
-    ).toBe(true);
-    await vi.waitFor(() => {
-      expect(editorText(domNode)).toContain('EDIT-DURING-DISK-READ');
-    });
-
-    allowRead.resolve();
-    await loadPromise;
-
-    expect(editorText(domNode)).toContain('EDIT-DURING-DISK-READ');
     expect(editorText(domNode)).not.toContain('the spec');
 
     releaseSave();

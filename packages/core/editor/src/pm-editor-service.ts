@@ -51,10 +51,7 @@ import {
   EditorSaveQueue,
 } from './editor-save-queue';
 import { setupExtensions } from './extensions';
-import {
-  buildExternalDocReplace,
-  ExternalContentSync,
-} from './external-content-sync';
+import { ExternalContentSync } from './external-content-sync';
 import { findHeadingIndexBySlug } from './heading-slug';
 import { createLocalImageNodeView } from './local-image-node-view';
 import { createEditor } from './pm-setup';
@@ -665,24 +662,8 @@ export class PmEditorService
    */
   async loadDiskVersionIntoEditors(wsPath: string): Promise<void> {
     try {
-      if (this.saveQueue.hasPendingOrFailed(wsPath)) {
-        this.logger.debug(
-          `${wsPath}: not loading the disk version — the user edited since the refusal and their save resolves the divergence`,
-        );
-        this.dismissStaleExternalContentToast(wsPath);
-        return;
-      }
-      const viewsBeforeRead = [...this.readyEditors()]
-        .filter((editor) => editor.wsPath === wsPath)
-        .map((editor) => ({
-          doc: editor.editorView.state.doc,
-          view: editor.editorView,
-        }));
-      const content = await this.dependencies.fileSystem.readFileAsText(
-        wsPath,
-        { signal: this.abortSignal },
-      );
-      if (content === undefined) {
+      const result = await this.externalContentSync.acceptDiskVersion(wsPath);
+      if (result.unavailable) {
         this.logger.warn(
           `Disk version of ${wsPath} could not be read; keeping the editor content`,
         );
@@ -691,52 +672,20 @@ export class PmEditorService
         toast.error(t.app.toasts.externalDiskVersionUnavailable({ fileName }));
         return;
       }
-      // The action does not block input. Re-check after the async read so a
-      // keystroke made while it was in flight cannot be replaced by stale disk
-      // content.
-      if (this.saveQueue.hasPendingOrFailed(wsPath)) {
-        this.logger.debug(
-          `${wsPath}: not loading the disk version — the user edited while it was being read`,
-        );
-        this.dismissStaleExternalContentToast(wsPath);
-        return;
-      }
-      let compositionBlocked = false;
-      for (const { doc, view } of viewsBeforeRead) {
-        if (view.isDestroyed || view.state.doc !== doc) {
-          continue;
-        }
-        const markdown = this.getMarkdown(view.state.schema);
-        const parsed = markdown.parser.parse(content);
-        const currentSerialized = markdown.serializer.serialize(view.state.doc);
-        const tr = buildExternalDocReplace(view, parsed);
-        if (!tr) {
-          this.logger.error(
-            `Disk version of ${wsPath} produced an empty document from non-empty content; skipping`,
-          );
-          continue;
-        }
-        const result = await this.replaceEditorContent({
-          currentSerialized,
-          expectedDoc: doc,
-          sourceMarkdown: content,
-          transaction: tr,
-          view,
-          wsPath,
-        });
-        if (result === 'retry') {
-          compositionBlocked = true;
-          continue;
-        }
-        if (result !== 'applied') {
-          continue;
-        }
+
+      for (const view of result.appliedViews) {
         this.logger.info(
-          `${wsPath}: loaded the disk version into the open editor at the user's request (${content.length} chars)`,
+          `${wsPath}: loaded the disk version into the open editor at the user's request (${result.content?.length ?? 0} chars)`,
         );
-        this.checkRoundTripFidelity({ content, editorView: view, wsPath });
+        if (result.content !== undefined) {
+          this.checkRoundTripFidelity({
+            content: result.content,
+            editorView: view,
+            wsPath,
+          });
+        }
       }
-      if (!compositionBlocked) {
+      if (!result.retry) {
         this.dismissStaleExternalContentToast(wsPath);
       }
     } catch (error) {

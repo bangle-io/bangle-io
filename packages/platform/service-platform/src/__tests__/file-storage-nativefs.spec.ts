@@ -204,6 +204,18 @@ function stubFileSystemObserver() {
   };
 }
 
+async function setupExternalChangeWatching() {
+  const observer = stubFileSystemObserver();
+  const testSetup = await setup(undefined, 'myWorkspace', {
+    withExternalChange: true,
+  });
+  await testSetup.service.fileExists('myWorkspace:seed.md');
+  await vi.waitFor(() => {
+    expect(observer.observe).toHaveBeenCalledTimes(1);
+  });
+  return { observer, ...testSetup };
+}
+
 describe('FileStorageNativeFs', () => {
   testCrossWorkspaceRenameContract(setup);
 
@@ -431,20 +443,7 @@ describe('external change watching', () => {
   });
 
   it('maps visible file records and degrades ambiguous moves to a refresh', async () => {
-    const observer = stubFileSystemObserver();
-    const { service, onExternalChange } = await setup(
-      undefined,
-      'myWorkspace',
-      {
-        withExternalChange: true,
-      },
-    );
-
-    // First storage access boots the watcher for the workspace.
-    await service.fileExists('myWorkspace:seed.md');
-    await vi.waitFor(() => {
-      expect(observer.observe).toHaveBeenCalledTimes(1);
-    });
+    const { observer, onExternalChange } = await setupExternalChangeWatching();
 
     await observer.emitRecords([
       {
@@ -487,18 +486,7 @@ describe('external change watching', () => {
   });
 
   it('coalesces one observer burst: duplicates collapse, a coarse record wins alone', async () => {
-    const observer = stubFileSystemObserver();
-    const { service, onExternalChange } = await setup(
-      undefined,
-      'myWorkspace',
-      {
-        withExternalChange: true,
-      },
-    );
-    await service.createFile('myWorkspace:seed.md', new File(['x'], 'seed.md'));
-    await vi.waitFor(() => {
-      expect(observer.observe).toHaveBeenCalledTimes(1);
-    });
+    const { observer, onExternalChange } = await setupExternalChangeWatching();
 
     // Duplicate records for the same path collapse into one event.
     await observer.emitRecords([
@@ -582,15 +570,7 @@ describe('external change watching', () => {
   });
 
   it('ignores hidden paths and coalesces unmappable records into one refresh', async () => {
-    const observer = stubFileSystemObserver();
-    const { service, onExternalChange } = await setup(
-      undefined,
-      'myWorkspace',
-      {
-        withExternalChange: true,
-      },
-    );
-    await service.fileExists('myWorkspace:seed.md');
+    const { observer, onExternalChange } = await setupExternalChangeWatching();
 
     await observer.emitRecords([
       // Hidden/system files are invisible to the app: ignored entirely.
@@ -616,18 +596,7 @@ describe('external change watching', () => {
   });
 
   it('coarse-refreshes a deleted directory, whose record has no handle to say so', async () => {
-    const observer = stubFileSystemObserver();
-    const { service, onExternalChange } = await setup(
-      undefined,
-      'myWorkspace',
-      {
-        withExternalChange: true,
-      },
-    );
-    await service.fileExists('myWorkspace:seed.md');
-    await vi.waitFor(() => {
-      expect(observer.observe).toHaveBeenCalledTimes(1);
-    });
+    const { observer, onExternalChange } = await setupExternalChangeWatching();
 
     // Real Chrome delivers `disappeared` with changedHandle: null, so a
     // deleted DIRECTORY is indistinguishable from a file by `kind`. Its
@@ -642,18 +611,7 @@ describe('external change watching', () => {
   });
 
   it('keeps invisible-to-visible atomic writes targeted but refreshes ambiguous visible moves', async () => {
-    const observer = stubFileSystemObserver();
-    const { service, onExternalChange } = await setup(
-      undefined,
-      'myWorkspace',
-      {
-        withExternalChange: true,
-      },
-    );
-    await service.fileExists('myWorkspace:seed.md');
-    await vi.waitFor(() => {
-      expect(observer.observe).toHaveBeenCalledTimes(1);
-    });
+    const { observer, onExternalChange } = await setupExternalChangeWatching();
 
     await observer.emitRecords([
       // Chromium's own createWritable commit / sync tools' write-to-temp:
@@ -696,18 +654,7 @@ describe('external change watching', () => {
   });
 
   it('reports changes to visible temp-suffix files', async () => {
-    const observer = stubFileSystemObserver();
-    const { service, onExternalChange } = await setup(
-      undefined,
-      'myWorkspace',
-      {
-        withExternalChange: true,
-      },
-    );
-    await service.fileExists('myWorkspace:seed.md');
-    await vi.waitFor(() => {
-      expect(observer.observe).toHaveBeenCalledTimes(1);
-    });
+    const { observer, onExternalChange } = await setupExternalChangeWatching();
 
     // The listing policy deliberately treats `.tmp`/`.swp` as legitimate
     // user files, so their watcher updates must not be silently dropped.
@@ -769,18 +716,8 @@ describe('external change watching', () => {
   });
 
   it('skips the refresh on plain refocus while a watcher is armed and healthy', async () => {
-    const observer = stubFileSystemObserver();
-    const { service, onExternalChange, triggerPageReturn } = await setup(
-      undefined,
-      'myWorkspace',
-      {
-        withExternalChange: true,
-      },
-    );
-    await service.fileExists('myWorkspace:seed.md');
-    await vi.waitFor(() => {
-      expect(observer.observe).toHaveBeenCalledTimes(1);
-    });
+    const { onExternalChange, triggerPageReturn } =
+      await setupExternalChangeWatching();
 
     // The page stayed visible the whole time and the observer was armed:
     // nothing was missed, so refreshing would re-list the workspace and
@@ -849,18 +786,8 @@ describe('external change watching', () => {
   });
 
   it('re-arms a dead watcher on page return after the observer errored', async () => {
-    const observer = stubFileSystemObserver();
-    const { service, onExternalChange, triggerPageReturn } = await setup(
-      undefined,
-      'myWorkspace',
-      {
-        withExternalChange: true,
-      },
-    );
-    await service.fileExists('myWorkspace:seed.md');
-    await vi.waitFor(() => {
-      expect(observer.observe).toHaveBeenCalledTimes(1);
-    });
+    const { observer, onExternalChange, triggerPageReturn } =
+      await setupExternalChangeWatching();
 
     // Observation broke (e.g. permission loss): one coarse refresh goes out.
     await observer.emitRecords([

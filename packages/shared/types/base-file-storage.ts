@@ -41,7 +41,7 @@ export type FileStorageChangeEvent =
  * app-wide.
  */
 export type FileStorageExternalChangeEvent =
-  | FileStorageChangeEvent
+  | Exclude<FileStorageChangeEvent, { type: 'rename' }>
   | {
       type: 'refresh';
       wsName?: string;

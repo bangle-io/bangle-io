@@ -390,6 +390,8 @@ describe('EditorSaveQueue', () => {
     );
 
     firstQueue.enqueue('workspace:note.md', 'old service content');
+    expect(coordinator.hasPendingOrFailedSave('workspace:note.md')).toBe(true);
+    expect(coordinator.hasPendingOrFailedSave()).toBe(true);
 
     const secondQueue = new EditorSaveQueue(
       vi.fn((_: string, doc: string) => {
@@ -414,6 +416,8 @@ describe('EditorSaveQueue', () => {
     expect(secondQueue.getStatus('workspace:note.md')).toEqual({
       status: 'clean',
     });
+    expect(coordinator.hasPendingOrFailedSave('workspace:note.md')).toBe(false);
+    expect(coordinator.hasPendingOrFailedSave()).toBe(false);
   });
 
   it('retries a retained failure through the current service graph', async () => {

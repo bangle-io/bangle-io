@@ -134,7 +134,7 @@ describe('coalescing and stability', () => {
     expect(passes).toBe(2);
   });
 
-  it('never-stable content is bounded: one burst, one trailing pass, then gives up', async () => {
+  it('bounds never-stable content to an initial and trailing retry burst', async () => {
     let reads = 0;
     const host = makeHost({
       getViews: vi.fn(() => [{ state: { doc: {} } } as never]),
@@ -152,8 +152,7 @@ describe('coalescing and stability', () => {
 
     // MAX_PASSES = 5 → 10 reads in the burst...
     await waitUntil(() => reads === 10, 10_000);
-    // ...then the single delayed trailing pass runs its own bounded burst
-    // and gives up for good (a trailing pass never re-arms another).
+    // ...then one delayed retry burst runs and gives up for good.
     await waitUntil(() => reads === 20, 10_000);
     await new Promise((resolve) => setTimeout(resolve, 2_000));
     expect(reads).toBe(20);
@@ -164,7 +163,7 @@ describe('coalescing and stability', () => {
     expect(host.replaceContent).not.toHaveBeenCalled();
   }, 20_000);
 
-  it('content that settles after the pass bound is still applied by the trailing pass', async () => {
+  it('content that settles after the pass bound is applied by the trailing retry', async () => {
     let reads = 0;
     const host = makeHost({
       // A destroyed view keeps the pass from reaching content application
@@ -286,6 +285,23 @@ describe('refusal and reconciliation reporting', () => {
     );
     expect(host.onContentReconciled).toHaveBeenCalledWith('ws:a.md');
     expect(host.onStaleContentRefused).not.toHaveBeenCalled();
+    expect(host.replaceContent).not.toHaveBeenCalled();
+  });
+});
+
+describe('user-approved disk version', () => {
+  it('keeps edits that become pending while disk is being read', async () => {
+    const view = { state: { doc: {} } } as never;
+    const host = makeHost({
+      getViews: vi.fn(() => [view]),
+      hasPendingSaves: vi.fn().mockReturnValueOnce(false).mockReturnValue(true),
+    });
+    const sync = new ExternalContentSync(host);
+
+    await sync.acceptDiskVersion('ws:a.md');
+
+    expect(host.readFileAsText).toHaveBeenCalledTimes(1);
+    expect(host.getMarkdown).not.toHaveBeenCalled();
     expect(host.replaceContent).not.toHaveBeenCalled();
   });
 });

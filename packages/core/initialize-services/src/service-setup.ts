@@ -429,8 +429,7 @@ export function createServiceSetup<
     workspaceState: slot(
       WorkspaceStateService,
       withOverride('workspaceState', () => ({
-        hasPendingOrFailedSave: (wsPath) =>
-          getCoreInstances().editorEngine.hasPendingOrFailedSave(wsPath),
+        hasPendingOrFailedSave: editorSaveCoordinator.hasPendingOrFailedSave,
       })),
     ),
     userActivityService: slot(

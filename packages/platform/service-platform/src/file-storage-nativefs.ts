@@ -36,30 +36,14 @@ type Config = {
   ) => Promise<{ handle: FileSystemDirectoryHandle }>;
   onChange: (event: FileStorageChangeEvent) => void;
   /**
-   * Invoked for changes made to workspace files by something other than this
-   * app instance (sync tools, other editors). Providing it turns on
-   * FileSystemObserver watching (Chrome 133+) per opened workspace, plus the
-   * page-return revalidation below when `subscribePageReturn` is supplied.
-   *
-   * Records caused by the app's own writes are NOT filtered here: a
-   * path+time ledger cannot distinguish an echo from a genuine external
-   * overwrite of the same file moments after a local save. Downstream
-   * consumers coalesce echoes by comparing content, which is cheap and
-   * cannot drop a real edit.
+   * External watcher events. Self-write records intentionally flow through;
+   * downstream content comparison coalesces echoes without hiding a real
+   * overwrite that happened just after a local save.
    */
   onExternalChange?: (event: FileStorageExternalChangeEvent) => void;
   /**
-   * Subscribes `listener` to "the user returned to the page" transitions
-   * (tab became visible again, window regained focus). The composition root
-   * wires this to the platform router's page-lifecycle stream (see
-   * `onPageReturn` in this package, which also collapses one return's
-   * transition burst into a single notification), keeping the visibility
-   * source swappable and out of this service.
-   *
-   * On each return the service re-arms watchers that died and re-emits a
-   * coarse refresh where the watcher may have missed something — OS file
-   * watchers are best-effort (frozen tabs, permission loss, network drives),
-   * so returning to the page is the natural moment to reconcile.
+   * Page-return fallback for unsupported, failed, or potentially starved
+   * observers.
    */
   subscribePageReturn?: (
     listener: (info: PageReturnInfo) => void,
@@ -75,11 +59,7 @@ type WatchPathClass =
 
 type FsCacheEntry = {
   fs: NativeFs;
-  /**
-   * Only `armed` is healthy enough to skip page-return revalidation.
-   * `starting` prevents duplicate observer setup without pretending the
-   * workspace is already protected from missed changes.
-   */
+  /** `starting` deduplicates setup; only `armed` may skip revalidation. */
   watchState: 'idle' | 'starting' | 'armed';
 };
 
@@ -183,18 +163,14 @@ export class FileStorageNativeFs
     if (
       !this.config.onExternalChange ||
       entry.watchState !== 'idle' ||
-      // Without the observer API, watching can never arm; leaving the entry
-      // unmarked keeps page-return revalidation as the refresh path (and
-      // avoids arming optimistically only to fail asynchronously each time).
+      // Unsupported browsers use page-return revalidation.
       !supportsFileSystemObserver()
     ) {
       return;
     }
     entry.watchState = 'starting';
 
-    // Watching is best-effort: a failure to observe must never break file
-    // operations, so errors are logged rather than propagated. A failed
-    // start leaves the workspace unmarked so the next page return retries.
+    // Watching is best-effort; page return retries a failed start.
     void entry.fs
       .watch((changes) => this.handleWatchChanges(wsName, changes), {
         signal: this.abortSignal,
@@ -212,19 +188,9 @@ export class FileStorageNativeFs
   }
 
   /**
-   * The user came back to the page: retry watchers that failed or died, and
-   * emit a coarse refresh where the watcher may have missed changes. This is
-   * the safety net for everything the observer cannot promise — events
-   * missed while the tab was frozen, watchers killed by permission loss,
-   * filesystems where OS watching is unreliable — and the only refresh
-   * mechanism at all when `FileSystemObserver` is unsupported.
-   *
-   * A return from a hidden/frozen tab refreshes if any workspace has been
-   * opened: the browser may have starved observers while the tab was away. A
-   * mere window refocus (the page stayed visible throughout) misses nothing
-   * while every watcher is armed, so it refreshes only when at least one
-   * watcher is unavailable. One app-wide event covers all qualifying
-   * workspaces without repeatedly invalidating global consumers.
+   * Re-arms unhealthy watchers. Hidden returns always refresh because the
+   * browser may have starved observers; plain refocus refreshes only when a
+   * watcher is unavailable. One app-wide event covers all workspaces.
    */
   private revalidateOnPageReturn(info: PageReturnInfo): void {
     const onExternalChange = this.config.onExternalChange;
@@ -245,18 +211,8 @@ export class FileStorageNativeFs
   }
 
   /**
-   * How the watcher should treat a record's path:
-   *
-   * - `file`: a visible workspace file — emit a targeted per-path event.
-   * - `ignored`: invisible to the app (dotfiles, ignored directories,
-   *   `.crswap`) — drop the record entirely.
-   * - `coarse`: directory-shaped or unparseable — the record cannot be
-   *   mapped to per-path events; only a workspace re-list reconciles it.
-   *   Deleted entries carry no handle (`kind` is unknowable for
-   *   `disappeared` records), so path shape is the only directory signal
-   *   left. A dotted directory name is indistinguishable from a file here;
-   *   the resulting per-path event is wrong but harmless — the counter bump
-   *   still re-lists the tree.
+   * Classifies a record as a targeted visible file, an ignored hidden path,
+   * or a coarse refresh when path shape is ambiguous.
    */
   private classifyWatchPath(
     wsName: string,
@@ -282,18 +238,11 @@ export class FileStorageNativeFs
       return;
     }
 
-    // One observer callback can deliver a burst (a sync tool touching many
-    // files at once), so the batch is coalesced before anything is emitted:
-    // identical records collapse to one event, and once any record demands a
-    // coarse refresh the refresh alone is emitted — it re-lists the workspace
-    // and revalidates its open notes, subsuming every per-path event in the
-    // same batch.
+    // Coalesce duplicate records; a coarse refresh subsumes targeted events.
     let needsRefresh = false;
     const specificEvents = new Map<string, FileStorageExternalChangeEvent>();
     for (const change of changes) {
-      // An `errored` record means observation broke (permission loss, the
-      // watched directory disappeared). Un-mark the workspace so the next
-      // page return re-arms the watcher, and refresh what we may have missed.
+      // Re-arm a broken observer on the next page return.
       if (change.type === 'errored') {
         const entry = this.fsCache.get(wsName);
         if (entry) {
@@ -303,13 +252,8 @@ export class FileStorageNativeFs
         continue;
       }
       if (needsRefresh) {
-        // The coarse refresh subsumes every per-path event in this batch;
-        // only further `errored` records (handled above) still matter.
         continue;
       }
-      // Directory-level records and records the observer could not classify
-      // only tell us "something under this workspace changed" — fall back to
-      // one coarse refresh instead of guessing per-file events.
       if (change.type === 'unknown' || change.kind === 'directory') {
         needsRefresh = true;
         continue;
@@ -317,9 +261,7 @@ export class FileStorageNativeFs
 
       if (change.type === 'moved') {
         if (change.movedFromPath === undefined) {
-          // Origin unknown (platform watchers cannot always pair renames):
-          // a visible file may have been renamed away, and only a re-list
-          // can tell.
+          // The origin is required to determine visibility.
           needsRefresh = true;
           continue;
         }
@@ -328,32 +270,21 @@ export class FileStorageNativeFs
         if (from.kind === 'coarse' || to.kind === 'coarse') {
           needsRefresh = true;
         } else if (from.kind === 'file' && to.kind === 'file') {
-          // A watcher `moved` record does not prove a user-visible rename: it
-          // can also be an atomic replacement of an existing target. Sending
-          // it through the app's rename pipeline would retarget pending saves
-          // from the source and leave an open target stale. Re-list and
-          // revalidate open notes instead; watcher moves are infrequent and
-          // correctness matters more than a speculative per-path shortcut.
+          // Visible moves may be renames or atomic replacements.
           needsRefresh = true;
         } else if (to.kind === 'file') {
-          // Atomic-write pattern (Chromium's own `.crswap` commit): content
-          // materialized at the visible path from one the app never showed. Treat it
-          // as appearing or replaced. External creates invalidate downstream
-          // content indexes without a coarse re-list on every local save.
+          // Atomic write from an invisible temporary path.
           specificEvents.set(`create:${to.wsPath}`, {
             type: 'create',
             wsPath: to.wsPath,
           });
         } else if (from.kind === 'file') {
-          // Visible file moved to an invisible path — gone as far as the app
-          // is concerned.
+          // A visible file moved out of the app's listing.
           specificEvents.set(`delete:${from.wsPath}`, {
             type: 'delete',
             wsPath: from.wsPath,
           });
         }
-        // Both endpoints invisible: drop the move like the equivalent
-        // appeared/disappeared records.
         continue;
       }
 
@@ -363,7 +294,6 @@ export class FileStorageNativeFs
         continue;
       }
       if (classified.kind === 'ignored') {
-        // Hidden/system paths are invisible to the app; ignore them entirely.
         continue;
       }
       const wsPath = classified.wsPath;

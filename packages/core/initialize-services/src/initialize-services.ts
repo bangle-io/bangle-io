@@ -119,15 +119,6 @@ export function initializeServices(
             });
             break;
           }
-          case 'rename': {
-            rootEmitter.emit('event::file:update', {
-              type: 'file-rename',
-              wsPath: change.newWsPath,
-              oldWsPath: change.oldWsPath,
-              sender,
-            });
-            break;
-          }
           case 'refresh': {
             rootEmitter.emit('event::file:force-update', {
               wsName: change.wsName,
