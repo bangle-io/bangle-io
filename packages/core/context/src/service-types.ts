@@ -52,6 +52,19 @@ export type EditorEngineContract = BaseService & {
   collapseAllHeadings: (level: number) => boolean;
   focusEditor: () => void;
   getSelectionMarkdown: () => string | null;
+  /**
+   * Redirects a global select-all (Cmd/Ctrl-A) into the mounted editor when
+   * the shortcut fires while the editor is not DOM-focused — e.g. the user
+   * clicked the empty padding around the note. Focuses the editor and selects
+   * its whole document, returning true so the caller suppresses the browser's
+   * document-wide select-all (which would otherwise sweep in the sidebar and
+   * the rest of the app chrome).
+   *
+   * Returns false when the editor already has focus (its own keymap owns
+   * select-all) or when no editor is mounted, so the caller leaves the native
+   * behavior intact for the editor's own shortcut and for non-editor pages.
+   */
+  selectAllInActiveEditor: () => boolean;
   hasPendingOrFailedSave: (wsPath?: string) => boolean;
   insertMarkdownAtSelection: (markdownText: string) => boolean;
   /** Reports whether an app-level editor action can run against the current

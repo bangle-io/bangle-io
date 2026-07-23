@@ -371,38 +371,57 @@ export function createServiceSetup<
       ShortcutService,
       withOverride('shortcut', () => ({
         target: shortcutTarget,
-        shortcuts: commands
-          .filter(
-            (
-              command,
-            ): command is Extract<
-              BangleAppCommand,
-              { keybindings: string[] }
-            > => 'keybindings' in command && command.keybindings !== undefined,
-          )
-          .map((command): ShortcutServiceConfig => {
-            const keys = command.keybindings.join('-');
-            return {
-              keyBinding: {
-                id: command.id,
-                keys,
-              },
-              handler: (event) => {
-                getCoreInstances().commandDispatcher.dispatch(
-                  command.id,
-                  event,
-                  `keyboard(${keys})`,
-                );
-              },
-              options: {
-                ...('allowShortcutInInputs' in command &&
-                command.allowShortcutInInputs
-                  ? { allowInInput: true }
-                  : {}),
-                unique: true,
-              },
-            };
-          }),
+        shortcuts: [
+          ...commands
+            .filter(
+              (
+                command,
+              ): command is Extract<
+                BangleAppCommand,
+                { keybindings: string[] }
+              > =>
+                'keybindings' in command && command.keybindings !== undefined,
+            )
+            .map((command): ShortcutServiceConfig => {
+              const keys = command.keybindings.join('-');
+              return {
+                keyBinding: {
+                  id: command.id,
+                  keys,
+                },
+                handler: (event) => {
+                  getCoreInstances().commandDispatcher.dispatch(
+                    command.id,
+                    event,
+                    `keyboard(${keys})`,
+                  );
+                },
+                options: {
+                  ...('allowShortcutInInputs' in command &&
+                  command.allowShortcutInInputs
+                    ? { allowInInput: true }
+                    : {}),
+                  unique: true,
+                },
+              };
+            }),
+          // Keep Cmd/Ctrl-A scoped to the note when it is pressed from the
+          // editor pane while the contenteditable is not focused (e.g. the
+          // user clicked the empty padding around the note). Returning the
+          // engine's boolean lets the editor keymap and native page behavior
+          // proceed unchanged whenever it declines to handle the shortcut.
+          // This is deliberately not a command: it must return synchronously so
+          // ShortcutManager can decide whether to suppress the default.
+          {
+            keyBinding: {
+              id: 'app-editor:select-all-in-editor',
+              keys: 'ctrl-a',
+            },
+            handler: () =>
+              getCoreInstances().editorEngine.selectAllInActiveEditor(),
+            options: { unique: true },
+          },
+        ],
       })),
     ),
     editorService: slot(
