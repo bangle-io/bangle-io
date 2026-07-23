@@ -686,6 +686,105 @@ test('renders an image asset inline when the asset URL is opened directly', asyn
   );
 });
 
+test('hands a generic asset to Android through the native app chooser', async ({
+  page,
+}, testInfo) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'canShare', {
+      configurable: true,
+      value: (data: ShareData) =>
+        data.files?.length === 1 && data.files[0]?.type === 'application/pdf',
+    });
+    Object.defineProperty(navigator, 'share', {
+      configurable: true,
+      value: async (data: ShareData) => {
+        const file = data.files?.[0];
+        if (!file) {
+          throw new Error('Expected one shared file');
+        }
+        (
+          window as typeof window & {
+            __sharedAsset?: {
+              bytes: number[];
+              name: string;
+              title: string | undefined;
+              type: string;
+            };
+          }
+        ).__sharedAsset = {
+          bytes: [...new Uint8Array(await file.arrayBuffer())],
+          name: file.name,
+          title: data.title,
+          type: file.type,
+        };
+      },
+    });
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+
+  const workspaceName = `asset-native-open-${testInfo.workerIndex}-${Date.now()}`;
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'nested/source',
+  });
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'assets/portal-da-nota-fiscal.pdf',
+    [37, 80, 68, 70, 45, 49, 46, 52, 10],
+    'application/pdf',
+  );
+
+  await page.goto(
+    `/ws#route=asset&wsPath=${encodeURIComponent(
+      `${workspaceName}:assets/portal-da-nota-fiscal.pdf`,
+    )}`,
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const heading = page.getByRole('heading', {
+    name: 'portal-da-nota-fiscal.pdf',
+  });
+  const openExternallyButton = page.getByRole('button', {
+    name: 'Open in another app',
+  });
+  await expect
+    .poll(async () => {
+      const headingBox = await heading.boundingBox();
+      const buttonBox = await openExternallyButton.boundingBox();
+      if (!headingBox || !buttonBox) {
+        return false;
+      }
+      return buttonBox.y >= headingBox.y + headingBox.height;
+    })
+    .toBe(true);
+
+  await openExternallyButton.click();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (
+            window as typeof window & {
+              __sharedAsset?: {
+                bytes: number[];
+                name: string;
+                title: string | undefined;
+                type: string;
+              };
+            }
+          ).__sharedAsset,
+      ),
+    )
+    .toEqual({
+      bytes: [37, 80, 68, 70, 45, 49, 46, 52, 10],
+      name: 'portal-da-nota-fiscal.pdf',
+      title: 'portal-da-nota-fiscal.pdf',
+      type: 'application/pdf',
+    });
+  await expect(page.getByRole('link', { name: 'Download' })).toBeVisible();
+});
+
 test('renders a text asset inline when the asset URL is opened directly', async ({
   page,
 }, testInfo) => {

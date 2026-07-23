@@ -6,7 +6,7 @@ import {
   WsPath,
 } from '@bangle.io/ws-path';
 import { useAtomValue } from 'jotai';
-import { Download } from 'lucide-react';
+import { Download, ExternalLink } from 'lucide-react';
 import React from 'react';
 import { AssetPreview } from '../components/common/asset-preview';
 import { ContentSection } from '../components/common/content-section';
@@ -26,6 +26,7 @@ type AssetState =
       fileName: string;
       objectUrl: string;
       kind: AssetPreviewKind | undefined;
+      shareFile?: File;
       textContent?: string;
     }
   | { status: 'missing'; fileName: string }
@@ -47,8 +48,10 @@ export function PageAsset() {
     routeFilePath?.fileName ??
     t.app.common.unknown;
   const [state, setState] = React.useState<AssetState>({ status: 'loading' });
+  const [shareFailed, setShareFailed] = React.useState(false);
 
   React.useEffect(() => {
+    setShareFailed(false);
     if (!wsPath) {
       setState({ status: 'error', fileName });
       return;
@@ -103,7 +106,18 @@ export function PageAsset() {
         const previewSource =
           kind === 'pdf' ? new Blob([file], { type: 'application/pdf' }) : file;
         objectUrl = URL.createObjectURL(previewSource);
-        setState({ status: 'ready', fileName, objectUrl, kind, textContent });
+        const candidateShareFile = createShareFile(file, fileName, kind);
+        const shareFile = canShareFile(candidateShareFile)
+          ? candidateShareFile
+          : undefined;
+        setState({
+          status: 'ready',
+          fileName,
+          objectUrl,
+          kind,
+          shareFile,
+          textContent,
+        });
       } catch {
         if (!disposed) {
           setState({ status: 'error', fileName });
@@ -119,6 +133,28 @@ export function PageAsset() {
       }
     };
   }, [fileName, fileSystem, wsPath]);
+
+  const handleShare = () => {
+    if (
+      state.status !== 'ready' ||
+      !state.shareFile ||
+      typeof navigator.share !== 'function'
+    ) {
+      return;
+    }
+
+    setShareFailed(false);
+    void navigator
+      .share({
+        files: [state.shareFile],
+        title: state.fileName,
+      })
+      .catch((error: unknown) => {
+        if (!(error instanceof DOMException && error.name === 'AbortError')) {
+          setShareFailed(true);
+        }
+      });
+  };
 
   if (!currentWsName) {
     return (
@@ -150,30 +186,83 @@ export function PageAsset() {
     <>
       <AppHeader />
       <PageContentContainer>
-        <div className="flex w-full flex-wrap items-center justify-between gap-2">
+        <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h1
-            className="wrap-anywhere min-w-0 flex-1 font-semibold text-lg"
+            className="wrap-anywhere min-w-0 font-semibold text-lg sm:flex-1"
             title={fileName}
           >
             {fileName}
           </h1>
           {state.status === 'ready' ? (
-            <a
-              className={buttonVariants({ variant: 'outline', size: 'sm' })}
-              download={state.fileName}
-              href={state.objectUrl}
-            >
-              <Download />
-              {t.app.pageAsset.downloadButton}
-            </a>
+            <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+              {state.shareFile ? (
+                <button
+                  className={buttonVariants({
+                    variant: 'outline',
+                    size: 'sm',
+                  })}
+                  onClick={handleShare}
+                  type="button"
+                >
+                  <ExternalLink />
+                  {t.app.pageAsset.openExternallyButton}
+                </button>
+              ) : null}
+              <a
+                className={buttonVariants({ variant: 'outline', size: 'sm' })}
+                download={state.fileName}
+                href={state.objectUrl}
+              >
+                <Download />
+                {t.app.pageAsset.downloadButton}
+              </a>
+            </div>
           ) : null}
         </div>
+        {shareFailed ? (
+          <p className="text-destructive text-sm" role="alert">
+            {t.app.pageAsset.openExternallyFailed}
+          </p>
+        ) : null}
         <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center gap-4">
           <AssetBody state={state} />
         </div>
       </PageContentContainer>
     </>
   );
+}
+
+function createShareFile(
+  file: File,
+  fileName: string,
+  kind: AssetPreviewKind | undefined,
+): File {
+  // Android chooses receiving apps from the MIME type. Stored PDFs can carry a
+  // missing or untrusted type, so match the safe type used by the PDF preview.
+  const type = kind === 'pdf' ? 'application/pdf' : file.type;
+  if (file.name === fileName && file.type === type) {
+    return file;
+  }
+
+  return new File([file], fileName, {
+    lastModified: file.lastModified,
+    type,
+  });
+}
+
+function canShareFile(file: File): boolean {
+  if (
+    typeof navigator.share !== 'function' ||
+    typeof navigator.canShare !== 'function'
+  ) {
+    return false;
+  }
+
+  try {
+    return navigator.canShare({ files: [file] });
+  } catch {
+    return false;
+  }
 }
 
 function AssetBody({ state }: { state: AssetState }) {
