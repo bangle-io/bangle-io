@@ -27,8 +27,6 @@ const SOURCE = [
 const MOVED_SOURCE = [
   '# Two',
   '',
-  'gamma',
-  '',
   '# One',
   '',
   'alpha',
@@ -38,6 +36,8 @@ const MOVED_SOURCE = [
   '## Sub',
   '',
   'nested content',
+  '',
+  'gamma',
 ].join('\n');
 
 async function openSeededNote(page: Page) {
@@ -229,21 +229,11 @@ test('moving a folded heading with option arrow moves the whole folded section',
   await waitForEditorFocus(page, {});
   await page.keyboard.press('Alt+ArrowDown');
 
-  // The full section moves past "Two" and remains folded at its new location.
+  // The full section moves down by one visible block ("Two"), rather than
+  // jumping over that heading's content, and remains folded at its new home.
   await expect(editor.getByText('alpha')).toBeHidden();
   await expect(editor.getByText('nested content')).toBeHidden();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(MOVED_SOURCE);
-
-  // The reverse shortcut treats the folded section as the same complete unit.
-  await page.keyboard.press('Alt+ArrowUp');
-  await expect(editor.getByText('alpha')).toBeHidden();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(SOURCE);
-
-  await page.keyboard.press('Alt+ArrowDown');
+  await expect(editor.getByText('gamma')).toBeHidden();
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, noteName))
     .toBe(MOVED_SOURCE);
@@ -251,6 +241,7 @@ test('moving a folded heading with option arrow moves the whole folded section',
   await editor.getByRole('button', { name: 'Expand section' }).click();
   await expect(editor.getByText('alpha')).toBeVisible();
   await expect(editor.getByText('nested content')).toBeVisible();
+  await expect(editor.getByText('gamma')).toBeVisible();
 });
 
 test('nested folds survive folding and unfolding the outer section', async ({

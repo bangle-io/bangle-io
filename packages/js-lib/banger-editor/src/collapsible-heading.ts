@@ -12,6 +12,7 @@ import {
   type PMNode,
   Selection,
   TextSelection,
+  type Transaction,
 } from './pm';
 import {
   findParentNodeOfType,
@@ -122,45 +123,85 @@ export function getHeadingFoldRange(
 
 function findAdjacentSectionDropPos(
   doc: PMNode,
-  headingPos: number,
+  currentRange: HeadingFoldRange,
   headingName: string,
   direction: 'up' | 'down',
+  foldedRanges: readonly HeadingFoldRange[],
 ): number | null {
+  const { headingPos } = currentRange;
   const heading = doc.nodeAt(headingPos);
-  const range = getHeadingFoldRange(doc, headingPos, headingName);
   if (
     !heading ||
     heading.type.name !== headingName ||
-    !range ||
     doc.resolve(headingPos).depth !== 0
   ) {
     return null;
   }
 
   if (direction === 'down') {
-    const nextHeading = doc.nodeAt(range.to);
-    if (!nextHeading || nextHeading.type.name !== headingName) {
+    const nextFoldedSection = foldedRanges.find(
+      (range) => range.headingPos === currentRange.to,
+    );
+    if (nextFoldedSection) {
+      return nextFoldedSection.to;
+    }
+    const nextSibling = doc.nodeAt(currentRange.to);
+    if (!nextSibling) {
       return null;
     }
-    return (
-      getHeadingFoldRange(doc, range.to, headingName)?.to ??
-      range.to + nextHeading.nodeSize
-    );
+    return currentRange.to + nextSibling.nodeSize;
+  }
+
+  const previousFoldedSection = foldedRanges.find(
+    (range) => range.to === headingPos,
+  );
+  if (previousFoldedSection) {
+    return previousFoldedSection.headingPos;
   }
 
   const $heading = doc.resolve(headingPos);
-  let siblingPos = headingPos;
-  for (let index = $heading.index() - 1; index >= 0; index--) {
-    const sibling = $heading.parent.child(index);
-    siblingPos -= sibling.nodeSize;
-    if (
-      sibling.type.name === headingName &&
-      sibling.attrs.level <= heading.attrs.level
-    ) {
-      return siblingPos;
-    }
+  const previousIndex = $heading.index() - 1;
+  if (previousIndex < 0) {
+    return null;
   }
-  return null;
+  return headingPos - $heading.parent.child(previousIndex).nodeSize;
+}
+
+function remapFoldedHeadingPos(
+  tr: Transaction,
+  pos: number,
+  oldDoc: PMNode,
+  newDoc: PMNode,
+  headingName: string,
+): number | null {
+  const mapped = tr.mapping.mapResult(pos);
+  if (!mapped.deleted) {
+    return mapped.pos;
+  }
+
+  // Moving a section is represented as delete + insert, so its old anchor is
+  // reported as deleted. ProseMirror nodes are immutable and the inserted
+  // slice retains the heading object; recovering that identity also keeps the
+  // fold anchored through history's inverse undo/redo transactions, which do
+  // not carry this plugin's forward transaction metadata.
+  const heading = oldDoc.nodeAt(pos);
+  if (!heading || heading.type.name !== headingName) {
+    return null;
+  }
+  let recovered: number | null = null;
+  let duplicate = false;
+  newDoc.descendants((node, nodePos) => {
+    if (node !== heading) {
+      return true;
+    }
+    if (recovered != null) {
+      duplicate = true;
+      return false;
+    }
+    recovered = nodePos;
+    return false;
+  });
+  return duplicate ? null : recovered;
 }
 
 export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
@@ -282,12 +323,6 @@ export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
         tr.delete(headingPos, range.to);
         const mapped = tr.mapping.map(insertPos);
         tr.insert(mapped, slice.content);
-        tr.setMeta(key, {
-          type: 'fold',
-          positions: pluginState.folded
-            .filter((pos) => pos >= headingPos && pos < range.to)
-            .map((pos) => mapped + (pos - headingPos)),
-        } satisfies FoldMeta);
         tr.setSelection(NodeSelection.create(tr.doc, mapped));
         tr.scrollIntoView();
         dispatch(tr);
@@ -317,12 +352,22 @@ export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
       if (!found || !pluginState?.folded.includes(found.pos)) {
         return false;
       }
+      if (!isNodeSelection(state.selection) && !state.selection.empty) {
+        return false;
+      }
 
+      const currentRange = pluginState.ranges.find(
+        (range) => range.headingPos === found.pos,
+      );
+      if (!currentRange) {
+        return true;
+      }
       const dropPos = findAdjacentSectionDropPos(
         state.doc,
-        found.pos,
+        currentRange,
         config.headingName,
         direction,
+        pluginState.ranges,
       );
       // Do not fall through to the ordinary heading keymap: it would move
       // only the heading and tear apart the folded section at the boundary.
@@ -447,14 +492,20 @@ function pluginFold(
         init: (_, state) => {
           return buildPluginState(state.doc, [], config, toggleAtPos);
         },
-        apply: (tr, prev, _oldState, newState) => {
+        apply: (tr, prev, oldState, newState) => {
           const meta = tr.getMeta(key) as FoldMeta | undefined;
 
           let folded = prev.folded;
           if (tr.docChanged) {
             folded = folded.flatMap((pos) => {
-              const result = tr.mapping.mapResult(pos);
-              return result.deleted ? [] : [result.pos];
+              const mapped = remapFoldedHeadingPos(
+                tr,
+                pos,
+                oldState.doc,
+                newState.doc,
+                config.headingName,
+              );
+              return mapped == null ? [] : [mapped];
             });
           }
 
