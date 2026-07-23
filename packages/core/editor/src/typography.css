@@ -216,12 +216,12 @@ div.ProseMirror {
   }
 
   & h2 {
-    margin: 1.75em 0 0.5em;
+    margin: 1.5rem 0 0.5rem;
     font-size: 1.75em;
   }
 
   & h3 {
-    margin: 1.5em 0 0.5em;
+    margin: 1.25rem 0 0.5rem;
     font-size: 1.375em;
   }
 
