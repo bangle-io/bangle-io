@@ -8,20 +8,23 @@ import {
   setupCollapsibleHeading,
 } from '../collapsible-heading';
 import { setupHeading } from '../heading';
+import { setupHistory } from '../history';
 import { setupList } from '../list';
 import { setupParagraph } from '../paragraph';
 import type { PMNode } from '../pm';
-import { NodeSelection, TextSelection } from '../pm';
+import { NodeSelection, redo, TextSelection, undo } from '../pm';
 import { createBangerEditorTestSetup } from '../test-helpers';
 
 const collapsible = setupCollapsibleHeading();
+const heading = setupHeading();
 
 const editorTest = createBangerEditorTestSetup({
   extensions: [
     setupBase(),
     setupParagraph(),
     setupCodeBlock(),
-    setupHeading(),
+    heading,
+    setupHistory(),
     setupList(),
     collapsible,
   ],
@@ -350,6 +353,35 @@ describe('document edits around folds', () => {
     expect(view.state.doc.textContent).toContain('a');
   });
 
+  it('keeps the fold when heading markup changes through undo and redo', () => {
+    const editor = editorTest.createEditor(
+      doc(h1('One<cursor>'), p('a'), h1('Two'), p('b')),
+    );
+    const { view } = editor;
+    const pos = headingPos(view.state.doc, 'One');
+    collapsible.command.toggleHeadingCollapseAtPos(pos)(
+      view.state,
+      view.dispatch,
+    );
+
+    expect(heading.command.toggleHeading(2)(view.state, view.dispatch)).toBe(
+      true,
+    );
+    expect(view.state.doc.nodeAt(pos)?.attrs.level).toBe(2);
+    expect(collapsible.query.isHeadingCollapsed(view.state, pos)).toBe(true);
+    expect(hiddenTexts(view)).toEqual(['a']);
+
+    expect(undo(view.state, view.dispatch)).toBe(true);
+    expect(view.state.doc.nodeAt(pos)?.attrs.level).toBe(1);
+    expect(collapsible.query.isHeadingCollapsed(view.state, pos)).toBe(true);
+    expect(hiddenTexts(view)).toEqual(['a']);
+
+    expect(redo(view.state, view.dispatch)).toBe(true);
+    expect(view.state.doc.nodeAt(pos)?.attrs.level).toBe(2);
+    expect(collapsible.query.isHeadingCollapsed(view.state, pos)).toBe(true);
+    expect(hiddenTexts(view)).toEqual(['a']);
+  });
+
   it('auto-unfolds when an edit lands inside the hidden region', () => {
     const editor = editorTest.createEditor(
       doc(h1('One'), p('a'), h1('Two'), p('b')),
@@ -618,6 +650,241 @@ describe('nested folds', () => {
 });
 
 describe('moving folded sections', () => {
+  it('moves a folded section by one visible block with Alt Arrow shortcuts', () => {
+    const downEditor = editorTest.createEditor(
+      doc(h1('One<cursor>'), p('a'), h2('Sub'), p('b'), h1('Two'), p('c')),
+    );
+    collapsible.command.toggleHeadingCollapseAtPos(
+      headingPos(downEditor.view.state.doc, 'One'),
+    )(downEditor.view.state, downEditor.view.dispatch);
+
+    expect(downEditor.pressKey('ArrowDown', { altKey: true })).toBe(true);
+    downEditor.expectDoc(
+      doc(h1('Two'), h1('One<cursor>'), p('a'), h2('Sub'), p('b'), p('c')),
+    );
+    expect(hiddenTexts(downEditor.view)).toEqual(['a', 'Sub', 'b', 'c']);
+
+    const upEditor = editorTest.createEditor(
+      doc(h1('One'), p('a'), h2('Sub'), p('b'), h1('Two<cursor>'), p('c')),
+    );
+    collapsible.command.toggleHeadingCollapseAtPos(
+      headingPos(upEditor.view.state.doc, 'Two'),
+    )(upEditor.view.state, upEditor.view.dispatch);
+
+    expect(upEditor.pressKey('ArrowUp', { altKey: true })).toBe(true);
+    upEditor.expectDoc(
+      doc(h1('One'), p('a'), h2('Sub'), h1('Two<cursor>'), p('c'), p('b')),
+    );
+    expect(hiddenTexts(upEditor.view)).toEqual(['c', 'b']);
+  });
+
+  it('treats an adjacent folded section as one visible block', () => {
+    const downOriginal = doc(
+      h1('One<cursor>'),
+      p('a'),
+      h1('Two'),
+      p('b'),
+      h1('Three'),
+      p('c'),
+    );
+    const downMoved = doc(
+      h1('Two'),
+      p('b'),
+      h1('One<cursor>'),
+      p('a'),
+      h1('Three'),
+      p('c'),
+    );
+    const downEditor = editorTest.createEditor(downOriginal);
+    for (const text of ['One', 'Two']) {
+      collapsible.command.toggleHeadingCollapseAtPos(
+        headingPos(downEditor.view.state.doc, text),
+      )(downEditor.view.state, downEditor.view.dispatch);
+    }
+
+    expect(downEditor.pressKey('ArrowDown', { altKey: true })).toBe(true);
+    downEditor.expectDoc(downMoved);
+    expect(hiddenTexts(downEditor.view)).toEqual(['b', 'a']);
+    collapsible.command.toggleHeadingCollapseAtPos(
+      headingPos(downEditor.view.state.doc, 'One'),
+    )(downEditor.view.state, downEditor.view.dispatch);
+    expect(hiddenTexts(downEditor.view)).toEqual(['b']);
+    collapsible.command.toggleHeadingCollapseAtPos(
+      headingPos(downEditor.view.state.doc, 'One'),
+    )(downEditor.view.state, downEditor.view.dispatch);
+    expect(undo(downEditor.view.state, downEditor.view.dispatch)).toBe(true);
+    downEditor.expectDoc(downOriginal);
+    expect(hiddenTexts(downEditor.view)).toEqual(['a', 'b']);
+    expect(redo(downEditor.view.state, downEditor.view.dispatch)).toBe(true);
+    downEditor.expectDoc(downMoved);
+    expect(hiddenTexts(downEditor.view)).toEqual(['b', 'a']);
+
+    const upOriginal = doc(
+      h1('One'),
+      p('a'),
+      h1('Two'),
+      p('b'),
+      h1('Three<cursor>'),
+      p('c'),
+    );
+    const upMoved = doc(
+      h1('One'),
+      p('a'),
+      h1('Three<cursor>'),
+      p('c'),
+      h1('Two'),
+      p('b'),
+    );
+    const upEditor = editorTest.createEditor(upOriginal);
+    for (const text of ['Two', 'Three']) {
+      collapsible.command.toggleHeadingCollapseAtPos(
+        headingPos(upEditor.view.state.doc, text),
+      )(upEditor.view.state, upEditor.view.dispatch);
+    }
+
+    expect(upEditor.pressKey('ArrowUp', { altKey: true })).toBe(true);
+    upEditor.expectDoc(upMoved);
+    expect(hiddenTexts(upEditor.view)).toEqual(['c', 'b']);
+    collapsible.command.toggleHeadingCollapseAtPos(
+      headingPos(upEditor.view.state.doc, 'Three'),
+    )(upEditor.view.state, upEditor.view.dispatch);
+    expect(hiddenTexts(upEditor.view)).toEqual(['b']);
+    collapsible.command.toggleHeadingCollapseAtPos(
+      headingPos(upEditor.view.state.doc, 'Three'),
+    )(upEditor.view.state, upEditor.view.dispatch);
+    expect(undo(upEditor.view.state, upEditor.view.dispatch)).toBe(true);
+    upEditor.expectDoc(upOriginal);
+    expect(hiddenTexts(upEditor.view)).toEqual(['b', 'c']);
+    expect(redo(upEditor.view.state, upEditor.view.dispatch)).toBe(true);
+    upEditor.expectDoc(upMoved);
+    expect(hiddenTexts(upEditor.view)).toEqual(['c', 'b']);
+  });
+
+  it('keeps a moved section folded through undo and redo', () => {
+    const original = doc(
+      h1('One<cursor>'),
+      p('a'),
+      h2('Sub'),
+      p('b'),
+      h1('Two'),
+      p('c'),
+    );
+    const moved = doc(
+      h1('Two'),
+      h1('One<cursor>'),
+      p('a'),
+      h2('Sub'),
+      p('b'),
+      p('c'),
+    );
+    const editor = editorTest.createEditor(original);
+    const { view } = editor;
+    collapsible.command.toggleHeadingCollapseAtPos(
+      headingPos(view.state.doc, 'One'),
+    )(view.state, view.dispatch);
+
+    expect(editor.pressKey('ArrowDown', { altKey: true })).toBe(true);
+    editor.expectDoc(moved);
+    expect(hiddenTexts(view)).toEqual(['a', 'Sub', 'b', 'c']);
+
+    expect(undo(view.state, view.dispatch)).toBe(true);
+    editor.expectDoc(original);
+    expect(hiddenTexts(view)).toEqual(['a', 'Sub', 'b']);
+
+    expect(redo(view.state, view.dispatch)).toBe(true);
+    editor.expectDoc(moved);
+    expect(hiddenTexts(view)).toEqual(['a', 'Sub', 'b', 'c']);
+  });
+
+  it('moves folded headings within the same nested parent', () => {
+    const downOriginal = doc(
+      bullet(h1('One<cursor>'), p('a'), h1('Two'), p('b')),
+    );
+    const downMoved = doc(bullet(h1('Two'), h1('One<cursor>'), p('a'), p('b')));
+    const downEditor = editorTest.createEditor(downOriginal);
+    collapsible.command.toggleHeadingCollapseAtPos(
+      headingPos(downEditor.view.state.doc, 'One'),
+    )(downEditor.view.state, downEditor.view.dispatch);
+
+    expect(downEditor.pressKey('ArrowDown', { altKey: true })).toBe(true);
+    downEditor.expectDoc(downMoved);
+    expect(hiddenTexts(downEditor.view)).toEqual(['a', 'b']);
+    expect(undo(downEditor.view.state, downEditor.view.dispatch)).toBe(true);
+    downEditor.expectDoc(downOriginal);
+    expect(hiddenTexts(downEditor.view)).toEqual(['a']);
+    expect(redo(downEditor.view.state, downEditor.view.dispatch)).toBe(true);
+    downEditor.expectDoc(downMoved);
+    expect(hiddenTexts(downEditor.view)).toEqual(['a', 'b']);
+
+    const upEditor = editorTest.createEditor(
+      doc(bullet(h1('One'), p('a'), h1('Two<cursor>'), p('b'))),
+    );
+    collapsible.command.toggleHeadingCollapseAtPos(
+      headingPos(upEditor.view.state.doc, 'Two'),
+    )(upEditor.view.state, upEditor.view.dispatch);
+
+    expect(upEditor.pressKey('ArrowUp', { altKey: true })).toBe(true);
+    upEditor.expectDoc(
+      doc(bullet(h1('One'), h1('Two<cursor>'), p('b'), p('a'))),
+    );
+    expect(hiddenTexts(upEditor.view)).toEqual(['b', 'a']);
+  });
+
+  it('preserves a heading node selection across a keyboard move', () => {
+    const editor = editorTest.createEditor(
+      doc(h1('One'), p('a'), h1('Two'), p('b')),
+    );
+    const { view } = editor;
+    const pos = headingPos(view.state.doc, 'One');
+    collapsible.command.toggleHeadingCollapseAtPos(pos)(
+      view.state,
+      view.dispatch,
+    );
+    view.dispatch(
+      view.state.tr.setSelection(NodeSelection.create(view.state.doc, pos)),
+    );
+
+    expect(editor.pressKey('ArrowDown', { altKey: true })).toBe(true);
+    expect(view.state.selection).toBeInstanceOf(NodeSelection);
+    expect(view.state.selection.from).toBe(headingPos(view.state.doc, 'One'));
+    expect(hiddenTexts(view)).toEqual(['a', 'b']);
+  });
+
+  it('does not move a folded section when heading text is selected', () => {
+    const original = doc(h1('<start>One<end>'), p('a'), h1('Two'), p('b'));
+    const editor = editorTest.createEditor(original);
+    const { view } = editor;
+    collapsible.command.toggleHeadingCollapseAtPos(
+      headingPos(view.state.doc, 'One'),
+    )(view.state, view.dispatch);
+
+    expect(editor.pressKey('ArrowDown', { altKey: true })).toBe(false);
+    editor.expectDoc(original);
+    expect(hiddenTexts(view)).toEqual(['a']);
+  });
+
+  it('keeps a folded section intact when there is no adjacent section', () => {
+    const downOriginal = doc(p('intro'), h1('One<cursor>'), p('a'));
+    const downEditor = editorTest.createEditor(downOriginal);
+    collapsible.command.toggleHeadingCollapseAtPos(
+      headingPos(downEditor.view.state.doc, 'One'),
+    )(downEditor.view.state, downEditor.view.dispatch);
+
+    expect(downEditor.pressKey('ArrowDown', { altKey: true })).toBe(true);
+    downEditor.expectDoc(downOriginal);
+    expect(hiddenTexts(downEditor.view)).toEqual(['a']);
+
+    const upOriginal = doc(h1('One<cursor>'), p('a'));
+    const upEditor = editorTest.createEditor(upOriginal);
+    collapsible.command.toggleHeadingCollapseAtPos(
+      headingPos(upEditor.view.state.doc, 'One'),
+    )(upEditor.view.state, upEditor.view.dispatch);
+
+    expect(upEditor.pressKey('ArrowUp', { altKey: true })).toBe(true);
+    upEditor.expectDoc(upOriginal);
+    expect(hiddenTexts(upEditor.view)).toEqual(['a']);
+  });
+
   it('moves the heading together with its hidden section to the end', () => {
     const editor = editorTest.createEditor(
       doc(h1('One'), p('a'), p('b'), h1('Two'), p('c')),
@@ -637,7 +904,8 @@ describe('moving folded sections', () => {
     ).toBe(true);
 
     editor.expectDoc(doc(h1('Two'), p('c'), h1('One'), p('a'), p('b')));
-    // The section arrives still folded, with a NodeSelection on the heading.
+    // The section arrives still folded, retaining the text cursor that was
+    // inside its heading.
     expect(hiddenTexts(view)).toEqual(['a', 'b']);
     expect(
       collapsible.query.isHeadingCollapsed(
@@ -645,7 +913,8 @@ describe('moving folded sections', () => {
         headingPos(view.state.doc, 'One'),
       ),
     ).toBe(true);
-    expect(view.state.selection).toBeInstanceOf(NodeSelection);
+    expect(view.state.selection).toBeInstanceOf(TextSelection);
+    expect(view.state.selection.$head.parent.textContent).toBe('One');
   });
 
   it('moves a folded section upwards', () => {
@@ -726,6 +995,26 @@ describe('moving folded sections', () => {
     ).toBe(false);
     editor.expectDoc(original);
     expect(hiddenTexts(view)).toEqual(['a', 'b']);
+  });
+
+  it('refuses to move a nested section into a different parent', () => {
+    const original = doc(bullet(h1('One'), p('a')), h1('Two'), p('b'));
+    const editor = editorTest.createEditor(original);
+    const { view } = editor;
+    const pos = headingPos(view.state.doc, 'One');
+    collapsible.command.toggleHeadingCollapseAtPos(pos)(
+      view.state,
+      view.dispatch,
+    );
+
+    expect(
+      collapsible.command.moveFoldedHeadingSection(
+        pos,
+        view.state.doc.content.size,
+      )(view.state, view.dispatch),
+    ).toBe(false);
+    editor.expectDoc(original);
+    expect(hiddenTexts(view)).toEqual(['a']);
   });
 
   it('does nothing for a heading that is not folded', () => {

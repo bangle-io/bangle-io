@@ -24,6 +24,22 @@ const SOURCE = [
   'gamma',
 ].join('\n');
 
+const MOVED_SOURCE = [
+  '# Two',
+  '',
+  '# One',
+  '',
+  'alpha',
+  '',
+  'beta',
+  '',
+  '## Sub',
+  '',
+  'nested content',
+  '',
+  'gamma',
+].join('\n');
+
 async function openSeededNote(page: Page) {
   const workspaceName = 'collapsible-headings';
   const noteName = 'Home';
@@ -196,6 +212,36 @@ test('dragging a folded heading moves the whole section without losing content',
   await editor.getByRole('button', { name: 'Expand section' }).click();
   await expect(editor.getByText('alpha')).toBeVisible();
   await expect(editor.getByText('nested content')).toBeVisible();
+});
+
+test('moving a folded heading with option arrow moves the whole folded section', async ({
+  page,
+}) => {
+  const { editor, noteName, workspaceName } = await openSeededNote(page);
+
+  await editor
+    .getByRole('button', { name: 'Collapse section' })
+    .first()
+    .click();
+  await expect(editor.getByText('alpha')).toBeHidden();
+
+  await editor.getByText('One').click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.press('Alt+ArrowDown');
+
+  // The full section moves down by one visible block ("Two"), rather than
+  // jumping over that heading's content, and remains folded at its new home.
+  await expect(editor.getByText('alpha')).toBeHidden();
+  await expect(editor.getByText('nested content')).toBeHidden();
+  await expect(editor.getByText('gamma')).toBeHidden();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(MOVED_SOURCE);
+
+  await editor.getByRole('button', { name: 'Expand section' }).click();
+  await expect(editor.getByText('alpha')).toBeVisible();
+  await expect(editor.getByText('nested content')).toBeVisible();
+  await expect(editor.getByText('gamma')).toBeVisible();
 });
 
 test('nested folds survive folding and unfolding the outer section', async ({

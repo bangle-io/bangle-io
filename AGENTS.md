@@ -58,6 +58,10 @@ recovery path over convenience.
 
 - Before adding functionality, inspect the owning package and lower layers for
   existing behavior that should be extended or shared.
+- Before writing ProseMirror position, range, or transaction math, inspect
+  `packages/js-lib/banger-editor/src/pm-utils` and official ProseMirror
+  utilities. Prefer an existing helper; otherwise keep unavoidable math behind
+  a typed helper, promoting it to `pm-utils` when its semantics are reusable.
 - Put behavior where the concept is owned, not where the first caller happens
   to need it. Keep local mechanism close to its owner, and move reusable policy
   or meaning behind a typed API at the lowest appropriate layer.
