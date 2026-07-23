@@ -11,6 +11,7 @@ import {
   type EditorView,
   markdownLoader,
   type Schema,
+  selectAll,
   TextSelection,
 } from '@bangle.io/prosemirror-plugins';
 import {
@@ -919,6 +920,28 @@ export class PmEditorService
 
   focusEditor() {
     this.getActiveEditorView()?.focus();
+  }
+
+  /**
+   * Redirects a global Cmd/Ctrl-A into the active editor when the editor is
+   * mounted but not DOM-focused (e.g. the user clicked the empty padding
+   * around the note, leaving focus on the page body). Without this a browser
+   * select-all fired from outside the contenteditable selects the whole
+   * document, sweeping the sidebar and app chrome into the selection.
+   *
+   * Defers to the editor's own keymap while it is focused, and to native
+   * behavior when no editor is mounted, by returning false in those cases.
+   */
+  selectAllInActiveEditor(): boolean {
+    const view = this.getActiveEditorView();
+    if (!view || view.isDestroyed || !view.dom.isConnected) {
+      return false;
+    }
+    if (view.hasFocus()) {
+      return false;
+    }
+    view.focus();
+    return selectAll(view.state, view.dispatch);
   }
 
   /** Dry-runs app-level editor actions against the live selection. */

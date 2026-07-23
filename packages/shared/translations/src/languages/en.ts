@@ -53,6 +53,13 @@ export const t = {
         strike: 'Strikethrough',
         inlineCode: 'Inline code',
         link: 'Link',
+        paragraph: 'Paragraph',
+        heading1: 'Heading 1',
+        heading2: 'Heading 2',
+        heading3: 'Heading 3',
+        bulletList: 'Bullet list',
+        orderedList: 'Numbered list',
+        taskList: 'Task list',
       },
       linkEditor: {
         label: 'Edit link',
