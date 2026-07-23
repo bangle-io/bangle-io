@@ -6,12 +6,10 @@ import {
   dropPoint,
   type EditorState,
   type EditorView,
-  NodeSelection,
   Plugin,
   PluginKey,
   type PMNode,
   Selection,
-  TextSelection,
   type Transaction,
 } from './pm';
 import {
@@ -130,11 +128,7 @@ function findAdjacentSectionDropPos(
 ): number | null {
   const { headingPos } = currentRange;
   const heading = doc.nodeAt(headingPos);
-  if (
-    !heading ||
-    heading.type.name !== headingName ||
-    doc.resolve(headingPos).depth !== 0
-  ) {
+  if (!heading || heading.type.name !== headingName) {
     return null;
   }
 
@@ -179,15 +173,29 @@ function remapFoldedHeadingPos(
     return mapped.pos;
   }
 
-  // Moving a section is represented as delete + insert, so its old anchor is
-  // reported as deleted. ProseMirror nodes are immutable and the inserted
-  // slice retains the heading object; recovering that identity also keeps the
-  // fold anchored through history's inverse undo/redo transactions, which do
-  // not carry this plugin's forward transaction metadata.
   const heading = oldDoc.nodeAt(pos);
   if (!heading || heading.type.name !== headingName) {
     return null;
   }
+
+  // Changing a heading's markup replaces its boundary tokens and creates a
+  // new node object even though its content is unchanged. Preserve the fold
+  // only when the mapped position still contains the same heading type and
+  // exact immutable content fragment; this avoids transferring a deleted
+  // heading's fold to an unrelated neighbor.
+  const replacement = newDoc.nodeAt(mapped.pos);
+  if (
+    replacement?.type === heading.type &&
+    replacement.content === heading.content
+  ) {
+    return mapped.pos;
+  }
+
+  // Reordering sibling ranges is represented as delete + insert, so a folded
+  // heading inside the moved range can be reported as deleted. ProseMirror
+  // nodes are immutable and the inserted slice retains the heading object;
+  // recovering that identity also keeps the fold anchored through history's
+  // inverse undo/redo transactions.
   let recovered: number | null = null;
   let duplicate = false;
   newDoc.descendants((node, nodePos) => {
@@ -287,16 +295,15 @@ export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
   /**
    * Moves a folded heading together with its hidden section to `dropPos`.
    * Nested fold state inside the section is preserved by re-anchoring it
-   * relative to the heading's new position. Fails (returns false) for drops
-   * inside the section itself and for non-top-level headings.
+   * relative to the heading's new position. The source and resolved drop
+   * position must share a parent, so a move cannot silently change the
+   * section's nesting. Fails (returns false) for drops inside the section
+   * itself.
    */
   const moveFoldedSection = (headingPos: number, dropPos: number): Command => {
     return (state, dispatch) => {
       const pluginState = key.getState(state);
       if (!pluginState?.folded.includes(headingPos)) {
-        return false;
-      }
-      if (state.doc.resolve(headingPos).depth !== 0) {
         return false;
       }
       const range = getHeadingFoldRange(
@@ -318,12 +325,44 @@ export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
       ) {
         return false;
       }
+      if (
+        !state.doc.resolve(headingPos).sameParent(state.doc.resolve(insertPos))
+      ) {
+        return false;
+      }
+
+      const movingDown = insertPos > range.to;
+      const neighborFrom = movingDown ? range.to : insertPos;
+      const neighborTo = movingDown ? insertPos : headingPos;
+      const neighbor = state.doc.slice(neighborFrom, neighborTo);
+      if (neighbor.content.size === 0) {
+        return false;
+      }
+
+      const swapFrom = Math.min(headingPos, insertPos);
+      const swapTo = Math.max(range.to, insertPos);
+      const $swapFrom = state.doc.resolve(swapFrom);
+      const $swapTo = state.doc.resolve(swapTo);
+      const swappedContent = movingDown
+        ? neighbor.content.append(slice.content)
+        : slice.content.append(neighbor.content);
+      if (
+        !$swapFrom.parent.canReplace(
+          $swapFrom.index(),
+          $swapTo.index(),
+          swappedContent,
+        )
+      ) {
+        return false;
+      }
+
       if (dispatch) {
         const tr = state.tr;
-        tr.delete(headingPos, range.to);
-        const mapped = tr.mapping.map(insertPos);
-        tr.insert(mapped, slice.content);
-        tr.setSelection(NodeSelection.create(tr.doc, mapped));
+        tr.delete(neighborFrom, neighborTo);
+        const neighborInsertPos = movingDown
+          ? headingPos
+          : tr.mapping.map(range.to);
+        tr.insert(neighborInsertPos, neighbor.content);
         tr.scrollIntoView();
         dispatch(tr);
       }
@@ -375,29 +414,12 @@ export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
         return true;
       }
 
-      const cursorOffset = isNodeSelection(state.selection)
-        ? 0
-        : Math.max(0, state.selection.head - found.pos - 1);
       const move = moveFoldedSection(found.pos, dropPos);
       if (!dispatch) {
         move(state);
         return true;
       }
-      move(state, (tr) => {
-        const movedHeadingPos = tr.selection.from;
-        const movedHeading = tr.doc.nodeAt(movedHeadingPos);
-        if (movedHeading?.type === headingType) {
-          tr.setSelection(
-            TextSelection.create(
-              tr.doc,
-              movedHeadingPos +
-                1 +
-                Math.min(cursorOffset, movedHeading.content.size),
-            ),
-          );
-        }
-        dispatch(tr);
-      });
+      move(state, dispatch);
       return true;
     };
   };
