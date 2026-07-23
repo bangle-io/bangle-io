@@ -161,6 +161,73 @@ function findAdjacentSectionDropPos(
   return headingPos - $heading.parent.child(previousIndex).nodeSize;
 }
 
+type SiblingRange = {
+  from: number;
+  to: number;
+};
+
+/**
+ * Moves a closed range of siblings to a raw drop position without deleting
+ * the source range. Instead, the intervening siblings move around it, which
+ * lets ProseMirror map selections and plugin anchors inside the source.
+ */
+function moveSiblingRange(
+  tr: Transaction,
+  source: SiblingRange,
+  rawDropPos: number,
+): Transaction | null {
+  const { from, to } = source;
+  if (
+    from < 0 ||
+    from >= to ||
+    to > tr.doc.content.size ||
+    rawDropPos < 0 ||
+    rawDropPos > tr.doc.content.size ||
+    (rawDropPos >= from && rawDropPos <= to)
+  ) {
+    return null;
+  }
+
+  const sourceSlice = tr.doc.slice(from, to);
+  const dropPos = dropPoint(tr.doc, rawDropPos, sourceSlice);
+  if (
+    dropPos == null ||
+    (dropPos >= from && dropPos <= to) ||
+    !tr.doc.resolve(from).sameParent(tr.doc.resolve(dropPos))
+  ) {
+    return null;
+  }
+
+  const movingDown = dropPos > to;
+  const neighborFrom = movingDown ? to : dropPos;
+  const neighborTo = movingDown ? dropPos : from;
+  const neighbor = tr.doc.slice(neighborFrom, neighborTo);
+  if (neighbor.content.size === 0) {
+    return null;
+  }
+
+  const swapFrom = Math.min(from, dropPos);
+  const swapTo = Math.max(to, dropPos);
+  const $swapFrom = tr.doc.resolve(swapFrom);
+  const $swapTo = tr.doc.resolve(swapTo);
+  const swappedContent = movingDown
+    ? neighbor.content.append(sourceSlice.content)
+    : sourceSlice.content.append(neighbor.content);
+  if (
+    !$swapFrom.parent.canReplace(
+      $swapFrom.index(),
+      $swapTo.index(),
+      swappedContent,
+    )
+  ) {
+    return null;
+  }
+
+  tr.delete(neighborFrom, neighborTo);
+  tr.insert(movingDown ? from : tr.mapping.map(to), neighbor.content);
+  return tr;
+}
+
 function remapFoldedHeadingPos(
   tr: Transaction,
   pos: number,
@@ -314,55 +381,16 @@ export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
       if (!range) {
         return false;
       }
-      if (dropPos >= headingPos && dropPos <= range.to) {
-        return false;
-      }
-      const slice = state.doc.slice(headingPos, range.to);
-      const insertPos = dropPoint(state.doc, dropPos, slice);
-      if (
-        insertPos == null ||
-        (insertPos >= headingPos && insertPos <= range.to)
-      ) {
-        return false;
-      }
-      if (
-        !state.doc.resolve(headingPos).sameParent(state.doc.resolve(insertPos))
-      ) {
-        return false;
-      }
-
-      const movingDown = insertPos > range.to;
-      const neighborFrom = movingDown ? range.to : insertPos;
-      const neighborTo = movingDown ? insertPos : headingPos;
-      const neighbor = state.doc.slice(neighborFrom, neighborTo);
-      if (neighbor.content.size === 0) {
-        return false;
-      }
-
-      const swapFrom = Math.min(headingPos, insertPos);
-      const swapTo = Math.max(range.to, insertPos);
-      const $swapFrom = state.doc.resolve(swapFrom);
-      const $swapTo = state.doc.resolve(swapTo);
-      const swappedContent = movingDown
-        ? neighbor.content.append(slice.content)
-        : slice.content.append(neighbor.content);
-      if (
-        !$swapFrom.parent.canReplace(
-          $swapFrom.index(),
-          $swapTo.index(),
-          swappedContent,
-        )
-      ) {
+      const tr = moveSiblingRange(
+        state.tr,
+        { from: headingPos, to: range.to },
+        dropPos,
+      );
+      if (!tr) {
         return false;
       }
 
       if (dispatch) {
-        const tr = state.tr;
-        tr.delete(neighborFrom, neighborTo);
-        const neighborInsertPos = movingDown
-          ? headingPos
-          : tr.mapping.map(range.to);
-        tr.insert(neighborInsertPos, neighbor.content);
         tr.scrollIntoView();
         dispatch(tr);
       }
