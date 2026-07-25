@@ -384,6 +384,42 @@ test('slash date command inserts a day picked from the current month', async ({
     .toBe(`${targetLabel} meeting`);
 });
 
+test('slash date command supports keyboard day navigation', async ({
+  page,
+}) => {
+  const workspaceName = 'slash-command-date-keyboard';
+  await page.clock.setFixedTime(FIXED_CALENDAR_DATE);
+  const target = new Date(
+    FIXED_CALENDAR_DATE.getFullYear(),
+    FIXED_CALENDAR_DATE.getMonth(),
+    FIXED_CALENDAR_DATE.getDate() + 1,
+  );
+  const targetLabel = formatDateLabel(target);
+
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('/');
+  await expect(page.getByText('Date', { exact: true })).toBeVisible();
+  await page.keyboard.insertText('date');
+  await page.keyboard.press('Enter');
+
+  await expect(page.locator('[data-slot="calendar"]')).toBeVisible();
+  await expect(page.locator(daySelector(FIXED_CALENDAR_DATE))).toBeFocused();
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('Enter');
+
+  await expect(editor).toBeFocused();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe(targetLabel);
+});
+
 test('slash date command inserts a day after navigating months', async ({
   page,
 }) => {

@@ -27,6 +27,7 @@ import { store } from '../store';
 export type Suggestion = {
   markName: string;
   trigger: string;
+  synthetic: boolean;
   show: boolean;
   text: string;
   position: number;
@@ -319,6 +320,9 @@ export function pluginSuggestion({
               return;
             }
 
+            const activeMark = state.doc
+              .nodeAt(result.start)
+              ?.marks.find((mark) => mark.type === markType);
             setSuggestionForView(state, view, markName, {
               selectedIndex:
                 suggestion?.markName === markName &&
@@ -327,6 +331,7 @@ export function pluginSuggestion({
                   : 0,
               markName,
               trigger,
+              synthetic: activeMark?.attrs.synthetic === true,
               show: true,
               text: result.text ?? '',
               position: result.start,
