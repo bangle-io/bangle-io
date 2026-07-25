@@ -355,7 +355,10 @@ describe('suggestions provider state', () => {
     // This is the contract the slash menu's "Date" item relies on: replacing
     // the slash mark with another provider's trigger text (carrying that
     // provider's mark) activates the other provider's suggestion.
-    const mark = schema.mark('date_suggestion', { trigger: '$date' });
+    const mark = schema.mark('date_suggestion', {
+      trigger: '$date',
+      synthetic: true,
+    });
     slashSuggestions.command.replaceSuggestMarkWith({
       content: Fragment.from(schema.text('$date', [mark])),
     })(view.state, view.dispatch, view);
@@ -364,6 +367,7 @@ describe('suggestions provider state', () => {
     expect(editorStore.get(view.state, $suggestions).get(view)).toMatchObject({
       markName: 'date_suggestion',
       text: '$date',
+      synthetic: true,
       show: true,
     });
 
@@ -399,6 +403,7 @@ describe('suggestions provider state', () => {
           {
             markName: 'slash_command',
             trigger: '/',
+            synthetic: false,
             show: true,
             text: '/',
             position: 1,
@@ -412,6 +417,7 @@ describe('suggestions provider state', () => {
           {
             markName: 'wiki_link_suggestion',
             trigger: '[[',
+            synthetic: false,
             show: true,
             text: '[[Tar',
             position: 1,

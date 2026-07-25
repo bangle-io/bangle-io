@@ -119,12 +119,13 @@ export function SlashCommand({
       return;
     }
 
-    // Swap the slash mark for the date trigger text carrying the
-    // `date_suggestion` mark — the same document state as if the user had
-    // typed the trigger — so the DatePickerMenu surface takes over.
+    // Swap the slash mark for a synthetic date trigger. DatePickerMenu uses
+    // that existing distinction to focus the calendar for keyboard navigation;
+    // a directly typed `$date` keeps focus in the editor so typing can continue.
     const { schema } = editorView.state;
     const mark = schema.mark(DATE_SUGGESTION.markName, {
       trigger: DATE_SUGGESTION.trigger,
+      synthetic: true,
     });
     ext.suggestions.command.replaceSuggestMarkWith({
       content: Fragment.from(schema.text(DATE_SUGGESTION.trigger, [mark])),
