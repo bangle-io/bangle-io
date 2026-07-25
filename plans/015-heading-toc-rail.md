@@ -74,9 +74,10 @@ internal atom plus read-only public atom, a copy-on-write `setXForView` that
 deletes the key on `undefined`, cleanup in `destroy`. `$suggestions` is the
 same shape with an extra by-mark inner map a TOC does not need.
 
-- New plugin in `@bangle.io/banger-editor` (js-lib layer), re-exported through
-  the `@bangle.io/prosemirror-plugins` barrel — see the placement correction in
-  Current Status: `headingWatch` (name TBD). On `docChanged` transactions it walks
+- New plugin `headingWatch` (name TBD) in `@bangle.io/banger-editor` (js-lib
+  layer), re-exported through the `@bangle.io/prosemirror-plugins` barrel.
+  That barrel is almost entirely re-exports of `banger-editor`, and
+  `core/editor` imports PM code through it rather than directly. On `docChanged` transactions it walks
   `doc.descendants`, collecting `{ pos, level, text }` for nodes of type
   `heading` (same walk `PmEditorService.navigateToHeading` already does).
   Publishes to a `$headings: Map<EditorView, HeadingItem[]>` atom, with a

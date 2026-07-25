@@ -42,10 +42,21 @@ plan assumed — the error half already landed, only the pending half remains.
   first scan the app asserts the listing is fine while `$rawWsPaths` is empty.
 - `page-editor.tsx` renders `NoteNotFoundView` from the final `else` of its
   three-way ternary, consulting neither a loading state nor
-  `$fileTreeListState` — so a scan *error* also shows "Note Not Found" today,
-  even though `app/src/index.tsx` and `app-sidebar.tsx` both handle that state.
-- There are no `PageEditor` tests, and no test blocks a scan to assert an
-  in-flight state.
+  `$fileTreeListState`. A *first* scan that fails therefore shows "Note Not
+  Found"; a failed rescan does not, because `$rawWsPaths` is preserved for the
+  same workspace. The `native-fs-directory-not-found` variant never reaches
+  `PageEditor` at all — `app/src/index.tsx` preempts it with
+  `PageNativeFsRecovery` — and `app-sidebar.tsx` handles only plain `error`.
+- **The `WorkspaceNotFoundView` branch has the same premature-verdict bug, and
+  it fires first.** `!currentWsName` renders workspace-not-found, but
+  `$currentWsName` derives from `$workspaceListState`, which *already* has a
+  `loading` member that `PageEditor` ignores. So on a cold load the first false
+  verdict is "Workspace Not Found", not "Note Not Found". Fixing only the file
+  scan leaves the earlier flash in place — this belongs in Scope.
+- There are no `PageEditor` unit tests. Note that
+  `e2e-tests/src/delete-note-dialog.e2e.ts` asserts the `Note Not Found`
+  heading twice, including after a reload, so it is pinned to the exact branch
+  steps 6-7 replace and will need updating.
 
 ## Scope
 
@@ -53,6 +64,8 @@ plan assumed — the error half already landed, only the pending half remains.
   `packages/core/service-core/src/workspace-state-service.ts`.
 - Add a derived current-route file resolution atom, likely shaped like:
   `none | loading | found | missing | error`.
+- Make `PageEditor` respect `$workspaceListState`'s existing `loading` status
+  so the workspace-not-found branch stops firing before the list resolves.
 - Keep the existing `$currentWsPath` API as the "found file only" compatibility
   surface so existing note-only callers do not accidentally start acting on
   unresolved routes.

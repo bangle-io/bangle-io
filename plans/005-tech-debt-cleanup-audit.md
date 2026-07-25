@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-06-15
-updated: 2026-07-21
+updated: 2026-07-24
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/631
@@ -24,7 +24,8 @@ related_prs:
   - https://github.com/bangle-io/bangle-io/pull/649
   - https://github.com/bangle-io/bangle-io/pull/658
   - https://github.com/bangle-io/bangle-io/pull/667
-related_issues: []
+related_issues:
+  - https://github.com/bangle-io/bangle-io/issues/563
 ---
 
 # Tech Debt Cleanup Audit

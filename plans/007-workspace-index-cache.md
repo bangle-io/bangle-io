@@ -46,10 +46,13 @@ has not started.
   the service extraction stays deferred.** Bounded concurrency and typed
   incremental updates remain target work (also A8 in plan 005).
 - The note file stats scan is a second workspace-wide lifecycle in the same
-  service, and a better one: bounded concurrency, a cache that survives
-  failures instead of flashing consumers back to empty, and incremental
-  single-path patching. Treat it as the reference template and migration
-  target for `WorkspaceIndexService`, not just the backlink index.
+  service, and a better one: bounded concurrency, a published map that is not
+  reset wholesale on failure, and incremental single-path patching. It is not
+  fully failure-retaining either — a per-path stat failure deletes that path's
+  cache entry, and only the targeted patch path keeps last-known values — but
+  it degrades per file instead of collapsing the workspace. Treat it as the
+  reference template and migration target for `WorkspaceIndexService`, not
+  just the backlink index.
 - `packages/core/app/src/components/backlinks/linked-mentions.tsx` now renders
   backlinks from `WorkspaceStateService.$backlinkIndex` instead of reading or
   parsing Markdown in React.

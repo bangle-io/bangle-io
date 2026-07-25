@@ -37,8 +37,10 @@ Blocked on upstream, verified 2026-07-24.
   `"./dist/*.css"`; raw `lib/` sources ship but are not exposed, so
   deep-importing the schema without the nodeview does not resolve.
 - Bangle must not fork or copy the upstream nodeview to create an artificial
-  split. A true lazy boundary needs an upstream entry split first, so the only
-  actionable step is an upstream issue or PR.
+  split. A true lazy boundary cannot *ship* without an upstream entry split, so
+  the blocking step is an upstream issue or PR. Next steps 1 and 3 (measuring
+  the module graph, prototyping the async nodeview handoff) can still proceed
+  locally and would strengthen that upstream request.
 
 ## Scope
 

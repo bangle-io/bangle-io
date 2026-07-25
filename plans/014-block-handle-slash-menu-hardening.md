@@ -36,13 +36,14 @@ Large / Editor).
 Partially complete. Item 6 shipped in PR #656; items 1-5 and 7-8 remain, and
 none block release of the merged PR #633 behavior.
 
-Verified against `main` 2026-07-24: items 1-5, 7, and 8 all still open,
-verbatim. Nothing has touched `banger-editor/src/drag/` since PR #633.
+Verified against `main` 2026-07-24: items 1-5, 7, and 8 all still open as
+described. Nothing has touched `banger-editor/src/drag/` since PR #633.
 Item 4 now goes first — see below.
 
 ## Scope
 
-Work areas, roughly in priority order. Each item should land with its own
+Work areas, numbered as identifiers rather than in priority order — see Next
+steps for the current sequencing. Each item should land with its own
 tests and can ship independently.
 
 ### 1. Track the hovered block as a mapped ProseMirror position
@@ -86,13 +87,15 @@ while `view.composing`, and keep the existing `view.editable` gate.
 Scroll-hiding already exists via the `mousewheel` handler; further scroll
 polish is optional.
 
-**Do this one first.** PR #680's inline selection toolbar shows on
-`!selection.empty`, the exact inverse of the handle's only gate
-(`view.editable`), so both floating surfaces are live during any drag-select.
-That is no longer hypothetical. The fix is a few lines in the `mousemove`
-guard and is independent of item 1's state container. No test asserts the
-handle hides during a selection; new coverage belongs beside the toolbar
-tests rather than in `block-handle.e2e.ts`.
+**Do this one first.** The inline selection toolbar requires
+`view.editable && !selection.empty` (plus code-block and eligible-content
+checks) — a strict superset of the handle's only gate, `view.editable`. Both
+floating surfaces are therefore live during a mouse drag-select. This has been
+true since PR #633 shipped the handle, not a recent regression, and the
+selection toolbar predates it. The fix is a few lines in the `mousemove` guard
+and is independent of item 1's state container. No test asserts the handle
+hides during a selection; new coverage belongs beside the selection-menu tests
+rather than in `block-handle.e2e.ts`.
 
 ### 5. Explicit nested-block handle policy
 

@@ -51,8 +51,9 @@ dialog is local-only and adds no file-event consumer.
    adapter (IndexedDB, Native FS, memory) has an internal
    `emitChange(FileStorageChangeEvent)` feeding a constructor `onChange`
    callback. This seam is currently dead-ended: `initialize-services` wires it
-   to `logger.info` only. No signal flows through it; it exists as reserved
-   plumbing for `FileSystemObserver`.
+   to `logger.info` only, and only for the IndexedDB and Native FS adapters —
+   memory's is not wired at all. No signal flows through it; it exists as
+   reserved plumbing for `FileSystemObserver`.
 
 2. **`RootEmitter` (`shared/root-emitter`).** Hand-rolled typed pub/sub with
    scoped views per service and a BroadcastChannel transport for the
@@ -80,9 +81,10 @@ dialog is local-only and adds no file-event consumer.
    note-stats scan/patch off `$fileForceUpdateCount` and
    `$fileContentUpdateEvent`. `PmEditorService` follows renames via
    `$fileRenameEvent` (no longer with a handled-sequence field — it relies on
-   an idempotent handler). `EditorService` bypasses atoms and uses the emitter
-   directly, and emits `file:force-update` as an "invalidate everything"
-   hammer on Native FS auth recovery. `NoteSnapshotService` also subscribes the
+   an idempotent handler). `EditorService` consumes no file events at all — it
+   subscribes only `event::editor:reload-editor` — but it *emits*
+   `file:force-update` as an "invalidate everything" hammer on Native FS auth
+   recovery. `NoteSnapshotService` also subscribes the
    scoped emitter directly, discriminates its own writes from cross-tab echoes
    via `event.sender`, and keeps its own path-state relocation for
    create/delete/rename.
@@ -134,13 +136,15 @@ function and test vehicle.
 
 The atom fan-out discards `event.sender`, so "was this my own write or another
 tab's" is unanswerable from atoms. `NoteSnapshotService` needs exactly that
-discrimination and therefore subscribes the scoped emitter directly — the
-second service after `EditorService` to bypass atoms, this time for a
-structural reason rather than preference. It also hand-rolls its own
-create/delete/rename path-state relocation, mirroring `WorkspaceStateService`'s
-against a different vocabulary: duplicated *semantics* rather than duplicated
-dedup. It is additionally on the write path via a synchronous pre-write hook in
-`FileSystemService`, so one service now participates through two mechanisms.
+discrimination and therefore subscribes the scoped emitter directly — it is the
+only consumer of `event::file:update` outside the translating service itself,
+and it bypassed atoms for a structural reason rather than preference. It also
+hand-rolls its own create/delete/rename path-state relocation, mirroring
+`WorkspaceStateService`'s against a different vocabulary: duplicated *semantics*
+rather than duplicated dedup. It is additionally on the write path via two
+`async` hooks that `FileSystemService` awaits before `writeFile`, so one
+service now participates through two mechanisms — and a snapshot failure or
+delay sits in front of the user's own write.
 
 This binds harder once FileSystemObserver adds a third origin — an external
 disk change that is neither self nor a known peer tab.
@@ -178,8 +182,8 @@ producer contracts, not spaghetti.
   with counters derived from it, plus one shared subscription helper that owns
   dedup — deleting the per-consumer copies.
 - Alternatively, reserve atoms strictly for state and have event consumers
-  subscribe the scoped emitter directly (the pattern `EditorService` already
-  uses), so events are never round-tripped through last-value atoms.
+  subscribe the scoped emitter directly (the pattern `NoteSnapshotService`
+  already uses), so events are never round-tripped through last-value atoms.
 
 ## Verification (when picked up)
 

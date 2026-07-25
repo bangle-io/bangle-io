@@ -41,9 +41,11 @@ Planned; no implementation. This plan exists because the shipped feature had no
 durable record and the follow-up was only captured in conversation.
 
 `NoteSnapshotService` is database-only (`static deps = ['database']`). It sits
-on the write path via a synchronous pre-write hook in `FileSystemService` and
-also subscribes the scoped emitter directly — plan 015 (file change eventing)
-records the constraints that come with that.
+on the write path via two `async` pre-write hooks that `FileSystemService`
+awaits *before* `writeFile`, and also subscribes the scoped emitter directly —
+plan 015 (file change eventing) records the constraints that come with that.
+The awaited-before-write ordering is what makes the write-path question below
+a real one rather than theoretical.
 
 ## Scope
 
