@@ -937,7 +937,12 @@ export class PmEditorService
     if (!view || view.isDestroyed || !view.dom.isConnected) {
       return false;
     }
-    if (view.hasFocus()) {
+    const activeElement = view.dom.ownerDocument.activeElement;
+    const pageOwnsFocus =
+      !activeElement ||
+      activeElement === view.dom.ownerDocument.body ||
+      activeElement === view.dom.ownerDocument.documentElement;
+    if (view.hasFocus() || !pageOwnsFocus) {
       return false;
     }
     view.focus();
@@ -1066,9 +1071,51 @@ export class PmEditorService
     if (!view) {
       return false;
     }
-    const parsed = this.getMarkdown(view.state.schema).parser.parse(
-      markdownText,
-    );
+    return this.insertMarkdownIntoView(view, markdownText);
+  }
+
+  /**
+   * Binds a future Markdown insertion to the current editor state. Clipboard
+   * reads may wait on a permission prompt; during that wait the user can switch
+   * notes or move the selection, and the pending operation must not follow.
+   */
+  captureMarkdownInsertion(): ((markdownText: string) => boolean) | null {
+    const view = this.getActiveEditorView();
+    if (!view) {
+      return null;
+    }
+    const capturedDoc = view.state.doc;
+    const capturedSelection = view.state.selection;
+
+    return (markdownText) => {
+      if (
+        view.isDestroyed ||
+        !this.getEditorEntryByView(view) ||
+        this.getActiveEditorView() !== view ||
+        !view.state.doc.eq(capturedDoc) ||
+        !view.state.selection.eq(capturedSelection)
+      ) {
+        return false;
+      }
+      return this.insertMarkdownIntoView(view, markdownText);
+    };
+  }
+
+  private insertMarkdownIntoView(
+    view: ReturnType<typeof createEditor>,
+    markdownText: string,
+  ): boolean {
+    const markdown = this.getMarkdown(view.state.schema);
+    let parsed: ReturnType<typeof markdown.parser.parse>;
+    try {
+      parsed = markdown.parser.parse(markdownText);
+      const serialized = markdown.serializer.serialize(parsed);
+      if (!isMarkdownRoundTripPreserved(markdownText, serialized)) {
+        return false;
+      }
+    } catch {
+      return false;
+    }
     const inline =
       parsed.childCount === 1 && parsed.firstChild?.type.name === 'paragraph';
     const slice = inline

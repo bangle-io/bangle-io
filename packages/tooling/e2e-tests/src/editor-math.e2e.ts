@@ -7,6 +7,7 @@ import {
   getEditorLocator,
   readStoredMarkdown,
   waitForEditorFocus,
+  writeStoredMarkdown,
 } from './common';
 
 test('authors, edits, copies, and persists inline and display math', async ({
@@ -162,6 +163,42 @@ $$`;
   });
 
   expect(invalidSelectionWarnings).toEqual([]);
+});
+
+test('undo from a focused math source restores the outer note history', async ({
+  page,
+}) => {
+  const workspaceName = 'editor-math-undo';
+  const noteName = 'Math';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    noteName,
+    'KEEP\n\n$$\nabc\n$$',
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const displayMath = getEditorLocator(page, {})
+    .first()
+    .locator('math-display');
+  await displayMath.locator('.math-render').click();
+  const sourceEditor = displayMath.locator('.math-src .ProseMirror');
+  await expect(sourceEditor).toBeVisible();
+  await sourceEditor.press('End');
+  await page.keyboard.insertText('d');
+  await expect(sourceEditor).toHaveText('abcd');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toContain('abcd');
+
+  await sourceEditor.press(`${ctrlKey}+z`);
+
+  await expect(sourceEditor).toBeFocused();
+  await expect(sourceEditor).toHaveText('abc');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('KEEP\n\n$$\nabc\n$$');
 });
 
 test('unsafe edited math cannot consume following note content', async ({

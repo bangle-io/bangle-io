@@ -1,9 +1,11 @@
 import { expect, test } from '@playwright/test';
 import {
   createBrowserWorkspaceAndNote,
+  ctrlKey,
   EDITOR_FOCUSED_SELECTOR,
   getEditorLocator,
   pressAppShortcut,
+  readStoredMarkdown,
   waitForEditorFocus,
 } from './common';
 
@@ -68,4 +70,38 @@ test('Cmd/Ctrl-A from the editor pane whitespace selects only the note', async (
   expect(selection.withinEditor).toBe(true);
   // The sidebar's workspace name must never land in the selection.
   expect(selection.text).not.toContain(workspaceName);
+});
+
+test('Cmd/Ctrl-A inside math cannot replace the outer note', async ({
+  page,
+}) => {
+  const noteName = 'math-selection';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName,
+  });
+  const editor = getEditorLocator(page, {}).first();
+  await waitForEditorFocus(page, {});
+  await editor.fill('KEEP THIS LINE');
+  await editor.press('End');
+  await editor.press('Enter');
+  await page.keyboard.insertText('/');
+  await page.getByText('Math block', { exact: true }).click();
+
+  const sourceEditor = editor.locator('math-display .math-src .ProseMirror');
+  await expect(sourceEditor).toBeVisible();
+  await sourceEditor.fill(String.raw`\frac{a}{b}`);
+  await expect(sourceEditor).toBeFocused();
+
+  // Exercise the application shortcut manager as well as the browser-native
+  // nested editor selection. Neither may redirect focus to the outer editor.
+  await pressAppShortcut(page, 'a');
+  await expect(sourceEditor).toBeFocused();
+  await sourceEditor.press(`${ctrlKey}+a`);
+  await page.keyboard.insertText('x');
+
+  await expect(editor).toContainText('KEEP THIS LINE');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('KEEP THIS LINE\n\n$$\nx\n$$');
 });

@@ -74,6 +74,31 @@ describe('PmEditorService', () => {
     ).toBe(true);
     expect(firstEditor.state.doc.textContent).toBe('First note');
 
+    const secondDocAfterSafePaste = secondEditor.state.doc;
+    secondEditor.dispatch(
+      secondEditor.state.tr.setSelection(
+        TextSelection.create(
+          secondEditor.state.doc,
+          1,
+          secondEditor.state.doc.content.size - 1,
+        ),
+      ),
+    );
+    expect(
+      service.insertMarkdownAtSelection(
+        '[visible][missing]\n\n[unused]: https://example.com',
+      ),
+    ).toBe(false);
+    expect(secondEditor.state.doc).toBe(secondDocAfterSafePaste);
+
+    secondEditor.focus();
+    const capturedInsertion = service.captureMarkdownInsertion();
+    expect(capturedInsertion).not.toBeNull();
+    firstEditor.focus();
+    expect(capturedInsertion?.('wrong editor')).toBe(false);
+    expect(firstEditor.state.doc.textContent).toBe('First note');
+    expect(secondEditor.state.doc.textContent).toBe('from Markdown');
+
     unmountSecond();
     unmountFirst();
     controller.abort();
@@ -202,15 +227,27 @@ describe('PmEditorService', () => {
       throw new Error('Expected the editor to be ready');
     }
 
-    // Focus lives outside the editor, mimicking a click on the pane whitespace
-    // that leaves the contenteditable unfocused.
-    outsideInput.focus();
+    // With no meaningful focus owner, the app-level shortcut redirects
+    // select-all into the last active editor.
+    view.dom.blur();
     expect(view.hasFocus()).toBe(false);
 
     expect(service.selectAllInActiveEditor()).toBe(true);
     expect(view.hasFocus()).toBe(true);
     expect(view.state.selection.from).toBe(0);
     expect(view.state.selection.to).toBe(view.state.doc.content.size);
+
+    const nestedEditor = document.createElement('div');
+    nestedEditor.contentEditable = 'true';
+    view.dom.append(nestedEditor);
+    nestedEditor.focus();
+    expect(view.hasFocus()).toBe(false);
+    expect(service.selectAllInActiveEditor()).toBe(false);
+    expect(document.activeElement).toBe(nestedEditor);
+
+    outsideInput.focus();
+    expect(service.selectAllInActiveEditor()).toBe(false);
+    expect(document.activeElement).toBe(outsideInput);
 
     // While the editor already owns focus its own keymap handles select-all,
     // so the service declines and leaves the live selection untouched.
@@ -223,6 +260,7 @@ describe('PmEditorService', () => {
 
     unmount();
     controller.abort();
+    nestedEditor.remove();
     domNode.remove();
     outsideInput.remove();
   });

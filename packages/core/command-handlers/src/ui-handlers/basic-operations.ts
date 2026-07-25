@@ -196,6 +196,11 @@ export const basicOperationsHandlers = [
   }),
 
   c('command::ui:paste-from-markdown', async ({ editorEngine }) => {
+    const insertMarkdown = editorEngine.captureMarkdownInsertion();
+    if (!insertMarkdown) {
+      toast.error(t.app.toasts.pasteMarkdownFailed);
+      return;
+    }
     let text: string;
     try {
       text = await readTextFromClipboard();
@@ -207,7 +212,7 @@ export const basicOperationsHandlers = [
       toast.error(t.app.toasts.pasteMarkdownEmpty);
       return;
     }
-    if (!editorEngine.insertMarkdownAtSelection(text)) {
+    if (!insertMarkdown(text)) {
       toast.error(t.app.toasts.pasteMarkdownFailed);
     }
   }),

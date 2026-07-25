@@ -135,9 +135,6 @@ export function DatePickerMenu({
         // that already-selected day toggles the selection to `undefined`, so
         // the trigger is left behind instead of committing today's date.
         required
-        // Move focus to the selected day so arrow keys navigate the grid and
-        // Enter commits, without any editor-side key forwarding.
-        autoFocus
         captionLayout="dropdown"
         // Hide adjacent-month days so only the visible month is selectable
         // (avoids ambiguous day cells near month boundaries).

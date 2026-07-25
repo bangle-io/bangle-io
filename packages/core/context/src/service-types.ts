@@ -49,6 +49,13 @@ export type EditorEngineContract = BaseService & {
    * note. An engine that always preserves Markdown exposes an always-empty set.
    */
   readonly $roundTripWarnings: Atom<ReadonlySet<string>>;
+  /**
+   * Captures the active editor and selection for a later Markdown insertion.
+   * The returned function refuses to insert if the editor, document, or
+   * selection changes before it runs, so asynchronous clipboard access cannot
+   * retarget content into another note or range.
+   */
+  captureMarkdownInsertion: () => ((markdownText: string) => boolean) | null;
   collapseAllHeadings: (level: number) => boolean;
   focusEditor: () => void;
   getSelectionMarkdown: () => string | null;
@@ -66,6 +73,10 @@ export type EditorEngineContract = BaseService & {
    */
   selectAllInActiveEditor: () => boolean;
   hasPendingOrFailedSave: (wsPath?: string) => boolean;
+  /**
+   * Parses and inserts Markdown at the current selection. Returns false when
+   * the source cannot round-trip without loss or normalization.
+   */
   insertMarkdownAtSelection: (markdownText: string) => boolean;
   /** Reports whether an app-level editor action can run against the current
    * active editor and selection. Callers must still revalidate on execution. */

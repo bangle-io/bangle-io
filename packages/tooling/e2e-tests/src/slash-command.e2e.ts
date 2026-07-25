@@ -448,6 +448,28 @@ test('typing the $date trigger directly opens the calendar and inserts a day', a
     .toBe(targetLabel);
 });
 
+test('typing after the $date trigger keeps every character in the note', async ({
+  page,
+}) => {
+  const workspaceName = 'date-trigger-literal-text';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await editor.pressSequentially('$datefoo', { delay: 100 });
+
+  await expect(page.locator('[data-slot="calendar"]')).toBeHidden();
+  await waitForEditorFocus(page, {});
+  await expect(editor).toHaveText('$datefoo');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe('$datefoo');
+});
+
 test('an abandoned $date trigger persists as plain text across reload', async ({
   page,
 }) => {

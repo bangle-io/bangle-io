@@ -51,11 +51,6 @@ type LinkSession = {
   initialHref: string;
 };
 
-// A single "turn into paragraph" click may need to peel off several nesting
-// levels (e.g. a list inside a blockquote); this bounds the flatten loop well
-// above any realistic nesting depth.
-const MAX_PARAGRAPH_FLATTEN_STEPS = 8;
-
 /**
  * Whether every block touched by the selection is a paragraph sitting directly
  * under the document. This is the goal state of "turn into paragraph", so it
@@ -185,14 +180,24 @@ function InlineSelectionMenuContent({
       return flattenStep(state, dispatch);
     }
     let changed = false;
-    for (let step = 0; step < MAX_PARAGRAPH_FLATTEN_STEPS; step += 1) {
+    // Each successful step must remove or convert document structure. The
+    // initial node size is therefore a natural upper bound that supports valid
+    // deeply nested Markdown while still guarding against a misbehaving
+    // command that reports success without making progress.
+    let remainingSteps = view.state.doc.nodeSize;
+    while (remainingSteps > 0) {
       if (isSelectionAllTopLevelParagraphs(view.state)) {
         break;
       }
+      const before = view.state.doc;
       if (!flattenStep(view.state, view.dispatch, view)) {
         break;
       }
+      if (view.state.doc.eq(before)) {
+        break;
+      }
       changed = true;
+      remainingSteps -= 1;
     }
     return changed;
   };

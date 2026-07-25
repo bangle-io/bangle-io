@@ -136,6 +136,10 @@ export class EditorWService
     return null;
   }
 
+  captureMarkdownInsertion(): null {
+    return null;
+  }
+
   insertMarkdownAtSelection(_markdownText: string): boolean {
     return false;
   }
