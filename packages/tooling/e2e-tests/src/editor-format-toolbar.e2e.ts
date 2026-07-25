@@ -152,6 +152,19 @@ test('Paragraph converts an entire mixed or nested selection in one click', asyn
     .poll(() => readStoredMarkdown(page, workspaceName, noteName))
     .toBe('item');
   await expect(paragraph).toHaveAttribute('aria-pressed', 'true');
+
+  // The flattening loop must be driven by document progress, not an arbitrary
+  // nesting cap. Ten blockquote levels previously stopped halfway through.
+  const deeplyNested = `${'> '.repeat(10)}- deep item`;
+  await writeStoredMarkdown(page, workspaceName, noteName, deeplyNested);
+  await page.reload({ waitUntil: 'networkidle' });
+  await selectEditorText(page, 'deep item');
+  await expect(paragraph).toBeEnabled();
+  await paragraph.click();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('deep item');
+  await expect(paragraph).toHaveAttribute('aria-pressed', 'true');
 });
 
 // Regression: the block controls used to rewrite every textblock in the range,

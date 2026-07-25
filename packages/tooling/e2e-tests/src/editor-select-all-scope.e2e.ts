@@ -1,9 +1,11 @@
 import { expect, test } from '@playwright/test';
 import {
   createBrowserWorkspaceAndNote,
+  ctrlKey,
   EDITOR_FOCUSED_SELECTOR,
   getEditorLocator,
   pressAppShortcut,
+  readStoredMarkdown,
   waitForEditorFocus,
 } from './common';
 
@@ -70,51 +72,38 @@ test('Cmd/Ctrl-A from the editor pane whitespace selects only the note', async (
   expect(selection.text).not.toContain(workspaceName);
 });
 
-// Regression: a math node opens a nested EditorView for its LaTeX source.
-// `view.hasFocus()` is an identity check on the outer contenteditable, so it
-// reported false while the nested editor held focus. The shortcut treated that
-// as "unfocused", stole focus out of the math editor and selected the whole
-// note — so the next keystroke replaced the entire document.
-test('Cmd/Ctrl-A inside a math node does not select or destroy the note', async ({
+test('Cmd/Ctrl-A inside math cannot replace the outer note', async ({
   page,
 }) => {
+  const noteName = 'math-selection';
   await createBrowserWorkspaceAndNote(page, {
-    workspaceName: 'select-all-math',
-    noteName: 'note-math',
+    workspaceName,
+    noteName,
   });
-  // The math node mounts its own nested `.ProseMirror`, so scope to the outer
-  // editor explicitly rather than letting the shared locator match both.
   const editor = getEditorLocator(page, {}).first();
   await waitForEditorFocus(page, {});
-  await page.keyboard.type('KEEP THIS LINE');
-  await page.keyboard.press('Enter');
+  await editor.fill('KEEP THIS LINE');
+  await editor.press('End');
+  await editor.press('Enter');
+  await page.keyboard.insertText('/');
+  await page.getByText('Math block', { exact: true }).click();
 
-  // Insert a math block and type into its nested source editor.
-  await page.keyboard.type('/math');
-  await expect(page.getByRole('option', { name: /Math block/i })).toBeVisible();
-  await page.keyboard.press('Enter');
-  const mathSource = editor.locator('.math-src .ProseMirror');
-  await expect(mathSource).toBeVisible();
-  await page.keyboard.type('\\frac{a}{b}');
+  const sourceEditor = editor.locator('math-display .math-src .ProseMirror');
+  await expect(sourceEditor).toBeVisible();
+  await sourceEditor.fill(String.raw`\frac{a}{b}`);
+  await expect(sourceEditor).toBeFocused();
 
-  // The nested editor owns focus, so select-all belongs to it, not the note.
-  // (Focus is asserted by containment: the outer editor and the math source are
-  // both `.ProseMirror`, so a focused-class selector would match either one.)
+  // Exercise the application shortcut manager as well as the browser-native
+  // nested editor selection. Neither may redirect focus to the outer editor.
   await pressAppShortcut(page, 'a');
-  await expect(mathSource).toBeVisible();
-  await expect
-    .poll(() =>
-      page.evaluate(() => {
-        const source = document.querySelector('.math-src');
-        const active = document.activeElement;
-        return Boolean(source && active && source.contains(active));
-      }),
-    )
-    .toBe(true);
+  await expect(sourceEditor).toBeFocused();
+  await sourceEditor.press(`${ctrlKey}+a`);
+  await page.keyboard.insertText('x');
 
-  // The decisive assertion: a keystroke after select-all must not wipe the note.
-  await page.keyboard.type('X');
   await expect(editor).toContainText('KEEP THIS LINE');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('KEEP THIS LINE\n\n$$\nx\n$$');
 });
 
 // Regression: the shortcut must not steal focus from a control elsewhere in the

@@ -141,6 +141,9 @@ export function setupExtensions(
       markName: DATE_SUGGESTION.markName,
       trigger: DATE_SUGGESTION.trigger,
       markClassName: 'text-pop',
+      // This provider has no query: typing past the exact trigger means the
+      // user is entering literal text, so close without consuming the suffix.
+      endOnQuery: true,
       // The suggestion keymap is installed once by the slash-command
       // provider and dispatches by mark name, same as wikiSuggestions.
       installKeymap: false,

@@ -198,11 +198,13 @@ export function pluginSuggestion({
   trigger,
   logger,
   endOnWhitespace = false,
+  endOnQuery = false,
 }: {
   markName: string;
   trigger: string;
   logger?: Logger;
   endOnWhitespace?: boolean;
+  endOnQuery?: boolean;
 }) {
   return new Plugin({
     key: new PluginKey(`suggestion-${markName}`),
@@ -284,6 +286,15 @@ export function pluginSuggestion({
               return;
             }
             logger?.debug('querytext', result?.text);
+
+            if (endOnQuery && result.text !== trigger) {
+              logger?.debug('suggestion:text after trigger ended the query');
+              removeSuggestMark({
+                markName,
+                selection: state.selection,
+              })(state, view.dispatch, view);
+              return;
+            }
 
             // Whitespace ends the query for providers that opt in (the
             // slash menu): the typed text stays in the document, the menu

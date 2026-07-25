@@ -42,6 +42,7 @@ const dateSuggestions = setupSuggestions({
   trigger: '$date',
   markClassName: 'date',
   installKeymap: false,
+  endOnQuery: true,
 });
 const resolved = resolve([
   collection({ id: 'test-store' }),
@@ -275,6 +276,35 @@ describe('suggestions provider state', () => {
       text: '$date',
       show: true,
     });
+  });
+
+  it('ends a trigger-only suggestion when literal text follows it', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: '$dat', store });
+
+    expect(handleTextInput(view, 5, 5, 'e')).toBe(true);
+    expect(editorStore.get(view.state, $suggestions).get(view)).toMatchObject({
+      markName: 'date_suggestion',
+      text: '$date',
+    });
+
+    view.dispatch(view.state.tr.insertText('f'));
+    view.dispatch(view.state.tr.insertText('oo'));
+
+    expect(view.state.doc.textContent).toBe('$datefoo');
+    expect(editorStore.get(view.state, $suggestions).get(view)).toBeUndefined();
+    const dateSuggestionMark = schema.marks.date_suggestion;
+    expect(dateSuggestionMark).toBeDefined();
+    if (!dateSuggestionMark) {
+      throw new Error('Expected the date suggestion mark');
+    }
+    expect(
+      view.state.doc.rangeHasMark(
+        0,
+        view.state.doc.content.size,
+        dateSuggestionMark,
+      ),
+    ).toBe(false);
   });
 
   it('activates a provider when its trigger arrives as a single inserted chunk', () => {
