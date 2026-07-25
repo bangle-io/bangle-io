@@ -202,10 +202,31 @@ describe('PmEditorService', () => {
       throw new Error('Expected the editor to be ready');
     }
 
-    // Focus lives outside the editor, mimicking a click on the pane whitespace
-    // that leaves the contenteditable unfocused.
+    // A control elsewhere in the app owns focus, so its own select-all must
+    // win. The service declines instead of stealing focus into the note.
     outsideInput.focus();
     expect(view.hasFocus()).toBe(false);
+    expect(service.selectAllInActiveEditor()).toBe(false);
+    expect(document.activeElement).toBe(outsideInput);
+
+    // Focus on a descendant of the editor — this is what a math node's nested
+    // EditorView looks like. `view.hasFocus()` is an identity check and reports
+    // false here, so treating it as unfocused used to yank focus out of the
+    // nested editor and select the whole note, letting the next keystroke
+    // replace the document.
+    const nested = document.createElement('div');
+    nested.tabIndex = -1;
+    view.dom.append(nested);
+    nested.focus();
+    expect(view.hasFocus()).toBe(false);
+    expect(service.selectAllInActiveEditor()).toBe(false);
+    expect(document.activeElement).toBe(nested);
+    nested.remove();
+
+    // Nothing owns focus, mimicking a click on the pane whitespace that leaves
+    // the contenteditable unfocused. Only then does the note take select-all.
+    outsideInput.blur();
+    expect(document.activeElement).toBe(document.body);
 
     expect(service.selectAllInActiveEditor()).toBe(true);
     expect(view.hasFocus()).toBe(true);

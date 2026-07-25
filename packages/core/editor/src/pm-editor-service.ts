@@ -924,20 +924,34 @@ export class PmEditorService
 
   /**
    * Redirects a global Cmd/Ctrl-A into the active editor when the editor is
-   * mounted but not DOM-focused (e.g. the user clicked the empty padding
-   * around the note, leaving focus on the page body). Without this a browser
-   * select-all fired from outside the contenteditable selects the whole
+   * mounted and nothing at all holds focus (e.g. the user clicked the empty
+   * padding around the note, leaving focus on the page body). Without this a
+   * browser select-all fired from outside the contenteditable selects the whole
    * document, sweeping the sidebar and app chrome into the selection.
    *
-   * Defers to the editor's own keymap while it is focused, and to native
-   * behavior when no editor is mounted, by returning false in those cases.
+   * Anything else keeps its own select-all: returning false defers to the
+   * editor's keymap, to a focused control elsewhere in the app, and to native
+   * behavior when no editor is mounted.
+   *
+   * The guard deliberately tests "nothing is focused" rather than
+   * `view.hasFocus()`. That method is an identity check on the outer
+   * contenteditable, so it reports false while focus sits on a descendant —
+   * notably the nested EditorView a math node opens for its LaTeX source.
+   * Treating that as unfocused stole focus out of the math editor and selected
+   * the whole note, so the next keystroke replaced the document.
    */
   selectAllInActiveEditor(): boolean {
     const view = this.getActiveEditorView();
     if (!view || view.isDestroyed || !view.dom.isConnected) {
       return false;
     }
-    if (view.hasFocus()) {
+    const { activeElement } = view.root;
+    const ownerDocument = view.dom.ownerDocument;
+    const nothingFocused =
+      !activeElement ||
+      activeElement === ownerDocument.body ||
+      activeElement === ownerDocument.documentElement;
+    if (!nothingFocused) {
       return false;
     }
     view.focus();
