@@ -1,10 +1,7 @@
 import {
   $selectionMenu,
   type Command,
-  chainCommands,
-  lift,
   type SelectionMenuState,
-  setBlockType,
 } from '@bangle.io/prosemirror-plugins';
 import {
   Button,
@@ -31,6 +28,12 @@ import {
   Strikethrough,
 } from 'lucide-react';
 import React, { useRef, useState } from 'react';
+import {
+  isSelectionAllHeadings,
+  isSelectionAllTopLevelParagraphs,
+  setParagraphInSelection,
+  toggleHeadingInSelection,
+} from '../block-format';
 import type { PmEditorService } from '../pm-editor-service';
 import { useEditorCoreServices } from '../use-editor-core-services';
 import {
@@ -51,39 +54,21 @@ type LinkSession = {
   initialHref: string;
 };
 
-// A single "turn into paragraph" click may need to peel off several nesting
-// levels (e.g. a list inside a blockquote); this bounds the flatten loop well
-// above any realistic nesting depth.
-const MAX_PARAGRAPH_FLATTEN_STEPS = 8;
+const HEADING_LEVELS = [1, 2, 3] as const;
 
-/**
- * Whether every block touched by the selection is a paragraph sitting directly
- * under the document. This is the goal state of "turn into paragraph", so it
- * drives both the Paragraph control's active state and its availability. A
- * mixed selection (e.g. a paragraph plus a following heading) is not all
- * top-level paragraphs, so the control stays actionable there.
- */
-function isSelectionAllTopLevelParagraphs(state: EditorState): boolean {
-  const paragraph = state.schema.nodes.paragraph;
-  if (!paragraph) {
-    return false;
-  }
-  const topType = state.schema.topNodeType;
-  const { from, to } = state.selection;
-  let sawTextblock = false;
-  let allTopLevel = true;
-  state.doc.nodesBetween(from, to, (node, _pos, parent) => {
-    if (node.isTextblock) {
-      sawTextblock = true;
-      if (node.type !== paragraph || parent?.type !== topType) {
-        allTopLevel = false;
-      }
-      return false;
-    }
-    return allTopLevel;
-  });
-  return sawTextblock && allTopLevel;
-}
+const HEADING_ICONS: Record<(typeof HEADING_LEVELS)[number], typeof Heading1> =
+  {
+    1: Heading1,
+    2: Heading2,
+    3: Heading3,
+  };
+
+// Read lazily: `t` is installed on the global at bootstrap, after module load.
+const HEADING_LABELS: Record<(typeof HEADING_LEVELS)[number], () => string> = {
+  1: () => t.app.editor.selectionMenu.heading1,
+  2: () => t.app.editor.selectionMenu.heading2,
+  3: () => t.app.editor.selectionMenu.heading3,
+};
 
 export function InlineSelectionMenu({ editorName }: { editorName: string }) {
   const selectionMenus = useAtomValue($selectionMenu);
@@ -158,44 +143,29 @@ function InlineSelectionMenuContent({
     onOutside: dismiss,
   });
 
-  // "Turn into paragraph", whole-selection aware. One flatten step converts
-  // every block in the range to a paragraph (`setBlockType` is range-aware, so
-  // a mixed paragraph+heading selection is handled in one transaction), then
-  // lifts out of an enclosing list or blockquote. Re-running the step against
-  // the live view until the whole selection sits at the top level means a
-  // single click also flattens nested blocks like `> - item`. `dispatch` is
-  // absent for the availability dry-run, where we only report whether anything
-  // is left to convert.
-  const paragraphType = editorView.state.schema.nodes.paragraph;
-  const flattenStep = paragraphType
-    ? chainCommands(
-        setBlockType(paragraphType),
-        ext.list.command.unwrapList,
-        lift,
-      )
-    : undefined;
-  const setParagraph: Command = (state, dispatch, view) => {
-    if (!flattenStep) {
-      return false;
-    }
-    if (!dispatch) {
-      return !isSelectionAllTopLevelParagraphs(state);
-    }
-    if (!view) {
-      return flattenStep(state, dispatch);
-    }
-    let changed = false;
-    for (let step = 0; step < MAX_PARAGRAPH_FLATTEN_STEPS; step += 1) {
-      if (isSelectionAllTopLevelParagraphs(view.state)) {
-        break;
-      }
-      if (!flattenStep(view.state, view.dispatch, view)) {
-        break;
-      }
-      changed = true;
-    }
-    return changed;
-  };
+  // Availability is a dry-run of each command, so a control is enabled only
+  // when clicking it would actually change the document. Recomputed per editor
+  // state rather than per render: the selection-menu atom hands back a fresh
+  // object on every view update, and the list dry-runs walk the whole selection
+  // — together that made a select-all in a long note re-scan it on each render.
+  const blockState = React.useMemo(() => {
+    const state = editorView.state;
+    return {
+      paragraphActive: isSelectionAllTopLevelParagraphs(state),
+      paragraphEnabled: setParagraphInSelection(state),
+      headings: HEADING_LEVELS.map((level) => ({
+        level,
+        active: isSelectionAllHeadings(state, level),
+        enabled: toggleHeadingInSelection(level)(state),
+      })),
+      bulletActive: ext.list.query.isBulletListActive(state),
+      bulletEnabled: ext.list.command.toggleBulletList(state),
+      orderedActive: ext.list.query.isOrderedListActive(state),
+      orderedEnabled: ext.list.command.toggleOrderedList(state),
+      taskActive: ext.list.query.isTaskListActive(state),
+      taskEnabled: ext.list.command.toggleTaskList(state),
+    };
+  }, [editorView.state, ext]);
 
   return linkSession ? (
     <FloatingLinkEditor
@@ -298,51 +268,35 @@ function InlineSelectionMenuContent({
           </ToolbarButton>
           <Separator className="mx-0.5 h-6" orientation="vertical" />
           <FormatToggle
-            // Pressed only when the whole selection is already made of
-            // top-level paragraphs; a mixed selection (e.g. a paragraph plus a
-            // following heading) is not, so the control stays actionable.
-            active={isSelectionAllTopLevelParagraphs(editorView.state)}
-            // Disabled only when there is genuinely nothing to convert, so the
-            // control never looks actionable while no-oping.
-            disabled={!setParagraph(editorView.state)}
+            // Pressed when the selection is already plain top-level paragraphs.
+            // Disabled tracks the command's own dry-run, so a selection it
+            // cannot change (inside a table cell, say) is not offered.
+            active={blockState.paragraphActive}
+            disabled={!blockState.paragraphEnabled}
             label={t.app.editor.selectionMenu.paragraph}
-            onToggle={() => runCommand(editorView, setParagraph)}
+            onToggle={() => runCommand(editorView, setParagraphInSelection)}
           >
             <Pilcrow />
           </FormatToggle>
+          {blockState.headings.map(({ active, enabled, level }) => {
+            const HeadingIcon = HEADING_ICONS[level];
+            return (
+              <FormatToggle
+                active={active}
+                disabled={!enabled}
+                key={level}
+                label={HEADING_LABELS[level]()}
+                onToggle={() =>
+                  runCommand(editorView, toggleHeadingInSelection(level))
+                }
+              >
+                <HeadingIcon />
+              </FormatToggle>
+            );
+          })}
           <FormatToggle
-            active={ext.heading.query.isHeadingActive(editorView.state, 1)}
-            disabled={!ext.heading.command.toggleHeading(1)(editorView.state)}
-            label={t.app.editor.selectionMenu.heading1}
-            onToggle={() =>
-              runCommand(editorView, ext.heading.command.toggleHeading(1))
-            }
-          >
-            <Heading1 />
-          </FormatToggle>
-          <FormatToggle
-            active={ext.heading.query.isHeadingActive(editorView.state, 2)}
-            disabled={!ext.heading.command.toggleHeading(2)(editorView.state)}
-            label={t.app.editor.selectionMenu.heading2}
-            onToggle={() =>
-              runCommand(editorView, ext.heading.command.toggleHeading(2))
-            }
-          >
-            <Heading2 />
-          </FormatToggle>
-          <FormatToggle
-            active={ext.heading.query.isHeadingActive(editorView.state, 3)}
-            disabled={!ext.heading.command.toggleHeading(3)(editorView.state)}
-            label={t.app.editor.selectionMenu.heading3}
-            onToggle={() =>
-              runCommand(editorView, ext.heading.command.toggleHeading(3))
-            }
-          >
-            <Heading3 />
-          </FormatToggle>
-          <FormatToggle
-            active={ext.list.query.isBulletListActive(editorView.state)}
-            disabled={!ext.list.command.toggleBulletList(editorView.state)}
+            active={blockState.bulletActive}
+            disabled={!blockState.bulletEnabled}
             label={t.app.editor.selectionMenu.bulletList}
             onToggle={() =>
               runCommand(editorView, ext.list.command.toggleBulletList)
@@ -351,8 +305,8 @@ function InlineSelectionMenuContent({
             <List />
           </FormatToggle>
           <FormatToggle
-            active={ext.list.query.isOrderedListActive(editorView.state)}
-            disabled={!ext.list.command.toggleOrderedList(editorView.state)}
+            active={blockState.orderedActive}
+            disabled={!blockState.orderedEnabled}
             label={t.app.editor.selectionMenu.orderedList}
             onToggle={() =>
               runCommand(editorView, ext.list.command.toggleOrderedList)
@@ -361,8 +315,8 @@ function InlineSelectionMenuContent({
             <ListOrdered />
           </FormatToggle>
           <FormatToggle
-            active={ext.list.query.isTaskListActive(editorView.state)}
-            disabled={!ext.list.command.toggleTaskList(editorView.state)}
+            active={blockState.taskActive}
+            disabled={!blockState.taskEnabled}
             label={t.app.editor.selectionMenu.taskList}
             onToggle={() =>
               runCommand(editorView, ext.list.command.toggleTaskList)
