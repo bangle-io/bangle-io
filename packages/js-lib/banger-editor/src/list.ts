@@ -363,7 +363,14 @@ function toggleTaskList(_config: RequiredConfig): Command {
   return (state, dispatch) => {
     return createToggleListCommand({
       kind: LIST_KIND.TASK,
-      checked: false,
+      // `checked` is deliberately not set here. Forcing it to false cleared the
+      // boxes of items that were already checked whenever a task list was
+      // converted to another kind and back, so correcting a mis-click lost
+      // state that undo would have kept. New task items still start unchecked
+      // via the node spec's default.
+      //
+      // `listKind` is likewise left alone: an ordered container that becomes a
+      // task list stays ordered, which Markdown writes as `1. [ ] item`.
     })(state, dispatch);
   };
 }
