@@ -4,7 +4,7 @@ status: planned
 type: plan
 archived: false
 created: 2026-06-14
-updated: 2026-06-14
+updated: 2026-07-24
 owner: mixed
 related_prs: []
 related_issues: []
@@ -26,6 +26,12 @@ such as Playwright E2E/component testing, Storybook, Chromatic, Sentry's Vite
 plugin, Tailwind's Vite plugin, and React's Vite plugin if still required.
 
 ## Current Status
+
+Not started. Vite+ reached beta in June 2026 (MIT, open source), a real
+de-risk versus the alpha this plan was written against — but still pre-1.0.
+The Known Risks below stand, in particular Oxlint/Oxfmt-versus-Biome rule
+parity, which decides whether this is a net win. Re-evaluate at 1.0; no
+forcing function today.
 
 - [ ] Create a dedicated migration branch.
 - [ ] Capture baseline results for the current toolchain.

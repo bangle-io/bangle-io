@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-18
-updated: 2026-07-19
+updated: 2026-07-24
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/652
@@ -38,6 +38,11 @@ refresh stats). PR #626 is still open and activates Native FS external-change
 observation, making this consolidation more important, but the consolidation
 itself has not started.
 
+Inventory verified against `main` 2026-07-24; the ten atoms, the force-update
+side-channel, and the dead `onChange` seam are unchanged. `NoteSnapshotService`
+has since joined as a consumer — see mechanism 5 and Cost 4. The stale-tab
+dialog is local-only and adds no file-event consumer.
+
 ## The problem
 
 ### Inventory: five stacked mechanisms
@@ -52,7 +57,8 @@ itself has not started.
 2. **`RootEmitter` (`shared/root-emitter`).** Hand-rolled typed pub/sub with
    scoped views per service and a BroadcastChannel transport for the
    `CROSS_TAB_EVENTS` allowlist (`event::file:update`,
-   `event::file:force-update`, `event::app:reload-ui`).
+   `event::file:force-update`, `event::app:reload-ui`, and — added since this
+   inventory was written — `event::app:build-presence`).
 
 3. **Command-side emission in `FileSystemService`.** Change detection is not
    observation of storage: the service emits `event::file:update`
@@ -73,9 +79,13 @@ itself has not started.
    rebuilds the backlink index off `$fileContentUpdateCount`, and runs the
    note-stats scan/patch off `$fileForceUpdateCount` and
    `$fileContentUpdateEvent`. `PmEditorService` follows renames via
-   `$fileRenameEvent`. `EditorService` bypasses atoms and uses the emitter
+   `$fileRenameEvent` (no longer with a handled-sequence field — it relies on
+   an idempotent handler). `EditorService` bypasses atoms and uses the emitter
    directly, and emits `file:force-update` as an "invalidate everything"
-   hammer on Native FS auth recovery.
+   hammer on Native FS auth recovery. `NoteSnapshotService` also subscribes the
+   scoped emitter directly, discriminates its own writes from cross-tab echoes
+   via `event.sender`, and keeps its own path-state relocation for
+   create/delete/rename.
 
 ### Cost 1: atoms used as event channels
 
@@ -83,10 +93,13 @@ Jotai atoms are last-value-wins state containers; file changes are a stream.
 Forcing the stream through atoms required sequence numbers on the producer
 side — and every consumer independently re-implements "have I already handled
 this event" with its own handled-sequence field. That pattern currently exists
-in at least four places (create merge, rename relocation, editor rename
-follow, stats patch). Each future consumer must write another copy, and each
-copy is an opportunity for a subtle bug (missed gating, wrong reset on
-remount, double-handling).
+in **three** places, all inside `WorkspaceStateService`: the stats patch, the
+create merge, and the rename relocation. (Corrected 2026-07-24 from "at least
+four": `PmEditorService` no longer keeps a handled-sequence field — it
+subscribes `$fileRenameEvent` and re-reads it, relying on an idempotent
+handler.) Each future consumer must write another copy, and each copy is an
+opportunity for a subtle bug (missed gating, wrong reset on remount,
+double-handling).
 
 A second-order effect: because an atom only holds the latest event, a consumer
 that processes events asynchronously can drop a superseded predecessor (two
@@ -117,6 +130,21 @@ it has never seen. Consolidating after that lands means debugging two problems
 at once; consolidating immediately before it lands has a natural forcing
 function and test vehicle.
 
+### Cost 4: the atom layer is lossy, and silently pushes consumers off it
+
+The atom fan-out discards `event.sender`, so "was this my own write or another
+tab's" is unanswerable from atoms. `NoteSnapshotService` needs exactly that
+discrimination and therefore subscribes the scoped emitter directly — the
+second service after `EditorService` to bypass atoms, this time for a
+structural reason rather than preference. It also hand-rolls its own
+create/delete/rename path-state relocation, mirroring `WorkspaceStateService`'s
+against a different vocabulary: duplicated *semantics* rather than duplicated
+dedup. It is additionally on the write path via a synchronous pre-write hook in
+`FileSystemService`, so one service now participates through two mechanisms.
+
+This binds harder once FileSystemObserver adds a third origin — an external
+disk change that is neither self nor a known peer tab.
+
 ### What is *not* the problem
 
 The layering itself is sound: providers → emitter → one translating service →
@@ -135,6 +163,7 @@ producer contracts, not spaghetti.
 - Force-update must not be a side-channel that event-consumers can miss.
 - The design must accommodate observation-side events (FileSystemObserver,
   cross-tab) with the same guarantees as command-side echoes.
+- Sender identity must survive to consumers (Cost 4).
 
 ## Out of scope
 

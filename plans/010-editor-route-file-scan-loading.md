@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-03
-updated: 2026-07-03
+updated: 2026-07-24
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/587
@@ -29,11 +29,23 @@ a missing note.
 
 ## Current Status
 
+Verified against `main` 2026-07-24: bug still present, and smaller than this
+plan assumed — the error half already landed, only the pending half remains.
+
 - The issue is reproducible in a large real Native FS workspace.
 - A worker prototype confirmed the likely root cause and proved that a
   dedicated route-resolution state can address it.
 - That prototype was intentionally not kept in the working tree because the
   state model and UI semantics need careful review before implementation.
+- `$fileTreeListState` (`ok | native-fs-directory-not-found | error`) now
+  exists but has no pending member and initializes to `ok`, so before the
+  first scan the app asserts the listing is fine while `$rawWsPaths` is empty.
+- `page-editor.tsx` renders `NoteNotFoundView` from the final `else` of its
+  three-way ternary, consulting neither a loading state nor
+  `$fileTreeListState` — so a scan *error* also shows "Note Not Found" today,
+  even though `app/src/index.tsx` and `app-sidebar.tsx` both handle that state.
+- There are no `PageEditor` tests, and no test blocks a scan to assert an
+  in-flight state.
 
 ## Scope
 
@@ -79,11 +91,15 @@ a missing note.
 
 ## Implementation Steps
 
-1. Add a private workspace scan atom in `WorkspaceStateService`, for example:
-   `idle`, `loading`, `ready`, and `error`, with `wsName` on non-idle states.
-2. Replace the `wrapPromiseInAppErrorHandler(..., EMPTY_STRING_ARRAY, ...)`
-   scan path with explicit success/error handling so errors can be represented
-   separately from an empty workspace.
+1. Add a `wsName`-keyed scan state to `WorkspaceStateService`: `idle`,
+   `loading`, `ready`, `error`. Prefer extending `$fileTreeListState` with a
+   pending member over a parallel atom, but note `app/src/index.tsx` and
+   `app-sidebar.tsx` both read it and each need a branch. The only current
+   workspace keying is `lastListedWsName`, a mutable field no atom can read.
+   `WorkspaceListState` is the in-repo precedent for the shape.
+2. ~~Replace the `wrapPromiseInAppErrorHandler` scan path with explicit
+   success/error handling.~~ Done: the scan uses explicit success/error
+   callbacks and a failed rescan preserves the last known tree.
 3. Add a public `$currentWsPathResolution` atom:
    - `none` when there is no editor file route;
    - `found` when the route wsPath is present in `$rawWsPaths`;

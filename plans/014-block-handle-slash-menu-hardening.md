@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-12
-updated: 2026-07-19
+updated: 2026-07-24
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/633
@@ -33,11 +33,12 @@ Large / Editor).
 
 ## Current status
 
-Partially complete. PR #656 completed item 6 by adding a typed editor-engine
-availability contract, hiding unavailable omni editor commands, retaining the
-last-focused live editor across external-focus handoffs, and revalidating at
-execution. Items 1-5 and 7-8 remain in Backlog; none block release of the
-merged PR #633 behavior.
+Partially complete. Item 6 shipped in PR #656; items 1-5 and 7-8 remain, and
+none block release of the merged PR #633 behavior.
+
+Verified against `main` 2026-07-24: items 1-5, 7, and 8 all still open,
+verbatim. Nothing has touched `banger-editor/src/drag/` since PR #633.
+Item 4 now goes first — see below.
 
 ## Scope
 
@@ -85,6 +86,14 @@ while `view.composing`, and keep the existing `view.editable` gate.
 Scroll-hiding already exists via the `mousewheel` handler; further scroll
 polish is optional.
 
+**Do this one first.** PR #680's inline selection toolbar shows on
+`!selection.empty`, the exact inverse of the handle's only gate
+(`view.editable`), so both floating surfaces are live during any drag-select.
+That is no longer hypothetical. The fix is a few lines in the `mousemove`
+guard and is independent of item 1's state container. No test asserts the
+handle hides during a selection; new coverage belongs beside the toolbar
+tests rather than in `block-handle.e2e.ts`.
+
 ### 5. Explicit nested-block handle policy
 
 List items (`prosemirror-flat-list`) are excluded from handles via
@@ -95,11 +104,8 @@ and encode it in tests before enabling handles on nested structures.
 
 ### 6. Omni editor-command availability
 
-Completed in PR #656. A narrow typed editor-engine availability contract now
-hides unavailable heading and table commands in omni search while handlers
-still revalidate at execution. The implementation also retains the
-last-focused live editor across omni/external focus handoffs and covers the
-multi-editor edge case without adding a generic dynamic command registry.
+Done — see Completed since first draft. Number retained so items 7-8 keep
+their identities.
 
 ### 7. Intentional undo grouping
 
@@ -110,6 +116,11 @@ state is the Atlaskit/tiptap convention), implement via `addToHistory` /
 `appendTransaction` grouping if needed, and add e2e coverage for typed-select
 undo and plus-select undo before changing anything.
 
+Try the cheap fix first: the item-select dismissal deletes the query text
+without `addToHistory: false`, while the Escape path sets it on every branch.
+Adding that meta may collapse typed-select to one undo step outright. The
+`+` path is genuinely three transactions and needs its own answer.
+
 ### 8. Outside-click and scrollbar interaction tests
 
 The slash menu dismisses via selection movement and Escape; outside clicks
@@ -117,6 +128,13 @@ move the selection and dismiss indirectly. Add explicit Playwright coverage:
 outside click closes the menu without inserting; dragging the menu's
 scrollbar (the `[cmdk-list]` mousedown exemption in `slash-command.tsx`)
 neither blurs the editor nor selects an item.
+
+A reusable `useOutsidePointer` hook now exists (used by the floating link
+editor and selection menu); the slash menu still dismisses indirectly via
+selection movement. Adopting it is a behavior change beyond this item — decide
+explicitly. Its effect has no dependency array, so it reattaches its capture
+listener every render; harmless today, but the slash menu re-renders per
+keystroke.
 
 ## Completed since first draft
 
@@ -126,8 +144,10 @@ neither blurs the editor nor selects an item.
   synthetic-marked text on every deactivation path, and the save path
   serializes through `stripSyntheticSuggestionText`, so a "+"-opened `/`
   can never reach storage (navigate-away e2e covers the repro).
-- Omni editor-command availability: PR #656 hides invalid heading/table
-  actions from omni search and retains execution-time validation.
+- Item 6, omni editor-command availability (PR #656): a typed editor-engine
+  availability contract hides unavailable heading/table commands in omni
+  search, handlers still revalidate at execution, and the last-focused live
+  editor is retained across external focus handoffs.
 
 ## Out of scope
 
@@ -159,8 +179,13 @@ None.
 
 ## Next steps
 
-1. Item 1 (mapped positions) first — items 2 and 4 want the same per-view
-   state container it introduces.
-2. Items 3 and 4 are small and independent; good warm-ups.
-3. Items 7–8 are behavior decisions; confirm the intended UX (one-line answer
-   each) before implementing.
+1. Item 4 first — small, independent, fixes a live overlap.
+2. Item 3 next; small and independent.
+3. Item 1 (mapped positions), then item 2 which reuses its state container.
+   Expect design friction on item 1: the drag plugin is `view`-only with no
+   `state`/`apply`, and the deliberate `WeakMap<EditorView>` keying rules out
+   plugin state, so mapping likely goes in a `view.update` hook.
+4. Items 5 and 7–8 are behavior decisions; confirm the intended UX (one-line
+   answer each) first. Item 5 may need no code change if the current matrix is
+   ratified, though the handle also hardcodes `ol`/`ul` beyond the configured
+   exclusions — a third undocumented rule to fold into config.
