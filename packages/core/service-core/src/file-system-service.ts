@@ -2,17 +2,18 @@ import {
   assertIsDefined,
   BaseService,
   type BaseServiceContext,
+  classifyEventSender,
   getEventSenderMetadata,
   throwAppError,
 } from '@bangle.io/base-utils';
 import {
-  EXTERNAL_FILE_CHANGE_SENDER_TAG,
   SERVICE_NAME,
   WORKSPACE_STORAGE_TYPE,
   type WorkspaceStorageType,
 } from '@bangle.io/constants';
 import type {
   BaseFileStorageService,
+  EventSenderMetadata,
   FileStat,
   ScopedEmitter,
 } from '@bangle.io/types';
@@ -218,11 +219,8 @@ export class FileSystemService extends BaseService {
     );
   }
 
-  private isExternalSender(sender: { id: string; tag?: string }): boolean {
-    return (
-      sender.tag === EXTERNAL_FILE_CHANGE_SENDER_TAG ||
-      sender.id !== this.config.selfSenderId
-    );
+  private isExternalSender(sender: EventSenderMetadata): boolean {
+    return classifyEventSender(sender, this.config.selfSenderId).external;
   }
 
   private setExternalFileChangeEvent(event: ExternalFileChangePayload): void {

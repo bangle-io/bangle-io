@@ -27,7 +27,7 @@ const IGNORED_FILE_NAMES = new Set(['desktop.ini', 'thumbs.db']);
  * legitimate user files (and the asset pipeline accepts them), so hiding or
  * suppressing their changes would leave visible workspace content stale.
  */
-const IGNORED_FILE_SUFFIXES = ['.crswap'];
+const CHROMIUM_SWAP_FILE_SUFFIX = '.crswap';
 
 function pathSegments(filePath: WsFilePath): readonly string[] {
   return filePath.path.split('/').filter(Boolean);
@@ -65,8 +65,7 @@ export function isVisibleWorkspaceFilePath(
     return false;
   }
 
-  const lowerFileName = fileName.toLowerCase();
-  if (IGNORED_FILE_SUFFIXES.some((suffix) => lowerFileName.endsWith(suffix))) {
+  if (fileName.toLowerCase().endsWith(CHROMIUM_SWAP_FILE_SUFFIX)) {
     return false;
   }
 

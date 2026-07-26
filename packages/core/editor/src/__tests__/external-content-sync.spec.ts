@@ -1,3 +1,4 @@
+import type { EditorView } from '@bangle.io/prosemirror-plugins';
 import type { ExternalFileChangeEvent } from '@bangle.io/service-core';
 import { describe, expect, it, vi } from 'vitest';
 import {
@@ -21,6 +22,24 @@ function makeEvent(
     | { type: 'refresh'; wsName?: string },
 ): ExternalFileChangeEvent {
   return { sequence: 1, ...payload };
+}
+
+/**
+ * Minimal stand-in for a mounted view. The sync only ever touches these
+ * fields, so the single cast lives here instead of at every call site.
+ */
+function fakeView({
+  composing = false,
+  isDestroyed = false,
+}: {
+  composing?: boolean;
+  isDestroyed?: boolean;
+} = {}): EditorView {
+  return {
+    composing,
+    isDestroyed,
+    state: { doc: {}, schema: {} },
+  } as unknown as EditorView;
 }
 
 function makeHost(overrides: Partial<ExternalContentSyncHost> = {}) {
@@ -56,7 +75,7 @@ async function waitUntil(check: () => boolean, timeoutMs = 5_000) {
 describe('target selection', () => {
   it('content updates target only mounted editors for that exact path', () => {
     const getViews = vi.fn((wsPath: string) =>
-      wsPath === 'ws:open.md' ? [{} as never] : [],
+      wsPath === 'ws:open.md' ? [fakeView()] : [],
     );
     const host = makeHost({
       getViews,
@@ -99,7 +118,7 @@ describe('coalescing and stability', () => {
     let passes = 0;
     const host = makeHost({
       // Non-empty so the pass reaches the reads (and thus takes time).
-      getViews: vi.fn(() => [{ state: { doc: {} } } as never]),
+      getViews: vi.fn(() => [fakeView()]),
       readFileAsText: vi.fn(async () => {
         passes += 1;
         return 'same';
@@ -134,10 +153,10 @@ describe('coalescing and stability', () => {
     expect(passes).toBe(2);
   });
 
-  it('bounds never-stable content to an initial and trailing retry burst', async () => {
+  it('gives up on never-stable content instead of spinning forever', async () => {
     let reads = 0;
     const host = makeHost({
-      getViews: vi.fn(() => [{ state: { doc: {} } } as never]),
+      getViews: vi.fn(() => [fakeView()]),
       // Every read returns something different: never stable.
       readFileAsText: vi.fn(async () => {
         reads += 1;
@@ -150,30 +169,33 @@ describe('coalescing and stability', () => {
       makeEvent({ type: 'file-content-update', wsPath: 'ws:a.md' }),
     );
 
-    // MAX_PASSES = 5 → 10 reads in the burst...
-    await waitUntil(() => reads === 10, 10_000);
-    // ...then one delayed retry burst runs and gives up for good.
-    await waitUntil(() => reads === 20, 10_000);
-    await new Promise((resolve) => setTimeout(resolve, 2_000));
-    expect(reads).toBe(20);
-    expect(host.logger.warn).toHaveBeenCalledWith(
-      expect.stringContaining('kept changing'),
+    // How many passes it takes is tuning; the contract is that the loop ends,
+    // says so, and never applies content it could not confirm.
+    await waitUntil(
+      () =>
+        vi
+          .mocked(host.logger.warn)
+          .mock.calls.some(([message]) =>
+            String(message).includes('kept changing'),
+          ),
+      15_000,
     );
-    // Nothing was ever applied.
+    const readsAtGiveUp = reads;
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    expect(reads).toBe(readsAtGiveUp);
     expect(host.replaceContent).not.toHaveBeenCalled();
   }, 20_000);
 
-  it('content that settles after the pass bound is applied by the trailing retry', async () => {
+  it('reconciles content that only settles after the fast passes', async () => {
     let reads = 0;
     const host = makeHost({
       // A destroyed view keeps the pass from reaching content application
       // while still exercising the full read protocol.
-      getViews: vi.fn(() => [
-        { isDestroyed: true, state: { doc: {} } } as never,
-      ]),
+      getViews: vi.fn(() => [fakeView({ isDestroyed: true })]),
       readFileAsText: vi.fn(async () => {
         reads += 1;
-        // Unstable through the whole first burst (10 reads), stable after.
+        // Unstable for longer than the back-to-back passes, so only the
+        // post-backoff passes can see two agreeing reads.
         return reads <= 10 ? `content-${reads}` : 'settled';
       }),
     });
@@ -183,11 +205,9 @@ describe('coalescing and stability', () => {
       makeEvent({ type: 'file-content-update', wsPath: 'ws:a.md' }),
     );
 
-    // Burst exhausts unstable; the trailing pass gets two agreeing reads and
-    // settles instead of silently dropping the pending work.
-    await waitUntil(() => reads === 12, 10_000);
+    // The trailing passes settle it rather than silently dropping the work.
+    await waitUntil(() => reads > 10, 10_000);
     await new Promise((resolve) => setTimeout(resolve, 400));
-    expect(reads).toBe(12);
     expect(host.logger.warn).not.toHaveBeenCalledWith(
       expect.stringContaining('kept changing'),
     );
@@ -195,11 +215,7 @@ describe('coalescing and stability', () => {
 
   it('a view busy with IME composition is never replaced; the pass retries', async () => {
     let reads = 0;
-    const view = {
-      isDestroyed: false,
-      composing: true,
-      state: { doc: {}, schema: {} },
-    } as never;
+    const view = fakeView({ composing: true });
     const host = makeHost({
       getViews: vi.fn(() => [view]),
       readFileAsText: vi.fn(async () => {
@@ -223,11 +239,7 @@ describe('coalescing and stability', () => {
 
 describe('refusal and reconciliation reporting', () => {
   it('an unparseable external change is refused and reported to the host', async () => {
-    const view = {
-      isDestroyed: false,
-      composing: false,
-      state: { doc: {}, schema: {} },
-    } as never;
+    const view = fakeView();
     const host = makeHost({
       getViews: vi.fn(() => [view]),
       getMarkdown: vi.fn(
@@ -257,11 +269,7 @@ describe('refusal and reconciliation reporting', () => {
   });
 
   it('an echo (serializer-equal content) reports reconciliation, clearing stale notices', async () => {
-    const view = {
-      isDestroyed: false,
-      composing: false,
-      state: { doc: {}, schema: {} },
-    } as never;
+    const view = fakeView();
     const host = makeHost({
       getViews: vi.fn(() => [view]),
       readFileAsText: vi.fn(async () => 'same output'),
@@ -291,7 +299,7 @@ describe('refusal and reconciliation reporting', () => {
 
 describe('user-approved disk version', () => {
   it('keeps edits that become pending while disk is being read', async () => {
-    const view = { state: { doc: {} } } as never;
+    const view = fakeView();
     const host = makeHost({
       getViews: vi.fn(() => [view]),
       hasPendingSaves: vi.fn().mockReturnValueOnce(false).mockReturnValue(true),
@@ -311,7 +319,7 @@ describe('abort', () => {
     let reads = 0;
     const controller = new AbortController();
     const host = makeHost({
-      getViews: vi.fn(() => [{ state: { doc: {} } } as never]),
+      getViews: vi.fn(() => [fakeView()]),
       readFileAsText: vi.fn(async () => {
         reads += 1;
         return `content-${reads}`;

@@ -4,7 +4,7 @@
 
 import { FILE_STORAGE_MAX_FILE_SIZE_BYTES } from '@bangle.io/constants';
 import { isAbortError } from '@bangle.io/mini-js-utils';
-import { NativeFs } from '@bangle.io/native-fs';
+import { NativeFs, type NativeFsWatchHandle } from '@bangle.io/native-fs';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { FileStorageNativeFs } from '../file-storage-nativefs';
@@ -744,7 +744,7 @@ describe('external change watching', () => {
     stubFileSystemObserver();
     const watchSpy = vi
       .spyOn(NativeFs.prototype, 'watch')
-      .mockResolvedValue(false);
+      .mockResolvedValue({ armed: false, stop: () => {} });
     const { service, onExternalChange, triggerPageReturn } = await setup(
       undefined,
       'myWorkspace',
@@ -770,8 +770,8 @@ describe('external change watching', () => {
 
   it('refreshes on refocus while a watcher is still starting', async () => {
     stubFileSystemObserver();
-    let resolveWatch!: (armed: boolean) => void;
-    const watchResult = new Promise<boolean>((resolve) => {
+    let resolveWatch!: (handle: NativeFsWatchHandle) => void;
+    const watchResult = new Promise<NativeFsWatchHandle>((resolve) => {
       resolveWatch = resolve;
     });
     const watchSpy = vi
@@ -797,7 +797,7 @@ describe('external change watching', () => {
     });
     expect(watchSpy).toHaveBeenCalledTimes(1);
 
-    resolveWatch(true);
+    resolveWatch({ armed: true, stop: () => {} });
   });
 
   it('re-arms a dead watcher on page return after the observer errored', async () => {
@@ -823,5 +823,8 @@ describe('external change watching', () => {
     await vi.waitFor(() => {
       expect(observer.observe).toHaveBeenCalledTimes(2);
     });
+    // The broken observer is disconnected rather than left attached: stacking
+    // observers would replay every later change once per error cycle.
+    expect(observer.disconnect).toHaveBeenCalledTimes(1);
   });
 });

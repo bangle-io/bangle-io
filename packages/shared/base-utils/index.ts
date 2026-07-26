@@ -1,4 +1,5 @@
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
+import { EXTERNAL_FILE_CHANGE_SENDER_TAG } from '@bangle.io/constants';
 import type { EventSenderMetadata } from '@bangle.io/types';
 
 export type { ErrorReporter } from '@bangle.io/logger';
@@ -74,4 +75,19 @@ export function getEventSenderMetadata({
     id: BROWSING_CONTEXT_ID,
     tag: tag,
   };
+}
+
+/**
+ * Where an app event came from, relative to the listening context. The two
+ * axes are independent: a storage watcher reports this tab's own writes
+ * (`watcher` without `foreignTab`), while another tab's watcher is both.
+ * `external` means "not caused by this context's own code path".
+ */
+export function classifyEventSender(
+  sender: EventSenderMetadata,
+  selfSenderId: string,
+): { external: boolean; foreignTab: boolean; watcher: boolean } {
+  const watcher = sender.tag === EXTERNAL_FILE_CHANGE_SENDER_TAG;
+  const foreignTab = sender.id !== selfSenderId;
+  return { external: watcher || foreignTab, foreignTab, watcher };
 }

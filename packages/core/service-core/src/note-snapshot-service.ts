@@ -1,9 +1,9 @@
-import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
 import {
-  DATABASE_TABLE_NAME,
-  EXTERNAL_FILE_CHANGE_SENDER_TAG,
-  SERVICE_NAME,
-} from '@bangle.io/constants';
+  BaseService,
+  type BaseServiceContext,
+  classifyEventSender,
+} from '@bangle.io/base-utils';
+import { DATABASE_TABLE_NAME, SERVICE_NAME } from '@bangle.io/constants';
 import { type InferType, T } from '@bangle.io/mini-js-utils';
 import type { BaseDatabaseService, ScopedEmitter } from '@bangle.io/types';
 import { WsPath } from '@bangle.io/ws-path';
@@ -157,13 +157,15 @@ export class NoteSnapshotService extends BaseService {
     this.config.emitter.on(
       'event::file:update',
       (event) => {
-        const isWatcher = event.sender.tag === EXTERNAL_FILE_CHANGE_SENDER_TAG;
-        const isForeignTab = event.sender.id !== this.config.selfSenderId;
+        const { foreignTab, watcher } = classifyEventSender(
+          event.sender,
+          this.config.selfSenderId,
+        );
 
         if (event.type === 'file-delete') {
           this.clearPathState(event.wsPath);
         } else if (event.type === 'file-create') {
-          if (isWatcher) {
+          if (watcher) {
             // A watcher can report our own atomic replace as a visible create
             // after the temporary file is renamed. Retain the just-written
             // outgoing version so a later foreign overwrite can preserve it.
@@ -176,15 +178,15 @@ export class NoteSnapshotService extends BaseService {
           if (event.oldWsPath) {
             void this.migratePersistedSnapshots(event.oldWsPath, event.wsPath);
           }
-        } else if (isWatcher || isForeignTab) {
-          if (isWatcher) {
+        } else if (watcher || foreignTab) {
+          if (watcher) {
             // A same-tab watcher also reports this tab's own writes, so the
             // event alone does not prove the disk content is foreign. `capture`
             // lifts the throttle only once it has read content we did not
             // write; lifting it here would suppress ordinary local snapshots.
             this.watcherUpdatePending.add(event.wsPath);
           }
-          if (isForeignTab) {
+          if (foreignTab) {
             // Another tab definitely changed this note: drop the throttle so
             // the next save captures the disk content it is about to
             // overwrite, and preserve what this tab last wrote in case that

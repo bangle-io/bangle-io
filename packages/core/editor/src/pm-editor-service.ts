@@ -185,18 +185,17 @@ export class PmEditorService
 
   private handledExternalChangeSequence = 0;
   /**
-   * One-shot markers telling `onDocChange` that the next doc change for this
-   * wsPath was produced by an external sync (not the user) and must not be
-   * re-saved — writing it back would bump the file's mtime and make sync
-   * tools churn on their own change.
+   * Tells `onDocChange` that the doc change it is seeing was produced by an
+   * external sync (not the user) and must not be re-saved — writing it back
+   * would bump the file's mtime and make sync tools churn on their own change.
    *
-   * Contract: this only works because the saveDoc plugin's `view.update`
-   * (and therefore `onDocChange`) runs synchronously inside
+   * Contract: a plain boolean is enough only because the saveDoc plugin's
+   * `view.update` (and therefore `onDocChange`) runs synchronously inside
    * `view.dispatch`, which `replaceEditorContent` wraps. If the save pipeline
    * ever defers off the dispatch (debounce, microtask), this flag must move
    * onto the transaction itself (a meta read from plugin state).
    */
-  private suppressSaveForExternalSync = new Set<string>();
+  private applyingExternalSync = false;
   private staleExternalContentWsPaths = new Set<string>();
 
   /**
@@ -452,13 +451,15 @@ export class PmEditorService
         store: this.store as Store,
         domNode,
         onDocChange: (doc) => {
-          const currentWsPath = this.editors.get(domNode)?.wsPath ?? wsPath;
-          if (this.suppressSaveForExternalSync.has(currentWsPath)) {
+          if (this.applyingExternalSync) {
             // External sync applying disk content — must not be re-saved;
-            // see suppressSaveForExternalSync.
+            // see applyingExternalSync.
             return;
           }
-          this.saveQueue.enqueue(currentWsPath, doc);
+          this.saveQueue.enqueue(
+            this.editors.get(domNode)?.wsPath ?? wsPath,
+            doc,
+          );
         },
         extensions: this.extensions,
         nodeViews: {
@@ -720,16 +721,10 @@ export class PmEditorService
 
   /**
    * A freshly loaded note may contain Markdown the editor cannot serialize
-   * byte-for-byte. Until its document changes, preserve that exact source
-   * rather than a normalized serialization when external content replaces it.
+   * byte-for-byte. While its document is unchanged, that exact source is what
+   * must be preserved when external content replaces it — not a normalized
+   * re-serialization.
    */
-  private getExactPreservableContent(
-    view: EditorView,
-    serialized: string,
-  ): string {
-    return this.getRetainedSource(view) ?? serialized;
-  }
-
   private getRetainedSource(view: EditorView): string | undefined {
     for (const editor of this.readyEditors()) {
       if (editor.editorView === view && editor.loadedDoc === view.state.doc) {
@@ -740,27 +735,17 @@ export class PmEditorService
   }
 
   /**
-   * The single lifecycle for replacing a mounted editor from disk. Snapshot
-   * storage is asynchronous, so every safety condition is checked both before
-   * and after it; in particular an IME composition that begins while the
-   * snapshot is being stored must never be destroyed by the replacement.
+   * Whether this view may still be replaced from disk. Re-checked after every
+   * await in `replaceEditorContent`, so it lives in one place: two hand-copied
+   * condition chains had already drifted apart.
    */
-  private async replaceEditorContent({
-    currentSerialized,
-    expectedDoc,
-    sourceMarkdown,
-    transaction,
-    view,
-    wsPath,
-  }: {
-    currentSerialized: string;
-    expectedDoc: EditorView['state']['doc'];
-    sourceMarkdown: string;
-    transaction: Transaction;
-    view: EditorView;
-    wsPath: string;
-  }): Promise<'applied' | 'refused' | 'retry' | 'skipped'> {
+  private checkReplaceable(
+    view: EditorView,
+    expectedDoc: EditorView['state']['doc'],
+    wsPath: string,
+  ): 'ok' | 'retry' | 'skipped' {
     if (
+      this.abortSignal.aborted ||
       this.saveQueue.hasPendingOrFailed(wsPath) ||
       view.isDestroyed ||
       view.state.doc !== expectedDoc ||
@@ -768,14 +753,40 @@ export class PmEditorService
     ) {
       return 'skipped';
     }
-    if (view.composing) {
-      return 'retry';
+    // Replacing the doc mid-composition silently drops uncommitted input.
+    return view.composing ? 'retry' : 'ok';
+  }
+
+  /**
+   * The single lifecycle for replacing a mounted editor from disk. Snapshot
+   * storage is asynchronous, so every safety condition is checked both before
+   * and after it; in particular an IME composition that begins while the
+   * snapshot is being stored must never be destroyed by the replacement.
+   */
+  private async replaceEditorContent({
+    expectedDoc,
+    preservableSource,
+    sourceMarkdown,
+    transaction,
+    view,
+    wsPath,
+  }: {
+    expectedDoc: EditorView['state']['doc'];
+    preservableSource: string;
+    sourceMarkdown: string;
+    transaction: Transaction;
+    view: EditorView;
+    wsPath: string;
+  }): Promise<'applied' | 'refused' | 'retry' | 'skipped'> {
+    const before = this.checkReplaceable(view, expectedDoc, wsPath);
+    if (before !== 'ok') {
+      return before;
     }
 
     const preserved =
       await this.dependencies.noteSnapshot.preserveExternalOverwrite(
         wsPath,
-        this.getExactPreservableContent(view, currentSerialized),
+        preservableSource,
       );
     if (preserved === 'retry') {
       return 'retry';
@@ -786,24 +797,16 @@ export class PmEditorService
       return 'refused';
     }
 
-    if (
-      this.abortSignal.aborted ||
-      this.saveQueue.hasPendingOrFailed(wsPath) ||
-      view.isDestroyed ||
-      view.state.doc !== expectedDoc ||
-      this.getEditorEntryByView(view)?.wsPath !== wsPath
-    ) {
-      return 'skipped';
-    }
-    if (view.composing) {
-      return 'retry';
+    const after = this.checkReplaceable(view, expectedDoc, wsPath);
+    if (after !== 'ok') {
+      return after;
     }
 
-    this.suppressSaveForExternalSync.add(wsPath);
+    this.applyingExternalSync = true;
     try {
       view.dispatch(transaction);
     } finally {
-      this.suppressSaveForExternalSync.delete(wsPath);
+      this.applyingExternalSync = false;
     }
 
     const editor = this.getEditorEntryByView(view);

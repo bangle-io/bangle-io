@@ -29,6 +29,7 @@ import {
 import type {
   BaseServiceCommonOptions,
   CommandHandler,
+  FileStorageExternalChangeEvent,
   RootEmitter,
 } from '@bangle.io/types';
 import { createServiceSetup } from './service-setup';
@@ -41,6 +42,20 @@ export function readEditorEngineFromUrl(
   );
   return isEditorEngineId(engineId) ? engineId : DEFAULT_EDITOR_ENGINE;
 }
+
+/**
+ * Per-path watcher changes carry the same meaning as the app's own file
+ * mutations; only the event names differ. The `Record` key type keeps this
+ * exhaustive over the non-`refresh` cases.
+ */
+const EXTERNAL_CHANGE_TO_FILE_EVENT = {
+  create: 'file-create',
+  update: 'file-content-update',
+  delete: 'file-delete',
+} as const satisfies Record<
+  Exclude<FileStorageExternalChangeEvent['type'], 'refresh'>,
+  string
+>;
 
 export function initializeServices(
   commonOpts: BaseServiceCommonOptions,
@@ -94,42 +109,18 @@ export function initializeServices(
         const sender = getEventSenderMetadata({
           tag: EXTERNAL_FILE_CHANGE_SENDER_TAG,
         });
-        switch (change.type) {
-          case 'create': {
-            rootEmitter.emit('event::file:update', {
-              type: 'file-create',
-              wsPath: change.wsPath,
-              sender,
-            });
-            break;
-          }
-          case 'update': {
-            rootEmitter.emit('event::file:update', {
-              type: 'file-content-update',
-              wsPath: change.wsPath,
-              sender,
-            });
-            break;
-          }
-          case 'delete': {
-            rootEmitter.emit('event::file:update', {
-              type: 'file-delete',
-              wsPath: change.wsPath,
-              sender,
-            });
-            break;
-          }
-          case 'refresh': {
-            rootEmitter.emit('event::file:force-update', {
-              wsName: change.wsName,
-              sender,
-            });
-            break;
-          }
-          default: {
-            const _exhaustiveCheck: never = change;
-          }
+        if (change.type === 'refresh') {
+          rootEmitter.emit('event::file:force-update', {
+            wsName: change.wsName,
+            sender,
+          });
+          return;
         }
+        rootEmitter.emit('event::file:update', {
+          type: EXTERNAL_CHANGE_TO_FILE_EVENT[change.type],
+          wsPath: change.wsPath,
+          sender,
+        });
       },
       subscribePageReturn: (listener, signal) => {
         assertIsDefined(getRouter, 'getRouter');

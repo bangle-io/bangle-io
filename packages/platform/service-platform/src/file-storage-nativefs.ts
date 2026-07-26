@@ -61,6 +61,8 @@ type FsCacheEntry = {
   fs: NativeFs;
   /** `starting` deduplicates setup; only `armed` may skip revalidation. */
   watchState: 'idle' | 'starting' | 'armed';
+  /** Disconnects the current observer, so re-arming cannot stack a second. */
+  stopWatch?: () => void;
 };
 
 export class FileStorageNativeFs
@@ -173,14 +175,20 @@ export class FileStorageNativeFs
       return;
     }
     entry.watchState = 'starting';
+    // A re-arm (after an `errored` record) must disconnect the broken
+    // observer; otherwise every error cycle leaves another one attached,
+    // duplicating every change it still reports.
+    entry.stopWatch?.();
+    entry.stopWatch = undefined;
 
     // Watching is best-effort; page return retries a failed start.
     void entry.fs
       .watch((changes) => this.handleWatchChanges(wsName, changes), {
         signal: this.abortSignal,
       })
-      .then((armed) => {
+      .then(({ armed, stop }) => {
         entry.watchState = armed ? 'armed' : 'idle';
+        entry.stopWatch = armed ? stop : undefined;
       })
       .catch((error) => {
         entry.watchState = 'idle';
@@ -233,82 +241,83 @@ export class FileStorageNativeFs
     return { kind: 'file', wsPath };
   }
 
-  private handleWatchChanges(wsName: string, changes: NativeFsChange[]): void {
-    const onExternalChange = this.config.onExternalChange;
-    if (!onExternalChange) {
-      return;
+  /**
+   * Whether a record is too coarse to translate into a targeted event, so the
+   * whole workspace has to be re-read.
+   */
+  private needsCoarseRefresh(wsName: string, change: NativeFsChange): boolean {
+    if (change.type === 'unknown' || change.kind === 'directory') {
+      return true;
     }
+    if (change.type !== 'moved') {
+      return this.classifyWatchPath(wsName, change.path).kind === 'coarse';
+    }
+    if (change.movedFromPath === undefined) {
+      // The origin is required to determine visibility.
+      return true;
+    }
+    const from = this.classifyWatchPath(wsName, change.movedFromPath);
+    const to = this.classifyWatchPath(wsName, change.path);
+    return (
+      from.kind === 'coarse' ||
+      to.kind === 'coarse' ||
+      // Visible moves may be renames or atomic replacements.
+      (from.kind === 'file' && to.kind === 'file')
+    );
+  }
 
-    // Coalesce duplicate records; a coarse refresh subsumes targeted events.
-    let needsRefresh = false;
-    const specificEvents = new Map<string, FileStorageExternalChangeEvent>();
+  /** Targeted events for a burst, deduplicated and in arrival order. */
+  private toTargetedEvents(
+    wsName: string,
+    changes: NativeFsChange[],
+  ): Map<string, FileStorageExternalChangeEvent> {
+    const events = new Map<string, FileStorageExternalChangeEvent>();
+    const add = (
+      event: FileStorageExternalChangeEvent & { wsPath: string },
+    ) => {
+      events.set(`${event.type}:${event.wsPath}`, event);
+    };
+
     for (const change of changes) {
-      // Re-arm a broken observer on the next page return.
-      if (change.type === 'errored') {
-        const entry = this.fsCache.get(wsName);
-        if (entry) {
-          entry.watchState = 'idle';
-        }
-        needsRefresh = true;
+      if (change.type === 'errored' || change.type === 'unknown') {
+        // Both force a coarse refresh, so this pass never runs for them.
         continue;
       }
-      if (needsRefresh) {
-        continue;
-      }
-      if (change.type === 'unknown' || change.kind === 'directory') {
-        needsRefresh = true;
-        continue;
-      }
-
       if (change.type === 'moved') {
         if (change.movedFromPath === undefined) {
-          // The origin is required to determine visibility.
-          needsRefresh = true;
+          // Unknown origin already forced a coarse refresh.
           continue;
         }
+        // Only one side can be visible here; a visible-to-visible move was
+        // already classified as needing a coarse refresh.
         const from = this.classifyWatchPath(wsName, change.movedFromPath);
         const to = this.classifyWatchPath(wsName, change.path);
-        if (from.kind === 'coarse' || to.kind === 'coarse') {
-          needsRefresh = true;
-        } else if (from.kind === 'file' && to.kind === 'file') {
-          // Visible moves may be renames or atomic replacements.
-          needsRefresh = true;
-        } else if (to.kind === 'file') {
+        if (to.kind === 'file') {
           // Atomic write from an invisible temporary path.
-          specificEvents.set(`create:${to.wsPath}`, {
-            type: 'create',
-            wsPath: to.wsPath,
-          });
+          add({ type: 'create', wsPath: to.wsPath });
         } else if (from.kind === 'file') {
           // A visible file moved out of the app's listing.
-          specificEvents.set(`delete:${from.wsPath}`, {
-            type: 'delete',
-            wsPath: from.wsPath,
-          });
+          add({ type: 'delete', wsPath: from.wsPath });
         }
         continue;
       }
 
       const classified = this.classifyWatchPath(wsName, change.path);
-      if (classified.kind === 'coarse') {
-        needsRefresh = true;
-        continue;
-      }
-      if (classified.kind === 'ignored') {
+      if (classified.kind !== 'file') {
         continue;
       }
       const wsPath = classified.wsPath;
       switch (change.type) {
         case 'appeared': {
-          specificEvents.set(`create:${wsPath}`, { type: 'create', wsPath });
+          add({ type: 'create', wsPath });
           break;
         }
         case 'modified': {
-          specificEvents.set(`update:${wsPath}`, { type: 'update', wsPath });
+          add({ type: 'update', wsPath });
           break;
         }
         case 'disappeared': {
-          specificEvents.set(`delete:${wsPath}`, { type: 'delete', wsPath });
+          add({ type: 'delete', wsPath });
           break;
         }
         default: {
@@ -316,12 +325,29 @@ export class FileStorageNativeFs
         }
       }
     }
+    return events;
+  }
 
-    if (needsRefresh) {
+  private handleWatchChanges(wsName: string, changes: NativeFsChange[]): void {
+    const onExternalChange = this.config.onExternalChange;
+    if (!onExternalChange) {
+      return;
+    }
+
+    if (changes.some((change) => change.type === 'errored')) {
+      // Observation broke; re-arm on the next page return.
+      const entry = this.fsCache.get(wsName);
+      if (entry) {
+        entry.watchState = 'idle';
+      }
       onExternalChange({ type: 'refresh', wsName });
       return;
     }
-    for (const event of specificEvents.values()) {
+    if (changes.some((change) => this.needsCoarseRefresh(wsName, change))) {
+      onExternalChange({ type: 'refresh', wsName });
+      return;
+    }
+    for (const event of this.toTargetedEvents(wsName, changes).values()) {
       onExternalChange(event);
     }
   }

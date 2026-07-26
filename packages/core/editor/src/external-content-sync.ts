@@ -93,14 +93,15 @@ export interface ExternalContentSyncHost {
   /** Exact disk source retained while this view's document is unchanged. */
   getRetainedSource(view: EditorView): string | undefined;
   /**
-   * Preserves the current source, re-checks that the editor is still safe to
+   * Preserves `preservableSource`, re-checks that the editor is still safe to
    * replace, applies the transaction without re-saving it, and records the
    * newly loaded source baseline. `refused` means the editor's own content
    * could not be preserved, so replacing it would lose it for good.
    */
   replaceContent(args: {
-    currentSerialized: string;
     expectedDoc: EditorView['state']['doc'];
+    /** What to keep recoverable before the editor is overwritten. */
+    preservableSource: string;
     sourceMarkdown: string;
     transaction: Transaction;
     view: EditorView;
@@ -336,6 +337,11 @@ export class ExternalContentSync {
         continue;
       }
 
+      // While the document is unchanged since load, the exact bytes it was
+      // parsed from are what must be preserved — a re-serialization would
+      // normalize away Markdown the editor cannot round-trip.
+      const retainedSource = this.host.getRetainedSource(view);
+
       if (mode === 'automatic') {
         let diskSerialized: string;
         try {
@@ -350,7 +356,6 @@ export class ExternalContentSync {
         }
         // Serializer comparison coalesces echoes and normalization-only
         // differences. Retained source recognizes unchanged lossy Markdown.
-        const retainedSource = this.host.getRetainedSource(view);
         if (
           currentSerialized === diskSerialized &&
           retainedSource !== undefined &&
@@ -391,8 +396,8 @@ export class ExternalContentSync {
       }
 
       const replaceResult = await this.host.replaceContent({
-        currentSerialized,
         expectedDoc: docsBefore[index],
+        preservableSource: retainedSource ?? currentSerialized,
         sourceMarkdown: diskText,
         transaction,
         view,
