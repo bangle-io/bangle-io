@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-13
-updated: 2026-07-18
+updated: 2026-07-24
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/642
@@ -32,6 +32,8 @@ editor engine is ProseMirror (`packages/core/editor` /
 `@bangle.io/banger-editor`); wordgard (`editor-w`) is URL-flag gated and its
 heading APIs are stubs, so this plan targets the ProseMirror stack with a
 seam that wordgard can adopt later.
+
+Verified against `main` 2026-07-24.
 
 ## UX behavior
 
@@ -66,11 +68,16 @@ seam that wordgard can adopt later.
 
 ### 1. Heading data: ProseMirror plugin → jotai atom
 
-Follow the `$suggestions` idiom (plugin publishes derived state to an atom;
-React reads it with `useAtomValue`):
+Follow the `link-menu` idiom (plugin publishes derived state to a view-keyed
+atom; React reads it with `useAtomValue`). `link-menu` is the minimal form —
+internal atom plus read-only public atom, a copy-on-write `setXForView` that
+deletes the key on `undefined`, cleanup in `destroy`. `$suggestions` is the
+same shape with an extra by-mark inner map a TOC does not need.
 
-- New plugin in `@bangle.io/prosemirror-plugins` (js-lib layer):
-  `headingWatch` (name TBD). On `docChanged` transactions it walks
+- New plugin `headingWatch` (name TBD) in `@bangle.io/banger-editor` (js-lib
+  layer), re-exported through the `@bangle.io/prosemirror-plugins` barrel.
+  That barrel is almost entirely re-exports of `banger-editor`, and
+  `core/editor` imports PM code through it rather than directly. On `docChanged` transactions it walks
   `doc.descendants`, collecting `{ pos, level, text }` for nodes of type
   `heading` (same walk `PmEditorService.navigateToHeading` already does).
   Publishes to a `$headings: Map<EditorView, HeadingItem[]>` atom, with a
@@ -92,18 +99,14 @@ React reads it with `useAtomValue`):
   `useEditorCoreServices().editorEngine.getEditor(editorName)`.
 - Reads `useAtomValue($headings)` and picks the entry for its view. Returns
   `null` under the visibility rules above.
-- Positioning: `position: fixed` is wrong here (sidebar width varies);
-  instead absolutely position within the editor's `relative` wrapper —
-  `right` pinned near the container edge, `top: 50%` with
-  `translateY(-50%)`, `sticky`-like behavior achieved by using `position:
-  fixed` **derived from the wrapper's client rect** is unnecessary: the
-  simplest correct approach is a `position: sticky; top: 50%` child inside a
-  full-height, zero-width absolutely-positioned column at the wrapper's
-  right edge, with a small inset so it does not sit under the scroll
-  container's scrollbar. Verify against the real scroll container (the
-  `SidebarInset` main region) during M2 and fall back to
-  `useFloatingPosition` + `@floating-ui/dom` `autoUpdate` if sticky proves
-  fragile.
+- Positioning: the editor page scrolls the **window**, not a nested container
+  — neither `SidebarInset` nor `PageContentContainer` sets `overflow`. So
+  `sticky` has no scrolling ancestor to stick to. Anchor vertically to the
+  viewport and horizontally to the content column: `top: 50%` with
+  `translateY(-50%)`, right edge measured against `PageContentContainer`,
+  whose width flips between centered and full-bleed via `$wideEditor`. Fall
+  back to `useFloatingPosition` + `@floating-ui/dom` `autoUpdate` if manual
+  measurement proves fragile.
 - Expanded panel renders adjacent to the rail (opens leftward). Reuse
   `FLOATING_INITIAL_STYLE` z-index conventions and `bg-popover
   text-popover-foreground ring-foreground/10` styling to match existing
@@ -111,12 +114,17 @@ React reads it with `useAtomValue`):
 
 ### 3. Active-section tracking
 
-- On scroll (rAF-throttled listener on the scroll container) find the last
-  heading whose DOM element (`editorView.domAtPos(pos)`) sits above a
-  viewport threshold (~1/3 height). Store as local state; drives both dash
-  and panel highlight. IntersectionObserver is an alternative, but heading
-  positions shift as the doc edits, so a cheap rAF scan over ≤100 cached
-  rects re-derived on `$headings` change is simpler and adequate.
+- On scroll find the last heading whose DOM element
+  (`editorView.domAtPos(pos)`) sits above a viewport threshold (~1/3 height).
+  Store as local state; drives both dash and panel highlight.
+  IntersectionObserver is an alternative, but heading positions shift as the
+  doc edits, so a cheap rAF scan over ≤100 cached rects re-derived on
+  `$headings` change is simpler and adequate.
+- Reuse `setupScrollAndResizeHandlers` from `banger-editor`'s
+  `pm-utils/position` — it is the existing rAF-throttled `window`
+  scroll/resize helper. Skip zero-sized rects: headings inside a collapsed
+  section stay mounted under `display: none` and report all-zero rects, which
+  would otherwise poison the scan.
 
 ### 4. Scroll-to-heading
 
@@ -135,18 +143,21 @@ React reads it with `useAtomValue`):
 
 ## Design considerations / known risks
 
-- **Right-edge overlaps**: the rail must not sit under the scroll
-  container's scrollbar, and in wide-editor mode text runs close to the
-  right edge, so the collapsed rail must stay slim (≤ 12px of dashes plus a
-  wider invisible hover hit-area) with a small inset. The left-gutter
-  block/drag handle from plan 014 is a non-issue on this side. Validate
-  visually in M2 in both wide and centered modes and with the sidebar open
-  and closed.
-- **Collapsed heading sections** (existing collapsible-headings feature): a
-  TOC target inside a collapsed region has no visible DOM to scroll to.
-  M3 must handle this: either expand ancestor collapsed sections before
-  scrolling (preferred, matches user intent) or visually mark unreachable
-  entries. Decide against the actual DOM behavior once measured.
+- **Right-edge overlaps**: in wide-editor mode text runs close to the right
+  edge, so the collapsed rail must stay slim (≤ 12px of dashes plus a wider
+  invisible hover hit-area) with a small inset. The left-gutter block/drag
+  handle from plan 014 is a non-issue on this side. `LinkedMentions` renders
+  below the editor in the same window scroll flow, so a viewport-centered
+  rail can overlap it on short notes. Validate visually in M2 in wide and
+  centered modes, sidebar open and closed, and on a short note.
+- **Collapsed heading sections**: folded sections stay mounted under
+  `display: none` node decorations, so a TOC target inside one has a live
+  element that cannot be scrolled to. Expand ancestors before scrolling
+  (matches user intent) using `query.listCollapsedHeadings` +
+  `getHeadingFoldRange` for the containment check and
+  `command.toggleHeadingCollapseAtPos` to open them. Note this dispatches a
+  transaction, which conflicts with the no-dispatch rule in §4 — resolve that
+  tension explicitly in M3.
 - **Focus discipline**: per the established rule for editor popups, the
   panel must never steal focus from the editor — `preventDefault` on
   `mousedown` for every interactive element.
@@ -156,7 +167,8 @@ React reads it with `useAtomValue`):
 
 ## Scope
 
-- Heading-watch plugin + `$headings` atom in `@bangle.io/prosemirror-plugins`.
+- Heading-watch plugin + `$headings` atom in `@bangle.io/banger-editor`,
+  re-exported through the `@bangle.io/prosemirror-plugins` barrel.
 - `HeadingTocRail` component (collapsed rail, hover/focus expansion, click
   to scroll, active tracking) mounted in the ProseMirror editor.
 - Visibility rules, translations, reduced-motion support, a11y pass.

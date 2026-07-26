@@ -4,13 +4,14 @@ status: active
 type: plan
 archived: false
 created: 2026-06-30
-updated: 2026-07-19
+updated: 2026-07-24
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/587
   - https://github.com/bangle-io/bangle-io/pull/610
   - https://github.com/bangle-io/bangle-io/pull/661
-related_issues: []
+related_issues:
+  - https://github.com/bangle-io/bangle-io/issues/679
 ---
 
 # Image Embeds And Paste Assets

@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-06-30
-updated: 2026-07-12
+updated: 2026-07-24
 owner: mixed
 related_prs: []
 related_issues: []
@@ -32,13 +32,27 @@ clearing, and eventual persisted snapshots.
 
 ## Current Status
 
-- `WorkspaceStateService.$backlinkIndex` currently builds an in-memory reverse
-  link map for the active workspace. A content-update counter triggers a
-  debounced full rebuild, files are read serially, and the atom aborts stale
-  generations. On failure it exposes an error state with an empty map rather
-  than retaining last-good data. Bounded concurrency, typed incremental event
-  updates, and stale-while-error behavior remain target work (also tracked as
-  A8 in plan 005).
+Verified against `main` 2026-07-24. No `WorkspaceIndexService` exists; Phase 1
+has not started.
+
+- `WorkspaceStateService.$backlinkIndex` builds an in-memory reverse link map
+  for the active workspace. A content-update counter triggers a debounced full
+  rebuild, files are read serially, and the atom aborts stale generations.
+  `buildBacklinkIndex` throws on the *first* unreadable source and the catch
+  returns an empty map, so one unreadable note collapses every backlink in the
+  workspace and Linked Mentions shows its error copy. The stale-while-*loading*
+  path is fine; only the error path drops data. **Retaining last-good data on
+  error is the highest-value item here and is worth doing on its own, even if
+  the service extraction stays deferred.** Bounded concurrency and typed
+  incremental updates remain target work (also A8 in plan 005).
+- The note file stats scan is a second workspace-wide lifecycle in the same
+  service, and a better one: bounded concurrency, a published map that is not
+  reset wholesale on failure, and incremental single-path patching. It is not
+  fully failure-retaining either — a per-path stat failure deletes that path's
+  cache entry, and only the targeted patch path keeps last-known values — but
+  it degrades per file instead of collapsing the workspace. Treat it as the
+  reference template and migration target for `WorkspaceIndexService`, not
+  just the backlink index.
 - `packages/core/app/src/components/backlinks/linked-mentions.tsx` now renders
   backlinks from `WorkspaceStateService.$backlinkIndex` instead of reading or
   parsing Markdown in React.
@@ -258,7 +272,7 @@ Completed in the release branch as a scoped cleanup:
   map for the active workspace.
 - `LinkedMentions` renders the service state and no longer reads files from
   React.
-- Failed rebuilds keep previous backlink data and expose an error state.
+- Failed rebuilds expose an error state, but do **not** retain last-good data.
 - Extensionless Markdown backlink extraction now resolves through the known
   note index instead of guessing `.md` before `.markdown`.
 

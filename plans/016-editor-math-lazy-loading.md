@@ -1,11 +1,11 @@
 ---
 title: Lazy-load the editor math renderer
-status: planned
+status: blocked
 type: plan
 archived: false
 archived_on:
 created: 2026-07-18
-updated: 2026-07-18
+updated: 2026-07-24
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/637
@@ -25,17 +25,22 @@ success to parse, edit, save, or recover.
 
 ## Current status
 
+Blocked on upstream, verified 2026-07-24.
+
 - Math support is complete in PR #637 and deliberately loads KaTeX eagerly.
 - The recorded main JavaScript bundle grew from 564.01 kB gzip before the
   feature to about 653.25 kB gzip on the PR head. KaTeX also emits about 1.07 MB
   of font assets that browsers load on demand.
-- `@benrbray/prosemirror-math` currently exposes one JavaScript entry point.
-  That entry statically imports KaTeX and bundles schema, plugins, commands, and
-  `MathView` together. Importing only the synchronous editor primitives still
-  pulls KaTeX into the eager graph.
+- `@benrbray/prosemirror-math` is pinned at `1.0.0` and exposes one JavaScript
+  entry, which statically imports KaTeX and bundles schema, plugins, commands,
+  and `MathView` together. Its `exports` map declares only `"."` and
+  `"./dist/*.css"`; raw `lib/` sources ship but are not exposed, so
+  deep-importing the schema without the nodeview does not resolve.
 - Bangle must not fork or copy the upstream nodeview to create an artificial
-  split. A true lazy boundary therefore needs an upstream package-entry split
-  or another upstream-supported renderer boundary first.
+  split. A true lazy boundary cannot *ship* without an upstream entry split, so
+  the blocking step is an upstream issue or PR. Next steps 1 and 3 (measuring
+  the module graph, prototyping the async nodeview handoff) can still proceed
+  locally and would strengthen that upstream request.
 
 ## Scope
 
