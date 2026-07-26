@@ -12,7 +12,6 @@ import {
   markdownLoader,
   type PMNode,
   type Schema,
-  selectAll,
   TextSelection,
 } from '@bangle.io/prosemirror-plugins';
 import {
@@ -925,45 +924,6 @@ export class PmEditorService
 
   focusEditor() {
     this.getActiveEditorView()?.focus();
-  }
-
-  /**
-   * Redirects a global Cmd/Ctrl-A into the active editor when the editor is
-   * mounted and nothing at all holds focus (e.g. the user clicked the empty
-   * padding around the note, leaving focus on the page body). Without this a
-   * browser select-all fired from outside the contenteditable selects the whole
-   * document, sweeping the sidebar and app chrome into the selection.
-   *
-   * Anything else keeps its own select-all: returning false defers to the
-   * editor's keymap, to a focused control elsewhere in the app, and to native
-   * behavior when no editor is mounted.
-   *
-   * The guard deliberately tests "nothing is focused" rather than
-   * `view.hasFocus()`. That method is an identity check on the outer
-   * contenteditable, so it reports false while focus sits on a descendant —
-   * notably the nested EditorView a math node opens for its LaTeX source.
-   * Treating that as unfocused stole focus out of the math editor and selected
-   * the whole note, so the next keystroke replaced the document.
-   */
-  selectAllInActiveEditor(): boolean {
-    const view = this.getActiveEditorView();
-    if (!view || view.isDestroyed || !view.dom.isConnected) {
-      return false;
-    }
-    // `view.root` rather than the document so a shadow-root host reports its
-    // own active element; a focused editor is its own `view.dom`, which is
-    // neither body nor documentElement, so it declines here too.
-    const { activeElement } = view.root;
-    const ownerDocument = view.dom.ownerDocument;
-    const nothingFocused =
-      !activeElement ||
-      activeElement === ownerDocument.body ||
-      activeElement === ownerDocument.documentElement;
-    if (!nothingFocused) {
-      return false;
-    }
-    view.focus();
-    return selectAll(view.state, view.dispatch);
   }
 
   /** Dry-runs app-level editor actions against the live selection. */
