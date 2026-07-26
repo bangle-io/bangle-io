@@ -9,13 +9,6 @@ import {
 const FRONTMATTER_NODE_NAME = 'frontmatter';
 
 /**
- * Lift passes allowed per block in the selection. Each pass peels one level off
- * one group of blocks, so a well-formed document always reaches the top well
- * inside this budget; it only stops a malformed one from spinning.
- */
-const MAX_LIFT_PASSES = 8;
-
-/**
  * Textblocks that store their text verbatim: code blocks and YAML frontmatter.
  *
  * Reformatting these as prose is destructive — it drops the fence, language or
@@ -209,8 +202,12 @@ export const setParagraphInSelection: Command = (state, dispatch) => {
   // as one block reaches the top level the range's common ancestor is the
   // document, which would strand the blocks still inside a list.
   const topType = state.schema.topNodeType;
-  const maxPasses = positions.length * MAX_LIFT_PASSES;
-  for (let pass = 0; bounds && pass < maxPasses; pass += 1) {
+  // Every pass must lift a group, which strictly reduces nesting, so the node
+  // count is a safe upper bound. A fixed depth cap instead stopped partway
+  // through legitimately deep Markdown and left the rest wrapped.
+  let remainingPasses = tr.doc.nodeSize;
+  while (bounds && remainingPasses > 0) {
+    remainingPasses -= 1;
     const from = tr.mapping.map(bounds.from);
     const to = tr.mapping.map(bounds.to);
     let nestedPos: number | undefined;
@@ -234,7 +231,13 @@ export const setParagraphInSelection: Command = (state, dispatch) => {
     if (!range || target === null) {
       break;
     }
+    const stepsBefore = tr.steps.length;
     tr.lift(range, target);
+    // Stop if a lift reported success without changing anything, rather than
+    // spinning until the bound runs out.
+    if (tr.steps.length === stepsBefore) {
+      break;
+    }
   }
 
   if (!tr.docChanged) {
