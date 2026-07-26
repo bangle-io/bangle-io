@@ -102,6 +102,12 @@ describe('Markdown paste content gate', () => {
     ).toBe(false);
   });
 
+  it('refuses a dropped definition whose label and URL are single characters', () => {
+    // The word-comparison approach skipped one-character tokens, so this
+    // dropped definition slipped through and only "KEEP" was inserted.
+    expect(setup()('KEEP\n\n[x]: /a')).toBe(false);
+  });
+
   it('refuses a dropped link reference definition', () => {
     // The definition and the missing label vanish from the document, so this
     // paste really would discard what the user copied.
