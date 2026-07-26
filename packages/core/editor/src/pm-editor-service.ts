@@ -58,7 +58,7 @@ import {
   resolveRememberedCursor,
 } from './remembered-cursor';
 import {
-  documentPayload,
+  collectLinkTargets,
   isMarkdownContentPreserved,
   isMarkdownRoundTripPreserved,
 } from './round-trip-check';
@@ -1130,7 +1130,9 @@ export class PmEditorService
       // comparison would also refuse pure normalization (`*italic*` arriving
       // as `_italic_`, `* item` as `- item`), which rejects most Markdown
       // copied from anywhere else and loses nothing.
-      if (!isMarkdownContentPreserved(markdownText, documentPayload(parsed))) {
+      if (
+        !isMarkdownContentPreserved(markdownText, collectLinkTargets(parsed))
+      ) {
         return false;
       }
     } catch {
@@ -1144,7 +1146,14 @@ export class PmEditorService
     if (slice.size === 0) {
       return false;
     }
-    view.dispatch(view.state.tr.replaceSelection(slice).scrollIntoView());
+    // A slice the schema cannot place here replaces nothing. Reporting success
+    // for that would drop the clipboard content without telling anyone, so the
+    // caller has to hear about it.
+    const tr = view.state.tr.replaceSelection(slice);
+    if (!tr.docChanged) {
+      return false;
+    }
+    view.dispatch(tr.scrollIntoView());
     view.focus();
     return true;
   }

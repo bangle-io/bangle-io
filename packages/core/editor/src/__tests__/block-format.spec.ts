@@ -209,7 +209,35 @@ describe('availability dry-run', () => {
 
       expect(available).toBe(applied);
     });
+
+    for (const level of [1, 2, 3]) {
+      it(`reports the same availability as dispatching for heading ${level} on ${name}`, () => {
+        const { stateFrom, run } = setup();
+        const state = stateFrom(source, 'all');
+        const command = toggleHeadingInSelection(level);
+
+        const available = command(state);
+        const { applied } = run(state, command);
+
+        expect(available).toBe(applied);
+      });
+    }
   }
+
+  // Regression: comparing only the node type counted a block that already
+  // carried the requested level as a change, so the control was offered for a
+  // selection it could not alter.
+  it('does not offer a heading the selection already has', () => {
+    const { stateFrom, run } = setup();
+    const source = '## alpha\n\n| h |\n| --- |\n| cell |';
+    const state = stateFrom(source, 'all');
+    const command = toggleHeadingInSelection(2);
+
+    // The table cell cannot take a heading and the paragraph already is one,
+    // so nothing in this selection can change.
+    expect(run(state, command).applied).toBe(false);
+    expect(command(state)).toBe(false);
+  });
 });
 
 describe('heading keybinding command', () => {

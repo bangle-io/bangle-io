@@ -28,6 +28,39 @@ function normalizeForComparison(markdown: string): string {
  */
 const LINK_DEFINITION = /^[ \t]{0,3}\[[^\]]+\]:[ \t]*<?([^\s>]+)>?/gm;
 
+/** Attributes that hold a link or image target. */
+const LINK_TARGET_ATTRS = ['href', 'src'] as const;
+
+/**
+ * Every link and image target the parsed document points at.
+ *
+ * Deliberately only these attributes: comparing against the document's prose as
+ * well would let an unrelated mention of the same text vouch for a definition
+ * that was actually dropped.
+ */
+export function collectLinkTargets(doc: PMNode): ReadonlySet<string> {
+  const targets = new Set<string>();
+  const collect = (attrs: Record<string, unknown> | undefined) => {
+    if (!attrs) {
+      return;
+    }
+    for (const name of LINK_TARGET_ATTRS) {
+      const value = attrs[name];
+      if (typeof value === 'string' && value) {
+        targets.add(value);
+      }
+    }
+  };
+  doc.descendants((node) => {
+    collect(node.attrs);
+    for (const mark of node.marks) {
+      collect(mark.attrs);
+    }
+    return true;
+  });
+  return targets;
+}
+
 /**
  * Decides whether parsing `source` kept everything the user can see.
  *
@@ -42,53 +75,30 @@ const LINK_DEFINITION = /^[ \t]{0,3}\[[^\]]+\]:[ \t]*<?([^\s>]+)>?/gm;
  * meant to disappear. The exception is the link reference definition: the
  * parser consumes it into its environment and emits nothing, so a definition
  * nothing resolved against is content that vanished silently. A definition that
- * *was* resolved reappears as the href or src it supplied, which is what this
- * looks for.
- *
- * Comparing words instead was tried and is not workable: reference labels,
- * ordered-list numbers and character entities are all syntax that legitimately
- * has no counterpart in the document, so each one had to be special-cased while
- * the check still missed duplicate and structural loss.
+ * *was* resolved becomes the target of a link or image, which is what this
+ * looks for — after the parser's own percent-encoding, or a URL holding an
+ * accent or a reserved character would look lost when it is merely encoded.
  */
 export function isMarkdownContentPreserved(
   source: string,
-  documentPayload: string,
+  linkTargets: ReadonlySet<string>,
 ): boolean {
   for (const [, url] of source.matchAll(LINK_DEFINITION)) {
-    if (url && !documentPayload.includes(url)) {
+    if (!url) {
+      continue;
+    }
+    if (linkTargets.has(url)) {
+      continue;
+    }
+    let encoded: string | undefined;
+    try {
+      encoded = encodeURI(url);
+    } catch {
+      encoded = undefined;
+    }
+    if (!encoded || !linkTargets.has(encoded)) {
       return false;
     }
   }
   return true;
-}
-
-/**
- * Everything a parsed document carries that came from the source text: its
- * text, plus the string attributes holding hrefs, titles, code languages and
- * the like. Used to check an insertion kept the source's content.
- */
-export function documentPayload(doc: PMNode): string {
-  const parts: string[] = [];
-  const collectAttrs = (attrs: Record<string, unknown> | undefined) => {
-    if (!attrs) {
-      return;
-    }
-    for (const value of Object.values(attrs)) {
-      if (typeof value === 'string') {
-        parts.push(value);
-      }
-    }
-  };
-  collectAttrs(doc.attrs);
-  doc.descendants((node) => {
-    if (node.isText && node.text) {
-      parts.push(node.text);
-    }
-    collectAttrs(node.attrs);
-    for (const mark of node.marks) {
-      collectAttrs(mark.attrs);
-    }
-    return true;
-  });
-  return parts.join(' ');
 }

@@ -262,7 +262,11 @@ export function setBlockTypeKeepingLiteralText(
     if (!dispatch) {
       return positions.some((pos) => {
         const node = state.doc.nodeAt(pos);
-        if (!node || (node.type === type && !attrs)) {
+        // `hasMarkup` is what `setBlockType` itself uses to decide there is
+        // nothing to do, so asking it here keeps the two paths from drifting.
+        // Comparing only the node type would call a block that already carries
+        // the requested attributes — an H2 asked to become an H2 — a change.
+        if (!node || node.hasMarkup(type, attrs ?? null)) {
           return false;
         }
         const $pos = state.doc.resolve(pos);

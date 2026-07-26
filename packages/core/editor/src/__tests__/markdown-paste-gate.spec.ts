@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  documentPayload,
+  collectLinkTargets,
   isMarkdownContentPreserved,
 } from '../round-trip-check';
 import { createProductionMarkdown } from './production-markdown-test-helpers';
@@ -15,7 +15,7 @@ function setup() {
   return (source: string) =>
     isMarkdownContentPreserved(
       source,
-      documentPayload(markdown.parser.parse(source)),
+      collectLinkTargets(markdown.parser.parse(source)),
     );
 }
 
@@ -75,6 +75,32 @@ describe('Markdown paste content gate', () => {
       expect(setup()(source)).toBe(true);
     });
   }
+
+  // A URL the parser percent-encodes must still be recognised as the same
+  // target, or an accented or reserved character makes a lossless paste fail.
+  const encodedUrls = [
+    ['accented path', 'https://example.com/\u00fcber'],
+    ['non-latin path', 'https://example.com/\u65e5\u672c\u8a9e'],
+    ['accented query', 'https://example.com/path?q=caf\u00e9'],
+    ['relative note link', './notes/\u00dcbersicht.md'],
+    ['reserved characters', 'https://example.com/a|b'],
+  ] as const;
+
+  for (const [name, url] of encodedUrls) {
+    it(`accepts a reference link whose URL has ${name}`, () => {
+      expect(setup()(`[see][ref]\n\n[ref]: ${url}`)).toBe(true);
+    });
+  }
+
+  it('refuses a dropped definition even when its URL appears in the prose', () => {
+    // Matching against the document's text would let this unrelated mention
+    // vouch for the definition that was actually discarded.
+    expect(
+      setup()(
+        'alpha https://example.com/x beta\n\n[gone]: https://example.com/x',
+      ),
+    ).toBe(false);
+  });
 
   it('refuses a dropped link reference definition', () => {
     // The definition and the missing label vanish from the document, so this
