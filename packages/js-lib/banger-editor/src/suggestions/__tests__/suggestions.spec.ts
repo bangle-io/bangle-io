@@ -809,3 +809,70 @@ describe('replaceSuggestMarkWith', () => {
     expect(view.state.doc.textContent).toBe('/aXbcd');
   });
 });
+
+describe('typing past a synthetic trigger', () => {
+  function createSyntheticTriggerEditor({
+    markName,
+    trigger,
+    store,
+  }: {
+    markName: string;
+    trigger: string;
+    store: ReturnType<typeof createStore>;
+  }) {
+    const mark = schema.mark(markName, { trigger, synthetic: true });
+    const doc = schema.node('doc', null, [
+      schema.node('paragraph', null, [schema.text(trigger, [mark])]),
+    ]);
+    const mount = document.createElement('div');
+    document.body.append(mount);
+    const state = EditorState.create({
+      doc,
+      schema,
+      selection: TextSelection.create(doc, trigger.length + 1),
+      plugins: resolve([
+        collection({
+          id: 'test-store',
+          plugin: { store: editorStore.storePlugin(store) },
+        }),
+        setupBase(),
+        setupParagraph(),
+        setupLink(),
+        slashSuggestions,
+        wikiSuggestions,
+        dateSuggestions,
+      ]).resolvePlugins({ schema }),
+    });
+    const view = new EditorView({ mount }, { state });
+    editors.push(view);
+    return view;
+  }
+
+  // Regression: the synthetic branch deleted the whole marked range, and the
+  // mark is inclusive, so the character the user had just typed went with it.
+  it('keeps the typed text when a synthetic date trigger ends the query', () => {
+    const store = createStore();
+    const view = createSyntheticTriggerEditor({
+      markName: 'date_suggestion',
+      trigger: '$date',
+      store,
+    });
+
+    view.dispatch(view.state.tr.insertText('h', view.state.selection.from));
+
+    expect(view.state.doc.textContent).toBe('h');
+  });
+
+  it('keeps the typed text when whitespace ends a synthetic slash query', () => {
+    const store = createStore();
+    const view = createSyntheticTriggerEditor({
+      markName: 'slash_command',
+      trigger: '/',
+      store,
+    });
+
+    view.dispatch(view.state.tr.insertText('hi ', view.state.selection.from));
+
+    expect(view.state.doc.textContent).toBe('hi ');
+  });
+});

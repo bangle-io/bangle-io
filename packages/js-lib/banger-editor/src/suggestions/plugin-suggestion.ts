@@ -293,6 +293,7 @@ export function pluginSuggestion({
               removeSuggestMark({
                 markName,
                 selection: state.selection,
+                trigger,
               })(state, view.dispatch, view);
               return;
             }
@@ -308,6 +309,7 @@ export function pluginSuggestion({
               removeSuggestMark({
                 markName,
                 selection: state.selection,
+                trigger,
               })(state, view.dispatch, view);
               return;
             }
@@ -436,9 +438,17 @@ export function openSuggestion({
 export function removeSuggestMark({
   markName,
   selection,
+  trigger,
 }: {
   markName: string;
   selection: Selection;
+  /**
+   * The provider's trigger text. Supply it when the query is ending because
+   * the user kept typing: a synthetic trigger is then removed on its own and
+   * everything typed after it stays. Leave it off to abandon the suggestion
+   * outright (Escape, deactivation), which drops the whole synthetic range.
+   */
+  trigger?: string;
 }): Command {
   return (state, dispatch, _view) => {
     const { schema } = state;
@@ -482,12 +492,23 @@ export function removeSuggestMark({
       .nodeAt(queryMark.start)
       ?.marks.find((mark) => mark.type === markType);
     if (activeMark?.attrs.synthetic) {
-      dispatch?.(
-        state.tr
-          .delete(queryMark.start, queryMark.end)
-          .removeStoredMark(markType)
-          .setMeta('addToHistory', false),
-      );
+      // The mark is inclusive, so once the user types the range covers those
+      // characters too. Deleting all of it would eat what they just typed, so
+      // when a trigger is supplied only the trigger text goes and the rest is
+      // merely unmarked.
+      const triggerEnd =
+        trigger === undefined
+          ? queryMark.end
+          : Math.min(queryMark.start + trigger.length, queryMark.end);
+      const tr = state.tr.delete(queryMark.start, triggerEnd);
+      if (triggerEnd < queryMark.end) {
+        tr.removeMark(
+          queryMark.start,
+          queryMark.end - (triggerEnd - queryMark.start),
+          markType,
+        );
+      }
+      dispatch?.(tr.removeStoredMark(markType).setMeta('addToHistory', false));
       return true;
     }
 

@@ -175,6 +175,49 @@ const parseLevel = (levelStr: string | number) => {
   return Number.isNaN(level) ? undefined : level;
 };
 
+/**
+ * Retypes the textblocks in the selection, stepping over the ones that store
+ * their text verbatim.
+ *
+ * `setBlockType` alone rewrites every textblock in the range, so a selection
+ * spanning a fenced code block or YAML frontmatter turned it into prose —
+ * dropping the fence, its language and the newlines inside it, and writing
+ * that straight to storage. Those nodes are marked `code` in the schema.
+ */
+function setBlockTypeKeepingLiteralText(
+  type: NodeType,
+  attrs?: Record<string, unknown>,
+): Command {
+  return (state, dispatch) => {
+    const { from, to } = state.selection;
+    const positions: number[] = [];
+    state.doc.nodesBetween(from, to, (node, pos) => {
+      if (!node.isTextblock) {
+        return true;
+      }
+      if (node.type.spec.code !== true) {
+        positions.push(pos);
+      }
+      return false;
+    });
+    if (positions.length === 0) {
+      return false;
+    }
+    const tr = state.tr;
+    for (const pos of positions) {
+      const mapped = tr.mapping.map(pos);
+      if (tr.doc.nodeAt(mapped)?.isTextblock) {
+        tr.setBlockType(mapped + 1, mapped + 1, type, attrs);
+      }
+    }
+    if (!tr.docChanged) {
+      return false;
+    }
+    dispatch?.(tr.scrollIntoView());
+    return true;
+  };
+}
+
 // COMMANDS
 function toggleHeading(config: RequiredConfig) {
   return (level?: number): Command => {
@@ -182,12 +225,11 @@ function toggleHeading(config: RequiredConfig) {
       const { name } = config;
       if (isHeadingActive(config)(state, level)) {
         const para = config.getParagraphNodeType(state.schema);
-        return setBlockType(para)(state, dispatch);
+        return setBlockTypeKeepingLiteralText(para)(state, dispatch);
       }
-      return setBlockType(getNodeType(state.schema, name), { level })(
-        state,
-        dispatch,
-      );
+      return setBlockTypeKeepingLiteralText(getNodeType(state.schema, name), {
+        level,
+      })(state, dispatch);
     };
   };
 }

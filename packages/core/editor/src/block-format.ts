@@ -6,19 +6,16 @@ import {
   type PMNode,
 } from '@bangle.io/prosemirror-plugins';
 
-const FRONTMATTER_NODE_NAME = 'frontmatter';
-
 /**
- * Textblocks that store their text verbatim: code blocks and YAML frontmatter.
+ * Textblocks that store their text verbatim: code blocks and YAML frontmatter,
+ * both of which the schema marks `code`.
  *
  * Reformatting these as prose is destructive — it drops the fence, language or
  * delimiters and collapses the newlines inside them — so the block-format
  * commands step over them instead of rewriting the user's source.
  */
 function holdsLiteralText(node: PMNode): boolean {
-  return (
-    node.type.spec.code === true || node.type.name === FRONTMATTER_NODE_NAME
-  );
+  return node.type.spec.code === true;
 }
 
 /**
@@ -210,32 +207,36 @@ export const setParagraphInSelection: Command = (state, dispatch) => {
     remainingPasses -= 1;
     const from = tr.mapping.map(bounds.from);
     const to = tr.mapping.map(bounds.to);
-    let nestedPos: number | undefined;
+    const nested: number[] = [];
     tr.doc.nodesBetween(from, to, (node, pos, parent) => {
-      if (nestedPos !== undefined) {
-        return false;
-      }
       if (!node.isTextblock) {
         return true;
       }
       if (!holdsLiteralText(node) && parent && parent.type !== topType) {
-        nestedPos = pos;
+        nested.push(pos);
       }
       return false;
     });
-    if (nestedPos === undefined) {
-      break;
+
+    // Lift one group per pass and rescan, since a lift invalidates the
+    // positions collected above. Blocks the schema refuses to lift — a table
+    // cell, for instance — are skipped rather than ending the loop, which
+    // would strand every block after them still nested.
+    let lifted = false;
+    for (const pos of nested) {
+      const range = tr.doc.resolve(pos + 1).blockRange();
+      const target = range ? liftTarget(range) : null;
+      if (!range || target === null) {
+        continue;
+      }
+      const stepsBefore = tr.steps.length;
+      tr.lift(range, target);
+      if (tr.steps.length > stepsBefore) {
+        lifted = true;
+        break;
+      }
     }
-    const range = tr.doc.resolve(nestedPos + 1).blockRange();
-    const target = range ? liftTarget(range) : null;
-    if (!range || target === null) {
-      break;
-    }
-    const stepsBefore = tr.steps.length;
-    tr.lift(range, target);
-    // Stop if a lift reported success without changing anything, rather than
-    // spinning until the bound runs out.
-    if (tr.steps.length === stepsBefore) {
+    if (!lifted) {
       break;
     }
   }

@@ -10,6 +10,7 @@ import type { EditorAction, EditorEngineContract } from '@bangle.io/context';
 import {
   type EditorView,
   markdownLoader,
+  type PMNode,
   type Schema,
   selectAll,
   TextSelection,
@@ -56,7 +57,10 @@ import {
   getRememberedCursorPosition,
   resolveRememberedCursor,
 } from './remembered-cursor';
-import { isMarkdownRoundTripPreserved } from './round-trip-check';
+import {
+  isMarkdownContentPreserved,
+  isMarkdownRoundTripPreserved,
+} from './round-trip-check';
 
 const ASSET_TOAST_FILE_NAME_MAX_LENGTH = 44;
 const EMPTY_WS_PATH_SET: ReadonlySet<string> = new Set();
@@ -112,6 +116,37 @@ type EditorEntry =
   | { name: string; status: 'pending'; wsPath: string };
 
 type ReadyEditorEntry = Extract<EditorEntry, { editorView: unknown }>;
+
+/**
+ * Everything a parsed document carries that came from the source text: its
+ * text, plus the string attributes holding hrefs, titles, code languages and
+ * the like. Used to check an insertion kept the source's content.
+ */
+function documentPayload(doc: PMNode): string {
+  const parts: string[] = [];
+  const collectAttrs = (attrs: Record<string, unknown> | undefined) => {
+    if (!attrs) {
+      return;
+    }
+    for (const value of Object.values(attrs)) {
+      if (typeof value === 'string') {
+        parts.push(value);
+      }
+    }
+  };
+  collectAttrs(doc.attrs);
+  doc.descendants((node) => {
+    if (node.isText && node.text) {
+      parts.push(node.text);
+    }
+    collectAttrs(node.attrs);
+    for (const mark of node.marks) {
+      collectAttrs(mark.attrs);
+    }
+    return true;
+  });
+  return parts.join(' ');
+}
 
 /**
  * Manages ProseMirror editor instances and state. This is the ProseMirror
@@ -1121,8 +1156,11 @@ export class PmEditorService
     let parsed: ReturnType<typeof markdown.parser.parse>;
     try {
       parsed = markdown.parser.parse(markdownText);
-      const serialized = markdown.serializer.serialize(parsed);
-      if (!isMarkdownRoundTripPreserved(markdownText, serialized)) {
+      // Refuse only when parsing dropped content the user can see. A byte
+      // comparison would also refuse pure normalization (`*italic*` arriving
+      // as `_italic_`, `* item` as `- item`), which rejects most Markdown
+      // copied from anywhere else and loses nothing.
+      if (!isMarkdownContentPreserved(markdownText, documentPayload(parsed))) {
         return false;
       }
     } catch {

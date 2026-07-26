@@ -59,7 +59,12 @@ function setup() {
     });
     return { applied, markdown: markdown.serializer.serialize(next.doc) };
   };
-  return { stateFrom, run, serialize: markdown.serializer.serialize };
+  return {
+    stateFrom,
+    run,
+    serialize: markdown.serializer.serialize,
+    extensions,
+  };
 }
 
 describe('setParagraphInSelection', () => {
@@ -133,6 +138,37 @@ describe('setParagraphInSelection', () => {
     expect(isSelectionAllTopLevelParagraphs(state)).toBe(true);
   });
 
+  it('flattens a list even when an un-liftable block precedes it', () => {
+    const { stateFrom, run } = setup();
+    // Table cells are textblocks that cannot be lifted. Aborting on the first
+    // one left every later block nested, so the list here stayed a list and the
+    // control reported nothing to do.
+    const state = stateFrom(
+      '| h |\n| --- |\n| cell |\n\n- item one\n- item two',
+      'all',
+    );
+
+    const { applied, markdown } = run(state, setParagraphInSelection);
+
+    expect(applied).toBe(true);
+    expect(markdown).toBe('| h |\n| --- |\n| cell |\n\nitem one\n\nitem two');
+  });
+
+  it('does not report success after a partial conversion', () => {
+    const { stateFrom, run } = setup();
+    const state = stateFrom(
+      '# head\n\n| h |\n| --- |\n| cell |\n\n- item one',
+      'all',
+    );
+
+    const { applied, markdown } = run(state, setParagraphInSelection);
+
+    // The heading converting while the list stayed nested was the silent
+    // partial conversion this command exists to prevent.
+    expect(applied).toBe(true);
+    expect(markdown).toBe('head\n\n| h |\n| --- |\n| cell |\n\nitem one');
+  });
+
   it('keeps marks and links while converting a heading', () => {
     const { stateFrom, run } = setup();
     const state = stateFrom('## **bold** and [link](http://x.com/)', 'all');
@@ -140,6 +176,28 @@ describe('setParagraphInSelection', () => {
     const { markdown } = run(state, setParagraphInSelection);
 
     expect(markdown).toBe('**bold** and [link](http://x.com/)');
+  });
+});
+
+describe('heading keybinding command', () => {
+  // Mod-Alt-1/2/3 goes through banger-editor's own toggleHeading, not the
+  // toolbar. It used to rewrite every textblock in range, so a select-all
+  // turned fenced code and frontmatter into headings.
+  it('leaves code blocks and frontmatter alone', () => {
+    const { stateFrom, run, extensions } = setup();
+    const source =
+      '---\ntitle: my note\n---\n\nalpha\n\n```js\nconst a = 1;\n```';
+    const state = stateFrom(source, 'all');
+
+    const { applied, markdown } = run(
+      state,
+      extensions.heading.command.toggleHeading(1),
+    );
+
+    expect(applied).toBe(true);
+    expect(markdown).toBe(
+      '---\ntitle: my note\n---\n\n# alpha\n\n```js\nconst a = 1;\n```',
+    );
   });
 });
 
