@@ -4,6 +4,7 @@ import {
   liftTarget,
   type NodeType,
   type PMNode,
+  setBlockTypeKeepingLiteralText,
 } from '@bangle.io/prosemirror-plugins';
 
 /**
@@ -127,42 +128,6 @@ export function isSelectionAllHeadings(
 }
 
 /**
- * Retypes every formattable block in the selection in a single transaction.
- * Blocks the schema will not retype in place (a heading inside a table cell,
- * say) are left as they are, so the command reports `false` when nothing
- * changed and callers can present it as unavailable.
- */
-function convertSelectionToBlockType(
-  type: NodeType,
-  attrs?: Record<string, unknown>,
-): Command {
-  return (state, dispatch) => {
-    const positions = formattableBlockPositions(state);
-    if (positions.length === 0) {
-      return false;
-    }
-    const tr = state.tr;
-    for (const pos of positions) {
-      const mapped = tr.mapping.map(pos);
-      const node = tr.doc.nodeAt(mapped);
-      if (!node?.isTextblock) {
-        continue;
-      }
-      // `setBlockType` takes a position inside the block and skips blocks the
-      // schema refuses, so an ineligible block simply stays put.
-      tr.setBlockType(mapped + 1, mapped + 1, type, attrs);
-    }
-    if (!tr.docChanged) {
-      return false;
-    }
-    if (dispatch) {
-      dispatch(tr.scrollIntoView());
-    }
-    return true;
-  };
-}
-
-/**
  * Turns the whole selection into plain top-level paragraphs: retypes headings
  * and other blocks, then lifts the selected range out of every list and
  * blockquote wrapping it.
@@ -262,9 +227,9 @@ export function toggleHeadingInSelection(level: number): Command {
       return false;
     }
     if (isSelectionAllHeadings(state, level)) {
-      return convertSelectionToBlockType(paragraph)(state, dispatch, view);
+      return setBlockTypeKeepingLiteralText(paragraph)(state, dispatch, view);
     }
-    return convertSelectionToBlockType(heading, { level })(
+    return setBlockTypeKeepingLiteralText(heading, { level })(
       state,
       dispatch,
       view,

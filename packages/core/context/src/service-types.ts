@@ -75,7 +75,9 @@ export type EditorEngineContract = BaseService & {
   hasPendingOrFailedSave: (wsPath?: string) => boolean;
   /**
    * Parses and inserts Markdown at the current selection. Returns false when
-   * the source cannot round-trip without loss or normalization.
+   * parsing would drop content the user can see. Normalization is accepted:
+   * `*italic*` arriving as `_italic_` loses nothing, and the same rewriting
+   * happens to Markdown the user simply types.
    */
   insertMarkdownAtSelection: (markdownText: string) => boolean;
   /** Reports whether an app-level editor action can run against the current

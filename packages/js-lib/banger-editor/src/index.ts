@@ -309,6 +309,7 @@ export {
   replaceSelectedNode,
   safeInsert,
   selectParentNodeOfType,
+  setBlockTypeKeepingLiteralText,
   setParentNodeMarkup,
   setTextSelection,
   setupScrollAndResizeHandlers,

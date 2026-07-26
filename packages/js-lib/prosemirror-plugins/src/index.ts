@@ -287,6 +287,7 @@ export {
   serializeMathClipboardText,
   serializeWikiLinkAttrs,
   setBlockType,
+  setBlockTypeKeepingLiteralText,
   setColumnAlign,
   setGlobalConfig,
   setParentNodeMarkup,

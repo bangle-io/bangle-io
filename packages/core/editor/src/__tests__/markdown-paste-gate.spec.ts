@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { isMarkdownContentPreserved } from '../round-trip-check';
+import {
+  documentPayload,
+  isMarkdownContentPreserved,
+} from '../round-trip-check';
 import { createProductionMarkdown } from './production-markdown-test-helpers';
 
 // The paste path must accept Markdown that merely normalizes and refuse only
@@ -7,23 +10,13 @@ import { createProductionMarkdown } from './production-markdown-test-helpers';
 // and rejected most Markdown copied from anywhere else.
 function setup() {
   const markdown = createProductionMarkdown();
-  return (source: string) => {
-    const parsed = markdown.parser.parse(source);
-    const parts: string[] = [];
-    const collect = (attrs: Record<string, unknown> | undefined) => {
-      if (!attrs) return;
-      for (const value of Object.values(attrs)) {
-        if (typeof value === 'string') parts.push(value);
-      }
-    };
-    parsed.descendants((node) => {
-      if (node.isText && node.text) parts.push(node.text);
-      collect(node.attrs);
-      for (const mark of node.marks) collect(mark.attrs);
-      return true;
-    });
-    return isMarkdownContentPreserved(source, parts.join(' '));
-  };
+  // Uses the production payload collector, so the gate cannot be tested
+  // against a shape the app no longer produces.
+  return (source: string) =>
+    isMarkdownContentPreserved(
+      source,
+      documentPayload(markdown.parser.parse(source)),
+    );
 }
 
 describe('Markdown paste content gate', () => {
@@ -42,6 +35,27 @@ describe('Markdown paste content gate', () => {
     ['plain paragraph', 'plain paragraph'],
     ['inline link with title', '[visible](https://example.com "the title")'],
     ['fenced code with language', '```js\nconst a = 1;\n```'],
+    // The list number is never stored on the node — the serializer always
+    // writes "1." — so a two-digit marker exists only in the source.
+    [
+      'ordered list past item nine',
+      [
+        '1. alpha',
+        '2. bravo',
+        '3. charlie',
+        '4. delta',
+        '5. echo',
+        '6. foxtrot',
+        '7. golf',
+        '8. hotel',
+        '9. india',
+        '10. juliett',
+      ].join('\n'),
+    ],
+    ['two-digit ordered marker', '12. twelfth item'],
+    // Entities decode to punctuation, so their spelling is gone by design.
+    ['named entity', 'fish &amp; chips'],
+    ['numeric entity', '&#169; notice text'],
   ] as const;
 
   for (const [name, source] of accepted) {
@@ -49,6 +63,12 @@ describe('Markdown paste content gate', () => {
       expect(setup()(source)).toBe(true);
     });
   }
+
+  it('does not let a longer surviving word excuse a dropped one', () => {
+    // Substring matching would call this preserved because "foobar" contains
+    // "foo", hiding the fact that the word itself is gone.
+    expect(isMarkdownContentPreserved('foo bar', 'foobar bar')).toBe(false);
+  });
 
   it('refuses a dropped link reference definition', () => {
     // The definition and the missing label vanish from the document, so this

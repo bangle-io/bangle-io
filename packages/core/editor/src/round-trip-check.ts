@@ -1,3 +1,5 @@
+import type { PMNode } from '@bangle.io/prosemirror-plugins';
+
 /**
  * Decides whether the editor can round-trip a note's Markdown without
  * rewriting it. `source` is the exact text read from storage; `serialized`
@@ -29,6 +31,32 @@ function normalizeForComparison(markdown: string): string {
  */
 const CONTENT_WORD = /[\p{L}\p{N}]{2,}/gu;
 
+/** An ordered-list marker at the start of a line: `1.`, `10)`. */
+const ORDERED_MARKER = /^[ \t]*\d+[.)](?=[ \t])/gm;
+
+/** A named, decimal or hex character entity. */
+const HTML_ENTITY = /&(?:#\d+|#x[0-9a-f]+|[a-z][a-z0-9]*);/gi;
+
+/**
+ * The words a piece of Markdown actually says, with the syntax that legitimately
+ * disappears on parse removed first:
+ *
+ * - ordered-list numbers, which are not stored on the node at all (the
+ *   serializer always writes `1.`), so a list of ten or more items would
+ *   otherwise look like it lost the number of its tenth
+ * - character entities, which decode to punctuation, so `&amp;` is an `&` and
+ *   the letters "amp" were never content
+ */
+function contentWords(markdown: string): string[] {
+  return (
+    markdown
+      .replace(ORDERED_MARKER, ' ')
+      .replace(HTML_ENTITY, ' ')
+      .toLowerCase()
+      .match(CONTENT_WORD) ?? []
+  );
+}
+
 /**
  * Decides whether parsing `source` kept everything the user can see.
  *
@@ -48,10 +76,39 @@ export function isMarkdownContentPreserved(
   source: string,
   documentPayload: string,
 ): boolean {
-  const words = source.match(CONTENT_WORD);
-  if (!words) {
+  // Whole words rather than substrings, so a word that really was dropped
+  // cannot be excused by a longer surviving word that happens to contain it.
+  const surviving = new Set(contentWords(documentPayload));
+  return contentWords(source).every((word) => surviving.has(word));
+}
+
+/**
+ * Everything a parsed document carries that came from the source text: its
+ * text, plus the string attributes holding hrefs, titles, code languages and
+ * the like. Used to check an insertion kept the source's content.
+ */
+export function documentPayload(doc: PMNode): string {
+  const parts: string[] = [];
+  const collectAttrs = (attrs: Record<string, unknown> | undefined) => {
+    if (!attrs) {
+      return;
+    }
+    for (const value of Object.values(attrs)) {
+      if (typeof value === 'string') {
+        parts.push(value);
+      }
+    }
+  };
+  collectAttrs(doc.attrs);
+  doc.descendants((node) => {
+    if (node.isText && node.text) {
+      parts.push(node.text);
+    }
+    collectAttrs(node.attrs);
+    for (const mark of node.marks) {
+      collectAttrs(mark.attrs);
+    }
     return true;
-  }
-  const payload = documentPayload.toLowerCase();
-  return words.every((word) => payload.includes(word.toLowerCase()));
+  });
+  return parts.join(' ');
 }
