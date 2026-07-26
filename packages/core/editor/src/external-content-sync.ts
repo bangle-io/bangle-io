@@ -18,15 +18,17 @@ const QUIET_MS = 150;
  * changed content is applied to an open editor.
  */
 const STABILITY_MS = 100;
+/** Back-to-back passes before backing off, for a writer that settles quickly. */
+const PASSES_BEFORE_BACKOFF = 5;
 /**
- * Upper bound on re-runs per event burst so a file under continuous external
+ * Upper bound on passes per event burst so a file under continuous external
  * writes cannot spin the sync loop forever; the next watcher event starts a
  * fresh sync.
  */
-const MAX_PASSES = 5;
+const MAX_PASSES = 10;
 /**
- * Backoff before one final bounded retry burst. A writer may settle without
- * producing another watcher event, so the first bound cannot simply give up.
+ * Backoff before the remaining passes. A writer may settle without producing
+ * another watcher event, so the fast passes cannot simply give up.
  */
 const TRAILING_RETRY_DELAY_MS = 1_000;
 
@@ -93,7 +95,8 @@ export interface ExternalContentSyncHost {
   /**
    * Preserves the current source, re-checks that the editor is still safe to
    * replace, applies the transaction without re-saving it, and records the
-   * newly loaded source baseline.
+   * newly loaded source baseline. `refused` means the editor's own content
+   * could not be preserved, so replacing it would lose it for good.
    */
   replaceContent(args: {
     currentSerialized: string;
@@ -102,7 +105,7 @@ export interface ExternalContentSyncHost {
     transaction: Transaction;
     view: EditorView;
     wsPath: string;
-  }): Promise<'applied' | 'retry' | 'skipped'>;
+  }): Promise<'applied' | 'refused' | 'retry' | 'skipped'>;
   /**
    * The disk copy of `wsPath` was confirmed stable and different, but was
    * refused (fidelity, emptied-file, schema, or parse refusal) — the open
@@ -223,7 +226,7 @@ export class ExternalContentSync {
     let pendingWork = false;
     try {
       do {
-        if (passes === MAX_PASSES) {
+        if (passes === PASSES_BEFORE_BACKOFF) {
           await sleep(TRAILING_RETRY_DELAY_MS, this.signal);
           if (this.aborted) {
             return;
@@ -233,7 +236,7 @@ export class ExternalContentSync {
         passes += 1;
         const result = await this.reconcileOnce(wsPath, 'automatic');
         pendingWork = result.retry || this.runs.get(wsPath) === true;
-      } while (pendingWork && passes < MAX_PASSES * 2 && !this.aborted);
+      } while (pendingWork && passes < MAX_PASSES && !this.aborted);
       if (pendingWork && !this.aborted) {
         this.host.logger.warn(
           `External content for ${wsPath} kept changing; giving up until the next external event`,
@@ -318,13 +321,9 @@ export class ExternalContentSync {
       const markdown = this.host.getMarkdown(view.state.schema);
       let parsed: ReturnType<typeof markdown.parser.parse>;
       let currentSerialized: string;
-      let diskSerialized: string | undefined;
       try {
         parsed = markdown.parser.parse(diskText);
         currentSerialized = markdown.serializer.serialize(view.state.doc);
-        if (mode === 'automatic') {
-          diskSerialized = markdown.serializer.serialize(parsed);
-        }
       } catch (error) {
         if (mode === 'user-approved') {
           throw error;
@@ -338,11 +337,19 @@ export class ExternalContentSync {
       }
 
       if (mode === 'automatic') {
-        // Serializer comparison coalesces echoes and normalization-only
-        // differences. Retained source recognizes unchanged lossy Markdown.
-        if (diskSerialized === undefined) {
+        let diskSerialized: string;
+        try {
+          diskSerialized = markdown.serializer.serialize(parsed);
+        } catch (error) {
+          this.host.logger.warn(
+            `Could not serialize externally changed content for ${wsPath}`,
+            error,
+          );
+          refused = true;
           continue;
         }
+        // Serializer comparison coalesces echoes and normalization-only
+        // differences. Retained source recognizes unchanged lossy Markdown.
         const retainedSource = this.host.getRetainedSource(view);
         if (
           currentSerialized === diskSerialized &&
@@ -396,6 +403,8 @@ export class ExternalContentSync {
       }
       if (replaceResult === 'retry') {
         outcome.retry = true;
+      } else if (replaceResult === 'refused') {
+        refused = true;
       } else if (replaceResult === 'applied') {
         outcome.appliedViews.push(view);
         reconciled = true;

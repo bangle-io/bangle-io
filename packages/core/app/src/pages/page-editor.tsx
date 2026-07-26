@@ -1,7 +1,7 @@
 import { EDITOR_GUTTER_PADDING_LEFT } from '@bangle.io/constants';
-import { useCoreServices } from '@bangle.io/context';
+import { type EditorEngineContract, useCoreServices } from '@bangle.io/context';
 import { useAtomValue } from 'jotai';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useSyncExternalStore } from 'react';
 import { LinkedMentions } from '../components/backlinks/linked-mentions';
 import { EditorSurface } from '../components/editor-surface';
 import { NoteNotFoundView } from '../components/feedback/note-not-found-view';
@@ -13,6 +13,35 @@ const MAIN_EDITOR_NAME = 'main-editor';
 
 // APP_MAIN_CONTENT_PADDING with the left side widened for the block handle.
 const EDITOR_CONTENT_PADDING = `py-4 pt-0 pr-4 md:pr-6 ${EDITOR_GUTTER_PADDING_LEFT}`;
+
+type SaveStatusSource = Pick<
+  EditorEngineContract,
+  'hasPendingOrFailedSave' | 'subscribeToSaveStatus'
+>;
+
+/**
+ * Save status lives outside Jotai, so it has to be subscribed to rather than
+ * read during render: otherwise a save that settles after the file tree
+ * dropped the path would never re-render this page.
+ */
+function useHasPendingSave(
+  saveStatus: SaveStatusSource,
+  wsPath: string | undefined,
+): boolean {
+  const subscribe = useCallback(
+    (onStoreChange: () => void) =>
+      wsPath === undefined
+        ? () => {}
+        : saveStatus.subscribeToSaveStatus(onStoreChange, wsPath),
+    [saveStatus, wsPath],
+  );
+  const getSnapshot = useCallback(
+    () => wsPath !== undefined && saveStatus.hasPendingOrFailedSave(wsPath),
+    [saveStatus, wsPath],
+  );
+
+  return useSyncExternalStore(subscribe, getSnapshot);
+}
 
 export function PageEditor() {
   const coreServices = useCoreServices();
@@ -27,10 +56,10 @@ export function PageEditor() {
   );
   const routeWsPath = useAtomValue(coreServices.navigation.$wsFilePath);
   const routeWsName = useAtomValue(coreServices.navigation.$wsName);
-  const routeWsPathValue = routeWsPath?.wsPath;
-  const hasPendingSave =
-    routeWsPathValue !== undefined &&
-    coreServices.editorEngine.hasPendingOrFailedSave(routeWsPathValue);
+  const hasPendingSave = useHasPendingSave(
+    coreServices.editorEngine,
+    routeWsPath?.wsPath,
+  );
   // A watcher-driven rename/delete removes the route path from the file tree.
   // Keep a dirty editor mounted so its only unsaved copy remains recoverable.
   const editorWsPath =

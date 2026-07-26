@@ -641,6 +641,8 @@ export const t = {
         `${fileName} changed on disk, but the change could not be applied safely. The editor kept the current version.`,
       externalDiskVersionUnavailable: ({ fileName }: { fileName: string }) =>
         `Could not read ${fileName} from disk. The editor kept the current version.`,
+      externalDiskVersionNotApplied: ({ fileName }: { fileName: string }) =>
+        `The disk version of ${fileName} was not loaded. The editor kept the current version.`,
       loadDiskVersion: 'Load disk version',
       fileCreated: ({ fileName }: { fileName: string }) =>
         `Created ${fileName}`,

@@ -661,6 +661,7 @@ export class PmEditorService
    * left alone (its save resolves the divergence).
    */
   async loadDiskVersionIntoEditors(wsPath: string): Promise<void> {
+    const fileName = WsPath.safeParseFile(wsPath).data?.fileName ?? wsPath;
     try {
       const result = await this.externalContentSync.acceptDiskVersion(wsPath);
       if (result.unavailable) {
@@ -668,8 +669,17 @@ export class PmEditorService
           `Disk version of ${wsPath} could not be read; keeping the editor content`,
         );
         this.dismissStaleExternalContentToast(wsPath);
-        const fileName = WsPath.safeParseFile(wsPath).data?.fileName ?? wsPath;
         toast.error(t.app.toasts.externalDiskVersionUnavailable({ fileName }));
+        return;
+      }
+      if (result.appliedViews.length === 0) {
+        // Nothing was replaced — local edits reclaimed the note, or it was
+        // closed. Keep the notice so the user still has a way back to disk
+        // instead of silently leaving them on the older content.
+        this.logger.warn(
+          `Disk version of ${wsPath} was not applied; keeping the editor content`,
+        );
+        toast.error(t.app.toasts.externalDiskVersionNotApplied({ fileName }));
         return;
       }
 
@@ -749,7 +759,7 @@ export class PmEditorService
     transaction: Transaction;
     view: EditorView;
     wsPath: string;
-  }): Promise<'applied' | 'retry' | 'skipped'> {
+  }): Promise<'applied' | 'refused' | 'retry' | 'skipped'> {
     if (
       this.saveQueue.hasPendingOrFailed(wsPath) ||
       view.isDestroyed ||
@@ -767,8 +777,13 @@ export class PmEditorService
         wsPath,
         this.getExactPreservableContent(view, currentSerialized),
       );
-    if (!preserved) {
+    if (preserved === 'retry') {
       return 'retry';
+    }
+    if (preserved === 'unpreservable') {
+      // Applying disk content would destroy the editor's copy with no
+      // recovery path, so keep it and tell the user instead.
+      return 'refused';
     }
 
     if (

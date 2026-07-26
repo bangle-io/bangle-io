@@ -705,14 +705,20 @@ describe('external change watching', () => {
       service.fileExists('myWorkspace:seed.md'),
       service.fileExists('secondWorkspace:seed.md'),
     ]);
+    // Each opened workspace is refreshed by name, so consumers never have to
+    // re-read workspaces this provider does not even hold.
     triggerPageReturn({ returnedFromHidden: true });
-    expect(onExternalChange).toHaveBeenCalledTimes(1);
-    expect(onExternalChange).toHaveBeenCalledWith({ type: 'refresh' });
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'refresh', wsName: 'myWorkspace' },
+      { type: 'refresh', wsName: 'secondWorkspace' },
+    ]);
 
     onExternalChange.mockClear();
     triggerPageReturn({ returnedFromHidden: false });
-    expect(onExternalChange).toHaveBeenCalledTimes(1);
-    expect(onExternalChange).toHaveBeenCalledWith({ type: 'refresh' });
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'refresh', wsName: 'myWorkspace' },
+      { type: 'refresh', wsName: 'secondWorkspace' },
+    ]);
   });
 
   it('skips the refresh on plain refocus while a watcher is armed and healthy', async () => {
@@ -728,7 +734,10 @@ describe('external change watching', () => {
     // A return from a hidden/frozen tab refreshes even with a live watcher:
     // the browser may have starved the observer while the tab was away.
     triggerPageReturn({ returnedFromHidden: true });
-    expect(onExternalChange).toHaveBeenCalledWith({ type: 'refresh' });
+    expect(onExternalChange).toHaveBeenCalledWith({
+      type: 'refresh',
+      wsName: 'myWorkspace',
+    });
   });
 
   it('retries when NativeFs reports that a watcher did not arm', async () => {
@@ -750,7 +759,10 @@ describe('external change watching', () => {
     });
 
     triggerPageReturn({ returnedFromHidden: false });
-    expect(onExternalChange).toHaveBeenCalledWith({ type: 'refresh' });
+    expect(onExternalChange).toHaveBeenCalledWith({
+      type: 'refresh',
+      wsName: 'myWorkspace',
+    });
     await vi.waitFor(() => {
       expect(watchSpy).toHaveBeenCalledTimes(2);
     });
@@ -779,7 +791,10 @@ describe('external change watching', () => {
     // Starting prevents duplicate setup, but is not yet healthy enough to
     // assume that the observer saw everything before this refocus.
     triggerPageReturn({ returnedFromHidden: false });
-    expect(onExternalChange).toHaveBeenCalledWith({ type: 'refresh' });
+    expect(onExternalChange).toHaveBeenCalledWith({
+      type: 'refresh',
+      wsName: 'myWorkspace',
+    });
     expect(watchSpy).toHaveBeenCalledTimes(1);
 
     resolveWatch(true);
@@ -801,7 +816,10 @@ describe('external change watching', () => {
     // the watcher dead, anything could have been missed meanwhile.
     onExternalChange.mockClear();
     triggerPageReturn({ returnedFromHidden: false });
-    expect(onExternalChange).toHaveBeenCalledWith({ type: 'refresh' });
+    expect(onExternalChange).toHaveBeenCalledWith({
+      type: 'refresh',
+      wsName: 'myWorkspace',
+    });
     await vi.waitFor(() => {
       expect(observer.observe).toHaveBeenCalledTimes(2);
     });

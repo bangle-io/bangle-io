@@ -299,6 +299,42 @@ describe('NoteSnapshotService', () => {
     controller.abort();
   });
 
+  it('keeps capturing local versions once the throttle window has passed', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-07-21T00:00:00Z'));
+    const { controller, services, testEnv } = await setup({
+      minCaptureIntervalMs: 60_000,
+    });
+    await services.fileSystem.createTextFile(NOTE_WS_PATH, 'v1');
+    await writeNote(services, NOTE_WS_PATH, 'v2 from this tab');
+
+    // A watched workspace echoes every one of this tab's own writes back. That
+    // must not switch off ordinary snapshot history: after the throttle window
+    // the next save still has to preserve the version it overwrites.
+    // Spaced past the retention thinning bucket so each version survives.
+    for (const content of ['v3 from this tab', 'v4 from this tab']) {
+      testEnv.rootEmitter.emit('event::file:update', {
+        type: 'file-content-update',
+        wsPath: NOTE_WS_PATH,
+        sender: SELF_WATCHER_SENDER,
+      });
+      vi.advanceTimersByTime(11 * 60_000);
+      await writeNote(services, NOTE_WS_PATH, content);
+    }
+
+    const snapshots = await services.noteSnapshot.listSnapshots();
+    const contents = await Promise.all(
+      snapshots.map(
+        async ({ id }) =>
+          (await services.noteSnapshot.getSnapshot(id))?.content,
+      ),
+    );
+    expect(contents).toEqual(
+      expect.arrayContaining(['v1', 'v2 from this tab', 'v3 from this tab']),
+    );
+    controller.abort();
+  });
+
   it('does not snapshot a same-tab watcher echo as external content', async () => {
     const { controller, services, testEnv } = await setup({
       minCaptureIntervalMs: 60_000,
@@ -502,12 +538,15 @@ describe('NoteSnapshotService', () => {
     controller.abort();
   });
 
-  it('applies the snapshot size limit to externally displaced editor content', async () => {
+  it('reports externally displaced editor content over the size limit as unpreservable', async () => {
     const { controller, services } = await setup();
     const huge = `# big\n${'word '.repeat(1_000_000)}`;
 
-    await services.noteSnapshot.preserveExternalOverwrite(NOTE_WS_PATH, huge);
-
+    // Reporting this as preserved would let the caller destroy the only
+    // remaining copy of the note.
+    await expect(
+      services.noteSnapshot.preserveExternalOverwrite(NOTE_WS_PATH, huge),
+    ).resolves.toBe('unpreservable');
     expect(await services.noteSnapshot.listSnapshots()).toEqual([]);
     controller.abort();
   });

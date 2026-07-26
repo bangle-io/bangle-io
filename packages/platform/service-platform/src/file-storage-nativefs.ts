@@ -142,8 +142,12 @@ export class FileStorageNativeFs
         // cross-tab write serialization stays keyed to the workspace identity.
         const fs = new NativeFs({ rootHandle: handle, lockScope: wsName });
         const entry: FsCacheEntry = { fs, watchState: 'idle' };
-        this.fsCache.set(wsName, entry);
-        this.startWatching(wsName, entry);
+        if (!this.abortSignal.aborted) {
+          // A load that outlived teardown must not refill the cache the
+          // cleanup just cleared.
+          this.fsCache.set(wsName, entry);
+          this.startWatching(wsName, entry);
+        }
         return entry;
       });
       this.fsLoads.set(wsName, load);
@@ -190,23 +194,20 @@ export class FileStorageNativeFs
   /**
    * Re-arms unhealthy watchers. Hidden returns always refresh because the
    * browser may have starved observers; plain refocus refreshes only when a
-   * watcher is unavailable. One app-wide event covers all workspaces.
+   * watcher is unavailable. Refreshes are scoped to the workspaces this
+   * provider actually holds, so unrelated workspaces are left alone.
    */
   private revalidateOnPageReturn(info: PageReturnInfo): void {
     const onExternalChange = this.config.onExternalChange;
-    if (!onExternalChange || this.fsCache.size === 0) {
+    if (!onExternalChange) {
       return;
     }
-    let shouldRefresh = false;
     for (const [wsName, entry] of this.fsCache) {
       const wasArmed = entry.watchState === 'armed';
       this.startWatching(wsName, entry);
       if (info.returnedFromHidden || !wasArmed) {
-        shouldRefresh = true;
+        onExternalChange({ type: 'refresh', wsName });
       }
-    }
-    if (shouldRefresh) {
-      onExternalChange({ type: 'refresh' });
     }
   }
 

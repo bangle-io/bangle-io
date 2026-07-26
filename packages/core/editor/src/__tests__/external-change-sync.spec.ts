@@ -186,7 +186,7 @@ describe('editor refresh on external file changes', () => {
     );
     const preserveSpy = vi
       .spyOn(services.noteSnapshot, 'preserveExternalOverwrite')
-      .mockResolvedValueOnce(false);
+      .mockResolvedValueOnce('retry');
 
     await simulateExternalEdit(testEnv, services, 'externally updated');
 
@@ -692,6 +692,34 @@ describe('editor refresh on external file changes', () => {
     expect(dismissSpy).toHaveBeenCalledWith(STALE_TOAST_ID);
   });
 
+  it('refuses to replace content it could not preserve', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      'the original note body',
+    );
+    const warningSpy = vi.spyOn(toast, 'warning');
+    // Snapshotting is impossible for this note (e.g. it is over the snapshot
+    // size limit). Applying disk content anyway would destroy the editor's
+    // copy with nothing to recover it from.
+    vi.spyOn(
+      services.noteSnapshot,
+      'preserveExternalOverwrite',
+    ).mockResolvedValue('unpreservable');
+
+    await simulateExternalEdit(testEnv, services, 'externally updated');
+
+    await vi.waitFor(
+      () => {
+        expect(warningSpy).toHaveBeenCalledWith(
+          expect.stringContaining('note.md'),
+          expect.objectContaining({ id: STALE_TOAST_ID }),
+        );
+      },
+      { timeout: 3_000 },
+    );
+    expect(editorText(domNode)).toContain('the original note body');
+    expect(editorText(domNode)).not.toContain('externally updated');
+  });
+
   it('withdraws a stale-content warning when the file is externally deleted', async () => {
     const { testEnv, services } = await setupEditorWithNote(
       'the original note body',
@@ -858,6 +886,8 @@ describe('editor refresh on external file changes', () => {
     const { testEnv, services, domNode } = await setupEditorWithNote(
       'the original note body',
     );
+    const dismissSpy = vi.spyOn(toast, 'dismiss');
+    const errorSpy = vi.spyOn(toast, 'error');
 
     await simulateRefusedExternalEdit(testEnv, services);
 
@@ -878,12 +908,19 @@ describe('editor refresh on external file changes', () => {
     });
 
     // Their unsaved edit exists nowhere else: the disk version must lose.
+    dismissSpy.mockClear();
     await asPmEditor(services.editorEngine).loadDiskVersionIntoEditors(
       NOTE_WS_PATH,
     );
 
     expect(editorText(domNode)).toContain('USER-EDIT-AFTER-TOAST');
     expect(editorText(domNode)).not.toContain('the spec');
+    // Nothing was loaded, so the notice must stay put with an explanation
+    // rather than vanish as if the request had succeeded.
+    expect(dismissSpy).not.toHaveBeenCalledWith(STALE_TOAST_ID);
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('The disk version of note.md was not loaded'),
+    );
 
     releaseSave();
     await vi.waitFor(() => {
