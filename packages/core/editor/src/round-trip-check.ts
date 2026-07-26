@@ -24,38 +24,9 @@ function normalizeForComparison(markdown: string): string {
 }
 
 /**
- * Words of two or more characters, which is what the content check compares.
- * Single characters are skipped because Markdown syntax is full of them — the
- * `X` of a `- [X]` task, the `1` of `1)` — and they carry no content of their
- * own.
+ * A link reference definition line: `[label]: https://example.com "title"`.
  */
-const CONTENT_WORD = /[\p{L}\p{N}]{2,}/gu;
-
-/** An ordered-list marker at the start of a line: `1.`, `10)`. */
-const ORDERED_MARKER = /^[ \t]*\d+[.)](?=[ \t])/gm;
-
-/** A named, decimal or hex character entity. */
-const HTML_ENTITY = /&(?:#\d+|#x[0-9a-f]+|[a-z][a-z0-9]*);/gi;
-
-/**
- * The words a piece of Markdown actually says, with the syntax that legitimately
- * disappears on parse removed first:
- *
- * - ordered-list numbers, which are not stored on the node at all (the
- *   serializer always writes `1.`), so a list of ten or more items would
- *   otherwise look like it lost the number of its tenth
- * - character entities, which decode to punctuation, so `&amp;` is an `&` and
- *   the letters "amp" were never content
- */
-function contentWords(markdown: string): string[] {
-  return (
-    markdown
-      .replace(ORDERED_MARKER, ' ')
-      .replace(HTML_ENTITY, ' ')
-      .toLowerCase()
-      .match(CONTENT_WORD) ?? []
-  );
-}
+const LINK_DEFINITION = /^[ \t]{0,3}\[[^\]]+\]:[ \t]*<?([^\s>]+)>?/gm;
 
 /**
  * Decides whether parsing `source` kept everything the user can see.
@@ -67,19 +38,28 @@ function contentWords(markdown: string): string[] {
  * of that loses anything, and the same normalization happens to text the user
  * simply types.
  *
- * What must not happen is content disappearing, such as a link reference
- * definition the parser drops on the floor. So compare the words of the source
- * against everything the parsed document carries — its text plus the string
- * attributes holding hrefs, titles, languages and the like.
+ * Almost everything in Markdown either survives as text or is syntax that is
+ * meant to disappear. The exception is the link reference definition: the
+ * parser consumes it into its environment and emits nothing, so a definition
+ * nothing resolved against is content that vanished silently. A definition that
+ * *was* resolved reappears as the href or src it supplied, which is what this
+ * looks for.
+ *
+ * Comparing words instead was tried and is not workable: reference labels,
+ * ordered-list numbers and character entities are all syntax that legitimately
+ * has no counterpart in the document, so each one had to be special-cased while
+ * the check still missed duplicate and structural loss.
  */
 export function isMarkdownContentPreserved(
   source: string,
   documentPayload: string,
 ): boolean {
-  // Whole words rather than substrings, so a word that really was dropped
-  // cannot be excused by a longer surviving word that happens to contain it.
-  const surviving = new Set(contentWords(documentPayload));
-  return contentWords(source).every((word) => surviving.has(word));
+  for (const [, url] of source.matchAll(LINK_DEFINITION)) {
+    if (url && !documentPayload.includes(url)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /**

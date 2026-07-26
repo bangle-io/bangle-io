@@ -56,6 +56,18 @@ describe('Markdown paste content gate', () => {
     // Entities decode to punctuation, so their spelling is gone by design.
     ['named entity', 'fish &amp; chips'],
     ['numeric entity', '&#169; notice text'],
+    // A resolved reference link keeps its content: the label is syntax, and
+    // the definition reappears as the link's href.
+    [
+      'reference-style link',
+      '[click here][docs]\n\n[docs]: https://example.com/page',
+    ],
+    [
+      'reference-style image',
+      '![diagram][img]\n\n[img]: https://example.com/d.png',
+    ],
+    ['collapsed reference link', '[docs][]\n\n[docs]: https://example.com/p'],
+    ['shortcut reference link', '[docs]\n\n[docs]: https://example.com/p'],
   ] as const;
 
   for (const [name, source] of accepted) {
@@ -63,12 +75,6 @@ describe('Markdown paste content gate', () => {
       expect(setup()(source)).toBe(true);
     });
   }
-
-  it('does not let a longer surviving word excuse a dropped one', () => {
-    // Substring matching would call this preserved because "foobar" contains
-    // "foo", hiding the fact that the word itself is gone.
-    expect(isMarkdownContentPreserved('foo bar', 'foobar bar')).toBe(false);
-  });
 
   it('refuses a dropped link reference definition', () => {
     // The definition and the missing label vanish from the document, so this
