@@ -128,6 +128,39 @@ export function isSelectionAllHeadings(
 }
 
 /**
+ * Whether the block at `pos` still has somewhere to go: either it is not a
+ * paragraph and the schema will retype it, or it sits inside a list or
+ * blockquote the schema will lift it out of.
+ *
+ * Deliberately asks the schema rather than trusting the block's shape, so a
+ * block that cannot move — a table cell, which is neither retypeable in place
+ * nor liftable — reports nothing to do instead of offering a control that would
+ * no-op.
+ */
+function canBecomeTopLevelParagraph(
+  state: EditorState,
+  pos: number,
+  paragraph: NodeType,
+): boolean {
+  const node = state.doc.nodeAt(pos);
+  if (!node) {
+    return false;
+  }
+  const $at = state.doc.resolve(pos);
+  if (
+    node.type !== paragraph &&
+    $at.parent.canReplaceWith($at.index(), $at.index() + 1, paragraph)
+  ) {
+    return true;
+  }
+  if ($at.parent.type === state.schema.topNodeType) {
+    return false;
+  }
+  const range = state.doc.resolve(pos + 1).blockRange();
+  return Boolean(range && liftTarget(range) !== null);
+}
+
+/**
  * Turns the whole selection into plain top-level paragraphs: retypes headings
  * and other blocks, then lifts the selected range out of every list and
  * blockquote wrapping it.
@@ -145,6 +178,15 @@ export const setParagraphInSelection: Command = (state, dispatch) => {
   const positions = formattableBlockPositions(state);
   if (positions.length === 0) {
     return false;
+  }
+
+  // Availability is asked on every editor state while the toolbar is open, so
+  // answer it from the document rather than by building the transaction below —
+  // that costs a transform step per block and per lift.
+  if (!dispatch) {
+    return positions.some((pos) =>
+      canBecomeTopLevelParagraph(state, pos, paragraph),
+    );
   }
 
   const tr = state.tr;

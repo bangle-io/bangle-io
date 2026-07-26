@@ -255,6 +255,22 @@ export function setBlockTypeKeepingLiteralText(
     if (positions.length === 0) {
       return false;
     }
+
+    // Availability only needs to know whether one block would change, so answer
+    // from the document. Building the transaction to find out costs a transform
+    // step per block, and toolbars ask on every editor state.
+    if (!dispatch) {
+      return positions.some((pos) => {
+        const node = state.doc.nodeAt(pos);
+        if (!node || (node.type === type && !attrs)) {
+          return false;
+        }
+        const $pos = state.doc.resolve(pos);
+        const index = $pos.index();
+        return $pos.parent.canReplaceWith(index, index + 1, type);
+      });
+    }
+
     const tr = state.tr;
     for (const pos of positions) {
       const mapped = tr.mapping.map(pos);

@@ -179,6 +179,39 @@ describe('setParagraphInSelection', () => {
   });
 });
 
+describe('availability dry-run', () => {
+  // The toolbar asks without a dispatch to decide whether a control is enabled.
+  // That answer is computed from the document rather than by building the
+  // transaction, so it has to agree with what dispatching actually does —
+  // otherwise a control is offered that does nothing, or withheld when it would
+  // have worked.
+  const documents = [
+    ['plain paragraphs', 'alpha\n\nbravo'],
+    ['heading', '# alpha'],
+    ['nested list', '- parent\n  - child one\n  - child two'],
+    ['list in blockquote', '> - item'],
+    ['deeply nested', `${'> '.repeat(10)}- deep item`],
+    ['code block only', '```js\nconst a = 1;\n```'],
+    ['frontmatter only', '---\ntitle: t\n---'],
+    ['table only', '| h |\n| --- |\n| cell |'],
+    ['table then list', '| h |\n| --- |\n| cell |\n\n- item'],
+    ['heading, table, list', '# head\n\n| h |\n| --- |\n| cell |\n\n- item'],
+    ['paragraph and code block', 'alpha\n\n```js\nconst a = 1;\n```'],
+  ] as const;
+
+  for (const [name, source] of documents) {
+    it(`reports the same availability as dispatching for ${name}`, () => {
+      const { stateFrom, run } = setup();
+      const state = stateFrom(source, 'all');
+
+      const available = setParagraphInSelection(state);
+      const { applied } = run(state, setParagraphInSelection);
+
+      expect(available).toBe(applied);
+    });
+  }
+});
+
 describe('heading keybinding command', () => {
   // Mod-Alt-1/2/3 goes through banger-editor's own toggleHeading, not the
   // toolbar. It used to rewrite every textblock in range, so a select-all
