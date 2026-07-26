@@ -17,7 +17,10 @@ import type {
   DOMOutputSpec,
   EditorState,
   NodeSpec,
+  NodeType,
   PMNode,
+  PMSelection,
+  ResolvedPos,
   Transaction,
 } from './pm';
 import {
@@ -50,6 +53,7 @@ import {
 } from './pm';
 import {
   findParentNode,
+  findParentNodeClosestToPos,
   getNodeType,
   insertNodeAdjacentToNode,
   type PluginContext,
@@ -376,38 +380,58 @@ function pluginInsertKeybindings(config: RequiredConfig) {
 }
 
 // COMMANDS
-function toggleBulletList(_config: RequiredConfig): Command {
-  return (state, dispatch) => {
-    return createToggleListCommand({
-      kind: LIST_KIND.BULLET,
-      listKind: LIST_KIND.BULLET,
-    })(state, dispatch);
-  };
+function toggleBulletList(config: RequiredConfig): Command {
+  return toggleList(config, {
+    kind: LIST_KIND.BULLET,
+    listKind: LIST_KIND.BULLET,
+  });
 }
 
-function toggleOrderedList(_config: RequiredConfig): Command {
-  return (state, dispatch) => {
-    return createToggleListCommand({
-      kind: LIST_KIND.ORDERED,
-      listKind: LIST_KIND.ORDERED,
-      order: 1,
-    })(state, dispatch);
-  };
+function toggleOrderedList(config: RequiredConfig): Command {
+  return toggleList(config, {
+    kind: LIST_KIND.ORDERED,
+    listKind: LIST_KIND.ORDERED,
+    order: 1,
+  });
 }
 
-function toggleTaskList(_config: RequiredConfig): Command {
-  return (state, dispatch) => {
-    return createToggleListCommand({
-      kind: LIST_KIND.TASK,
-      // `checked` is deliberately not set here. Forcing it to false cleared the
-      // boxes of items that were already checked whenever a task list was
-      // converted to another kind and back, so correcting a mis-click lost
-      // state that undo would have kept. New task items still start unchecked
-      // via the node spec's default.
-      //
-      // `listKind` is likewise left alone: an ordered container that becomes a
-      // task list stays ordered, which Markdown writes as `1. [ ] item`.
-    })(state, dispatch);
+function toggleTaskList(config: RequiredConfig): Command {
+  return toggleList(config, {
+    kind: LIST_KIND.TASK,
+    // `checked` is deliberately not set here. Forcing it to false cleared the
+    // boxes of items that were already checked whenever a task list was
+    // converted to another kind and back, so correcting a mis-click lost
+    // state that undo would have kept. New task items still start unchecked
+    // via the node spec's default.
+    //
+    // `listKind` is likewise left alone: an ordered container that becomes a
+    // task list stays ordered, which Markdown writes as `1. [ ] item`.
+  });
+}
+
+type ToggleListAttrs = ListAttributes & {
+  kind: ListKindType;
+  listKind?: MarkdownListKind;
+};
+
+function toggleList(
+  config: RequiredConfig,
+  targetAttrs: ToggleListAttrs,
+): Command {
+  const command = createToggleListCommand(targetAttrs);
+  return (state, dispatch, view) => {
+    const type = getNodeType(state.schema, config.listNodeName);
+    const sourceRun = findSelectedListRun(state.selection, type);
+    if (sourceRun && sourceRun.attrs.kind !== targetAttrs.kind) {
+      if (dispatch) {
+        const tr = state.tr;
+        setListAttrs(tr, sourceRun.positions, targetAttrs);
+        dispatch(tr);
+      }
+      return true;
+    }
+
+    return command(state, dispatch, view);
   };
 }
 
@@ -512,8 +536,135 @@ function normalizeNewIndentationPlaceholders(
   }
 }
 
-function dedentList(_config: RequiredConfig): Command {
-  return createDedentListCommand();
+function dedentList(config: RequiredConfig): Command {
+  const command = createDedentListCommand();
+  return (state, dispatch, view) => {
+    if (!dispatch) return command(state, undefined, view);
+
+    const type = getNodeType(state.schema, config.listNodeName);
+    const destinationAttrs = findDedentDestinationAttrs(state.selection, type);
+
+    return command(
+      state,
+      destinationAttrs
+        ? (tr) => {
+            const positions = findSelectedSiblingLists(tr.selection, type);
+            setListAttrs(tr, positions, {
+              kind: destinationAttrs.kind,
+              listKind: destinationAttrs.listKind,
+              order: null,
+              tight: destinationAttrs.tight,
+            });
+            dispatch(tr);
+          }
+        : dispatch,
+      view,
+    );
+  };
+}
+
+function findSelectedListRun(
+  selection: PMSelection,
+  type: NodeType,
+): { attrs: MarkdownListAttrs; positions: number[] } | null {
+  const from = findListAtPos(selection.$from, type);
+  const to = findListAtPos(selection.$to, type);
+  if (!from || !to || from.node !== to.node) return null;
+
+  const attrs = readListAttrs(from.node);
+  if (!attrs) return null;
+
+  const parentDepth = from.depth - 1;
+  const parent = selection.$from.node(parentDepth);
+  const selectedIndex = selection.$from.index(parentDepth);
+  let startIndex = selectedIndex;
+  let endIndex = selectedIndex + 1;
+
+  while (startIndex > 0 && isSameListRun(parent.child(startIndex - 1), attrs)) {
+    startIndex--;
+  }
+  while (
+    endIndex < parent.childCount &&
+    isSameListRun(parent.child(endIndex), attrs)
+  ) {
+    endIndex++;
+  }
+
+  return {
+    attrs,
+    positions: Array.from({ length: endIndex - startIndex }, (_, offset) =>
+      selection.$from.posAtIndex(startIndex + offset, parentDepth),
+    ),
+  };
+}
+
+function findDedentDestinationAttrs(
+  selection: PMSelection,
+  type: NodeType,
+): MarkdownListAttrs | null {
+  const source = findListAtPos(selection.$from, type);
+  const endSource = findListAtPos(selection.$to, type);
+  // A range can lift items to different destination depths, each with its own
+  // list kind. The single-item caret workflow has one unambiguous destination.
+  if (!source || source.node !== endSource?.node) return null;
+
+  for (let depth = source.depth - 1; depth > 0; depth--) {
+    const node = selection.$from.node(depth);
+    if (node.type === type) return readListAttrs(node);
+  }
+  return null;
+}
+
+function findSelectedSiblingLists(
+  selection: PMSelection,
+  type: NodeType,
+): number[] {
+  const from = findListAtPos(selection.$from, type);
+  const to = findListAtPos(selection.$to, type);
+  if (!from || !to || from.depth !== to.depth) return [];
+
+  const parentDepth = from.depth - 1;
+  if (selection.$from.node(parentDepth) !== selection.$to.node(parentDepth)) {
+    return [];
+  }
+
+  const startIndex = selection.$from.index(parentDepth);
+  const endIndex = selection.$to.index(parentDepth);
+  const parent = selection.$from.node(parentDepth);
+  const positions: number[] = [];
+  for (let index = startIndex; index <= endIndex; index++) {
+    const node = parent.maybeChild(index);
+    if (node?.type === type && isListNode(node)) {
+      positions.push(selection.$from.posAtIndex(index, parentDepth));
+    }
+  }
+  return positions;
+}
+
+function findListAtPos($pos: ResolvedPos, type: NodeType) {
+  return findParentNodeClosestToPos(
+    $pos,
+    (node: PMNode) => node.type === type && isListNode(node),
+  );
+}
+
+function isSameListRun(node: PMNode, attrs: MarkdownListAttrs): boolean {
+  const candidate = readListAttrs(node);
+  return (
+    candidate?.kind === attrs.kind && candidate.listKind === attrs.listKind
+  );
+}
+
+function setListAttrs(
+  tr: Transaction,
+  positions: readonly number[],
+  attrs: Partial<MarkdownListAttrs>,
+) {
+  for (const pos of positions) {
+    const node = tr.doc.nodeAt(pos);
+    if (!node || !isListNode(node)) continue;
+    tr.setNodeMarkup(pos, null, { ...node.attrs, ...attrs });
+  }
 }
 
 function insertEmptyListAbove(config: RequiredConfig): Command {
