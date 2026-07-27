@@ -74,6 +74,31 @@ describe('PmEditorService', () => {
     ).toBe(true);
     expect(firstEditor.state.doc.textContent).toBe('First note');
 
+    const secondDocAfterSafePaste = secondEditor.state.doc;
+    secondEditor.dispatch(
+      secondEditor.state.tr.setSelection(
+        TextSelection.create(
+          secondEditor.state.doc,
+          1,
+          secondEditor.state.doc.content.size - 1,
+        ),
+      ),
+    );
+    expect(
+      service.insertMarkdownAtSelection(
+        '[visible][missing]\n\n[unused]: https://example.com',
+      ),
+    ).toBe(false);
+    expect(secondEditor.state.doc).toBe(secondDocAfterSafePaste);
+
+    secondEditor.focus();
+    const capturedInsertion = service.captureMarkdownInsertion();
+    expect(capturedInsertion).not.toBeNull();
+    firstEditor.focus();
+    expect(capturedInsertion?.('wrong editor')).toBe(false);
+    expect(firstEditor.state.doc.textContent).toBe('First note');
+    expect(secondEditor.state.doc.textContent).toBe('from Markdown');
+
     unmountSecond();
     unmountFirst();
     controller.abort();
@@ -158,73 +183,6 @@ describe('PmEditorService', () => {
 
     controller.abort();
     domNode.remove();
-  });
-
-  test('selectAllInActiveEditor redirects select-all into an unfocused editor', async () => {
-    const controller = new AbortController();
-    const testEnv = createTestEnvironment({ controller });
-    const services = testEnv.instantiateAll();
-    await testEnv.mountAll();
-
-    await services.workspaceOps.createWorkspaceInfo({
-      name: TEST_WS_NAME,
-      type: WORKSPACE_STORAGE_TYPE.Memory,
-      metadata: {},
-    });
-    await services.fileSystem.createTextFile(
-      `${TEST_WS_NAME}:note.md`,
-      'Alpha\n\nBeta',
-    );
-
-    if (!(services.editorEngine instanceof PmEditorService)) {
-      throw new Error('Expected the ProseMirror editor engine');
-    }
-    const service = services.editorEngine;
-
-    // With no editor mounted the shortcut declines, so native (document-wide)
-    // select-all still runs on non-editor pages.
-    expect(service.selectAllInActiveEditor()).toBe(false);
-
-    const domNode = document.createElement('div');
-    const outsideInput = document.createElement('input');
-    document.body.append(domNode, outsideInput);
-
-    const unmount = service.mountEditor({
-      domNode,
-      wsPath: `${TEST_WS_NAME}:note.md`,
-      name: 'note-editor',
-    });
-    await waitForExpect(() => {
-      expect(service.getEditor('note-editor')).toBeDefined();
-    });
-    const view = service.getEditor('note-editor');
-    if (!view) {
-      throw new Error('Expected the editor to be ready');
-    }
-
-    // Focus lives outside the editor, mimicking a click on the pane whitespace
-    // that leaves the contenteditable unfocused.
-    outsideInput.focus();
-    expect(view.hasFocus()).toBe(false);
-
-    expect(service.selectAllInActiveEditor()).toBe(true);
-    expect(view.hasFocus()).toBe(true);
-    expect(view.state.selection.from).toBe(0);
-    expect(view.state.selection.to).toBe(view.state.doc.content.size);
-
-    // While the editor already owns focus its own keymap handles select-all,
-    // so the service declines and leaves the live selection untouched.
-    view.dispatch(
-      view.state.tr.setSelection(TextSelection.create(view.state.doc, 1, 1)),
-    );
-    expect(service.selectAllInActiveEditor()).toBe(false);
-    expect(view.state.selection.empty).toBe(true);
-    expect(view.state.selection.from).toBe(1);
-
-    unmount();
-    controller.abort();
-    domNode.remove();
-    outsideInput.remove();
   });
 
   test('keeps the last active editor while another surface owns focus', async () => {

@@ -6,6 +6,7 @@ import {
   pressAppShortcut,
   readStoredMarkdown,
   selectEditorText,
+  waitForEditorFocus,
   writeStoredMarkdown,
 } from './common';
 
@@ -148,4 +149,122 @@ test('multi-block Markdown pasted into a tight list keeps its paragraph boundari
   await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
     expected,
   );
+});
+
+test('refuses Markdown paste when parsing would silently discard source', async ({
+  context,
+  page,
+}) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  const workspaceName = 'paste-markdown-fidelity';
+  const noteName = 'fidelity';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  const editor = getEditorLocator(page, {});
+  await waitForEditorFocus(page, {});
+  await editor.fill('KEEP');
+  await selectEditorText(page, 'KEEP');
+  await page.evaluate(() =>
+    navigator.clipboard.writeText(
+      '[visible][missing]\n\n[unused]: https://example.com',
+    ),
+  );
+
+  await runCommand(page, 'Paste from Markdown');
+
+  await expect(page.getByText('Could not paste Markdown')).toBeVisible();
+  await expect(editor).toHaveText('KEEP');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('KEEP');
+});
+
+test('async Markdown paste cannot land in a different note', async ({
+  context,
+  page,
+}) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  const workspaceName = 'paste-markdown-target';
+  const firstNote = 'first';
+  const secondNote = 'second';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: firstNote,
+  });
+  const editor = getEditorLocator(page, {});
+  await waitForEditorFocus(page, {});
+  await editor.fill('FIRST');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, firstNote))
+    .toBe('FIRST');
+
+  await page.getByRole('button', { name: 'Bangle.io' }).click();
+  await page.getByRole('menuitem', { name: 'New Note' }).click();
+  await page.getByLabel('Note name').fill(secondNote);
+  await page.getByRole('button', { name: 'Create' }).click();
+  await expect
+    .poll(() => editor.getAttribute('data-editor-name'))
+    .toContain(`${workspaceName}:${secondNote}.md`);
+  await waitForEditorFocus(page, {});
+  await editor.fill('SECOND');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, secondNote))
+    .toBe('SECOND');
+  await page.getByRole('treeitem', { name: `${firstNote}.md` }).click();
+  await expect
+    .poll(() => editor.getAttribute('data-editor-name'))
+    .toContain(`${workspaceName}:${firstNote}.md`);
+  await waitForEditorFocus(page, {});
+  await selectEditorText(page, 'FIRST');
+
+  await page.evaluate(() => {
+    const testWindow = window as typeof window & {
+      clipboardReadStarted?: boolean;
+      resolveClipboardRead?: (value: string) => void;
+    };
+    const pendingRead = new Promise<string>((resolve) => {
+      testWindow.resolveClipboardRead = resolve;
+    });
+    Object.defineProperty(navigator.clipboard, 'readText', {
+      configurable: true,
+      value: () => {
+        testWindow.clipboardReadStarted = true;
+        return pendingRead;
+      },
+    });
+  });
+  await runCommand(page, 'Paste from Markdown');
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (
+            window as typeof window & {
+              clipboardReadStarted?: boolean;
+            }
+          ).clipboardReadStarted,
+      ),
+    )
+    .toBe(true);
+
+  await page.getByRole('treeitem', { name: `${secondNote}.md` }).click();
+  await expect
+    .poll(() => editor.getAttribute('data-editor-name'))
+    .toContain(`${workspaceName}:${secondNote}.md`);
+  await waitForEditorFocus(page, {});
+  await selectEditorText(page, 'SECOND');
+  await page.evaluate(() =>
+    (
+      window as typeof window & {
+        resolveClipboardRead?: (value: string) => void;
+      }
+    ).resolveClipboardRead?.('WRONG NOTE'),
+  );
+
+  await expect(page.getByText('Could not paste Markdown')).toBeVisible();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, firstNote))
+    .toBe('FIRST');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, secondNote))
+    .toBe('SECOND');
 });

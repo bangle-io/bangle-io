@@ -152,6 +152,61 @@ test('Paragraph converts an entire mixed or nested selection in one click', asyn
     .poll(() => readStoredMarkdown(page, workspaceName, noteName))
     .toBe('item');
   await expect(paragraph).toHaveAttribute('aria-pressed', 'true');
+
+  // The flattening loop must be driven by document progress, not an arbitrary
+  // nesting cap. Ten blockquote levels previously stopped halfway through.
+  const deeplyNested = `${'> '.repeat(10)}- deep item`;
+  await writeStoredMarkdown(page, workspaceName, noteName, deeplyNested);
+  await page.reload({ waitUntil: 'networkidle' });
+  await selectEditorText(page, 'deep item');
+  await expect(paragraph).toBeEnabled();
+  await paragraph.click();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('deep item');
+  await expect(paragraph).toHaveAttribute('aria-pressed', 'true');
+});
+
+// Regression: the block controls used to rewrite every textblock in the range,
+// including code blocks and YAML frontmatter. That dropped the fence and its
+// language and collapsed the newlines inside them, writing the mangled note
+// straight to storage.
+test('block controls leave code blocks and frontmatter intact', async ({
+  page,
+}) => {
+  const workspaceName = 'format-toolbar-literal';
+  const noteName = 'literal';
+  const source =
+    '---\ntitle: my note\n---\n\n# alpha\n\n```js\nconst a = 1;\nconst b = 2;\n```\n\nbravo';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(page, workspaceName, noteName, source);
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(source);
+
+  const editor = getEditorLocator(page, {}).first();
+  const toolbar = page.getByRole('toolbar', { name: 'Text formatting' });
+  await editor.click();
+  await page.keyboard.press('ControlOrMeta+a');
+  await expect(toolbar).toBeVisible();
+
+  // Turning the selection into headings must convert only the prose.
+  await toolbar.getByRole('button', { name: 'Heading 2' }).click();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(
+      '---\ntitle: my note\n---\n\n## alpha\n\n```js\nconst a = 1;\nconst b = 2;\n```\n\n## bravo',
+    );
+
+  // And so must turning it back into paragraphs.
+  await editor.click();
+  await page.keyboard.press('ControlOrMeta+a');
+  await expect(toolbar).toBeVisible();
+  await toolbar.getByRole('button', { name: 'Paragraph' }).click();
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(source.replace('# alpha', 'alpha'));
 });
 
 // The toolbar now carries enough controls that it can be wider than a phone

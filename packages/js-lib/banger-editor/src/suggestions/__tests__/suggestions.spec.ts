@@ -42,6 +42,7 @@ const dateSuggestions = setupSuggestions({
   trigger: '$date',
   markClassName: 'date',
   installKeymap: false,
+  endOnQuery: true,
 });
 const resolved = resolve([
   collection({ id: 'test-store' }),
@@ -277,6 +278,35 @@ describe('suggestions provider state', () => {
     });
   });
 
+  it('ends a trigger-only suggestion when literal text follows it', () => {
+    const store = createStore();
+    const view = createPlainEditor({ text: '$dat', store });
+
+    expect(handleTextInput(view, 5, 5, 'e')).toBe(true);
+    expect(editorStore.get(view.state, $suggestions).get(view)).toMatchObject({
+      markName: 'date_suggestion',
+      text: '$date',
+    });
+
+    view.dispatch(view.state.tr.insertText('f'));
+    view.dispatch(view.state.tr.insertText('oo'));
+
+    expect(view.state.doc.textContent).toBe('$datefoo');
+    expect(editorStore.get(view.state, $suggestions).get(view)).toBeUndefined();
+    const dateSuggestionMark = schema.marks.date_suggestion;
+    expect(dateSuggestionMark).toBeDefined();
+    if (!dateSuggestionMark) {
+      throw new Error('Expected the date suggestion mark');
+    }
+    expect(
+      view.state.doc.rangeHasMark(
+        0,
+        view.state.doc.content.size,
+        dateSuggestionMark,
+      ),
+    ).toBe(false);
+  });
+
   it('activates a provider when its trigger arrives as a single inserted chunk', () => {
     const store = createStore();
     const view = createPlainEditor({ text: 'note ', store });
@@ -325,7 +355,10 @@ describe('suggestions provider state', () => {
     // This is the contract the slash menu's "Date" item relies on: replacing
     // the slash mark with another provider's trigger text (carrying that
     // provider's mark) activates the other provider's suggestion.
-    const mark = schema.mark('date_suggestion', { trigger: '$date' });
+    const mark = schema.mark('date_suggestion', {
+      trigger: '$date',
+      synthetic: true,
+    });
     slashSuggestions.command.replaceSuggestMarkWith({
       content: Fragment.from(schema.text('$date', [mark])),
     })(view.state, view.dispatch, view);
@@ -334,6 +367,7 @@ describe('suggestions provider state', () => {
     expect(editorStore.get(view.state, $suggestions).get(view)).toMatchObject({
       markName: 'date_suggestion',
       text: '$date',
+      synthetic: true,
       show: true,
     });
 
@@ -369,6 +403,7 @@ describe('suggestions provider state', () => {
           {
             markName: 'slash_command',
             trigger: '/',
+            synthetic: false,
             show: true,
             text: '/',
             position: 1,
@@ -382,6 +417,7 @@ describe('suggestions provider state', () => {
           {
             markName: 'wiki_link_suggestion',
             trigger: '[[',
+            synthetic: false,
             show: true,
             text: '[[Tar',
             position: 1,
@@ -771,5 +807,72 @@ describe('replaceSuggestMarkWith', () => {
 
     expect(handled).toBe(false);
     expect(view.state.doc.textContent).toBe('/aXbcd');
+  });
+});
+
+describe('typing past a synthetic trigger', () => {
+  function createSyntheticTriggerEditor({
+    markName,
+    trigger,
+    store,
+  }: {
+    markName: string;
+    trigger: string;
+    store: ReturnType<typeof createStore>;
+  }) {
+    const mark = schema.mark(markName, { trigger, synthetic: true });
+    const doc = schema.node('doc', null, [
+      schema.node('paragraph', null, [schema.text(trigger, [mark])]),
+    ]);
+    const mount = document.createElement('div');
+    document.body.append(mount);
+    const state = EditorState.create({
+      doc,
+      schema,
+      selection: TextSelection.create(doc, trigger.length + 1),
+      plugins: resolve([
+        collection({
+          id: 'test-store',
+          plugin: { store: editorStore.storePlugin(store) },
+        }),
+        setupBase(),
+        setupParagraph(),
+        setupLink(),
+        slashSuggestions,
+        wikiSuggestions,
+        dateSuggestions,
+      ]).resolvePlugins({ schema }),
+    });
+    const view = new EditorView({ mount }, { state });
+    editors.push(view);
+    return view;
+  }
+
+  // Regression: the synthetic branch deleted the whole marked range, and the
+  // mark is inclusive, so the character the user had just typed went with it.
+  it('keeps the typed text when a synthetic date trigger ends the query', () => {
+    const store = createStore();
+    const view = createSyntheticTriggerEditor({
+      markName: 'date_suggestion',
+      trigger: '$date',
+      store,
+    });
+
+    view.dispatch(view.state.tr.insertText('h', view.state.selection.from));
+
+    expect(view.state.doc.textContent).toBe('h');
+  });
+
+  it('keeps the typed text when whitespace ends a synthetic slash query', () => {
+    const store = createStore();
+    const view = createSyntheticTriggerEditor({
+      markName: 'slash_command',
+      trigger: '/',
+      store,
+    });
+
+    view.dispatch(view.state.tr.insertText('hi ', view.state.selection.from));
+
+    expect(view.state.doc.textContent).toBe('hi ');
   });
 });

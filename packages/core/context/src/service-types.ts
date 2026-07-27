@@ -49,23 +49,23 @@ export type EditorEngineContract = BaseService & {
    * note. An engine that always preserves Markdown exposes an always-empty set.
    */
   readonly $roundTripWarnings: Atom<ReadonlySet<string>>;
+  /**
+   * Captures the active editor and selection for a later Markdown insertion.
+   * The returned function refuses to insert if the editor, document, or
+   * selection changes before it runs, so asynchronous clipboard access cannot
+   * retarget content into another note or range.
+   */
+  captureMarkdownInsertion: () => ((markdownText: string) => boolean) | null;
   collapseAllHeadings: (level: number) => boolean;
   focusEditor: () => void;
   getSelectionMarkdown: () => string | null;
-  /**
-   * Redirects a global select-all (Cmd/Ctrl-A) into the mounted editor when
-   * the shortcut fires while the editor is not DOM-focused — e.g. the user
-   * clicked the empty padding around the note. Focuses the editor and selects
-   * its whole document, returning true so the caller suppresses the browser's
-   * document-wide select-all (which would otherwise sweep in the sidebar and
-   * the rest of the app chrome).
-   *
-   * Returns false when the editor already has focus (its own keymap owns
-   * select-all) or when no editor is mounted, so the caller leaves the native
-   * behavior intact for the editor's own shortcut and for non-editor pages.
-   */
-  selectAllInActiveEditor: () => boolean;
   hasPendingOrFailedSave: (wsPath?: string) => boolean;
+  /**
+   * Parses and inserts Markdown at the current selection. Returns false when
+   * parsing would drop content the user can see. Normalization is accepted:
+   * `*italic*` arriving as `_italic_` loses nothing, and the same rewriting
+   * happens to Markdown the user simply types.
+   */
   insertMarkdownAtSelection: (markdownText: string) => boolean;
   /** Reports whether an app-level editor action can run against the current
    * active editor and selection. Callers must still revalidate on execution. */

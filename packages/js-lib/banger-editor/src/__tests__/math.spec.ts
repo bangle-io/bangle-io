@@ -4,8 +4,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { setupBase } from '../base';
 import { setupBold } from '../bold';
 import { setupCodeBlock } from '../code-block';
-import { collection } from '../common';
+import { collection, isMac } from '../common';
 import { setupHardBreak } from '../hard-break';
+import { setupHistory } from '../history';
 import { setupImage } from '../image';
 import { serializeMathClipboardText, setupMath } from '../math';
 import { setupParagraph } from '../paragraph';
@@ -37,6 +38,7 @@ const editorTest = createBangerEditorTestSetup({
     setupBold(),
     setupCodeBlock(),
     setupHardBreak(),
+    setupHistory(),
     setupImage(),
     setupWikiLink(),
     math,
@@ -372,6 +374,63 @@ describe('math interaction', () => {
 
     expect(event.defaultPrevented).toBe(true);
     editor.expectDoc(doc(p('before ', mathInline('alpha '))));
+  });
+
+  it('keeps select-all scoped to the nested math source', () => {
+    const editor = editorTest.createEditor(doc(p(mathInline('abc'))));
+    editor.view.dispatch(
+      editor.view.state.tr.setSelection(
+        NodeSelection.create(editor.view.state.doc, 1),
+      ),
+    );
+    const sourceEditor = editor.view.dom.querySelector<HTMLElement>(
+      'math-inline .math-src .ProseMirror',
+    );
+    expect(sourceEditor).not.toBeNull();
+    sourceEditor?.focus();
+    const event = new KeyboardEvent('keydown', {
+      key: 'a',
+      metaKey: isMac,
+      ctrlKey: !isMac,
+      bubbles: true,
+      cancelable: true,
+    });
+    sourceEditor?.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(true);
+    expect(document.getSelection()?.toString()).toBe('abc');
+    expect(editor.view.state.selection).toBeInstanceOf(NodeSelection);
+  });
+
+  it('undoes outer document history while the math source editor is focused', () => {
+    const editor = editorTest.createEditor(doc(p(), mathDisplay('abc'), p()));
+    const mathPos = 2;
+    editor.view.dispatch(
+      editor.view.state.tr.setSelection(
+        NodeSelection.create(editor.view.state.doc, mathPos),
+      ),
+    );
+    const sourceEditor = editor.view.dom.querySelector<HTMLElement>(
+      'math-display .math-src .ProseMirror',
+    );
+    expect(sourceEditor).not.toBeNull();
+
+    editor.view.dispatch(
+      editor.view.state.tr.insertText('d', mathPos + 4, mathPos + 4),
+    );
+    editor.expectDoc(doc(p(), mathDisplay('abcd'), p()));
+
+    const event = new KeyboardEvent('keydown', {
+      key: 'z',
+      metaKey: isMac,
+      ctrlKey: !isMac,
+      bubbles: true,
+      cancelable: true,
+    });
+    sourceEditor?.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(true);
+    editor.expectDoc(doc(p(), mathDisplay('abc'), p()));
   });
 
   it('keeps multiline plain-text paste inside display math source', () => {

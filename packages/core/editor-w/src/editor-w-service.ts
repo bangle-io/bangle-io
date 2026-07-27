@@ -126,13 +126,11 @@ export class EditorWService
     // Read-only stub: nothing focusable to hand the cursor to.
   }
 
-  selectAllInActiveEditor(): boolean {
-    // Read-only stub: no editable view to focus or select, so a global
-    // select-all falls through to native behavior.
-    return false;
+  getSelectionMarkdown(): string | null {
+    return null;
   }
 
-  getSelectionMarkdown(): string | null {
+  captureMarkdownInsertion(): null {
     return null;
   }
 

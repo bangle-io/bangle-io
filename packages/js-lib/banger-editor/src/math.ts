@@ -12,6 +12,7 @@ import type { PluginSimple } from 'markdown-it';
 import {
   type CollectionType,
   collection,
+  isMac,
   keybinding,
   PRIORITY,
   setPluginPriority,
@@ -39,8 +40,10 @@ import {
   NodeSelection,
   Plugin,
   PluginKey,
+  redo,
   Selection,
   TextSelection,
+  undo,
 } from './pm';
 import { getNodeType } from './pm-utils';
 
@@ -195,6 +198,8 @@ function installMathViewSafeguards(
   displayMode: boolean,
 ): void {
   const handleKeyDown = (event: KeyboardEvent) => {
+    if (handleNestedSelectAll(event, mathView)) return;
+    if (handleHistoryShortcut(event, outerView)) return;
     if (handleCtrlBackspace(event, mathView, outerView, getPos)) return;
     if (!displayMode) return;
     const direction = displayExitDirection(event, mathView.dom);
@@ -281,6 +286,75 @@ function installMathViewSafeguards(
     mathView.dom.removeEventListener('paste', handlePaste, true);
     upstreamDestroy();
   };
+}
+
+function handleNestedSelectAll(
+  event: KeyboardEvent,
+  mathView: MathView,
+): boolean {
+  if (event.isComposing || event.altKey || event.shiftKey) {
+    return false;
+  }
+  const primaryModifier = isMac
+    ? event.metaKey && !event.ctrlKey
+    : event.ctrlKey && !event.metaKey;
+  if (!primaryModifier || event.key.toLowerCase() !== 'a') {
+    return false;
+  }
+  const source = mathView.dom.querySelector<HTMLElement>(
+    '.math-src .ProseMirror',
+  );
+  if (
+    !source ||
+    !(event.target instanceof Node) ||
+    !source.contains(event.target)
+  ) {
+    return false;
+  }
+
+  const selection = source.ownerDocument.getSelection();
+  if (!selection) {
+    return false;
+  }
+  const range = source.ownerDocument.createRange();
+  range.selectNodeContents(source);
+  selection.removeAllRanges();
+  selection.addRange(range);
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  return true;
+}
+
+function handleHistoryShortcut(
+  event: KeyboardEvent,
+  outerView: Parameters<NodeViewConstructor>[1],
+): boolean {
+  if (event.isComposing || event.altKey) {
+    return false;
+  }
+  const primaryModifier = isMac
+    ? event.metaKey && !event.ctrlKey
+    : event.ctrlKey && !event.metaKey;
+  if (!primaryModifier) {
+    return false;
+  }
+
+  const key = event.key.toLowerCase();
+  const command =
+    key === 'z'
+      ? event.shiftKey
+        ? redo
+        : undo
+      : !isMac && key === 'y' && !event.shiftKey
+        ? redo
+        : undefined;
+  if (!command || !command(outerView.state, outerView.dispatch)) {
+    return false;
+  }
+
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  return true;
 }
 
 function handleCtrlBackspace(

@@ -37,6 +37,8 @@ export function DatePickerMenu({
   const suggestions = useAtomValue($suggestions);
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const selectedDateRef = useRef(selectedDate);
+  const calendarRef = useRef<HTMLDivElement | null>(null);
+  const didAutoFocusRef = useRef(false);
   selectedDateRef.current = selectedDate;
   const { editorEngine } = useEditorCoreServices();
   const editorView = editorEngine.getEditor(editorName);
@@ -71,6 +73,7 @@ export function DatePickerMenu({
   useEffect(() => {
     if (!active?.show) {
       setSelectedDate(new Date());
+      didAutoFocusRef.current = false;
     }
   }, [active?.show]);
 
@@ -91,13 +94,29 @@ export function DatePickerMenu({
     markName: DATE_SUGGESTION.markName,
   });
 
+  const focusCalendarAfterPosition = useCallback(() => {
+    const selectedDay = calendarRef.current?.querySelector<HTMLElement>(
+      '[data-selected-single="true"]',
+    );
+    if (!active?.synthetic || didAutoFocusRef.current || !selectedDay) {
+      return;
+    }
+    didAutoFocusRef.current = true;
+    selectedDay.focus({ preventScroll: true });
+  }, [active?.synthetic]);
+
   const floatingRef = useFloatingPosition({
     show: Boolean(active?.show),
     anchorEl: () => active?.anchorEl() ?? null,
     // Constrain to the owning editor: a global selector would pick the
     // first editable ProseMirror on the page and leak across editors.
     boundaryElement: editorView?.dom ?? null,
+    onPositioned: focusCalendarAfterPosition,
   });
+  const setFloatingRef = (node: HTMLDivElement | null) => {
+    calendarRef.current = node;
+    floatingRef.current = node;
+  };
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
@@ -124,7 +143,7 @@ export function DatePickerMenu({
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: Escape handling for a floating popover, not an interactive control.
     <div
-      ref={floatingRef}
+      ref={setFloatingRef}
       style={FLOATING_INITIAL_STYLE}
       className="w-fit overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md"
       onKeyDown={handleKeyDown}
@@ -135,9 +154,6 @@ export function DatePickerMenu({
         // that already-selected day toggles the selection to `undefined`, so
         // the trigger is left behind instead of committing today's date.
         required
-        // Move focus to the selected day so arrow keys navigate the grid and
-        // Enter commits, without any editor-side key forwarding.
-        autoFocus
         captionLayout="dropdown"
         // Hide adjacent-month days so only the visible month is selectable
         // (avoids ambiguous day cells near month boundaries).

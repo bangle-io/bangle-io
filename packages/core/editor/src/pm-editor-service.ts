@@ -10,8 +10,8 @@ import type { EditorAction, EditorEngineContract } from '@bangle.io/context';
 import {
   type EditorView,
   markdownLoader,
+  type PMNode,
   type Schema,
-  selectAll,
   TextSelection,
 } from '@bangle.io/prosemirror-plugins';
 import {
@@ -56,7 +56,11 @@ import {
   getRememberedCursorPosition,
   resolveRememberedCursor,
 } from './remembered-cursor';
-import { isMarkdownRoundTripPreserved } from './round-trip-check';
+import {
+  collectLinkTargets,
+  isMarkdownContentPreserved,
+  isMarkdownRoundTripPreserved,
+} from './round-trip-check';
 
 const ASSET_TOAST_FILE_NAME_MAX_LENGTH = 44;
 const EMPTY_WS_PATH_SET: ReadonlySet<string> = new Set();
@@ -922,28 +926,6 @@ export class PmEditorService
     this.getActiveEditorView()?.focus();
   }
 
-  /**
-   * Redirects a global Cmd/Ctrl-A into the active editor when the editor is
-   * mounted but not DOM-focused (e.g. the user clicked the empty padding
-   * around the note, leaving focus on the page body). Without this a browser
-   * select-all fired from outside the contenteditable selects the whole
-   * document, sweeping the sidebar and app chrome into the selection.
-   *
-   * Defers to the editor's own keymap while it is focused, and to native
-   * behavior when no editor is mounted, by returning false in those cases.
-   */
-  selectAllInActiveEditor(): boolean {
-    const view = this.getActiveEditorView();
-    if (!view || view.isDestroyed || !view.dom.isConnected) {
-      return false;
-    }
-    if (view.hasFocus()) {
-      return false;
-    }
-    view.focus();
-    return selectAll(view.state, view.dispatch);
-  }
-
   /** Dry-runs app-level editor actions against the live selection. */
   isActionAvailable(action: EditorAction): boolean {
     const view = this.getActiveEditorView();
@@ -1066,9 +1048,56 @@ export class PmEditorService
     if (!view) {
       return false;
     }
-    const parsed = this.getMarkdown(view.state.schema).parser.parse(
-      markdownText,
-    );
+    return this.insertMarkdownIntoView(view, markdownText);
+  }
+
+  /**
+   * Binds a future Markdown insertion to the current editor state. Clipboard
+   * reads may wait on a permission prompt; during that wait the user can switch
+   * notes or move the selection, and the pending operation must not follow.
+   */
+  captureMarkdownInsertion(): ((markdownText: string) => boolean) | null {
+    const view = this.getActiveEditorView();
+    if (!view) {
+      return null;
+    }
+    const capturedDoc = view.state.doc;
+    const capturedSelection = view.state.selection;
+
+    return (markdownText) => {
+      if (
+        view.isDestroyed ||
+        !this.getEditorEntryByView(view) ||
+        this.getActiveEditorView() !== view ||
+        !view.state.doc.eq(capturedDoc) ||
+        !view.state.selection.eq(capturedSelection)
+      ) {
+        return false;
+      }
+      return this.insertMarkdownIntoView(view, markdownText);
+    };
+  }
+
+  private insertMarkdownIntoView(
+    view: ReturnType<typeof createEditor>,
+    markdownText: string,
+  ): boolean {
+    const markdown = this.getMarkdown(view.state.schema);
+    let parsed: ReturnType<typeof markdown.parser.parse>;
+    try {
+      parsed = markdown.parser.parse(markdownText);
+      // Refuse only when parsing dropped content the user can see. A byte
+      // comparison would also refuse pure normalization (`*italic*` arriving
+      // as `_italic_`, `* item` as `- item`), which rejects most Markdown
+      // copied from anywhere else and loses nothing.
+      if (
+        !isMarkdownContentPreserved(markdownText, collectLinkTargets(parsed))
+      ) {
+        return false;
+      }
+    } catch {
+      return false;
+    }
     const inline =
       parsed.childCount === 1 && parsed.firstChild?.type.name === 'paragraph';
     const slice = inline
@@ -1077,7 +1106,14 @@ export class PmEditorService
     if (slice.size === 0) {
       return false;
     }
-    view.dispatch(view.state.tr.replaceSelection(slice).scrollIntoView());
+    // A slice the schema cannot place here replaces nothing. Reporting success
+    // for that would drop the clipboard content without telling anyone, so the
+    // caller has to hear about it.
+    const tr = view.state.tr.replaceSelection(slice);
+    if (!tr.docChanged) {
+      return false;
+    }
+    view.dispatch(tr.scrollIntoView());
     view.focus();
     return true;
   }

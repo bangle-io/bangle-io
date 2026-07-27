@@ -45,6 +45,21 @@ export function PageEditor() {
               wsPath={currentWsPath.wsPath}
               className={EDITOR_CONTENT_PADDING}
             />
+            {/* Clicking the empty space under a short note puts the caret back
+                in it, the way every other editor behaves. Without this the
+                click lands on the page and leaves focus on the body, so the
+                next keystroke — Cmd/Ctrl-A especially — is handled by the
+                browser against the whole document instead of the note. */}
+            <button
+              aria-hidden
+              className="min-h-16 flex-1 cursor-text"
+              onMouseDown={(event) => {
+                event.preventDefault();
+                coreServices.editorEngine.focusEditor();
+              }}
+              tabIndex={-1}
+              type="button"
+            />
             <LinkedMentions currentWsPath={currentWsPath} />
           </>
         ) : !currentWsName ? (

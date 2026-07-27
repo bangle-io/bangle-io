@@ -29,6 +29,9 @@ export type SuggestionConfig = {
   /** End the suggestion when the query contains whitespace (slash menu
    * behavior); providers with multi-word queries (wiki links) leave it off. */
   endOnWhitespace?: boolean;
+  /** End the suggestion as soon as text follows the trigger. Use for
+   * trigger-only providers that have no query. */
+  endOnQuery?: boolean;
 };
 
 export function setupSuggestions(config: SuggestionConfig) {
