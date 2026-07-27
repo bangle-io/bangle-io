@@ -7,6 +7,7 @@ import {
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { toast } from '@bangle.io/ui-components';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { RECONCILE_SETTLE_MS } from '../external-content-sync';
 import { PmEditorService } from '../pm-editor-service';
 
 function asPmEditor(editorEngine: unknown): PmEditorService {
@@ -14,6 +15,15 @@ function asPmEditor(editorEngine: unknown): PmEditorService {
     throw new Error('expected the ProseMirror editor engine');
   }
   return editorEngine;
+}
+
+/**
+ * Waits long enough that "the editor did not change" proves the sync refused
+ * rather than simply not having run yet. Derived from the sync's own timings,
+ * so tuning them cannot turn these negative assertions vacuous.
+ */
+function settleReconcile(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, RECONCILE_SETTLE_MS));
 }
 
 const WS_NAME = 'test-ws';
@@ -260,7 +270,7 @@ describe('editor refresh on external file changes', () => {
 
     // Give the sync path ample opportunity to (incorrectly) run — well past
     // its quiet-period and stability-read delays.
-    await new Promise((resolve) => setTimeout(resolve, 700));
+    await settleReconcile();
 
     expect(editorText(domNode)).toContain('USER-UNSAVED-EDIT');
     expect(editorText(domNode)).not.toContain(
@@ -460,7 +470,7 @@ describe('editor refresh on external file changes', () => {
       sender: EXTERNAL_SENDER,
     });
 
-    await new Promise((resolve) => setTimeout(resolve, 700));
+    await settleReconcile();
     expect(warningSpy).not.toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({
@@ -513,7 +523,7 @@ describe('editor refresh on external file changes', () => {
     });
     allowPreservation.resolve();
 
-    await new Promise((resolve) => setTimeout(resolve, 350));
+    await settleReconcile();
     expect(editorText(domNode)).toContain('the original note body');
     expect(editorText(domNode)).not.toContain(
       'updated while composition begins',
@@ -565,7 +575,7 @@ describe('editor refresh on external file changes', () => {
     });
     allowPreservation.resolve();
 
-    await new Promise((resolve) => setTimeout(resolve, 350));
+    await settleReconcile();
     expect(editorText(domNode)).toContain('the original note body');
     expect(editorText(domNode)).not.toContain(
       'external content from the old path',
@@ -586,7 +596,7 @@ describe('editor refresh on external file changes', () => {
     // is never auto-applied.
     await simulateExternalEdit(testEnv, services, '');
 
-    await new Promise((resolve) => setTimeout(resolve, 700));
+    await settleReconcile();
     expect(editorText(domNode)).toContain('the original note body');
   });
 
@@ -653,7 +663,7 @@ describe('editor refresh on external file changes', () => {
     const docBefore = domNode.innerHTML;
 
     await simulateExternalEdit(testEnv, services, 'the original note body\n');
-    await new Promise((resolve) => setTimeout(resolve, 700));
+    await settleReconcile();
 
     expect(domNode.innerHTML).toBe(docBefore);
     expect(editorText(domNode)).toContain('the original note body');
@@ -778,6 +788,34 @@ describe('editor refresh on external file changes', () => {
     expect(errorSpy).toHaveBeenCalledWith(
       expect.stringContaining('Could not read note.md'),
     );
+    expect(editorText(domNode)).toContain('the original note body');
+  });
+
+  it('reports when loading a requested disk version throws', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      'the original note body',
+    );
+    const dismissSpy = vi.spyOn(toast, 'dismiss');
+    const errorSpy = vi.spyOn(toast, 'error');
+
+    await simulateRefusedExternalEdit(testEnv, services);
+
+    // Read and parse/serialize failures both surface here. A parse failure is
+    // deterministic — retrying can never succeed — so the user must be told
+    // the action did nothing rather than left guessing.
+    vi.spyOn(services.fileSystem, 'readFileAsText').mockRejectedValue(
+      new Error('storage read exploded'),
+    );
+    dismissSpy.mockClear();
+    await asPmEditor(services.editorEngine).loadDiskVersionIntoEditors(
+      NOTE_WS_PATH,
+    );
+
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('The disk version of note.md was not loaded'),
+    );
+    // The notice stays: it is still the only way back to the disk copy.
+    expect(dismissSpy).not.toHaveBeenCalledWith(STALE_TOAST_ID);
     expect(editorText(domNode)).toContain('the original note body');
   });
 

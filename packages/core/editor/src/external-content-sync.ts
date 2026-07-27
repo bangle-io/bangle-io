@@ -12,12 +12,19 @@ import { isMarkdownRoundTripPreserved } from './round-trip-check';
  * Quiet period between an external change notification and the first disk
  * read, letting in-progress writes (truncate-then-write) finish first.
  */
-const QUIET_MS = 150;
+export const QUIET_MS = 150;
 /**
  * Gap between the two confirming reads that must agree before externally
  * changed content is applied to an open editor.
  */
-const STABILITY_MS = 100;
+export const STABILITY_MS = 100;
+/**
+ * How long a test must wait before "the editor did not change" proves a
+ * refusal rather than the pass simply not having run yet. Exported so those
+ * negative assertions cannot quietly go vacuous when the timings above are
+ * tuned.
+ */
+export const RECONCILE_SETTLE_MS = (QUIET_MS + STABILITY_MS) * 2 + 150;
 /** Back-to-back passes before backing off, for a writer that settles quickly. */
 const PASSES_BEFORE_BACKOFF = 5;
 /**
@@ -210,6 +217,16 @@ export class ExternalContentSync {
    * the dirty-edit, composition, parsing, and replacement lifecycle with
    * automatic reconciliation, while bypassing its fidelity and empty-file
    * refusals.
+   *
+   * Two deliberate differences from the automatic path:
+   * - it reads once instead of requiring two agreeing reads, so consenting
+   *   while a writer is mid-write can load a truncated file. The editor's own
+   *   copy is snapshotted first, so that stays recoverable, and making the
+   *   user wait out a stability protocol for an explicit action is worse than
+   *   the rare bad read;
+   * - it runs outside `runs`, so it can interleave with an automatic pass.
+   *   Whichever applies first changes the doc, and the loser's `expectedDoc`
+   *   check turns it into a no-op.
    */
   acceptDiskVersion(wsPath: string): Promise<DiskVersionApplyResult> {
     return this.reconcileOnce(wsPath, 'user-approved');

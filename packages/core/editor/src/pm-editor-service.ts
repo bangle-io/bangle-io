@@ -700,8 +700,11 @@ export class PmEditorService
         this.dismissStaleExternalContentToast(wsPath);
       }
     } catch (error) {
-      // Editor and toast stay as they are; the user can retry.
+      // Parsing or serializing the disk copy threw. The notice stays so the
+      // user keeps a way back, but they must be told the action did nothing —
+      // a deterministic parse failure will never succeed on retry.
       this.logger.warn(`Could not load the disk version of ${wsPath}`, error);
+      toast.error(t.app.toasts.externalDiskVersionNotApplied({ fileName }));
     }
   }
 
