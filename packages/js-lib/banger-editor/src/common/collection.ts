@@ -411,6 +411,13 @@ export const PRIORITY = {
   // order collections are registered in.
   codeMarkSpec: -100,
 
+  // A list item is the fallback owner of the insert-above/below shortcut: any
+  // special block inside the item (heading, blockquote, code block, table)
+  // keeps handling the key itself, and the list only adds a sibling item when
+  // nothing inner claimed it. Sorting below the default 0 makes that explicit
+  // rather than leaving it to the order collections happen to be registered in.
+  listInsertKeymap: -50,
+
   // -100 to allow default user keymap with 0 priority to run first
   baseKeymap: -100,
 };

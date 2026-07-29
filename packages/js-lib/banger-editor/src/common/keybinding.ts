@@ -14,6 +14,10 @@ export function keybinding(
   // `Object.fromEntries` keeps the last entry for a repeated key, which would
   // silently disable the earlier binding. Fail loudly instead: two commands on
   // one key inside a single keymap need an explicit `chainCommands`.
+  //
+  // Compares the chord as written, since prosemirror-keymap does not export its
+  // normalizer. Aliases that normalize to the same chord (`Mod-Enter` versus
+  // `Meta-Enter`) are not caught; every call site spells chords the same way.
   const seen = new Set<string>();
   for (const [key] of normalizedKeys) {
     if (!key) continue;

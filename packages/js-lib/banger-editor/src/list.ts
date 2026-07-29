@@ -273,6 +273,7 @@ export function setupList(userConfig: Partial<ListConfig> = {}) {
   const plugin = {
     inputRules: pluginInputRules(config),
     keybindings: pluginKeybindings(config),
+    insertKeybindings: pluginInsertKeybindings(config),
     listPlugins: ({ schema }: PluginContext) =>
       createMarkdownListPlugins(schema, listNodeName),
   };
@@ -284,6 +285,8 @@ export function setupList(userConfig: Partial<ListConfig> = {}) {
     command: {
       dedentList: dedentList(config),
       indentList: indentList(config),
+      insertEmptyListAbove: insertEmptyListAbove(config),
+      insertEmptyListBelow: insertEmptyListBelow(config),
       moveListDown: moveListDown(config),
       moveListUp: moveListUp(config),
       toggleBulletList: toggleBulletList(config),
@@ -339,8 +342,6 @@ function pluginKeybindings(config: RequiredConfig) {
       ['Delete', deleteCommand],
       [config.keyDedentList, dedentList(config)],
       [config.keyIndentList, indentList(config)],
-      [config.keyInsertEmptyListAbove, insertEmptyListAbove(config)],
-      [config.keyInsertEmptyListBelow, insertEmptyListBelow(config)],
       [config.keyMoveListDown, moveListDown(config)],
       [config.keyMoveListUp, moveListUp(config)],
       [config.keyToggleBulletList, toggleBulletList(config)],
@@ -351,6 +352,24 @@ function pluginKeybindings(config: RequiredConfig) {
       [config.keyToggleTaskChecked, toggleTaskChecked(config)],
     ],
     'list',
+  );
+}
+
+/**
+ * Registered below the default priority so a heading, blockquote, code block or
+ * table inside a list item keeps handling insert-above/below itself. The list
+ * only adds a sibling item when no inner block claimed the key, which keeps the
+ * behaviour identical for every special block instead of depending on the order
+ * extensions happen to be registered in.
+ */
+function pluginInsertKeybindings(config: RequiredConfig) {
+  return keybinding(
+    [
+      [config.keyInsertEmptyListAbove, insertEmptyListAbove(config)],
+      [config.keyInsertEmptyListBelow, insertEmptyListBelow(config)],
+    ],
+    'list-insert',
+    PRIORITY.listInsertKeymap,
   );
 }
 
@@ -522,6 +541,11 @@ function insertEmptySiblingList(
       if (!attrs) return null;
       return type.createAndFill({
         ...found.node.attrs,
+        // Normalized rather than copied raw: an item that never carried an
+        // explicit `listKind` still hands the sibling the marker it renders
+        // with, the same repair `enterListCommand` applies.
+        listKind: attrs.listKind,
+        tight: attrs.tight,
         checked: false,
         collapsed: false,
         order: null,

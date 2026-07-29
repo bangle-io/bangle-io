@@ -12,13 +12,17 @@ import type { PMNode } from '../pm';
 import { createBangerEditorTestSetup } from '../test-helpers';
 
 const editorTest = createBangerEditorTestSetup({
+  // Registered in the same relative order as the app (see the `extensions`
+  // object in @bangle.io/editor). Keymaps of equal priority are sorted stably,
+  // so a different order here would exercise a different winner for keys that
+  // more than one extension binds.
   extensions: [
     setupBase(),
-    setupParagraph(),
-    setupCodeBlock(),
-    setupHeading(),
     setupBlockquote(),
     setupList(),
+    setupHeading(),
+    setupParagraph(),
+    setupCodeBlock(),
   ],
   builderAliases: {
     blockquote: { nodeType: 'blockquote' },
@@ -73,6 +77,15 @@ function caretIsInEmptyBlock(editor: Editor) {
   return editor.view.state.selection.$from.parent.content.size === 0;
 }
 
+/** Position of the source text, so above/below can be told apart by direction. */
+function posOfText(editor: Editor, text: string) {
+  let found = -1;
+  editor.view.state.doc.descendants((node, pos) => {
+    if (found === -1 && node.isText && node.text?.includes(text)) found = pos;
+  });
+  return found;
+}
+
 function childTexts(node: PMNode) {
   return Array.from(
     { length: node.childCount },
@@ -84,55 +97,94 @@ describe('insert empty block above/below shortcuts', () => {
   // Guards the whole keymap surface at once: before this fix, a caret inside a
   // list item left both shortcuts completely unhandled because paragraph.ts
   // filtered them to top level and list.ts bound neither.
+  // `docChildren` and `caret` pin *which* extension handled the key: a special
+  // block inside a list item inserts a paragraph into that item (doc stays one
+  // child), while a plain item gets a whole sibling item (doc grows to two).
   describe.each([
-    { name: 'paragraph at top level', build: () => doc(p('one<cursor>')) },
-    { name: 'heading at top level', build: () => doc(h1('one<cursor>')) },
+    {
+      name: 'paragraph at top level',
+      build: () => doc(p('one<cursor>')),
+      docChildren: 2,
+      caret: 'paragraph',
+    },
+    {
+      name: 'heading at top level',
+      build: () => doc(h1('one<cursor>')),
+      docChildren: 2,
+      caret: 'paragraph',
+    },
     {
       name: 'code block at top level',
       build: () => doc(codeBlock('one<cursor>')),
+      docChildren: 2,
+      caret: 'paragraph',
     },
     {
       name: 'paragraph in a blockquote',
       build: () => doc(blockquote(p('one<cursor>'))),
+      docChildren: 2,
+      caret: 'paragraph',
     },
     {
       name: 'bullet list item',
       build: () => doc(list(bullet, p('one<cursor>'))),
+      docChildren: 2,
+      caret: 'list>paragraph',
     },
     {
       name: 'ordered list item',
       build: () => doc(list(ordered, p('one<cursor>'))),
+      docChildren: 2,
+      caret: 'list>paragraph',
     },
     {
       name: 'task list item',
       build: () => doc(list(uncheckedTask, p('one<cursor>'))),
+      docChildren: 2,
+      caret: 'list>paragraph',
     },
     {
       name: 'heading inside a list item',
       build: () => doc(list(bullet, h1('one<cursor>'))),
+      docChildren: 1,
+      caret: 'list>paragraph',
     },
     {
       name: 'code block inside a list item',
       build: () => doc(list(bullet, codeBlock('one<cursor>'))),
+      docChildren: 1,
+      caret: 'list>paragraph',
     },
     {
       name: 'nested list item',
       build: () =>
         doc(list(bullet, p('parent'), list(bullet, p('one<cursor>')))),
+      docChildren: 1,
+      caret: 'list>list>paragraph',
     },
-  ])('$name', ({ build }) => {
-    it('inserts an empty block below and puts the caret in it', () => {
+  ])('$name', ({ build, docChildren, caret }) => {
+    it('inserts an empty block below the source and puts the caret in it', () => {
       const editor = editorTest.createEditor(build());
 
       expect(editor.pressKey('Enter', INSERT_BELOW)).toBe(true);
       expect(caretIsInEmptyBlock(editor)).toBe(true);
+      expect(editor.view.state.doc.childCount).toBe(docChildren);
+      expect(caretPath(editor)).toBe(caret);
+      expect(editor.view.state.selection.from).toBeGreaterThan(
+        posOfText(editor, 'one'),
+      );
     });
 
-    it('inserts an empty block above and puts the caret in it', () => {
+    it('inserts an empty block above the source and puts the caret in it', () => {
       const editor = editorTest.createEditor(build());
 
       expect(editor.pressKey('Enter', INSERT_ABOVE)).toBe(true);
       expect(caretIsInEmptyBlock(editor)).toBe(true);
+      expect(editor.view.state.doc.childCount).toBe(docChildren);
+      expect(caretPath(editor)).toBe(caret);
+      expect(editor.view.state.selection.from).toBeLessThan(
+        posOfText(editor, 'one'),
+      );
     });
   });
 
