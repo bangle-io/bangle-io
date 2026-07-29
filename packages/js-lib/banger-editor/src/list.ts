@@ -48,7 +48,12 @@ import {
   unwrapListSlice,
   wrappingListInputRule,
 } from './pm';
-import { findParentNode, getNodeType, type PluginContext } from './pm-utils';
+import {
+  findParentNode,
+  getNodeType,
+  insertNodeAdjacentToNode,
+  type PluginContext,
+} from './pm-utils';
 
 const LIST_KIND = {
   BULLET: 'bullet',
@@ -218,6 +223,8 @@ type ListConfig = {
   keyDedentList?: string | false;
   keyDeleteList?: string | false;
   keyIndentList?: string | false;
+  keyInsertEmptyListAbove?: string | false;
+  keyInsertEmptyListBelow?: string | false;
   keyMoveListDown?: string | false;
   keyMoveListUp?: string | false;
   keyToggleBulletList?: string | false;
@@ -236,6 +243,10 @@ const DEFAULT_CONFIG: RequiredConfig = {
   keyDedentList: 'Shift-Tab',
   keyDeleteList: 'Delete',
   keyIndentList: 'Tab',
+  // Mirrors the paragraph/heading/blockquote/code-block bindings so the
+  // shortcut keeps working when the caret sits inside a list item.
+  keyInsertEmptyListAbove: 'Mod-Shift-Enter',
+  keyInsertEmptyListBelow: 'Mod-Enter',
   keyMoveListDown: 'Alt-ArrowDown',
   keyMoveListUp: 'Alt-ArrowUp',
   keyToggleBulletList: 'Mod-Shift-8',
@@ -243,7 +254,9 @@ const DEFAULT_CONFIG: RequiredConfig = {
   keyToggleTaskList: 'Mod-Shift-7',
   keyToggleToggleList: 'Mod-Shift-6',
   keyUnwrapList: 'Shift-Mod-0',
-  keyToggleTaskChecked: 'Mod-Enter',
+  // Moved off `Mod-Enter` so insert-below behaves the same in every list item
+  // instead of being swallowed by the checkbox toggle inside task lists.
+  keyToggleTaskChecked: 'Alt-Enter',
 };
 
 export function setupList(userConfig: Partial<ListConfig> = {}) {
@@ -326,6 +339,8 @@ function pluginKeybindings(config: RequiredConfig) {
       ['Delete', deleteCommand],
       [config.keyDedentList, dedentList(config)],
       [config.keyIndentList, indentList(config)],
+      [config.keyInsertEmptyListAbove, insertEmptyListAbove(config)],
+      [config.keyInsertEmptyListBelow, insertEmptyListBelow(config)],
       [config.keyMoveListDown, moveListDown(config)],
       [config.keyMoveListUp, moveListUp(config)],
       [config.keyToggleBulletList, toggleBulletList(config)],
@@ -478,6 +493,41 @@ function normalizeNewIndentationPlaceholders(
 
 function dedentList(_config: RequiredConfig): Command {
   return createDedentListCommand();
+}
+
+function insertEmptyListAbove(config: RequiredConfig): Command {
+  return insertEmptySiblingList(config, 'above');
+}
+
+function insertEmptyListBelow(config: RequiredConfig): Command {
+  return insertEmptySiblingList(config, 'below');
+}
+
+/**
+ * Adds an empty item next to the caret's item, matching the run's marker so the
+ * surrounding Markdown list is not split into two lists.
+ *
+ * Item-specific state is deliberately not inherited: a fresh item starts
+ * unchecked and expanded, and carries no explicit `order` so the run keeps
+ * numbering itself.
+ */
+function insertEmptySiblingList(
+  config: RequiredConfig,
+  side: 'above' | 'below',
+): Command {
+  return (state, dispatch, view) => {
+    const type = getNodeType(state.schema, config.listNodeName);
+    return insertNodeAdjacentToNode(type, side, (found) => {
+      const attrs = readListAttrs(found.node);
+      if (!attrs) return null;
+      return type.createAndFill({
+        ...found.node.attrs,
+        checked: false,
+        collapsed: false,
+        order: null,
+      });
+    })(state, dispatch, view);
+  };
 }
 
 function moveListUp(_config: RequiredConfig): Command {

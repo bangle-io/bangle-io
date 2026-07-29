@@ -328,3 +328,78 @@ test('deeply indenting a task does not create another task on reload', async ({
     expected,
   );
 });
+
+test('insert-item shortcuts add siblings that keep the list marker', async ({
+  page,
+}) => {
+  const workspaceName = 'list-insert-shortcuts';
+  const noteName = 'insert-items';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    noteName,
+    '- alpha\n- beta\n- gamma',
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await collapseEditorSelectionAfterText(page, 'beta');
+  await waitForEditorFocus(page, {});
+  await page.keyboard.press('ControlOrMeta+Enter');
+  await page.keyboard.insertText('delta');
+
+  const withBelow = '- alpha\n- beta\n- delta\n- gamma';
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(withBelow);
+  await expect(
+    editor.locator('.prosemirror-flat-list[data-list-container-kind="bullet"]'),
+  ).toHaveCount(4);
+
+  await collapseEditorSelectionAfterText(page, 'alpha');
+  await page.keyboard.press('ControlOrMeta+Shift+Enter');
+  await page.keyboard.insertText('start');
+
+  const withAbove = '- start\n- alpha\n- beta\n- delta\n- gamma';
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(withAbove);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
+    withAbove,
+  );
+});
+
+test('insert-item shortcut adds an unchecked task without toggling the source', async ({
+  page,
+}) => {
+  const workspaceName = 'list-insert-task-shortcut';
+  const noteName = 'insert-task';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  await writeStoredMarkdown(page, workspaceName, noteName, '- [x] done');
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await expect(editor.getByRole('checkbox')).toBeChecked();
+  await collapseEditorSelectionAfterText(page, 'done');
+  await waitForEditorFocus(page, {});
+  await page.keyboard.press('ControlOrMeta+Enter');
+  await page.keyboard.insertText('todo');
+
+  const expected = '- [x] done\n- [ ] todo';
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(expected);
+  await expect(editor.getByRole('checkbox')).toHaveCount(2);
+  await expect(editor.getByRole('checkbox').first()).toBeChecked();
+  await expect(editor.getByRole('checkbox').last()).not.toBeChecked();
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
+    expected,
+  );
+});

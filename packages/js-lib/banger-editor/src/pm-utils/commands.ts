@@ -1,5 +1,5 @@
 import { assertIsDefined } from '../common';
-import type { Command, EditorState, EditorView, Schema } from '../pm';
+import type { Command, EditorState, EditorView, PMNode, Schema } from '../pm';
 import {
   Fragment,
   NodeSelection,
@@ -12,6 +12,7 @@ import {
 import { mapChildren } from './helpers';
 import { findParentNodeOfType } from './selection';
 import { safeInsert } from './transforms';
+import type { ContentNodeWithPos } from './types';
 
 type PredicateFunction = (state: EditorState, view?: EditorView) => boolean;
 export type MoveDirection = 'UP' | 'DOWN';
@@ -142,6 +143,49 @@ export function jumpToEndOfNode(type: NodeType): Command {
 }
 
 /**
+ * Builds the node to insert next to an existing block. Returning `null` aborts
+ * the command, leaving the key free for a lower-priority handler.
+ */
+export type AdjacentNodeBuilder = (
+  found: ContentNodeWithPos,
+  state: EditorState,
+) => PMNode | null;
+
+/**
+ * Insert a node as a sibling of the nearest ancestor of the given node type.
+ *
+ * `side` is resolved against that ancestor, so `'below'` lands after the whole
+ * subtree rather than between the ancestor and its children.
+ *
+ * @param type - The type of the ancestor to anchor against.
+ * @param side - Whether the new node goes before or after the ancestor.
+ * @param buildNode - Builds the node to insert.
+ * @returns A ProseMirror command function.
+ */
+export function insertNodeAdjacentToNode(
+  type: NodeType,
+  side: 'above' | 'below',
+  buildNode: AdjacentNodeBuilder,
+): Command {
+  return (state, dispatch) => {
+    const parent = findParentNodeOfType(type)(state.selection);
+    if (!parent) {
+      return false;
+    }
+
+    const newNode = buildNode(parent, state);
+    if (!newNode) {
+      return false;
+    }
+
+    const insertPos =
+      side === 'above' ? parent.pos : parent.pos + parent.node.nodeSize;
+    dispatch?.(safeInsert(newNode, insertPos)(state.tr));
+    return true;
+  };
+}
+
+/**
  * Insert an empty paragraph above the nearest parent of the given node type.
  *
  * @param type - The type of the parent node to find.
@@ -152,21 +196,9 @@ export function insertEmptyParagraphAboveNode(
   type: NodeType,
   getParagraphNodeType: (schema: Schema) => NodeType,
 ): Command {
-  return (state, dispatch) => {
-    const parent = findParentNodeOfType(type)(state.selection);
-    if (!parent) {
-      return false;
-    }
-
-    const newPara = getParagraphNodeType(state.schema).createAndFill();
-    if (!newPara) {
-      return false;
-    }
-
-    const insertPos = parent.pos;
-    dispatch?.(safeInsert(newPara, insertPos)(state.tr));
-    return true;
-  };
+  return insertNodeAdjacentToNode(type, 'above', (_found, state) =>
+    getParagraphNodeType(state.schema).createAndFill(),
+  );
 }
 
 /**
@@ -180,21 +212,9 @@ export function insertEmptyParagraphBelowNode(
   type: NodeType,
   getParagraphNodeType: (schema: Schema) => NodeType,
 ): Command {
-  return (state, dispatch) => {
-    const parent = findParentNodeOfType(type)(state.selection);
-    if (!parent) {
-      return false;
-    }
-
-    const newPara = getParagraphNodeType(state.schema).createAndFill();
-    if (!newPara) {
-      return false;
-    }
-
-    const insertPos = parent.pos + parent.node.nodeSize;
-    dispatch?.(safeInsert(newPara, insertPos)(state.tr));
-    return true;
-  };
+  return insertNodeAdjacentToNode(type, 'below', (_found, state) =>
+    getParagraphNodeType(state.schema).createAndFill(),
+  );
 }
 
 /**
