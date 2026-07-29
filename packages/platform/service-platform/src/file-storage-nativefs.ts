@@ -23,6 +23,7 @@ import type {
   FileStorageExternalChangeEvent,
 } from '@bangle.io/types';
 import {
+  isIgnoredWorkspacePathSegment,
   isVisibleWorkspaceDirectoryName,
   isVisibleWorkspaceFilePath,
   WsPath,
@@ -227,6 +228,14 @@ export class FileStorageNativeFs
     wsName: string,
     relativePath: string,
   ): WatchPathClass {
+    // Locations the workspace listing never shows cannot change it, whatever
+    // shape their paths have. This runs before the file-shape parse because
+    // extensionless paths (`.git/HEAD`, `node_modules/.bin/tsc`) do not parse
+    // as files — without it, ordinary `git` and `npm` activity inside a
+    // workspace would each force a full re-list.
+    if (relativePath.split('/').some(isIgnoredWorkspacePathSegment)) {
+      return { kind: 'ignored' };
+    }
     const result = WsPath.safeFromParts(wsName, relativePath);
     const wsPath = result.ok && result.data ? result.data.wsPath : undefined;
     if (wsPath === undefined) {
@@ -246,24 +255,32 @@ export class FileStorageNativeFs
    * whole workspace has to be re-read.
    */
   private needsCoarseRefresh(wsName: string, change: NativeFsChange): boolean {
-    if (change.type === 'unknown' || change.kind === 'directory') {
+    if (change.type === 'unknown') {
       return true;
     }
-    if (change.type !== 'moved') {
-      return this.classifyWatchPath(wsName, change.path).kind === 'coarse';
+    if (change.type === 'moved') {
+      if (change.movedFromPath === undefined) {
+        // The origin is required to determine visibility.
+        return true;
+      }
+      const from = this.classifyWatchPath(wsName, change.movedFromPath);
+      const to = this.classifyWatchPath(wsName, change.path);
+      if (from.kind === 'ignored' && to.kind === 'ignored') {
+        return false;
+      }
+      return (
+        from.kind === 'coarse' ||
+        to.kind === 'coarse' ||
+        // Visible moves may be renames or atomic replacements.
+        (from.kind === 'file' && to.kind === 'file')
+      );
     }
-    if (change.movedFromPath === undefined) {
-      // The origin is required to determine visibility.
-      return true;
+    const classified = this.classifyWatchPath(wsName, change.path);
+    if (classified.kind === 'ignored') {
+      return false;
     }
-    const from = this.classifyWatchPath(wsName, change.movedFromPath);
-    const to = this.classifyWatchPath(wsName, change.path);
-    return (
-      from.kind === 'coarse' ||
-      to.kind === 'coarse' ||
-      // Visible moves may be renames or atomic replacements.
-      (from.kind === 'file' && to.kind === 'file')
-    );
+    // A visible directory appearing or vanishing changes the listing.
+    return change.kind === 'directory' || classified.kind === 'coarse';
   }
 
   /** Targeted events for a burst, deduplicated and in arrival order. */

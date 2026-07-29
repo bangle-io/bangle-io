@@ -653,6 +653,68 @@ describe('external change watching', () => {
     ]);
   });
 
+  it('ignores churn inside locations the listing never shows', async () => {
+    const { observer, onExternalChange } = await setupExternalChangeWatching();
+
+    // A workspace pointed at a code repo sees constant `git`/`npm` activity.
+    // None of it can change the workspace listing, and most of these paths
+    // are extensionless so they do not parse as files — without the ignore
+    // check running first, each one would force a full re-list.
+    await observer.emitRecords([
+      {
+        type: 'modified',
+        relativePathComponents: ['.git', 'HEAD'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'modified',
+        relativePathComponents: ['.git', 'index'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'appeared',
+        relativePathComponents: ['.git', 'COMMIT_EDITMSG'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'appeared',
+        relativePathComponents: ['.git', 'objects', 'ab'],
+        changedHandle: { kind: 'directory' },
+      },
+      {
+        type: 'modified',
+        relativePathComponents: ['node_modules', '.bin', 'tsc'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'moved',
+        relativePathComponents: ['.git', 'index'],
+        relativePathMovedFrom: ['.git', 'index.lock'],
+        changedHandle: { kind: 'file' },
+      },
+    ]);
+
+    expect(onExternalChange).not.toHaveBeenCalled();
+  });
+
+  it('still refreshes when a visible directory changes', async () => {
+    const { observer, onExternalChange } = await setupExternalChangeWatching();
+
+    // The ignore check must not swallow real directory changes: adding or
+    // removing a visible folder does change the listing.
+    await observer.emitRecords([
+      {
+        type: 'appeared',
+        relativePathComponents: ['notes'],
+        changedHandle: { kind: 'directory' },
+      },
+    ]);
+
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'refresh', wsName: 'myWorkspace' },
+    ]);
+  });
+
   it('reports changes to visible temp-suffix files', async () => {
     const { observer, onExternalChange } = await setupExternalChangeWatching();
 

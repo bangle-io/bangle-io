@@ -9,6 +9,15 @@
       "env": {
         "BANGLE_DEV_PORT": "5225"
       }
+    },
+    {
+      "name": "bangle-preview-production",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["preview-production"],
+      "port": 4963,
+      "env": {
+        "BANGLE_PREVIEW_PORT": "4963"
+      }
     }
   ]
 }
