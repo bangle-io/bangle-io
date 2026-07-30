@@ -9,6 +9,7 @@ import { setupHeading } from '../heading';
 import { setupList } from '../list';
 import { setupParagraph } from '../paragraph';
 import type { PMNode } from '../pm';
+import { setupTable } from '../table';
 import { createBangerEditorTestSetup } from '../test-helpers';
 
 const editorTest = createBangerEditorTestSetup({
@@ -23,6 +24,7 @@ const editorTest = createBangerEditorTestSetup({
     setupHeading(),
     setupParagraph(),
     setupCodeBlock(),
+    setupTable(),
   ],
   builderAliases: {
     blockquote: { nodeType: 'blockquote' },
@@ -31,6 +33,9 @@ const editorTest = createBangerEditorTestSetup({
     h1: { nodeType: 'heading', level: 1 },
     list: { nodeType: 'list' },
     p: { nodeType: 'paragraph' },
+    table: { nodeType: 'table' },
+    td: { nodeType: 'table_cell' },
+    tr: { nodeType: 'table_row' },
   },
 });
 
@@ -38,6 +43,9 @@ const { doc, p, codeBlock } = editorTest.builders;
 const list = editorTest.nodeBuilder('list');
 const h1 = editorTest.nodeBuilder('h1');
 const blockquote = editorTest.nodeBuilder('blockquote');
+const table = editorTest.nodeBuilder('table');
+const tableRow = editorTest.nodeBuilder('tr');
+const tableCell = editorTest.nodeBuilder('td');
 
 afterEach(() => editorTest.cleanup());
 
@@ -237,6 +245,32 @@ describe('insert empty block above/below shortcuts', () => {
     expect(childTexts(parent)).toEqual(['parent', 'one', '']);
     expect(parent.child(2).attrs).toMatchObject(bullet);
     expect(caretPath(editor)).toBe('list>list>paragraph');
+  });
+
+  // A table binds only insert-below, so insert-above used to leak through to
+  // the list keymap and replace the caret-in-a-cell with a brand new item.
+  describe('table inside a list item', () => {
+    const build = () =>
+      doc(list(bullet, table(tableRow(tableCell(p('cell<cursor>'))))));
+
+    it('lets the table own insert-below and keeps the caret in the item', () => {
+      const editor = editorTest.createEditor(build());
+
+      expect(editor.pressKey('Enter', INSERT_BELOW)).toBe(true);
+      expect(editor.view.state.doc.childCount).toBe(1);
+      expect(caretPath(editor)).toBe('list>paragraph');
+    });
+
+    it('leaves insert-above unhandled rather than escaping the table', () => {
+      const editor = editorTest.createEditor(build());
+      const before = editor.view.state.doc.toJSON();
+
+      expect(editor.pressKey('Enter', INSERT_ABOVE)).toBe(false);
+      expect(editor.view.state.doc.toJSON()).toEqual(before);
+      expect(caretPath(editor)).toBe(
+        'list>table>table_row>table_cell>paragraph',
+      );
+    });
   });
 
   it('adds the sibling after the whole subtree, not between an item and its children', () => {

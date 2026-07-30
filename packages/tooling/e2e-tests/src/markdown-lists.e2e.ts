@@ -403,3 +403,42 @@ test('insert-item shortcut adds an unchecked task without toggling the source', 
     expected,
   );
 });
+
+test('the task checkbox shortcut toggles the item under the caret', async ({
+  page,
+}) => {
+  const workspaceName = 'list-task-shortcut';
+  const noteName = 'toggle-task';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    noteName,
+    '- [ ] alpha\n- [ ] bravo',
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await collapseEditorSelectionAfterText(page, 'bravo');
+  await waitForEditorFocus(page, {});
+  await page.keyboard.press('Alt+Enter');
+
+  const toggled = '- [ ] alpha\n- [x] bravo';
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(toggled);
+  await expect(editor.getByRole('checkbox').first()).not.toBeChecked();
+  await expect(editor.getByRole('checkbox').last()).toBeChecked();
+
+  // Toggling back proves the shortcut is a toggle, not a one-way set.
+  await page.keyboard.press('Alt+Enter');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe('- [ ] alpha\n- [ ] bravo');
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
+    '- [ ] alpha\n- [ ] bravo',
+  );
+});

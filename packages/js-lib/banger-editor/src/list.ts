@@ -356,11 +356,13 @@ function pluginKeybindings(config: RequiredConfig) {
 }
 
 /**
- * Registered below the default priority so a heading, blockquote, code block or
- * table inside a list item keeps handling insert-above/below itself. The list
- * only adds a sibling item when no inner block claimed the key, which keeps the
- * behaviour identical for every special block instead of depending on the order
- * extensions happen to be registered in.
+ * Registered below the default priority so a heading, blockquote or code block
+ * inside a list item keeps handling insert-above/below itself, rather than the
+ * winner depending on the order extensions happen to be registered in.
+ *
+ * A table binds only insert-below (`exitTableBelow`), so insert-above would
+ * otherwise reach this keymap; `insertEmptySiblingList` declines any caret that
+ * is not directly inside the item to keep the two directions consistent.
  */
 function pluginInsertKeybindings(config: RequiredConfig) {
   return keybinding(
@@ -536,7 +538,14 @@ function insertEmptySiblingList(
 ): Command {
   return (state, dispatch, view) => {
     const type = getNodeType(state.schema, config.listNodeName);
-    return insertNodeAdjacentToNode(type, side, (found) => {
+    return insertNodeAdjacentToNode(type, side, (found, { selection }) => {
+      // Only claim the key for a block the item directly contains. A caret
+      // inside a table cell (or any other nested structure) belongs to that
+      // structure, so leaking through to here would yank the caret out of it
+      // into a brand new item. Declining keeps such a caret behaving the same
+      // as it does in a table outside a list.
+      if (selection.$from.depth !== found.depth + 1) return null;
+
       const attrs = readListAttrs(found.node);
       if (!attrs) return null;
       return type.createAndFill({
