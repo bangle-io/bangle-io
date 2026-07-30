@@ -83,14 +83,45 @@ describe('changing a list run marker', () => {
   });
 
   it('stops at a neighbour that already has the target marker', () => {
+    // The neighbour is a task so over-expansion is visible: rewriting it too
+    // would strip its checkbox instead of leaving the item untouched.
     const out = serialize(
       apply(
-        stateAt('- alpha\n\n1. beta', 'alpha'),
+        stateAt('- alpha\n\n1. [ ] beta', 'alpha'),
         list.command.toggleOrderedList,
       ),
     );
 
-    expect(out).toBe('1. alpha\n1. beta');
+    expect(out).toBe('1. alpha\n1. [ ] beta');
+    expect(reserialize(out)).toBe(out);
+  });
+
+  it('converts the whole run when the selection ends inside a nested item', () => {
+    const out = serialize(
+      apply(
+        stateAt('- [x] alpha\n- beta\n  - sub\n- gamma', 'alpha', 'sub'),
+        list.command.toggleOrderedList,
+      ),
+    );
+
+    // Endpoints at different depths used to fall back to the library command,
+    // which stripped alpha's checkbox and left `- gamma` as a second list.
+    expect(out).toBe('1. [x] alpha\n1. beta\n   - sub\n1. gamma');
+    expect(reserialize(out)).toBe(out);
+  });
+
+  it('converts a mixed-marker selection to one uniform run', () => {
+    const out = serialize(
+      apply(
+        stateAt('- alpha\n\n1. [x] beta', 'alpha', 'beta'),
+        list.command.toggleBulletList,
+      ),
+    );
+
+    // The first item already has the target marker, so keying the decision off
+    // it alone used to defer to the library and drop beta's checkbox.
+    expect(out).toBe('- alpha\n- [x] beta');
+    expect(reserialize(out)).toBe(out);
   });
 
   it('leaves task-ness alone when toggling the task kind', () => {

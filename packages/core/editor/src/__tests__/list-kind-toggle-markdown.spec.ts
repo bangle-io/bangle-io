@@ -61,18 +61,20 @@ describe('list kind toggles', () => {
     expect(serialize(back)).toBe('- [x] alpha\n- [x] bravo');
   });
 
-  it('keeps checked state when a task list detours through an ordered list', () => {
+  it('keeps checked state when a task list takes an ordered marker', () => {
     const { stateFrom, apply, serialize, list } = setup();
     const checked = stateFrom('- [x] alpha\n- [x] bravo');
 
+    // Asking for a number does not ask for the checkboxes to go: the marker is
+    // a whole-list property, task-ness is per item. This used to detour through
+    // `1. alpha`, so saving in between lost the boxes for good.
     const ordered = apply(checked, list.command.toggleOrderedList);
-    expect(serialize(ordered)).toBe('1. alpha\n1. bravo');
+    expect(serialize(ordered)).toBe('1. [x] alpha\n1. [x] bravo');
 
-    const back = apply(ordered, list.command.toggleTaskList);
-
-    // The container stays ordered because that is what the user asked for;
-    // only the checkbox state has to survive the detour.
-    expect(serialize(back)).toBe('1. [x] alpha\n1. [x] bravo');
+    // Pressing the task toggle when every item is already a task turns the list
+    // off, rather than clearing boxes the user had ticked.
+    const off = apply(ordered, list.command.toggleTaskList);
+    expect(serialize(off)).toBe('alpha\n\nbravo');
   });
 
   it('round-trips a bullet list through task and back', () => {

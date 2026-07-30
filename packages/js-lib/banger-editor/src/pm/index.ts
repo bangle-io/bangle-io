@@ -52,6 +52,7 @@ export {
   deleteCommand,
   enterCommand,
   findCheckboxInListItem,
+  findListsRange,
   isListNode,
   isListType,
   ListDOMSerializer,
