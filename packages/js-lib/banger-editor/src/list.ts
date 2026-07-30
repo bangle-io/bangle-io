@@ -48,7 +48,12 @@ import {
   unwrapListSlice,
   wrappingListInputRule,
 } from './pm';
-import { findParentNode, getNodeType, type PluginContext } from './pm-utils';
+import {
+  findParentNode,
+  getNodeType,
+  insertNodeAdjacentToNode,
+  type PluginContext,
+} from './pm-utils';
 
 const LIST_KIND = {
   BULLET: 'bullet',
@@ -218,6 +223,8 @@ type ListConfig = {
   keyDedentList?: string | false;
   keyDeleteList?: string | false;
   keyIndentList?: string | false;
+  keyInsertEmptyListAbove?: string | false;
+  keyInsertEmptyListBelow?: string | false;
   keyMoveListDown?: string | false;
   keyMoveListUp?: string | false;
   keyToggleBulletList?: string | false;
@@ -236,6 +243,10 @@ const DEFAULT_CONFIG: RequiredConfig = {
   keyDedentList: 'Shift-Tab',
   keyDeleteList: 'Delete',
   keyIndentList: 'Tab',
+  // Mirrors the paragraph/heading/blockquote/code-block bindings so the
+  // shortcut keeps working when the caret sits inside a list item.
+  keyInsertEmptyListAbove: 'Mod-Shift-Enter',
+  keyInsertEmptyListBelow: 'Mod-Enter',
   keyMoveListDown: 'Alt-ArrowDown',
   keyMoveListUp: 'Alt-ArrowUp',
   keyToggleBulletList: 'Mod-Shift-8',
@@ -243,7 +254,9 @@ const DEFAULT_CONFIG: RequiredConfig = {
   keyToggleTaskList: 'Mod-Shift-7',
   keyToggleToggleList: 'Mod-Shift-6',
   keyUnwrapList: 'Shift-Mod-0',
-  keyToggleTaskChecked: 'Mod-Enter',
+  // Moved off `Mod-Enter` so insert-below behaves the same in every list item
+  // instead of being swallowed by the checkbox toggle inside task lists.
+  keyToggleTaskChecked: 'Alt-Enter',
 };
 
 export function setupList(userConfig: Partial<ListConfig> = {}) {
@@ -260,6 +273,7 @@ export function setupList(userConfig: Partial<ListConfig> = {}) {
   const plugin = {
     inputRules: pluginInputRules(config),
     keybindings: pluginKeybindings(config),
+    insertKeybindings: pluginInsertKeybindings(config),
     listPlugins: ({ schema }: PluginContext) =>
       createMarkdownListPlugins(schema, listNodeName),
   };
@@ -271,6 +285,8 @@ export function setupList(userConfig: Partial<ListConfig> = {}) {
     command: {
       dedentList: dedentList(config),
       indentList: indentList(config),
+      insertEmptyListAbove: insertEmptyListAbove(config),
+      insertEmptyListBelow: insertEmptyListBelow(config),
       moveListDown: moveListDown(config),
       moveListUp: moveListUp(config),
       toggleBulletList: toggleBulletList(config),
@@ -336,6 +352,26 @@ function pluginKeybindings(config: RequiredConfig) {
       [config.keyToggleTaskChecked, toggleTaskChecked(config)],
     ],
     'list',
+  );
+}
+
+/**
+ * Registered below the default priority so a heading, blockquote or code block
+ * inside a list item keeps handling insert-above/below itself, rather than the
+ * winner depending on the order extensions happen to be registered in.
+ *
+ * A table binds only insert-below (`exitTableBelow`), so insert-above would
+ * otherwise reach this keymap; `insertEmptySiblingList` declines any caret that
+ * is not directly inside the item to keep the two directions consistent.
+ */
+function pluginInsertKeybindings(config: RequiredConfig) {
+  return keybinding(
+    [
+      [config.keyInsertEmptyListAbove, insertEmptyListAbove(config)],
+      [config.keyInsertEmptyListBelow, insertEmptyListBelow(config)],
+    ],
+    'list-insert',
+    PRIORITY.listInsertKeymap,
   );
 }
 
@@ -478,6 +514,53 @@ function normalizeNewIndentationPlaceholders(
 
 function dedentList(_config: RequiredConfig): Command {
   return createDedentListCommand();
+}
+
+function insertEmptyListAbove(config: RequiredConfig): Command {
+  return insertEmptySiblingList(config, 'above');
+}
+
+function insertEmptyListBelow(config: RequiredConfig): Command {
+  return insertEmptySiblingList(config, 'below');
+}
+
+/**
+ * Adds an empty item next to the caret's item, matching the run's marker so the
+ * surrounding Markdown list is not split into two lists.
+ *
+ * Item-specific state is deliberately not inherited: a fresh item starts
+ * unchecked and expanded, and carries no explicit `order` so the run keeps
+ * numbering itself.
+ */
+function insertEmptySiblingList(
+  config: RequiredConfig,
+  side: 'above' | 'below',
+): Command {
+  return (state, dispatch, view) => {
+    const type = getNodeType(state.schema, config.listNodeName);
+    return insertNodeAdjacentToNode(type, side, (found, { selection }) => {
+      // Only claim the key for a block the item directly contains. A caret
+      // inside a table cell (or any other nested structure) belongs to that
+      // structure, so leaking through to here would yank the caret out of it
+      // into a brand new item. Declining keeps such a caret behaving the same
+      // as it does in a table outside a list.
+      if (selection.$from.depth !== found.depth + 1) return null;
+
+      const attrs = readListAttrs(found.node);
+      if (!attrs) return null;
+      return type.createAndFill({
+        ...found.node.attrs,
+        // Normalized rather than copied raw: an item that never carried an
+        // explicit `listKind` still hands the sibling the marker it renders
+        // with, the same repair `enterListCommand` applies.
+        listKind: attrs.listKind,
+        tight: attrs.tight,
+        checked: false,
+        collapsed: false,
+        order: null,
+      });
+    })(state, dispatch, view);
+  };
 }
 
 function moveListUp(_config: RequiredConfig): Command {

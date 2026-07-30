@@ -16,6 +16,7 @@ import {
   PlusIcon,
   Search,
   Settings2,
+  Sparkles,
 } from 'lucide-react';
 import React from 'react';
 
@@ -105,6 +106,17 @@ export function SidebarFooterMenu({
           className="mr-2 h-4 w-4 grayscale"
         />
         <span>{t.app.sidebar.homepage}</span>
+      </DropdownMenu.DropdownMenuItem>
+      <DropdownMenu.DropdownMenuItem
+        onClick={() =>
+          window.open(
+            'https://github.com/bangle-io/bangle-io/blob/main/CHANGELOG.md',
+            '_blank',
+          )
+        }
+      >
+        <Sparkles className="mr-2 h-4 w-4" />
+        <span>{t.app.sidebar.whatsNew}</span>
       </DropdownMenu.DropdownMenuItem>
       <DropdownMenu.DropdownMenuItem
         onClick={() =>
