@@ -204,6 +204,7 @@ export const t = {
       settings: 'Settings',
       linksLabel: 'Links',
       homepage: 'Homepage',
+      whatsNew: "What's New",
       githubProject: 'GitHub Project',
       reportIssue: 'Report an Issue',
       twitter: 'Twitter',
