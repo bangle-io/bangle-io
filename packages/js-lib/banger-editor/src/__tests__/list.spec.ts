@@ -396,9 +396,17 @@ describe('list Markdown metadata through editing commands', () => {
       name: 'ordered to ordered task',
       source: { kind: 'ordered', listKind: 'ordered', tight: false },
     },
+    // Changing the marker of a task keeps the task: the container becomes
+    // ordered/bullet while the checkbox survives, which Markdown writes as
+    // `1. [x] item`. Rewriting `kind` here used to drop the checkbox outright.
     {
       command: lists.command.toggleOrderedList,
-      expected: { kind: 'ordered', listKind: 'ordered', tight: false },
+      expected: {
+        checked: true,
+        kind: 'task',
+        listKind: 'ordered',
+        tight: false,
+      },
       name: 'bullet task to ordered',
       source: {
         checked: true,
@@ -409,7 +417,12 @@ describe('list Markdown metadata through editing commands', () => {
     },
     {
       command: lists.command.toggleBulletList,
-      expected: { kind: 'bullet', listKind: 'bullet', tight: false },
+      expected: {
+        checked: true,
+        kind: 'task',
+        listKind: 'bullet',
+        tight: false,
+      },
       name: 'ordered task to bullet',
       source: {
         checked: true,
@@ -475,7 +488,10 @@ describe('list Markdown metadata through editing commands', () => {
     expect(editor.view.state.doc.child(3).attrs).toMatchObject(ordered);
   });
 
-  it('does not cross a different list item kind when converting a run', () => {
+  // A task sharing the run's marker is still part of the same Markdown list, so
+  // the conversion has to carry it along. Stopping at it would leave
+  // `1. one` beside `- [x] task`, splitting one list into two.
+  it('carries a task that shares the marker along with the run', () => {
     const bullet = {
       kind: 'bullet',
       listKind: 'bullet',
@@ -502,7 +518,12 @@ describe('list Markdown metadata through editing commands', () => {
 
     run(lists.command.toggleOrderedList, editor);
 
-    expectListShapes(editor.view.state.doc, [ordered, task, bullet]);
+    expectListShapes(editor.view.state.doc, [
+      ordered,
+      // The container becomes ordered but the checkbox stays.
+      { ...task, listKind: 'ordered' },
+      ordered,
+    ]);
   });
 
   it('unwraps only the selected item when toggling the active list kind', () => {
@@ -633,7 +654,8 @@ describe('list Markdown metadata through editing commands', () => {
 
     run(lists.command.toggleBulletList, editor);
     expect(editor.view.state.doc.firstChild?.attrs).toMatchObject({
-      kind: 'bullet',
+      checked: true,
+      kind: 'task',
       listKind: 'bullet',
       tight: false,
     });

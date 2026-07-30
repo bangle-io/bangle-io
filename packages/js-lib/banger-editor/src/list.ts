@@ -419,14 +419,23 @@ function toggleList(
   targetAttrs: ToggleListAttrs,
 ): Command {
   const command = createToggleListCommand(targetAttrs);
+  const targetListKind = targetAttrs.listKind;
   return (state, dispatch, view) => {
     const type = getNodeType(state.schema, config.listNodeName);
-    const sourceRun = findSelectedListRun(state.selection, type);
-    if (sourceRun && sourceRun.attrs.kind !== targetAttrs.kind) {
+    // Only the marker is a whole-list property in Markdown, so only a marker
+    // change converts the run. Task-ness is per item, which is why the task
+    // toggle has no `listKind` and always defers to the library command.
+    const sourceRun = targetListKind
+      ? findSelectedListRun(state.selection, type)
+      : null;
+    if (targetListKind && sourceRun && sourceRun.listKind !== targetListKind) {
       if (dispatch) {
         const tr = state.tr;
-        setListAttrs(tr, sourceRun.positions, targetAttrs);
-        dispatch(tr);
+        setRunMarker(tr, sourceRun.positions, {
+          listKind: targetListKind,
+          order: targetAttrs.order ?? null,
+        });
+        dispatch(tr.scrollIntoView());
       }
       return true;
     }
@@ -548,13 +557,16 @@ function dedentList(config: RequiredConfig): Command {
       state,
       destinationAttrs
         ? (tr) => {
-            const positions = findSelectedSiblingLists(tr.selection, type);
-            setListAttrs(tr, positions, {
-              kind: destinationAttrs.kind,
-              listKind: destinationAttrs.listKind,
-              order: null,
-              tight: destinationAttrs.tight,
-            });
+            // Adopt the destination run's marker only. Taking its `kind` too
+            // would rewrite a dedented task into a plain bullet and drop the
+            // checkbox from the Markdown.
+            const lifted = findListAtPos(tr.selection.$from, type);
+            if (lifted) {
+              setRunMarker(tr, [lifted.pos], {
+                listKind: destinationAttrs.listKind,
+                tight: destinationAttrs.tight,
+              });
+            }
             dispatch(tr);
           }
         : dispatch,
@@ -563,35 +575,40 @@ function dedentList(config: RequiredConfig): Command {
   };
 }
 
+/**
+ * The contiguous items the selection sits in that Markdown writes as one list,
+ * which is every neighbour sharing the same marker. A range selection expands to
+ * the whole run too, so selecting part of a list cannot leave it half converted.
+ */
 function findSelectedListRun(
   selection: PMSelection,
   type: NodeType,
-): { attrs: MarkdownListAttrs; positions: number[] } | null {
+): { listKind: MarkdownListKind; positions: number[] } | null {
   const from = findListAtPos(selection.$from, type);
   const to = findListAtPos(selection.$to, type);
-  if (!from || !to || from.node !== to.node) return null;
-
-  const attrs = readListAttrs(from.node);
-  if (!attrs) return null;
+  if (!from || !to || from.depth !== to.depth) return null;
 
   const parentDepth = from.depth - 1;
   const parent = selection.$from.node(parentDepth);
-  const selectedIndex = selection.$from.index(parentDepth);
-  let startIndex = selectedIndex;
-  let endIndex = selectedIndex + 1;
+  if (parent !== selection.$to.node(parentDepth)) return null;
 
-  while (startIndex > 0 && isSameListRun(parent.child(startIndex - 1), attrs)) {
+  const listKind = readListAttrs(from.node)?.listKind;
+  if (!listKind) return null;
+
+  let startIndex = selection.$from.index(parentDepth);
+  let endIndex = selection.$to.index(parentDepth) + 1;
+  while (startIndex > 0 && hasMarker(parent.child(startIndex - 1), listKind)) {
     startIndex--;
   }
   while (
     endIndex < parent.childCount &&
-    isSameListRun(parent.child(endIndex), attrs)
+    hasMarker(parent.child(endIndex), listKind)
   ) {
     endIndex++;
   }
 
   return {
-    attrs,
+    listKind,
     positions: Array.from({ length: endIndex - startIndex }, (_, offset) =>
       selection.$from.posAtIndex(startIndex + offset, parentDepth),
     ),
@@ -615,32 +632,6 @@ function findDedentDestinationAttrs(
   return null;
 }
 
-function findSelectedSiblingLists(
-  selection: PMSelection,
-  type: NodeType,
-): number[] {
-  const from = findListAtPos(selection.$from, type);
-  const to = findListAtPos(selection.$to, type);
-  if (!from || !to || from.depth !== to.depth) return [];
-
-  const parentDepth = from.depth - 1;
-  if (selection.$from.node(parentDepth) !== selection.$to.node(parentDepth)) {
-    return [];
-  }
-
-  const startIndex = selection.$from.index(parentDepth);
-  const endIndex = selection.$to.index(parentDepth);
-  const parent = selection.$from.node(parentDepth);
-  const positions: number[] = [];
-  for (let index = startIndex; index <= endIndex; index++) {
-    const node = parent.maybeChild(index);
-    if (node?.type === type && isListNode(node)) {
-      positions.push(selection.$from.posAtIndex(index, parentDepth));
-    }
-  }
-  return positions;
-}
-
 function findListAtPos($pos: ResolvedPos, type: NodeType) {
   return findParentNodeClosestToPos(
     $pos,
@@ -648,24 +639,44 @@ function findListAtPos($pos: ResolvedPos, type: NodeType) {
   );
 }
 
-function isSameListRun(node: PMNode, attrs: MarkdownListAttrs): boolean {
-  const candidate = readListAttrs(node);
-  return (
-    candidate?.kind === attrs.kind && candidate.listKind === attrs.listKind
-  );
+function hasMarker(node: PMNode, listKind: MarkdownListKind): boolean {
+  return readListAttrs(node)?.listKind === listKind;
 }
 
-function setListAttrs(
+/**
+ * Rewrites only the container marker of the given items.
+ *
+ * `kind` follows the marker for plain bullet/ordered items, because
+ * `readListAttrs` derives the marker from it. A task or toggle item keeps its
+ * own `kind`, so its checkbox survives the change and Markdown writes the
+ * combination the user asked for, such as `1. [x] item`.
+ */
+function setRunMarker(
   tr: Transaction,
   positions: readonly number[],
-  attrs: Partial<MarkdownListAttrs>,
+  { listKind, order = null, tight }: MarkerChange,
 ) {
   for (const pos of positions) {
     const node = tr.doc.nodeAt(pos);
-    if (!node || !isListNode(node)) continue;
-    tr.setNodeMarkup(pos, null, { ...node.attrs, ...attrs });
+    const attrs = readListAttrs(node ?? undefined);
+    if (!node || !attrs) continue;
+    const isPlainMarker =
+      attrs.kind === LIST_KIND.BULLET || attrs.kind === LIST_KIND.ORDERED;
+    tr.setNodeMarkup(pos, null, {
+      ...node.attrs,
+      listKind,
+      ...(isPlainMarker ? { kind: listKind } : {}),
+      order: listKind === LIST_KIND.ORDERED ? order : null,
+      ...(tight === undefined ? {} : { tight }),
+    });
   }
 }
+
+type MarkerChange = {
+  listKind: MarkdownListKind;
+  order?: number | null;
+  tight?: boolean;
+};
 
 function insertEmptyListAbove(config: RequiredConfig): Command {
   return insertEmptySiblingList(config, 'above');
