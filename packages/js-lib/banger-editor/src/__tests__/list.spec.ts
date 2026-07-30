@@ -396,9 +396,17 @@ describe('list Markdown metadata through editing commands', () => {
       name: 'ordered to ordered task',
       source: { kind: 'ordered', listKind: 'ordered', tight: false },
     },
+    // Changing the marker of a task keeps the task: the container becomes
+    // ordered/bullet while the checkbox survives, which Markdown writes as
+    // `1. [x] item`. Rewriting `kind` here used to drop the checkbox outright.
     {
       command: lists.command.toggleOrderedList,
-      expected: { kind: 'ordered', listKind: 'ordered', tight: false },
+      expected: {
+        checked: true,
+        kind: 'task',
+        listKind: 'ordered',
+        tight: false,
+      },
       name: 'bullet task to ordered',
       source: {
         checked: true,
@@ -409,7 +417,12 @@ describe('list Markdown metadata through editing commands', () => {
     },
     {
       command: lists.command.toggleBulletList,
-      expected: { kind: 'bullet', listKind: 'bullet', tight: false },
+      expected: {
+        checked: true,
+        kind: 'task',
+        listKind: 'bullet',
+        tight: false,
+      },
       name: 'ordered task to bullet',
       source: {
         checked: true,
@@ -427,7 +440,7 @@ describe('list Markdown metadata through editing commands', () => {
     expectListShapes(editor.view.state.doc, [expected, expected]);
   });
 
-  it('converts only the selected item in a longer list run', () => {
+  it('converts the whole same-level list run from the selected item', () => {
     const bullet = {
       kind: 'bullet',
       listKind: 'bullet',
@@ -447,10 +460,10 @@ describe('list Markdown metadata through editing commands', () => {
     );
 
     run(lists.command.toggleOrderedList, editor);
-    expectListShapes(editor.view.state.doc, [bullet, ordered, bullet]);
+    expectListShapes(editor.view.state.doc, [ordered, ordered, ordered]);
   });
 
-  it('leaves surrounding paragraphs and list items outside the selection unchanged', () => {
+  it('converts a whole list run without changing surrounding paragraphs', () => {
     const bullet = { kind: 'bullet', listKind: 'bullet', tight: true } as const;
     const ordered = {
       kind: 'ordered',
@@ -470,9 +483,70 @@ describe('list Markdown metadata through editing commands', () => {
     run(lists.command.toggleOrderedList, editor);
     expect(editor.view.state.doc.child(0).textContent).toBe('before');
     expect(editor.view.state.doc.child(4).textContent).toBe('after');
-    expect(editor.view.state.doc.child(1).attrs).toMatchObject(bullet);
+    expect(editor.view.state.doc.child(1).attrs).toMatchObject(ordered);
     expect(editor.view.state.doc.child(2).attrs).toMatchObject(ordered);
-    expect(editor.view.state.doc.child(3).attrs).toMatchObject(bullet);
+    expect(editor.view.state.doc.child(3).attrs).toMatchObject(ordered);
+  });
+
+  // A task sharing the run's marker is still part of the same Markdown list, so
+  // the conversion has to carry it along. Stopping at it would leave
+  // `1. one` beside `- [x] task`, splitting one list into two.
+  it('carries a task that shares the marker along with the run', () => {
+    const bullet = {
+      kind: 'bullet',
+      listKind: 'bullet',
+      tight: true,
+    } as const;
+    const task = {
+      checked: true,
+      kind: 'task',
+      listKind: 'bullet',
+      tight: true,
+    } as const;
+    const ordered = {
+      kind: 'ordered',
+      listKind: 'ordered',
+      tight: true,
+    } as const;
+    const editor = editorTest.createEditor(
+      doc(
+        list(bullet, p('one<cursor>')),
+        list(task, p('task')),
+        list(bullet, p('two')),
+      ),
+    );
+
+    run(lists.command.toggleOrderedList, editor);
+
+    expectListShapes(editor.view.state.doc, [
+      ordered,
+      // The container becomes ordered but the checkbox stays.
+      { ...task, listKind: 'ordered' },
+      ordered,
+    ]);
+  });
+
+  it('unwraps only the selected item when toggling the active list kind', () => {
+    const bullet = {
+      kind: 'bullet',
+      listKind: 'bullet',
+      tight: true,
+    } as const;
+    const editor = editorTest.createEditor(
+      doc(
+        list(bullet, p('one')),
+        list(bullet, p('two<cursor>')),
+        list(bullet, p('three')),
+      ),
+    );
+
+    run(lists.command.toggleBulletList, editor);
+
+    expect(editor.view.state.doc.childCount).toBe(3);
+    expect(editor.view.state.doc.child(0).attrs).toMatchObject(bullet);
+    expect(editor.view.state.doc.child(1).type.name).toBe('paragraph');
+    expect(editor.view.state.doc.child(1).textContent).toBe('two');
+    expect(editor.view.state.doc.child(2).attrs).toMatchObject(bullet);
   });
 
   it('keeps each container kind when a mixed selection becomes tasks', () => {
@@ -580,10 +654,38 @@ describe('list Markdown metadata through editing commands', () => {
 
     run(lists.command.toggleBulletList, editor);
     expect(editor.view.state.doc.firstChild?.attrs).toMatchObject({
-      kind: 'bullet',
+      checked: true,
+      kind: 'task',
       listKind: 'bullet',
       tight: false,
     });
+    expect(editor.view.state.doc.firstChild?.content.toJSON()).toEqual(
+      contentBefore,
+    );
+  });
+
+  it('preserves a continuation paragraph when converting its list run', () => {
+    const bullet = {
+      kind: 'bullet',
+      listKind: 'bullet',
+      tight: false,
+    } as const;
+    const ordered = {
+      kind: 'ordered',
+      listKind: 'ordered',
+      tight: false,
+    } as const;
+    const editor = editorTest.createEditor(
+      doc(
+        list(bullet, p('first'), p('continuation<cursor>')),
+        list(bullet, p('sibling')),
+      ),
+    );
+    const contentBefore = editor.view.state.doc.firstChild?.content.toJSON();
+
+    run(lists.command.toggleOrderedList, editor);
+
+    expectListShapes(editor.view.state.doc, [ordered, ordered]);
     expect(editor.view.state.doc.firstChild?.content.toJSON()).toEqual(
       contentBefore,
     );
@@ -617,6 +719,66 @@ describe('list Markdown metadata through editing commands', () => {
     expectListShapes(editor.view.state.doc, [parent, child]);
     expect(editor.view.state.doc.child(0).textContent).toBe('parent');
     expect(editor.view.state.doc.child(1).textContent).toBe('child');
+  });
+
+  // Looseness is a property of the run the item lands in, so the lifted item
+  // has to stop carrying the tightness of the run it came from. The Markdown
+  // serializer arbitrates the run's spacing on its own, which is why this is
+  // asserted on the node rather than on the serialized output.
+  it('adopts the destination looseness when dedenting', () => {
+    const looseBullet = {
+      kind: 'bullet',
+      listKind: 'bullet',
+      tight: false,
+    } as const;
+    const tightBullet = {
+      kind: 'bullet',
+      listKind: 'bullet',
+      tight: true,
+    } as const;
+    const editor = editorTest.createEditor(
+      doc(
+        list(looseBullet, p('one'), list(tightBullet, p('nested<cursor>'))),
+        list(looseBullet, p('two')),
+      ),
+    );
+
+    run(lists.command.dedentList, editor);
+
+    expectListShapes(editor.view.state.doc, [
+      looseBullet,
+      looseBullet,
+      looseBullet,
+    ]);
+  });
+
+  it('adopts the destination list kind when dedenting into a parent run', () => {
+    const bullet = {
+      kind: 'bullet',
+      listKind: 'bullet',
+      tight: true,
+    } as const;
+    const ordered = {
+      kind: 'ordered',
+      listKind: 'ordered',
+      tight: true,
+    } as const;
+    const editor = editorTest.createEditor(
+      doc(
+        list(bullet, p('one'), list(ordered, p('nested<cursor>'))),
+        list(bullet, p('two')),
+      ),
+    );
+
+    run(lists.command.dedentList, editor);
+
+    expectListShapes(editor.view.state.doc, [bullet, bullet, bullet]);
+    expect(
+      Array.from(
+        { length: editor.view.state.doc.childCount },
+        (_, index) => editor.view.state.doc.child(index).textContent,
+      ),
+    ).toEqual(['one', 'nested', 'two']);
   });
 
   it.each([

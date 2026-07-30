@@ -221,6 +221,59 @@ test('typing a bullet marker inside an ordered item persists as a bullet', async
   );
 });
 
+test('list type changes follow the same-level run', async ({ page }) => {
+  const workspaceName = 'same-level-list-formatting';
+  const noteName = 'list-runs';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  const bulletRun = '- alpha\n- beta\n- gamma';
+  await writeStoredMarkdown(page, workspaceName, noteName, bulletRun);
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  await collapseEditorSelectionAfterText(page, 'beta');
+  await page.keyboard.insertText(' /');
+  const slashMenu = page.getByTestId('slash-command-menu');
+  await expect(slashMenu).toBeVisible();
+  await slashMenu.getByText('Numbered list', { exact: true }).click();
+  await page.keyboard.press('Backspace');
+
+  const orderedRun = '1. alpha\n1. beta\n1. gamma';
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(orderedRun);
+  await expect(
+    editor.locator(
+      '.prosemirror-flat-list[data-list-container-kind="ordered"]',
+    ),
+  ).toHaveCount(3);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
+    orderedRun,
+  );
+
+  const nestedRun = '- parent\n  1. nested\n- sibling';
+  await writeStoredMarkdown(page, workspaceName, noteName, nestedRun);
+  await page.reload({ waitUntil: 'networkidle' });
+  await editor.getByText('nested', { exact: true }).click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.press('Shift+Tab');
+
+  const dedentedRun = '- parent\n- nested\n- sibling';
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .toBe(dedentedRun);
+  await expect(
+    editor.locator('.prosemirror-flat-list[data-list-container-kind="bullet"]'),
+  ).toHaveCount(3);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
+    dedentedRun,
+  );
+});
+
 test('replacing task text with a thematic break preserves both structures', async ({
   page,
 }) => {
