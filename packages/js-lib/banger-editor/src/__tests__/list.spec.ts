@@ -721,6 +721,37 @@ describe('list Markdown metadata through editing commands', () => {
     expect(editor.view.state.doc.child(1).textContent).toBe('child');
   });
 
+  // Looseness is a property of the run the item lands in, so the lifted item
+  // has to stop carrying the tightness of the run it came from. The Markdown
+  // serializer arbitrates the run's spacing on its own, which is why this is
+  // asserted on the node rather than on the serialized output.
+  it('adopts the destination looseness when dedenting', () => {
+    const looseBullet = {
+      kind: 'bullet',
+      listKind: 'bullet',
+      tight: false,
+    } as const;
+    const tightBullet = {
+      kind: 'bullet',
+      listKind: 'bullet',
+      tight: true,
+    } as const;
+    const editor = editorTest.createEditor(
+      doc(
+        list(looseBullet, p('one'), list(tightBullet, p('nested<cursor>'))),
+        list(looseBullet, p('two')),
+      ),
+    );
+
+    run(lists.command.dedentList, editor);
+
+    expectListShapes(editor.view.state.doc, [
+      looseBullet,
+      looseBullet,
+      looseBullet,
+    ]);
+  });
+
   it('adopts the destination list kind when dedenting into a parent run', () => {
     const bullet = {
       kind: 'bullet',

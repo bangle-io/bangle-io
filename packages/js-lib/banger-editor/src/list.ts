@@ -1,17 +1,4 @@
-import {
-  listItemCanRenderTight,
-  readListTokenMetadata,
-  resolveListRunTightness,
-  type TightListItemBlockKind,
-} from '@bangle.io/markdown-syntax';
-import type { MarkdownSerializerState } from 'prosemirror-markdown';
-import {
-  type CollectionType,
-  collection,
-  keybinding,
-  PRIORITY,
-  setPriority,
-} from './common';
+import { collection, keybinding, PRIORITY, setPriority } from './common';
 import {
   LIST_KIND,
   type ListKindType,
@@ -53,7 +40,6 @@ import {
   isListType,
   type ListAttributes,
   ListDOMSerializer,
-  type ListKind,
   listToDOM,
   Plugin,
   type Schema,

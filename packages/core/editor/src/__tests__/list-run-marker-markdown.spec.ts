@@ -138,4 +138,16 @@ describe('dedenting a list item', () => {
     expect(out).toBe('1. one\n1. nested\n1. two');
     expect(reserialize(out)).toBe(out);
   });
+
+  it('joins a loose destination without closing it up', () => {
+    const out = serialize(
+      apply(
+        caretAfter('- one\n\n  - nested\n\n- two', 'nested'),
+        list.command.dedentList,
+      ),
+    );
+
+    expect(out).toBe('- one\n\n- nested\n\n- two');
+    expect(reserialize(out)).toBe(out);
+  });
 });
