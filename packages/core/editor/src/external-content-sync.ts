@@ -140,7 +140,6 @@ export interface ExternalContentSyncHost {
 export type DiskVersionApplyResult = {
   /** How many mounted views were replaced. */
   appliedCount: number;
-  content?: string;
   retry: boolean;
   unavailable: boolean;
 };
@@ -322,7 +321,6 @@ export class ExternalContentSync {
         return outcome;
       }
     }
-    outcome.content = diskText;
 
     // The user may have typed while disk was being read.
     if (this.host.hasPendingSaves(wsPath)) {

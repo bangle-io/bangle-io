@@ -685,7 +685,7 @@ export class PmEditorService
       }
 
       this.logger.info(
-        `${wsPath}: loaded the disk version into ${result.appliedCount} open editor(s) at the user's request (${result.content?.length ?? 0} chars)`,
+        `${wsPath}: loaded the disk version into ${result.appliedCount} open editor(s) at the user's request`,
       );
       // The fidelity notice is refreshed by replaceEditorContent, which every
       // applied view goes through.
