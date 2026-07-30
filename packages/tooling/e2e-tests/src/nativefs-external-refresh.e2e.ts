@@ -292,13 +292,14 @@ test('a refused external change surfaces a toast whose action loads the disk ver
     })
     .toContain('local wording of the note');
 
-  // Reference-style links do not round-trip through the editor schema, so
-  // the sync refuses to auto-apply them — the user must learn the editor is
-  // now showing older content than disk.
+  // The parser consumes an unresolved link reference definition and emits
+  // nothing, so auto-applying this would arm the next keystroke to delete a
+  // line that is still on disk. The user must learn the editor is now showing
+  // older content than disk.
   await externallyWriteFile(
     page,
     'conflict-note.md',
-    'see [the spec][1]\n\n[1]: https://example.com/spec\n',
+    'see the spec\n\n[unused]: https://example.com/spec\n',
   );
 
   const conflictToast = page.getByText(/conflict-note\.md changed on disk/);
@@ -309,9 +310,51 @@ test('a refused external change surfaces a toast whose action loads the disk ver
   // The offered recovery replaces only this note's content in place — no
   // app reload that could disturb another editor's unsaved work.
   await page.getByRole('button', { name: 'Load disk version' }).click();
-  await expect(editor).toContainText('the spec');
+  await expect(editor).toContainText('see the spec');
   await expect(editor).not.toContainText('local wording of the note');
   await expect(conflictToast).not.toBeVisible();
+});
+
+test('external content that only reformats on save is applied, not refused', async ({
+  page,
+  browserName,
+}) => {
+  test.skip(
+    browserName !== 'chromium',
+    'NativeFS workspaces are Chromium-only',
+  );
+
+  await createNativeFsWorkspace(page);
+  const observerSupported = await page.evaluate(
+    () =>
+      typeof (globalThis as { FileSystemObserver?: unknown })
+        .FileSystemObserver === 'function',
+  );
+  test.skip(
+    !observerSupported,
+    'FileSystemObserver is unavailable in this Chromium build',
+  );
+
+  await page.getByRole('button', { name: 'New Note' }).click();
+  await page.getByLabel('Note name').fill('reflow-note');
+  await page.getByRole('button', { name: 'Create' }).click();
+  const editor = getEditorLocator(page, {});
+  await expect(editor).toBeVisible();
+
+  // Hand-wrapped list items are extremely common in real Markdown. They never
+  // round-trip byte-for-byte, but parsing keeps every word, so the editor must
+  // follow disk instead of going stale behind a conflict notice.
+  await externallyWriteFile(
+    page,
+    'reflow-note.md',
+    '- Standup notes:\n  https://example.com/standup\n- second item\n',
+  );
+
+  await expect(editor).toContainText('Standup notes');
+  await expect(editor).toContainText('second item');
+  await expect(
+    page.getByText(/reflow-note\.md changed on disk/),
+  ).not.toBeVisible();
 });
 
 test('an externally deleted note stays mounted while its local save is failed', async ({

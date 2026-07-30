@@ -684,18 +684,11 @@ export class PmEditorService
         return;
       }
 
-      for (const view of result.appliedViews) {
-        this.logger.info(
-          `${wsPath}: loaded the disk version into the open editor at the user's request (${result.content?.length ?? 0} chars)`,
-        );
-        if (result.content !== undefined) {
-          this.checkRoundTripFidelity({
-            content: result.content,
-            editorView: view,
-            wsPath,
-          });
-        }
-      }
+      this.logger.info(
+        `${wsPath}: loaded the disk version into ${result.appliedViews.length} open editor(s) at the user's request (${result.content?.length ?? 0} chars)`,
+      );
+      // The fidelity notice is refreshed by replaceEditorContent, which every
+      // applied view goes through.
       if (!result.retry) {
         this.dismissStaleExternalContentToast(wsPath);
       }
@@ -817,6 +810,14 @@ export class PmEditorService
       editor.loadedDoc = view.state.doc;
       editor.loadedMarkdown = sourceMarkdown;
     }
+    // The newly loaded source has its own fidelity: external content may
+    // normalize on save where the previous content did not, or vice versa.
+    // Auto-applied content needs this as much as a user-requested load.
+    this.checkRoundTripFidelity({
+      content: sourceMarkdown,
+      editorView: view,
+      wsPath,
+    });
     return 'applied';
   }
 

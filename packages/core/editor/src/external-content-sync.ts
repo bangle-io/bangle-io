@@ -6,7 +6,11 @@ import type {
 } from '@bangle.io/prosemirror-plugins';
 import { TextSelection } from '@bangle.io/prosemirror-plugins';
 import type { ExternalFileChangeEvent } from '@bangle.io/service-core';
-import { isMarkdownRoundTripPreserved } from './round-trip-check';
+import {
+  collectLinkTargets,
+  isMarkdownContentPreserved,
+  isMarkdownRoundTripPreserved,
+} from './round-trip-check';
 
 /**
  * Quiet period between an external change notification and the first disk
@@ -381,9 +385,19 @@ export class ExternalContentSync {
           reconciled = true;
           continue;
         }
-        if (!isMarkdownRoundTripPreserved(diskText, diskSerialized)) {
+        // Applying writes nothing, so the question is not "would saving
+        // rewrite this file?" (pure normalization would, and the fidelity
+        // notice already says so) but "did parsing lose anything the user can
+        // see?". Only the latter justifies showing older content than disk.
+        // The two tests are not nested: a fenced code block that merely
+        // contains a definition-shaped line is byte-identical yet fails the
+        // content test, so either one passing is enough.
+        if (
+          !isMarkdownRoundTripPreserved(diskText, diskSerialized) &&
+          !isMarkdownContentPreserved(diskText, collectLinkTargets(parsed))
+        ) {
           this.host.logger.warn(
-            `External change to ${wsPath} does not round-trip through the editor; not auto-applying`,
+            `Parsing the external change to ${wsPath} dropped content; not auto-applying`,
           );
           refused = true;
           continue;

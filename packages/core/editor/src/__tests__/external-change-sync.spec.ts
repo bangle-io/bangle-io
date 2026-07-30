@@ -28,7 +28,18 @@ function settleReconcile(): Promise<void> {
 
 const WS_NAME = 'test-ws';
 const NOTE_WS_PATH = `${WS_NAME}:note.md`;
-const REFUSED_SOURCE = 'see [the spec][1]\n\n[1]: https://example.com/spec\n';
+/**
+ * A link reference definition nothing resolves against. The parser consumes it
+ * and emits nothing, so applying this would silently drop content the user can
+ * still see on disk — the one class the auto-apply gate refuses.
+ */
+const REFUSED_SOURCE = 'see the spec\n\n[unused]: https://example.com/spec\n';
+/**
+ * Soft-wrapped prose: reformats on save, but parsing keeps everything. This
+ * must auto-apply rather than leave the editor stale.
+ */
+const REFLOWED_SOURCE =
+  '- Standup notes:\n  https://example.com/standup\n- second item\n';
 const STALE_TOAST_ID = `external-stale-content:${NOTE_WS_PATH}`;
 const EXTERNAL_SENDER = {
   id: 'other-source',
@@ -419,32 +430,64 @@ describe('editor refresh on external file changes', () => {
     expect(editorText(domNode)).toContain('the original note body');
   });
 
-  it('refuses external content that does not round-trip (fidelity gate)', async () => {
+  it('refuses external content whose parse drops what the user can see', async () => {
     const { testEnv, services, domNode } = await setupEditorWithNote(
       'the original note body',
     );
 
-    // Reference-style links resolve to inline links in the schema, so
-    // serializing rewrites the source — exactly the lossy shape the load
-    // path refuses. The external sync must refuse it too: applying it would
-    // let the user's next keystroke save the rewritten note.
+    // The parser consumes an unresolved link reference definition and emits
+    // nothing, so applying this would arm the user's next keystroke to delete
+    // a line that is still on disk.
     await simulateRefusedExternalEdit(testEnv, services);
     expect(editorText(domNode)).toContain('the original note body');
-    expect(editorText(domNode)).not.toContain('the spec');
+    expect(editorText(domNode)).not.toContain('see the spec');
   });
 
-  it('refuses lossy source even when it serializes like the open document', async () => {
+  it('auto-applies external content that only reformats on save', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      'the original note body',
+    );
+    const warningSpy = vi.spyOn(toast, 'warning');
+    const writeSpy = vi.spyOn(services.fileSystem, 'writeFile');
+
+    // Soft-wrapped list items serialize to one line, so this never round-trips
+    // byte-for-byte — but parsing keeps every word. Refusing it would leave the
+    // editor stale on a large share of ordinary hand-written Markdown.
+    await simulateExternalEdit(testEnv, services, REFLOWED_SOURCE);
+
+    await vi.waitFor(
+      () => {
+        expect(editorText(domNode)).toContain('Standup notes');
+      },
+      { timeout: 3_000 },
+    );
+    expect(editorText(domNode)).toContain('second item');
+    // Applying must not write back, and must not raise the stale-content
+    // notice — the fidelity notice covers the reformat-on-save warning.
+    expect(writeSpy).not.toHaveBeenCalled();
+    expect(warningSpy).not.toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ id: STALE_TOAST_ID }),
+    );
+    // The reformat risk is surfaced through the fidelity notice instead.
+    expect(
+      testEnv.store.get(asPmEditor(services.editorEngine).$roundTripWarnings),
+    ).toContain(NOTE_WS_PATH);
+  });
+
+  it('refuses dropped content even when it serializes like the open document', async () => {
     const { testEnv, services } = await setupEditorWithNote(
       'the original note body with [the spec](https://example.com/spec)',
     );
     const warningSpy = vi.spyOn(toast, 'warning');
 
-    // This parses to the same editor document as the inline link above, but
-    // its reference definition would be normalized away by the next save.
+    // Serializes identically to the open document — the unused definition is
+    // the only difference, and it vanishes. The refusal must outrank the
+    // serializer-equality no-op.
     await simulateExternalEdit(
       testEnv,
       services,
-      'the original note body with [the spec][1]\n\n[1]: https://example.com/spec\n',
+      'the original note body with [the spec](https://example.com/spec)\n\n[unused]: https://example.com/other\n',
     );
 
     await vi.waitFor(
