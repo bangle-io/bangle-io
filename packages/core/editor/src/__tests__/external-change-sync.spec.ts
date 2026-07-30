@@ -443,6 +443,34 @@ describe('editor refresh on external file changes', () => {
     expect(editorText(domNode)).not.toContain('see the spec');
   });
 
+  it('auto-applies a resolved reference link', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      'the original note body',
+    );
+    const warningSpy = vi.spyOn(toast, 'warning');
+
+    // A definition that a link resolves against survives the parse as that
+    // link's target, so nothing is lost. This is the largest class of real
+    // Markdown the byte comparison alone used to leave permanently stale.
+    await simulateExternalEdit(
+      testEnv,
+      services,
+      'see [the spec][ref]\n\n[ref]: https://example.com/spec\n',
+    );
+
+    await vi.waitFor(
+      () => {
+        expect(editorText(domNode)).toContain('the spec');
+      },
+      { timeout: 3_000 },
+    );
+    expect(editorText(domNode)).not.toContain('the original note body');
+    expect(warningSpy).not.toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ id: STALE_TOAST_ID }),
+    );
+  });
+
   it('auto-applies external content that only reformats on save', async () => {
     const { testEnv, services, domNode } = await setupEditorWithNote(
       'the original note body',

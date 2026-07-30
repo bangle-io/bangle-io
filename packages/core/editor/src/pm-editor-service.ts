@@ -673,7 +673,7 @@ export class PmEditorService
         toast.error(t.app.toasts.externalDiskVersionUnavailable({ fileName }));
         return;
       }
-      if (result.appliedViews.length === 0) {
+      if (result.appliedCount === 0) {
         // Nothing was replaced — local edits reclaimed the note, or it was
         // closed. Keep the notice so the user still has a way back to disk
         // instead of silently leaving them on the older content.
@@ -685,7 +685,7 @@ export class PmEditorService
       }
 
       this.logger.info(
-        `${wsPath}: loaded the disk version into ${result.appliedViews.length} open editor(s) at the user's request (${result.content?.length ?? 0} chars)`,
+        `${wsPath}: loaded the disk version into ${result.appliedCount} open editor(s) at the user's request (${result.content?.length ?? 0} chars)`,
       );
       // The fidelity notice is refreshed by replaceEditorContent, which every
       // applied view goes through.

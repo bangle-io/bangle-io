@@ -138,7 +138,8 @@ export interface ExternalContentSyncHost {
 }
 
 export type DiskVersionApplyResult = {
-  appliedViews: EditorView[];
+  /** How many mounted views were replaced. */
+  appliedCount: number;
   content?: string;
   retry: boolean;
   unavailable: boolean;
@@ -274,7 +275,7 @@ export class ExternalContentSync {
     mode: ReconcileMode,
   ): Promise<DiskVersionApplyResult> {
     const outcome: DiskVersionApplyResult = {
-      appliedViews: [],
+      appliedCount: 0,
       retry: false,
       unavailable: false,
     };
@@ -442,7 +443,7 @@ export class ExternalContentSync {
       } else if (replaceResult === 'refused') {
         refused = true;
       } else if (replaceResult === 'applied') {
-        outcome.appliedViews.push(view);
+        outcome.appliedCount += 1;
         reconciled = true;
       }
     }
