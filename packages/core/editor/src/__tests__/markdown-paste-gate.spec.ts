@@ -115,4 +115,31 @@ describe('Markdown paste content gate', () => {
       false,
     );
   });
+
+  // CommonMark consumes definitions nested inside blockquotes and list items
+  // too; a gate that only scans line starts would let these vanish silently.
+  const nestedDropped = [
+    ['blockquote', '> quoted text\n>\n> [gone]: https://example.com/spec'],
+    ['list item', '- item text\n\n- [gone]: https://example.com/spec'],
+    [
+      'ordered list item',
+      '1. item text\n\n2. [gone]: https://example.com/spec',
+    ],
+    [
+      'blockquote inside a list item',
+      '- > quoted\n  >\n  > [gone]: https://example.com/spec',
+    ],
+  ] as const;
+
+  for (const [name, source] of nestedDropped) {
+    it(`refuses a dropped definition inside a ${name}`, () => {
+      expect(setup()(source)).toBe(false);
+    });
+  }
+
+  it('accepts a resolved definition inside a blockquote', () => {
+    expect(
+      setup()('> see [the spec][ref]\n>\n> [ref]: https://example.com/spec'),
+    ).toBe(true);
+  });
 });

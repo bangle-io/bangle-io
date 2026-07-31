@@ -25,8 +25,14 @@ function normalizeForComparison(markdown: string): string {
 
 /**
  * A link reference definition line: `[label]: https://example.com "title"`.
+ * CommonMark also consumes definitions nested inside blockquotes and list
+ * items (`> [label]: …`, `- [label]: …`), so those prefixes are allowed, in
+ * any combination. Over-matching (a definition-shaped line inside indented
+ * code) errs toward refusal, never toward silent loss — and the byte
+ * comparison in the caller accepts such content first when it round-trips.
  */
-const LINK_DEFINITION = /^[ \t]{0,3}\[[^\]]+\]:[ \t]*<?([^\s>]+)>?/gm;
+const LINK_DEFINITION =
+  /^(?:[ \t>]|(?:[-*+]|\d{1,9}[.)])[ \t])*\[[^\]]+\]:[ \t]*<?([^\s>]+)>?/gm;
 
 /** Attributes that hold a link or image target. */
 const LINK_TARGET_ATTRS = ['href', 'src'] as const;
