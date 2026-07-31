@@ -176,7 +176,7 @@ describe('coalescing and stability', () => {
         vi
           .mocked(host.logger.warn)
           .mock.calls.some(([message]) =>
-            String(message).includes('kept changing'),
+            String(message).includes('could not be reconciled'),
           ),
       15_000,
     );
@@ -184,6 +184,9 @@ describe('coalescing and stability', () => {
     await new Promise((resolve) => setTimeout(resolve, 500));
     expect(reads).toBe(readsAtGiveUp);
     expect(host.replaceContent).not.toHaveBeenCalled();
+    // Giving up leaves the editor knowingly behind disk — the user must get
+    // the stale-content surface, not only a console warning.
+    expect(host.onStaleContentRefused).toHaveBeenCalledWith('ws:a.md');
   }, 20_000);
 
   it('reconciles content that only settles after the fast passes', async () => {
@@ -209,8 +212,9 @@ describe('coalescing and stability', () => {
     await waitUntil(() => reads > 10, 10_000);
     await new Promise((resolve) => setTimeout(resolve, 400));
     expect(host.logger.warn).not.toHaveBeenCalledWith(
-      expect.stringContaining('kept changing'),
+      expect.stringContaining('could not be reconciled'),
     );
+    expect(host.onStaleContentRefused).not.toHaveBeenCalled();
   }, 15_000);
 
   it('a view busy with IME composition is never replaced; the pass retries', async () => {

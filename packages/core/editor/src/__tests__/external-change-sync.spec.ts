@@ -7,7 +7,7 @@ import {
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { toast } from '@bangle.io/ui-components';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { RECONCILE_SETTLE_MS } from '../external-content-sync';
+import { ExternalContentSync } from '../external-content-sync';
 import { PmEditorService } from '../pm-editor-service';
 
 function asPmEditor(editorEngine: unknown): PmEditorService {
@@ -23,7 +23,9 @@ function asPmEditor(editorEngine: unknown): PmEditorService {
  * so tuning them cannot turn these negative assertions vacuous.
  */
 function settleReconcile(): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, RECONCILE_SETTLE_MS));
+  return new Promise((resolve) =>
+    setTimeout(resolve, ExternalContentSync.RECONCILE_SETTLE_MS),
+  );
 }
 
 const WS_NAME = 'test-ws';
@@ -501,6 +503,45 @@ describe('editor refresh on external file changes', () => {
     expect(
       testEnv.store.get(asPmEditor(services.editorEngine).$roundTripWarnings),
     ).toContain(NOTE_WS_PATH);
+  });
+
+  it('applies a serializer-equal external change so the fidelity baseline follows disk', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      '- the original note body\n',
+    );
+    const warningSpy = vi.spyOn(toast, 'warning');
+    const writeSpy = vi.spyOn(services.fileSystem, 'writeFile');
+
+    // `* item` parses to the same document as `- item`, so the serializer
+    // comparison alone calls this an echo. But disk now holds different bytes:
+    // without refreshing the retained baseline and fidelity notice, the next
+    // local save would silently revert the external author's formatting.
+    await simulateExternalEdit(testEnv, services, '* the original note body\n');
+
+    await vi.waitFor(
+      () => {
+        expect(
+          testEnv.store.get(
+            asPmEditor(services.editorEngine).$roundTripWarnings,
+          ),
+        ).toContain(NOTE_WS_PATH);
+      },
+      { timeout: 3_000 },
+    );
+    expect(editorText(domNode)).toContain('the original note body');
+    // Applying is not a save — nothing may bounce back to storage — and a
+    // visually identical document is no reason for a conflict notice.
+    expect(writeSpy).not.toHaveBeenCalled();
+    expect(warningSpy).not.toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ id: STALE_TOAST_ID }),
+    );
+    // The pre-change bytes stay recoverable.
+    const snapshots = await services.noteSnapshot.listSnapshots();
+    expect(snapshots).toHaveLength(1);
+    await expect(
+      services.noteSnapshot.getSnapshot(snapshots[0]?.id ?? ''),
+    ).resolves.toMatchObject({ content: '- the original note body\n' });
   });
 
   it('refuses dropped content even when it serializes like the open document', async () => {

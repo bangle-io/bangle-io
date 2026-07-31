@@ -16,19 +16,12 @@ import {
  * Quiet period between an external change notification and the first disk
  * read, letting in-progress writes (truncate-then-write) finish first.
  */
-export const QUIET_MS = 150;
+const QUIET_MS = 150;
 /**
  * Gap between the two confirming reads that must agree before externally
  * changed content is applied to an open editor.
  */
-export const STABILITY_MS = 100;
-/**
- * How long a test must wait before "the editor did not change" proves a
- * refusal rather than the pass simply not having run yet. Exported so those
- * negative assertions cannot quietly go vacuous when the timings above are
- * tuned.
- */
-export const RECONCILE_SETTLE_MS = (QUIET_MS + STABILITY_MS) * 2 + 150;
+const STABILITY_MS = 100;
 /** Back-to-back passes before backing off, for a writer that settles quickly. */
 const PASSES_BEFORE_BACKOFF = 5;
 /**
@@ -162,6 +155,14 @@ type ReconcileMode = 'automatic' | 'user-approved';
  */
 export class ExternalContentSync {
   /**
+   * How long a test must wait before "the editor did not change" proves a
+   * refusal rather than the pass simply not having run yet. Lives here so
+   * those negative assertions cannot quietly go vacuous when the timings
+   * above are tuned.
+   */
+  static readonly RECONCILE_SETTLE_MS = (QUIET_MS + STABILITY_MS) * 2 + 150;
+
+  /**
    * wsPaths with a sync pass in flight; the boolean marks whether another
    * external event arrived meanwhile and the pass must run again. Only
    * `handleEvent`/`syncPath` write it — passes report their own rerun needs
@@ -260,8 +261,12 @@ export class ExternalContentSync {
         pendingWork = result.retry || this.runs.get(wsPath) === true;
       } while (pendingWork && passes < MAX_PASSES && !this.aborted);
       if (pendingWork && !this.aborted) {
+        // Every retry was spent (never-stable reads, a long IME composition,
+        // or repeated snapshot-preservation failures). The editor may now be
+        // behind disk, so tell the user instead of leaving a console trail.
+        this.host.onStaleContentRefused(wsPath);
         this.host.logger.warn(
-          `External content for ${wsPath} kept changing; giving up until the next external event`,
+          `External content for ${wsPath} could not be reconciled after ${passes} passes; giving up until the next external event`,
         );
       }
     } finally {
@@ -401,7 +406,16 @@ export class ExternalContentSync {
           refused = true;
           continue;
         }
-        if (currentSerialized === diskSerialized) {
+        if (
+          currentSerialized === diskSerialized &&
+          retainedSource === undefined
+        ) {
+          // The doc changed since load, so a save writes exactly these bytes —
+          // nothing on disk can be silently reverted. Typically our own save's
+          // echo. With a retained baseline this falls through instead: disk
+          // holds different bytes than the baseline, and applying refreshes
+          // the baseline and the fidelity notice so a later save cannot
+          // silently revert the external author's formatting.
           reconciled = true;
           continue;
         }
