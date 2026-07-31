@@ -268,6 +268,12 @@ export class FileStorageNativeFs
       if (from.kind === 'ignored' && to.kind === 'ignored') {
         return false;
       }
+      // Same as the plain branch below: a visible directory moving changes
+      // the listing wholesale, and a dot-named directory would otherwise pass
+      // for a file on path shape alone.
+      if (change.kind === 'directory') {
+        return true;
+      }
       return (
         from.kind === 'coarse' ||
         to.kind === 'coarse' ||

@@ -653,6 +653,27 @@ describe('external change watching', () => {
     ]);
   });
 
+  it('coarse-refreshes a moved directory whose dot-named path looks like a file', async () => {
+    const { observer, onExternalChange } = await setupExternalChangeWatching();
+
+    // A directory materializing from an invisible path matches the atomic-write
+    // move shape, but its handle says directory: a targeted file-create here
+    // would tell the app a note named like the folder appeared. Only a re-list
+    // reconciles the tree with the directory's contents.
+    await observer.emitRecords([
+      {
+        type: 'moved',
+        relativePathComponents: ['archive.md'],
+        relativePathMovedFrom: ['archive.md.crswap'],
+        changedHandle: { kind: 'directory' },
+      },
+    ]);
+
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'refresh', wsName: 'myWorkspace' },
+    ]);
+  });
+
   it('ignores churn inside locations the listing never shows', async () => {
     const { observer, onExternalChange } = await setupExternalChangeWatching();
 
@@ -827,6 +848,39 @@ describe('external change watching', () => {
     });
     await vi.waitFor(() => {
       expect(watchSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  it('re-arms on page return after watch setup rejects', async () => {
+    stubFileSystemObserver();
+    const watchSpy = vi
+      .spyOn(NativeFs.prototype, 'watch')
+      .mockRejectedValueOnce(new Error('observer setup failed'))
+      .mockResolvedValue({ armed: true, stop: () => {} });
+    const { service, onExternalChange, triggerPageReturn } = await setup(
+      undefined,
+      'myWorkspace',
+      {
+        withExternalChange: true,
+      },
+    );
+
+    await service.fileExists('myWorkspace:seed.md');
+    await vi.waitFor(() => {
+      expect(watchSpy).toHaveBeenCalledTimes(1);
+    });
+
+    // The rejection must settle the watcher back to idle — a state stuck at
+    // `starting` would permanently disable re-arming — so a page return both
+    // refreshes and retries the observer. Retriggering inside waitFor keeps
+    // the test independent of how fast the rejection handler runs.
+    await vi.waitFor(() => {
+      triggerPageReturn({ returnedFromHidden: false });
+      expect(watchSpy).toHaveBeenCalledTimes(2);
+    });
+    expect(onExternalChange).toHaveBeenCalledWith({
+      type: 'refresh',
+      wsName: 'myWorkspace',
     });
   });
 
