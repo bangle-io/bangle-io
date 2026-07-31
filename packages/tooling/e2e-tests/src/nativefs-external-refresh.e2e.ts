@@ -92,9 +92,27 @@ async function rejectAppWritesToFile(page: Page, fileName: string) {
         }
         return originalCreateWritable.call(this, options);
       };
+      (
+        window as Window & { __restoreAppWrites?: () => void }
+      ).__restoreAppWrites = () => {
+        prototype.createWritable = originalCreateWritable;
+      };
     },
     { workspaceDir: WORKSPACE_DIR, fileName },
   );
+}
+
+/**
+ * Undoes {@link rejectAppWritesToFile}. A save that already failed stays
+ * failed until the user retries it, so the editor remains dirty afterwards —
+ * this only reopens the disk for the test's own external writes.
+ */
+async function restoreAppWrites(page: Page) {
+  await page.evaluate(() => {
+    (
+      window as Window & { __restoreAppWrites?: () => void }
+    ).__restoreAppWrites?.();
+  });
 }
 
 async function createNativeFsWorkspace(page: Page) {
@@ -355,6 +373,79 @@ test('external content that only reformats on save is applied, not refused', asy
   await expect(
     page.getByText(/reflow-note\.md changed on disk/),
   ).not.toBeVisible();
+});
+
+test('an external write never clobbers unsaved local edits in the open editor', async ({
+  page,
+  browserName,
+}) => {
+  test.skip(
+    browserName !== 'chromium',
+    'NativeFS workspaces are Chromium-only',
+  );
+
+  await createNativeFsWorkspace(page);
+  const observerSupported = await page.evaluate(
+    () =>
+      typeof (globalThis as { FileSystemObserver?: unknown })
+        .FileSystemObserver === 'function',
+  );
+  test.skip(
+    !observerSupported,
+    'FileSystemObserver is unavailable in this Chromium build',
+  );
+
+  await page.getByRole('button', { name: 'New Note' }).click();
+  await page.getByLabel('Note name').fill('conflict-dirty');
+  await page.getByRole('button', { name: 'Create' }).click();
+  const editor = getEditorLocator(page, {});
+  await expect(editor).toBeVisible();
+
+  // Break saves first so the local edit stays pending: the editor then holds
+  // the only copy of the user's wording when the external write arrives.
+  await rejectAppWritesToFile(page, 'conflict-dirty.md');
+  await editor.click();
+  await page.keyboard.type('local wording that exists nowhere else');
+  await expect(page.getByText(/Changes could not be saved/)).toBeVisible();
+  // The failed save keeps the editor dirty until the user retries; restoring
+  // writes only reopens the disk for the sync tool simulated below.
+  await restoreAppWrites(page);
+
+  // A sync tool overwrites the dirty note, then creates a sentinel file. The
+  // sentinel's appearance in the tree proves the watcher pipeline processed
+  // the burst, so "the editor did not change" below is a real refusal rather
+  // than the sync simply not having run yet.
+  await externallyWriteFile(
+    page,
+    'conflict-dirty.md',
+    '# External\n\noverwritten by the sync tool\n',
+  );
+  await externallyWriteFile(page, 'sentinel.md', 'marker\n');
+  await expect(
+    page
+      .getByTestId('bangle-file-explorer')
+      .getByRole('treeitem', { name: /sentinel/ }),
+  ).toBeVisible();
+
+  // Unsaved edits always win over the external copy...
+  await expect(editor).toContainText('local wording that exists nowhere else');
+  await expect(editor).not.toContainText('overwritten by the sync tool');
+  // ...and refusing must not auto-save the editor over disk either: the
+  // sync tool's copy survives until the user resolves the conflict.
+  await expect
+    .poll(async () => {
+      return page.evaluate(
+        async ({ workspaceDir }) => {
+          const root = await navigator.storage.getDirectory();
+          const dir = await root.getDirectoryHandle(workspaceDir);
+          const handle = await dir.getFileHandle('conflict-dirty.md');
+          const file = await handle.getFile();
+          return file.text();
+        },
+        { workspaceDir: WORKSPACE_DIR },
+      );
+    })
+    .toContain('overwritten by the sync tool');
 });
 
 test('an externally deleted note stays mounted while its local save is failed', async ({

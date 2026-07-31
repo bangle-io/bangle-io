@@ -64,8 +64,8 @@ describe('transient swap files', () => {
     'ws:notes/recovered.swp',
   ])('keeps possibly-legitimate temp-suffixed user file %s visible', (wsPath) => {
     // .tmp/.swp can be real pre-existing user files (and the asset
-    // pipeline accepts them); only the native FS watcher suppresses them
-    // as change noise, listings must not hide them.
+    // pipeline accepts them), so listings and the native FS watcher both
+    // keep them visible; only `.crswap` above is hidden.
     expect(isVisibleWorkspaceFilePath(wsPath)).toBe(true);
   });
 
