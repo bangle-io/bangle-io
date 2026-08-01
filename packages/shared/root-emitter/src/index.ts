@@ -68,6 +68,12 @@ export type RootEvents =
   | {
       event: 'event::file:force-update';
       payload: {
+        /**
+         * When set, the refresh concerns a single workspace (e.g. a storage
+         * watcher's coarse "something changed here"); consumers doing
+         * per-workspace work can scope to it. Absent means app-wide.
+         */
+        wsName?: string;
         sender: EventSenderMetadata;
       };
     }

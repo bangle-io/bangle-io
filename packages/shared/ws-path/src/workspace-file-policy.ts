@@ -17,6 +17,18 @@ const IGNORED_DIRECTORY_NAMES = new Set([
 
 const IGNORED_FILE_NAMES = new Set(['desktop.ini', 'thumbs.db']);
 
+/**
+ * Chromium's File System Access API writes `<name>.crswap` swap files next
+ * to real content while a writable stream is open. They can surface through
+ * directory listings and file watchers mid-write and must never be treated
+ * as workspace content.
+ *
+ * Deliberately narrow: broader temp suffixes like `.tmp`/`.swp` can be
+ * legitimate user files (and the asset pipeline accepts them), so hiding or
+ * suppressing their changes would leave visible workspace content stale.
+ */
+const CHROMIUM_SWAP_FILE_SUFFIX = '.crswap';
+
 function pathSegments(filePath: WsFilePath): readonly string[] {
   return filePath.path.split('/').filter(Boolean);
 }
@@ -50,6 +62,10 @@ export function isVisibleWorkspaceFilePath(
   if (
     parentSegments.some((segment) => isIgnoredWorkspacePathSegment(segment))
   ) {
+    return false;
+  }
+
+  if (fileName.toLowerCase().endsWith(CHROMIUM_SWAP_FILE_SUFFIX)) {
     return false;
   }
 

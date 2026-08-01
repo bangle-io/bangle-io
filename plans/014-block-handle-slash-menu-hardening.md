@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-12
-updated: 2026-07-24
+updated: 2026-08-01
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/633
@@ -36,7 +36,7 @@ Large / Editor).
 Partially complete. Item 6 shipped in PR #656; items 1-5 and 7-8 remain, and
 none block release of the merged PR #633 behavior.
 
-Verified against `main` 2026-07-24: items 1-5, 7, and 8 all still open as
+Verified against `main` 2026-08-01: items 1-5, 7, and 8 all still open as
 described. Nothing has touched `banger-editor/src/drag/` since PR #633.
 Item 4 now goes first — see below.
 

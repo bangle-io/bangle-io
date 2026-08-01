@@ -413,6 +413,9 @@ export class WorkspaceStateService extends BaseService {
       fileSystem: FileSystemService;
       workspaceOps: WorkspaceOpsService;
     },
+    private config: {
+      hasPendingOrFailedSave: (wsPath: string) => boolean;
+    },
   ) {
     super(SERVICE_NAME.workspaceStateService, context, dep);
   }
@@ -623,7 +626,9 @@ export class WorkspaceStateService extends BaseService {
 
           if (
             get(this.navigation.$activeWsFilePath)?.wsPath ===
-            oldFilePath.wsPath
+              oldFilePath.wsPath &&
+            (!renameEvent.external ||
+              !this.config.hasPendingOrFailedSave(oldFilePath.wsPath))
           ) {
             this.navigation.goWsPath(newFilePath.wsPath);
           }

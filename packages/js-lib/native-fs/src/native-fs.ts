@@ -40,6 +40,13 @@ export interface NativeFsStat {
   sizeBytes: number;
 }
 
+export interface NativeFsWatchHandle {
+  /** False when `FileSystemObserver` is unavailable or the signal aborted. */
+  armed: boolean;
+  /** Disconnects this observer. Idempotent, and implied by the signal. */
+  stop: () => void;
+}
+
 export interface NativeFsChange {
   type: FileSystemChangeType;
   /** Root-relative path of the changed entry; `''` is the root itself. */
@@ -465,9 +472,13 @@ export class NativeFs {
 
   /**
    * Observes external changes under the root via `FileSystemObserver`
-   * (Chrome 133+ desktop). Returns `false` when the API is unavailable so
-   * callers can fall back to polling/manual refresh. Observation stops when
-   * `signal` aborts.
+   * (Chrome 133+ desktop). `armed` is false when the API is unavailable, so
+   * callers can fall back to polling/manual refresh.
+   *
+   * Observation stops when `signal` aborts or when the returned `stop` is
+   * called, whichever happens first. Callers that re-arm a watcher (e.g.
+   * after an `errored` record) must `stop` the previous one, otherwise both
+   * observers stay attached for the lifetime of `signal`.
    *
    * Change records from the OS can be coarse (`unknown` type, or `errored`
    * when observation breaks, e.g. on permission loss) — treat them as hints
@@ -476,13 +487,13 @@ export class NativeFs {
   async watch(
     onChanges: (changes: NativeFsChange[]) => void,
     opts: { signal: AbortSignal; recursive?: boolean },
-  ): Promise<boolean> {
+  ): Promise<NativeFsWatchHandle> {
     const { signal, recursive = true } = opts;
     const ObserverCtor = (
       globalThis as { FileSystemObserver?: FileSystemObserverConstructor }
     ).FileSystemObserver;
     if (typeof ObserverCtor !== 'function' || signal.aborted) {
-      return false;
+      return { armed: false, stop: () => {} };
     }
 
     return guardNativeFsOp('watch', async () => {
@@ -493,6 +504,15 @@ export class NativeFs {
           onChanges(changes);
         }
       });
+      let stopped = false;
+      const stop = () => {
+        if (stopped) {
+          return;
+        }
+        stopped = true;
+        signal.removeEventListener('abort', stop);
+        observer.disconnect();
+      };
       try {
         await observer.observe(this.rootHandle, { recursive });
       } catch (error) {
@@ -501,12 +521,10 @@ export class NativeFs {
       }
       if (signal.aborted) {
         observer.disconnect();
-        return false;
+        return { armed: false, stop: () => {} };
       }
-      signal.addEventListener('abort', () => observer.disconnect(), {
-        once: true,
-      });
-      return true;
+      signal.addEventListener('abort', stop, { once: true });
+      return { armed: true, stop };
     });
   }
 

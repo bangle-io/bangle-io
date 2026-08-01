@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-06-15
-updated: 2026-07-24
+updated: 2026-08-01
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/631
@@ -66,172 +66,41 @@ workflows, recovery gaps, and the open package-boundary items below.
   error instead of leaving the mount promise silently pending. Failed load
   status and a same-node retry API are now exposed. Parse-failure isolation and
   the user-facing recovery view remain.
-- 2026-07-07 re-audit and cleanup pass:
-  - P0.3 verified complete on main: ws command handlers await storage
-    mutations before navigating, keep routes stable on failure, and
-    `ws-command-handlers.spec.ts` covers the ordering.
-  - P0.4 safe ordering landed: baby-fs rename now verifies the destination
-    bytes before deleting the source and throws
-    `RENAME_VERIFICATION_FAILED_ERROR` with cause; failure-point tests cover
-    both backends. Journaled pending-move records and startup recovery remain
-    follow-up.
-  - P0.5 done for file-tree listing: `WorkspaceStateService` preserves the last
-    known file tree on same-workspace list failures, exposes
-    `$fileTreeListState`, and the sidebar shows a retry notice backed by
-    `command::ws:refresh-file-tree`. This does not cover `$workspaces` metadata
-    refresh failures; that remains C1 in the 2026-07-12 matrix.
-  - P1.1 partially superseded: the shared golden corpus
-    (`test-utils/markdown-corpus.ts`) plus a load-time round-trip fidelity
-    gate in `PmEditorService` (warns when a note cannot round-trip; opening
-    never writes back) landed. Per-construct parity decisions live in plan
-    012.
-  - P2.1 and P2.2 verified already resolved on main: `@bangle.io/types` no
-    longer imports core services and no package-private `src` imports remain.
-  - P2.3 improved mechanically: storage services now reach
-    `FileSystemService` via a config thunk resolved inside `instantiate()` and
-    asserted before use. The 2026-07-12 re-audit reopens the Native FS half as
-    A3 because its platform root-handle provider still calls upward into
-    `WorkspaceOpsService` through a late-bound closure.
-  - P3.1 verified already resolved: no duplicate component trees remain.
-  - P3.2 done for render paths: remaining render-time `resolveAtoms()` reads
-    replaced with `useAtomValue` subscriptions.
-  - P3.5 done for app-level decomposition: sidebar file-tree actions moved to
-    `useSidebarFileActions`, the footer menu moved to `SidebarFooterMenu`, and
-    core `AppSidebar` is a thin composition layer. Moving the one-caller,
-    Bangle-specific 582-line UI composition out of `ui-components` remains A6.
-  - P4.1 done: GitHub Actions runs `pnpm run build`.
-  - P4.5 partially done: `noFloatingPromises` is now a Biome error repo-wide;
-    `noExplicitAny` (163 sites) and `noUnusedVariables` remain warnings.
-- 2026-07-12 high-ROI cleanup batch:
-  - A10 done: production editor setup no longer enables global debug mode,
-    installs the schema/editor view on `window`, or ships the console-only
-    document inspection helpers. E2E assertions now observe DOM selection and
-    navigation rather than the private editor global.
-  - P4.2 done: the external Playwright sample was deleted, E2E and component
-    reports/results use separate package-local directories, and CI uploads
-    those actual artifact paths.
-  - A4 improved: `WorkbenchStateService` no longer declares or receives its
-    unused database dependency.
-  - P3.3 improved: `StarButton` now follows the application convention of using
-    the global `t` object instead of importing translations directly. The
-    broader literal-string sweep remains open.
-- 2026-07-12 obsolete service API cleanup (PR #636):
-  - A4 improved: removed the zero-consumer command object-to-key cache/getter,
-    core navigation `fromUri` pass-through, workspace misc-data methods, and
-    their unreachable app-error variant. The generic database misc table stays
-    intact so this cleanup does not alter persisted storage schemas.
-- 2026-07-12 workspace dialog correctness and accessibility cleanup:
-  - C5 done: workspace creation now awaits the durable callback, blocks repeat
-    submission and dismissal while pending, keeps the dialog open on failure,
-    and restores an in-dialog retry path. Component coverage proves a
-    double-click starts one attempt, while app E2E covers a real duplicate
-    workspace rejection.
-  - P3.4 improved: the sidebar search affordance is now a semantic button with
-    native Enter/Space behavior instead of a `div role="button"` wrapped around
-    a read-only input. App E2E exercises the Space-key path.
-- 2026-07-12 IndexedDB error and type hygiene cleanup:
-  - P5.3 done: the remaining IndexedDB adapter now retains the original
-    rejection as `Error.cause` for both generic upstream errors and translated
-    constraint failures. The replacement Native FS library already preserves
-    causes when it normalizes browser errors; the legacy Native Browser FS
-    evidence was removed with that adapter.
-  - P5.1 improved: foundational `BaseError` stack capture no longer relies on
-    `any` or the obsolete `__proto__` fallback, and the touched IndexedDB slice
-    no longer carries an unsafe array guard, a parameter-assignment lint
-    suppression, or dead untyped test helpers.
-- 2026-07-13 workspace refresh continuity cleanup:
-  - C1 done: `WorkspaceStateService` now exposes an explicit
-    `$workspaceListState` resource with `loading`, `ready`, and `error` states.
-    Every state carries the last successful workspace data, so a failed
-    metadata refresh no longer hides the active workspace or clears
-    workspace-driven UI.
-  - Focused real-service coverage forces a database failure after a successful
-    load, verifies the prior array and current workspace remain available, and
-    proves a later refresh returns the resource to `ready`.
-- 2026-07-13 cross-context lifecycle and type-hygiene cleanup:
-  - P5.4 done: `TypedBroadcastBus` now closes immediately for an already-aborted
-    owner, ignores already-aborted subscriptions, and makes sends after disposal
-    a consistent no-op across native and memory channels.
-  - The in-memory channel now structured-clones a payload independently for
-    each recipient, matching the isolation of the browser channel instead of
-    sharing mutable references between services and tests. Its public type now
-    describes the small channel contract it actually implements rather than
-    carrying throwing `BroadcastChannel` stubs.
-  - P5.1 improved: `Logger` now accepts the four-method console surface it uses,
-    and its message boundary uses `unknown[]` instead of five `any[]`
-    signatures. Browser-bus tests no longer need an unsafe logger cast.
-- 2026-07-13 foundational utility type and lifecycle cleanup (PR #646):
-  - P5.1 improved: mini validators now accept `unknown` at their public
-    boundary, weak caches require object keys, and command validator inspection
-    uses `Validator<unknown>`.
-  - P5.4 improved: generic emitter subscriptions now ignore already-aborted
-    signals, detach their abort listeners during cleanup, and make destruction
-    idempotent. The two-key weak cache now retains cached `undefined` results
-    instead of recomputing them.
-  - P4.5 re-audit: a package-wide `noExplicitAny` ratchet was trialled but not
-    kept because removing type-level wildcards from the generic emitter
-    required conditional types and a double assertion without rejecting more
-    invalid caller behavior. The stale browser-entry `eslint` script and the
-    original command-dialog/radio-control accessibility findings were verified
-    already resolved on `main` and are reconciled below.
-- 2026-07-14 storage-contract and translation hygiene cleanup (batch 3, PR
-  #647):
-  - P3.3 done: every Omni Search heading, action, empty state, placeholder, and
-    accessible dialog title now uses the global translation object. English
-    and German carry the complete eight-message surface, and locale E2E opens
-    the German command bar and verifies translated user-visible behavior.
-  - P5.1 improved: `BaseFileStorageProvider` no longer advertises six
-    zero-consumer metadata, capability, and search members. The three concrete
-    storage providers no longer carry the corresponding dead labels or
-    support-probe methods. The follow-up removes the unused `sha` create/write
-    option path and narrows provider workspace types to the existing typed
-    storage union.
-  - P4.2 improved: the shared create-workspace/note E2E helper now waits for
-    the exact new editor identity instead of any visible editor, preventing
-    follow-up typing and shortcuts from racing a stale view. The date picker
-    also makes its initial single-day selection required so selecting today
-    commits instead of toggling to an empty selection in UTC CI.
-  - The full open-item re-audit kept C3/C4, P0.4, and Native FS work out of this
-  batch because PR #640 owns relocation/save-queue changes, PR #644 owns the
-    Native FS settings command, PR #626 owns external sync, and the existing
-    service-architecture and Knip worktrees cover broader boundary/dead-code
-    changes. C6, C8, P1.3, P4.4, and P5.2 are narrowed below to match current
-    code instead of retaining stale claims.
-- 2026-07-15 relocation safety cleanup (PR #640):
-  - P0.4 substantially complete for ordinary file and directory relocation:
-    pending source saves drain before the durable mutation, queued and mounted
-    writes retarget afterward, IndexedDB rename/update paths are atomic, active
-    routes follow durable rename events, and starred paths migrate in one
-    lifecycle. Unit, race, command-handler, and Playwright coverage includes
-    reload persistence. Cross-workspace moves, empty-folder persistence,
-    journaled startup recovery, and link rewriting remain outside this slice.
-  - The matching project task for preserving stars across rename/move is now
-    complete. Issue #563 remains open because its cross-workspace move UX is
-    explicitly outside PR #640.
-- 2026-07-18 editor save-coordinator lifetime cleanup (PR #649):
-  - C4 resolved: the browser composition root now owns an explicit
-    `EditorSaveCoordinator` and injects it into every replacement UI service
-    graph. Queued and failed tasks retain document state only; execution and
-    error reporting resolve through the newest graph's writer and error
-    boundary instead of callbacks captured from a disposed service.
-  - Focused queue coverage retries a retained failure through the old graph's
-    facade and proves the current graph performs the write. Browser E2E forces
-    a save failure, emits the real `event::app:reload-ui`, retries through the
-    disposed graph, and verifies the edit is durable after a full page reload.
-- 2026-07-19 list-fidelity cleanup (PR #658):
-  - The merged implementation preserves tight/loose list semantics, ordered
-    task-list container kind, and structural nested-list indentation across
-    both editor engines.
-  - P1.3 is complete. Shared corpus, command, codec, DOM, persistence, and
-    reload coverage protect the cross-engine behavior.
-- 2026-07-21 broad cleanup continuation (PR #667, open):
-  - The review-ready sweep removes dead code and obsolete tooling, consolidates
-    repeated editor/router/service/script behavior behind existing owners, and
-    hardens Native FS rename, sync-value, malformed-state, and mobile-origin
-    boundaries.
-  - The plan remains active after this sweep because the command-completion,
-    asset-recovery, package-boundary, and workspace-index items below are still
-    separate follow-ups.
+- Landed-batch history (full detail lives in the per-item records below and
+  the 2026-07-12 matrix):
+  - 2026-07-07: re-audit and cleanup pass — verified P0.3/P2.1/P2.2/P3.1
+    resolved on main; landed P0.4 rename destination verification, P0.5
+    file-tree retention, the P1.1 golden corpus and load-time round-trip
+    gate, P2.3 config-thunk wiring, P3.2 render subscriptions, P3.5 sidebar
+    decomposition, P4.1 CI build, and the P4.5 `noFloatingPromises` error.
+  - 2026-07-12: high-ROI batch — A10 production debug surface removed, P4.2
+    Playwright hygiene, A4 unused database dependency dropped, P3.3
+    StarButton translation.
+  - 2026-07-12 (PR #636): zero-consumer service APIs removed (A4).
+  - 2026-07-12: C5 durable workspace-creation dialog and P3.4 sidebar search
+    accessibility.
+  - 2026-07-12: P5.3 IndexedDB error causes and a P5.1 type-hygiene slice.
+  - 2026-07-13: C1 `$workspaceListState` refresh continuity with real-service
+    failure/recovery coverage.
+  - 2026-07-13: P5.4 broadcast-bus lifetimes and payload isolation plus P5.1
+    logger typing.
+  - 2026-07-13 (PR #646): foundational validator/cache/emitter typing and
+    lifecycle (P5.1, P5.4) plus the P4.5 ratchet re-audit.
+  - 2026-07-14 (PR #647): storage-contract and translation hygiene — P3.3
+    completed, P5.1 provider-surface pruning, P4.2 E2E helper waits; the
+    batch deferred to PR #640 (relocation), PR #644 (Native FS settings
+    command), and PR #626 (external sync) ownership.
+  - 2026-07-15 (PR #640): P0.4 relocation-safety slice for ordinary file and
+    directory rename/move, with reload coverage and star migration.
+  - 2026-07-18 (PR #649): C4 browser-root `EditorSaveCoordinator` owning save
+    continuity across UI service-graph replacement.
+  - 2026-07-19 (PR #658): P1.3 list fidelity across both editor engines.
+  - 2026-07-21 (PR #667, merged 2026-07-22): broad sweep removing dead code
+    and obsolete tooling, consolidating repeated editor/router/service/script
+    behavior behind existing owners, and hardening Native FS rename,
+    sync-value, malformed-state, and mobile-origin boundaries. The
+    command-completion, asset-recovery, package-boundary, and workspace-index
+    items below remain separate follow-ups.
 - Findings are grouped by priority and theme below.
 
 ## Scope
@@ -254,49 +123,17 @@ workflows, recovery gaps, and the open package-boundary items below.
 
 ### P0.1 Add Reliable Editor Save Pipeline
 
-Problem:
-
-- Editor writes are started from `PmEditorService` without awaiting, catching,
-  retrying, or surfacing errors.
-- `createEditor` serializes Markdown on every document change, so rapid edits
-  can start overlapping storage writes.
-- A slower earlier write can finish after a newer write and overwrite the latest
-  content.
-
-Evidence:
-
-- `packages/core/editor/src/pm-editor-service.ts`
-- `packages/core/editor/src/pm-setup.ts`
-
-Plan:
-
-- [x] Introduce a per-`wsPath` save queue owned by editor or service-core.
-- [x] Debounce or coalesce rapid document changes before writing.
-- Track monotonically increasing save revisions and ignore stale completions.
-- [x] Surface save states: clean, pending, failed.
-- [x] Retain the latest failed save body for explicit retry.
-- Surface retrying save state if/when automatic retry is added.
-- [x] Route failures through the app error system and keep a persistent unsaved
-  state until the write succeeds or the user chooses a recovery action.
-- [x] Expose a service API that navigation/reload protection can query for
-  pending or failed writes.
-- [x] Add navigation/reload protection UI wiring when a note has pending or
-  failed writes.
-- [x] Show a persistent translated failed-save recovery action that retries the
-  retained latest body.
-
-Verification:
-
-- [x] Unit test ordered save completion with intentionally delayed writes.
-- [x] Unit test rejected writes produce an app error and do not clear dirty
-  state.
-- [x] Unit test latest failed save retry writes the retained unsaved body.
-- [x] Unit/integration test save-status subscriptions activate protection once
-  and clear it after save or successful retry.
-- [x] Playwright CLI verified successful edit navigation/reload persistence,
-  forced-write-failure dirty state and retry UI, protected reload and full-page
-  navigation, retained-body persistence after retry, and protection clearing
-  after retry.
+Done. The editor owns a per-`wsPath` save queue that serializes writes and
+coalesces rapid edits to the latest pending document, so an older completion
+cannot overwrite a newer edit. Save state (clean/pending/failed) is exposed
+with change subscriptions, failed latest saves retain the unsaved body for an
+explicit translated retry action, failures route through the app error system,
+and pending or failed saves activate browser navigation/reload protection.
+PR #649 (C4) moved queue lifetime to an explicit browser-root
+`EditorSaveCoordinator` that survives UI service-graph replacement. Unit,
+integration, and Playwright coverage exercise delayed writes, rejected writes,
+retained-body retry, and protection clearing. A separate `retrying` state is
+only needed if automatic retry is ever added.
 
 ### P0.2 Handle Editor Load And Parse Failures
 
@@ -332,30 +169,12 @@ Verification:
 
 ### P0.3 Await Command Storage Mutations Before Navigation
 
-Problem:
-
-- Some command handlers navigate before storage mutations complete.
-- Several command paths drop asynchronous failures with unawaited promises.
-- Failed create/delete/rename operations can leave navigation pointing at the
-  wrong route or hide a failure from the user.
-
-Evidence:
-
-- `packages/core/command-handlers/src/ws-command-handlers.ts`
-
-Plan:
-
-- Convert create/delete/rename/move command handlers to `async`.
-- Await storage mutations before navigating.
-- Route rejected mutations through command failure handling.
-- Keep the current route stable when a destructive operation fails.
-- Add tests for failure ordering: navigation should only happen after durable
-  success.
-
-Verification:
-
-- Unit tests in `packages/core/command-handlers/src/__tests__`.
-- E2E smoke for create, rename, move, delete, and reload.
+Done; verified resolved on main during the 2026-07-07 re-audit. Workspace
+command handlers await storage mutations before navigating, route rejected
+mutations through command failure handling, and keep the current route stable
+when a destructive operation fails. `ws-command-handlers.spec.ts` covers the
+failure ordering. Do not reintroduce fire-and-forget mutations followed by
+navigation.
 
 ### P0.4 Make Rename/Move Recoverable
 
@@ -365,10 +184,27 @@ Problem:
 - A crash, permission loss, quota failure, or partial write can leave duplicate
   files or incomplete moves.
 
+Current status:
+
+- 2026-07-07: baby-fs rename verifies destination bytes before deleting the
+  source and throws `RENAME_VERIFICATION_FAILED_ERROR` with cause;
+  failure-point tests cover both backends.
+- PR #640 landed the relocation-safety slice for ordinary file and directory
+  rename/move: pending source saves drain before the durable mutation, queued
+  and mounted writes retarget afterward, IndexedDB rename/update paths are
+  atomic, active routes follow durable rename events, and starred paths
+  migrate in one lifecycle, with unit, race, command-handler, and Playwright
+  coverage including reload persistence.
+- Remaining: journaled pending-move records, startup recovery for incomplete
+  moves, cross-workspace moves (issue #563 UX), empty-folder persistence, and
+  link rewriting.
+
 Evidence:
 
 - `packages/js-lib/baby-fs/indexed-db-fs.ts`
-- `packages/js-lib/baby-fs/native-browser-fs.ts`
+- `packages/js-lib/native-fs` and
+  `packages/platform/service-platform/src/file-storage-nativefs.ts` (the
+  Native FS side; the legacy baby-fs native adapter no longer exists)
 
 Plan:
 
@@ -387,27 +223,12 @@ Verification:
 
 ### P0.5 Preserve File Tree On Transient List Failures
 
-Problem:
-
-- Workspace file tree refresh falls back to an empty path list when list fails.
-- A transient storage or permission failure can make notes appear missing.
-
-Evidence:
-
-- `packages/core/service-core/src/workspace-state-service.ts`
-
-Plan:
-
-- Preserve the last known file tree on list failures.
-- Add a separate file-tree error atom/state.
-- Render a recoverable error state instead of empty workspace state.
-- Keep `Note Not Found` reserved for confirmed absence, not load failure.
-
-Verification:
-
-- Unit test list failure preserves previous paths.
-- E2E test reload during transient storage failure does not show destructive or
-  misleading empty state.
+Done. `WorkspaceStateService` preserves the last known file tree on
+same-workspace list failures, exposes `$fileTreeListState`, and the sidebar
+shows a recoverable retry notice backed by `command::ws:refresh-file-tree`.
+The parallel `$workspaces` metadata-refresh gap was tracked as C1 and resolved
+by `$workspaceListState` on 2026-07-13. Keep `Note Not Found` reserved for
+confirmed absence, never for load failure.
 
 ## Priority 1: Markdown Fidelity
 
@@ -418,6 +239,13 @@ Problem:
 - Markdown is parsed into ProseMirror and serialized back after edits.
 - There is no clear raw-preservation layer for frontmatter, raw HTML, tables,
   unknown directives, or unsupported constructs.
+
+Current status:
+
+- The shared golden corpus (`test-utils/markdown-corpus.ts`) and a load-time
+  round-trip fidelity gate in `PmEditorService` (warns when a note cannot
+  round-trip; opening never writes back) landed 2026-07-07. Per-construct
+  parity decisions live in plan 012.
 
 Evidence:
 
@@ -470,93 +298,31 @@ Verification:
 
 ### P1.3 Harden List And Task-List Parsing
 
-Current status:
-
-- The shared golden corpus now covers unchecked, checked, uppercase, nested,
-  mixed, linked, marked-up, and empty task items for both editor engines.
-- ProseMirror explicitly ignores wrapper `bullet_list`/`ordered_list` tokens
-  and derives flat list items from the configured kind/checked attributes.
-- The original general task-list coverage gap is resolved.
-- PR #658 merged with the remaining implementation: tight/loose list semantics,
-  ordered task-list containers, and structural marker widths for stable nested
-  indentation across both editor engines.
-
-Evidence:
-
-- `packages/js-lib/banger-editor/src/list.ts`
-
-Plan:
-
-- [x] Add tests for `- [ ]`, `- [x]`, nested task/bullet lists, and mixed
-  task/plain lists.
-- [x] Derive task-list state from standard Markdown tokens or configure the parser
-  explicitly to emit the required attrs.
-- [x] Document task-list normalization rules in tests.
-- [x] Merge PR #658, including nested ordered-list indentation in the golden
-  corpus and fixed-point coverage.
-
-Verification:
-
-- Golden Markdown list fixtures pass parse/serialize round trips.
+Done in PR #658. The shared golden corpus covers unchecked, checked,
+uppercase, nested, mixed, linked, marked-up, and empty task items for both
+editor engines, and the merged implementation preserves tight/loose list
+semantics, ordered task-list container kind, and structural marker widths for
+stable nested indentation. ProseMirror derives flat list items from configured
+kind/checked attributes rather than wrapper list tokens. Shared corpus,
+command, codec, DOM, persistence, and reload coverage protect the
+cross-engine behavior.
 
 ## Priority 2: Architecture And Package Boundaries
 
 ### P2.1 Split Shared Types Away From Core Implementations
 
-Problem:
-
-- `@bangle.io/types` is in the shared layer but imports concrete core/editor
-  services.
-- The validator has a broad exemption allowing shared types to import anything.
-
-Evidence:
-
-- `packages/shared/types/src/services.ts`
-- `packages/shared/types/src/services-setup.ts`
-- `packages/tooling/custom-scripts/scripts/validate-all.ts`
-
-Plan:
-
-- Move core-specific service aggregation types to a core package.
-- Keep `@bangle.io/types` limited to stable cross-layer contracts.
-- Replace the broad validator exemption with a narrow allowlist for true
-  type-only exceptions.
-- Add a validation check that fails if shared imports core/platform/ui.
-
-Verification:
-
-- `pnpm run custom-validation`
-- Typecheck across packages.
+Done; verified resolved on main during the 2026-07-07 re-audit.
+`@bangle.io/types` no longer imports concrete core/editor services and stays
+limited to cross-layer contracts. The intentional validator exception for
+`@bangle.io/types` remains type-only; do not use it to move runtime logic
+across layers.
 
 ### P2.2 Ban Package-Private `src` Imports Across Package Boundaries
 
-Problem:
-
-- Several packages import `@bangle.io/*/src/...`, bypassing public APIs.
-- This weakens package ownership and makes refactors harder.
-
-Evidence:
-
-- `packages/tooling/test-utils/test-service-setup.ts`
-- `packages/js-lib/prosemirror-plugins/src/index.ts`
-- `packages/core/app/src/layout/app-sidebar.tsx`
-- `packages/core/app/src/components/*`
-- `packages/tooling/e2e-tests/src/component-tests/*`
-
-Plan:
-
-- Add public exports or explicit subpath exports for required APIs and assets.
-- Export the Bangle icon through `@bangle.io/ui-components` or wrap it in a UI
-  component.
-- Split `@bangle.io/service-platform` public entrypoints for browser, memory,
-  test, and router implementations if a single barrel pulls browser-only deps.
-- Add custom validation that rejects `@bangle.io/*/src` imports outside the
-  package itself.
-
-Verification:
-
-- `pnpm run custom-validation`
-- `rg -n "from ['\"]@bangle\\.io/.*/src" packages`
+Done; verified resolved on main during the 2026-07-07 re-audit. No
+`@bangle.io/*/src` imports cross package boundaries, and custom validation
+rejects package-private `src` imports outside the owning package (see the
+P4.4 checkbox). Import other workspaces only through package roots.
 
 ### P2.3 Remove Post-Construction Service Wiring
 
@@ -564,6 +330,13 @@ Problem:
 
 - `FileSystemService` declares no DI deps, then receives storage services and
   workspace lookup through mutable properties.
+
+Current status:
+
+- Storage services now reach `FileSystemService` via a config thunk resolved
+  inside `instantiate()` and asserted before use (2026-07-07). The Native FS
+  half is reopened as A3: the platform root-handle provider still calls
+  upward into core through a late-bound closure.
 
 Evidence:
 
@@ -588,33 +361,10 @@ Verification:
 
 ### P3.1 Consolidate Duplicate App Components
 
-Problem:
-
-- Old and new component trees coexist with near-duplicate implementations.
-- Breadcrumb logic and sibling-file helpers are duplicated.
-
-Evidence:
-
-- `packages/core/app/src/components/note-breadcrumb.tsx`
-- `packages/core/app/src/components/navigation/note-breadcrumb.tsx`
-- `packages/core/app/src/components/navigation/utils.ts`
-- `packages/core/app/src/components/page-header.tsx`
-- `packages/core/app/src/components/common/page-header.tsx`
-- `packages/core/app/src/components/notice-view.tsx`
-- `packages/core/app/src/components/feedback/notice-view.tsx`
-- `packages/core/app/src/components/app-toolbar.tsx`
-
-Plan:
-
-- Confirm unused top-level duplicates with `rg`.
-- Keep `common`, `feedback`, and `navigation` variants as the canonical tree.
-- Move tests to utility modules where possible.
-- Delete stale duplicates and update imports.
-
-Verification:
-
-- App unit tests.
-- `rg` confirms stale component names are gone.
+Done; verified resolved on main during the 2026-07-07 re-audit. The duplicate
+top-level component tree is gone; the `common`, `feedback`, and `navigation`
+variants are canonical. Do not reintroduce parallel component trees for the
+same surface.
 
 ### P3.2 Make React State Subscription-Safe
 
@@ -644,144 +394,51 @@ Verification:
 
 ### P3.3 Translate Remaining User-Visible Strings
 
-Problem:
-
-- Production user-visible strings bypass the global `t` object.
-- One UI component imports `t` directly despite the project convention.
-
-Evidence:
-
-- `packages/core/omni-search/src/index.tsx`
-
-Plan:
-
-- [x] Add the complete Omni Search surface to the English and German bundles.
-- [x] Replace the remaining Omni Search group headings, empty state, accessible
-  dialog name, and input placeholder with global `t` references.
-- [x] Verify the audited app-sidebar, slash-command, link-menu, and star-button
-  strings use the global `t` object.
-- [x] Remove direct `t` imports from the audited production UI components.
-- [x] Replace the placeholder translation test with bundle parity coverage and
-  add German-locale browser coverage for the Omni Search surface.
-
-Verification:
-
-- [x] `packages/core/app/src/__tests__/translation.spec.ts`
-- [x] `packages/shared/translations/src/__tests__/translations.spec.ts`
-- [x] `packages/tooling/e2e-tests/src/translations-locale.e2e.ts`
+Done in the 2026-07-14 batch (PR #647), after the StarButton fix in the
+2026-07-12 batch. Every Omni Search heading, action, empty state, placeholder,
+and accessible dialog title uses the global `t` object; English and German
+carry the complete surface; direct `t` imports were removed from the audited
+production UI components. Bundle parity is covered by
+`packages/shared/translations/src/__tests__/translations.spec.ts`, and
+`packages/tooling/e2e-tests/src/translations-locale.e2e.ts` opens the German
+command bar and verifies translated user-visible behavior.
 
 ### P3.4 Fix Dialog And Custom Control Accessibility
 
-Problem:
-
-- The original command-dialog, sidebar search, and workspace-storage selector
-  accessibility findings have been resolved on `main`.
-
-Evidence:
-
-- `packages/ui/shadcn/src/command.tsx`
-- `packages/ui/ui-components/src/app-sidebar.tsx`
-- `packages/ui/ui-components/src/workspace-dialog.tsx`
-
-Plan:
-
-- [x] Keep command-dialog title and description elements inside
-  `DialogContent` where the dialog primitive expects them.
-- [x] Give every command dialog an accessible description.
-- [x] Replace the sidebar pseudo-button with a real button or fully implement
-  Space, Enter, focus, and label semantics.
-- [x] Use native radio inputs in a labeled radiogroup for workspace type
-  selection.
-
-Verification:
-
-- [x] Component tests select workspace storage choices by radio role and
-  accessible name.
-- [x] App E2E opens the workspace dialog by its accessible name and completes
-  the Browser workspace flow.
+Done; resolved on main plus the 2026-07-12 batch. Command dialogs keep title
+and description elements inside `DialogContent` with accessible descriptions,
+the sidebar search affordance is a semantic button with native Enter/Space
+behavior, and workspace type selection uses native radio inputs in a labeled
+radiogroup. Component tests select storage choices by radio role and
+accessible name; app E2E covers the Space-key search path and the Browser
+workspace flow.
 
 ### P3.5 Split Overloaded Sidebar Composition
 
-Problem:
-
-- Core `AppSidebar` handles command wiring, footer menu composition, workspace
-  mapping, truncation policy, file actions, and drag/drop behavior together.
-
-Evidence:
-
-- `packages/core/app/src/layout/app-sidebar.tsx`
-
-Plan:
-
-- Extract a `useSidebarModel` hook for derived workspace/path data.
-- Extract sidebar action handlers into small functions or a command adapter.
-- Keep presentational sidebar pieces in `ui-components`.
-- Preserve existing drag/drop behavior during the split.
-
-Verification:
-
-- Unit tests for derived model output.
-- Existing E2E workspace navigation and drag/drop smoke.
+Done for app-level decomposition (2026-07-07 pass): sidebar file-tree actions
+moved to `useSidebarFileActions`, the footer menu moved to
+`SidebarFooterMenu`, and core `AppSidebar` is a thin composition layer with
+drag/drop behavior preserved. The remaining work — moving the one-caller,
+Bangle-specific `ui-components/AppSidebar` composition into
+`core/app/features/sidebar` — is tracked as A6 in the 2026-07-12 matrix.
 
 ## Priority 4: Tooling, CI, And Validation Hardening
 
 ### P4.1 Run Production Build In CI And Local CI
 
-Problem:
-
-- GitHub Actions run lint, unit tests, and E2E, but not the production build.
-- `local-ci-check.sh` only runs root scripts ending in `:ci`, so it skips
-  `build`.
-
-Evidence:
-
-- `.github/workflows/node.js.yml`
-- `local-ci-check.sh`
-- `package.json`
-
-Plan:
-
-- Add a CI build job that runs `pnpm run build`.
-- Add `build:ci` or explicitly include `pnpm run build` in
-  `local-ci-check.sh`.
-- Keep build after lint/test unless build catches type or bundling issues that
-  should fail earlier.
-
-Verification:
-
-- GitHub Actions build job passes.
-- `pnpm local-ci-check` includes build.
+Done (2026-07-07 pass): GitHub Actions runs `pnpm run build`, so production
+build breakage fails CI.
 
 ### P4.2 Fix Playwright CI Hygiene
 
-Problem:
-
-- A sample Playwright test hits `https://playwright.dev/`, making CI depend on
-  external network and not the app.
-- Playwright artifact upload path points at repo-root `playwright-report/`, but
-  package reports are under `packages/tooling/e2e-tests`.
-- One `.e2e.tsx` file imports component-test APIs.
-
-Evidence:
-
-- `packages/tooling/e2e-tests/src/sample.e2e.ts`
-- `packages/tooling/e2e-tests/src/workspace-dialog.e2e.tsx`
-- `packages/tooling/e2e-tests/playwright.config.ts`
-- `.github/workflows/node.js.yml`
-
-Plan:
-
-- [x] Delete or replace the external sample with a local app smoke test.
-- [x] Upload `packages/tooling/e2e-tests/playwright-report/` and relevant
-  `test-results/` paths.
-- [x] Move component-style tests to CT or import from `@playwright/test`.
-- [x] Wait for the exact newly created note editor before follow-up E2E input,
-  and cover selecting an already-selected current day in the slash date picker.
-
-Verification:
-
-- `pnpm e2e:ci`
-- CI artifact contains the expected report.
+Done in the 2026-07-12 batch. The external `playwright.dev` sample was
+deleted, E2E and component reports/results use separate package-local
+directories, CI uploads those actual artifact paths, and component-style
+tests were moved off the `.e2e.tsx` import mix. PR #647 additionally made the
+shared create-workspace/note E2E helper wait for the exact new editor
+identity before follow-up input, and made the slash date picker's initial
+single-day selection required so UTC CI cannot toggle to an empty selection.
+Do not reintroduce network-dependent sample tests.
 
 ### P4.3 Add Coverage Paths For Data-Safety Packages
 
@@ -847,6 +504,14 @@ Problem:
 - Tooling disables `noExplicitAny`.
 - CSS and HTML are excluded from Biome file includes, while Tailwind/CSS are
   part of the shipped app.
+
+Current status:
+
+- `noFloatingPromises` is a Biome error repo-wide (2026-07-07);
+  `noExplicitAny` (163 sites at that count) and `noUnusedVariables` remain
+  warnings. A package-wide `noExplicitAny` ratchet was trialled alongside PR
+  #646 but dropped: de-wildcarding the generic emitter needed conditional
+  types and a double assertion without rejecting more invalid callers.
 
 Evidence:
 
@@ -920,9 +585,10 @@ Current status:
 
 Evidence:
 
-- `packages/platform/service-platform/src/file-storage-nativefs.ts`
+- `packages/platform/service-platform/src/file-storage-nativefs.ts` and
+  `packages/js-lib/native-fs` (the Native FS side; the legacy baby-fs native
+  adapter no longer exists)
 - `packages/js-lib/baby-fs/indexed-db-fs.ts`
-- `packages/js-lib/baby-fs/native-browser-fs.ts`
 - `packages/core/service-core/src/file-system-service.ts`
 
 Plan:
@@ -940,71 +606,25 @@ Verification:
 
 ### P5.3 Preserve Error Cause Details Across Storage Boundaries
 
-Problem:
-
-- The IndexedDB adapter converted upstream failures to broad storage errors
-  without preserving original cause details.
-
-Evidence:
-
-- `packages/js-lib/baby-fs/indexed-db-fs.ts`
-- `packages/js-lib/native-fs/src/errors.ts`
-
-Plan:
-
-- [x] Preserve original error cause for generic IndexedDB failures and mapped
-  constraint failures.
-- [x] Verify the replacement Native FS error normalization preserves causes.
-- [x] Keep user-facing messages safe and readable while retaining structured
-  diagnostic details on the error object.
-
-Verification:
-
-- [x] Unit tests assert error code and cause shape.
+Done. The IndexedDB adapter (`packages/js-lib/baby-fs/indexed-db-fs.ts`)
+retains the original rejection as `Error.cause` for generic upstream errors
+and translated constraint failures, and the replacement Native FS library
+(`packages/js-lib/native-fs/src/errors.ts`) preserves causes when normalizing
+browser errors. Unit tests assert error code and cause shape. The legacy
+Native Browser FS evidence was removed together with that adapter.
 
 ### P5.4 Align Cross-Context Messaging Lifetimes And Payload Isolation
 
-Problem:
-
-- A bus created with an already-aborted owner remained connected because an
-  abort listener added after abort never runs.
-- An already-aborted subscription was still registered and could continue
-  receiving messages indefinitely.
-- Sending after disposal was a silent no-op for the memory channel but could
-  throw through a closed native channel.
-- The memory fallback shared the same mutable payload object with every
-  recipient, unlike native `BroadcastChannel` structured-clone isolation.
-- `MemoryBroadcastChannel` claimed the full browser interface while three
-  inherited event methods only threw `Method not implemented`.
-
-Evidence:
-
-- `packages/js-lib/browser-utils/src/broadcast-channel.ts`
-- `packages/js-lib/browser-utils/__tests__/broadcast-channel.spec.ts`
-
-Plan:
-
-- [x] Close immediately when the owner signal is already aborted.
-- [x] Ignore subscriptions whose signal is already aborted.
-- [x] Make post-disposal sends consistently inert.
-- [x] Structured-clone payloads independently for memory-channel recipients.
-- [x] Type the fallback against the minimal channel contract it supports.
-- [x] Apply the same already-aborted subscription and idempotent-disposal
-  semantics to the generic emitter used by root events.
-
-Verification:
-
-- [x] Focused tests cover already-aborted owners and subscriptions.
-- [x] Focused tests prove independent mutable payloads for memory recipients.
-- [x] Focused emitter tests cover already-aborted subscriptions and repeated
-  destruction.
-- [x] Browser-utils and logger unit suites pass.
-- [x] Repository project-reference typecheck passes.
-- [x] `pnpm lint:ci`, `pnpm test:ci`, `pnpm build`, and `pnpm e2e:ci`
-  pass. The E2E run had one unrelated cursor-restoration retry.
-- [x] `pnpm local-ci-check` passes every root CI script, including E2E,
-  component tests, desktop builds/tests, and the Electron persistence smoke.
-  Its E2E run had one unrelated file-explorer retry.
+Done (2026-07-13 batches; PR #646 for the emitter slice). `TypedBroadcastBus`
+closes immediately for an already-aborted owner, ignores already-aborted
+subscriptions, and makes post-disposal sends a consistent no-op across native
+and memory channels. The in-memory channel structured-clones payloads
+independently per recipient and is typed against the minimal channel contract
+it implements instead of the full throwing `BroadcastChannel` interface. The
+generic emitter used by root events applies the same already-aborted and
+idempotent-destruction semantics, and the two-key weak cache retains cached
+`undefined` results. Focused suites cover all of the above, and the batch
+passed `pnpm local-ci-check` end to end.
 
 ## 2026-07-12 Core/App Containment Re-audit
 
@@ -1032,10 +652,10 @@ listed so future agents do not rediscover it or accidentally restore it.
 | --- | --- | --- | --- |
 | A1 | Open; extends P3.2 | Move dialog intents and transient feature state out of `WorkbenchStateService`. It still imports UI prop types and stores callbacks/icons/full dialog props, plus Omni and All Files state, inside `service-core`. Put feature-owned state and callback execution beside the owning app feature; keep durable preferences in the service. | 250-500 LOC; removes core-to-UI coupling |
 | A2 | Open | Replace the global `commandKeyToContext` WeakMap and string-selected service-locator kernel with direct typed handler context. Colocate command metadata and handlers by feature; keep only serializable cross-context command contracts in shared. | 100-200 LOC; explicit dependencies |
-| A3 | Open; reopens P2.3 | Remove the hidden Native FS upward dependency. `initialize-services` currently gives the platform storage adapter a late-bound closure that calls core `WorkspaceOpsService`. Introduce a core-owned workspace storage-session/root-handle registry with explicit invalidation and a downward platform contract. | Removes reload/recovery glue and runtime cycle |
+| A3 | Open; reopens P2.3 | Remove the hidden Native FS upward dependency. `initialize-services` currently gives the platform storage adapter a late-bound closure that calls core `WorkspaceOpsService`. Introduce a core-owned workspace storage-session/root-handle registry with explicit invalidation and a downward platform contract. Plan 019 M4 owns the router late-bound closure; A3's remaining half is the workspaceOps/root-handle capability injection. | Removes reload/recovery glue and runtime cycle |
 | A4 | Partial | PR #631 deleted `WorkspaceService` and pass-through `WorkbenchService` and strengthened graph validation. The 2026-07-12 cleanup batches removed the unused `WorkbenchStateService` database dependency plus the zero-consumer command-key cache/getter, navigation `fromUri` pass-through, and workspace misc-data methods/error variant. The core aggregate is still repeated in `coreServiceClasses`, `coreServiceSlots`, `getCoreInstances`, `toCoreServices`, and public service types; derive those views from one descriptor in a separate slice. | 150-250 LOC originally; remaining benefit is one derived service graph |
 | A5 | Open | Fold All Files into Omni Search as a file-only scope. Both surfaces independently map workspace files, fuzzy-search, virtualize results, dispatch navigation, and maintain separate open/input state. | 184-230 LOC |
-| A6 | Open; remainder of P3.5 | Move the one-caller Bangle-specific `ui-components/AppSidebar` composition into `core/app/features/sidebar`. Keep reusable sidebar and file-tree primitives in UI, but remove the roughly 30-prop adapter boundary split across a 582-line UI component and its sole app caller. | About 100-200 LOC and one feature boundary |
+| A6 | Open; remainder of P3.5 | Move the one-caller Bangle-specific `ui-components/AppSidebar` composition into `core/app/features/sidebar`. Keep reusable sidebar and file-tree primitives in UI, but remove the roughly 30-prop adapter boundary split across a 631-line UI component and its sole app caller. | About 100-200 LOC and one feature boundary |
 | A7 | Resolved in PR #632 | Delete the five zero-producer fatal/auth/missing routes, their pages/types/decoder branches/translations, and unused `ROUTES`; stale IDs decode through normal `not-found`. | 205 net code LOC before review hardening |
 | A8 | Open; tracked by plan 007 | Extract backlink indexing from `WorkspaceStateService`. Current content-update signals trigger a debounced serial full-workspace reread, and a failed rebuild returns an empty map. A dedicated index service should update per source from typed file events, use bounded concurrency, ignore stale generations, and retain last-good data. | Performance, failure semantics, ownership |
 | A9 | Partial | PR #631 stopped the switch-workspace dialog from mutating the atom array with `.sort()`. Welcome, switcher, and settings still need one immutable workspace-summary model and one sorting policy; cached workspace objects/arrays should not be exposed as mutable shared state. | 80-150 LOC and consistent ordering |
@@ -1079,18 +699,6 @@ listed so future agents do not rediscover it or accidentally restore it.
    coverage where navigation or interaction changes.
 5. A8 through plan 007, after correcting the temporary index's failure and
    concurrency assumptions.
-
-## Original 2026-06-15 Suggested Execution Order
-
-1. Editor save queue, error surfacing, and pending-save state.
-2. Await command storage mutations and add failure-ordering tests.
-3. File tree failure behavior and recoverable rename design.
-4. Markdown golden fixture suite.
-5. Shared types/package boundary refactor and `src` import validation.
-6. CI build and Playwright hygiene.
-7. Duplicate component deletion and translation sweep.
-8. Accessibility fixes for dialogs and sidebar controls.
-9. Lint ratchet and unsafe TypeScript cleanup.
 
 ## Verification Matrix
 

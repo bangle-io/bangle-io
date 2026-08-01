@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-07
-updated: 2026-07-21
+updated: 2026-08-01
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/615
@@ -51,6 +51,9 @@ Active and partially implemented:
   tokenization, editable inline/display nodes, KaTeX rendering, exact-source
   safeguards, and Playwright persistence coverage. That PR also added a
   separate Plan 016 for lazy-loading the renderer after the first release.
+- M4 shipped without golden-corpus math fixtures (neither BOTH_ENGINES nor
+  `engines: ['prosemirror']`); adding PM-only fixtures is owed under
+  architecture rule 6 / the plan 011 coordination rule.
 - PR #658 merged with a cross-engine list-fidelity slice: tight/loose list
   semantics, ordered task-list kind, split/input-rule transitions, and stable
   structural indentation. It strengthens the parity baseline but does not
@@ -68,16 +71,15 @@ Mutating on save today:
 | Reference links | `[foo][ref]` + `[ref]: url "T"` → inlined `[foo](url "T")`; definition destroyed |
 | Single-tilde strike (GFM) | `~x~` → `\~x\~` |
 | HTML entities | `&amp;` `&copy;` → literal `&` `©` |
-| Math block | `$$\nx^2\n$$` → `$$ x^2 $$` (soft break collapsed) |
 | Definition lists | `term\n: def` → `term : def` |
 
 Round-tripping safely as plain text (unrendered): raw HTML (tokenizer runs
-`html: false`), bare URLs, `==highlight==`, `$inline math$`, `:emoji:`,
-`> [!note]` callouts (render as plain blockquotes).
+`html: false`), bare URLs, `==highlight==`, `:emoji:`, `> [!note]` callouts
+(render as plain blockquotes).
 
 Already supported and verified: tables with alignment, task lists, `~~strike~~`,
 setext→ATX normalization, both hard-break forms, angle autolinks, link titles,
-indented + fenced code, frontmatter.
+indented + fenced code, frontmatter, inline + block math.
 
 ## Reference implementations studied
 
@@ -198,16 +200,8 @@ notes. Follow the GitLab/Milkdown two-node shape:
 
 ### M4 — Math (inline `$x$`, block `$$…$$`) — completed in PR #637
 
-- Two atom nodes with a `latex`/text content, per tiptap
-  `extension-mathematics`; block math is its own node, not a code-block
-  hijack (Milkdown's hijack couples two unrelated features).
-- Tokenizer: strict inline `$…$` rule (decline `$ 5 and $6`-style false
-  positives: no leading/trailing space inside delimiters, no digits abutting
-  outside — follow Pandoc's rules) and block `$$` fence rule.
-- Render with KaTeX behind a lazy dynamic import, mirroring the
-  `code-highlight-shiki` lazy-parser pattern already in `core/editor`.
-- Serialization must preserve interior newlines in block math (fixes the
-  probe's `$$ x^2 $$` collapse).
+Completed in PR #637 — atom nodes + strict tokenizer in `markdown-syntax`,
+interior newlines preserved; renderer lazy-loading tracked in plan 016.
 
 ### M5 — Reference links (decision milestone)
 

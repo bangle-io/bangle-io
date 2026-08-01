@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-18
-updated: 2026-07-24
+updated: 2026-08-01
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/637
@@ -25,7 +25,10 @@ success to parse, edit, save, or recover.
 
 ## Current status
 
-Blocked on upstream, verified 2026-07-24.
+Blocked on upstream, verified 2026-08-01: `@benrbray/prosemirror-math` remains
+at 1.0.0 with no newer release, and no upstream issue requesting the
+renderer-free entry split has been filed yet — filing that request (next step
+2) is the actionable move, not waiting.
 
 - Math support is complete in PR #637 and deliberately loads KaTeX eagerly.
 - The recorded main JavaScript bundle grew from 564.01 kB gzip before the

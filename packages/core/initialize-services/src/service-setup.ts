@@ -354,6 +354,7 @@ export function createServiceSetup<
           );
           return fileStorageServices;
         },
+        selfSenderId: BROWSING_CONTEXT_ID,
       })),
     ),
     navigation: slot(NavigationService),
@@ -425,7 +426,12 @@ export function createServiceSetup<
       })),
     ),
     workspaceOps: slot(WorkspaceOpsService),
-    workspaceState: slot(WorkspaceStateService),
+    workspaceState: slot(
+      WorkspaceStateService,
+      withOverride('workspaceState', () => ({
+        hasPendingOrFailedSave: editorSaveCoordinator.hasPendingOrFailedSave,
+      })),
+    ),
     userActivityService: slot(
       UserActivityService,
       withOverride('userActivityService', () => ({

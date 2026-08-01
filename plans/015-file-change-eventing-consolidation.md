@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-18
-updated: 2026-07-24
+updated: 2026-08-01
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/652
@@ -34,9 +34,14 @@ the actual design should be decided when the work is picked up.
 Documented during the notes-table work (PR #652), which added two more
 consumers (note file stats scan + targeted patch) and hit one of the implicit
 contracts described below as a real bug during review (force-update did not
-refresh stats). PR #626 is still open and activates Native FS external-change
-observation, making this consolidation more important, but the consolidation
-itself has not started.
+refresh stats). The Native FS external-change observation this plan was
+waiting on has now landed (PR #626): the provider seam is live, external disk
+changes flow through the existing typed events with a sender tag, and
+`ExternalContentSync` joined as another emitter-direct consumer. The
+"consolidate immediately before it lands" window has therefore passed; the
+consumer-side consolidation itself has still not started. The write-provenance
+primitive that would remove the sender-tag discrimination is recorded as plan
+019 M1.
 
 Inventory verified against `main` 2026-07-24; the ten atoms, the force-update
 side-channel, and the dead `onChange` seam are unchanged. `NoteSnapshotService`
@@ -195,7 +200,8 @@ producer contracts, not spaghetti.
 
 ## Next steps
 
-- Schedule alongside (immediately before) the FileSystemObserver integration
-  from issue #521.
+- The FileSystemObserver integration (issue #521, PR #626) has landed, so the
+  preferred scheduling window is gone; pick this up on its own merits, ideally
+  with plan 019 M1 so sender discrimination and dedup land as one design.
 - Re-read the consumer inventory above at pickup time; PR #652 and later work
   may have added consumers.

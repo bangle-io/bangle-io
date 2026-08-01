@@ -4,6 +4,7 @@ export { CommandRegistryService } from './command-registry-service';
 export { waitForSaveQueueToDrain } from './editor-save-status';
 export { EditorService } from './editor-service';
 export type {
+  ExternalFileChangeEvent,
   FileContentUpdateEvent,
   FileCreateEvent,
 } from './file-system-service';
@@ -18,7 +19,10 @@ export type {
   NoteSnapshotMetadata,
   NoteSnapshotRecord,
 } from './note-snapshot-service';
-export { NoteSnapshotService } from './note-snapshot-service';
+export {
+  NoteSnapshotService,
+  type PreserveOutcome,
+} from './note-snapshot-service';
 export type { ShortcutServiceConfig } from './shortcut-service';
 export { ShortcutService } from './shortcut-service';
 export { UserActivityService } from './user-activity-service';

@@ -12,7 +12,11 @@ import {
 } from '@bangle.io/service-platform/testing';
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import { describe, expect, test, vi } from 'vitest';
-import { coreServiceClasses, createServiceSetup } from '../service-setup';
+import {
+  type CoreConfigOverrides,
+  coreServiceClasses,
+  createServiceSetup,
+} from '../service-setup';
 
 const coreServiceSlotIds = [...Object.keys(coreServiceClasses), 'editorEngine'];
 
@@ -25,8 +29,10 @@ const themeManager = {
 
 function makeSetup({
   fileStorageConfig = () => ({ onChange: () => {} }),
+  coreConfigOverrides,
 }: {
   fileStorageConfig?: () => { onChange: () => void };
+  coreConfigOverrides?: CoreConfigOverrides;
 } = {}) {
   const controller = new AbortController();
   const { commonOpts, rootEmitter } = makeTestCommonOpts({ controller });
@@ -51,6 +57,7 @@ function makeSetup({
     fileStorageSlots: ['fileStorageMemory'],
     editorEngineId: 'prosemirror',
     editorSaveCoordinator: createEditorSaveCoordinator(),
+    coreConfigOverrides,
   });
 
   return { setup, controller };
@@ -62,6 +69,23 @@ describe('createServiceSetup', () => {
 
     expect(() => setup.getServices()).toThrow(/instantiate\(\)/);
     expect(() => setup.coreServices()).toThrow(/instantiate\(\)/);
+
+    controller.abort();
+  });
+
+  test('workspace save status does not resolve the editor engine', () => {
+    const inspectBaseConfig = vi.fn<
+      NonNullable<CoreConfigOverrides['workspaceState']>
+    >((base) => {
+      expect(base.hasPendingOrFailedSave('workspace:note.md')).toBe(false);
+      return base;
+    });
+    const { setup, controller } = makeSetup({
+      coreConfigOverrides: { workspaceState: inspectBaseConfig },
+    });
+
+    expect(() => setup.instantiate()).not.toThrow();
+    expect(inspectBaseConfig).toHaveBeenCalledOnce();
 
     controller.abort();
   });

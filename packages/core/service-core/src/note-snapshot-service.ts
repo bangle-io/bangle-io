@@ -1,4 +1,8 @@
-import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
+import {
+  BaseService,
+  type BaseServiceContext,
+  classifyEventSender,
+} from '@bangle.io/base-utils';
 import { DATABASE_TABLE_NAME, SERVICE_NAME } from '@bangle.io/constants';
 import { type InferType, T } from '@bangle.io/mini-js-utils';
 import type { BaseDatabaseService, ScopedEmitter } from '@bangle.io/types';
@@ -45,6 +49,13 @@ const NOTE_SNAPSHOT_MAX_CONTENT_BYTES = 4 * 1024 * 1024;
  */
 const OUTGOING_WRITE_CACHE_SIZE = 32;
 const SNAPSHOT_LOCK_PREFIX = 'bangle:note-snapshots:';
+
+/**
+ * Outcome of preserving content that is about to be destroyed by a write this
+ * service did not perform. `unpreservable` means no copy can ever be stored,
+ * so the caller must not go ahead with the destructive replacement.
+ */
+export type PreserveOutcome = 'preserved' | 'retry' | 'unpreservable';
 
 export function countWords(content: string): number {
   const words = content.match(/\S+/g);
@@ -99,6 +110,8 @@ export class NoteSnapshotService extends BaseService {
     string,
     { content: string; preserved: boolean }
   >();
+  /** Paths whose next capture must distinguish a watcher echo from a change. */
+  private watcherUpdatePending = new Set<string>();
   private lastIssuedCreatedAt = 0;
   private localSnapshotLockTails = new Map<string, Promise<void>>();
 
@@ -144,32 +157,56 @@ export class NoteSnapshotService extends BaseService {
     this.config.emitter.on(
       'event::file:update',
       (event) => {
-        if (event.type === 'file-create' || event.type === 'file-delete') {
+        const { foreignTab, watcher } = classifyEventSender(
+          event.sender,
+          this.config.selfSenderId,
+        );
+
+        if (event.type === 'file-delete') {
           this.clearPathState(event.wsPath);
+        } else if (event.type === 'file-create') {
+          if (watcher) {
+            // A watcher can report our own atomic replace as a visible create
+            // after the temporary file is renamed. Retain the just-written
+            // outgoing version so a later foreign overwrite can preserve it.
+            this.watcherUpdatePending.add(event.wsPath);
+          } else {
+            this.clearPathState(event.wsPath);
+          }
         } else if (event.type === 'file-rename') {
           this.relocatePathState(event.oldWsPath, event.wsPath);
           if (event.oldWsPath) {
             void this.migratePersistedSnapshots(event.oldWsPath, event.wsPath);
           }
-        } else if (event.sender.id !== this.config.selfSenderId) {
-          // Another tab changed this note. Drop the local throttle so this
-          // tab's next save re-captures the content it is about to overwrite.
-          this.lastCaptureAt.delete(event.wsPath);
-          // And preserve what this tab last wrote: if that write just lost the
-          // race, its content only exists in this map now.
-          const outgoing = this.lastWrittenContent.get(event.wsPath);
-          if (outgoing && !outgoing.preserved) {
-            // Marked eagerly so overlapping foreign events do not preserve
-            // twice; reset on storage failure so a later foreign event
-            // retries instead of silently dropping the only copy.
-            outgoing.preserved = true;
-            void this.preserveContent(event.wsPath, outgoing.content).then(
-              (preserved) => {
-                if (!preserved) {
+        } else if (watcher || foreignTab) {
+          if (watcher) {
+            // A same-tab watcher also reports this tab's own writes, so the
+            // event alone does not prove the disk content is foreign. `capture`
+            // lifts the throttle only once it has read content we did not
+            // write; lifting it here would suppress ordinary local snapshots.
+            this.watcherUpdatePending.add(event.wsPath);
+          }
+          if (foreignTab) {
+            // Another tab definitely changed this note: drop the throttle so
+            // the next save captures the disk content it is about to
+            // overwrite, and preserve what this tab last wrote in case that
+            // write just lost the race.
+            this.lastCaptureAt.delete(event.wsPath);
+            const outgoing = this.lastWrittenContent.get(event.wsPath);
+            if (outgoing && !outgoing.preserved) {
+              // Marked eagerly so overlapping foreign events do not preserve
+              // twice; reset on storage failure so a later foreign event
+              // retries instead of silently dropping the only copy.
+              outgoing.preserved = true;
+              void this.preserveExternalOverwrite(
+                event.wsPath,
+                outgoing.content,
+              ).then((outcome) => {
+                if (outcome === 'retry') {
                   outgoing.preserved = false;
                 }
-              },
-            );
+              });
+            }
           }
         }
       },
@@ -180,6 +217,7 @@ export class NoteSnapshotService extends BaseService {
   private clearPathState(wsPath: string): void {
     this.lastCaptureAt.delete(wsPath);
     this.lastWrittenContent.delete(wsPath);
+    this.watcherUpdatePending.delete(wsPath);
   }
 
   private relocatePathState(oldWsPath: string | undefined, wsPath: string) {
@@ -190,12 +228,16 @@ export class NoteSnapshotService extends BaseService {
 
     const lastCaptureAt = this.lastCaptureAt.get(oldWsPath);
     const lastWrittenContent = this.lastWrittenContent.get(oldWsPath);
+    const watcherUpdatePending = this.watcherUpdatePending.has(oldWsPath);
     this.clearPathState(oldWsPath);
     if (lastCaptureAt !== undefined) {
       this.lastCaptureAt.set(wsPath, lastCaptureAt);
     }
     if (lastWrittenContent !== undefined) {
       this.lastWrittenContent.set(wsPath, lastWrittenContent);
+    }
+    if (watcherUpdatePending) {
+      this.watcherUpdatePending.add(wsPath);
     }
   }
 
@@ -340,10 +382,14 @@ export class NoteSnapshotService extends BaseService {
 
     const now = Date.now();
     const lastCapture = this.lastCaptureAt.get(wsPath);
-    if (
+    const throttled =
       lastCapture !== undefined &&
-      now - lastCapture < this.minCaptureIntervalMs
-    ) {
+      now - lastCapture < this.minCaptureIntervalMs;
+    // A watcher reports this tab's own writes too, so its event only earns a
+    // *provisional* throttle bypass: the content is read, and the bypass is
+    // honoured only if the disk copy is not the one we just wrote.
+    const watcherUpdatePending = this.watcherUpdatePending.delete(wsPath);
+    if (throttled && !watcherUpdatePending) {
       return;
     }
 
@@ -359,6 +405,10 @@ export class NoteSnapshotService extends BaseService {
       return;
     }
     const content = await file.text();
+    if (throttled && this.lastWrittenContent.get(wsPath)?.content === content) {
+      // Our own echo: nothing foreign to rescue, so the throttle stands.
+      return;
+    }
     // A note that was created but never given content has nothing worth
     // recovering; skip it instead of storing an empty snapshot.
     if (content.trim() === '') {
@@ -372,26 +422,37 @@ export class NoteSnapshotService extends BaseService {
   }
 
   /**
-   * Best-effort preservation of this tab's outgoing content. Never throws.
-   * Returns false only for a storage failure worth retrying; empty content
-   * and invalid paths count as done.
+   * Best-effort preservation of content displaced by a write outside the
+   * normal FileSystemService path. The external-change editor sync calls this
+   * immediately before replacing a clean editor with the new disk version.
+   * Never throws. Empty content and invalid paths count as preserved: there is
+   * nothing worth recovering.
    */
-  private async preserveContent(
+  async preserveExternalOverwrite(
     wsPath: string,
     content: string,
-  ): Promise<boolean> {
+  ): Promise<PreserveOutcome> {
     try {
-      if (content.trim() === '') {
-        return true;
+      const filePath = WsPath.fromString(wsPath).asFile();
+      if (!filePath?.isMarkdown() || content.trim() === '') {
+        return 'preserved';
+      }
+      if (new Blob([content]).size > NOTE_SNAPSHOT_MAX_CONTENT_BYTES) {
+        // No copy can ever be stored, so the caller must keep this content
+        // rather than let it be destroyed unrecoverably.
+        this.logger.warn(
+          `cannot preserve ${wsPath}: content exceeds the snapshot size limit`,
+        );
+        return 'unpreservable';
       }
       await this.storeSnapshot(wsPath, content);
-      return true;
+      return 'preserved';
     } catch (error) {
       this.logger.warn(
         `could not preserve outgoing content for ${wsPath}`,
         error,
       );
-      return false;
+      return 'retry';
     }
   }
 

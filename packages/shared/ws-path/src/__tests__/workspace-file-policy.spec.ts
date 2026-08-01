@@ -50,3 +50,27 @@ describe('workspace file visibility policy', () => {
     expect(isVisibleWorkspaceFilePath('garden:assets/THUMBS.DB')).toBe(false);
   });
 });
+
+describe('transient swap files', () => {
+  it.each([
+    'ws:note.md.crswap',
+    'ws:docs/other.MD.CRSWAP',
+  ])('hides Chromium swap file %s from workspace listings and watchers', (wsPath) => {
+    expect(isVisibleWorkspaceFilePath(wsPath)).toBe(false);
+  });
+
+  it.each([
+    'ws:export.tmp',
+    'ws:notes/recovered.swp',
+  ])('keeps possibly-legitimate temp-suffixed user file %s visible', (wsPath) => {
+    // .tmp/.swp can be real pre-existing user files (and the asset
+    // pipeline accepts them), so listings and the native FS watcher both
+    // keep them visible; only `.crswap` above is hidden.
+    expect(isVisibleWorkspaceFilePath(wsPath)).toBe(true);
+  });
+
+  it('still shows regular notes and assets', () => {
+    expect(isVisibleWorkspaceFilePath('ws:note.md')).toBe(true);
+    expect(isVisibleWorkspaceFilePath('ws:image.png')).toBe(true);
+  });
+});

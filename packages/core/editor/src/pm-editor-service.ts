@@ -13,11 +13,13 @@ import {
   type PMNode,
   type Schema,
   TextSelection,
+  type Transaction,
 } from '@bangle.io/prosemirror-plugins';
 import {
   displayNameForAsset,
   type FileSystemService,
   type NavigationService,
+  type NoteSnapshotService,
   type StoredMarkdownAsset,
   storeWorkspaceAssetFiles,
   type WorkbenchStateService,
@@ -49,6 +51,7 @@ import {
   EditorSaveQueue,
 } from './editor-save-queue';
 import { setupExtensions } from './extensions';
+import { ExternalContentSync } from './external-content-sync';
 import { findHeadingIndexBySlug } from './heading-slug';
 import { createLocalImageNodeView } from './local-image-node-view';
 import { createEditor } from './pm-setup';
@@ -63,11 +66,21 @@ import {
 } from './round-trip-check';
 
 const ASSET_TOAST_FILE_NAME_MAX_LENGTH = 44;
+
 const EMPTY_WS_PATH_SET: ReadonlySet<string> = new Set();
 
 export type PmEditorServiceConfig = {
   saveCoordinator: EditorSaveCoordinator;
 };
+
+/**
+ * Stable per-path toast id so repeated refusals for the same note update one
+ * toast instead of stacking, and a later successful reconciliation can
+ * withdraw it.
+ */
+function staleExternalContentToastId(wsPath: string): string {
+  return `external-stale-content:${wsPath}`;
+}
 
 function formatFileSize(bytes: number): string {
   const units = ['B', 'KB', 'MB', 'GB'];
@@ -109,6 +122,9 @@ type EditorEntry =
   | {
       name: string;
       editorView: ReturnType<typeof createEditor>;
+      /** Exact source retained while the loaded document remains unchanged. */
+      loadedDoc: EditorView['state']['doc'];
+      loadedMarkdown: string;
       removeFocusListener: () => void;
       wsPath: string;
     }
@@ -129,6 +145,7 @@ export class PmEditorService
   static deps = [
     'fileSystem',
     'navigation',
+    'noteSnapshot',
     'workbenchState',
     'workspaceState',
   ] as const;
@@ -153,16 +170,81 @@ export class PmEditorService
 
   private editors = new Map<HTMLElement, EditorEntry>();
 
+  /**
+   * Markdown parse/serialize loaders keyed by editor schema. Every mounted
+   * editor builds its own `Schema` instance, and parsing creates nodes bound
+   * to the loader's schema — feeding nodes from one editor's schema into
+   * another editor's document makes ProseMirror's replace fitting silently
+   * drop the content. Keying by schema keeps each loader usable only with
+   * the views it belongs to.
+   */
   private markdownBySchema = new WeakMap<
     Schema,
     ReturnType<typeof markdownLoader>
   >();
+
+  private handledExternalChangeSequence = 0;
+  /**
+   * Tells `onDocChange` that the doc change it is seeing was produced by an
+   * external sync (not the user) and must not be re-saved — writing it back
+   * would bump the file's mtime and make sync tools churn on their own change.
+   *
+   * Contract: a plain boolean is enough only because the saveDoc plugin's
+   * `view.update` (and therefore `onDocChange`) runs synchronously inside
+   * `view.dispatch`, which `replaceEditorContent` wraps. If the save pipeline
+   * ever defers off the dispatch (debounce, microtask), this flag must move
+   * onto the transaction itself (a meta read from plugin state).
+   */
+  private applyingExternalSync = false;
+  private staleExternalContentWsPaths = new Set<string>();
+
+  /**
+   * Reconciles open editors with externally changed files. Owns sequencing,
+   * coalescing, and content-stability policy; this service only supplies the
+   * narrow host surface below.
+   */
+  private externalContentSync = new ExternalContentSync(
+    {
+      getViews: (wsPath) =>
+        [...this.readyEditors()]
+          .filter((editor) => editor.wsPath === wsPath)
+          .map((editor) => editor.editorView),
+      getMountedWsPaths: (wsName) => [
+        ...new Set(
+          [...this.readyEditors()]
+            .filter(
+              (editor) =>
+                wsName === undefined ||
+                WsPath.safeParse(editor.wsPath).data?.wsName === wsName,
+            )
+            .map((editor) => editor.wsPath),
+        ),
+      ],
+      hasPendingSaves: (wsPath) => this.saveQueue.hasPendingOrFailed(wsPath),
+      readFileAsText: (wsPath) =>
+        this.dependencies.fileSystem.readFileAsText(wsPath, {
+          signal: this.abortSignal,
+        }),
+      getMarkdown: (schema) => this.getMarkdown(schema),
+      getRetainedSource: (view) => this.getRetainedSource(view),
+      replaceContent: (args) => this.replaceEditorContent(args),
+      onStaleContentRefused: (wsPath) => {
+        this.showStaleExternalContentToast(wsPath);
+      },
+      onContentReconciled: (wsPath) => {
+        this.dismissStaleExternalContentToast(wsPath);
+      },
+      logger: this.logger,
+    },
+    this.abortSignal,
+  );
 
   constructor(
     context: BaseServiceContext,
     private dependencies: {
       fileSystem: FileSystemService;
       navigation: NavigationService;
+      noteSnapshot: NoteSnapshotService;
       workbenchState: WorkbenchStateService;
       workspaceState: WorkspaceStateService;
     },
@@ -214,6 +296,7 @@ export class PmEditorService
             type: 'text/plain',
           }),
         );
+        this.dismissStaleExternalContentToast(wsPath);
       },
       this.emitAppError,
       config.saveCoordinator,
@@ -232,6 +315,9 @@ export class PmEditorService
       this.editors.clear();
       this.lastActiveEditorView = undefined;
       this.rememberedCursors.clear();
+      for (const wsPath of [...this.staleExternalContentWsPaths]) {
+        this.dismissStaleExternalContentToast(wsPath);
+      }
     });
     this.addCleanup(
       this.store.sub(this.dependencies.navigation.$routeInfo, () => {
@@ -268,13 +354,43 @@ export class PmEditorService
           this.dependencies.fileSystem.$fileRenameEvent,
         );
         if (event) {
-          this.handleFileRename(event.oldWsPath, event.wsPath);
+          this.handleFileRename(event.oldWsPath, event.wsPath, event.external);
         }
       }),
     );
+    this.addCleanup(
+      this.store.sub(
+        this.dependencies.fileSystem.$externalFileChangeEvent,
+        () => {
+          const event = this.store.get(
+            this.dependencies.fileSystem.$externalFileChangeEvent,
+          );
+          if (!event || event.sequence <= this.handledExternalChangeSequence) {
+            return;
+          }
+          this.handledExternalChangeSequence = event.sequence;
+          if (event.type === 'file-delete') {
+            this.dismissStaleExternalContentToast(event.wsPath);
+          }
+          this.externalContentSync.handleEvent(event);
+        },
+      ),
+    );
   }
 
-  private handleFileRename(oldWsPath: string, newWsPath: string): void {
+  private handleFileRename(
+    oldWsPath: string,
+    newWsPath: string,
+    external: boolean,
+  ): void {
+    this.dismissStaleExternalContentToast(oldWsPath);
+    // A local rename drains this queue before moving the file. A rename from
+    // another tab has no such guarantee: keep a pending/failed editor on its
+    // old path so its only unsaved body stays mounted and fails visibly rather
+    // than being retargeted over the renamed file.
+    if (external && this.saveQueue.hasPendingOrFailed(oldWsPath)) {
+      return;
+    }
     this.saveQueue.relocate(oldWsPath, newWsPath);
 
     for (const [domNode, editor] of this.editors) {
@@ -335,8 +451,15 @@ export class PmEditorService
         store: this.store as Store,
         domNode,
         onDocChange: (doc) => {
-          const currentWsPath = this.editors.get(domNode)?.wsPath ?? wsPath;
-          this.saveQueue.enqueue(currentWsPath, doc);
+          if (this.applyingExternalSync) {
+            // External sync applying disk content — must not be re-saved;
+            // see applyingExternalSync.
+            return;
+          }
+          this.saveQueue.enqueue(
+            this.editors.get(domNode)?.wsPath ?? wsPath,
+            doc,
+          );
         },
         extensions: this.extensions,
         nodeViews: {
@@ -355,6 +478,8 @@ export class PmEditorService
       this.editors.set(domNode, {
         name,
         editorView,
+        loadedDoc: editorView.state.doc,
+        loadedMarkdown: content ?? '',
         removeFocusListener: () => {
           editorView.dom.removeEventListener('focusin', handleFocusIn);
         },
@@ -423,6 +548,14 @@ export class PmEditorService
     this.editors.delete(domNode);
     if (editor) {
       this.setRoundTripWarning(editor.wsPath, false);
+      if (
+        'editorView' in editor &&
+        ![...this.readyEditors()].some(
+          (mountedEditor) => mountedEditor.wsPath === editor.wsPath,
+        )
+      ) {
+        this.dismissStaleExternalContentToast(editor.wsPath);
+      }
     }
   }
 
@@ -486,6 +619,88 @@ export class PmEditorService
     }
   }
 
+  /**
+   * The external sync confirmed the disk copy of `wsPath` differs but
+   * refused to auto-apply it (fidelity, emptied-file, schema, or parse
+   * refusal). Without this the user would keep looking at silently stale
+   * content with only a console warning. The offered action loads the disk
+   * version into this note's editors in place — deliberately not a UI reload,
+   * which would tear down every editor and could strand another note's pending
+   * or failed save.
+   */
+  private showStaleExternalContentToast(wsPath: string): void {
+    const fileName = WsPath.safeParseFile(wsPath).data?.fileName ?? wsPath;
+    this.staleExternalContentWsPaths.add(wsPath);
+    toast.warning(t.app.toasts.externalChangeNotApplied({ fileName }), {
+      id: staleExternalContentToastId(wsPath),
+      duration: Number.POSITIVE_INFINITY,
+      cancel: {
+        label: t.app.common.dismiss,
+        onClick: () => {},
+      },
+      action: {
+        label: t.app.toasts.loadDiskVersion,
+        onClick: () => {
+          void this.loadDiskVersionIntoEditors(wsPath);
+        },
+      },
+    });
+  }
+
+  private dismissStaleExternalContentToast(wsPath: string): void {
+    if (!this.staleExternalContentWsPaths.delete(wsPath)) {
+      return;
+    }
+    toast.dismiss(staleExternalContentToastId(wsPath));
+  }
+
+  /**
+   * User-consented recovery for external changes the automatic sync
+   * refused: replaces only this note's open editors with the current disk
+   * content, then runs the same fidelity check as note loading. Unsaved
+   * local edits still win — a note that became dirty since the refusal is
+   * left alone (its save resolves the divergence).
+   */
+  async loadDiskVersionIntoEditors(wsPath: string): Promise<void> {
+    const fileName = WsPath.safeParseFile(wsPath).data?.fileName ?? wsPath;
+    try {
+      const result = await this.externalContentSync.acceptDiskVersion(wsPath);
+      if (result.unavailable) {
+        this.logger.warn(
+          `Disk version of ${wsPath} could not be read; keeping the editor content`,
+        );
+        this.dismissStaleExternalContentToast(wsPath);
+        toast.error(t.app.toasts.externalDiskVersionUnavailable({ fileName }));
+        return;
+      }
+      if (result.appliedCount === 0) {
+        // Nothing was replaced — local edits reclaimed the note, or it was
+        // closed. Keep the notice so the user still has a way back to disk
+        // instead of silently leaving them on the older content.
+        this.logger.warn(
+          `Disk version of ${wsPath} was not applied; keeping the editor content`,
+        );
+        toast.error(t.app.toasts.externalDiskVersionNotApplied({ fileName }));
+        return;
+      }
+
+      this.logger.info(
+        `${wsPath}: loaded the disk version into ${result.appliedCount} open editor(s) at the user's request`,
+      );
+      // The fidelity notice is refreshed by replaceEditorContent, which every
+      // applied view goes through.
+      if (!result.retry) {
+        this.dismissStaleExternalContentToast(wsPath);
+      }
+    } catch (error) {
+      // Parsing or serializing the disk copy threw. The notice stays so the
+      // user keeps a way back, but they must be told the action did nothing —
+      // a deterministic parse failure will never succeed on retry.
+      this.logger.warn(`Could not load the disk version of ${wsPath}`, error);
+      toast.error(t.app.toasts.externalDiskVersionNotApplied({ fileName }));
+    }
+  }
+
   private setRoundTripWarning(wsPath: string, hasWarning: boolean): void {
     const current = this.store.get(this.$roundTripWarnings);
     if (current.has(wsPath) === hasWarning) {
@@ -498,6 +713,112 @@ export class PmEditorService
       next.delete(wsPath);
     }
     this.store.set(this.$roundTripWarnings, next);
+  }
+
+  /**
+   * A freshly loaded note may contain Markdown the editor cannot serialize
+   * byte-for-byte. While its document is unchanged, that exact source is what
+   * must be preserved when external content replaces it — not a normalized
+   * re-serialization.
+   */
+  private getRetainedSource(view: EditorView): string | undefined {
+    for (const editor of this.readyEditors()) {
+      if (editor.editorView === view && editor.loadedDoc === view.state.doc) {
+        return editor.loadedMarkdown;
+      }
+    }
+    return undefined;
+  }
+
+  /**
+   * Whether this view may still be replaced from disk. Re-checked after every
+   * await in `replaceEditorContent`, so it lives in one place: two hand-copied
+   * condition chains had already drifted apart.
+   */
+  private checkReplaceable(
+    view: EditorView,
+    expectedDoc: EditorView['state']['doc'],
+    wsPath: string,
+  ): 'ok' | 'retry' | 'skipped' {
+    if (
+      this.abortSignal.aborted ||
+      this.saveQueue.hasPendingOrFailed(wsPath) ||
+      view.isDestroyed ||
+      view.state.doc !== expectedDoc ||
+      this.getEditorEntryByView(view)?.wsPath !== wsPath
+    ) {
+      return 'skipped';
+    }
+    // Replacing the doc mid-composition silently drops uncommitted input.
+    return view.composing ? 'retry' : 'ok';
+  }
+
+  /**
+   * The single lifecycle for replacing a mounted editor from disk. Snapshot
+   * storage is asynchronous, so every safety condition is checked both before
+   * and after it; in particular an IME composition that begins while the
+   * snapshot is being stored must never be destroyed by the replacement.
+   */
+  private async replaceEditorContent({
+    expectedDoc,
+    preservableSource,
+    sourceMarkdown,
+    transaction,
+    view,
+    wsPath,
+  }: {
+    expectedDoc: EditorView['state']['doc'];
+    preservableSource: string;
+    sourceMarkdown: string;
+    transaction: Transaction;
+    view: EditorView;
+    wsPath: string;
+  }): Promise<'applied' | 'refused' | 'retry' | 'skipped'> {
+    const before = this.checkReplaceable(view, expectedDoc, wsPath);
+    if (before !== 'ok') {
+      return before;
+    }
+
+    const preserved =
+      await this.dependencies.noteSnapshot.preserveExternalOverwrite(
+        wsPath,
+        preservableSource,
+      );
+    if (preserved === 'retry') {
+      return 'retry';
+    }
+    if (preserved === 'unpreservable') {
+      // Applying disk content would destroy the editor's copy with no
+      // recovery path, so keep it and tell the user instead.
+      return 'refused';
+    }
+
+    const after = this.checkReplaceable(view, expectedDoc, wsPath);
+    if (after !== 'ok') {
+      return after;
+    }
+
+    this.applyingExternalSync = true;
+    try {
+      view.dispatch(transaction);
+    } finally {
+      this.applyingExternalSync = false;
+    }
+
+    const editor = this.getEditorEntryByView(view);
+    if (editor?.wsPath === wsPath) {
+      editor.loadedDoc = view.state.doc;
+      editor.loadedMarkdown = sourceMarkdown;
+    }
+    // The newly loaded source has its own fidelity: external content may
+    // normalize on save where the previous content did not, or vice versa.
+    // Auto-applied content needs this as much as a user-requested load.
+    this.checkRoundTripFidelity({
+      content: sourceMarkdown,
+      editorView: view,
+      wsPath,
+    });
+    return 'applied';
   }
 
   getEditorLoadStatus(
@@ -1130,6 +1451,15 @@ export class PmEditorService
     );
     this.markdownBySchema.set(schema, markdown);
     return markdown;
+  }
+
+  /** Mounted editors whose view is created and not destroyed. */
+  private *readyEditors(): Generator<ReadyEditorEntry> {
+    for (const editor of this.editors.values()) {
+      if ('editorView' in editor && !editor.editorView.isDestroyed) {
+        yield editor;
+      }
+    }
   }
 
   private getActiveEditorView() {

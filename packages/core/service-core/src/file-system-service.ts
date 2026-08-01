@@ -2,6 +2,7 @@ import {
   assertIsDefined,
   BaseService,
   type BaseServiceContext,
+  classifyEventSender,
   getEventSenderMetadata,
   throwAppError,
 } from '@bangle.io/base-utils';
@@ -12,6 +13,7 @@ import {
 } from '@bangle.io/constants';
 import type {
   BaseFileStorageService,
+  EventSenderMetadata,
   FileStat,
   ScopedEmitter,
 } from '@bangle.io/types';
@@ -36,10 +38,32 @@ export type FileCreateEvent = {
 };
 
 export type FileRenameEvent = {
+  external: boolean;
   oldWsPath: string;
   sequence: number;
   wsPath: string;
 };
+
+/**
+ * A file change that did NOT originate from this browsing context — detected
+ * by a storage watcher (e.g. a sync tool editing a Native FS workspace) or
+ * broadcast from another tab. `refresh` means "something changed, re-read
+ * what you depend on" without a specific path.
+ */
+type ExternalFileChangePayload =
+  | {
+      type: 'file-create' | 'file-content-update' | 'file-delete';
+      wsPath: string;
+    }
+  | {
+      type: 'refresh';
+      /** The workspace the refresh concerns; absent = app-wide. */
+      wsName?: string;
+    };
+
+export type ExternalFileChangeEvent = {
+  sequence: number;
+} & ExternalFileChangePayload;
 
 type FileReadOptions = {
   signal?: AbortSignal;
@@ -70,10 +94,14 @@ export class FileSystemService extends BaseService {
   $fileCreateEvent = atom<FileCreateEvent | undefined>(undefined);
   $fileContentUpdateEvent = atom<FileContentUpdateEvent | undefined>(undefined);
   $fileRenameEvent = atom<FileRenameEvent | undefined>(undefined);
+  $externalFileChangeEvent = atom<ExternalFileChangeEvent | undefined>(
+    undefined,
+  );
 
   private fileCreateSequence = 0;
   private fileContentUpdateSequence = 0;
   private fileRenameSequence = 0;
+  private externalFileChangeSequence = 0;
 
   $fileTreeChangeCount = atom((get) => {
     return (
@@ -95,6 +123,8 @@ export class FileSystemService extends BaseService {
     private config: {
       emitter: ScopedEmitter<'event::file:update' | 'event::file:force-update'>;
       getFileStorageServices: () => Record<string, BaseFileStorageService>;
+      /** This browsing context's event-sender id (BROWSING_CONTEXT_ID). */
+      selfSenderId: string;
     },
   ) {
     super(SERVICE_NAME.fileSystemService, context, dependencies);
@@ -108,12 +138,18 @@ export class FileSystemService extends BaseService {
 
     this.config.emitter.on(
       'event::file:force-update',
-      () => {
+      (event) => {
         this.store.set(this.$fileCreateCount, (c) => c + 1);
         this.store.set(this.$fileContentUpdateCount, (c) => c + 1);
         this.store.set(this.$fileDeleteCount, (c) => c + 1);
         this.store.set(this.$fileRenameCount, (c) => c + 1);
         this.store.set(this.$fileForceUpdateCount, (c) => c + 1);
+        if (this.isExternalSender(event.sender)) {
+          this.setExternalFileChangeEvent({
+            type: 'refresh',
+            wsName: event.wsName,
+          });
+        }
       },
       this.abortSignal,
     );
@@ -121,6 +157,13 @@ export class FileSystemService extends BaseService {
     this.config.emitter.on(
       'event::file:update',
       (event) => {
+        const isExternal = this.isExternalSender(event.sender);
+        if (isExternal && event.type !== 'file-rename') {
+          this.setExternalFileChangeEvent({
+            type: event.type,
+            wsPath: event.wsPath,
+          });
+        }
         switch (event.type) {
           case 'file-create': {
             this.store.set(this.$fileCreateCount, (c) => c + 1);
@@ -129,15 +172,16 @@ export class FileSystemService extends BaseService {
               sequence: this.fileCreateSequence,
               wsPath: event.wsPath,
             });
+            // Observers cannot distinguish a new path from an atomic
+            // temp-to-target replacement. External creates therefore also
+            // invalidate indexes derived from file content.
+            if (isExternal) {
+              this.recordFileContentUpdate(event.wsPath);
+            }
             break;
           }
           case 'file-content-update': {
-            this.store.set(this.$fileContentUpdateCount, (c) => c + 1);
-            this.fileContentUpdateSequence += 1;
-            this.store.set(this.$fileContentUpdateEvent, {
-              sequence: this.fileContentUpdateSequence,
-              wsPath: event.wsPath,
-            });
+            this.recordFileContentUpdate(event.wsPath);
             break;
           }
           case 'file-delete': {
@@ -148,12 +192,22 @@ export class FileSystemService extends BaseService {
             if (event.oldWsPath) {
               this.fileRenameSequence += 1;
               this.store.set(this.$fileRenameEvent, {
+                external: isExternal,
                 oldWsPath: event.oldWsPath,
                 sequence: this.fileRenameSequence,
                 wsPath: event.wsPath,
               });
             }
             this.store.set(this.$fileRenameCount, (c) => c + 1);
+            if (isExternal) {
+              // $fileRenameEvent retargets editors when the origin is known.
+              // A coarse refresh then reconciles their content and also
+              // covers origin-less rename events.
+              this.setExternalFileChangeEvent({
+                type: 'refresh',
+                wsName: WsPath.safeParse(event.wsPath).data?.wsName,
+              });
+            }
             break;
           }
           default: {
@@ -163,6 +217,27 @@ export class FileSystemService extends BaseService {
       },
       this.abortSignal,
     );
+  }
+
+  private isExternalSender(sender: EventSenderMetadata): boolean {
+    return classifyEventSender(sender, this.config.selfSenderId).external;
+  }
+
+  private setExternalFileChangeEvent(event: ExternalFileChangePayload): void {
+    this.externalFileChangeSequence += 1;
+    this.store.set(this.$externalFileChangeEvent, {
+      sequence: this.externalFileChangeSequence,
+      ...event,
+    });
+  }
+
+  private recordFileContentUpdate(wsPath: string): void {
+    this.store.set(this.$fileContentUpdateCount, (count) => count + 1);
+    this.fileContentUpdateSequence += 1;
+    this.store.set(this.$fileContentUpdateEvent, {
+      sequence: this.fileContentUpdateSequence,
+      wsPath,
+    });
   }
 
   /**

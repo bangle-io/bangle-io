@@ -1,7 +1,7 @@
 import { EDITOR_GUTTER_PADDING_LEFT } from '@bangle.io/constants';
-import { useCoreServices } from '@bangle.io/context';
+import { type EditorEngineContract, useCoreServices } from '@bangle.io/context';
 import { useAtomValue } from 'jotai';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useSyncExternalStore } from 'react';
 import { LinkedMentions } from '../components/backlinks/linked-mentions';
 import { EditorSurface } from '../components/editor-surface';
 import { NoteNotFoundView } from '../components/feedback/note-not-found-view';
@@ -14,6 +14,35 @@ const MAIN_EDITOR_NAME = 'main-editor';
 // APP_MAIN_CONTENT_PADDING with the left side widened for the block handle.
 const EDITOR_CONTENT_PADDING = `py-4 pt-0 pr-4 md:pr-6 ${EDITOR_GUTTER_PADDING_LEFT}`;
 
+type SaveStatusSource = Pick<
+  EditorEngineContract,
+  'hasPendingOrFailedSave' | 'subscribeToSaveStatus'
+>;
+
+/**
+ * Save status lives outside Jotai, so it has to be subscribed to rather than
+ * read during render: otherwise a save that settles after the file tree
+ * dropped the path would never re-render this page.
+ */
+function useHasPendingSave(
+  saveStatus: SaveStatusSource,
+  wsPath: string | undefined,
+): boolean {
+  const subscribe = useCallback(
+    (onStoreChange: () => void) =>
+      wsPath === undefined
+        ? () => {}
+        : saveStatus.subscribeToSaveStatus(onStoreChange, wsPath),
+    [saveStatus, wsPath],
+  );
+  const getSnapshot = useCallback(
+    () => wsPath !== undefined && saveStatus.hasPendingOrFailedSave(wsPath),
+    [saveStatus, wsPath],
+  );
+
+  return useSyncExternalStore(subscribe, getSnapshot);
+}
+
 export function PageEditor() {
   const coreServices = useCoreServices();
   const currentWsPath = useAtomValue(
@@ -25,24 +54,33 @@ export function PageEditor() {
   const $forceReloadCounter = useAtomValue(
     coreServices.editorService.$forceReloadCounter,
   );
+  const routeWsPath = useAtomValue(coreServices.navigation.$wsFilePath);
   const routeWsName = useAtomValue(coreServices.navigation.$wsName);
+  const hasPendingSave = useHasPendingSave(
+    coreServices.editorEngine,
+    routeWsPath?.wsPath,
+  );
+  // A watcher-driven rename/delete removes the route path from the file tree.
+  // Keep a dirty editor mounted so its only unsaved copy remains recoverable.
+  const editorWsPath =
+    currentWsPath ?? (hasPendingSave ? routeWsPath : undefined);
 
   const editorKey = useMemo(() => {
-    return currentWsPath
-      ? `editor::${MAIN_EDITOR_NAME}:${currentWsPath.wsPath}:${$forceReloadCounter}`
+    return editorWsPath
+      ? `editor::${MAIN_EDITOR_NAME}:${editorWsPath.wsPath}:${$forceReloadCounter}`
       : `${MAIN_EDITOR_NAME}:${$forceReloadCounter}`;
-  }, [currentWsPath, $forceReloadCounter]);
+  }, [editorWsPath, $forceReloadCounter]);
 
   return (
     <>
       <AppHeader />
       <PageContentContainer applyPadding={false}>
-        {currentWsPath && currentWsName ? (
+        {editorWsPath && currentWsName ? (
           <>
             <EditorSurface
               key={editorKey}
               name={editorKey}
-              wsPath={currentWsPath.wsPath}
+              wsPath={editorWsPath.wsPath}
               className={EDITOR_CONTENT_PADDING}
             />
             {/* Clicking the empty space under a short note puts the caret back
@@ -60,7 +98,9 @@ export function PageEditor() {
               tabIndex={-1}
               type="button"
             />
-            <LinkedMentions currentWsPath={currentWsPath} />
+            {/* The editor can outlive the tree entry when a dirty note is
+                externally renamed or deleted, so this has no path to render. */}
+            {currentWsPath && <LinkedMentions currentWsPath={currentWsPath} />}
           </>
         ) : !currentWsName ? (
           <WorkspaceNotFoundView wsName={routeWsName} />

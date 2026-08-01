@@ -1,5 +1,7 @@
+import { getEventSenderMetadata } from '@bangle.io/base-utils';
 import {
   DATABASE_TABLE_NAME,
+  EXTERNAL_FILE_CHANGE_SENDER_TAG,
   WORKSPACE_STORAGE_TYPE,
 } from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
@@ -8,6 +10,9 @@ import { countWords } from '../note-snapshot-service';
 
 const TEST_WS_NAME = 'test-ws';
 const NOTE_WS_PATH = `${TEST_WS_NAME}:note.md`;
+const SELF_WATCHER_SENDER = getEventSenderMetadata({
+  tag: EXTERNAL_FILE_CHANGE_SENDER_TAG,
+});
 
 async function setup({
   minCaptureIntervalMs = 0,
@@ -230,6 +235,128 @@ describe('NoteSnapshotService', () => {
     controller.abort();
   });
 
+  it('retains outgoing content across a watcher create echo', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-07-21T00:00:00Z'));
+    const { controller, services, testEnv } = await setup({
+      minCaptureIntervalMs: 60_000,
+    });
+    await services.fileSystem.createTextFile(NOTE_WS_PATH, 'v1');
+    await writeNote(services, NOTE_WS_PATH, 'v2 from this tab');
+    vi.advanceTimersByTime(11 * 60_000);
+
+    // NativeFS atomic replacement can surface as temp-file -> visible-file,
+    // which the watcher reports as a create even though this was our write.
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-create',
+      wsPath: NOTE_WS_PATH,
+      sender: SELF_WATCHER_SENDER,
+    });
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-content-update',
+      wsPath: NOTE_WS_PATH,
+      sender: { id: 'some-other-tab', tag: 'file-system-service' },
+    });
+
+    await vi.waitFor(async () => {
+      const snapshots = await services.noteSnapshot.listSnapshots();
+      const contents = await Promise.all(
+        snapshots.map(
+          async ({ id }) =>
+            (await services.noteSnapshot.getSnapshot(id))?.content,
+        ),
+      );
+      expect(contents).toContain('v2 from this tab');
+    });
+    controller.abort();
+  });
+
+  it('re-captures same-tab watcher content despite the throttle', async () => {
+    const { controller, services, testEnv } = await setup({
+      minCaptureIntervalMs: 60_000,
+    });
+    await services.fileSystem.createTextFile(NOTE_WS_PATH, 'v1');
+    await writeNote(services, NOTE_WS_PATH, 'v2 from this tab');
+
+    // Production watcher events carry this browsing context's id plus the
+    // external-change tag. Write storage directly to model the external edit.
+    await services.fileStorageMemory.writeFile(
+      NOTE_WS_PATH,
+      new File(['external disk content'], 'note.md'),
+    );
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-content-update',
+      wsPath: NOTE_WS_PATH,
+      sender: SELF_WATCHER_SENDER,
+    });
+
+    await writeNote(services, NOTE_WS_PATH, 'v3 local overwrite');
+    const snapshots = await services.noteSnapshot.listSnapshots();
+    const newest = await services.noteSnapshot.getSnapshot(
+      snapshots[0]?.id ?? '',
+    );
+    expect(newest?.content).toBe('external disk content');
+    controller.abort();
+  });
+
+  it('keeps capturing local versions once the throttle window has passed', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-07-21T00:00:00Z'));
+    const { controller, services, testEnv } = await setup({
+      minCaptureIntervalMs: 60_000,
+    });
+    await services.fileSystem.createTextFile(NOTE_WS_PATH, 'v1');
+    await writeNote(services, NOTE_WS_PATH, 'v2 from this tab');
+
+    // A watched workspace echoes every one of this tab's own writes back. That
+    // must not switch off ordinary snapshot history: after the throttle window
+    // the next save still has to preserve the version it overwrites.
+    // Spaced past the retention thinning bucket so each version survives.
+    for (const content of ['v3 from this tab', 'v4 from this tab']) {
+      testEnv.rootEmitter.emit('event::file:update', {
+        type: 'file-content-update',
+        wsPath: NOTE_WS_PATH,
+        sender: SELF_WATCHER_SENDER,
+      });
+      vi.advanceTimersByTime(11 * 60_000);
+      await writeNote(services, NOTE_WS_PATH, content);
+    }
+
+    const snapshots = await services.noteSnapshot.listSnapshots();
+    const contents = await Promise.all(
+      snapshots.map(
+        async ({ id }) =>
+          (await services.noteSnapshot.getSnapshot(id))?.content,
+      ),
+    );
+    expect(contents).toEqual(
+      expect.arrayContaining(['v1', 'v2 from this tab', 'v3 from this tab']),
+    );
+    controller.abort();
+  });
+
+  it('does not snapshot a same-tab watcher echo as external content', async () => {
+    const { controller, services, testEnv } = await setup({
+      minCaptureIntervalMs: 60_000,
+    });
+    await services.fileSystem.createTextFile(NOTE_WS_PATH, 'v1');
+    await writeNote(services, NOTE_WS_PATH, 'v2 from this tab');
+
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-content-update',
+      wsPath: NOTE_WS_PATH,
+      sender: SELF_WATCHER_SENDER,
+    });
+    await writeNote(services, NOTE_WS_PATH, 'v3 from this tab');
+
+    const snapshots = await services.noteSnapshot.listSnapshots();
+    expect(snapshots).toHaveLength(1);
+    await expect(
+      services.noteSnapshot.getSnapshot(snapshots[0]?.id ?? ''),
+    ).resolves.toMatchObject({ content: 'v1' });
+    controller.abort();
+  });
+
   it('preserves each cached outgoing version only once', async () => {
     vi.useFakeTimers({ toFake: ['Date'] });
     vi.setSystemTime(new Date('2026-07-21T00:00:00Z'));
@@ -408,6 +535,19 @@ describe('NoteSnapshotService', () => {
     // Overwriting the huge note does not snapshot the huge content.
     await writeNote(services, NOTE_WS_PATH, 'small again');
     expect(await services.noteSnapshot.listSnapshots()).toHaveLength(1);
+    controller.abort();
+  });
+
+  it('reports externally displaced editor content over the size limit as unpreservable', async () => {
+    const { controller, services } = await setup();
+    const huge = `# big\n${'word '.repeat(1_000_000)}`;
+
+    // Reporting this as preserved would let the caller destroy the only
+    // remaining copy of the note.
+    await expect(
+      services.noteSnapshot.preserveExternalOverwrite(NOTE_WS_PATH, huge),
+    ).resolves.toBe('unpreservable');
+    expect(await services.noteSnapshot.listSnapshots()).toEqual([]);
     controller.abort();
   });
 

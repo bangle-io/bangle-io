@@ -9,6 +9,7 @@ import {
   DEFAULT_EDITOR_ENGINE,
   EDITOR_ENGINE_QUERY_PARAM,
   type EditorEngineId,
+  EXTERNAL_FILE_CHANGE_SENDER_TAG,
   isEditorEngineId,
 } from '@bangle.io/constants';
 import type { EditorSaveCoordinator } from '@bangle.io/editor';
@@ -23,10 +24,12 @@ import {
   FileStorageNativeFs,
   HashStrategy,
   IdbDatabaseService,
+  onPageReturn,
 } from '@bangle.io/service-platform';
 import type {
   BaseServiceCommonOptions,
   CommandHandler,
+  FileStorageExternalChangeEvent,
   RootEmitter,
 } from '@bangle.io/types';
 import { createServiceSetup } from './service-setup';
@@ -39,6 +42,20 @@ export function readEditorEngineFromUrl(
   );
   return isEditorEngineId(engineId) ? engineId : DEFAULT_EDITOR_ENGINE;
 }
+
+/**
+ * Per-path watcher changes carry the same meaning as the app's own file
+ * mutations; only the event names differ. The `Record` key type keeps this
+ * exhaustive over the non-`refresh` cases.
+ */
+const EXTERNAL_CHANGE_TO_FILE_EVENT = {
+  create: 'file-create',
+  update: 'file-content-update',
+  delete: 'file-delete',
+} as const satisfies Record<
+  Exclude<FileStorageExternalChangeEvent['type'], 'refresh'>,
+  string
+>;
 
 export function initializeServices(
   commonOpts: BaseServiceCommonOptions,
@@ -53,6 +70,9 @@ export function initializeServices(
   // a core service. The lookup is late-bound: it is wired right after the
   // setup is created and only runs after services are instantiated.
   let getWorkspaceOps: (() => WorkspaceOpsService) | undefined;
+  // Same late-binding for the router, whose page-lifecycle stream drives
+  // native FS page-return revalidation.
+  let getRouter: (() => BrowserRouterService) | undefined;
 
   const browserPlatformServices = {
     errorService: slot(BrowserErrorHandlerService, () => ({
@@ -79,6 +99,32 @@ export function initializeServices(
     fileStorageNativeFs: slot(FileStorageNativeFs, () => ({
       onChange: (change) => {
         commonOpts.logger.info('File storage change:', change);
+      },
+      // External edits (sync tools, other editors) feed the same typed event
+      // pipeline as the app's own file mutations, so the file tree, indexes,
+      // and editors react to them identically — the sender tag is what lets
+      // consumers tell the two apart.
+      onExternalChange: (change) => {
+        commonOpts.logger.info('External file storage change:', change);
+        const sender = getEventSenderMetadata({
+          tag: EXTERNAL_FILE_CHANGE_SENDER_TAG,
+        });
+        if (change.type === 'refresh') {
+          rootEmitter.emit('event::file:force-update', {
+            wsName: change.wsName,
+            sender,
+          });
+          return;
+        }
+        rootEmitter.emit('event::file:update', {
+          type: EXTERNAL_CHANGE_TO_FILE_EVENT[change.type],
+          wsPath: change.wsPath,
+          sender,
+        });
+      },
+      subscribePageReturn: (listener, signal) => {
+        assertIsDefined(getRouter, 'getRouter');
+        onPageReturn(getRouter().emitter, listener, signal);
       },
       getRootDirHandle: async (wsName: string) => {
         assertIsDefined(getWorkspaceOps, 'getWorkspaceOps');
@@ -124,6 +170,7 @@ export function initializeServices(
   });
 
   getWorkspaceOps = () => setup.getServices().workspaceOps;
+  getRouter = () => setup.getServices().router;
 
   setup.instantiate();
 

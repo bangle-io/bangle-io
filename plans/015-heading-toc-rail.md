@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-13
-updated: 2026-07-24
+updated: 2026-08-01
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/642
@@ -33,7 +33,7 @@ editor engine is ProseMirror (`packages/core/editor` /
 heading APIs are stubs, so this plan targets the ProseMirror stack with a
 seam that wordgard can adopt later.
 
-Verified against `main` 2026-07-24.
+Verified against `main` 2026-08-01.
 
 ## UX behavior
 

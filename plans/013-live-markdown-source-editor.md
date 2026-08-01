@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-12
-updated: 2026-07-19
+updated: 2026-08-01
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/630
@@ -431,14 +431,6 @@ Therefore:
 - use `atomicRanges` only for collapsed replacement ranges, and remove them as
   soon as selection/composition intersects the construct.
 
-Official CodeMirror support for mark/widget/replacement/line decorations,
-atomic ranges, viewport rendering, parser extensions, and explicit line
-separators is documented in the
-[decoration example](https://codemirror.net/examples/decoration/) and
-[reference manual](https://codemirror.net/docs/ref/). The current Markdown
-package exposes GFM language support, Markdown parser extensions, and fenced
-code language hooks.
-
 ### Link, wiki-link, and asset behavior
 
 Live Markdown keeps editing mechanics local to CodeMirror:
@@ -777,10 +769,9 @@ reasons to delay the earlier experimental milestones.
 
 ## Next steps
 
-1. Land this plan and add a short pointer from plan 011's raw-editor section.
-2. Build the M0 CodeMirror proof with heading/emphasis reveal, composition,
+1. Build the M0 CodeMirror proof with heading/emphasis reveal, composition,
    mixed line endings, dynamic loading, and a large-note fixture.
-3. Review the proof results and freeze the internal adapter contracts.
-4. Implement M1 as a behavior-preserving `editor-common` extraction.
-5. Land the M2 exact source editor behind `editorMode=live-markdown` with the
+2. Review the proof results and freeze the internal adapter contracts.
+3. Implement M1 as a behavior-preserving `editor-common` extraction.
+4. Land the M2 exact source editor behind `editorMode=live-markdown` with the
    full persistence/switching E2E before adding visual compaction.

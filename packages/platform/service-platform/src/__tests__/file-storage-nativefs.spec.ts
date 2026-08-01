@@ -4,9 +4,11 @@
 
 import { FILE_STORAGE_MAX_FILE_SIZE_BYTES } from '@bangle.io/constants';
 import { isAbortError } from '@bangle.io/mini-js-utils';
+import { NativeFs, type NativeFsWatchHandle } from '@bangle.io/native-fs';
 import { createTestEnvironment } from '@bangle.io/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { FileStorageNativeFs } from '../file-storage-nativefs';
+import type { PageReturnInfo } from '../router/page-return';
 import { testCrossWorkspaceRenameContract } from './file-storage-rename-contract';
 
 class FakeFileHandle {
@@ -105,9 +107,27 @@ class FakeDirectoryHandle {
   }
 }
 
-async function setup(onEntryVisited?: () => void, rootName = 'myWorkspace') {
+afterEach(() => {
+  vi.restoreAllMocks();
+  vi.unstubAllGlobals();
+});
+
+async function setup(
+  onEntryVisited?: () => void,
+  rootName = 'myWorkspace',
+  options: { withExternalChange?: boolean } = {},
+) {
   const { commonOpts } = createTestEnvironment();
   const onChange = vi.fn();
+  const onExternalChange = vi.fn();
+  // Captures the page-return listener the service registers so tests can
+  // simulate the user coming back to the tab.
+  let pageReturnListener: ((info: PageReturnInfo) => void) | undefined;
+  const triggerPageReturn = (
+    info: PageReturnInfo = { returnedFromHidden: true },
+  ) => {
+    pageReturnListener?.(info);
+  };
   const rootDirHandle = new FakeDirectoryHandle(
     rootName,
     onEntryVisited,
@@ -123,10 +143,77 @@ async function setup(onEntryVisited?: () => void, rootName = 'myWorkspace') {
     {
       getRootDirHandle: async () => ({ handle: rootDirHandle }),
       onChange,
+      ...(options.withExternalChange
+        ? {
+            onExternalChange,
+            subscribePageReturn: (listener: (info: PageReturnInfo) => void) => {
+              pageReturnListener = listener;
+            },
+          }
+        : {}),
     },
   );
   await service.mount();
-  return { service, onChange, rootDirHandle };
+  return {
+    service,
+    onChange,
+    onExternalChange,
+    rootDirHandle,
+    triggerPageReturn,
+  };
+}
+
+type ObservedRecord = {
+  type?: string;
+  relativePathComponents?: readonly string[];
+  relativePathMovedFrom?: readonly string[] | null;
+  changedHandle?: { kind: string };
+};
+
+/**
+ * Installs a fake `FileSystemObserver` global and returns a trigger that
+ * feeds change records to whatever callback the adapter registered.
+ */
+function stubFileSystemObserver() {
+  let capturedCallback:
+    | ((records: readonly ObservedRecord[], observer: unknown) => void)
+    | undefined;
+  const observe = vi.fn(async () => undefined);
+  const disconnect = vi.fn();
+
+  class FakeFileSystemObserver {
+    constructor(
+      callback: (records: readonly ObservedRecord[], observer: unknown) => void,
+    ) {
+      capturedCallback = callback;
+    }
+    observe = observe;
+    disconnect = disconnect;
+  }
+  vi.stubGlobal('FileSystemObserver', FakeFileSystemObserver);
+
+  return {
+    observe,
+    disconnect,
+    async emitRecords(records: ObservedRecord[]) {
+      await vi.waitFor(() => {
+        expect(capturedCallback).toBeDefined();
+      });
+      capturedCallback?.(records, undefined);
+    },
+  };
+}
+
+async function setupExternalChangeWatching() {
+  const observer = stubFileSystemObserver();
+  const testSetup = await setup(undefined, 'myWorkspace', {
+    withExternalChange: true,
+  });
+  await testSetup.service.fileExists('myWorkspace:seed.md');
+  await vi.waitFor(() => {
+    expect(observer.observe).toHaveBeenCalledTimes(1);
+  });
+  return { observer, ...testSetup };
 }
 
 describe('FileStorageNativeFs', () => {
@@ -335,5 +422,525 @@ describe('FileStorageNativeFs', () => {
       oldWsPath: 'myWorkspace:a.md',
       newWsPath: 'myWorkspace:sub/b.md',
     });
+  });
+});
+
+describe('external change watching', () => {
+  it('arms one observer for concurrent first access to a workspace', async () => {
+    const observer = stubFileSystemObserver();
+    const { service } = await setup(undefined, 'myWorkspace', {
+      withExternalChange: true,
+    });
+
+    await Promise.all([
+      service.fileExists('myWorkspace:first.md'),
+      service.readFile('myWorkspace:second.md'),
+    ]);
+
+    await vi.waitFor(() => {
+      expect(observer.observe).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('maps visible file records and degrades ambiguous moves to a refresh', async () => {
+    const { observer, onExternalChange } = await setupExternalChangeWatching();
+
+    await observer.emitRecords([
+      {
+        type: 'appeared',
+        relativePathComponents: ['sub', 'new.md'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'modified',
+        relativePathComponents: ['existing.md'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        // Deleted entries carry no handle in real Chrome (kind unknowable);
+        // classification must come from the path shape.
+        type: 'disappeared',
+        relativePathComponents: ['gone.md'],
+      },
+    ]);
+
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'create', wsPath: 'myWorkspace:sub/new.md' },
+      { type: 'update', wsPath: 'myWorkspace:existing.md' },
+      { type: 'delete', wsPath: 'myWorkspace:gone.md' },
+    ]);
+
+    onExternalChange.mockClear();
+    await observer.emitRecords([
+      {
+        type: 'moved',
+        relativePathComponents: ['renamed.md'],
+        relativePathMovedFrom: ['old-name.md'],
+        changedHandle: { kind: 'file' },
+      },
+    ]);
+    expect(onExternalChange).toHaveBeenCalledWith({
+      type: 'refresh',
+      wsName: 'myWorkspace',
+    });
+  });
+
+  it('coalesces one observer burst: duplicates collapse, a coarse record wins alone', async () => {
+    const { observer, onExternalChange } = await setupExternalChangeWatching();
+
+    // Duplicate records for the same path collapse into one event.
+    await observer.emitRecords([
+      {
+        type: 'modified',
+        relativePathComponents: ['a.md'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'modified',
+        relativePathComponents: ['a.md'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'modified',
+        relativePathComponents: ['b.md'],
+        changedHandle: { kind: 'file' },
+      },
+    ]);
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'update', wsPath: 'myWorkspace:a.md' },
+      { type: 'update', wsPath: 'myWorkspace:b.md' },
+    ]);
+
+    // Once any record in the batch demands a coarse refresh, the refresh is
+    // emitted alone — it re-lists the workspace and revalidates open notes,
+    // so per-path events in the same batch would only duplicate that work.
+    onExternalChange.mockClear();
+    await observer.emitRecords([
+      {
+        type: 'modified',
+        relativePathComponents: ['a.md'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'appeared',
+        relativePathComponents: ['sub'],
+        changedHandle: { kind: 'directory' },
+      },
+    ]);
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'refresh', wsName: 'myWorkspace' },
+    ]);
+  });
+
+  it('still reports external changes to a path the app itself just wrote', async () => {
+    // Regression for a removed "self-write echo" ledger: a path+time filter
+    // cannot tell the app's own echo from a sync tool overwriting the same
+    // file moments after a local save, and silently dropped the latter.
+    // Echoes are instead coalesced downstream by content comparison.
+    const observer = stubFileSystemObserver();
+    const { service, onExternalChange } = await setup(
+      undefined,
+      'myWorkspace',
+      {
+        withExternalChange: true,
+      },
+    );
+
+    await service.createFile(
+      'myWorkspace:mine.md',
+      new File(['from the app'], 'mine.md'),
+    );
+    await vi.waitFor(() => {
+      expect(observer.observe).toHaveBeenCalledTimes(1);
+    });
+
+    // A record for the just-written path (echo or a genuinely external
+    // overwrite — indistinguishable here) must flow through.
+    await observer.emitRecords([
+      {
+        type: 'modified',
+        relativePathComponents: ['mine.md'],
+        changedHandle: { kind: 'file' },
+      },
+    ]);
+
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'update', wsPath: 'myWorkspace:mine.md' },
+    ]);
+  });
+
+  it('ignores hidden paths and coalesces unmappable records into one refresh', async () => {
+    const { observer, onExternalChange } = await setupExternalChangeWatching();
+
+    await observer.emitRecords([
+      // Hidden/system files are invisible to the app: ignored entirely.
+      {
+        type: 'modified',
+        relativePathComponents: ['.obsidian', 'config.json'],
+        changedHandle: { kind: 'file' },
+      },
+      // Directory records and unknown/errored records only say "something
+      // changed": they collapse into a single coarse refresh.
+      {
+        type: 'appeared',
+        relativePathComponents: ['new-dir'],
+        changedHandle: { kind: 'directory' },
+      },
+      { type: 'unknown', relativePathComponents: [] },
+      { type: 'errored', relativePathComponents: [] },
+    ]);
+
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'refresh', wsName: 'myWorkspace' },
+    ]);
+  });
+
+  it('coarse-refreshes a deleted directory, whose record has no handle to say so', async () => {
+    const { observer, onExternalChange } = await setupExternalChangeWatching();
+
+    // Real Chrome delivers `disappeared` with changedHandle: null, so a
+    // deleted DIRECTORY is indistinguishable from a file by `kind`. Its
+    // extensionless path is directory-shaped, and its descendants get no
+    // records of their own — only a re-list reconciles the tree.
+    await observer.emitRecords([
+      { type: 'disappeared', relativePathComponents: ['archive'] },
+    ]);
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'refresh', wsName: 'myWorkspace' },
+    ]);
+  });
+
+  it('keeps invisible-to-visible atomic writes targeted but refreshes ambiguous visible moves', async () => {
+    const { observer, onExternalChange } = await setupExternalChangeWatching();
+
+    await observer.emitRecords([
+      // Chromium's own createWritable commit / sync tools' write-to-temp:
+      // the visible file materialized from a transient path. A workspace
+      // refresh here would re-list on EVERY local save (self-writes are
+      // deliberately unfiltered).
+      {
+        type: 'moved',
+        relativePathComponents: ['note.md'],
+        relativePathMovedFrom: ['note.md.crswap'],
+        changedHandle: { kind: 'file' },
+      },
+    ]);
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'create', wsPath: 'myWorkspace:note.md' },
+    ]);
+
+    onExternalChange.mockClear();
+    await observer.emitRecords([
+      // `.tmp` is visible workspace content. A visible-to-visible watcher
+      // move can be either a rename or an atomic target replacement, so the
+      // safe interpretation is a workspace refresh.
+      {
+        type: 'moved',
+        relativePathComponents: ['trash.md.tmp'],
+        relativePathMovedFrom: ['trash.md'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'moved',
+        relativePathComponents: ['b.md.tmp'],
+        relativePathMovedFrom: ['a.md.tmp'],
+        changedHandle: { kind: 'file' },
+      },
+    ]);
+
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'refresh', wsName: 'myWorkspace' },
+    ]);
+  });
+
+  it('coarse-refreshes a moved directory whose dot-named path looks like a file', async () => {
+    const { observer, onExternalChange } = await setupExternalChangeWatching();
+
+    // A directory materializing from an invisible path matches the atomic-write
+    // move shape, but its handle says directory: a targeted file-create here
+    // would tell the app a note named like the folder appeared. Only a re-list
+    // reconciles the tree with the directory's contents.
+    await observer.emitRecords([
+      {
+        type: 'moved',
+        relativePathComponents: ['archive.md'],
+        relativePathMovedFrom: ['archive.md.crswap'],
+        changedHandle: { kind: 'directory' },
+      },
+    ]);
+
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'refresh', wsName: 'myWorkspace' },
+    ]);
+  });
+
+  it('ignores churn inside locations the listing never shows', async () => {
+    const { observer, onExternalChange } = await setupExternalChangeWatching();
+
+    // A workspace pointed at a code repo sees constant `git`/`npm` activity.
+    // None of it can change the workspace listing, and most of these paths
+    // are extensionless so they do not parse as files — without the ignore
+    // check running first, each one would force a full re-list.
+    await observer.emitRecords([
+      {
+        type: 'modified',
+        relativePathComponents: ['.git', 'HEAD'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'modified',
+        relativePathComponents: ['.git', 'index'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'appeared',
+        relativePathComponents: ['.git', 'COMMIT_EDITMSG'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'appeared',
+        relativePathComponents: ['.git', 'objects', 'ab'],
+        changedHandle: { kind: 'directory' },
+      },
+      {
+        type: 'modified',
+        relativePathComponents: ['node_modules', '.bin', 'tsc'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'moved',
+        relativePathComponents: ['.git', 'index'],
+        relativePathMovedFrom: ['.git', 'index.lock'],
+        changedHandle: { kind: 'file' },
+      },
+    ]);
+
+    expect(onExternalChange).not.toHaveBeenCalled();
+  });
+
+  it('still refreshes when a visible directory changes', async () => {
+    const { observer, onExternalChange } = await setupExternalChangeWatching();
+
+    // The ignore check must not swallow real directory changes: adding or
+    // removing a visible folder does change the listing.
+    await observer.emitRecords([
+      {
+        type: 'appeared',
+        relativePathComponents: ['notes'],
+        changedHandle: { kind: 'directory' },
+      },
+    ]);
+
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'refresh', wsName: 'myWorkspace' },
+    ]);
+  });
+
+  it('reports changes to visible temp-suffix files', async () => {
+    const { observer, onExternalChange } = await setupExternalChangeWatching();
+
+    // The listing policy deliberately treats `.tmp`/`.swp` as legitimate
+    // user files, so their watcher updates must not be silently dropped.
+    await observer.emitRecords([
+      {
+        type: 'modified',
+        relativePathComponents: ['export.tmp'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'appeared',
+        relativePathComponents: ['recovered.swp'],
+        changedHandle: { kind: 'file' },
+      },
+      {
+        type: 'modified',
+        relativePathComponents: ['real-note.md'],
+        changedHandle: { kind: 'file' },
+      },
+    ]);
+
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'update', wsPath: 'myWorkspace:export.tmp' },
+      { type: 'create', wsPath: 'myWorkspace:recovered.swp' },
+      { type: 'update', wsPath: 'myWorkspace:real-note.md' },
+    ]);
+  });
+
+  it('revalidates opened workspaces on every page return when no observer exists', async () => {
+    // The observer API is absent here, so watchers can never arm and
+    // page-return revalidation is the only refresh path — it must fire for
+    // hidden-returns AND plain refocus alike. (Collapsing one return's
+    // visibilitychange+focus burst is owned by onPageReturn and covered in
+    // page-return.spec.ts.)
+    const { service, onExternalChange, triggerPageReturn } = await setup(
+      undefined,
+      'myWorkspace',
+      {
+        withExternalChange: true,
+      },
+    );
+
+    // Before any workspace is opened, a page return is a no-op.
+    triggerPageReturn();
+    expect(onExternalChange).not.toHaveBeenCalled();
+
+    await Promise.all([
+      service.fileExists('myWorkspace:seed.md'),
+      service.fileExists('secondWorkspace:seed.md'),
+    ]);
+    // Each opened workspace is refreshed by name, so consumers never have to
+    // re-read workspaces this provider does not even hold.
+    triggerPageReturn({ returnedFromHidden: true });
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'refresh', wsName: 'myWorkspace' },
+      { type: 'refresh', wsName: 'secondWorkspace' },
+    ]);
+
+    onExternalChange.mockClear();
+    triggerPageReturn({ returnedFromHidden: false });
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'refresh', wsName: 'myWorkspace' },
+      { type: 'refresh', wsName: 'secondWorkspace' },
+    ]);
+  });
+
+  it('skips the refresh on plain refocus while a watcher is armed and healthy', async () => {
+    const { onExternalChange, triggerPageReturn } =
+      await setupExternalChangeWatching();
+
+    // The page stayed visible the whole time and the observer was armed:
+    // nothing was missed, so refreshing would re-list the workspace and
+    // re-read every open note on every alt-tab for no reason.
+    triggerPageReturn({ returnedFromHidden: false });
+    expect(onExternalChange).not.toHaveBeenCalled();
+
+    // A return from a hidden/frozen tab refreshes even with a live watcher:
+    // the browser may have starved the observer while the tab was away.
+    triggerPageReturn({ returnedFromHidden: true });
+    expect(onExternalChange).toHaveBeenCalledWith({
+      type: 'refresh',
+      wsName: 'myWorkspace',
+    });
+  });
+
+  it('retries when NativeFs reports that a watcher did not arm', async () => {
+    stubFileSystemObserver();
+    const watchSpy = vi
+      .spyOn(NativeFs.prototype, 'watch')
+      .mockResolvedValue({ armed: false, stop: () => {} });
+    const { service, onExternalChange, triggerPageReturn } = await setup(
+      undefined,
+      'myWorkspace',
+      {
+        withExternalChange: true,
+      },
+    );
+
+    await service.fileExists('myWorkspace:seed.md');
+    await vi.waitFor(() => {
+      expect(watchSpy).toHaveBeenCalledTimes(1);
+    });
+
+    triggerPageReturn({ returnedFromHidden: false });
+    expect(onExternalChange).toHaveBeenCalledWith({
+      type: 'refresh',
+      wsName: 'myWorkspace',
+    });
+    await vi.waitFor(() => {
+      expect(watchSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  it('re-arms on page return after watch setup rejects', async () => {
+    stubFileSystemObserver();
+    const watchSpy = vi
+      .spyOn(NativeFs.prototype, 'watch')
+      .mockRejectedValueOnce(new Error('observer setup failed'))
+      .mockResolvedValue({ armed: true, stop: () => {} });
+    const { service, onExternalChange, triggerPageReturn } = await setup(
+      undefined,
+      'myWorkspace',
+      {
+        withExternalChange: true,
+      },
+    );
+
+    await service.fileExists('myWorkspace:seed.md');
+    await vi.waitFor(() => {
+      expect(watchSpy).toHaveBeenCalledTimes(1);
+    });
+
+    // The rejection must settle the watcher back to idle — a state stuck at
+    // `starting` would permanently disable re-arming — so a page return both
+    // refreshes and retries the observer. Retriggering inside waitFor keeps
+    // the test independent of how fast the rejection handler runs.
+    await vi.waitFor(() => {
+      triggerPageReturn({ returnedFromHidden: false });
+      expect(watchSpy).toHaveBeenCalledTimes(2);
+    });
+    expect(onExternalChange).toHaveBeenCalledWith({
+      type: 'refresh',
+      wsName: 'myWorkspace',
+    });
+  });
+
+  it('refreshes on refocus while a watcher is still starting', async () => {
+    stubFileSystemObserver();
+    let resolveWatch!: (handle: NativeFsWatchHandle) => void;
+    const watchResult = new Promise<NativeFsWatchHandle>((resolve) => {
+      resolveWatch = resolve;
+    });
+    const watchSpy = vi
+      .spyOn(NativeFs.prototype, 'watch')
+      .mockReturnValue(watchResult);
+    const { service, onExternalChange, triggerPageReturn } = await setup(
+      undefined,
+      'myWorkspace',
+      {
+        withExternalChange: true,
+      },
+    );
+
+    await service.fileExists('myWorkspace:seed.md');
+    expect(watchSpy).toHaveBeenCalledTimes(1);
+
+    // Starting prevents duplicate setup, but is not yet healthy enough to
+    // assume that the observer saw everything before this refocus.
+    triggerPageReturn({ returnedFromHidden: false });
+    expect(onExternalChange).toHaveBeenCalledWith({
+      type: 'refresh',
+      wsName: 'myWorkspace',
+    });
+    expect(watchSpy).toHaveBeenCalledTimes(1);
+
+    resolveWatch({ armed: true, stop: () => {} });
+  });
+
+  it('re-arms a dead watcher on page return after the observer errored', async () => {
+    const { observer, onExternalChange, triggerPageReturn } =
+      await setupExternalChangeWatching();
+
+    // Observation broke (e.g. permission loss): one coarse refresh goes out.
+    await observer.emitRecords([
+      { type: 'errored', relativePathComponents: [] },
+    ]);
+    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
+      { type: 'refresh', wsName: 'myWorkspace' },
+    ]);
+
+    // Even a plain refocus re-establishes the observer AND refreshes: with
+    // the watcher dead, anything could have been missed meanwhile.
+    onExternalChange.mockClear();
+    triggerPageReturn({ returnedFromHidden: false });
+    expect(onExternalChange).toHaveBeenCalledWith({
+      type: 'refresh',
+      wsName: 'myWorkspace',
+    });
+    await vi.waitFor(() => {
+      expect(observer.observe).toHaveBeenCalledTimes(2);
+    });
+    // The broken observer is disconnected rather than left attached: stacking
+    // observers would replay every later change once per error cycle.
+    expect(observer.disconnect).toHaveBeenCalledTimes(1);
   });
 });

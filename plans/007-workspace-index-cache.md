@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-06-30
-updated: 2026-07-24
+updated: 2026-08-01
 owner: mixed
 related_prs: []
 related_issues: []
@@ -33,7 +33,9 @@ clearing, and eventual persisted snapshots.
 ## Current Status
 
 Verified against `main` 2026-07-24. No `WorkspaceIndexService` exists; Phase 1
-has not started.
+has not started. Plan 005 item A8 tracks this same service extraction, and
+plan 015 (file-change eventing consolidation) owns the typed-event-vs-counter
+groundwork that the incremental updates below depend on.
 
 - `WorkspaceStateService.$backlinkIndex` builds an in-memory reverse link map
   for the active workspace. A content-update counter triggers a debounced full
@@ -208,76 +210,21 @@ same note should result in one latest reindex task when practical.
 
 ### Persistence
 
-Persisted snapshots should be a second phase after the in-memory service is
-stable.
-
-Potential provider interface:
-
-```ts
-type WorkspaceIndexSnapshot = {
-  schemaVersion: number;
-  wsName: string;
-  generatedAt: number;
-  fileVersions: Record<string, { mtime?: number }>;
-  linkGraph: {
-    outgoingBySource: Record<string, string[]>;
-  };
-};
-
-interface WorkspaceIndexCacheProvider {
-  readSnapshot(wsName: string): Promise<WorkspaceIndexSnapshot | undefined>;
-  writeSnapshot(wsName: string, snapshot: WorkspaceIndexSnapshot): Promise<void>;
-  clearWorkspace(wsName: string): Promise<void>;
-  clearAll(): Promise<void>;
-}
-```
-
-Initial validity can compare known paths and `mtime` where available. If
-metadata is missing or unreliable, load the snapshot as stale and rebuild in
-the background.
+Persisted snapshots are a second phase, after the in-memory service is stable:
+a platform-owned `WorkspaceIndexCacheProvider` storing schema-versioned
+snapshots, loaded stale-while-revalidate by default when file metadata is
+missing or unreliable.
 
 ### Future Indexes
 
-Do not start with a generic plugin framework. Begin with typed fields on one
-service:
-
-- `linkGraph`
-- `search`
-- `noteMetadata`
-
-Extract a generic indexer interface only after the second real index lands and
-the shared lifecycle is proven.
-
-Possible future interface:
-
-```ts
-interface WorkspaceIndexer<TSnapshot> {
-  id: string;
-  build(ctx: WorkspaceIndexBuildContext): Promise<TSnapshot>;
-  update(
-    ctx: WorkspaceIndexUpdateContext,
-    change: WorkspaceFileChange,
-    previous: TSnapshot,
-  ): Promise<TSnapshot>;
-}
-```
+Do not build a generic indexer/plugin framework until the second real index
+(search or note metadata) lands and the shared lifecycle is proven.
 
 ## Migration Plan
 
 ### Phase 0: Lightweight Backlink Index
 
-Completed in the release branch as a scoped cleanup:
-
-- `WorkspaceStateService.$backlinkIndex` builds an in-memory reverse backlink
-  map for the active workspace.
-- `LinkedMentions` renders the service state and no longer reads files from
-  React.
-- Failed rebuilds expose an error state, but do **not** retain last-good data.
-- Extensionless Markdown backlink extraction now resolves through the known
-  note index instead of guessing `.md` before `.markdown`.
-
-This phase deliberately does not introduce the full `WorkspaceIndexService`,
-incremental graph updates, persisted snapshots, or reusable index lifecycle.
+Completed; see Current Status for what shipped and its limitations.
 
 ### Phase 1: Dedicated Workspace Index Service
 

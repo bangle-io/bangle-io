@@ -150,6 +150,13 @@ export const APP_MAIN_CONTENT_PADDING = 'px-4 py-4 pt-0 md:px-6';
  */
 export const EDITOR_GUTTER_PADDING_LEFT = 'pl-10 md:pl-14';
 export type ServiceName = (typeof SERVICE_NAME)[keyof typeof SERVICE_NAME];
+/**
+ * Sender tag on `event::file:update` / `event::file:force-update` events that
+ * originated from a storage watcher observing changes made OUTSIDE this app
+ * (sync tools, other editors). Consumers use it to react to external edits
+ * without re-triggering on the app's own writes.
+ */
+export const EXTERNAL_FILE_CHANGE_SENDER_TAG = 'external-file-change';
 export { browserHistoryStateEvents } from './browser-history-events';
 export { commandExcludedServices, commandKeyToContext } from './command';
 export { THEME_MANAGER_CONFIG } from './theme';

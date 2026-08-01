@@ -717,13 +717,13 @@ describe('cross-tab locking', () => {
 });
 
 describe('watch', () => {
-  it('returns false when FileSystemObserver is unavailable', async () => {
+  it('reports not armed when FileSystemObserver is unavailable', async () => {
     const { fs } = setup();
     const controller = new AbortController();
-    const supported = await fs.watch(() => undefined, {
+    const { armed } = await fs.watch(() => undefined, {
       signal: controller.signal,
     });
-    expect(supported).toBe(false);
+    expect(armed).toBe(false);
   });
 
   it('maps change records and disconnects on abort', async () => {
@@ -745,10 +745,10 @@ describe('watch', () => {
 
     const controller = new AbortController();
     const batches: unknown[] = [];
-    const supported = await fs.watch((changes) => batches.push(changes), {
+    const { armed } = await fs.watch((changes) => batches.push(changes), {
       signal: controller.signal,
     });
-    expect(supported).toBe(true);
+    expect(armed).toBe(true);
     expect(observe).toHaveBeenCalledWith(fs.rootHandle, { recursive: true });
 
     capturedCallback?.(
@@ -777,6 +777,29 @@ describe('watch', () => {
       ],
     ]);
 
+    controller.abort();
+    expect(disconnect).toHaveBeenCalledTimes(1);
+  });
+
+  it('stop disconnects once and survives a later abort', async () => {
+    const { fs } = setup();
+    const disconnect = vi.fn();
+    class FakeObserver {
+      observe = vi.fn(async () => undefined);
+      disconnect = disconnect;
+    }
+    vi.stubGlobal('FileSystemObserver', FakeObserver);
+
+    const controller = new AbortController();
+    const { armed, stop } = await fs.watch(() => undefined, {
+      signal: controller.signal,
+    });
+    expect(armed).toBe(true);
+
+    // Callers re-arming a watcher stop the old one; the signal firing later
+    // must not disconnect a second time.
+    stop();
+    stop();
     controller.abort();
     expect(disconnect).toHaveBeenCalledTimes(1);
   });
