@@ -4,7 +4,7 @@ status: active
 type: plan
 archived: false
 created: 2026-06-30
-updated: 2026-07-24
+updated: 2026-08-01
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/587
@@ -53,44 +53,10 @@ The target behavior is:
 - Failure and recovery coverage should still be expanded for permission loss,
   quota failures, and missing assets without document mutation.
 
-## Legacy Findings
-
-Legacy commit `ec3fd897` (`Feat/images (#62)`) is the useful first pass:
-
-- `extensions/image-extension/parse-local-path.js` resolved Markdown image
-  sources relative to the current note path.
-- The image React node view left `http:`, `https:`, and `data:image/` sources
-  alone.
-- Local image sources were read through workspace storage, converted to object
-  URLs with `URL.createObjectURL(file)`, and revoked during cleanup.
-- Missing local files were silently tolerated in rendering; source Markdown was
-  not rewritten.
-
-Legacy commit `483aea18` (`Feat/image (#77)`) added the pasted-file flow:
-
-- `create-image-nodes.js` accepted pasted/dropped image files, calculated image
-  dimensions, created a workspace image path, saved the original file, and then
-  returned image nodes.
-- `image-writing.js` placed files under a configured image save directory and
-  returned both a storage `wsPath` and a Markdown `srcUrl`.
-- `image-file-helpers.js` added filename helpers for dimensions, timestamps,
-  and scale metadata.
-- `ImageEditorReactComponent.jsx` showed a selected-image floating menu with
-  scale controls.
-
-Do not copy this implementation directly. Reuse the product ideas, but adapt
-them to the current package boundaries, TypeScript code, service wiring, and
-data-safety rules.
-
 ## ProseKit Findings
 
-ProseKit's current image design is a useful reference:
-
-- Image file ingestion is handled through an uploader callback rather than
-  hardcoded inside the base image extension.
-- The editor can show upload/progress/error state through image-specific views.
-- Image attrs support `src`, `alt`, `title`, `width`, and `height`.
-- Resizing is represented in node attrs instead of encoding sizing in `alt`.
+- ProseKit represents image sizing as `width`/`height` node attrs (never
+  encoded in `alt`), the model to follow for any sizing controls here.
 
 Reference docs:
 
@@ -99,18 +65,20 @@ Reference docs:
 
 ## Scope
 
-- Render existing Markdown images in the editor for:
-  - relative paths such as `assets/pic.png` and `./assets/pic.png`;
-  - parent-relative paths such as `../assets/pic.png`;
-  - root-relative workspace paths such as `/assets/pic.png`;
-  - `http:` and `https:` URLs;
-  - `data:image/...` URLs.
-- Persist pasted and dropped image files into the active workspace before
+Shipped (PRs #587, #610, #661):
+
+- Rendering existing Markdown images: relative, parent-relative,
+  root-relative, `http:`/`https:`, and `data:image/...` sources.
+- Persisting pasted and dropped image files into the active workspace before
   inserting editor content.
-- Generate stable, safe Markdown image targets from stored file paths.
-- Preserve `src`, `alt`, and `title` through parse/serialize round trips.
+- Stable, safe Markdown image targets generated from stored file paths.
+- `src`, `alt`, and `title` preserved through parse/serialize round trips.
+
+Remaining:
+
 - Add selected-image UI for editing image metadata and supported sizing.
-- Add unit and Playwright coverage for visible behavior and persistence.
+- Expand unit and Playwright coverage for visible behavior and persistence,
+  especially failure and recovery paths.
 
 ## Out Of Scope
 
@@ -128,18 +96,20 @@ Reference docs:
 
 ### Package Ownership
 
-Keep `packages/js-lib/banger-editor` generic. It may expose better extension
-hooks, attrs, commands, and error callbacks, but it must not import Bangle
-workspace services.
+Keep `packages/js-lib/banger-editor` generic (schema, attrs, commands, error
+callbacks); it must not import Bangle workspace services. Bangle-specific
+storage behavior lives in `packages/core/editor` under `PmEditorService`,
+which already knows the mounted editor views, the current note `wsPath`,
+`FileSystemService`, app error reporting, and the editor save lifecycle.
 
-Put Bangle-specific storage behavior in `packages/core/editor`, owned by
-`PmEditorService`, because that service already knows:
+### Shipped Rendering And Persistence
 
-- the mounted editor views;
-- the current note `wsPath`;
-- `FileSystemService`;
-- app error reporting;
-- editor save lifecycle.
+Rendering, paste/drop persistence, and asset path generation shipped via
+`packages/core/editor/src/asset-file-plugin.ts`,
+`packages/core/editor/src/local-image-node-view.ts`, and
+`packages/core/service-core/src/workspace-asset-storage.ts`. The shipped
+paste/drop mechanism is that asset-file-plugin pipeline — `extensions.ts`
+calls plain `setupImage()`; there is no `createImageNodes` callback.
 
 ### Image Node Schema
 
@@ -163,81 +133,6 @@ release should either:
 
 Do not encode scale in `alt` like legacy did. That mixes display metadata with
 accessibility text.
-
-### Reading Existing Markdown Images
-
-Add an image node view in `core/editor` that receives the current note `wsPath`
-through service configuration or view metadata.
-
-Rendering rules:
-
-- If `src` starts with `http://`, `https://`, or `data:image/`, render it
-  directly.
-- If `src` has another explicit URL scheme, render a blocked/broken state.
-- If `src` is relative or root-relative, resolve it against the current note.
-- Reject paths that escape the workspace root or contain unsafe encoded
-  separators.
-- Read the target file with `fileSystem.readFile(imageWsPath)`.
-- Create an object URL for the returned `File`.
-- Revoke the previous object URL when attrs change, the node view updates, or
-  the node view is destroyed.
-- If the file is missing or unreadable, show a visible broken-image state with
-  useful alt text but never dispatch a document change.
-
-Path resolution should live in the lowest valid shared layer if it is reused by
-links or other asset types. `@bangle.io/ws-path` is the likely home for a typed
-helper such as `resolveWorkspaceAssetPath(currentWsPath, markdownTarget)`.
-
-### Pasting And Dropping Images
-
-Configure `setupImage({ createImageNodes })` from `PmEditorService`.
-
-The custom `createImageNodes` must:
-
-- accept a list of image `File` objects;
-- identify the current note path from the editor view;
-- sanitize the original file name;
-- preserve the original extension when safe and known;
-- derive an image directory;
-- generate a unique target `wsPath`;
-- optionally calculate dimensions using a temporary object URL;
-- await `fileSystem.createFile(targetWsPath, file)`;
-- only create and return the image node after the file write succeeds;
-- emit an app error and return no node on failure.
-
-Do not insert a Markdown image reference before persistence succeeds. A failed
-write must not leave the note pointing at an image file that does not exist.
-
-### Asset Location And Naming
-
-Recommended initial location:
-
-```text
-assets/<note-stem>/<sanitized-original-name>-<timestamp>-<width>x<height>.<ext>
-```
-
-Example:
-
-```text
-assets/research-note/screenshot-20260630142530123-1280x720.png
-```
-
-For notes inside folders, keep asset paths workspace-rooted under `assets/`
-rather than beside the note unless the product wants Obsidian-style colocated
-assets. Rooted `assets/` has simpler sidebar filtering and fewer rename/move
-implications.
-
-Collision policy:
-
-- Check `fileSystem.exists(targetWsPath)`.
-- If occupied, append `-2`, `-3`, etc. before the extension.
-- Keep the original source file bytes unchanged.
-
-Markdown insertion policy:
-
-- Insert a relative Markdown URL from the current note to the asset path.
-- URL-encode path segments for Markdown.
-- Keep the stored filesystem `wsPath` decoded.
 
 ### Selected Image Menu
 
@@ -264,38 +159,8 @@ an image node.
 
 ## Implementation Plan
 
-### Phase 1: Markdown And Path Fidelity
-
-- Add focused round-trip tests for image Markdown:
-  - `![alt](assets/pic.png)`;
-  - `![alt](assets/pic.png "title")`;
-  - paths with spaces and parentheses;
-  - data image source;
-  - image beside wiki links and normal links.
-- Add or reuse a typed resolver for Markdown asset targets.
-- Cover relative, root-relative, encoded space, `..`, and workspace-escape
-  cases.
-
-### Phase 2: Local Image Rendering
-
-- Add a Bangle image node view that resolves and reads local image files.
-- Ensure object URL lifecycle is tested.
-- Add broken-image UI state without document mutation.
-- Add Playwright coverage for loading an existing local image from a fixture
-  workspace.
-- Add Playwright coverage that missing images do not erase the Markdown source
-  after edit/reload.
-
-### Phase 3: Paste And Drop Persistence
-
-- Add Bangle-specific `createImageNodes` wiring in `PmEditorService`.
-- Add filename sanitization and collision-resistant path generation.
-- Add dimension calculation if it is reliable and does not block too long.
-- Await `fileSystem.createFile` before returning nodes.
-- Route failures through `emitAppError`.
-- Add tests for success, collision, invalid image names, and write failure.
-- Add Playwright coverage that paste creates an image file, inserts Markdown,
-  reloads, and still renders.
+Phases 1-3 (Markdown/path fidelity, local image rendering, and paste/drop
+persistence) shipped in PRs #587, #610, and #661.
 
 ### Phase 4: Image Menu
 
@@ -354,15 +219,12 @@ Manual smoke for release candidate:
   is easy.
 - Markdown image syntax does not support width/height. Avoid inventing hidden
   serialization that harms interoperability.
-- Renaming or moving notes will not automatically move assets in the initial
-  design. Root-level `assets/<note-stem>/` reduces ambiguity but does not solve
-  lifecycle cleanup.
+- Renaming or moving notes will not automatically move assets. Tracked as
+  https://github.com/bangle-io/bangle-io/issues/679. Root-level
+  `assets/<note-stem>/` reduces ambiguity but does not solve lifecycle
+  cleanup.
 
 ## Next Steps
 
-- Confirm the asset directory convention: root `assets/<note-stem>/` versus
-  colocated `./assets/<note-stem>/`.
-- Implement Phase 1 path/Markdown tests first.
-- Implement local image node view before paste persistence so existing
-  Markdown fixtures drive the rendering behavior.
-- Implement pasted-image persistence with failure-first tests before UI polish.
+- Implement the selected-image menu (Phase 4).
+- Add recovery and permission-failure coverage (Phase 5).

@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-24
-updated: 2026-07-24
+updated: 2026-08-01
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/669
@@ -68,16 +68,17 @@ a real one rather than theoretical.
 These need answers before implementation, and none should be guessed:
 
 - Directory name and layout, and whether it must be hidden from the file tree,
-  search, backlinks, and the notes table.
+  search, backlinks, and the notes table. The external-change watcher (PR
+  #626) applies the listing's visibility policy before classifying records,
+  so a dot-prefixed directory such as `.bangle/backups/` is ignored by
+  observation for free once #626 merges — the decision reduces to name and
+  layout.
 - Whether a write failure to the snapshot directory (permission loss, quota,
   read-only volume) may ever fail or delay the user's own note write. It must
   not — but the pre-write hook currently sits on the write path, so this needs
   a deliberate answer.
 - Behavior when the user deletes or edits files inside the snapshot directory
   by hand, which they can and eventually will.
-- Whether snapshots should be excluded from the Native FS external-change
-  observation work (PR #626 / issue #521) to avoid a feedback loop where
-  writing a snapshot triggers a change event that triggers another snapshot.
 
 ## Verification
 
@@ -90,8 +91,9 @@ These need answers before implementation, and none should be guessed:
 
 ## Known blockers
 
-Depends on the open questions above, particularly the interaction with
-FileSystemObserver in PR #626.
+Depends on the open questions above, and on PR #626 landing (its watcher-side
+hidden-path exclusion is what keeps a dot-prefixed snapshot directory out of
+external-change observation).
 
 ## Next steps
 

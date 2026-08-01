@@ -1,11 +1,11 @@
 ---
 title: iOS mobile app via Expo shell + WebView
-status: active
+status: blocked
 type: plan
 archived: false
 archived_on:
 created: 2026-07-02
-updated: 2026-07-12
+updated: 2026-08-01
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/567
@@ -38,25 +38,21 @@ Decisions made (2026-07-02, with Kushan):
 
 ## Why this shape
 
-- The web app already runs at 390x844; ProseMirror cannot run in React
-  Native, so any "native" rewrite still ends with the editor in a WebView.
-- Platform coupling is already behind DI seams
-  (`packages/core/initialize-services`): file storage is a registry keyed by
-  workspace type, cross-tab events degrade to an in-memory channel, and the
-  router/error services work in WKWebView.
-- The only hard WKWebView blocker is the File System Access API
-  (`showDirectoryPicker`), which only affects the NativeFS workspace type.
-- A maintainer-provided reference app (private) already proves the EAS +
-  pnpm-monorepo + GitHub Actions pipeline; we reuse its variant scheme
-  (dev/preview/prod bundle IDs, EAS profiles, fingerprint PR builds)
-  without its full-native UI architecture.
+The web app already runs at mobile viewport, ProseMirror ends up in a WebView
+under any architecture, platform coupling already sits behind DI seams, the
+only hard WKWebView blocker (File System Access API) affects only the NativeFS
+workspace type, and a maintainer-provided private reference app proves the
+EAS + pnpm-monorepo + GitHub Actions pipeline.
 
 ## Milestones
 
-PR #567 merged the M0 repository scaffolding: the Expo/WebView package, app
-variants, EAS profiles, and manual GitHub workflow. M0 is not complete until the
-human-owned account/provisioning steps below put the app on a physical phone.
-M1-M3 remain unstarted.
+Current status (2026-08-01): the repo-side M0 scaffolding (Expo/WebView
+package, app variants, EAS profiles, manual GitHub workflow) merged in PR #567
+on 2026-07-02; there has been no repository activity since beyond mechanical
+maintenance. The plan is blocked on the human-owned steps: Apple Developer
+enrollment, Expo account + `eas init` (no `EAS_PROJECT_ID` committed), and the
+`EXPO_TOKEN` secret. M0's exit criterion — the app running on a physical
+phone — is unmet; M1-M3 remain unstarted.
 
 ### M0 — pipeline end-to-end (this plan's exit criterion: app on a phone)
 
