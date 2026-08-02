@@ -15,6 +15,22 @@ import { getEditorLocator } from './common';
 
 const WORKSPACE_DIR = 'sync-notes';
 
+type EchoRead = { content: string | undefined };
+type EchoDebugWindow = Window &
+  typeof globalThis & {
+    __echoReads?: EchoRead[];
+    services: {
+      core: {
+        fileSystem: {
+          readFileAsText: (
+            wsPath: string,
+            options?: { signal?: AbortSignal },
+          ) => Promise<string | undefined>;
+        };
+      };
+    };
+  };
+
 test.beforeEach(async ({ page }) => {
   await page.addInitScript((workspaceDir) => {
     (
@@ -115,8 +131,11 @@ async function restoreAppWrites(page: Page) {
   });
 }
 
-async function createNativeFsWorkspace(page: Page) {
-  await page.goto('/');
+async function createNativeFsWorkspace(
+  page: Page,
+  { debug = false }: { debug?: boolean } = {},
+) {
+  await page.goto(debug ? '/?debug=true' : '/');
   if (await page.getByRole('dialog').isVisible()) {
     await page.keyboard.press('Escape');
   }
@@ -217,6 +236,101 @@ test('externally created and edited files refresh the tree and the open note', a
   // The refresh pipeline must not have clobbered the other note.
   await explorer.getByRole('treeitem', { name: /local-note/ }).click();
   await expect(getEditorLocator(page, {})).toBeVisible();
+});
+
+test('a byte-identical watcher update cannot normalize a locally saved note', async ({
+  page,
+  browserName,
+}) => {
+  test.skip(
+    browserName !== 'chromium',
+    'NativeFS workspaces are Chromium-only',
+  );
+
+  await createNativeFsWorkspace(page, { debug: true });
+  const observerSupported = await page.evaluate(
+    () =>
+      typeof (globalThis as { FileSystemObserver?: unknown })
+        .FileSystemObserver === 'function',
+  );
+  test.skip(
+    !observerSupported,
+    'FileSystemObserver is unavailable in this Chromium build',
+  );
+
+  await page.getByRole('button', { name: 'New Note' }).click();
+  await page.getByLabel('Note name').fill('self-write-echo');
+  await page.getByRole('button', { name: 'Create' }).click();
+  const editor = getEditorLocator(page, {});
+  await expect(editor).toBeVisible();
+
+  await editor.click();
+  await page.keyboard.insertText('xyz   ');
+  await expect
+    .poll(async () => {
+      return page.evaluate(async (workspaceDir) => {
+        const root = await navigator.storage.getDirectory();
+        const dir = await root.getDirectoryHandle(workspaceDir);
+        const handle = await dir.getFileHandle('self-write-echo.md');
+        return (await handle.getFile()).text();
+      }, WORKSPACE_DIR);
+    })
+    .toBe('xyz   ');
+
+  const selectionBefore = await editor.evaluate((root) => {
+    const selection = root.ownerDocument.getSelection();
+    return {
+      anchorOffset: selection?.anchorOffset,
+      focusOffset: selection?.focusOffset,
+    };
+  });
+
+  // OPFS does not report an app write back to its own observer consistently,
+  // so repeat the exact saved bytes through a handle outside the app. Chrome
+  // reports this record identically to a self-write echo. Record reads through
+  // the same FileSystemService seam used by reconciliation so the assertions
+  // below wait for the stable-read protocol instead of relying on a timeout.
+  await page.evaluate(
+    ({ wsPath }) => {
+      const debugWindow = window as EchoDebugWindow;
+      const fileSystem = debugWindow.services.core.fileSystem;
+      const readFileAsText = fileSystem.readFileAsText.bind(fileSystem);
+      debugWindow.__echoReads = [];
+      fileSystem.readFileAsText = async (path, options) => {
+        const content = await readFileAsText(path, options);
+        if (path === wsPath) {
+          debugWindow.__echoReads?.push({ content });
+        }
+        return content;
+      };
+    },
+    {
+      wsPath: `${WORKSPACE_DIR}:self-write-echo.md`,
+    },
+  );
+  await externallyWriteFile(page, 'self-write-echo.md', 'xyz   ');
+
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const reads = (window as EchoDebugWindow).__echoReads ?? [];
+        return reads.filter((read) => read.content === 'xyz   ').length;
+      }),
+    )
+    .toBeGreaterThanOrEqual(2);
+
+  await expect
+    .poll(() => editor.evaluate((root) => root.textContent))
+    .toBe('xyz   ');
+  expect(
+    await editor.evaluate((root) => {
+      const selection = root.ownerDocument.getSelection();
+      return {
+        anchorOffset: selection?.anchorOffset,
+        focusOffset: selection?.focusOffset,
+      };
+    }),
+  ).toEqual(selectionBefore);
 });
 
 test('page-return revalidation refreshes external changes when FileSystemObserver is unavailable', async ({

@@ -781,6 +781,53 @@ describe('editor refresh on external file changes', () => {
     expect(editorText(domNode)).toContain('the original note body');
   });
 
+  it('leaves a locally saved parse-normalized document untouched when its watcher echo arrives', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      'the original note body',
+    );
+    const editor = asPmEditor(services.editorEngine).getEditor(
+      'main-test-editor',
+    );
+    expect(editor).toBeDefined();
+    if (!editor) {
+      return;
+    }
+
+    editor.dispatch(
+      editor.state.tr.insertText(
+        'xyz   ',
+        1,
+        editor.state.doc.content.size - 1,
+      ),
+    );
+    await vi.waitFor(async () => {
+      expect(services.editorEngine.hasPendingOrFailedSave()).toBe(false);
+      await expect(
+        services.fileSystem.readFileAsText(NOTE_WS_PATH),
+      ).resolves.toBe('xyz   ');
+    });
+
+    const docBefore = editor.state.doc;
+    const selectionBefore = editor.state.selection;
+    expect(editorText(domNode)).toBe('xyz   ');
+
+    // Native FS observers cannot distinguish this app's just-completed write
+    // from a foreign update, so the adapter deliberately forwards the record.
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-content-update',
+      wsPath: NOTE_WS_PATH,
+      sender: EXTERNAL_SENDER,
+    });
+    await settleReconcile();
+
+    expect(editor.state.doc).toBe(docBefore);
+    expect(editor.state.selection.eq(selectionBefore)).toBe(true);
+    expect(editorText(domNode)).toBe('xyz   ');
+    await expect(
+      services.fileSystem.readFileAsText(NOTE_WS_PATH),
+    ).resolves.toBe('xyz   ');
+  });
+
   it('surfaces a refusal as a per-note warning toast and withdraws it once reconciled', async () => {
     const { testEnv, services, domNode } = await setupEditorWithNote(
       'the original note body',

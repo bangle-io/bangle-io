@@ -53,6 +53,7 @@ function makeHost(overrides: Partial<ExternalContentSyncHost> = {}) {
     getMarkdown: vi.fn(() => {
       throw new Error('not needed in these tests');
     }),
+    getSaveProjection: vi.fn(() => 'current content'),
     getRetainedSource: vi.fn(() => undefined),
     replaceContent: vi.fn(async (): Promise<'applied'> => 'applied'),
     onStaleContentRefused: vi.fn(),
@@ -277,14 +278,7 @@ describe('refusal and reconciliation reporting', () => {
     const host = makeHost({
       getViews: vi.fn(() => [view]),
       readFileAsText: vi.fn(async () => 'same output'),
-      getMarkdown: vi.fn(
-        () =>
-          ({
-            parser: { parse: () => ({}) },
-            // Editor doc and disk content serialize identically → echo.
-            serializer: { serialize: () => 'same output' },
-          }) as never,
-      ),
+      getSaveProjection: vi.fn(() => 'same output'),
     });
     const sync = new ExternalContentSync(host);
 
@@ -297,6 +291,7 @@ describe('refusal and reconciliation reporting', () => {
     );
     expect(host.onContentReconciled).toHaveBeenCalledWith('ws:a.md');
     expect(host.onStaleContentRefused).not.toHaveBeenCalled();
+    expect(host.getMarkdown).not.toHaveBeenCalled();
     expect(host.replaceContent).not.toHaveBeenCalled();
   });
 });

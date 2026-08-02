@@ -7,6 +7,7 @@ import {
   markdownLoader,
   type NodeViewConstructor,
   Plugin,
+  type PMNode,
   resolve,
   Schema,
   stripSyntheticSuggestionText,
@@ -15,6 +16,19 @@ import {
 import type { Store } from '@bangle.io/types';
 
 import type { setupExtensions } from './extensions';
+
+/**
+ * Produces the exact Markdown projection used for durable editor saves.
+ * Reconciliation must use this same projection when deciding whether disk
+ * already contains the current document, including removal of UI-only
+ * suggestion text that must never reach storage.
+ */
+export function serializeEditorDocumentForSave(
+  markdown: ReturnType<typeof markdownLoader>,
+  doc: PMNode,
+): string {
+  return markdown.serializer.serialize(stripSyntheticSuggestionText(doc));
+}
 
 export function createEditor({
   domNode,
@@ -52,8 +66,9 @@ export function createEditor({
                     // must never reach storage, even when a debounced save
                     // fires while the menu is still open or the editor
                     // unmounts mid-suggestion.
-                    const result = markdown.serializer.serialize(
-                      stripSyntheticSuggestionText(view.state.doc),
+                    const result = serializeEditorDocumentForSave(
+                      markdown,
+                      view.state.doc,
                     );
 
                     onDocChange(result);
