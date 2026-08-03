@@ -355,9 +355,9 @@ export class ExternalContentSync {
         continue;
       }
 
-      let currentSerialized: string;
+      let saveProjection: string;
       try {
-        currentSerialized = this.host.getSaveProjection(view);
+        saveProjection = this.host.getSaveProjection(view);
       } catch (error) {
         if (mode === 'user-approved') {
           throw error;
@@ -373,7 +373,7 @@ export class ExternalContentSync {
       if (
         mode === 'automatic' &&
         retainedSource === undefined &&
-        diskText === currentSerialized
+        diskText === saveProjection
       ) {
         // The disk already contains exactly what this view's save path emits.
         // Whether the watcher record came from this app or another writer is
@@ -414,7 +414,7 @@ export class ExternalContentSync {
         // Serializer comparison coalesces echoes and normalization-only
         // differences. Retained source recognizes unchanged lossy Markdown.
         if (
-          currentSerialized === diskSerialized &&
+          saveProjection === diskSerialized &&
           retainedSource !== undefined &&
           isMarkdownRoundTripPreserved(diskText, retainedSource)
         ) {
@@ -438,22 +438,9 @@ export class ExternalContentSync {
           refused = true;
           continue;
         }
-        if (
-          currentSerialized === diskSerialized &&
-          retainedSource === undefined
-        ) {
-          // The doc changed since load, so a save writes exactly these bytes —
-          // nothing on disk can be silently reverted. Typically our own save's
-          // echo. With a retained baseline this falls through instead: disk
-          // holds different bytes than the baseline, and applying refreshes
-          // the baseline and the fidelity notice so a later save cannot
-          // silently revert the external author's formatting.
-          reconciled = true;
-          continue;
-        }
         // Agreeing reads can both land inside a writer's truncated state.
         // Never automatically blank a non-empty editor.
-        if (diskText.trim() === '' && currentSerialized.trim() !== '') {
+        if (diskText.trim() === '' && saveProjection.trim() !== '') {
           this.host.logger.warn(
             `External change emptied ${wsPath}; keeping the editor content`,
           );
@@ -473,7 +460,7 @@ export class ExternalContentSync {
 
       const replaceResult = await this.host.replaceContent({
         expectedDoc: docsBefore[index],
-        preservableSource: retainedSource ?? currentSerialized,
+        preservableSource: retainedSource ?? saveProjection,
         sourceMarkdown: diskText,
         transaction,
         view,
