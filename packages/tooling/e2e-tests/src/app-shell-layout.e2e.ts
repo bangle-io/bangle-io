@@ -337,10 +337,53 @@ test('app shell: mobile PWA titlebar keeps controls inside the window-controls-o
     .toBeGreaterThanOrEqual(titlebarLeftInset);
   await expect
     .poll(() =>
+      sidebarToggle.evaluate((element) => element.getBoundingClientRect().left),
+    )
+    .toBeLessThanOrEqual(titlebarLeftInset + 12);
+  await expect
+    .poll(() =>
       starButton.evaluate(
         (element) => window.innerWidth - element.getBoundingClientRect().right,
       ),
     )
     .toBeGreaterThanOrEqual(titlebarRightInset);
   await expectNoPageHorizontalOverflow(page);
+});
+
+test('app shell: max-width control follows the responsive layout after resize', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 844 });
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName: 'responsive-max-width-ws',
+    noteName: 'Responsive Width',
+  });
+
+  const toggleMaxWidthButton = page.getByRole('button', {
+    name: 'Toggle Max Width',
+  });
+  const pageContent = page.locator('main.B-app-page-content');
+  await expect(toggleMaxWidthButton).toBeVisible();
+  await toggleMaxWidthButton.click();
+  await expect
+    .poll(() =>
+      pageContent.evaluate((element) => getComputedStyle(element).maxWidth),
+    )
+    .toBe('768px');
+
+  await page.setViewportSize({ width: 767, height: 844 });
+  await expect(toggleMaxWidthButton).toBeHidden();
+  await expect
+    .poll(() =>
+      pageContent.evaluate((element) => getComputedStyle(element).maxWidth),
+    )
+    .toBe('none');
+
+  await page.setViewportSize({ width: 768, height: 844 });
+  await expect(toggleMaxWidthButton).toBeVisible();
+  await expect
+    .poll(() =>
+      pageContent.evaluate((element) => getComputedStyle(element).maxWidth),
+    )
+    .toBe('768px');
 });
