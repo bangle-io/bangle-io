@@ -74,7 +74,14 @@ function BreadcrumbItem({
 }: BreadcrumbItemProps) {
   return (
     <React.Fragment>
-      <Breadcrumb.BreadcrumbItem className={isFirst ? 'shrink-0' : 'min-w-0'}>
+      <Breadcrumb.BreadcrumbItem
+        className={cn(
+          isFirst ? 'shrink-0' : 'min-w-0',
+          !isLast && 'hidden md:inline-flex',
+          isLast &&
+            'flex-1 overflow-hidden md:flex-[0_1_auto] md:overflow-visible',
+        )}
+      >
         {isFirst ? (
           <HomeFolderLink />
         ) : (
@@ -86,11 +93,13 @@ function BreadcrumbItem({
           />
         )}
       </Breadcrumb.BreadcrumbItem>
-      {!isLast && <Breadcrumb.BreadcrumbSeparator className="shrink-0" />}
+      {!isLast && (
+        <Breadcrumb.BreadcrumbSeparator className="hidden shrink-0 md:list-item" />
+      )}
       {showEllipsis && (
         <>
-          <Breadcrumb.BreadcrumbEllipsis />
-          <Breadcrumb.BreadcrumbSeparator className="shrink-0" />
+          <Breadcrumb.BreadcrumbEllipsis className="hidden md:flex" />
+          <Breadcrumb.BreadcrumbSeparator className="hidden shrink-0 md:list-item" />
         </>
       )}
     </React.Fragment>
@@ -148,7 +157,7 @@ function DirectoryDropdown({
         render={
           <Button
             variant="ghost"
-            className="h-auto min-w-0 cursor-pointer truncate px-1 py-0 text-sm hover:underline"
+            className="h-auto min-w-0 max-w-full shrink cursor-pointer truncate px-1 py-0 text-sm hover:underline"
           >
             {segment.label}
           </Button>

@@ -162,6 +162,19 @@ html[data-bangle-window-controls-overlay="visible"]:is(
   );
 }
 
+@media (width < 48rem) {
+  html[data-bangle-window-controls-overlay="visible"]:is(
+      [data-bangle-window-controls-overlay-controls="left"],
+      [data-bangle-window-controls-overlay-controls="both"]
+    )
+    .desktop-titlebar-main-spacer {
+    width: max(
+      4.75rem,
+      calc(var(--bangle-titlebar-left-inset) + 0.5rem)
+    );
+  }
+}
+
 html[data-bangle-desktop-platform="darwin"]
   .peer[data-state="collapsed"][data-side="left"]
   ~ *

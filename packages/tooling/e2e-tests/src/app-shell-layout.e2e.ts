@@ -58,21 +58,103 @@ test('app shell: full-height flush sidebar, thin titlebar, collapse/expand', asy
     .toBeGreaterThanOrEqual(0);
 });
 
-test('app shell: keeps a nested note breadcrumb on one mobile titlebar line', async ({
+test('app shell: mobile titlebar scrolls away with the document', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 500 });
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName: 'mobile-scroll-titlebar-ws',
+    noteName: 'Long note',
+  });
+
+  const titlebar = page.locator('header.desktop-titlebar-surface').first();
+  await expect(titlebar).toBeVisible();
+
+  await page.locator('.ProseMirror').evaluate((element) => {
+    element.style.minHeight = '200vh';
+  });
+  await page.evaluate(() => window.scrollTo({ top: 300, behavior: 'instant' }));
+
+  await expect
+    .poll(() => page.evaluate(() => window.scrollY))
+    .toBeGreaterThanOrEqual(300);
+  await expect
+    .poll(() =>
+      titlebar.evaluate((element) => element.getBoundingClientRect().top),
+    )
+    .toBeLessThanOrEqual(-300);
+});
+
+test('app shell: mobile titlebar shows only the truncated current filename', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  const noteName =
-    'Novo folder de teste/Com anexo generico com um nome muito longo';
+  const directoryName = 'Directory that must not consume titlebar space';
+  const fileName =
+    'Current filename that is deliberately much too long for a mobile titlebar.md';
   await createBrowserWorkspaceAndNote(page, {
-    workspaceName: 'mobile-titlebar-ws',
-    noteName,
+    workspaceName: 'mobile-filename-titlebar-ws',
+    noteName: `${directoryName}/Nested directory/${fileName}`,
   });
 
   const titlebar = page.locator('header.desktop-titlebar-surface').first();
   const breadcrumb = titlebar.getByRole('navigation', { name: 'breadcrumb' });
   await expect(breadcrumb).toBeVisible();
+  await expect(
+    breadcrumb.getByRole('button', { name: fileName, exact: true }),
+  ).toBeVisible();
+  await expect(
+    breadcrumb.getByText(directoryName, { exact: true }),
+  ).toBeHidden();
+  await expect(
+    breadcrumb.getByText('Nested directory', { exact: true }),
+  ).toBeHidden();
+  await expect(
+    breadcrumb.locator('[data-slot="breadcrumb-item"]:visible'),
+  ).toHaveCount(1);
+  await expect(
+    breadcrumb.locator('[data-slot="breadcrumb-separator"]:visible'),
+  ).toHaveCount(0);
+
+  const filenameButton = breadcrumb.getByRole('button', {
+    name: fileName,
+    exact: true,
+  });
+  await expect
+    .poll(() =>
+      filenameButton.evaluate((element) => {
+        const style = getComputedStyle(element);
+        return {
+          isOverflowing: element.scrollWidth > element.clientWidth,
+          overflow: style.overflow,
+          textOverflow: style.textOverflow,
+          whiteSpace: style.whiteSpace,
+        };
+      }),
+    )
+    .toEqual({
+      isOverflowing: true,
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+    });
   await expectNoPageHorizontalOverflow(page);
+
+  await page.setViewportSize({ width: 767, height: 844 });
+  await expect(
+    breadcrumb.getByText(directoryName, { exact: true }),
+  ).toBeHidden();
+  await expect(
+    breadcrumb.locator('[data-slot="breadcrumb-item"]:visible'),
+  ).toHaveCount(1);
+
+  await page.setViewportSize({ width: 768, height: 844 });
+  await expect(
+    breadcrumb.getByText(directoryName, { exact: true }),
+  ).toBeVisible();
+  await expect(
+    breadcrumb.locator('[data-slot="breadcrumb-item"]:visible'),
+  ).toHaveCount(4);
   await expect
     .poll(async () => {
       const titlebarBox = await titlebar.boundingBox();
@@ -211,4 +293,54 @@ test('app shell: PWA window controls overlay keeps titlebar actions outside rese
       ),
     )
     .toBeGreaterThanOrEqual(96);
+});
+
+test('app shell: mobile PWA titlebar keeps controls inside the window-controls-overlay area', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName: 'mobile-overlay-layout-ws',
+    noteName: 'Overlay Note',
+  });
+
+  const titlebarLeftInset = 80;
+  const titlebarRightInset = 96;
+  await page.evaluate(
+    ({ leftInset, rightInset }) => {
+      const root = document.documentElement;
+
+      root.setAttribute('data-bangle-window-controls-overlay', 'visible');
+      root.setAttribute('data-bangle-window-controls-overlay-controls', 'both');
+      root.style.setProperty('--bangle-titlebar-area-x', `${leftInset}px`);
+      root.style.setProperty(
+        '--bangle-titlebar-area-width',
+        `calc(100vw - ${leftInset + rightInset}px)`,
+      );
+      root.style.setProperty('--bangle-titlebar-area-height', '40px');
+    },
+    { leftInset: titlebarLeftInset, rightInset: titlebarRightInset },
+  );
+
+  const titlebar = page.locator('header.desktop-titlebar-surface').first();
+  const sidebarToggle = titlebar.getByRole('button', {
+    name: 'Toggle Sidebar',
+  });
+  const starButton = titlebar.getByRole('button', { name: 'Star this item' });
+
+  await expect(sidebarToggle).toBeVisible();
+  await expect(starButton).toBeVisible();
+  await expect
+    .poll(() =>
+      sidebarToggle.evaluate((element) => element.getBoundingClientRect().left),
+    )
+    .toBeGreaterThanOrEqual(titlebarLeftInset);
+  await expect
+    .poll(() =>
+      starButton.evaluate(
+        (element) => window.innerWidth - element.getBoundingClientRect().right,
+      ),
+    )
+    .toBeGreaterThanOrEqual(titlebarRightInset);
+  await expectNoPageHorizontalOverflow(page);
 });
