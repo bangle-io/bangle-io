@@ -10,7 +10,6 @@ import type { EditorAction, EditorEngineContract } from '@bangle.io/context';
 import {
   type EditorView,
   markdownLoader,
-  type PMNode,
   type Schema,
   TextSelection,
   type Transaction,
@@ -54,7 +53,7 @@ import { setupExtensions } from './extensions';
 import { ExternalContentSync } from './external-content-sync';
 import { findHeadingIndexBySlug } from './heading-slug';
 import { createLocalImageNodeView } from './local-image-node-view';
-import { createEditor } from './pm-setup';
+import { createEditor, serializeEditorDocumentForSave } from './pm-setup';
 import {
   getRememberedCursorPosition,
   resolveRememberedCursor,
@@ -226,6 +225,11 @@ export class PmEditorService
           signal: this.abortSignal,
         }),
       getMarkdown: (schema) => this.getMarkdown(schema),
+      getSaveProjection: (view) =>
+        serializeEditorDocumentForSave(
+          this.getMarkdown(view.state.schema),
+          view.state.doc,
+        ),
       getRetainedSource: (view) => this.getRetainedSource(view),
       replaceContent: (args) => this.replaceEditorContent(args),
       onStaleContentRefused: (wsPath) => {

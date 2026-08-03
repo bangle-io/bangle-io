@@ -219,6 +219,89 @@ test('externally created and edited files refresh the tree and the open note', a
   await expect(getEditorLocator(page, {})).toBeVisible();
 });
 
+test('a byte-identical watcher update cannot normalize a locally saved note', async ({
+  page,
+  browserName,
+}) => {
+  test.skip(
+    browserName !== 'chromium',
+    'NativeFS workspaces are Chromium-only',
+  );
+
+  await createNativeFsWorkspace(page);
+  const observerSupported = await page.evaluate(
+    () =>
+      typeof (globalThis as { FileSystemObserver?: unknown })
+        .FileSystemObserver === 'function',
+  );
+  test.skip(
+    !observerSupported,
+    'FileSystemObserver is unavailable in this Chromium build',
+  );
+
+  await page.getByRole('button', { name: 'New Note' }).click();
+  await page.getByLabel('Note name').fill('self-write-echo');
+  await page.getByRole('button', { name: 'Create' }).click();
+  const editor = getEditorLocator(page, {});
+  await expect(editor).toBeVisible();
+
+  await editor.click();
+  await page.keyboard.insertText('xyz   ');
+  await expect
+    .poll(async () => {
+      return page.evaluate(async (workspaceDir) => {
+        const root = await navigator.storage.getDirectory();
+        const dir = await root.getDirectoryHandle(workspaceDir);
+        const handle = await dir.getFileHandle('self-write-echo.md');
+        return (await handle.getFile()).text();
+      }, WORKSPACE_DIR);
+    })
+    .toBe('xyz   ');
+
+  // First establish a visible conflict. Its later dismissal is the
+  // user-observable completion signal for the exact-content reconciliation;
+  // unrelated services reading the same file cannot satisfy this barrier.
+  await externallyWriteFile(
+    page,
+    'self-write-echo.md',
+    'see the spec\n\n[unused]: https://example.com/spec\n',
+  );
+  const conflictToast = page.getByText(/self-write-echo\.md changed on disk/);
+  await expect(conflictToast).toBeVisible();
+  await expect
+    .poll(() => editor.evaluate((root) => root.textContent))
+    .toBe('xyz   ');
+
+  const editorBefore = await editor.evaluate((root) => {
+    const selection = root.ownerDocument.getSelection();
+    return {
+      html: root.innerHTML,
+      anchorOffset: selection?.anchorOffset,
+      focusOffset: selection?.focusOffset,
+    };
+  });
+
+  // OPFS does not report an app write back to its own observer consistently,
+  // so repeat the exact saved bytes through a handle outside the app. Chrome
+  // reports this record identically to a self-write echo.
+  await externallyWriteFile(page, 'self-write-echo.md', 'xyz   ');
+  await expect(conflictToast).not.toBeVisible();
+
+  await expect
+    .poll(() => editor.evaluate((root) => root.textContent))
+    .toBe('xyz   ');
+  expect(
+    await editor.evaluate((root) => {
+      const selection = root.ownerDocument.getSelection();
+      return {
+        html: root.innerHTML,
+        anchorOffset: selection?.anchorOffset,
+        focusOffset: selection?.focusOffset,
+      };
+    }),
+  ).toEqual(editorBefore);
+});
+
 test('page-return revalidation refreshes external changes when FileSystemObserver is unavailable', async ({
   page,
   browserName,

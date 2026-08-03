@@ -4,6 +4,7 @@ import {
   EXTERNAL_FILE_CHANGE_SENDER_TAG,
   WORKSPACE_STORAGE_TYPE,
 } from '@bangle.io/constants';
+import { markdownLoader } from '@bangle.io/prosemirror-plugins';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { toast } from '@bangle.io/ui-components';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -544,6 +545,56 @@ describe('editor refresh on external file changes', () => {
     ).resolves.toMatchObject({ content: '- the original note body\n' });
   });
 
+  it('applies a serializer-equal external reformat after a local save', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      '- the original note body\n',
+    );
+    const editorService = asPmEditor(services.editorEngine);
+    const editor = editorService.getEditor('main-test-editor');
+    expect(editor).toBeDefined();
+    if (!editor) {
+      return;
+    }
+
+    editor.dispatch(
+      editor.state.tr.insertText('updated ', editor.state.selection.from),
+    );
+    let locallySaved = '';
+    await vi.waitFor(async () => {
+      expect(services.editorEngine.hasPendingOrFailedSave()).toBe(false);
+      locallySaved =
+        (await services.fileSystem.readFileAsText(NOTE_WS_PATH)) ?? '';
+      expect(locallySaved).toContain('updated');
+    });
+    expect(locallySaved).toMatch(/^- /);
+
+    // Once the view has changed, it no longer has a retained load baseline.
+    // A byte-different external marker still must be applied: serializer
+    // equality is not writer provenance, and skipping would let the next save
+    // silently restore the locally serialized marker.
+    const externalSource = locallySaved.replace(/^- /, '* ');
+    await simulateExternalEdit(testEnv, services, externalSource);
+
+    await vi.waitFor(
+      () => {
+        expect(testEnv.store.get(editorService.$roundTripWarnings)).toContain(
+          NOTE_WS_PATH,
+        );
+      },
+      { timeout: 3_000 },
+    );
+    expect(editorText(domNode)).toContain('updated');
+    await expect(
+      services.fileSystem.readFileAsText(NOTE_WS_PATH),
+    ).resolves.toBe(externalSource);
+
+    const snapshots = await services.noteSnapshot.listSnapshots();
+    expect(snapshots).toHaveLength(1);
+    await expect(
+      services.noteSnapshot.getSnapshot(snapshots[0]?.id ?? ''),
+    ).resolves.toMatchObject({ content: locallySaved });
+  });
+
   it('refuses dropped content even when it serializes like the open document', async () => {
     const { testEnv, services } = await setupEditorWithNote(
       'the original note body with [the spec](https://example.com/spec)',
@@ -779,6 +830,173 @@ describe('editor refresh on external file changes', () => {
 
     expect(domNode.innerHTML).toBe(docBefore);
     expect(editorText(domNode)).toContain('the original note body');
+  });
+
+  it('leaves a locally saved parse-normalized document untouched when its watcher echo arrives', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      'the original note body',
+    );
+    const editor = asPmEditor(services.editorEngine).getEditor(
+      'main-test-editor',
+    );
+    expect(editor).toBeDefined();
+    if (!editor) {
+      return;
+    }
+
+    editor.dispatch(
+      editor.state.tr.insertText(
+        'xyz   ',
+        1,
+        editor.state.doc.content.size - 1,
+      ),
+    );
+    await vi.waitFor(async () => {
+      expect(services.editorEngine.hasPendingOrFailedSave()).toBe(false);
+      await expect(
+        services.fileSystem.readFileAsText(NOTE_WS_PATH),
+      ).resolves.toBe('xyz   ');
+    });
+
+    const docBefore = editor.state.doc;
+    const selectionBefore = editor.state.selection;
+    expect(editorText(domNode)).toBe('xyz   ');
+
+    // Native FS observers cannot distinguish this app's just-completed write
+    // from a foreign update, so the adapter deliberately forwards the record.
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-content-update',
+      wsPath: NOTE_WS_PATH,
+      sender: EXTERNAL_SENDER,
+    });
+    await settleReconcile();
+
+    expect(editor.state.doc).toBe(docBefore);
+    expect(editor.state.selection.eq(selectionBefore)).toBe(true);
+    expect(editorText(domNode)).toBe('xyz   ');
+    await expect(
+      services.fileSystem.readFileAsText(NOTE_WS_PATH),
+    ).resolves.toBe('xyz   ');
+  });
+
+  it('does not mistake a byte-different external reformat for an echo while a synthetic suggestion is open', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      '- the original note body\n',
+    );
+    const editorService = asPmEditor(services.editorEngine);
+    const editor = editorService.getEditor('main-test-editor');
+    expect(editor).toBeDefined();
+    if (!editor) {
+      return;
+    }
+
+    // jsdom has no layout implementation for ProseMirror's scroll request.
+    const scrollSpy = vi
+      .spyOn(
+        editor as typeof editor & { scrollToSelection(): void },
+        'scrollToSelection',
+      )
+      .mockImplementation(() => undefined);
+    const opened =
+      editorService.extensions.suggestions.command.openSuggestion()(
+        editor.state,
+        editor.dispatch,
+        editor,
+      );
+    scrollSpy.mockRestore();
+    expect(opened).toBe(true);
+    expect(editorText(domNode)).toContain('/');
+    await vi.waitFor(async () => {
+      expect(services.editorEngine.hasPendingOrFailedSave()).toBe(false);
+      await expect(
+        services.fileSystem.readFileAsText(NOTE_WS_PATH),
+      ).resolves.toBe('- the original note body');
+    });
+
+    // The external bytes parse to the same list document as the save
+    // projection, but they are a genuine change whose exact source must become
+    // the new fidelity baseline. The live synthetic slash must not hide it.
+    await simulateExternalEdit(testEnv, services, '* the original note body\n');
+
+    await vi.waitFor(
+      () => {
+        expect(testEnv.store.get(editorService.$roundTripWarnings)).toContain(
+          NOTE_WS_PATH,
+        );
+      },
+      { timeout: 3_000 },
+    );
+    expect(editorText(domNode)).toBe('the original note body');
+    await expect(
+      services.fileSystem.readFileAsText(NOTE_WS_PATH),
+    ).resolves.toBe('* the original note body\n');
+
+    const snapshots = await services.noteSnapshot.listSnapshots();
+    expect(snapshots).toHaveLength(1);
+    await expect(
+      services.noteSnapshot.getSnapshot(snapshots[0]?.id ?? ''),
+    ).resolves.toMatchObject({ content: '- the original note body' });
+  });
+
+  it('turns externally written suggestion text into durable editor content', async () => {
+    const { testEnv, services, domNode } = await setupEditorWithNote(
+      '- the original note body\n',
+    );
+    const editorService = asPmEditor(services.editorEngine);
+    const editor = editorService.getEditor('main-test-editor');
+    expect(editor).toBeDefined();
+    if (!editor) {
+      return;
+    }
+
+    const scrollSpy = vi
+      .spyOn(
+        editor as typeof editor & { scrollToSelection(): void },
+        'scrollToSelection',
+      )
+      .mockImplementation(() => undefined);
+    const opened =
+      editorService.extensions.suggestions.command.openSuggestion()(
+        editor.state,
+        editor.dispatch,
+        editor,
+      );
+    scrollSpy.mockRestore();
+    expect(opened).toBe(true);
+
+    const markdown = markdownLoader(
+      [...Object.values(editorService.extensions)],
+      editor.state.schema,
+    );
+    const externalSource = markdown.serializer.serialize(editor.state.doc);
+    expect(externalSource).toContain('/');
+    await vi.waitFor(async () => {
+      expect(services.editorEngine.hasPendingOrFailedSave()).toBe(false);
+      await expect(
+        services.fileSystem.readFileAsText(NOTE_WS_PATH),
+      ).resolves.not.toBe(externalSource);
+    });
+
+    const syntheticDoc = editor.state.doc;
+    await simulateExternalEdit(testEnv, services, externalSource);
+
+    await vi.waitFor(async () => {
+      expect(editor.state.doc).not.toBe(syntheticDoc);
+      expect(await services.noteSnapshot.listSnapshots()).toHaveLength(1);
+    });
+    expect(editorText(domNode)).toContain('/');
+
+    // A subsequent normal edit must preserve the external author's literal
+    // slash. If reconciliation only skipped the serializer-equal document,
+    // the slash would still be synthetic and the save projection would remove
+    // it here.
+    editor.dispatch(editor.state.tr.insertText('!'));
+    await vi.waitFor(async () => {
+      expect(services.editorEngine.hasPendingOrFailedSave()).toBe(false);
+      await expect(
+        services.fileSystem.readFileAsText(NOTE_WS_PATH),
+      ).resolves.toContain('/');
+    });
   });
 
   it('surfaces a refusal as a per-note warning toast and withdraws it once reconciled', async () => {

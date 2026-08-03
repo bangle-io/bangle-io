@@ -94,6 +94,8 @@ export interface ExternalContentSyncHost {
   hasPendingSaves(wsPath: string): boolean;
   readFileAsText(wsPath: string): Promise<string | undefined>;
   getMarkdown(schema: Schema): ReturnType<typeof markdownLoader>;
+  /** Exact Markdown bytes the save path currently projects from `view`. */
+  getSaveProjection(view: EditorView): string;
   /** Exact disk source retained while this view's document is unchanged. */
   getRetainedSource(view: EditorView): string | undefined;
   /**
@@ -344,28 +346,58 @@ export class ExternalContentSync {
         continue;
       }
 
-      const markdown = this.host.getMarkdown(view.state.schema);
-      let parsed: ReturnType<typeof markdown.parser.parse>;
-      let currentSerialized: string;
+      // While the document is unchanged since load, the exact bytes it was
+      // parsed from are what must be preserved — a re-serialization would
+      // normalize away Markdown the editor cannot round-trip.
+      const retainedSource = this.host.getRetainedSource(view);
+      if (mode === 'automatic' && diskText === retainedSource) {
+        reconciled = true;
+        continue;
+      }
+
+      let saveProjection: string;
       try {
-        parsed = markdown.parser.parse(diskText);
-        currentSerialized = markdown.serializer.serialize(view.state.doc);
+        saveProjection = this.host.getSaveProjection(view);
       } catch (error) {
         if (mode === 'user-approved') {
           throw error;
         }
         this.host.logger.warn(
-          `Could not parse or compare externally changed content for ${wsPath}`,
+          `Could not compare externally changed content for ${wsPath}`,
           error,
         );
         refused = true;
         continue;
       }
 
-      // While the document is unchanged since load, the exact bytes it was
-      // parsed from are what must be preserved — a re-serialization would
-      // normalize away Markdown the editor cannot round-trip.
-      const retainedSource = this.host.getRetainedSource(view);
+      if (
+        mode === 'automatic' &&
+        retainedSource === undefined &&
+        diskText === saveProjection
+      ) {
+        // The disk already contains exactly what this view's save path emits.
+        // Whether the watcher record came from this app or another writer is
+        // irrelevant: parsing and replacing cannot make the durable content
+        // more current, but it can normalize Markdown and disturb the caret.
+        reconciled = true;
+        continue;
+      }
+
+      const markdown = this.host.getMarkdown(view.state.schema);
+      let parsed: ReturnType<typeof markdown.parser.parse>;
+      try {
+        parsed = markdown.parser.parse(diskText);
+      } catch (error) {
+        if (mode === 'user-approved') {
+          throw error;
+        }
+        this.host.logger.warn(
+          `Could not parse externally changed content for ${wsPath}`,
+          error,
+        );
+        refused = true;
+        continue;
+      }
 
       if (mode === 'automatic') {
         let diskSerialized: string;
@@ -382,7 +414,7 @@ export class ExternalContentSync {
         // Serializer comparison coalesces echoes and normalization-only
         // differences. Retained source recognizes unchanged lossy Markdown.
         if (
-          currentSerialized === diskSerialized &&
+          saveProjection === diskSerialized &&
           retainedSource !== undefined &&
           isMarkdownRoundTripPreserved(diskText, retainedSource)
         ) {
@@ -406,22 +438,9 @@ export class ExternalContentSync {
           refused = true;
           continue;
         }
-        if (
-          currentSerialized === diskSerialized &&
-          retainedSource === undefined
-        ) {
-          // The doc changed since load, so a save writes exactly these bytes —
-          // nothing on disk can be silently reverted. Typically our own save's
-          // echo. With a retained baseline this falls through instead: disk
-          // holds different bytes than the baseline, and applying refreshes
-          // the baseline and the fidelity notice so a later save cannot
-          // silently revert the external author's formatting.
-          reconciled = true;
-          continue;
-        }
         // Agreeing reads can both land inside a writer's truncated state.
         // Never automatically blank a non-empty editor.
-        if (diskText.trim() === '' && currentSerialized.trim() !== '') {
+        if (diskText.trim() === '' && saveProjection.trim() !== '') {
           this.host.logger.warn(
             `External change emptied ${wsPath}; keeping the editor content`,
           );
@@ -441,7 +460,7 @@ export class ExternalContentSync {
 
       const replaceResult = await this.host.replaceContent({
         expectedDoc: docsBefore[index],
-        preservableSource: retainedSource ?? currentSerialized,
+        preservableSource: retainedSource ?? saveProjection,
         sourceMarkdown: diskText,
         transaction,
         view,
