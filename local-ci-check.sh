@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if ! ci_scripts="$(node scripts/list-ci-scripts.js package.json)"; then
+if ! ci_scripts="$(bun packages/tooling/custom-scripts/scripts/list-ci-scripts.ts package.json)"; then
     exit 1
 fi
 

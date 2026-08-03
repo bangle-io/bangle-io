@@ -1,15 +1,13 @@
 import { readFile } from 'node:fs/promises';
-import { pathToFileURL } from 'node:url';
 
-export function listCiScripts(packageJson) {
-  if (
-    typeof packageJson !== 'object' ||
-    packageJson === null ||
-    Array.isArray(packageJson) ||
-    typeof packageJson.scripts !== 'object' ||
-    packageJson.scripts === null ||
-    Array.isArray(packageJson.scripts)
-  ) {
+import { isMainModule } from '../lib';
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+export function listCiScripts(packageJson: unknown): string[] {
+  if (!isRecord(packageJson) || !isRecord(packageJson.scripts)) {
     throw new Error('package.json must define a scripts object.');
   }
 
@@ -25,12 +23,16 @@ export function listCiScripts(packageJson) {
   return scripts;
 }
 
-export async function readCiScripts(packageJsonPath = 'package.json') {
-  const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'));
+export async function readCiScripts(
+  packageJsonPath = 'package.json',
+): Promise<string[]> {
+  const packageJson: unknown = JSON.parse(
+    await readFile(packageJsonPath, 'utf8'),
+  );
   return listCiScripts(packageJson);
 }
 
-async function main() {
+async function main(): Promise<void> {
   try {
     const scripts = await readCiScripts(process.argv[2]);
     process.stdout.write(`${scripts.join('\n')}\n`);
@@ -44,9 +46,6 @@ async function main() {
   }
 }
 
-if (
-  process.argv[1] &&
-  import.meta.url === pathToFileURL(process.argv[1]).href
-) {
+if (isMainModule(import.meta.url)) {
   await main();
 }
