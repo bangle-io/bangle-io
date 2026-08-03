@@ -29,7 +29,6 @@ import {
 import type {
   BaseServiceCommonOptions,
   CommandHandler,
-  FileStorageExternalChangeEvent,
   RootEmitter,
 } from '@bangle.io/types';
 import { createServiceSetup } from './service-setup';
@@ -42,20 +41,6 @@ export function readEditorEngineFromUrl(
   );
   return isEditorEngineId(engineId) ? engineId : DEFAULT_EDITOR_ENGINE;
 }
-
-/**
- * Per-path watcher changes carry the same meaning as the app's own file
- * mutations; only the event names differ. The `Record` key type keeps this
- * exhaustive over the non-`refresh` cases.
- */
-const EXTERNAL_CHANGE_TO_FILE_EVENT = {
-  create: 'file-create',
-  update: 'file-content-update',
-  delete: 'file-delete',
-} as const satisfies Record<
-  Exclude<FileStorageExternalChangeEvent['type'], 'refresh'>,
-  string
->;
 
 export function initializeServices(
   commonOpts: BaseServiceCommonOptions,
@@ -117,7 +102,7 @@ export function initializeServices(
           return;
         }
         rootEmitter.emit('event::file:update', {
-          type: EXTERNAL_CHANGE_TO_FILE_EVENT[change.type],
+          type: 'file-content-update',
           wsPath: change.wsPath,
           sender,
         });

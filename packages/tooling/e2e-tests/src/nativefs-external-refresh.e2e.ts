@@ -3,8 +3,8 @@ import { getEditorLocator } from './common';
 
 /**
  * Exercises the NativeFS external-change refresh pipeline end to end:
- * FileSystemObserver → storage watcher → typed file events → file tree and
- * open-editor refresh.
+ * FileSystemObserver → safe live content updates, plus page-return
+ * revalidation for structural file-tree changes.
  *
  * The directory picker is stubbed to return an OPFS-backed directory, which
  * behaves like a picked local directory (granted permissions, observer
@@ -70,6 +70,28 @@ async function externallyDeleteFile(page: Page, relativePath: string) {
       await dir.removeEntry(fileName);
     },
     { workspaceDir: WORKSPACE_DIR, relativePath },
+  );
+}
+
+/** Models the durable copy-then-delete rename used by sync tools and fallbacks. */
+async function externallyRenameFile(
+  page: Page,
+  oldFileName: string,
+  newFileName: string,
+) {
+  await page.evaluate(
+    async ({ workspaceDir, oldFileName, newFileName }) => {
+      const root = await navigator.storage.getDirectory();
+      const dir = await root.getDirectoryHandle(workspaceDir);
+      const oldHandle = await dir.getFileHandle(oldFileName);
+      const oldFile = await oldHandle.getFile();
+      const newHandle = await dir.getFileHandle(newFileName, { create: true });
+      const writable = await newHandle.createWritable();
+      await writable.write(oldFile);
+      await writable.close();
+      await dir.removeEntry(oldFileName);
+    },
+    { workspaceDir: WORKSPACE_DIR, oldFileName, newFileName },
   );
 }
 
@@ -157,7 +179,26 @@ async function simulateLeaveAndReturn(page: Page) {
   });
 }
 
-test('externally created and edited files refresh the tree and the open note', async ({
+/** Simulates switching to another app window and focusing Bangle again. */
+async function simulateWindowRefocus(page: Page) {
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'hasFocus', {
+      configurable: true,
+      value: () => false,
+    });
+    window.dispatchEvent(new Event('blur'));
+  });
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'hasFocus', {
+      configurable: true,
+      value: () => true,
+    });
+    window.dispatchEvent(new Event('focus'));
+    Reflect.deleteProperty(document, 'hasFocus');
+  });
+}
+
+test('external content stays live while structural changes reconcile on ordinary refocus', async ({
   page,
   browserName,
 }) => {
@@ -178,27 +219,73 @@ test('externally created and edited files refresh the tree and the open note', a
     'FileSystemObserver is unavailable in this Chromium build',
   );
 
-  // Sanity: the normal app flow works against the OPFS-backed directory.
+  // Seed one app-owned note so a later byte update can prove that the live
+  // observer pipeline is running independently of structural tree refreshes.
   await page.getByRole('button', { name: 'New Note' }).click();
   await page.getByLabel('Note name').fill('local-note');
   await page.getByRole('button', { name: 'Create' }).click();
-  await expect(getEditorLocator(page, {})).toBeVisible();
+  const editor = getEditorLocator(page, {});
+  await expect(editor).toBeVisible();
 
   const explorer = page.getByTestId('bangle-file-explorer');
 
-  // A file created outside the app appears in the file tree without any
-  // manual reload.
+  // A new external path is a structural change. The experimental observer
+  // cannot distinguish it from an intermediate app rename, so it must not
+  // mutate the tree immediately.
   await externallyWriteFile(
     page,
     'external-note.md',
     '# External Note\n\nsynced from another device\n',
   );
+
+  // An update to an existing path remains live. Waiting for it gives us a
+  // deterministic observer barrier before asserting that the earlier create
+  // was deliberately deferred rather than merely slow.
+  await externallyWriteFile(
+    page,
+    'local-note.md',
+    '# Local Note\n\nupdated outside the app\n',
+  );
+  await expect(editor).toContainText('updated outside the app');
+  await expect(
+    explorer.getByRole('treeitem', { name: /external-note/ }),
+  ).toHaveCount(0);
+
+  // Switching back from another app window performs the authoritative
+  // structural re-list even though the Bangle tab stayed visible throughout.
+  await simulateWindowRefocus(page);
   await expect(
     explorer.getByRole('treeitem', { name: /external-note/ }),
   ).toBeVisible();
 
-  // Open the externally created note...
-  await explorer.getByRole('treeitem', { name: /external-note/ }).click();
+  // A rename-like copy/delete is also structural. Updating the still-open
+  // local note afterwards is an observer barrier: once its new bytes are in
+  // the editor, the earlier structural records have reached the app but must
+  // not have exposed either half of the rename in the tree.
+  await externallyRenameFile(page, 'external-note.md', 'renamed-note.md');
+  await externallyWriteFile(
+    page,
+    'local-note.md',
+    '# Local Note\n\nrename observer barrier\n',
+  );
+  await expect(editor).toContainText('rename observer barrier');
+  await expect(
+    explorer.getByRole('treeitem', { name: /external-note/ }),
+  ).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /renamed-note/ }),
+  ).toHaveCount(0);
+
+  await simulateWindowRefocus(page);
+  await expect(
+    explorer.getByRole('treeitem', { name: /external-note/ }),
+  ).toHaveCount(0);
+  await expect(
+    explorer.getByRole('treeitem', { name: /renamed-note/ }),
+  ).toBeVisible();
+
+  // Open the externally renamed note...
+  await explorer.getByRole('treeitem', { name: /renamed-note/ }).click();
   await expect(getEditorLocator(page, {})).toContainText(
     'synced from another device',
   );
@@ -207,16 +294,34 @@ test('externally created and edited files refresh the tree and the open note', a
   // to the new disk content instead of showing a stale note.
   await externallyWriteFile(
     page,
-    'external-note.md',
+    'renamed-note.md',
     '# External Note\n\nupdated by the sync tool\n',
   );
   await expect(getEditorLocator(page, {})).toContainText(
     'updated by the sync tool',
   );
 
-  // The refresh pipeline must not have clobbered the other note.
+  // Return to the local note, then delete the renamed note externally. A
+  // second content barrier proves the disappeared record was observed while
+  // the stale tree entry remains deliberately mounted.
   await explorer.getByRole('treeitem', { name: /local-note/ }).click();
-  await expect(getEditorLocator(page, {})).toBeVisible();
+  await expect(editor).toContainText('rename observer barrier');
+  await externallyDeleteFile(page, 'renamed-note.md');
+  await externallyWriteFile(
+    page,
+    'local-note.md',
+    '# Local Note\n\ndelete observer barrier\n',
+  );
+  await expect(editor).toContainText('delete observer barrier');
+  await expect(
+    explorer.getByRole('treeitem', { name: /renamed-note/ }),
+  ).toBeVisible();
+
+  await simulateWindowRefocus(page);
+  await expect(
+    explorer.getByRole('treeitem', { name: /renamed-note/ }),
+  ).toHaveCount(0);
+  await expect(editor).toContainText('delete observer barrier');
 });
 
 test('a byte-identical watcher update cannot normalize a locally saved note', async ({
@@ -494,16 +599,17 @@ test('an external write never clobbers unsaved local edits in the open editor', 
   // writes only reopens the disk for the sync tool simulated below.
   await restoreAppWrites(page);
 
-  // A sync tool overwrites the dirty note, then creates a sentinel file. The
-  // sentinel's appearance in the tree proves the watcher pipeline processed
-  // the burst, so "the editor did not change" below is a real refusal rather
-  // than the sync simply not having run yet.
+  // A sync tool overwrites the dirty note, then creates a sentinel file.
+  // Structural records wait for page return; the sentinel's later appearance
+  // proves the authoritative refresh processed both disk changes, so "the
+  // editor did not change" below is a real refusal rather than a race.
   await externallyWriteFile(
     page,
     'conflict-dirty.md',
     '# External\n\noverwritten by the sync tool\n',
   );
   await externallyWriteFile(page, 'sentinel.md', 'marker\n');
+  await simulateLeaveAndReturn(page);
   await expect(
     page
       .getByTestId('bangle-file-explorer')
@@ -563,6 +669,15 @@ test('an externally deleted note stays mounted while its local save is failed', 
   await expect(page.getByText(/Changes could not be saved/)).toBeVisible();
 
   await externallyDeleteFile(page, 'dirty-note.md');
+  await expect(
+    page
+      .getByTestId('bangle-file-explorer')
+      .getByRole('treeitem', { name: /dirty-note/ }),
+  ).toBeVisible();
+
+  // Destructive structural changes are reconciled only at the explicit
+  // page-return boundary.
+  await simulateLeaveAndReturn(page);
   await expect(
     page
       .getByTestId('bangle-file-explorer')

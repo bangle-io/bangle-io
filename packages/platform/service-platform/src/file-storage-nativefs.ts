@@ -39,7 +39,8 @@ type Config = {
   /**
    * External watcher events. Self-write records intentionally flow through;
    * downstream content comparison coalesces echoes without hiding a real
-   * overwrite that happened just after a local save.
+   * overwrite that happened just after a local save. Live observer delivery
+   * is content-only; structural changes reconcile on page return.
    */
   onExternalChange?: (event: FileStorageExternalChangeEvent) => void;
   /**
@@ -60,6 +61,8 @@ type WatchPathClass =
 
 type FsCacheEntry = {
   fs: NativeFs;
+  /** A watcher saw structure that must be reconciled on the next return. */
+  pendingStructuralRefresh: boolean;
   /** `starting` deduplicates setup; only `armed` may skip revalidation. */
   watchState: 'idle' | 'starting' | 'armed';
   /** Disconnects the current observer, so re-arming cannot stack a second. */
@@ -144,7 +147,11 @@ export class FileStorageNativeFs
         // The lock scope is the workspace name (not the folder basename) so
         // cross-tab write serialization stays keyed to the workspace identity.
         const fs = new NativeFs({ rootHandle: handle, lockScope: wsName });
-        const entry: FsCacheEntry = { fs, watchState: 'idle' };
+        const entry: FsCacheEntry = {
+          fs,
+          pendingStructuralRefresh: false,
+          watchState: 'idle',
+        };
         if (!this.abortSignal.aborted) {
           // A load that outlived teardown must not refill the cache the
           // cleanup just cleared.
@@ -202,9 +209,10 @@ export class FileStorageNativeFs
 
   /**
    * Re-arms unhealthy watchers. Hidden returns always refresh because the
-   * browser may have starved observers; plain refocus refreshes only when a
-   * watcher is unavailable. Refreshes are scoped to the workspaces this
-   * provider actually holds, so unrelated workspaces are left alone.
+   * browser may have starved observers; plain refocus refreshes when a watcher
+   * is unavailable or reported deferred structure. Refreshes are scoped to
+   * the workspaces this provider actually holds, so unrelated workspaces are
+   * left alone.
    */
   private revalidateOnPageReturn(info: PageReturnInfo): void {
     const onExternalChange = this.config.onExternalChange;
@@ -214,7 +222,12 @@ export class FileStorageNativeFs
     for (const [wsName, entry] of this.fsCache) {
       const wasArmed = entry.watchState === 'armed';
       this.startWatching(wsName, entry);
-      if (info.returnedFromHidden || !wasArmed) {
+      if (
+        info.returnedFromHidden ||
+        !wasArmed ||
+        entry.pendingStructuralRefresh
+      ) {
+        entry.pendingStructuralRefresh = false;
         onExternalChange({ type: 'refresh', wsName });
       }
     }
@@ -222,7 +235,7 @@ export class FileStorageNativeFs
 
   /**
    * Classifies a record as a targeted visible file, an ignored hidden path,
-   * or a coarse refresh when path shape is ambiguous.
+   * or an ambiguous structural path.
    */
   private classifyWatchPath(
     wsName: string,
@@ -251,104 +264,84 @@ export class FileStorageNativeFs
   }
 
   /**
-   * Whether a record is too coarse to translate into a targeted event, so the
-   * whole workspace has to be re-read.
+   * Content updates that are safe to apply live, deduplicated in arrival
+   * order. FileSystemObserver does not identify the writer or describe a
+   * multi-step operation as one transaction. Applying structural records
+   * immediately can therefore expose an app rename's copy/delete fallback as
+   * a real deletion in this or another tab. App mutations already publish
+   * typed logical events; external structural changes reconcile through the
+   * page-return/manual refresh path.
+   *
+   * `appeared` and invisible-to-visible moves may be atomic replacements of
+   * an existing file. Treating their destination as a content update keeps
+   * common editor/sync-tool saves live without adding or removing tree paths.
    */
-  private needsCoarseRefresh(wsName: string, change: NativeFsChange): boolean {
-    if (change.type === 'unknown') {
-      return true;
-    }
-    if (change.type === 'moved') {
-      if (change.movedFromPath === undefined) {
-        // The origin is required to determine visibility.
-        return true;
-      }
-      const from = this.classifyWatchPath(wsName, change.movedFromPath);
-      const to = this.classifyWatchPath(wsName, change.path);
-      if (from.kind === 'ignored' && to.kind === 'ignored') {
-        return false;
-      }
-      // Same as the plain branch below: a visible directory moving changes
-      // the listing wholesale, and a dot-named directory would otherwise pass
-      // for a file on path shape alone.
-      if (change.kind === 'directory') {
-        return true;
-      }
-      return (
-        from.kind === 'coarse' ||
-        to.kind === 'coarse' ||
-        // Visible moves may be renames or atomic replacements.
-        (from.kind === 'file' && to.kind === 'file')
-      );
-    }
-    const classified = this.classifyWatchPath(wsName, change.path);
-    if (classified.kind === 'ignored') {
-      return false;
-    }
-    // A visible directory appearing or vanishing changes the listing.
-    return change.kind === 'directory' || classified.kind === 'coarse';
-  }
-
-  /** Targeted events for a burst, deduplicated and in arrival order. */
-  private toTargetedEvents(
+  private translateWatchChanges(
     wsName: string,
     changes: NativeFsChange[],
-  ): Map<string, FileStorageExternalChangeEvent> {
-    const events = new Map<string, FileStorageExternalChangeEvent>();
-    const add = (
-      event: FileStorageExternalChangeEvent & { wsPath: string },
-    ) => {
-      events.set(`${event.type}:${event.wsPath}`, event);
-    };
+  ): {
+    contentUpdates: Array<
+      Extract<FileStorageExternalChangeEvent, { type: 'update' }>
+    >;
+    hasDeferredStructure: boolean;
+  } {
+    const wsPaths = new Set<string>();
+    let hasDeferredStructure = false;
 
     for (const change of changes) {
       if (change.type === 'errored' || change.type === 'unknown') {
-        // Both force a coarse refresh, so this pass never runs for them.
+        hasDeferredStructure = true;
         continue;
       }
       if (change.type === 'moved') {
-        if (change.movedFromPath === undefined) {
-          // Unknown origin already forced a coarse refresh.
-          continue;
-        }
-        // Only one side can be visible here; a visible-to-visible move was
-        // already classified as needing a coarse refresh.
-        const from = this.classifyWatchPath(wsName, change.movedFromPath);
+        const from = change.movedFromPath
+          ? this.classifyWatchPath(wsName, change.movedFromPath)
+          : ({ kind: 'coarse' } as const);
         const to = this.classifyWatchPath(wsName, change.path);
-        if (to.kind === 'file') {
-          // Atomic write from an invisible temporary path.
-          add({ type: 'create', wsPath: to.wsPath });
-        } else if (from.kind === 'file') {
-          // A visible file moved out of the app's listing.
-          add({ type: 'delete', wsPath: from.wsPath });
+        if (from.kind !== 'ignored' || to.kind !== 'ignored') {
+          hasDeferredStructure = true;
+        }
+        if (
+          change.kind !== 'directory' &&
+          to.kind === 'file' &&
+          from.kind !== 'file'
+        ) {
+          wsPaths.add(to.wsPath);
         }
         continue;
       }
 
       const classified = this.classifyWatchPath(wsName, change.path);
-      if (classified.kind !== 'file') {
+      if (
+        change.type === 'disappeared' ||
+        change.kind === 'directory' ||
+        change.type === 'appeared'
+      ) {
+        if (classified.kind !== 'ignored') {
+          hasDeferredStructure = true;
+        }
+      }
+      if (change.type === 'disappeared' || change.kind === 'directory') {
         continue;
       }
-      const wsPath = classified.wsPath;
-      switch (change.type) {
-        case 'appeared': {
-          add({ type: 'create', wsPath });
-          break;
+      if (classified.kind !== 'file') {
+        if (change.type === 'modified' && classified.kind === 'coarse') {
+          hasDeferredStructure = true;
         }
-        case 'modified': {
-          add({ type: 'update', wsPath });
-          break;
-        }
-        case 'disappeared': {
-          add({ type: 'delete', wsPath });
-          break;
-        }
-        default: {
-          const _exhaustiveCheck: never = change.type;
-        }
+        continue;
+      }
+      if (change.type === 'appeared' || change.type === 'modified') {
+        wsPaths.add(classified.wsPath);
       }
     }
-    return events;
+
+    return {
+      contentUpdates: [...wsPaths].map((wsPath) => ({
+        type: 'update',
+        wsPath,
+      })),
+      hasDeferredStructure,
+    };
   }
 
   private handleWatchChanges(wsName: string, changes: NativeFsChange[]): void {
@@ -357,20 +350,22 @@ export class FileStorageNativeFs
       return;
     }
 
+    const entry = this.fsCache.get(wsName);
+    const { contentUpdates, hasDeferredStructure } = this.translateWatchChanges(
+      wsName,
+      changes,
+    );
+    if (entry && hasDeferredStructure) {
+      entry.pendingStructuralRefresh = true;
+    }
+
     if (changes.some((change) => change.type === 'errored')) {
       // Observation broke; re-arm on the next page return.
-      const entry = this.fsCache.get(wsName);
       if (entry) {
         entry.watchState = 'idle';
       }
-      onExternalChange({ type: 'refresh', wsName });
-      return;
     }
-    if (changes.some((change) => this.needsCoarseRefresh(wsName, change))) {
-      onExternalChange({ type: 'refresh', wsName });
-      return;
-    }
-    for (const event of this.toTargetedEvents(wsName, changes).values()) {
+    for (const event of contentUpdates) {
       onExternalChange(event);
     }
   }
