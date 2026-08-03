@@ -92,6 +92,36 @@ describe('extractLinkedWsPathsFromMarkdown', () => {
     ).toEqual(['notes:folder/nested.md']);
   });
 
+  it('ignores wiki-link punctuation inside inline math', () => {
+    expect(
+      extractLinkedWsPathsFromMarkdown({
+        currentWsPath: source,
+        index,
+        markdown: 'Formula $[[target]]$ is opaque TeX.',
+      }),
+    ).toEqual([]);
+  });
+
+  it('ignores wiki-link punctuation inside display math', () => {
+    expect(
+      extractLinkedWsPathsFromMarkdown({
+        currentWsPath: source,
+        index,
+        markdown: ['$$', '[[target]]', '$$'].join('\n'),
+      }),
+    ).toEqual([]);
+  });
+
+  it('keeps wiki links in callout content aligned with the editor tokenizer', () => {
+    expect(
+      extractLinkedWsPathsFromMarkdown({
+        currentWsPath: source,
+        index,
+        markdown: '> [!note] See [[target]]',
+      }),
+    ).toEqual(['notes:target.md']);
+  });
+
   it('ignores links that resolve back to the current note', () => {
     expect(
       extractLinkedWsPathsFromMarkdown({

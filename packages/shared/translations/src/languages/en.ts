@@ -51,6 +51,7 @@ export const t = {
         bold: 'Bold',
         italic: 'Italic',
         strike: 'Strikethrough',
+        highlight: 'Highlight',
         inlineCode: 'Inline code',
         link: 'Link',
         paragraph: 'Paragraph',

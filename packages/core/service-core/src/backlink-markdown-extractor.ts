@@ -1,6 +1,8 @@
 import {
+  calloutTokenizer,
   createBaseMarkdownTokenizer,
   frontmatterTokenizer,
+  mathTokenizer,
   wikiLinkTokenizer,
 } from '@bangle.io/markdown-syntax';
 import {
@@ -15,10 +17,13 @@ import {
 // it must not pull in an editor engine. Keep this tokenizer aligned with the
 // editors' configuration so all agree on what a note links to. Frontmatter is
 // included so `[[…]]` text inside YAML metadata is plain text here too, not a
-// backlink.
+// backlink. Math is likewise opaque: TeX that happens to contain wiki-link
+// punctuation must not create a relationship the editor does not represent.
 const backlinkMarkdownTokenizer = createBaseMarkdownTokenizer()
   .use(wikiLinkTokenizer)
-  .use(frontmatterTokenizer);
+  .use(frontmatterTokenizer)
+  .use(mathTokenizer)
+  .use(calloutTokenizer);
 
 type MarkdownToken = ReturnType<typeof backlinkMarkdownTokenizer.parse>[number];
 

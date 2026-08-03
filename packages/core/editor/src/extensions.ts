@@ -14,6 +14,7 @@ import {
   setupFrontmatter,
   setupHardBreak,
   setupHeading,
+  setupHighlight,
   setupHistory,
   setupHorizontalRule,
   setupImage,
@@ -93,6 +94,7 @@ export function setupExtensions(
       deleteFrontmatter: frontmatter.command.deleteFrontmatter,
     }),
     blockquote: setupBlockquote(),
+    highlight: setupHighlight(),
     bold: setupBold(),
     list: setupList(),
     math: setupMath({

@@ -42,6 +42,8 @@ export type { HardBreakConfig } from './hard-break';
 export { setupHardBreak } from './hard-break';
 export type { HeadingConfig } from './heading';
 export { setupHeading } from './heading';
+export type { HighlightConfig } from './highlight';
+export { setupHighlight } from './highlight';
 export type { HistoryConfig } from './history';
 export { setupHistory } from './history';
 export type { HorizontalRuleConfig } from './horizontal-rule';
