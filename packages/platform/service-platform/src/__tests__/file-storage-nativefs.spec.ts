@@ -442,7 +442,7 @@ describe('external change watching', () => {
     });
   });
 
-  it('maps visible file records and degrades ambiguous moves to a refresh', async () => {
+  it('maps possible content writes without applying structural records live', async () => {
     const { observer, onExternalChange } = await setupExternalChangeWatching();
 
     await observer.emitRecords([
@@ -465,9 +465,8 @@ describe('external change watching', () => {
     ]);
 
     expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
-      { type: 'create', wsPath: 'myWorkspace:sub/new.md' },
+      { type: 'update', wsPath: 'myWorkspace:sub/new.md' },
       { type: 'update', wsPath: 'myWorkspace:existing.md' },
-      { type: 'delete', wsPath: 'myWorkspace:gone.md' },
     ]);
 
     onExternalChange.mockClear();
@@ -479,13 +478,10 @@ describe('external change watching', () => {
         changedHandle: { kind: 'file' },
       },
     ]);
-    expect(onExternalChange).toHaveBeenCalledWith({
-      type: 'refresh',
-      wsName: 'myWorkspace',
-    });
+    expect(onExternalChange).not.toHaveBeenCalled();
   });
 
-  it('coalesces one observer burst: duplicates collapse, a coarse record wins alone', async () => {
+  it('coalesces content updates without letting structural hints hide them', async () => {
     const { observer, onExternalChange } = await setupExternalChangeWatching();
 
     // Duplicate records for the same path collapse into one event.
@@ -511,9 +507,8 @@ describe('external change watching', () => {
       { type: 'update', wsPath: 'myWorkspace:b.md' },
     ]);
 
-    // Once any record in the batch demands a coarse refresh, the refresh is
-    // emitted alone — it re-lists the workspace and revalidates open notes,
-    // so per-path events in the same batch would only duplicate that work.
+    // A structural hint in the same burst waits for page-return revalidation;
+    // it must not suppress an independent live content update.
     onExternalChange.mockClear();
     await observer.emitRecords([
       {
@@ -528,7 +523,7 @@ describe('external change watching', () => {
       },
     ]);
     expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
-      { type: 'refresh', wsName: 'myWorkspace' },
+      { type: 'update', wsPath: 'myWorkspace:a.md' },
     ]);
   });
 
@@ -569,7 +564,7 @@ describe('external change watching', () => {
     ]);
   });
 
-  it('ignores hidden paths and coalesces unmappable records into one refresh', async () => {
+  it('ignores hidden, unmappable, and errored structural records live', async () => {
     const { observer, onExternalChange } = await setupExternalChangeWatching();
 
     await observer.emitRecords([
@@ -579,8 +574,8 @@ describe('external change watching', () => {
         relativePathComponents: ['.obsidian', 'config.json'],
         changedHandle: { kind: 'file' },
       },
-      // Directory records and unknown/errored records only say "something
-      // changed": they collapse into a single coarse refresh.
+      // Directory and unknown records only say that workspace structure may
+      // have changed. The next page return owns that revalidation.
       {
         type: 'appeared',
         relativePathComponents: ['new-dir'],
@@ -590,34 +585,31 @@ describe('external change watching', () => {
       { type: 'errored', relativePathComponents: [] },
     ]);
 
-    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
-      { type: 'refresh', wsName: 'myWorkspace' },
-    ]);
+    expect(onExternalChange).not.toHaveBeenCalled();
   });
 
-  it('coarse-refreshes a deleted directory, whose record has no handle to say so', async () => {
+  it('defers a deleted directory whose record has no handle to say so', async () => {
     const { observer, onExternalChange } = await setupExternalChangeWatching();
 
     // Real Chrome delivers `disappeared` with changedHandle: null, so a
     // deleted DIRECTORY is indistinguishable from a file by `kind`. Its
     // extensionless path is directory-shaped, and its descendants get no
-    // records of their own — only a re-list reconciles the tree.
+    // records of their own. Page-return/manual revalidation reconciles it
+    // without letting an app mutation's intermediate state reach the tree.
     await observer.emitRecords([
       { type: 'disappeared', relativePathComponents: ['archive'] },
     ]);
-    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
-      { type: 'refresh', wsName: 'myWorkspace' },
-    ]);
+    expect(onExternalChange).not.toHaveBeenCalled();
   });
 
-  it('keeps invisible-to-visible atomic writes targeted but refreshes ambiguous visible moves', async () => {
+  it('keeps atomic replacement content live but defers visible moves', async () => {
     const { observer, onExternalChange } = await setupExternalChangeWatching();
 
     await observer.emitRecords([
       // Chromium's own createWritable commit / sync tools' write-to-temp:
       // the visible file materialized from a transient path. A workspace
-      // refresh here would re-list on EVERY local save (self-writes are
-      // deliberately unfiltered).
+      // tree update here would run on EVERY local save (self-writes are
+      // deliberately unfiltered). Only the destination bytes are relevant.
       {
         type: 'moved',
         relativePathComponents: ['note.md'],
@@ -626,14 +618,14 @@ describe('external change watching', () => {
       },
     ]);
     expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
-      { type: 'create', wsPath: 'myWorkspace:note.md' },
+      { type: 'update', wsPath: 'myWorkspace:note.md' },
     ]);
 
     onExternalChange.mockClear();
     await observer.emitRecords([
       // `.tmp` is visible workspace content. A visible-to-visible watcher
-      // move can be either a rename or an atomic target replacement, so the
-      // safe interpretation is a workspace refresh.
+      // move can be either a rename or an atomic target replacement, so it is
+      // deferred to page-return/manual structural revalidation.
       {
         type: 'moved',
         relativePathComponents: ['trash.md.tmp'],
@@ -648,12 +640,10 @@ describe('external change watching', () => {
       },
     ]);
 
-    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
-      { type: 'refresh', wsName: 'myWorkspace' },
-    ]);
+    expect(onExternalChange).not.toHaveBeenCalled();
   });
 
-  it('coarse-refreshes a moved directory whose dot-named path looks like a file', async () => {
+  it('defers a moved directory whose dot-named path looks like a file', async () => {
     const { observer, onExternalChange } = await setupExternalChangeWatching();
 
     // A directory materializing from an invisible path matches the atomic-write
@@ -669,9 +659,7 @@ describe('external change watching', () => {
       },
     ]);
 
-    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
-      { type: 'refresh', wsName: 'myWorkspace' },
-    ]);
+    expect(onExternalChange).not.toHaveBeenCalled();
   });
 
   it('ignores churn inside locations the listing never shows', async () => {
@@ -718,11 +706,12 @@ describe('external change watching', () => {
     expect(onExternalChange).not.toHaveBeenCalled();
   });
 
-  it('still refreshes when a visible directory changes', async () => {
+  it('defers visible directory changes until page return', async () => {
     const { observer, onExternalChange } = await setupExternalChangeWatching();
 
-    // The ignore check must not swallow real directory changes: adding or
-    // removing a visible folder does change the listing.
+    // The observer record is still real, but applying it immediately can
+    // expose an app operation's intermediate disk state. Page return performs
+    // the eventual full listing instead.
     await observer.emitRecords([
       {
         type: 'appeared',
@@ -731,9 +720,7 @@ describe('external change watching', () => {
       },
     ]);
 
-    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
-      { type: 'refresh', wsName: 'myWorkspace' },
-    ]);
+    expect(onExternalChange).not.toHaveBeenCalled();
   });
 
   it('reports changes to visible temp-suffix files', async () => {
@@ -761,9 +748,40 @@ describe('external change watching', () => {
 
     expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
       { type: 'update', wsPath: 'myWorkspace:export.tmp' },
-      { type: 'create', wsPath: 'myWorkspace:recovered.swp' },
+      { type: 'update', wsPath: 'myWorkspace:recovered.swp' },
       { type: 'update', wsPath: 'myWorkspace:real-note.md' },
     ]);
+  });
+
+  it('reconciles deferred structural records on the next plain refocus', async () => {
+    const { observer, onExternalChange, triggerPageReturn } =
+      await setupExternalChangeWatching();
+
+    await observer.emitRecords([
+      {
+        type: 'disappeared',
+        relativePathComponents: ['removed.md'],
+      },
+      {
+        type: 'moved',
+        relativePathComponents: ['renamed.md'],
+        relativePathMovedFrom: ['original.md'],
+        changedHandle: { kind: 'file' },
+      },
+    ]);
+    expect(onExternalChange).not.toHaveBeenCalled();
+
+    triggerPageReturn({ returnedFromHidden: false });
+    expect(onExternalChange).toHaveBeenCalledWith({
+      type: 'refresh',
+      wsName: 'myWorkspace',
+    });
+
+    // The pending bit is consumed by that reconciliation. A later ordinary
+    // refocus can stay cheap until another structural record arrives.
+    onExternalChange.mockClear();
+    triggerPageReturn({ returnedFromHidden: false });
+    expect(onExternalChange).not.toHaveBeenCalled();
   });
 
   it('revalidates opened workspaces on every page return when no observer exists', async () => {
@@ -804,13 +822,22 @@ describe('external change watching', () => {
     ]);
   });
 
-  it('skips the refresh on plain refocus while a watcher is armed and healthy', async () => {
-    const { onExternalChange, triggerPageReturn } =
+  it('skips the refresh on plain refocus while a watcher is armed and clean', async () => {
+    const { observer, onExternalChange, triggerPageReturn } =
       await setupExternalChangeWatching();
 
-    // The page stayed visible the whole time and the observer was armed:
-    // nothing was missed, so refreshing would re-list the workspace and
-    // re-read every open note on every alt-tab for no reason.
+    // Ignored tool metadata does not dirty the visible workspace.
+    await observer.emitRecords([
+      {
+        type: 'appeared',
+        relativePathComponents: ['.git', 'index.lock'],
+        changedHandle: { kind: 'file' },
+      },
+    ]);
+
+    // The page stayed visible, the observer was armed, and it saw no relevant
+    // structure, so refreshing would re-list the workspace and re-read every
+    // open note on every alt-tab for no reason.
     triggerPageReturn({ returnedFromHidden: false });
     expect(onExternalChange).not.toHaveBeenCalled();
 
@@ -920,13 +947,12 @@ describe('external change watching', () => {
     const { observer, onExternalChange, triggerPageReturn } =
       await setupExternalChangeWatching();
 
-    // Observation broke (e.g. permission loss): one coarse refresh goes out.
+    // Observation broke (e.g. permission loss). Do not scan immediately from
+    // the error record; page return owns re-arming and reconciliation.
     await observer.emitRecords([
       { type: 'errored', relativePathComponents: [] },
     ]);
-    expect(onExternalChange.mock.calls.map(([event]) => event)).toEqual([
-      { type: 'refresh', wsName: 'myWorkspace' },
-    ]);
+    expect(onExternalChange).not.toHaveBeenCalled();
 
     // Even a plain refocus re-establishes the observer AND refreshes: with
     // the watcher dead, anything could have been missed meanwhile.

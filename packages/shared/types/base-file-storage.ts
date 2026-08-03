@@ -33,15 +33,18 @@ export type FileStorageChangeEvent =
     };
 
 /**
- * A change made to workspace files by something other than this app instance
- * (a sync tool, another editor, a shell command), detected by a storage
- * provider's watcher. Per-path changes reuse the mutation event shape;
- * `refresh` is the coarse fallback when the watcher only knows "something
+ * A storage-provider hint that workspace files changed. Watchers may also
+ * report this app's own writes because platform records do not carry writer
+ * identity. `update` invalidates content at an existing path; `refresh` is the
+ * structural revalidation boundary when the provider only knows "something
  * changed". A workspace name scopes the refresh when known; absent means
  * app-wide.
  */
 export type FileStorageExternalChangeEvent =
-  | Exclude<FileStorageChangeEvent, { type: 'rename' }>
+  | {
+      type: 'update';
+      wsPath: string;
+    }
   | {
       type: 'refresh';
       wsName?: string;
