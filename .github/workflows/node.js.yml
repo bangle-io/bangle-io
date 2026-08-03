@@ -6,19 +6,77 @@ on:
   pull_request:
     branches: [main, dev, staging, production]
 
+permissions:
+  contents: read
+  pull-requests: read
+
 concurrency:
   group: bangle-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 env:
   SENTRY_NO_PROGRESS_BAR: 1
+
 jobs:
+  classify-changes:
+    name: Classify changes
+    runs-on: ubuntu-latest
+    outputs:
+      docs_only: ${{ steps.classify.outputs.docs_only }}
+    steps:
+      - name: Detect documentation-only pull requests
+        id: classify
+        uses: actions/github-script@v8
+        with:
+          script: |
+            if (context.eventName !== 'pull_request') {
+              core.setOutput('docs_only', 'false');
+              return;
+            }
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              per_page: 100,
+            });
+            const reportedFileCount = context.payload.pull_request.changed_files;
+            const hasCompleteFileList = files.length === reportedFileCount;
+            const isDocumentationPath = (filename) =>
+              filename.startsWith('docs/') ||
+              filename.startsWith('plans/') ||
+              (!filename.includes('/') && /\.(?:md|mdx)$/i.test(filename)) ||
+              /(?:^|\/)(?:AGENTS|CHANGELOG|CONTRIBUTING|README)\.(?:md|mdx)$/i.test(
+                filename,
+              );
+            const docsOnly =
+              hasCompleteFileList &&
+              files.length > 0 &&
+              files.every(
+                ({ filename, previous_filename: previousFilename }) =>
+                  isDocumentationPath(filename) &&
+                  (!previousFilename || isDocumentationPath(previousFilename)),
+              );
+
+            if (!hasCompleteFileList) {
+              core.warning(
+                `GitHub reported ${reportedFileCount} changed files but returned ${files.length}; all suites will run.`,
+              );
+            }
+            core.info(
+              docsOnly
+                ? 'Only documentation files changed; code suites will be skipped.'
+                : 'Code-affecting files changed; all suites will run.',
+            );
+            core.setOutput('docs_only', String(docsOnly));
+
   lint:
+    needs: classify-changes
+    if: needs.classify-changes.outputs.docs_only != 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - name: Install pnpm
-        id: pnpm-install
         run: |
           corepack enable
           corepack prepare --activate
@@ -26,64 +84,26 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
-          cache: 'pnpm'
       - name: Install bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
       - name: Install dependencies
         run: pnpm install
-      - name: Setup Biome
-        uses: biomejs/setup-biome@v2
-        with:
-          version: latest
       - name: Lint
         run: pnpm run lint:ci
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install pnpm
-        id: pnpm-install
-        run: |
-          corepack enable
-          corepack prepare --activate
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm install
-      - name: test
-        run: pnpm run test:ci
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - name: Install pnpm
-        id: pnpm-install
-        run: |
-          corepack enable
-          corepack prepare --activate
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm install
+
       - name: Production build
+        if: ${{ !cancelled() }}
         run: pnpm run build
-  e2e-tests:
-    continue-on-error: true
-    timeout-minutes: 30
+
+  test:
+    needs: classify-changes
+    if: needs.classify-changes.outputs.docs_only != 'true'
     runs-on: ubuntu-latest
-    container: mcr.microsoft.com/playwright:v1.60.0-noble
     steps:
       - uses: actions/checkout@v6
       - name: Install pnpm
-        id: pnpm-install
         run: |
           corepack enable
           corepack prepare --activate
@@ -91,25 +111,46 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
-          cache: 'pnpm'
-      - name: Cache Playwright browsers
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-browsers
-          restore-keys: |
-            ${{ runner.os }}-playwright-browsers
       - name: Install dependencies
         run: pnpm install
-      - name: Install Playwright Browsers
-        run: pnpm -w run e2e-install
-      - name: Run Playwright tests
-        run: pnpm -w run e2e:ci
-      - uses: actions/upload-artifact@v7
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report
-          path: |
-            packages/tooling/e2e-tests/playwright-report/
-            packages/tooling/e2e-tests/test-results/
-          retention-days: 30
+      - name: Test
+        run: pnpm run test:ci
+
+  e2e-shard-1:
+    needs: classify-changes
+    if: needs.classify-changes.outputs.docs_only != 'true'
+    uses: ./.github/workflows/e2e-shard.yml
+    with:
+      shard: 1
+
+  e2e-shard-2:
+    needs: classify-changes
+    if: needs.classify-changes.outputs.docs_only != 'true'
+    uses: ./.github/workflows/e2e-shard.yml
+    with:
+      shard: 2
+
+  e2e-tests:
+    name: e2e-tests
+    needs: [classify-changes, e2e-shard-1, e2e-shard-2]
+    if: >-
+      always() &&
+      needs.classify-changes.outputs.docs_only != 'true'
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify E2E shards
+        env:
+          SHARD_1_JOB_RESULT: ${{ needs.e2e-shard-1.result }}
+          SHARD_1_TEST_OUTCOME: ${{ needs.e2e-shard-1.outputs.outcome }}
+          SHARD_2_JOB_RESULT: ${{ needs.e2e-shard-2.result }}
+          SHARD_2_TEST_OUTCOME: ${{ needs.e2e-shard-2.outputs.outcome }}
+        run: |
+          if [ "$SHARD_1_JOB_RESULT" != "success" ] || [ "$SHARD_1_TEST_OUTCOME" != "success" ]; then
+            echo "E2E shard 1 failed." >&2
+            exit 1
+          fi
+          if [ "$SHARD_2_JOB_RESULT" != "success" ] || [ "$SHARD_2_TEST_OUTCOME" != "success" ]; then
+            echo "E2E shard 2 failed." >&2
+            exit 1
+          fi

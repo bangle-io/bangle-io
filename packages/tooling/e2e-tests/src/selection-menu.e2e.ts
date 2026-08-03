@@ -7,6 +7,7 @@ import {
   getEditorLocator,
   readStoredMarkdown,
   selectEditorText,
+  waitForEditorFocus,
   writeStoredMarkdown,
 } from './common';
 
@@ -289,6 +290,7 @@ test('routes immediate typing to the link URL input after opening it from select
   await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
   const editor = getEditorLocator(page, {});
   await editor.click();
+  await waitForEditorFocus(page, {});
   await page.keyboard.insertText(initialMarkdown);
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, noteName))

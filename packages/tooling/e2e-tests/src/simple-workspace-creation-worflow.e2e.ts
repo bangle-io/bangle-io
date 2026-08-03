@@ -3,7 +3,7 @@ import {
   clearEditor,
   getEditorLocator,
   getEditorText,
-  pressAppShortcut,
+  openOmniSearch,
 } from './common';
 
 const WORKSPACE_COMMAND_TITLES = [
@@ -24,13 +24,13 @@ async function expectOmniSearchCommandVisibility(
     hidden: readonly string[];
   },
 ) {
-  await pressAppShortcut(page, 'k');
-  const commandInput = page.getByPlaceholder('Type a command or search...');
+  const commandInput = await openOmniSearch(page);
+  const dialog = page.getByRole('dialog', { name: 'omni command bar' });
 
   for (const commandTitle of visible) {
     await commandInput.fill(commandTitle);
     await expect(
-      page.getByRole('option').filter({
+      dialog.getByRole('option').filter({
         has: page.getByText(commandTitle, { exact: true }),
       }),
     ).toBeVisible();
@@ -38,13 +38,14 @@ async function expectOmniSearchCommandVisibility(
   for (const commandTitle of hidden) {
     await commandInput.fill(commandTitle);
     await expect(
-      page.getByRole('option').filter({
+      dialog.getByRole('option').filter({
         has: page.getByText(commandTitle, { exact: true }),
       }),
     ).toHaveCount(0);
   }
 
   await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
 }
 
 test('Simple Workspace Creation Workflow', async ({ page }) => {

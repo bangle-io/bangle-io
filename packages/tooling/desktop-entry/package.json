@@ -52,7 +52,7 @@
   "devDependencies": {
     "@types/node": "^26.1.0",
     "electron-builder": "26.15.3",
-    "playwright": "^1.61.1",
+    "playwright": "1.62.1",
     "tsx": "^4.22.5"
   }
 }

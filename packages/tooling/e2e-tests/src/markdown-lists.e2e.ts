@@ -256,8 +256,7 @@ test('list type changes follow the same-level run', async ({ page }) => {
   const nestedRun = '- parent\n  1. nested\n- sibling';
   await writeStoredMarkdown(page, workspaceName, noteName, nestedRun);
   await page.reload({ waitUntil: 'networkidle' });
-  await editor.getByText('nested', { exact: true }).click();
-  await waitForEditorFocus(page, {});
+  await collapseEditorSelectionAfterText(page, 'nested');
   await page.keyboard.press('Shift+Tab');
 
   const dedentedRun = '- parent\n- nested\n- sibling';
