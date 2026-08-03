@@ -112,3 +112,8 @@ jobs:
             packages/tooling/e2e-tests/playwright-report/
             packages/tooling/e2e-tests/test-results/
           retention-days: 30
+      - name: Fail canceled E2E runs
+        if: ${{ always() && cancelled() }}
+        run: |
+          echo "Playwright tests were canceled. This required check must be rerun before merging."
+          exit 1
