@@ -150,6 +150,10 @@ The `local-ci-check` script runs all CI validation scripts defined in package.js
 - `desktop:ci` - Electron desktop tests, build, and smoke test
 
 This ensures your changes will pass CI before pushing to the repository.
+Full unit, browser, desktop, and aggregate local CI runs share a repository
+lock, so concurrent runs from linked worktrees queue instead of competing for
+the same machine. The waiting command reports the PID and worktree holding the
+lock and continues automatically when it is released.
 
 `knip:ci` runs two passes:
 
