@@ -56,7 +56,7 @@ Use this skill to convert short Bangle follow-ups into the next concrete action.
 ### Planning or project task
 
 - For durable plans under `plans/`, read `plans/AGENTS.md` first.
-- For "add a task", "track this", or Bangle project board requests, use `bangle-project-task`.
+- For adding, updating, triaging, scheduling, or reconciling Bangle project items, use `bangle-project-operator`.
 - When a plan is fully done, move it to `plans/archived/`, set `status: completed`, set `archived: true`, set `archived_on: YYYY-MM-DD` in the YAML frontmatter, update `updated`, and include the DONE note required by `plans/AGENTS.md`.
 
 ## Close Out
