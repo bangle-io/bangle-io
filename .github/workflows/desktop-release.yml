@@ -22,7 +22,7 @@ jobs:
   preflight:
     name: Preflight
     runs-on: ubuntu-latest
-    container: mcr.microsoft.com/playwright:v1.60.0-noble
+    container: mcr.microsoft.com/playwright:v1.62.1-noble
     outputs:
       channel: ${{ steps.metadata.outputs.channel }}
       make_latest: ${{ steps.metadata.outputs.make_latest }}
@@ -33,8 +33,6 @@ jobs:
       version: ${{ steps.metadata.outputs.version }}
     steps:
       - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
 
       - name: Install pnpm
         run: |
@@ -80,9 +78,6 @@ jobs:
               --github-output
           fi
 
-      - name: Install Playwright browsers
-        run: pnpm -w run e2e-install
-
       - name: Run local CI preflight
         env:
           BANGLE_RELEASE_VERSION: ${{ steps.metadata.outputs.version }}
@@ -94,8 +89,6 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
 
       - name: Install pnpm
         run: |

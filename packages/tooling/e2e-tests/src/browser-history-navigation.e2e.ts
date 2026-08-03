@@ -14,6 +14,7 @@ async function createNoteViaDialog(page: Page, noteName: string) {
   await page.getByRole('menuitem', { name: 'New Note' }).click();
   await page.getByLabel('Note name').fill(noteName);
   await page.getByRole('button', { name: 'Create' }).click();
+  await expect(page).toHaveURL(editorUrl(`${noteName}.md`));
   await expect(getEditorLocator(page, {})).toBeVisible();
 }
 

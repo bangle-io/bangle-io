@@ -57,7 +57,7 @@
     "desktop:release:stable": "pnpm --filter \"@bangle.io/desktop-entry\" run release:stable",
     "dev-ports": "node scripts/dev-ports.js",
     "lint:ci": "pnpm run custom-validation && pnpm run typecheck && biome ci .  --diagnostic-level=error",
-    "test:ci": "pnpm vitest run --configLoader runner --maxWorkers=50%",
+    "test:ci": "pnpm vitest run --configLoader runner --maxWorkers=3",
     "e2e-install": "pnpm --filter \"@bangle.io/e2e-tests\" exec playwright install --with-deps chromium",
     "e2e:ci": "pnpm --filter \"@bangle.io/e2e-tests\" run ci && pnpm run e2e-ct-test",
     "e2e-ui-mode": "pnpm --filter \"@bangle.io/e2e-tests\" run test-ui-mode",
