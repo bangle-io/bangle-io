@@ -1,9 +1,17 @@
+import { useIsMobile } from '@bangle.io/ui-misc';
 import React from 'react';
 import { Toaster as Sonner, toast } from 'sonner';
 
-type ToasterProps = React.ComponentProps<typeof Sonner>;
+type SonnerProps = React.ComponentProps<typeof Sonner>;
 
-const Toaster = ({ ...props }: ToasterProps) => {
+type ToasterProps = SonnerProps & {
+  /** Overrides the toast position below the shared mobile breakpoint. */
+  mobilePosition?: SonnerProps['position'];
+};
+
+const Toaster = ({ mobilePosition, position, ...props }: ToasterProps) => {
+  const isMobile = useIsMobile();
+
   return (
     <Sonner
       className="toaster group"
@@ -18,6 +26,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
             'group-[.toast]:bg-muted group-[.toast]:text-muted-foreground',
         },
       }}
+      position={isMobile ? (mobilePosition ?? position) : position}
       {...props}
     />
   );

@@ -4,7 +4,7 @@ export const COLOR_SCHEME = {
   LIGHT: LIGHT_SCHEME,
   DARK: DARK_SCHEME,
 } as const;
-export const WIDESCREEN_WIDTH = 759;
+export const WIDESCREEN_WIDTH = 768;
 export const SIDEBAR_DEFAULT_WIDTH = 272;
 export const SIDEBAR_MIN_WIDTH = 224;
 export const SIDEBAR_MAX_WIDTH = 400;
