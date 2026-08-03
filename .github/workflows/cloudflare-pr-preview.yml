@@ -4,6 +4,19 @@ on:
   pull_request:
     branches: [main, dev, staging, production]
     types: [opened, reopened, synchronize, ready_for_review]
+    paths-ignore:
+      - 'docs/**'
+      - 'plans/**'
+      - '*.md'
+      - '*.mdx'
+      - '**/AGENTS.md'
+      - '**/AGENTS.mdx'
+      - '**/CHANGELOG.md'
+      - '**/CHANGELOG.mdx'
+      - '**/CONTRIBUTING.md'
+      - '**/CONTRIBUTING.mdx'
+      - '**/README.md'
+      - '**/README.mdx'
 
 concurrency:
   group: cloudflare-pr-preview-${{ github.event.pull_request.number }}

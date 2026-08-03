@@ -1,10 +1,34 @@
 import { execFileSync, spawn } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const packageRoot = fileURLToPath(new URL('..', import.meta.url));
 const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url));
 const host = process.env.BANGLE_E2E_HOST ?? '127.0.0.1';
 const serverLogPrefix = '[E2E WebServer]';
+
+export function getShardArgs(value = process.env.BANGLE_E2E_SHARD): string[] {
+  if (!value) {
+    return [];
+  }
+
+  const [currentValue, totalValue, ...unexpected] = value.split('/');
+  const current = Number(currentValue);
+  const total = Number(totalValue);
+  if (
+    unexpected.length > 0 ||
+    !Number.isInteger(current) ||
+    !Number.isInteger(total) ||
+    current < 1 ||
+    total < 1 ||
+    current > total
+  ) {
+    throw new Error(
+      'BANGLE_E2E_SHARD must use Playwright shard syntax such as 1/2.',
+    );
+  }
+
+  return [`--shard=${current}/${total}`];
+}
 
 function resolveE2EPort(): string {
   if (process.env.BANGLE_E2E_PORT) {
@@ -140,12 +164,16 @@ async function main() {
 
   try {
     await waitForServer(baseUrl, () => serverExited);
-    const exitCode = await runChild('pnpm', ['run', 'test'], {
-      ...process.env,
-      BANGLE_E2E_BASE_URL: baseUrl,
-      BANGLE_E2E_EXTERNAL_SERVER: '1',
-      CI: '1',
-    });
+    const exitCode = await runChild(
+      'pnpm',
+      ['run', 'test', ...getShardArgs()],
+      {
+        ...process.env,
+        BANGLE_E2E_BASE_URL: baseUrl,
+        BANGLE_E2E_EXTERNAL_SERVER: '1',
+        CI: '1',
+      },
+    );
 
     process.exitCode = exitCode;
   } finally {
@@ -153,4 +181,9 @@ async function main() {
   }
 }
 
-await main();
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(process.argv[1]).href
+) {
+  await main();
+}
