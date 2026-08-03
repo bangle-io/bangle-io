@@ -29,6 +29,7 @@ const heading = editorTest.nodeBuilder('heading');
 
 afterEach(() => {
   editorTest.cleanup();
+  document.body.replaceChildren();
 });
 
 describe('trailing node', () => {
@@ -50,11 +51,17 @@ describe('trailing node', () => {
       top: 20,
     });
 
+    const externalControl = document.createElement('button');
+    document.body.append(externalControl);
+    externalControl.focus();
+    expect(editor.view.hasFocus()).toBe(false);
+
     const event = dispatchMouseDown(editor.view.dom, { clientY: 160 });
 
     expect(event.defaultPrevented).toBe(true);
     editor.expectDoc(doc(codeBlock('const done = true;'), p()));
     expect(editor.selectionParentType()).toBe('paragraph');
+    expect(editor.view.hasFocus()).toBe(true);
   });
 
   it('adds a paragraph when the user clicks below a final heading', () => {
@@ -126,7 +133,7 @@ describe('trailing node', () => {
     codeBlockEditor.expectDoc(doc(codeBlock('done')));
   });
 
-  it('does not add a paragraph for modified clicks below the final node', () => {
+  it('does not add a paragraph for modified, non-primary, or out-of-bounds clicks', () => {
     const editor = editorTest.createEditor(doc(codeBlock('done')));
 
     mockEditorBounds(editor.view.dom, {
@@ -142,7 +149,12 @@ describe('trailing node', () => {
       top: 20,
     });
 
-    for (const modifier of ['shiftKey', 'metaKey'] as const) {
+    for (const modifier of [
+      'altKey',
+      'ctrlKey',
+      'metaKey',
+      'shiftKey',
+    ] as const) {
       const event = dispatchMouseDown(editor.view.dom, {
         clientY: 160,
         [modifier]: true,
@@ -151,6 +163,20 @@ describe('trailing node', () => {
       expect(event.defaultPrevented).toBe(false);
       editor.expectDoc(doc(codeBlock('done')));
     }
+
+    const rightClick = dispatchMouseDown(editor.view.dom, {
+      button: 2,
+      clientY: 160,
+    });
+    expect(rightClick.defaultPrevented).toBe(false);
+    editor.expectDoc(doc(codeBlock('done')));
+
+    const outOfBoundsClick = dispatchMouseDown(editor.view.dom, {
+      clientX: 600,
+      clientY: 160,
+    });
+    expect(outOfBoundsClick.defaultPrevented).toBe(false);
+    editor.expectDoc(doc(codeBlock('done')));
   });
 });
 

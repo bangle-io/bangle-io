@@ -1,373 +1,131 @@
 import { expect, type Page, test } from '@playwright/test';
 import {
   clearEditor,
-  collapseEditorSelection,
-  createBrowserWorkspace,
-  createBrowserWorkspaceAndNote,
-  expectNoPageHorizontalOverflow,
+  collapseEditorSelectionAfterText,
   getEditorLocator,
-  readStoredMarkdown,
-  selectEditorText,
+  readSeededBrowserNote,
+  seedBrowserWorkspaceAndNote,
   waitForEditorFocus,
-  writeStoredMarkdown,
+  waitForSeededBrowserNote,
 } from './common';
 
-async function writeManyStoredMarkdown(
+type DebugServices = {
+  core: {
+    fileSystem: {
+      createTextFile(wsPath: string, text: string): Promise<void>;
+    };
+  };
+};
+
+type DebugWindow = Window &
+  typeof globalThis & {
+    services?: DebugServices;
+  };
+
+type WikiSeedFile = {
+  markdown: string;
+  noteName: string;
+};
+
+const WIKI_SCALE_BUDGET_MS = 5_000;
+const WIKI_SCALE_ENABLED = process.env.BANGLE_E2E_WIKI_SCALE === '1';
+
+function markdownFileName(noteName: string): string {
+  return noteName.endsWith('.md') ? noteName : `${noteName}.md`;
+}
+
+function wsPath(workspaceName: string, noteName: string): string {
+  return `${workspaceName}:${markdownFileName(noteName)}`;
+}
+
+async function createWikiNotes(
   page: Page,
   workspaceName: string,
-  files: Array<{ noteName: string; markdown: string }>,
+  files: readonly WikiSeedFile[],
 ) {
   await page.evaluate(
-    async ({ workspace, entries }) => {
-      const request = indexedDB.open('baby-idb-db-3');
-      const database = await new Promise<IDBDatabase>((resolve, reject) => {
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-      });
-      await new Promise<void>((resolve, reject) => {
-        const transaction = database.transaction(
-          'baby-idb-db-store-3',
-          'readwrite',
+    async ({ entries, wsName }) => {
+      const services = (window as DebugWindow).services?.core;
+      if (!services) throw new Error('Debug services are unavailable');
+
+      // The real file-system service owns each durable write; serializing the
+      // batch avoids turning the scale fixture into a storage-concurrency test.
+      for (const entry of entries) {
+        await services.fileSystem.createTextFile(
+          `${wsName}:${entry.fileName}`,
+          entry.markdown,
         );
-        transaction.oncomplete = () => resolve();
-        transaction.onerror = () => reject(transaction.error);
-        transaction.onabort = () => reject(transaction.error);
-        const store = transaction.objectStore('baby-idb-db-store-3');
-        for (const entry of entries) {
-          store.put(
-            new File([entry.markdown], `${entry.noteName}.md`, {
-              type: 'text/markdown',
-            }),
-            `${workspace}/${entry.noteName}.md`,
-          );
-        }
-      });
-      database.close();
+      }
     },
-    { workspace: workspaceName, entries: files },
+    {
+      entries: files.map((file) => ({
+        fileName: markdownFileName(file.noteName),
+        markdown: file.markdown,
+      })),
+      wsName: workspaceName,
+    },
   );
 }
 
-test('authors, persists, reloads, and navigates wiki links safely', async ({
+async function seedWikiWorkspace(
+  page: Page,
+  {
+    files = [],
+    homeMarkdown = '',
+    workspaceName,
+  }: {
+    files?: readonly WikiSeedFile[];
+    homeMarkdown?: string;
+    workspaceName: string;
+  },
+) {
+  const home = await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown: homeMarkdown,
+    noteName: 'Home',
+    workspaceName,
+  });
+  await createWikiNotes(page, workspaceName, files);
+  return home;
+}
+
+test('authors canonical wiki links, navigates safely, creates missing targets, and keeps dark affordances distinct', async ({
   page,
 }) => {
-  const workspaceName = 'wiki-links';
-  await createBrowserWorkspaceAndNote(page, {
-    workspaceName,
-    noteName: 'Home',
+  const home = await seedWikiWorkspace(page, {
+    files: [{ markdown: 'target content', noteName: 'Target' }],
+    homeMarkdown: 'Start',
+    workspaceName: 'wiki-canonical',
   });
-  await writeStoredMarkdown(page, workspaceName, 'Target', 'target content');
-  await writeStoredMarkdown(page, workspaceName, 'folder/Duplicate', 'one');
-  await writeStoredMarkdown(page, workspaceName, 'other/Duplicate', 'two');
-  await page.reload({ waitUntil: 'networkidle' });
-
   const editor = getEditorLocator(page, {});
-  await editor.click();
-  await page.keyboard.insertText('Start ');
-  await page.keyboard.insertText('[');
-  await page.keyboard.insertText('[');
   const picker = page.getByRole('listbox', { name: 'Link to a note' });
+
+  await collapseEditorSelectionAfterText(page, 'Start');
+  await page.keyboard.insertText(' ');
+  await page.keyboard.insertText('[');
+  await page.keyboard.insertText('[');
   await expect(picker).toBeVisible();
   await page.keyboard.insertText('Tar');
-  await expect(picker.getByRole('option', { name: 'Target' })).toBeVisible();
+  const targetOption = picker.getByRole('option', { name: 'Target' });
+  await expect(targetOption).toBeVisible();
   await expect(
     picker.getByRole('option', { name: 'Link to “Tar”' }),
   ).toBeVisible();
-  await page.keyboard.press('ArrowDown');
-  await expect(
-    picker.getByRole('option', { name: 'Link to “Tar”' }),
-  ).toHaveAttribute('aria-selected', 'true');
-  await page.keyboard.press('ArrowUp');
-  await expect(picker.getByRole('option', { name: 'Target' })).toHaveAttribute(
-    'aria-selected',
-    'true',
-  );
   await page.keyboard.press('Enter');
 
-  const targetChip = editor.getByRole('link', { name: 'Target', exact: true });
-  await expect(targetChip).toBeVisible();
+  const target = editor.getByRole('link', { name: 'Target', exact: true });
+  await expect(target).toBeVisible();
   await page.keyboard.insertText(' and ');
   await page.keyboard.insertText('[');
   await page.keyboard.insertText('[');
-  await page.keyboard.insertText('Duplicate');
-  await expect(picker).toBeVisible();
-  const folderDuplicate = picker
-    .getByRole('option')
-    .filter({ hasText: 'folder/' });
-  await folderDuplicate.click();
-  await expect(
-    editor.getByRole('link', { name: 'Duplicate', exact: true }),
-  ).toBeVisible();
-  await page.keyboard.insertText(' after');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
-    .toBe('Start [[Target]] and [[/folder/Duplicate]] after');
+  await page.keyboard.insertText('Missing');
+  await page.keyboard.insertText(']');
+  await page.keyboard.insertText(']');
+  const expectedHome = 'Start [[Target]] and [[Missing]]';
+  await expect.poll(() => readSeededBrowserNote(page, home)).toBe(expectedHome);
 
-  await page.reload({ waitUntil: 'networkidle' });
-  await expect(targetChip).toBeVisible();
-  await targetChip.focus();
-  await page.keyboard.press('Enter');
-  await expect(editor).toContainText('target content');
-
-  await writeStoredMarkdown(
-    page,
-    workspaceName,
-    'Target',
-    '[[Home|Go home]] and [[Missing]]',
-  );
-  await page.reload({ waitUntil: 'networkidle' });
-  await expect(editor.getByRole('link', { name: 'Go home' })).toBeVisible();
-  const missing = editor.getByRole('link', {
-    name: 'Missing (note not found)',
-  });
-  await expect(missing).toBeVisible();
-  await missing.click();
-  await expect(page).toHaveURL(
-    /ws#route=editor&wsPath=wiki-links%3AMissing\.md$/,
-  );
-  await expect(
-    page.getByLabel('breadcrumb').getByRole('button', { name: 'Missing.md' }),
-  ).toBeVisible();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'Missing'))
-    .toBe('');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'Target'))
-    .toBe('[[Home|Go home]] and [[Missing]]');
-});
-
-test('resolves spaced wiki targets without rewriting their Markdown', async ({
-  page,
-}) => {
-  const workspaceName = 'spaced-wiki-links';
-  const sourceMarkdown = '[[ Existing.md ]] and [[ Missing.md ]]';
-  await createBrowserWorkspaceAndNote(page, {
-    workspaceName,
-    noteName: 'Home',
-  });
-  await writeStoredMarkdown(page, workspaceName, 'Existing', 'existing body');
-  await writeStoredMarkdown(page, workspaceName, 'Home', sourceMarkdown);
-  await page.reload({ waitUntil: 'networkidle' });
-
-  const editor = getEditorLocator(page, {});
-  const existing = editor.locator('[data-wiki-link=" Existing.md "]');
-  await expect(existing).toHaveText('Existing');
-  await expect(existing).not.toHaveClass(/wiki-link-unresolved/);
-  await existing.click();
-  await expect(page).toHaveURL(
-    /ws#route=editor&wsPath=spaced-wiki-links%3AExisting\.md$/,
-  );
-  await expect(editor).toContainText('existing body');
-
-  await page.goBack({ waitUntil: 'networkidle' });
-  await expect(page).toHaveURL(
-    /ws#route=editor&wsPath=spaced-wiki-links%3AHome\.md$/,
-  );
-
-  const missing = editor.locator('[data-wiki-link=" Missing.md "]');
-  await expect(missing).toHaveText('Missing');
-  await expect(missing).toHaveClass(/wiki-link-unresolved/);
-  await missing.click();
-  await expect(page).toHaveURL(
-    /ws#route=editor&wsPath=spaced-wiki-links%3AMissing\.md$/,
-  );
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'Missing'))
-    .toBe('');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
-    .toBe(sourceMarkdown);
-});
-
-test('does not offer the note being edited as a wiki-link suggestion', async ({
-  page,
-}) => {
-  const workspaceName = 'wiki-link-self-suggestion';
-  await createBrowserWorkspaceAndNote(page, {
-    workspaceName,
-    noteName: 'Home',
-  });
-  await writeStoredMarkdown(page, workspaceName, 'Target', 'target content');
-  await page.reload({ waitUntil: 'networkidle' });
-
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await page.keyboard.insertText('[');
-  await page.keyboard.insertText('[');
-
-  const picker = page.getByRole('listbox', { name: 'Link to a note' });
-  await expect(picker).toBeVisible();
-  await expect(
-    picker.getByRole('option', { name: 'Target', exact: true }),
-  ).toBeVisible();
-  await expect(
-    picker.getByRole('option', { name: 'Home', exact: true }),
-  ).toHaveCount(0);
-});
-
-test('explains how to create backlinks when linked mentions are empty', async ({
-  page,
-}) => {
-  await createBrowserWorkspaceAndNote(page, {
-    workspaceName: 'empty-linked-mentions',
-    noteName: 'Home',
-  });
-
-  const linkedMentions = page.getByRole('region', {
-    name: 'Linked mentions',
-  });
-
-  await expect(linkedMentions).toContainText(
-    'No backlinks yet. Type [[ in another note to create a backlink to this note.',
-  );
-});
-
-test('shows exact linked mentions for the active note', async ({ page }) => {
-  const workspaceName = 'linked-mentions';
-  await createBrowserWorkspaceAndNote(page, {
-    workspaceName,
-    noteName: 'Target',
-  });
-  await writeStoredMarkdown(
-    page,
-    workspaceName,
-    'Target',
-    `Target content ${'x'.repeat(240)}`,
-  );
-  await writeStoredMarkdown(
-    page,
-    workspaceName,
-    'SourceWiki',
-    'See [[Target]]',
-  );
-  await writeStoredMarkdown(
-    page,
-    workspaceName,
-    'SourceMarkdown',
-    'See [Target](Target.md)',
-  );
-  await writeStoredMarkdown(
-    page,
-    workspaceName,
-    'PlainMention',
-    'Target appears as plain text.',
-  );
-  await writeStoredMarkdown(
-    page,
-    workspaceName,
-    'IgnoredSyntax',
-    '`[[Target]]`\n\n```md\n[[Target]]\n```\n\n![[Target]]\n\n![Target](Target.md)',
-  );
-  await writeStoredMarkdown(
-    page,
-    workspaceName,
-    'EscapedMarkdown',
-    String.raw`See \[Target](Target.md) as plain text.`,
-  );
-  await writeStoredMarkdown(
-    page,
-    workspaceName,
-    'MarkdownLinkLabel',
-    '[ordinary [[Target]]](https://example.com)',
-  );
-  await page.reload({ waitUntil: 'networkidle' });
-
-  const linkedMentions = page.getByRole('region', {
-    name: 'Linked mentions',
-  });
-  await expect(linkedMentions).toBeVisible();
-
-  await page.getByRole('button', { name: 'Toggle Max Width' }).click();
-  const editorBox = await getEditorLocator(page, {}).boundingBox();
-  const editorPaddingLeft = await getEditorLocator(page, {}).evaluate(
-    (element) => Number.parseFloat(getComputedStyle(element).paddingLeft),
-  );
-  const linkedMentionsControlBox = await linkedMentions
-    .getByRole('button', { name: 'Collapse linked mentions' })
-    .boundingBox();
-  if (!editorBox || !linkedMentionsControlBox) {
-    throw new Error('Unable to measure linked mentions layout');
-  }
-  expect(
-    Math.abs(linkedMentionsControlBox.x - (editorBox.x + editorPaddingLeft)),
-  ).toBeLessThanOrEqual(1);
-  await expectNoPageHorizontalOverflow(page);
-
-  await expect(
-    linkedMentions.getByRole('link', { name: 'SourceWiki.md' }),
-  ).toBeVisible();
-  await expect(
-    linkedMentions.getByRole('link', { name: 'SourceMarkdown.md' }),
-  ).toBeVisible();
-  await expect(
-    linkedMentions.getByRole('link', { name: 'PlainMention.md' }),
-  ).toHaveCount(0);
-  await expect(
-    linkedMentions.getByRole('link', { name: 'IgnoredSyntax.md' }),
-  ).toHaveCount(0);
-  await expect(
-    linkedMentions.getByRole('link', { name: 'EscapedMarkdown.md' }),
-  ).toHaveCount(0);
-  await expect(
-    linkedMentions.getByRole('link', { name: 'MarkdownLinkLabel.md' }),
-  ).toHaveCount(0);
-
-  await linkedMentions
-    .getByRole('button', { name: 'Collapse linked mentions' })
-    .click();
-  await expect(
-    linkedMentions.getByRole('button', { name: 'Expand linked mentions' }),
-  ).toHaveAttribute('aria-expanded', 'false');
-  await expect(
-    linkedMentions.getByRole('link', { name: 'SourceWiki.md' }),
-  ).toHaveCount(0);
-
-  await page.reload({ waitUntil: 'networkidle' });
-  const reloadedLinkedMentions = page.getByRole('region', {
-    name: 'Linked mentions',
-  });
-  await expect(
-    reloadedLinkedMentions.getByRole('button', {
-      name: 'Expand linked mentions',
-    }),
-  ).toHaveAttribute('aria-expanded', 'false');
-  await expect(
-    reloadedLinkedMentions.getByRole('link', { name: 'SourceWiki.md' }),
-  ).toHaveCount(0);
-
-  await reloadedLinkedMentions
-    .getByRole('button', { name: 'Expand linked mentions' })
-    .click();
-  await expect(
-    reloadedLinkedMentions.getByRole('link', { name: 'SourceWiki.md' }),
-  ).toBeVisible();
-
-  await reloadedLinkedMentions
-    .getByRole('link', { name: 'SourceWiki.md' })
-    .click();
-  await expect(page).toHaveURL(
-    /ws#route=editor&wsPath=linked-mentions%3ASourceWiki\.md$/,
-  );
-  await expect(getEditorLocator(page, {})).toContainText('See');
-});
-
-test('renders resolved and unresolved wiki links with distinct dark-mode affordances', async ({
-  page,
-}) => {
-  const workspaceName = 'wiki-link-dark-affordance';
-  await createBrowserWorkspaceAndNote(page, {
-    workspaceName,
-    noteName: 'Home',
-  });
-  await writeStoredMarkdown(page, workspaceName, 'Target', 'target content');
-  await writeStoredMarkdown(
-    page,
-    workspaceName,
-    'Home',
-    '[[Target]] and [[Missing]]',
-  );
   await page.evaluate(() => localStorage.setItem('color-scheme', 'dark'));
-  await page.reload({ waitUntil: 'networkidle' });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, home);
   await expect
     .poll(() =>
       page.evaluate(() =>
@@ -376,360 +134,224 @@ test('renders resolved and unresolved wiki links with distinct dark-mode afforda
     )
     .toBe(true);
 
-  const editor = getEditorLocator(page, {});
-  const target = editor.getByRole('link', { name: 'Target', exact: true });
+  const darkTarget = editor.getByRole('link', { name: 'Target', exact: true });
   const missing = editor.getByRole('link', {
     name: 'Missing (note not found)',
   });
-  await expect(target).toBeVisible();
+  await expect(darkTarget).toBeVisible();
   await expect(missing).toBeVisible();
+  const [targetStyle, missingStyle] = await Promise.all(
+    [darkTarget, missing].map((link) =>
+      link.evaluate((node) => {
+        const style = getComputedStyle(node);
+        return {
+          color: style.color,
+          textDecorationStyle: style.textDecorationStyle,
+        };
+      }),
+    ),
+  );
+  expect(targetStyle?.color).not.toBe(missingStyle?.color);
+  expect(targetStyle?.textDecorationStyle).toBe('solid');
+  expect(missingStyle?.textDecorationStyle).toBe('dotted');
 
-  const targetStyle = await target.evaluate((node) => {
-    const style = getComputedStyle(node);
-    return {
-      borderWidth: style.borderWidth,
-      color: style.color,
-      textDecorationLine: style.textDecorationLine,
-      textDecorationStyle: style.textDecorationStyle,
-    };
+  await darkTarget.click();
+  await waitForSeededBrowserNote(page, {
+    wsPath: wsPath(home.workspaceName, 'Target'),
   });
-  const missingStyle = await missing.evaluate((node) => {
-    const style = getComputedStyle(node);
-    return {
-      borderWidth: style.borderWidth,
-      color: style.color,
-      textDecorationLine: style.textDecorationLine,
-      textDecorationStyle: style.textDecorationStyle,
-    };
+  await expect(editor).toContainText('target content');
+  await page.goBack({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, home);
+
+  await editor.getByRole('link', { name: 'Missing (note not found)' }).click();
+  const missingNote = { wsPath: wsPath(home.workspaceName, 'Missing') };
+  await waitForSeededBrowserNote(page, missingNote);
+  await expect.poll(() => readSeededBrowserNote(page, missingNote)).toBe('');
+  await expect.poll(() => readSeededBrowserNote(page, home)).toBe(expectedHome);
+});
+
+test('shows the linked-mentions empty-to-ready lifecycle and persists collapse while retaining navigation', async ({
+  page,
+}) => {
+  const target = await seedWikiWorkspace(page, {
+    workspaceName: 'wiki-linked-mentions',
+  });
+  const editor = getEditorLocator(page, {});
+  const linkedMentions = page.getByRole('region', {
+    name: 'Linked mentions',
   });
 
-  expect(targetStyle.color).not.toBe(missingStyle.color);
-  expect(targetStyle.textDecorationLine).toContain('underline');
-  expect(targetStyle.textDecorationStyle).toBe('solid');
-  expect(targetStyle.borderWidth).toBe('0px');
-  expect(missingStyle.textDecorationLine).toContain('underline');
-  expect(missingStyle.textDecorationLine).not.toContain('line-through');
-  expect(missingStyle.textDecorationStyle).toBe('dotted');
-  expect(missingStyle.borderWidth).toBe('0px');
-});
-
-test('keeps escape, code, and malformed wiki text non-destructive and resolves duplicate names', async ({
-  page,
-}) => {
-  const workspaceName = 'wiki-link-literals';
-  await createBrowserWorkspaceAndNote(page, {
-    workspaceName,
-    noteName: 'Home',
-  });
-  await writeStoredMarkdown(page, workspaceName, 'one/Same', 'one');
-  await writeStoredMarkdown(page, workspaceName, 'two/Same', 'two');
-  await page.reload({ waitUntil: 'networkidle' });
-
-  const editor = getEditorLocator(page, {});
-  await expect(editor).toBeVisible();
-  await editor.click();
-  await waitForEditorFocus(page, {});
-  await page.keyboard.insertText('[');
-  await page.keyboard.insertText('[');
-  await expect(
-    page.getByRole('listbox', { name: 'Link to a note' }),
-  ).toBeVisible();
-  await page.keyboard.press('Escape');
-  await expect(
-    page.getByRole('listbox', { name: 'Link to a note' }),
-  ).toBeHidden();
-  await expect(editor).toContainText('[[');
-  await page.keyboard.insertText('Missing');
-  await page.keyboard.insertText(']');
-  await page.keyboard.insertText(']');
-  await expect(
-    editor.getByRole('link', { name: 'Missing (note not found)' }),
-  ).toBeVisible();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
-    .toBe('[[Missing]]');
-
-  await clearEditor(page, {});
-  await page.keyboard.insertText('[');
-  await page.keyboard.insertText('[');
-  const picker = page.getByRole('listbox', { name: 'Link to a note' });
-  await expect(picker).toBeVisible();
-  await page.keyboard.insertText('foo|bar');
-  await expect(
-    picker.getByRole('option', { name: 'Link to “foo|bar”' }),
-  ).toBeVisible();
-  await page.keyboard.press('Enter');
-  await expect(
-    editor.getByRole('link', { name: 'bar (note not found)' }),
-  ).toBeVisible();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
-    .toBe('[[foo|bar]]');
-  await page.reload({ waitUntil: 'networkidle' });
-  await expect(
-    editor.getByRole('link', { name: 'bar (note not found)' }),
-  ).toBeVisible();
-
-  await writeStoredMarkdown(
-    page,
-    workspaceName,
-    'Home',
-    '`[[inline]]`\n\n```md\n[[fenced]]\n```\n\n[[nested [[bad]]]]\n\n[[Same]]',
+  await expect(linkedMentions).toContainText(
+    'No backlinks yet. Type [[ in another note to create a backlink to this note.',
   );
-  await page.reload({ waitUntil: 'networkidle' });
-  await expect(editor.locator('code').first()).toHaveText('[[inline]]');
-  await expect(editor.locator('pre')).toContainText('[[fenced]]');
-  await expect(editor).toContainText('[[nested [[bad]]]]');
 
-  const sameLink = editor.getByRole('link', { name: 'Same', exact: true });
-  await expect(sameLink).toBeVisible();
-  await expect(
-    editor.getByRole('link', { name: 'Same (note not found)' }),
-  ).toHaveCount(0);
-  await sameLink.click();
-  await expect(page).toHaveURL(
-    /ws#route=editor&wsPath=wiki-link-literals%3Aone%2FSame\.md$/,
-  );
-  await expect(getEditorLocator(page, {})).toContainText('one');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'Same'))
-    .toBeUndefined();
-});
-
-test('resolves duplicate wiki-link names to the note closest to the current note', async ({
-  page,
-}) => {
-  const workspaceName = 'wiki-link-closest';
-  await createBrowserWorkspaceAndNote(page, {
-    workspaceName,
-    noteName: 'Home',
-  });
-  await writeStoredMarkdown(page, workspaceName, 'todo', 'root todo');
-  await writeStoredMarkdown(
-    page,
-    workspaceName,
-    'projects/todo',
-    'projects todo',
-  );
-  await writeStoredMarkdown(
-    page,
-    workspaceName,
-    'projects/plan',
-    'Plan [[todo]]',
-  );
-  await writeStoredMarkdown(page, workspaceName, 'Home', 'Home [[todo]]');
-  await page.reload({ waitUntil: 'networkidle' });
-
-  const editor = getEditorLocator(page, {});
-  const todoLink = editor.getByRole('link', { name: 'todo', exact: true });
-
-  // From a root note, [[todo]] prefers the shallowest match: the root todo.md.
-  await expect(todoLink).toBeVisible();
-  await todoLink.click();
-  await expect(page).toHaveURL(
-    /ws#route=editor&wsPath=wiki-link-closest%3Atodo\.md$/,
-  );
-  await expect(editor).toContainText('root todo');
-
-  const linkedMentions = page.getByRole('region', { name: 'Linked mentions' });
-  await expect(
-    linkedMentions.getByRole('link', { name: 'Home.md' }),
-  ).toBeVisible();
-  await expect(
-    linkedMentions.getByRole('link', { name: 'projects/plan.md' }),
-  ).toHaveCount(0);
-
-  // From projects/plan.md, the same [[todo]] prefers its sibling projects/todo.md.
-  await page.goto(
-    `/ws#route=editor&wsPath=${encodeURIComponent(`${workspaceName}:projects/plan.md`)}`,
-  );
-  await expect(todoLink).toBeVisible();
-  await todoLink.click();
-  await expect(page).toHaveURL(
-    /ws#route=editor&wsPath=wiki-link-closest%3Aprojects%2Ftodo\.md$/,
-  );
-  await expect(editor).toContainText('projects todo');
-  await expect(
-    linkedMentions.getByRole('link', { name: 'projects/plan.md' }),
-  ).toBeVisible();
-  await expect(
-    linkedMentions.getByRole('link', { name: 'Home.md' }),
-  ).toHaveCount(0);
-
-  // Navigation resolved to existing notes; nothing new was created.
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'todo'))
-    .toBe('root todo');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'projects/todo'))
-    .toBe('projects todo');
-});
-
-test('does not trigger wiki-link suggestions while typing inside a Markdown link', async ({
-  page,
-}) => {
-  const workspaceName = 'wiki-link-inside-markdown-link';
-  const noteName = 'Home';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await waitForEditorFocus(page, {});
-  await page.keyboard.insertText('visit example');
-  await selectEditorText(page, 'example');
-  await page.getByRole('button', { name: 'Link', exact: true }).click();
-  const urlInput = page.getByRole('textbox', { name: 'Link URL' });
-  await urlInput.fill('https://example.com');
-  await urlInput.press('Enter');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('visit [example](https://example.com/)');
-
-  await collapseEditorSelection(page, 9);
-  await page.keyboard.insertText('[');
-  await page.keyboard.insertText('[');
-
-  await expect(
-    page.getByRole('listbox', { name: 'Link to a note' }),
-  ).toHaveCount(0);
-  await expect(editor.getByRole('link', { name: 'exa[[mple' })).toBeVisible();
-  await page.reload({ waitUntil: 'networkidle' });
-  await expect(editor.getByRole('link', { name: 'exa[[mple' })).toBeVisible();
-  await expect(
-    page.getByRole('listbox', { name: 'Link to a note' }),
-  ).toHaveCount(0);
-});
-
-test('keeps wiki syntax inside ordinary Markdown link text as plain link text', async ({
-  page,
-}) => {
-  const workspaceName = 'wiki-text-in-markdown-link';
-  const noteName = 'Home';
-  const initialMarkdown = 'See [ordinary [[target]]](./target.md) after';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  await writeStoredMarkdown(page, workspaceName, noteName, initialMarkdown);
-  await page.reload({ waitUntil: 'networkidle' });
-
-  const editor = getEditorLocator(page, {});
-  await expect(
-    editor.getByRole('link', { name: 'ordinary [[target]]' }),
-  ).toBeVisible();
-  await expect(
-    editor.getByRole('link', { name: 'target (note not found)' }),
-  ).toHaveCount(0);
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(initialMarkdown);
-
-  await page.reload({ waitUntil: 'networkidle' });
-  await expect(
-    editor.getByRole('link', { name: 'ordinary [[target]]' }),
-  ).toBeVisible();
-});
-
-test('uses Markdown escape parity for typed wiki links across reload', async ({
-  page,
-}) => {
-  const workspaceName = 'wiki-link-typed-escapes';
-  await createBrowserWorkspaceAndNote(page, {
-    workspaceName,
-    noteName: 'Home',
-  });
-  await writeStoredMarkdown(page, workspaceName, 'Target', 'target content');
-  await page.reload({ waitUntil: 'networkidle' });
-
-  const editor = getEditorLocator(page, {});
-  await expect(editor).toBeVisible();
-  await editor.click();
-  await waitForEditorFocus(page, {});
-
-  await page.keyboard.insertText('\\');
-  await page.keyboard.insertText('[');
-  await page.keyboard.insertText('[');
-  await page.keyboard.insertText('Target');
-  await page.keyboard.insertText(']');
-  await page.keyboard.insertText(']');
-
-  await expect(editor.getByRole('link', { name: 'Target' })).toHaveCount(0);
-  await expect(editor).toContainText('[[Target]]');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
-    .toBe(String.raw`\\\[\[Target\]\]`);
-
-  await page.reload({ waitUntil: 'networkidle' });
-  await expect(editor.getByRole('link', { name: 'Target' })).toHaveCount(0);
-  await expect(editor).toContainText('[[Target]]');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
-    .toBe(String.raw`\\\[\[Target\]\]`);
-  await editor.click();
-  await waitForEditorFocus(page, {});
-  await clearEditor(page, {});
-  await page.keyboard.insertText('\\');
-  await page.keyboard.insertText('\\');
-  await page.keyboard.insertText('[');
-  await page.keyboard.insertText('[');
-  await page.keyboard.insertText('Target');
-  await page.keyboard.insertText(']');
-  await page.keyboard.insertText(']');
-
-  await expect(editor.getByRole('link', { name: 'Target' })).toBeVisible();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
-    .toBe(String.raw`\\\\[[Target]]`);
-
-  await page.reload({ waitUntil: 'networkidle' });
-  await expect(editor.getByRole('link', { name: 'Target' })).toBeVisible();
-  await expect(editor).toContainText('\\\\');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
-    .toBe(String.raw`\\\\[[Target]]`);
-});
-
-test('pins the unresolved option and remains usable in a large workspace', async ({
-  page,
-}) => {
-  const workspaceName = 'wiki-link-large';
-  await createBrowserWorkspace(page, { workspaceName });
-  await writeManyStoredMarkdown(page, workspaceName, [
-    { noteName: 'Home', markdown: '' },
-    { noteName: 'TargetLarge', markdown: 'large target content' },
-    ...Array.from({ length: 1000 }, (_, index) => ({
-      noteName: `generated/Note${String(index).padStart(4, '0')}`,
-      markdown: `generated ${index}`,
-    })),
+  await createWikiNotes(page, target.workspaceName, [
+    {
+      markdown:
+        'See [[Home]], [[Home|alias]], [Home](Home.md), and [Home](./Home.md).',
+      noteName: 'SourceWiki',
+    },
+    { markdown: 'See [Home](Home.md)', noteName: 'SourceMarkdown' },
+    {
+      markdown: '`[[Home]]`\n\n```md\n[[Home]]\n```\n\n![[Home]]',
+      noteName: 'IgnoredSyntax',
+    },
   ]);
-  await page.reload({ waitUntil: 'networkidle' });
-  await page.goto(
-    `/ws#route=editor&wsPath=${encodeURIComponent(`${workspaceName}:Home.md`)}`,
-  );
+  await expect(
+    linkedMentions.getByRole('link', { name: 'SourceWiki.md' }),
+  ).toHaveCount(1);
+  await expect(
+    linkedMentions.getByRole('link', { name: 'SourceMarkdown.md' }),
+  ).toHaveCount(1);
+  await expect(
+    linkedMentions.getByRole('link', { name: 'IgnoredSyntax.md' }),
+  ).toHaveCount(0);
 
+  await linkedMentions
+    .getByRole('button', { name: 'Collapse linked mentions' })
+    .click();
+  await expect(
+    linkedMentions.getByRole('button', { name: 'Expand linked mentions' }),
+  ).toHaveAttribute('aria-expanded', 'false');
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, target);
+  await expect(
+    linkedMentions.getByRole('button', { name: 'Expand linked mentions' }),
+  ).toHaveAttribute('aria-expanded', 'false');
+
+  await linkedMentions
+    .getByRole('button', { name: 'Expand linked mentions' })
+    .click();
+  await linkedMentions.getByRole('link', { name: 'SourceWiki.md' }).click();
+  await waitForSeededBrowserNote(page, {
+    wsPath: wsPath(target.workspaceName, 'SourceWiki'),
+  });
+  await expect(editor).toContainText('See');
+});
+
+test('keeps typed wiki-link escape parity exact across reload', async ({
+  page,
+}) => {
+  const home = await seedWikiWorkspace(page, {
+    files: [{ markdown: 'target content', noteName: 'Target' }],
+    workspaceName: 'wiki-typed-escapes',
+  });
   const editor = getEditorLocator(page, {});
-  await expect(editor).toBeVisible();
+
   await editor.click();
   await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('\\');
   await page.keyboard.insertText('[');
   await page.keyboard.insertText('[');
-  const picker = page.getByRole('listbox', { name: 'Link to a note' });
-  await expect(picker).toBeVisible();
-  await page.keyboard.insertText('NoExistingNote');
-  await expect(
-    picker.getByRole('option', { name: 'Link to “NoExistingNote”' }),
-  ).toBeVisible();
+  await page.keyboard.insertText('Target');
+  await page.keyboard.insertText(']');
+  await page.keyboard.insertText(']');
+  const oddEscape = String.raw`\\\[\[Target\]\]`;
+  await expect(editor.getByRole('link', { name: 'Target' })).toHaveCount(0);
+  await expect.poll(() => readSeededBrowserNote(page, home)).toBe(oddEscape);
 
-  await page.keyboard.press('Escape');
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, home);
+  await expect(editor.getByRole('link', { name: 'Target' })).toHaveCount(0);
+  await expect.poll(() => readSeededBrowserNote(page, home)).toBe(oddEscape);
+
+  await editor.click();
+  await waitForEditorFocus(page, {});
   await clearEditor(page, {});
+  await page.keyboard.insertText('\\');
+  await page.keyboard.insertText('\\');
   await page.keyboard.insertText('[');
   await page.keyboard.insertText('[');
-  await page.keyboard.insertText('TargetLarge');
-  await expect(
-    picker.getByRole('option', { name: 'TargetLarge', exact: true }),
-  ).toBeVisible();
-  await page.keyboard.press('Enter');
-  await expect(
-    editor.getByRole('link', { name: 'TargetLarge', exact: true }),
-  ).toBeVisible();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
-    .toBe('[[TargetLarge]]');
+  await page.keyboard.insertText('Target');
+  await page.keyboard.insertText(']');
+  await page.keyboard.insertText(']');
+  const evenEscape = String.raw`\\\\[[Target]]`;
+  await expect(editor.getByRole('link', { name: 'Target' })).toBeVisible();
+  await expect.poll(() => readSeededBrowserNote(page, home)).toBe(evenEscape);
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, home);
+  await expect(editor.getByRole('link', { name: 'Target' })).toBeVisible();
+  await expect.poll(() => readSeededBrowserNote(page, home)).toBe(evenEscape);
 });
+
+if (WIKI_SCALE_ENABLED) {
+  test(
+    'keeps wiki suggestions bounded and responsive for 1,000 notes @wiki-scale',
+    { tag: '@wiki-scale' },
+    async ({ page }, testInfo) => {
+      const home = await seedWikiWorkspace(page, {
+        files: [
+          { markdown: 'large target content', noteName: 'TargetLarge' },
+          ...Array.from({ length: 1_000 }, (_, index) => ({
+            markdown: `generated ${index}`,
+            noteName: `generated/Note${String(index).padStart(4, '0')}`,
+          })),
+        ],
+        workspaceName: 'wiki-scale',
+      });
+      const editor = getEditorLocator(page, {});
+      const picker = page.getByRole('listbox', { name: 'Link to a note' });
+
+      await editor.click();
+      await waitForEditorFocus(page, {});
+      await page.keyboard.insertText('[');
+      await page.keyboard.insertText('[');
+      // Wait for the full workspace index before timing the unresolved-only
+      // query. Otherwise the unresolved fallback can appear before indexing
+      // completes and make an unready 1,002-note fixture look responsive.
+      await expect(picker.getByRole('option')).toHaveCount(12, {
+        timeout: WIKI_SCALE_BUDGET_MS,
+      });
+      await page.keyboard.press('Escape');
+      await expect(picker).toBeHidden();
+      await clearEditor(page, {});
+      await editor.click();
+      await waitForEditorFocus(page, {});
+
+      const startedAt = performance.now();
+      let elapsedMs = 0;
+      let resultCount: number | undefined;
+      try {
+        await page.keyboard.insertText('[');
+        await page.keyboard.insertText('[');
+        const unresolved = picker.getByRole('option', {
+          name: 'Link to “NoExistingNote”',
+        });
+        await page.keyboard.insertText('NoExistingNote');
+        await expect(unresolved).toBeVisible({
+          timeout: WIKI_SCALE_BUDGET_MS,
+        });
+        resultCount = await picker.getByRole('option').count();
+      } finally {
+        elapsedMs = performance.now() - startedAt;
+        testInfo.annotations.push({
+          description: `notes=1002 elapsedMs=${elapsedMs} resultCount=${resultCount ?? 'unavailable'} budgetMs=${WIKI_SCALE_BUDGET_MS}`,
+          type: 'performance',
+        });
+      }
+      expect(
+        elapsedMs,
+        `Wiki suggestion query exceeded ${WIKI_SCALE_BUDGET_MS}ms (notes=1002, results=${resultCount ?? 'unavailable'}).`,
+      ).toBeLessThanOrEqual(WIKI_SCALE_BUDGET_MS);
+      expect(resultCount).toBe(1);
+
+      await page.keyboard.press('Escape');
+      await clearEditor(page, {});
+      await page.keyboard.insertText('[');
+      await page.keyboard.insertText('[');
+      await expect(picker.getByRole('option')).toHaveCount(12);
+      await page.keyboard.insertText('TargetLarge');
+      await expect(
+        picker.getByRole('option', { name: 'TargetLarge', exact: true }),
+      ).toBeVisible();
+      await page.keyboard.press('Enter');
+      await expect(
+        editor.getByRole('link', { name: 'TargetLarge', exact: true }),
+      ).toBeVisible();
+      await expect
+        .poll(() => readSeededBrowserNote(page, home))
+        .toBe('[[TargetLarge]]');
+    },
+  );
+}

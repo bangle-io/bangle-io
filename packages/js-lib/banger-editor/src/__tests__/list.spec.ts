@@ -196,6 +196,26 @@ describe('list Markdown metadata through editing commands', () => {
     expect(parent?.child(2).attrs).toMatchObject(nested);
   });
 
+  it('toggles only the caret task twice with Alt-Enter', () => {
+    const task = {
+      checked: false,
+      kind: 'task',
+      listKind: 'bullet',
+      tight: true,
+    } as const;
+    const editor = editorTest.createEditor(
+      doc(list(task, p('alpha')), list(task, p('bravo<cursor>'))),
+    );
+
+    expect(editor.pressKey('Enter', { altKey: true })).toBe(true);
+    expect(editor.view.state.doc.child(0).attrs.checked).toBe(false);
+    expect(editor.view.state.doc.child(1).attrs.checked).toBe(true);
+
+    expect(editor.pressKey('Enter', { altKey: true })).toBe(true);
+    expect(editor.view.state.doc.child(0).attrs.checked).toBe(false);
+    expect(editor.view.state.doc.child(1).attrs.checked).toBe(false);
+  });
+
   it('keeps an ordered input-rule list ordered when converting it to tasks', () => {
     const editor = editorTest.createEditor(doc(p('<cursor>')));
     typeText(editor.view, '1. ordered');

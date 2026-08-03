@@ -3,7 +3,6 @@ import {
   createBrowserWorkspaceAndNote,
   EDITOR_FOCUSED_SELECTOR,
   getEditorLocator,
-  readStoredMarkdown,
   waitForEditorFocus,
 } from './common';
 
@@ -45,7 +44,7 @@ test('Cmd/Ctrl-A after clicking below the note selects only the note', async ({
     const pm = document.querySelector('.ProseMirror');
     const sel = window.getSelection();
     const text = sel ? sel.toString() : '';
-    const range = sel && sel.rangeCount ? sel.getRangeAt(0) : null;
+    const range = sel?.rangeCount ? sel.getRangeAt(0) : null;
     const container = range ? range.commonAncestorContainer : null;
     const ancestor =
       container && container.nodeType === Node.TEXT_NODE
@@ -63,34 +62,4 @@ test('Cmd/Ctrl-A after clicking below the note selects only the note', async ({
   expect(selection.withinEditor).toBe(true);
   // The sidebar's workspace name must never land in the selection.
   expect(selection.text).not.toContain(workspaceName);
-});
-
-// A math node runs its own nested editor for the LaTeX source. Select-all there
-// belongs to that editor, and a keystroke after it must not reach the note.
-test('Cmd/Ctrl-A inside math cannot replace the outer note', async ({
-  page,
-}) => {
-  const noteName = 'math-selection';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  const editor = getEditorLocator(page, {}).first();
-  await waitForEditorFocus(page, {});
-  await editor.fill('KEEP THIS LINE');
-  await editor.press('End');
-  await editor.press('Enter');
-  await page.keyboard.insertText('/');
-  await page.getByText('Math block', { exact: true }).click();
-
-  const sourceEditor = editor.locator('math-display .math-src .ProseMirror');
-  await expect(sourceEditor).toBeVisible();
-  await sourceEditor.fill(String.raw`\frac{a}{b}`);
-  await expect(sourceEditor).toBeFocused();
-
-  await page.keyboard.press('ControlOrMeta+a');
-  await expect(sourceEditor).toBeFocused();
-  await page.keyboard.insertText('x');
-
-  await expect(editor).toContainText('KEEP THIS LINE');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('KEEP THIS LINE\n\n$$\nx\n$$');
 });

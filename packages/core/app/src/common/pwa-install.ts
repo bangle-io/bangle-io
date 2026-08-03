@@ -90,6 +90,8 @@ const TITLEBAR_EDGE_OCCLUSION_EPSILON = 0.5;
 // Registered in manifest.webmanifest `protocol_handlers`; navigating to this
 // scheme from a browser tab launches the installed PWA.
 const PWA_PROTOCOL_LAUNCH_URL = 'web+bangle://open';
+const PWA_PROTOCOL_HOST = 'open';
+const PWA_MANIFEST_PATH = '/manifest.webmanifest';
 const PWA_LAUNCH_QUERY_PARAM = 'launch';
 const PWA_SHORTCUT_QUERY_PARAM = 'shortcut';
 const INSTALLED_APP_DISPLAY_MODE_QUERIES = [
@@ -362,7 +364,7 @@ function parseProtocolDeepLinkHash(launchValue: string): string | undefined {
     return undefined;
   }
 
-  if (url.protocol !== 'web+bangle:') {
+  if (url.protocol !== 'web+bangle:' || url.hostname !== PWA_PROTOCOL_HOST) {
     return undefined;
   }
 
@@ -424,7 +426,7 @@ async function probeInstalledRelatedApps(windowRef: Window) {
       (app) =>
         app.platform === 'webapp' &&
         app.url !== undefined &&
-        isSameOrigin(app.url, windowRef.location.origin),
+        isOwnManifestUrl(app.url, windowRef.location.origin),
     );
     if (hasInstalledSelf && !installedRelatedAppDetected) {
       installedRelatedAppDetected = true;
@@ -436,9 +438,9 @@ async function probeInstalledRelatedApps(windowRef: Window) {
   }
 }
 
-function isSameOrigin(url: string, origin: string): boolean {
+function isOwnManifestUrl(url: string, origin: string): boolean {
   try {
-    return new URL(url).origin === origin;
+    return new URL(url).href === new URL(PWA_MANIFEST_PATH, origin).href;
   } catch {
     return false;
   }

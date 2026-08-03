@@ -103,6 +103,21 @@ describe('changing a list run marker', () => {
 });
 
 describe('dedenting a list item', () => {
+  it('keeps command-driven task indentation and outdent as production fixed points', () => {
+    const source = '- parent\n  - [ ] child';
+    const indented = serialize(
+      apply(caretAfter(source, 'child'), list.command.indentList),
+    );
+    expect(indented).toBe('- parent\n\n  - \n    - [ ] child');
+    expect(reserialize(indented)).toBe(indented);
+
+    const outdented = serialize(
+      apply(caretAfter(indented, 'child'), list.command.dedentList),
+    );
+    expect(outdented).toBe('- parent\n\n  - [ ] child');
+    expect(reserialize(outdented)).toBe(outdented);
+  });
+
   it('adopts the destination marker without dropping a checkbox', () => {
     const out = serialize(
       apply(
@@ -149,5 +164,22 @@ describe('dedenting a list item', () => {
 
     expect(out).toBe('- one\n\n- nested\n\n- two');
     expect(reserialize(out)).toBe(out);
+  });
+});
+
+describe('toggling a task checkbox', () => {
+  it('toggles twice without changing a sibling task', () => {
+    const source = '- [ ] alpha\n- [ ] bravo';
+    const toggled = serialize(
+      apply(caretAfter(source, 'bravo'), list.command.toggleTaskChecked),
+    );
+    expect(toggled).toBe('- [ ] alpha\n- [x] bravo');
+    expect(reserialize(toggled)).toBe(toggled);
+
+    const restored = serialize(
+      apply(caretAfter(toggled, 'bravo'), list.command.toggleTaskChecked),
+    );
+    expect(restored).toBe(source);
+    expect(reserialize(restored)).toBe(restored);
   });
 });

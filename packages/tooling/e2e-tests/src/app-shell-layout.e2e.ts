@@ -170,29 +170,63 @@ test('app shell: resize the sidebar with pointer or keyboard and persist its wid
 test('app shell: PWA window controls overlay keeps titlebar actions outside reserved chrome geometry', async ({
   page,
 }) => {
+  await page.addInitScript(() => {
+    const titlebarLeftInset = 80;
+    const titlebarRightInset = 96;
+    const overlay = new EventTarget() as EventTarget & {
+      getTitlebarAreaRect: () => DOMRectReadOnly;
+      visible: boolean;
+    };
+    overlay.visible = true;
+    overlay.getTitlebarAreaRect = () =>
+      ({
+        height: 40,
+        width: window.innerWidth - titlebarLeftInset - titlebarRightInset,
+        x: titlebarLeftInset,
+        y: 0,
+      }) as DOMRectReadOnly;
+
+    Object.defineProperty(window.navigator, 'windowControlsOverlay', {
+      configurable: true,
+      value: overlay,
+    });
+
+    const nativeMatchMedia = window.matchMedia.bind(window);
+    window.matchMedia = (query) => {
+      const mediaQuery = nativeMatchMedia(query);
+      if (query !== '(display-mode: window-controls-overlay)') {
+        return mediaQuery;
+      }
+
+      return new Proxy(mediaQuery, {
+        get(target, property) {
+          if (property === 'matches') {
+            return true;
+          }
+
+          const value = Reflect.get(target, property, target);
+          return typeof value === 'function' ? value.bind(target) : value;
+        },
+      });
+    };
+  });
+
   await createBrowserWorkspaceAndNote(page, {
     workspaceName: 'overlay-layout-ws',
     noteName: 'Overlay Note',
   });
 
-  await page.evaluate(() => {
-    const titlebarLeftInset = 80;
-    const titlebarRightInset = 96;
-    const root = document.documentElement;
-
-    root.setAttribute('data-bangle-window-controls-overlay', 'visible');
-    root.setAttribute('data-bangle-window-controls-overlay-controls', 'both');
-    root.style.setProperty(
-      '--bangle-titlebar-area-x',
-      `${titlebarLeftInset}px`,
-    );
-    root.style.setProperty(
-      '--bangle-titlebar-area-width',
-      `calc(100vw - ${titlebarLeftInset + titlebarRightInset}px)`,
-    );
-    root.style.setProperty('--bangle-titlebar-area-height', '40px');
-  });
-
+  const root = page.locator('html');
+  await expect(root).toHaveAttribute(
+    'data-bangle-window-controls-overlay',
+    'visible',
+  );
+  await expect(root).toHaveAttribute(
+    'data-bangle-window-controls-overlay-controls',
+    'both',
+  );
+  await expect(root).toHaveCSS('--bangle-titlebar-area-x', '80px');
+  await expect(root).toHaveCSS('--bangle-titlebar-area-height', '40px');
   const titlebar = page.locator('header.desktop-titlebar-surface').first();
   const toggleMaxWidthButton = page.getByRole('button', {
     name: 'Toggle Max Width',
@@ -211,4 +245,12 @@ test('app shell: PWA window controls overlay keeps titlebar actions outside rese
       ),
     )
     .toBeGreaterThanOrEqual(96);
+
+  const defaultPrevented = await page.evaluate(() => {
+    const event = new Event('beforeinstallprompt', { cancelable: true });
+    window.dispatchEvent(event);
+    return event.defaultPrevented;
+  });
+  expect(defaultPrevented).toBe(false);
+  await expect(page.getByTestId('sidebar-pwa-action')).toHaveCount(0);
 });

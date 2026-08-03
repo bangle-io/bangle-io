@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { setupBase } from '../base';
 import { setupCodeBlock } from '../code-block';
 import {
@@ -12,7 +12,7 @@ import { setupHistory } from '../history';
 import { setupList } from '../list';
 import { setupParagraph } from '../paragraph';
 import type { PMNode } from '../pm';
-import { NodeSelection, redo, TextSelection, undo } from '../pm';
+import { NodeSelection, redo, Slice, TextSelection, undo } from '../pm';
 import { createBangerEditorTestSetup } from '../test-helpers';
 
 const collapsible = setupCollapsibleHeading();
@@ -294,6 +294,28 @@ describe('toggle affordance', () => {
       cancelable: true,
     });
     expect(widgetDesc?.stopEvent?.(event)).toBe(true);
+  });
+
+  it('keeps the heading selection and editor focus on toggle mousedown', () => {
+    const editor = editorTest.createEditor(doc(h1('One'), p('a')));
+    const { view } = editor;
+    editor.setSelection(headingPos(view.state.doc, 'One') + 1);
+    view.focus();
+    const selectionBefore = view.state.selection;
+    const [button] = toggleButtons(view);
+    if (!button) {
+      throw new Error('Expected a collapsible heading toggle');
+    }
+
+    const event = new MouseEvent('mousedown', {
+      bubbles: true,
+      cancelable: true,
+    });
+    button.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(true);
+    expect(view.hasFocus()).toBe(true);
+    expect(view.state.selection.eq(selectionBefore)).toBe(true);
   });
 
   it('clicking the toggle folds and unfolds the section', () => {
@@ -650,6 +672,53 @@ describe('nested folds', () => {
 });
 
 describe('moving folded sections', () => {
+  it('handles only native drops of folded node selections and preserves no-op drops', () => {
+    const original = doc(h1('One'), p('a'), h1('Two'), p('b'));
+    const moved = doc(h1('Two'), p('b'), h1('One'), p('a'));
+    const editor = editorTest.createEditor(original);
+    const { view } = editor;
+    const onePos = headingPos(view.state.doc, 'One');
+    // jsdom does not implement DragEvent; the handler only consumes the
+    // MouseEvent coordinates, which this native `drop` event provides.
+    const dropEvent = new MouseEvent('drop', {
+      clientX: 10,
+      clientY: 10,
+    }) as DragEvent;
+    const handleDrop = view.someProp('handleDrop');
+    if (!handleDrop) {
+      throw new Error('Expected a collapsible heading drop handler');
+    }
+
+    // Non-moved drops, text selections, and unfolded heading selections fall
+    // through to the normal ProseMirror handler.
+    expect(handleDrop(view, dropEvent, Slice.empty, false)).toBe(false);
+    expect(handleDrop(view, dropEvent, Slice.empty, true)).toBe(false);
+    view.dispatch(
+      view.state.tr.setSelection(NodeSelection.create(view.state.doc, onePos)),
+    );
+    expect(handleDrop(view, dropEvent, Slice.empty, true)).toBe(false);
+
+    collapsible.command.toggleHeadingCollapseAtPos(onePos)(
+      view.state,
+      view.dispatch,
+    );
+    view.dispatch(
+      view.state.tr.setSelection(NodeSelection.create(view.state.doc, onePos)),
+    );
+    const posAtCoords = vi.spyOn(view, 'posAtCoords');
+    posAtCoords.mockReturnValue(null);
+    expect(handleDrop(view, dropEvent, Slice.empty, true)).toBe(true);
+    editor.expectDoc(original);
+
+    posAtCoords.mockReturnValue({
+      inside: -1,
+      pos: view.state.doc.content.size,
+    });
+    expect(handleDrop(view, dropEvent, Slice.empty, true)).toBe(true);
+    editor.expectDoc(moved);
+    expect(hiddenTexts(view)).toEqual(['a']);
+  });
+
   it('moves a folded section by one visible block with Alt Arrow shortcuts', () => {
     const downEditor = editorTest.createEditor(
       doc(h1('One<cursor>'), p('a'), h2('Sub'), p('b'), h1('Two'), p('c')),

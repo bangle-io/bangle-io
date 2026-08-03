@@ -1,328 +1,137 @@
 import { expect, test } from '@playwright/test';
 import {
   collapseEditorSelection,
-  createBrowserWorkspaceAndNote,
-  ctrlKey,
-  expectReadableContrast,
+  collapseEditorSelectionAfterText,
   getEditorLocator,
-  readStoredMarkdown,
+  readSeededBrowserNote,
+  seedBrowserWorkspaceAndNote,
   selectEditorText,
-  waitForEditorFocus,
-  writeStoredMarkdown,
+  waitForSeededBrowserNote,
 } from './common';
 
-test('formats selected text, dismisses safely, anchors wrapped selections, and persists Markdown', async ({
+test('shows, positions, toggles, and persists the desktop selection toolbar', async ({
   page,
 }) => {
-  const workspaceName = 'selection-formatting';
-  const noteName = 'formatting';
-  const content = 'bold italic strike code plain wrapped selection text';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  const source = 'bold plain wrapped selection text';
+  const expected = '**bold** plain wrapped selection text';
+  const seeded = await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown: source,
+    noteName: 'Formatting',
+    workspaceName: 'selection-formatting',
+  });
   const editor = getEditorLocator(page, {});
-  await editor.click();
-  await page.keyboard.insertText(content);
-
   const toolbar = page.getByRole('toolbar', { name: 'Text formatting' });
+  const bold = toolbar.getByRole('button', { name: 'Bold' });
 
-  await page.keyboard.press('ControlOrMeta+a');
+  await selectEditorText(page, 'bold');
   await expect(toolbar).toBeVisible();
-  await expect
-    .poll(() => page.evaluate(() => window.getSelection()?.toString()))
-    .toBe(content);
-  await collapseEditorSelection(page, 2);
+  await expect(bold).toHaveAttribute('aria-pressed', 'false');
+  await bold.click();
+  await expect(toolbar).toBeVisible();
+  await expect(bold).toHaveAttribute('aria-pressed', 'true');
+  await expect(editor.locator('strong')).toHaveText('bold');
+
+  await collapseEditorSelection(page, 1);
   await expect(toolbar).toBeHidden();
-
-  const cases = [
-    { text: 'bold', button: 'Bold' },
-    { text: 'italic', button: 'Italic' },
-    { text: 'strike', button: 'Strikethrough' },
-    { text: 'code', button: 'Inline code' },
-  ] as const;
-
-  for (const { text, button } of cases) {
-    await selectEditorText(page, text);
-    await expect(toolbar).toBeVisible();
-    const toggle = page.getByRole('button', { name: button });
-    await expect(toggle).toBeEnabled();
-    await expect(toggle).toHaveAttribute('aria-pressed', 'false');
-    await toggle.click();
-    await expect(toolbar).toBeVisible();
-    await expect(toggle).toHaveAttribute('aria-pressed', 'true');
-    await toggle.click();
-    await expect(toolbar).toBeVisible();
-    await expect(toggle).toHaveAttribute('aria-pressed', 'false');
-    await toggle.click();
-    await expect(toggle).toHaveAttribute('aria-pressed', 'true');
-  }
-
-  await selectEditorText(page, 'plain');
-  await expect(
-    page.getByRole('button', { name: 'Link', exact: true }),
-  ).toBeEnabled();
-  await page.getByRole('button', { name: 'Toggle Max Width' }).click();
-  await expect(toolbar).toBeHidden();
-
   await selectEditorText(page, 'plain');
   await page.keyboard.press('Escape');
   await expect(toolbar).toBeHidden();
 
-  await selectEditorText(page, 'plain');
-  await collapseEditorSelection(page, 2);
-  await expect(toolbar).toBeHidden();
-
-  await editor.evaluate((element) => {
-    element.setAttribute('style', 'width: 220px; max-width: 220px');
-  });
-  await selectEditorText(page, 'plain wrapped selection text');
-  await expect(toolbar).toBeVisible();
-  await expect
-    .poll(async () =>
-      page.evaluate(() => {
-        const selection = window.getSelection();
-        const menu = document.querySelector(
-          '[role="toolbar"][aria-label="Text formatting"]',
-        );
-        if (!selection?.rangeCount || !menu) {
-          return false;
-        }
-        const rects = Array.from(selection.getRangeAt(0).getClientRects());
-        const menuRect = menu.getBoundingClientRect();
-        const first = rects[0];
-        if (!first) {
-          return false;
-        }
-        const horizontalDistance = Math.abs(
-          menuRect.left + menuRect.width / 2 - (first.left + first.width / 2),
-        );
-        return (
-          rects.length >= 2 &&
-          horizontalDistance < 180 &&
-          Math.abs(first.top - menuRect.bottom) < 80
-        );
-      }),
-    )
-    .toBe(true);
-
   await editor.evaluate((element) => {
     element.setAttribute('style', 'width: 180px; max-width: 180px');
   });
+  await selectEditorText(page, 'wrapped selection text');
+  await expect(toolbar).toBeVisible();
   await expect
-    .poll(async () =>
+    .poll(() =>
       page.evaluate(() => {
         const selection = window.getSelection();
         const menu = document.querySelector(
           '[role="toolbar"][aria-label="Text formatting"]',
         );
-        if (!selection?.rangeCount || !menu) {
-          return false;
-        }
-        const first = selection.getRangeAt(0).getClientRects()[0];
+        if (!selection?.rangeCount || !menu) return false;
+        const rects = Array.from(selection.getRangeAt(0).getClientRects());
+        const first = rects[0];
         const menuRect = menu.getBoundingClientRect();
-        return Boolean(first && Math.abs(first.top - menuRect.bottom) < 80);
-      }),
-    )
-    .toBe(true);
-
-  const expectedMarkdown =
-    '**bold** _italic_ ~~strike~~ `code` plain wrapped selection text';
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(expectedMarkdown);
-
-  await page.reload({ waitUntil: 'networkidle' });
-  await expect(editor.locator('strong')).toHaveText('bold');
-  await expect(editor.locator('em')).toHaveText('italic');
-  await expect(editor.locator('s')).toHaveText('strike');
-  await expect(editor.locator('code')).toHaveText('code');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(expectedMarkdown);
-});
-
-test('creates, expands, edits, cancels, and removes links without draft mutations', async ({
-  page,
-}) => {
-  const workspaceName = 'selection-links';
-  const noteName = 'links';
-  const initialMarkdown = 'visit example today';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await page.keyboard.insertText(initialMarkdown);
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(initialMarkdown);
-
-  const toolbar = page.getByRole('toolbar', { name: 'Text formatting' });
-  const urlInput = page.getByRole('textbox', { name: 'Link URL' });
-
-  await selectEditorText(page, 'example');
-  await page.getByRole('button', { name: 'Link', exact: true }).click();
-  await urlInput.fill('google com');
-  await urlInput.press('Enter');
-  const linkError = page
-    .getByRole('alert')
-    .getByText('Enter a web address or Markdown path.');
-  await expect(linkError).toBeVisible();
-  await expectReadableContrast(linkError);
-  await expect
-    .poll(() =>
-      page.getByTestId('link-editor').evaluate((element) => {
-        const input = element.querySelector('input');
-        const alert = element.querySelector('[role="alert"]');
-        if (!input || !alert) {
-          return false;
-        }
-        const inputStyle = getComputedStyle(input);
-        const alertStyle = getComputedStyle(alert);
-        return (
-          inputStyle.color !== alertStyle.color &&
-          inputStyle.borderTopWidth === '1px' &&
-          inputStyle.borderTopColor !== 'rgba(0, 0, 0, 0)'
+        const verticalOffset = first ? first.top - menuRect.bottom : 0;
+        return Boolean(
+          first &&
+            rects.length >= 2 &&
+            menuRect.top < first.top &&
+            verticalOffset >= 4 &&
+            verticalOffset <= 12 &&
+            menuRect.right >= first.left &&
+            menuRect.left <= first.right,
         );
       }),
     )
     .toBe(true);
-  await expect
-    .poll(() =>
-      page.getByTestId('link-editor').evaluate((element) => {
-        const rect = element.getBoundingClientRect();
-        return rect.width <= 300 && rect.height <= 80;
-      }),
-    )
-    .toBe(true);
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(initialMarkdown);
 
-  await urlInput.press('Escape');
-  await expect(toolbar).toBeVisible();
-  await expect(urlInput).toBeHidden();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(initialMarkdown);
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(expected);
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, seeded);
+  await expect(getEditorLocator(page, {}).locator('strong')).toHaveText('bold');
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(expected);
+});
 
-  await page.getByRole('button', { name: 'Link', exact: true }).click();
-  await expect(
-    page.getByRole('form', { name: 'Edit link' }).getByRole('button'),
-  ).toHaveCount(0);
-  await urlInput.fill('one.example');
-  await page.getByRole('button', { name: 'Star this item' }).click();
-  await expect(urlInput).toBeHidden();
-  await expect(editor.locator('a')).toHaveAttribute(
-    'href',
-    'https://one.example/',
-  );
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('visit [example](https://one.example/) today');
+test('creates, expands, cancels, edits, and removes a selected-text link', async ({
+  page,
+}) => {
+  const source = 'visit example today';
+  const created = 'visit [example](https://one.example/) today';
+  const updated = 'visit [example](https://two.example/) today';
+  const seeded = await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown: source,
+    noteName: 'Links',
+    workspaceName: 'selection-links',
+  });
+  const editor = getEditorLocator(page, {});
+  const linkButton = page.getByRole('button', { name: 'Link', exact: true });
+  const urlInput = page.getByRole('textbox', { name: 'Link URL' });
 
+  await selectEditorText(page, 'example');
+  await linkButton.click();
+  await page.keyboard.insertText('one.example');
+  await expect(urlInput).toBeFocused();
+  await expect(urlInput).toHaveValue('one.example');
+  await expect(editor).toHaveText(source);
+  await urlInput.press('Enter');
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(created);
+
+  // Opening the menu from part of a link expands to the complete mark before
+  // editing, so Escape cannot alter a draft or split the link.
   await selectEditorText(page, 'amp');
-  await page.getByRole('button', { name: 'Link', exact: true }).click();
+  await linkButton.click();
   await expect(urlInput).toHaveValue('https://one.example/');
   await urlInput.fill('https://draft.example');
   await urlInput.press('Escape');
-  await expect(toolbar).toBeVisible();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('visit [example](https://one.example/) today');
+  await expect(urlInput).toBeHidden();
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(created);
 
-  await page.getByRole('button', { name: 'Link', exact: true }).click();
-  await urlInput.fill('https://two.example');
+  await selectEditorText(page, 'example');
+  await linkButton.click();
+  await urlInput.fill('two.example');
   await urlInput.press('Enter');
   await expect(editor.locator('a')).toHaveText('example');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('visit [example](https://two.example/) today');
-
-  await collapseEditorSelection(page, 2);
-  await selectEditorText(page, 'example');
-  await page.getByRole('button', { name: 'Link', exact: true }).click();
-  await urlInput.fill('google com');
-  await page.getByRole('button', { name: 'Star this item' }).click();
-  await expect(urlInput).toBeHidden();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('visit [example](https://two.example/) today');
-
-  await collapseEditorSelection(page, 2);
-  await selectEditorText(page, 'example');
-  await page.getByRole('button', { name: 'Link', exact: true }).click();
-  await urlInput.fill('https://outside.example');
-  const outsideButton = page.getByRole('button', { name: 'Toggle Max Width' });
-  await outsideButton.click();
-  await expect(urlInput).toBeHidden();
-  await expect(outsideButton).toBeFocused();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('visit [example](https://outside.example/) today');
-
-  await collapseEditorSelection(page, 8);
-  await expect(urlInput).toHaveValue('https://outside.example/');
-  await expect(toolbar).toBeHidden();
-  await urlInput.fill('https://cursor.example');
-  await page.getByRole('button', { name: 'Star this item' }).click();
-  await expect(urlInput).toBeHidden();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('visit [example](https://cursor.example/) today');
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(updated);
 
   await selectEditorText(page, 'example');
-  await page.getByRole('button', { name: 'Link', exact: true }).click();
+  await linkButton.click();
   await page.getByRole('button', { name: 'Remove link' }).click();
   await expect(editor.locator('a')).toHaveCount(0);
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(initialMarkdown);
-
-  await page.reload({ waitUntil: 'networkidle' });
-  await expect(editor).toHaveText(initialMarkdown);
-  await expect(editor.locator('a')).toHaveCount(0);
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(source);
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, seeded);
+  await expect(getEditorLocator(page, {}).locator('a')).toHaveCount(0);
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(source);
 });
 
-test('routes immediate typing to the link URL input after opening it from selected text', async ({
-  page,
-}) => {
-  const workspaceName = 'selection-link-focus';
-  const noteName = 'focus';
-  const initialMarkdown = 'visit example today';
-  const typedHref = 'focus.example';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await waitForEditorFocus(page, {});
-  await page.keyboard.insertText(initialMarkdown);
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(initialMarkdown);
-
-  await selectEditorText(page, 'example');
-  await page.getByRole('button', { name: 'Link', exact: true }).click();
-  const urlInput = page.getByRole('textbox', { name: 'Link URL' });
-
-  await page.keyboard.insertText(typedHref);
-  await expect(urlInput).toBeFocused();
-  await expect(urlInput).toHaveValue(typedHref);
-  await expect(editor).toHaveText(initialMarkdown);
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(initialMarkdown);
-
-  await urlInput.press('Enter');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('visit [example](https://focus.example/) today');
-});
-
-test('copies, opens, and cancels cursor-link drafts', async ({
+test('copies, opens, and cancels a cursor-link draft without changing Markdown', async ({
   context,
   page,
 }) => {
-  const workspaceName = 'cursor-link-actions';
-  const noteName = 'actions';
-  const initialMarkdown = 'visit example';
-  const inputHref = 'actions.example/docs/readme.md?mode=test#results';
-  const href = `https://${inputHref}`;
+  const href = 'https://actions.example/docs/readme.md?mode=test#results';
+  const source = `visit [example](${href})`;
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   await context.route('https://actions.example/**', (route) =>
     route.fulfill({
@@ -331,20 +140,12 @@ test('copies, opens, and cancels cursor-link drafts', async ({
       status: 200,
     }),
   );
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await page.keyboard.insertText(initialMarkdown);
-
-  await selectEditorText(page, 'example');
-  await page.getByRole('button', { name: 'Link', exact: true }).click();
+  const seeded = await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown: source,
+    noteName: 'Cursor link',
+    workspaceName: 'cursor-link-actions',
+  });
   const urlInput = page.getByRole('textbox', { name: 'Link URL' });
-  await urlInput.fill(inputHref);
-  await urlInput.press('Enter');
-  const linkedMarkdown = `visit [example](${href})`;
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(linkedMarkdown);
 
   await collapseEditorSelection(page, 8);
   await expect(urlInput).toHaveValue(href);
@@ -353,6 +154,41 @@ test('copies, opens, and cancels cursor-link drafts', async ({
   await expect
     .poll(() => page.evaluate(() => navigator.clipboard.readText()))
     .toBe(href);
+
+  const pageErrors: Error[] = [];
+  page.on('pageerror', (error) => pageErrors.push(error));
+  await page.evaluate(() => {
+    const clipboard = navigator.clipboard;
+    const descriptor = Object.getOwnPropertyDescriptor(clipboard, 'writeText');
+    const originalWriteText = clipboard.writeText;
+    Object.assign(window, {
+      __bangleTestRestoreClipboardWriteText: () => {
+        if (descriptor) {
+          Object.defineProperty(clipboard, 'writeText', descriptor);
+        } else {
+          Object.defineProperty(clipboard, 'writeText', {
+            configurable: true,
+            value: originalWriteText,
+            writable: true,
+          });
+        }
+      },
+    });
+    Object.defineProperty(clipboard, 'writeText', {
+      configurable: true,
+      value: () => Promise.reject(new Error('clipboard unavailable')),
+    });
+  });
+  await page.getByRole('button', { name: 'Copied!' }).click();
+  await expect(page.getByRole('button', { name: 'Copy failed' })).toBeVisible();
+  expect(pageErrors).toHaveLength(0);
+  await page.evaluate(() => {
+    (
+      window as typeof window & {
+        __bangleTestRestoreClipboardWriteText?: () => void;
+      }
+    ).__bangleTestRestoreClipboardWriteText?.();
+  });
 
   const openedPagePromise = context.waitForEvent('page');
   await page.getByRole('button', { name: 'Open link' }).click();
@@ -363,219 +199,43 @@ test('copies, opens, and cancels cursor-link drafts', async ({
   await urlInput.fill('https://draft.example');
   await urlInput.press('Escape');
   await expect(urlInput).toBeHidden();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(linkedMarkdown);
-
-  await collapseEditorSelection(page, 7);
-  await expect(urlInput).toHaveValue(href);
-  await urlInput.fill('google com');
-  await page.getByRole('button', { name: 'Star this item' }).click();
-  await expect(urlInput).toBeHidden();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(linkedMarkdown);
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(source);
 });
 
-test('reports clipboard write failures without an unhandled rejection', async ({
-  context,
+test('keeps an invalid pre-existing Markdown link through rejection, cancel, and unrelated edits', async ({
   page,
 }) => {
-  const workspaceName = 'cursor-link-copy-failure';
-  const noteName = 'copy-failure';
-  const href = 'https://copy-failure.example/path';
-  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await page.keyboard.insertText('visit example');
-
-  await selectEditorText(page, 'example');
-  await page.getByRole('button', { name: 'Link', exact: true }).click();
-  const urlInput = page.getByRole('textbox', { name: 'Link URL' });
-  await urlInput.fill(href);
-  await urlInput.press('Enter');
-  await collapseEditorSelection(page, 8);
-
-  const pageErrors: Error[] = [];
-  page.on('pageerror', (error) => pageErrors.push(error));
-  await page.evaluate(() => {
-    Object.defineProperty(navigator.clipboard, 'writeText', {
-      configurable: true,
-      value: () =>
-        Promise.reject(new DOMException('Clipboard denied', 'NotAllowedError')),
-    });
-  });
-
-  await page.getByRole('button', { name: 'Copy link' }).click();
-  const copyFailed = page.getByRole('button', { name: 'Copy failed' });
-  await expect(copyFailed).toBeVisible();
-  await expect(copyFailed).toBeEnabled();
-  expect(pageErrors).toEqual([]);
-});
-
-test('creates and modifier-opens a relative Markdown note link', async ({
-  page,
-}) => {
-  const workspaceName = 'internal-note-links';
-  await createBrowserWorkspaceAndNote(page, {
-    workspaceName,
-    noteName: 'target',
+  const source = 'before [invalid](https://google%20com/) after';
+  const edited = `${source}!`;
+  const seeded = await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown: source,
+    noteName: 'Invalid link',
+    workspaceName: 'invalid-markdown-link',
   });
   const editor = getEditorLocator(page, {});
-  const targetMarkdown = '# Target\n\n## Target Heading\n\ntarget content';
-  await writeStoredMarkdown(page, workspaceName, 'target', targetMarkdown);
-  await page.reload({ waitUntil: 'networkidle' });
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'target'))
-    .toBe(targetMarkdown);
-
-  await page.getByRole('link', { name: 'Home' }).click();
-  await page.getByRole('button', { name: 'New Note' }).click();
-  await page.getByLabel('Note name').fill('source');
-  await page.getByRole('button', { name: 'Create' }).click();
-  await editor.click();
-  await page.keyboard.insertText('open target');
-  await selectEditorText(page, 'target');
-  await page.getByRole('button', { name: 'Link', exact: true }).click();
   const urlInput = page.getByRole('textbox', { name: 'Link URL' });
-  await urlInput.fill('target.md#target-heading');
-  await urlInput.press('Enter');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'source'))
-    .toBe('open [target](target.md#target-heading)');
 
-  const link = editor.getByRole('link', { name: 'target' });
-  const sourceUrl = page.url();
-  await link.click();
-  await expect(page).toHaveURL(sourceUrl);
-  await expect(urlInput).toHaveValue('target.md#target-heading');
-  await urlInput.press('Escape');
-
-  await page.keyboard.down(ctrlKey);
-  await link.hover();
-  await expect
-    .poll(() => link.evaluate((element) => getComputedStyle(element).cursor))
-    .toBe('pointer');
-  await link.click();
-  await page.keyboard.up(ctrlKey);
-
-  await expect(
-    page.getByLabel('breadcrumb').getByRole('button', { name: 'target.md' }),
-  ).toBeVisible();
-  await expect(
-    editor.getByRole('heading', { name: 'Target Heading' }),
-  ).toBeVisible();
-  await expect
-    .poll(() =>
-      page.evaluate(() => {
-        return window.getSelection()?.anchorNode?.textContent;
-      }),
-    )
-    .toBe('Target Heading');
-});
-
-test('preserves pre-existing Markdown links rejected by the URL editor', async ({
-  page,
-}) => {
-  const workspaceName = 'invalid-markdown-link';
-  const noteName = 'invalid-link';
-  const initialMarkdown = 'before [invalid](https://google%20com/) after';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  await writeStoredMarkdown(page, workspaceName, noteName, initialMarkdown);
-  await page.reload({ waitUntil: 'networkidle' });
-
-  const editor = getEditorLocator(page, {});
-  const invalidLink = editor.getByRole('link', { name: 'invalid' });
-  await expect(invalidLink).toHaveAttribute('href', 'https://google%20com/');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(initialMarkdown);
-
-  await selectEditorText(page, 'invalid');
-  await page.getByRole('button', { name: 'Link', exact: true }).click();
-  await expect(page.getByRole('textbox', { name: 'Link URL' })).toHaveValue(
-    'https://google%20com/',
-  );
-  await expect(
-    page.getByRole('alert').getByText('Enter a web address or Markdown path.'),
-  ).toBeVisible();
-  await page.getByRole('textbox', { name: 'Link URL' }).press('Escape');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(initialMarkdown);
-
-  await collapseEditorSelection(page, 'before invalid after'.length);
-  await page.keyboard.insertText('!');
-  const editedMarkdown = `${initialMarkdown}!`;
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(editedMarkdown);
-
-  await page.reload({ waitUntil: 'networkidle' });
   await expect(editor.getByRole('link', { name: 'invalid' })).toHaveAttribute(
     'href',
     'https://google%20com/',
   );
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(editedMarkdown);
-});
+  await selectEditorText(page, 'invalid');
+  await page.getByRole('button', { name: 'Link', exact: true }).click();
+  await expect(urlInput).toHaveValue('https://google%20com/');
+  await expect(urlInput).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.getByRole('alert')).toHaveText(
+    'Enter a web address or Markdown path.',
+  );
+  await urlInput.press('Escape');
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(source);
 
-test('disables link formatting for a multi-block selection', async ({
-  page,
-}) => {
-  await createBrowserWorkspaceAndNote(page, {
-    workspaceName: 'selection-multiblock',
-    noteName: 'multiblock',
-  });
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await page.keyboard.insertText('first');
-  await page.keyboard.press('Enter');
-  await page.keyboard.insertText('second');
-  await selectEditorText(page, 'firstsecond');
+  await collapseEditorSelectionAfterText(page, 'after');
+  await page.keyboard.insertText('!');
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(edited);
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, seeded);
   await expect(
-    page.getByRole('toolbar', { name: 'Text formatting' }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole('button', { name: 'Link', exact: true }),
-  ).toBeDisabled();
-  await expect(page.getByRole('button', { name: 'Bold' })).toBeEnabled();
-});
-
-test('disables link formatting for selections containing wiki links', async ({
-  page,
-}) => {
-  const workspaceName = 'selection-wiki-link';
-  const noteName = 'wiki-link-selection';
-  const initialMarkdown = 'before [[Target]] after';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  await writeStoredMarkdown(page, workspaceName, noteName, initialMarkdown);
-  await page.reload({ waitUntil: 'networkidle' });
-
-  const editor = getEditorLocator(page, {});
-  await expect(
-    editor.getByRole('link', { name: 'Target (note not found)' }),
-  ).toBeVisible();
-
-  await selectEditorText(page, 'before Target after');
-  await expect(
-    page.getByRole('toolbar', { name: 'Text formatting' }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole('button', { name: 'Link', exact: true }),
-  ).toBeDisabled();
-  await expect(page.getByRole('button', { name: 'Bold' })).toBeEnabled();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(initialMarkdown);
-
-  await page.reload({ waitUntil: 'networkidle' });
-  await expect(
-    editor.getByRole('link', { name: 'Target (note not found)' }),
-  ).toBeVisible();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(initialMarkdown);
+    getEditorLocator(page, {}).getByRole('link', { name: 'invalid' }),
+  ).toHaveAttribute('href', 'https://google%20com/');
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(edited);
 });

@@ -1,8 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   getPwaManifestBuildOrigin,
   getPwaManifestSource,
   getRequestOrigin,
+  pwaManifestPlugin,
 } from '../../pwa-manifest';
 
 describe('PWA manifest generation', () => {
@@ -31,6 +32,58 @@ describe('PWA manifest generation', () => {
         id: 'https://app.bangle.io/',
       },
     ]);
+    expect(manifest).toMatchObject({
+      background_color: '#ffffff',
+      description: 'Local-first Markdown notes.',
+      display: 'standalone',
+      display_override: ['window-controls-overlay'],
+      id: '/',
+      icons: [
+        {
+          purpose: 'any',
+          sizes: '192x192',
+          src: '/icons/app-icon-192.png',
+          type: 'image/png',
+        },
+        {
+          purpose: 'any',
+          sizes: '512x512',
+          src: '/icons/app-icon-512.png',
+          type: 'image/png',
+        },
+      ],
+      launch_handler: { client_mode: 'focus-existing' },
+      name: 'Bangle.io',
+      protocol_handlers: [{ protocol: 'web+bangle', url: '/?launch=%s' }],
+      scope: '/',
+      shortcuts: [
+        {
+          icons: [
+            {
+              sizes: '192x192',
+              src: '/icons/app-icon-192.png',
+              type: 'image/png',
+            },
+          ],
+          name: 'New note',
+          url: '/?shortcut=new-note',
+        },
+        {
+          icons: [
+            {
+              sizes: '192x192',
+              src: '/icons/app-icon-192.png',
+              type: 'image/png',
+            },
+          ],
+          name: 'Search notes',
+          url: '/?shortcut=search',
+        },
+      ],
+      short_name: 'Bangle.io',
+      start_url: '/',
+      theme_color: '#ffffff',
+    });
   });
 
   it('does not duplicate the production self entry', () => {
@@ -105,6 +158,24 @@ describe('PWA manifest generation', () => {
     ) as { related_applications: Array<{ id: string }> };
 
     expect(manifest.related_applications[0]?.id).toBe('http://localhost:5173/');
+  });
+
+  it('emits the deployment-specific manifest as a build asset', () => {
+    const buildOrigin = 'https://pr-657.example.pages.dev/build';
+    const plugin = pwaManifestPlugin(buildOrigin);
+    const emitFile = vi.fn();
+    const generateBundle = plugin.generateBundle;
+    if (typeof generateBundle !== 'function') {
+      throw new Error('Expected a generateBundle hook');
+    }
+
+    Reflect.apply(generateBundle, { emitFile }, []);
+
+    expect(emitFile).toHaveBeenCalledExactlyOnceWith({
+      fileName: 'manifest.webmanifest',
+      source: getPwaManifestSource(buildOrigin),
+      type: 'asset',
+    });
   });
 });
 

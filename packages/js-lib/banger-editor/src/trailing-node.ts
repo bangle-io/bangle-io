@@ -89,6 +89,7 @@ function clickAtEnd(
   const tr = view.state.tr.insert(insertPos, trailingNode);
   tr.setSelection(TextSelection.create(tr.doc, insertPos + 1));
   view.dispatch(tr.scrollIntoView());
+  view.focus();
   event.preventDefault();
   return true;
 }

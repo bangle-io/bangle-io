@@ -2,6 +2,10 @@ import { useCoreServices } from '@bangle.io/context';
 import { useAtom } from 'jotai';
 import React from 'react';
 import { usePwaInstall } from '../common/use-pwa-install';
+import {
+  createPwaOpenInAppPromptActions,
+  shouldShowPwaOpenInAppPrompt,
+} from './pwa-open-in-app-prompt-controller';
 
 /**
  * Shows a one-time alert dialog inviting the user to switch to the installed
@@ -28,11 +32,13 @@ export function PwaOpenInAppPrompt() {
     // auto-opens the app window right after installing, so prompting the
     // old tab to "open in the app" would be redundant noise.
     if (
-      hasShownRef.current ||
-      promptSeen ||
-      !canOpenInApp ||
-      installedThisSession ||
-      alertDialog !== undefined
+      !shouldShowPwaOpenInAppPrompt({
+        alertDialogOpen: alertDialog !== undefined,
+        canOpenInApp,
+        hasShown: hasShownRef.current,
+        installedThisSession,
+        promptSeen,
+      })
     ) {
       return;
     }
@@ -45,10 +51,7 @@ export function PwaOpenInAppPrompt() {
       description: t.app.dialogs.pwaOpenInApp.description,
       continueText: t.app.dialogs.pwaOpenInApp.continueText,
       cancelText: t.app.dialogs.pwaOpenInApp.cancelText,
-      onContinue: () => {
-        openInApp();
-      },
-      onCancel: () => {},
+      ...createPwaOpenInAppPromptActions({ openInApp }),
     }));
   }, [
     promptSeen,

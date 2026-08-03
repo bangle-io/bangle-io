@@ -127,6 +127,28 @@ describe('PWA install prompt tracking', () => {
       }
     }
   });
+
+  it('treats iOS standalone mode as an installed app window', () => {
+    Object.defineProperty(window.navigator, 'standalone', {
+      configurable: true,
+      value: true,
+    });
+    try {
+      pwaInstall.initializePwaInstallPromptTracking(window);
+      const event = makeInstallPromptEvent();
+      window.dispatchEvent(event);
+
+      expect(event.defaultPrevented).toBe(false);
+      expect(pwaInstall.getPwaInstallSnapshot()).toMatchObject({
+        canInstall: false,
+        canOpenInApp: false,
+        isInstalled: true,
+        isStandalone: true,
+      });
+    } finally {
+      Reflect.deleteProperty(window.navigator, 'standalone');
+    }
+  });
 });
 
 describe('installed related apps detection', () => {
@@ -194,6 +216,20 @@ describe('installed related apps detection', () => {
     stubInstalledRelatedApps([
       { platform: 'webapp', url: 'https://app.bangle.io/manifest.webmanifest' },
       { platform: 'webapp' },
+    ]);
+
+    pwaInstall.initializePwaInstallPromptTracking(window);
+    await Promise.resolve();
+
+    expect(pwaInstall.getPwaInstallSnapshot().canOpenInApp).toBe(false);
+  });
+
+  it('ignores a same-origin web app with a different manifest path', async () => {
+    stubInstalledRelatedApps([
+      {
+        platform: 'webapp',
+        url: `${window.location.origin}/other.webmanifest`,
+      },
     ]);
 
     pwaInstall.initializePwaInstallPromptTracking(window);
@@ -289,6 +325,50 @@ describe('launch target handling in an open app window', () => {
     return { windowStub: { location } as unknown as Window, location };
   }
 
+  it('registers the launch queue consumer and delegates protocol and shortcut targets', () => {
+    type LaunchQueueConsumer = (params: { targetURL?: string }) => void;
+
+    let consumer: LaunchQueueConsumer | undefined;
+    const setConsumer = vi.fn((nextConsumer: LaunchQueueConsumer) => {
+      consumer = nextConsumer;
+    });
+    const location = {
+      hash: '#route=welcome',
+      origin: 'https://app.example.com',
+    };
+    const windowStub = {
+      addEventListener: vi.fn(),
+      launchQueue: { setConsumer },
+      location,
+      navigator: {},
+    } as unknown as Window;
+
+    pwaInstall.initializePwaInstallPromptTracking(windowStub);
+
+    expect(setConsumer).toHaveBeenCalledOnce();
+    if (!consumer) {
+      throw new Error(
+        'Expected initializePwaInstallPromptTracking to register a consumer',
+      );
+    }
+
+    const hashRoute = 'route=editor&wsPath=launch-ws:note.md';
+    consumer({
+      targetURL: `https://app.example.com/?launch=${encodeURIComponent(
+        `web+bangle://open?hash=${encodeURIComponent(hashRoute)}`,
+      )}`,
+    });
+    expect(location.hash).toBe(`#${hashRoute}`);
+
+    consumer({ targetURL: 'https://app.example.com/?shortcut=search' });
+    const received: unknown[] = [];
+    const unsubscribe = pwaInstall.subscribePwaLaunchIntents((intent) => {
+      received.push(intent);
+    });
+    expect(received).toEqual([{ shortcut: 'search' }]);
+    unsubscribe();
+  });
+
   it('ignores a payload-less protocol launch so the current route stays put', () => {
     const { windowStub, location } = makeWindowStub('#route=editor');
 
@@ -314,6 +394,21 @@ describe('launch target handling in an open app window', () => {
     );
 
     expect(location.hash).toBe('#route=editor&wsPath=my-ws:note.md');
+  });
+
+  it.each([
+    'web+bangle://not-open?hash=route%3Deditor',
+    'web+bangle://open?hash=',
+    'not a launch URL',
+  ])('rejects malformed or wrong-host protocol payloads: %s', (launch) => {
+    const { windowStub, location } = makeWindowStub('#route=welcome');
+
+    pwaInstall.handlePwaLaunchTarget(
+      windowStub,
+      `https://app.example.com/?launch=${encodeURIComponent(launch)}`,
+    );
+
+    expect(location.hash).toBe('#route=welcome');
   });
 
   it('queues a shortcut intent from a shortcut launch URL', () => {

@@ -7,6 +7,28 @@ import {
   subscribePwaLaunchIntents,
 } from './pwa-install';
 
+type Workspace = { name: string };
+type RecentWsPath = { wsPath: string };
+
+/** Chooses a currently available workspace for a manifest new-note launch. */
+export function resolvePwaNewNoteWorkspace(input: {
+  activeWsName: string | undefined;
+  recentWsPaths: readonly RecentWsPath[];
+  workspaces: readonly Workspace[];
+}): string | undefined {
+  const workspaceNames = new Set(
+    input.workspaces.map((workspace) => workspace.name),
+  );
+  if (input.activeWsName && workspaceNames.has(input.activeWsName)) {
+    return input.activeWsName;
+  }
+
+  const recent = input.recentWsPaths
+    .map((entry) => WsPath.safeParse(entry.wsPath).data?.wsName)
+    .find((wsName) => wsName !== undefined && workspaceNames.has(wsName));
+  return recent ?? input.workspaces[0]?.name;
+}
+
 /**
  * Acts on PWA launches that need application services: manifest shortcuts
  * (`?shortcut=`). Deep-link hashes are applied to the URL by the pwa-install
@@ -51,8 +73,11 @@ export function PwaLaunchActions() {
       return;
     }
 
-    if (
+    const activeWorkspaceIsAvailable =
       activeWsName &&
+      workspaces.some((workspace) => workspace.name === activeWsName);
+    if (
+      activeWorkspaceIsAvailable &&
       (!navigationTargetWsName || activeWsName === navigationTargetWsName)
     ) {
       setNewNotePending(false);
@@ -65,14 +90,22 @@ export function PwaLaunchActions() {
       return;
     }
 
+    if (
+      navigationTargetWsName &&
+      workspaces.some((workspace) => workspace.name === navigationTargetWsName)
+    ) {
+      return;
+    }
     if (navigationTargetWsName) {
+      setNavigationTargetWsName(undefined);
       return;
     }
 
-    const recentWsName = recentWsPaths
-      .map((entry) => WsPath.safeParse(entry.wsPath).data?.wsName)
-      .find((wsName) => wsName !== undefined);
-    const targetWsName = recentWsName ?? workspaces[0]?.name;
+    const targetWsName = resolvePwaNewNoteWorkspace({
+      activeWsName,
+      recentWsPaths,
+      workspaces,
+    });
     if (!targetWsName) {
       return;
     }

@@ -162,15 +162,25 @@ export function setupWikiLink(userConfig: WikiLinkConfig = {}) {
             (state, match, start, end) => {
               const attrs = parseMatchedWikiLink(match);
               const linkMarkType = state.schema.marks.link;
+              const activeMarks =
+                state.storedMarks ?? state.selection.$from.marks();
+              const hasBlockedRangeMark =
+                (state.schema.marks.code !== undefined &&
+                  state.doc.rangeHasMark(
+                    start,
+                    end,
+                    state.schema.marks.code,
+                  )) ||
+                (linkMarkType !== undefined &&
+                  state.doc.rangeHasMark(start, end, linkMarkType));
               if (
                 !attrs ||
                 isEscapedWikiLink(state, start) ||
                 state.selection.$from.parent.type.spec.code ||
-                state.selection.$from
-                  .marks()
-                  .some(
-                    (mark) => mark.type.spec.code || mark.type === linkMarkType,
-                  )
+                hasBlockedRangeMark ||
+                activeMarks.some(
+                  (mark) => mark.type.spec.code || mark.type === linkMarkType,
+                )
               ) {
                 return null;
               }
