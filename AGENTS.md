@@ -8,10 +8,13 @@
   TypeScript (`tsgo`) project-reference checks, and Biome.
 - Run `pnpm build` when changing browser bootstrapping, build configuration,
   dependencies, environment variables, themes, or production-only behavior.
-- Run the relevant Playwright suite when changing user-visible UI, routing,
-  editor behavior, browser storage, persistence, or cross-tab behavior:
-  `pnpm e2e:ci` for the full E2E and component suite, or a narrower filtered
-  command while iterating.
+- Run the relevant Playwright suite only for the final PR update, before a
+  release, or when the user explicitly asks. For user-visible UI, routing,
+  editor behavior, browser storage, persistence, or cross-tab changes, add or
+  update the relevant Playwright coverage but defer executing it during normal
+  iteration. Use `pnpm e2e:ci` for the full E2E and component suite, or a
+  narrower filtered command while iterating when execution is explicitly
+  requested.
 - Every feature intended for release must include a high-quality Playwright E2E
   test that proves its user-visible behavior. Component tests may supplement
   this coverage but do not replace the released workflow test. A manual smoke
@@ -19,9 +22,8 @@
 - Before every release, use `playwright-cli` against the release candidate and
   manually exercise the affected feature plus the local-first persistence smoke
   path. A release is not ready based only on automated test results.
-- Before opening or updating a PR, and before any release,
-  `pnpm local-ci-check` must pass. It runs every root script ending in `:ci`,
-  including Playwright.
+- Before the final PR update and before any release, `pnpm local-ci-check` must
+  pass. It runs every root script ending in `:ci`, including Playwright.
 - When working on a non-main branch, end every turn by committing completed
   changes and creating or updating the PR for that branch.
 - Documentation-only changes do not require the code suites. Verify the
