@@ -59,6 +59,7 @@ export function setupCode(userConfig?: CodeConfig) {
     // marks whose content is not escaped.
     [name]: setPriority(
       {
+        code: true,
         parseDOM: [{ tag: name }],
         toDOM: () => [name, 0],
       } satisfies MarkSpec,

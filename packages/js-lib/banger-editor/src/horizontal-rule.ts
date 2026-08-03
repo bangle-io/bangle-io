@@ -149,7 +149,16 @@ function markdown(config: RequiredConfig): CollectionType['markdown'] {
           // to survive a parse round trip.
           const isDocStart =
             parent.type === parent.type.schema.topNodeType && index === 0;
-          state.write(isDocStart && markup === '---' ? '***' : markup);
+          // A rule immediately after a callout marker has the same setext
+          // ambiguity: `> [!note]\n> ---` reparses as one heading instead of a
+          // callout followed by a thematic break.
+          const isCalloutStart =
+            index === 0 &&
+            typeof parent.attrs.calloutType === 'string' &&
+            parent.attrs.calloutType.length > 0;
+          state.write(
+            (isDocStart || isCalloutStart) && markup === '---' ? '***' : markup,
+          );
           state.closeBlock(node);
         },
         parseMarkdown: {

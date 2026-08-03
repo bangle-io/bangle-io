@@ -13,9 +13,9 @@ test('renders imported callouts and authors persistent highlights', async ({
   const workspaceName = 'markdown-parity';
   const noteName = 'Callouts and highlights';
   const source = [
-    '> [!note] Imported title',
-    '>',
-    '> Body',
+    '> [!note]',
+    '> - First',
+    '> - Second',
     '',
     'Existing ==marked== and plain',
   ].join('\n');
@@ -26,8 +26,13 @@ test('renders imported callouts and authors persistent highlights', async ({
 
   const editor = getEditorLocator(page, {});
   const callout = editor.locator('blockquote[data-callout="note"]');
-  await expect(callout).toContainText('Imported title');
-  await expect(callout).toContainText('Body');
+  await expect(
+    callout.locator(
+      '.prosemirror-flat-list[data-list-container-kind="bullet"]',
+    ),
+  ).toHaveCount(2);
+  await expect(callout.getByText('First', { exact: true })).toBeVisible();
+  await expect(callout.getByText('Second', { exact: true })).toBeVisible();
   await expect(editor.locator('mark')).toHaveText('marked');
   await expect(page.getByTestId('markdown-fidelity-notice')).toHaveCount(0);
 
@@ -49,7 +54,7 @@ test('renders imported callouts and authors persistent highlights', async ({
   const reloaded = getEditorLocator(page, {});
   await expect(
     reloaded.locator('blockquote[data-callout="note"]'),
-  ).toContainText('Body');
+  ).toContainText('Second');
   await expect(reloaded.locator('mark')).toHaveCount(2);
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, noteName))

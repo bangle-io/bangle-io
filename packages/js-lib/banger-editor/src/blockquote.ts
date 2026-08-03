@@ -252,8 +252,12 @@ function markdown(config: RequiredConfig): CollectionType['markdown'] {
           if (marker) {
             state.wrapBlock('> ', null, node, () => {
               state.write(marker);
+              const firstChild = node.firstChild;
               const onlyEmptyParagraph =
-                node.childCount === 1 && node.firstChild?.textContent === '';
+                node.childCount === 1 &&
+                firstChild?.type ===
+                  config.getParagraphNodeType(node.type.schema) &&
+                firstChild.childCount === 0;
               if (!onlyEmptyParagraph) {
                 state.write(calloutMarkerOnOwnLine ? '\n' : ' ');
                 state.renderContent(node);

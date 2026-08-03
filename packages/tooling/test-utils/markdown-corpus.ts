@@ -622,6 +622,11 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     engines: PROSEMIRROR_ONLY,
   },
   {
+    name: 'callout with an adjacent list',
+    markdown: '> [!note]\n> - First\n> - Second',
+    engines: PROSEMIRROR_ONLY,
+  },
+  {
     name: 'callout with an inline title',
     markdown: '> [!warning] Careful **here**',
     engines: PROSEMIRROR_ONLY,

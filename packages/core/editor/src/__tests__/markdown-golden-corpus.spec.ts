@@ -27,6 +27,13 @@ describe('Markdown golden corpus (ProseMirror engine)', () => {
     const expected = fixture.canonical ?? fixture.markdown;
     expect(roundTrip(fixture.markdown)).toBe(expected);
     if (fixture.canonical !== undefined) {
+      // Canonical bytes may re-spell a construct, but they must not bless a
+      // serializer output that changed the parsed document's meaning.
+      expect(
+        markdown.parser
+          .parse(fixture.markdown)
+          .eq(markdown.parser.parse(fixture.canonical)),
+      ).toBe(true);
       // The canonical form must itself be stable, or the "normalization"
       // never converges and every save would rewrite the note.
       expect(roundTrip(fixture.canonical)).toBe(fixture.canonical);

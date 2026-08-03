@@ -78,6 +78,26 @@ export function calloutTokenizer(md: MarkdownIt): void {
       inline.content = content;
       inline.children = [];
       state.md.inline.parse(content, state.md, state.env, inline.children);
+
+      const paragraphClose = state.tokens[index + 3];
+      const nextBlock = state.tokens[index + 4];
+      const markerEndLine = paragraph.map?.[1];
+      const nextBlockStartLine = nextBlock?.map?.[0];
+      const markerEndsImmediatelyBeforeNextBlock =
+        content === '' &&
+        typeof markerEndLine === 'number' &&
+        markerEndLine === nextBlockStartLine &&
+        paragraphClose?.type === 'paragraph_close' &&
+        nextBlock !== undefined &&
+        nextBlock.level === paragraph.level &&
+        nextBlock.type !== 'blockquote_close';
+      if (markerEndsImmediatelyBeforeNextBlock) {
+        // The marker is metadata, not an empty editable paragraph. Markdown-it
+        // emits one when a marker-only line is followed directly by a list,
+        // heading, fence, or nested quote. Keeping that token triple would add
+        // a visible blank block and serialize an extra quoted blank line.
+        state.tokens.splice(index + 1, 3);
+      }
     }
   });
 }

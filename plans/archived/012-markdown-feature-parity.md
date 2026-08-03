@@ -42,8 +42,14 @@ normalizing syntax visible through the editor's fidelity warning.
 - PR #695 added basic `> [!type]` callouts by extending the blockquote owner.
   Marker-only and inline-title forms round-trip exactly; nested content and
   ordinary blockquotes retain their existing semantics.
+- A follow-up reference audit fixed marker-only callouts whose first real
+  child is a list, heading, fence, or nested callout: the tokenizer now removes
+  its synthetic empty paragraph only for directly adjacent blocks and keeps
+  intentional blank separation exact.
 - PR #695 added `==highlight==` as an editable `<mark>` with typing, paste,
   selection-menu, parse, and exact serialization support.
+- Markdown mark paste rules now remove delimiters without dropping surrounding
+  whitespace, and typing or paste inside inline code remains literal.
 - The shared corpus now records callout, highlight, and math as explicit
   ProseMirror-only fixtures. Wordgard parity therefore remains visible instead
   of silently changing that engine's token stream.
@@ -88,8 +94,13 @@ The closeout audit corrected assumptions in the original probe:
   editor schema.
 - **Broader callout dialects:** folding markers, aliases, custom icons, and
   other renderer-specific behavior are deliberately declined. The implemented
-  grammar accepts conservative ASCII callout types and preserves malformed
-  input as ordinary Markdown.
+  grammar accepts conservative ASCII callout types; unsupported or malformed
+  variants remain ordinary Markdown and trigger the fidelity warning when the
+  normal serializer would rewrite them.
+- **Arbitrary multi-mark crossings:** the common two-mark highlight boundary
+  is protected. General three-or-more partially crossing inline marks require
+  a serializer transition-state redesign and remain deferred without product
+  evidence.
 
 ## Cross-engine boundary
 
@@ -101,11 +112,11 @@ those fixtures in Wordgard without reverse-engineering an implicit contract.
 ## Verification
 
 - `pnpm lint:ci` passed.
-- `pnpm test:ci` passed: 174 files, 3,712 tests passed, 1 skipped.
+- `pnpm test:ci` passed: 174 files, 3,736 tests passed, 1 skipped.
 - `pnpm build` passed with the existing Sentry-token and chunk-size warnings.
 - Focused Playwright coverage for callout import, highlight authoring,
   persistence, and reload passed.
-- `pnpm local-ci-check` passed, including 218 E2E tests, 8 component tests, and
+- `pnpm local-ci-check` passed, including 220 E2E tests, 8 component tests, and
   the desktop persistence smoke. Two unrelated E2E tests passed on retry.
 
 Further Markdown parity work should be evidence-driven under a focused issue or

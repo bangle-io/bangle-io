@@ -62,6 +62,7 @@ describe('round-trip gate against the real serializer', () => {
     ['single-tilde strikethrough', 'this is ~gone~ now\n'],
     ['html entity', 'Tom &amp; Jerry\n'],
     ['multiline raw HTML that collapses', '<div>\nraw **body**\n</div>\n'],
+    ['unsupported folding callout marker', '> [!note]+ Folded\n> Body\n'],
     ['definition list', 'term\n: definition\n'],
   ])('flags %s as not preserved', (_label, source) => {
     expect(roundTrip(source)).toBe(false);

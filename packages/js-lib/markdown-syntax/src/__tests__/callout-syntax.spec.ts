@@ -45,6 +45,26 @@ describe('calloutTokenizer', () => {
     expect(readCalloutTokenMetadata(tokens[0]?.meta)).toBeNull();
   });
 
+  it.each([
+    ['list', '> [!note]\n> - item', 'bullet_list_open'],
+    ['heading', '> [!note]\n> # Heading', 'heading_open'],
+    ['fenced code', '> [!note]\n> ```js\n> code\n> ```', 'fence'],
+    ['nested quote', '> [!note]\n> > Nested', 'blockquote_open'],
+  ])('removes the synthetic marker paragraph before an adjacent %s', (_label, source, expectedFirstChild) => {
+    const tokens = parse(source);
+    expect(tokens[1]?.type).toBe(expectedFirstChild);
+  });
+
+  it('keeps an intentional blank marker paragraph before separated content', () => {
+    const tokens = parse('> [!note]\n>\n> Body');
+    expect(tokens.slice(1, 5).map((token) => token.type)).toEqual([
+      'paragraph_open',
+      'inline',
+      'paragraph_close',
+      'paragraph_open',
+    ]);
+  });
+
   it('declines malformed and folding markers', () => {
     for (const source of [
       '> [!]',
