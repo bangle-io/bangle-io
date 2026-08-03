@@ -54,7 +54,6 @@ export {
   atomWithCompare,
   createAsyncAtom,
 } from './jotai';
-export { checkWidescreen } from './misc';
 export type { AppErrorName } from './throw-app-error';
 export {
   createAppError,
