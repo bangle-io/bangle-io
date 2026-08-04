@@ -28,6 +28,7 @@ type LockOwner = Record<string, unknown> & {
   cwd: string;
   hostname: string;
   startedAt: string;
+  activeChildPid?: number;
 };
 
 type LockRecord = Record<string, unknown>;
@@ -81,6 +82,24 @@ export function isProcessRunning(pid: unknown): boolean {
   }
 }
 
+function isProcessTreeRunning(pid: unknown): boolean {
+  if (typeof pid !== 'number' || !Number.isInteger(pid) || pid <= 0) {
+    return false;
+  }
+  if (process.platform === 'win32') {
+    return isProcessRunning(pid);
+  }
+  try {
+    execFileSync('kill', ['-0', '--', `-${pid}`], { stdio: 'ignore' });
+    return true;
+  } catch (error) {
+    if (hasErrorCode(error, 'ENOENT')) {
+      throw error;
+    }
+    return false;
+  }
+}
+
 function readLockOwner(lockFile: string): LockRecord | null {
   try {
     const owner: unknown = JSON.parse(readFileSync(lockFile, 'utf8'));
@@ -118,6 +137,40 @@ function removeStaleLock(lockFile: string): boolean {
   }
 }
 
+function replaceLockOwner(lockFile: string, owner: LockOwner): void {
+  const temporaryLockFile = `${lockFile}.update-${process.pid}`;
+  try {
+    writeFileSync(temporaryLockFile, `${JSON.stringify(owner, null, 2)}\n`);
+    renameSync(temporaryLockFile, lockFile);
+  } catch (error) {
+    try {
+      unlinkSync(temporaryLockFile);
+    } catch (cleanupError) {
+      if (!hasErrorCode(cleanupError, 'ENOENT')) {
+        console.error(
+          `Failed to clean up local CI lock metadata: ${cleanupError}`,
+        );
+      }
+    }
+    throw error;
+  }
+}
+
+function recordActiveChild(
+  lockFile: string,
+  owner: LockOwner,
+  activeChildPid: number,
+): void {
+  const currentOwner = readLockOwner(lockFile);
+  if (!currentOwner || currentOwner.pid !== owner.pid) {
+    throw new Error(
+      'Lost the Bangle local CI lock before starting its command.',
+    );
+  }
+  owner.activeChildPid = activeChildPid;
+  replaceLockOwner(lockFile, owner);
+}
+
 export function tryAcquireCiLock(
   lockFile: string,
   owner: LockOwner,
@@ -140,7 +193,9 @@ export function tryAcquireCiLock(
 
   const currentOwner = readLockOwner(lockFile);
   if (
-    (currentOwner && isProcessRunning(currentOwner.pid)) ||
+    (currentOwner &&
+      (isProcessRunning(currentOwner.pid) ||
+        isProcessTreeRunning(currentOwner.activeChildPid))) ||
     (!currentOwner && isFreshIncompleteLock(lockFile))
   ) {
     return { acquired: false, owner: currentOwner };
@@ -153,7 +208,11 @@ export function tryAcquireCiLock(
 
 export function releaseCiLock(lockFile: string, pid = process.pid): boolean {
   const owner = readLockOwner(lockFile);
-  if (!owner || owner.pid !== pid) {
+  if (
+    !owner ||
+    owner.pid !== pid ||
+    isProcessTreeRunning(owner.activeChildPid)
+  ) {
     return false;
   }
   unlinkSync(lockFile);
@@ -248,7 +307,13 @@ function runCommand(
       env,
       stdio: 'inherit',
     });
-    setActiveChild(child);
+    try {
+      setActiveChild(child);
+    } catch (error) {
+      stopProcessTree(child, 'SIGTERM');
+      rejectRun(error);
+      return;
+    }
     child.once('error', rejectRun);
     child.once('exit', (code) => {
       setActiveChild(null);
@@ -299,8 +364,20 @@ async function main(): Promise<void> {
 
   let hasLock = false;
   const failures: string[] = [];
+  const inheritedLock = process.env[INHERITED_LOCK_ENV] === '1';
+  const trackActiveChild = (child: ChildProcess | null): void => {
+    activeChild = child;
+    if (!child) {
+      return;
+    }
+    if (!inheritedLock && child.pid) {
+      recordActiveChild(lockFile, owner, child.pid);
+    }
+    if (receivedSignal) {
+      stopProcessTree(child, receivedSignal);
+    }
+  };
   try {
-    const inheritedLock = process.env[INHERITED_LOCK_ENV] === '1';
     hasLock =
       inheritedLock ||
       (await acquireCiLock(lockFile, owner, () => receivedSignal !== null));
@@ -310,12 +387,7 @@ async function main(): Promise<void> {
 
     if (executable && hasLock && !receivedSignal) {
       const args = requestedCommand?.slice(1) ?? [];
-      const code = await runCommand(executable, args, (child) => {
-        activeChild = child;
-        if (child && receivedSignal) {
-          stopProcessTree(child, receivedSignal);
-        }
-      });
+      const code = await runCommand(executable, args, trackActiveChild);
       if (code !== 0) {
         failures.push([executable, ...args].join(' '));
       }
@@ -329,12 +401,7 @@ async function main(): Promise<void> {
         const code = await runCommand(
           'pnpm',
           ['run', script],
-          (child) => {
-            activeChild = child;
-            if (child && receivedSignal) {
-              stopProcessTree(child, receivedSignal);
-            }
-          },
+          trackActiveChild,
           { ...process.env, [INHERITED_LOCK_ENV]: '1' },
         );
         if (code !== 0) {
