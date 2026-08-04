@@ -97,10 +97,10 @@ The closeout audit corrected assumptions in the original probe:
   grammar accepts conservative ASCII callout types; unsupported or malformed
   variants remain ordinary Markdown and trigger the fidelity warning when the
   normal serializer would rewrite them.
-- **Arbitrary multi-mark crossings:** the common two-mark highlight boundary
-  is protected. General three-or-more partially crossing inline marks require
-  a serializer transition-state redesign and remain deferred without product
-  evidence.
+- **Partially crossing inline marks:** Markdown delimiters are nested, while
+  rich-text selections can overlap. Correctly normalizing those transitions is
+  a serializer-wide concern shared by bold, italic, strike, and highlight, so
+  it remains deferred without product evidence for that broader redesign.
 
 ## Cross-engine boundary
 

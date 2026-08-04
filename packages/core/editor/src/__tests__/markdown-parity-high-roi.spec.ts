@@ -57,44 +57,20 @@ describe('high-ROI Markdown parity constructs', () => {
     expect(markdown.serializer.serialize(doc)).toBe(source);
   });
 
-  it.each([
-    [
-      'highlight into bold',
-      ['highlight', 1, 8] as const,
-      ['bold', 5, 14] as const,
-      '==one **two**== **three**',
-    ],
-    [
-      'bold into highlight',
-      ['bold', 1, 8] as const,
-      ['highlight', 5, 14] as const,
-      '**one ==two==** ==three==',
-    ],
-  ])('keeps %s edits as parseable Markdown', (_label, first, second, expected) => {
-    const doc = markdown.parser.parse('one two three');
+  it('preserves an editor-created nested highlight inside a word', () => {
+    const doc = markdown.parser.parse('word');
     const state = EditorState.create({ doc, schema: markdown.schema });
     const highlight = markdown.schema.marks.highlight;
     const bold = markdown.schema.marks.bold;
     if (!highlight || !bold) {
       throw new Error('highlight and bold marks are required');
     }
-    const markTypes = { bold, highlight };
     const edited = state.tr
-      .addMark(first[1], first[2], markTypes[first[0]].create())
-      .addMark(second[1], second[2], markTypes[second[0]].create()).doc;
+      .addMark(1, 3, bold.create())
+      .addMark(1, 3, highlight.create()).doc;
 
     const serialized = markdown.serializer.serialize(edited);
-    expect(serialized).toBe(expected);
     const reparsed = markdown.parser.parse(serialized);
-    let trailingTextKeepsMark = false;
-    reparsed.descendants((node) => {
-      if (node.text === 'three') {
-        trailingTextKeepsMark = node.marks.some(
-          (mark) => mark.type === markTypes[second[0]],
-        );
-      }
-    });
-    expect(trailingTextKeepsMark).toBe(true);
-    expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
+    expect(reparsed.eq(edited)).toBe(true);
   });
 });

@@ -29,6 +29,8 @@ describe('highlightTokenizer', () => {
     expect(inlineTypes('==**bold** and [link](https://x)==')).toContain(
       'link_open',
     );
+    expect(inlineTypes('==**wo**==rd')).toContain('highlight_open');
+    expect(inlineTypes('wo==**rd**==')).toContain('highlight_open');
   });
 
   it('declines single, unbalanced, and whitespace-only delimiters', () => {

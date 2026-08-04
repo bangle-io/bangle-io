@@ -35,8 +35,11 @@ export function highlightTokenizer(md: MarkdownIt): void {
       length: 0,
       token: state.tokens.length - 1,
       end: -1,
-      open: scanned.can_open,
-      close: scanned.can_close,
+      // Unlike emphasis, highlight is allowed next to punctuation and inside
+      // a word. This also keeps serializer-produced nesting such as
+      // `==**wo**==rd` semantic on reload.
+      open: !isWhitespace(state.src[state.pos + scanned.length]),
+      close: !isWhitespace(state.src[state.pos - 1]),
     });
 
     state.pos += scanned.length;
@@ -52,6 +55,10 @@ export function highlightTokenizer(md: MarkdownIt): void {
     }
     return true;
   });
+}
+
+function isWhitespace(character: string | undefined): boolean {
+  return character === undefined || /\s/u.test(character);
 }
 
 function processHighlightDelimiters(
