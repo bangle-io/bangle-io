@@ -78,6 +78,24 @@ test('slash insertion restores focus, prevents duplicates, and recovers deleted 
   const deleteFrontmatter = editor.getByRole('button', {
     name: 'Delete frontmatter',
   });
+
+  // Exercise the real pointer path before the keyboard path. The widget must
+  // preserve editor focus and the deletion must remain an undoable editor
+  // transaction regardless of how the button is activated.
+  await deleteFrontmatter.click();
+  await expect(editor.locator('pre[data-frontmatter]')).toHaveCount(0);
+  await waitForEditorFocus(page, {});
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(BODY);
+
+  await editor.press(`${ctrlKey}+z`);
+  await expect(editor.locator(':scope > pre[data-frontmatter]')).toContainText(
+    'title: Hello',
+  );
+  await expect
+    .poll(() => readSeededBrowserNote(page, seeded))
+    .toBe(INSERTED_SOURCE);
+
+  // Preserve the independently wired keyboard activation path.
   await deleteFrontmatter.focus();
   await deleteFrontmatter.press('Enter');
   await expect(editor.locator('pre[data-frontmatter]')).toHaveCount(0);

@@ -154,6 +154,18 @@ describe('dedenting a list item', () => {
     expect(reserialize(out)).toBe(out);
   });
 
+  it('adopts a bullet destination marker from a nested ordered run', () => {
+    const out = serialize(
+      apply(
+        caretAfter('- parent\n  1. nested\n- sibling', 'nested'),
+        list.command.dedentList,
+      ),
+    );
+
+    expect(out).toBe('- parent\n- nested\n- sibling');
+    expect(reserialize(out)).toBe(out);
+  });
+
   it('joins a loose destination without closing it up', () => {
     const out = serialize(
       apply(

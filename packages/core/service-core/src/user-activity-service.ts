@@ -35,6 +35,24 @@ type ActivityLogEntry<T extends EntityType = EntityType> = {
   timestamp: number;
 };
 
+export type RecentWsPath = { wsPath: string; timestamp: number };
+
+export type RecentWsPathReadFailure =
+  | { scope: 'workspace-list'; error: unknown }
+  | { scope: 'workspace-activity'; workspaceName: string; error: unknown };
+
+export type RecentWsPathsReadResult =
+  | {
+      status: 'complete';
+      recentWsPaths: RecentWsPath[];
+      failures: [];
+    }
+  | {
+      status: 'incomplete';
+      recentWsPaths: RecentWsPath[];
+      failures: [RecentWsPathReadFailure, ...RecentWsPathReadFailure[]];
+    };
+
 const ACTIVITY_LOG_KEY = 'ws-activity';
 const STARRED_ITEMS_KEY = 'starred-items';
 
@@ -61,36 +79,17 @@ export class UserActivityService extends BaseService {
   });
 
   $allRecentWsPaths = createAsyncAtom(
-    async (get): Promise<Array<{ wsPath: string; timestamp: number }>> => {
+    async (get): Promise<RecentWsPath[]> => {
       await this.mountPromise;
       get(this.$refreshActivityCounter);
 
-      const workspaces = await this.workspaceOps.getAllWorkspaces();
-      const allActivities: ActivityLogEntry<'ws-path'>[] = [];
-
-      for (const workspace of workspaces) {
-        const activities = await this.getRecent(workspace.name, 'ws-path');
-        allActivities.push(...activities);
+      const result = await this.readRecentWsPathsAcrossWorkspaces();
+      if (result.status === 'incomplete') {
+        throw result.failures[0].error;
       }
-
-      allActivities.sort((a, b) => b.timestamp - a.timestamp);
-
-      const seen = new Set<string>();
-      return allActivities
-        .map((activity) => ({
-          wsPath: activity.data.wsPath,
-          timestamp: activity.timestamp,
-        }))
-        .filter((item) => {
-          if (seen.has(item.wsPath)) {
-            return false;
-          }
-          seen.add(item.wsPath);
-          return true;
-        })
-        .slice(0, this.maxRecentEntries);
+      return result.recentWsPaths;
     },
-    (): Array<{ wsPath: string; timestamp: number }> => [],
+    (): RecentWsPath[] => [],
     this.emitAppError,
   );
 
@@ -252,6 +251,80 @@ export class UserActivityService extends BaseService {
     return activityLog.filter(
       (entry): entry is ActivityLogEntry<T> => entry.entityType === entityType,
     );
+  }
+
+  /**
+   * Reads recent note activity across every workspace from persisted metadata.
+   * Partial data is returned for diagnostics, but callers that choose a
+   * workspace must require `status: complete`: a failed workspace could hold
+   * the true most-recent note, so falling back from an incomplete result would
+   * be misleading.
+   */
+  public async readRecentWsPathsAcrossWorkspaces(): Promise<RecentWsPathsReadResult> {
+    await this.mountPromise;
+
+    let workspaces: Awaited<
+      ReturnType<WorkspaceOpsService['getAllWorkspaces']>
+    >;
+    try {
+      workspaces = await this.workspaceOps.getAllWorkspaces();
+    } catch (error) {
+      return {
+        status: 'incomplete',
+        recentWsPaths: [],
+        failures: [{ scope: 'workspace-list', error }],
+      };
+    }
+
+    const reads = await Promise.allSettled(
+      workspaces.map(async (workspace) => ({
+        workspaceName: workspace.name,
+        activities: await this.getRecent(workspace.name, 'ws-path'),
+      })),
+    );
+    const allActivities: ActivityLogEntry<'ws-path'>[] = [];
+    const failures: RecentWsPathReadFailure[] = [];
+    reads.forEach((read, index) => {
+      if (read.status === 'fulfilled') {
+        allActivities.push(...read.value.activities);
+        return;
+      }
+      const workspace = workspaces[index];
+      if (workspace) {
+        const error: unknown = read.reason;
+        failures.push({
+          scope: 'workspace-activity',
+          workspaceName: workspace.name,
+          error,
+        });
+      }
+    });
+
+    allActivities.sort((a, b) => b.timestamp - a.timestamp);
+    const seen = new Set<string>();
+    const recentWsPaths = allActivities
+      .map((activity) => ({
+        wsPath: activity.data.wsPath,
+        timestamp: activity.timestamp,
+      }))
+      .filter((item) => {
+        if (seen.has(item.wsPath)) {
+          return false;
+        }
+        seen.add(item.wsPath);
+        return true;
+      })
+      .slice(0, this.maxRecentEntries);
+
+    const [firstFailure, ...remainingFailures] = failures;
+    if (firstFailure) {
+      return {
+        status: 'incomplete',
+        recentWsPaths,
+        failures: [firstFailure, ...remainingFailures],
+      };
+    }
+    return { status: 'complete', recentWsPaths, failures: [] };
   }
 
   public async _recordCommandResult(result: CommandDispatchResult) {

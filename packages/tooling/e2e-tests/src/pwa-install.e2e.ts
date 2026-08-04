@@ -41,6 +41,30 @@ function stubInstalledRelatedApps(page: Page) {
   });
 }
 
+function captureLaunchQueueConsumer(page: Page) {
+  return page.addInitScript(() => {
+    type LaunchQueueConsumer = (params: { targetURL?: string }) => void;
+    let launchQueueConsumer: LaunchQueueConsumer | undefined;
+
+    Object.defineProperty(window, 'launchQueue', {
+      configurable: true,
+      value: {
+        setConsumer(consumer: LaunchQueueConsumer) {
+          launchQueueConsumer = consumer;
+        },
+      },
+    });
+    Object.assign(window, {
+      __bangleTestConsumeLaunchTarget(targetURL: string) {
+        if (!launchQueueConsumer) {
+          throw new Error('The app did not register a launch queue consumer');
+        }
+        launchQueueConsumer({ targetURL });
+      },
+    });
+  });
+}
+
 test('serves the complete PWA manifest contract and every referenced PNG icon', async ({
   page,
 }) => {
@@ -155,7 +179,7 @@ test('serves the complete PWA manifest contract and every referenced PNG icon', 
   }
 });
 
-test('installs once from Settings after a sidebar prompt, then exposes open-in-app without a same-session alert', async ({
+test('installs once from the sidebar, then exposes open-in-app without a same-session alert', async ({
   page,
 }) => {
   await page.goto('/');
@@ -167,13 +191,7 @@ test('installs once from Settings after a sidebar prompt, then exposes open-in-a
   expect(await dispatchInstallPromptEvent(page)).toBe(true);
   await expect(sidebarAction).toHaveText('Install app');
 
-  await page.getByRole('button', { name: /Bangle\.io/ }).click();
-  await page.getByRole('menuitem', { name: 'Settings' }).click();
-  await expect(page.getByRole('heading', { name: 'General' })).toBeVisible();
-  const settingsInstall = page.getByTestId('settings-install-app');
-  await expect(settingsInstall).toBeVisible();
-
-  await settingsInstall.click();
+  await sidebarAction.click();
   await expect
     .poll(() =>
       page.evaluate(
@@ -183,7 +201,6 @@ test('installs once from Settings after a sidebar prompt, then exposes open-in-a
       ),
     )
     .toBe(1);
-  await expect(settingsInstall).toHaveCount(0);
   await expect(sidebarAction).toHaveCount(0);
 
   await page.evaluate(() => {
@@ -191,7 +208,11 @@ test('installs once from Settings after a sidebar prompt, then exposes open-in-a
   });
 
   await expect(sidebarAction).toHaveText('Open in app');
+  await page.getByRole('button', { name: /Bangle\.io/ }).click();
+  await page.getByRole('menuitem', { name: 'Settings' }).click();
+  await expect(page.getByRole('heading', { name: 'General' })).toBeVisible();
   await expect(page.getByTestId('settings-open-in-app')).toBeVisible();
+  await expect(page.getByTestId('settings-install-app')).toHaveCount(0);
   await expect(page.getByRole('alertdialog')).toHaveCount(0);
 });
 
@@ -222,6 +243,28 @@ test('previously installed apps prompt once and retain open-in-app entry points 
   );
   await expect(page.getByTestId('settings-open-in-app')).toBeVisible();
   await expect(page.getByRole('alertdialog')).toHaveCount(0);
+});
+
+test('open-in-app dialog CTA uses the browser launch wiring and leaves the tab usable', async ({
+  page,
+}) => {
+  // Chromium cannot install and register this test origin as an OS protocol
+  // handler. The production-wired unit tests assert the exact web+bangle URL;
+  // this browser test retains the real dialog -> CTA -> browser navigation
+  // path and verifies that the source tab remains usable when no handler is
+  // registered.
+  await stubInstalledRelatedApps(page);
+  await page.goto('/');
+
+  const dialog = page.getByRole('alertdialog');
+  await expect(dialog).toContainText('Open in the app?');
+  await dialog.getByRole('button', { name: 'Open in app' }).click();
+
+  await expect(dialog).toHaveCount(0);
+  await expect(page.getByTestId('sidebar-pwa-action')).toHaveText(
+    'Open in app',
+  );
+  await expect(page.getByRole('button', { name: /Bangle\.io/ })).toBeVisible();
 });
 
 test('protocol launch payload opens the seeded note and is consumed before later navigation and reload', async ({
@@ -267,6 +310,53 @@ test('protocol launch payload opens the seeded note and is consumed before later
   expect(new URL(page.url()).search).toBe('');
 });
 
+test('an already-open app consumes a protocol LaunchQueue target once', async ({
+  page,
+}) => {
+  await captureLaunchQueueConsumer(page);
+  const seeded = await seedBrowserWorkspaceAndNote(page, {
+    noteName: 'launch-queue-target',
+    workspaceName: 'pwa-launch-queue-ws',
+  });
+
+  await page.getByRole('button', { name: /Bangle\.io/ }).click();
+  await page.getByRole('menuitem', { name: 'Settings' }).click();
+  await expect(page.getByRole('heading', { name: 'General' })).toBeVisible();
+
+  const hashRoute = `route=editor&wsPath=${seeded.wsPath}`;
+  const launchValue = encodeURIComponent(
+    `web+bangle://open?hash=${encodeURIComponent(hashRoute)}`,
+  );
+  await page.evaluate(
+    (targetURL) => {
+      const consumeLaunchTarget = (
+        window as typeof window & {
+          __bangleTestConsumeLaunchTarget?: (url: string) => void;
+        }
+      ).__bangleTestConsumeLaunchTarget;
+      if (!consumeLaunchTarget) {
+        throw new Error('Launch queue test bridge is unavailable');
+      }
+      consumeLaunchTarget(targetURL);
+    },
+    `${new URL(page.url()).origin}/?launch=${launchValue}`,
+  );
+
+  const editor = getEditorLocator(page, {});
+  await expect(editor).toBeVisible();
+  await expect
+    .poll(() => editor.getAttribute('data-editor-name'))
+    .toContain(seeded.wsPath);
+  expect(new URL(page.url()).searchParams.has('launch')).toBe(false);
+  expect(new URL(page.url()).searchParams.has('shortcut')).toBe(false);
+
+  await page.getByRole('button', { name: /Bangle\.io/ }).click();
+  await page.getByRole('menuitem', { name: 'Settings' }).click();
+  await expect(page.getByRole('heading', { name: 'General' })).toBeVisible();
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.getByRole('heading', { name: 'General' })).toBeVisible();
+});
+
 test('manifest search and new-note shortcuts consume their launch query and act in the seeded workspace', async ({
   page,
 }) => {
@@ -285,12 +375,20 @@ test('manifest search and new-note shortcuts consume their launch query and act 
     await expect(
       page.getByPlaceholder('Type a command or search...'),
     ).toHaveCount(0);
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await expect(
+      page.getByPlaceholder('Type a command or search...'),
+    ).toHaveCount(0);
   });
 
   await test.step('create a note in the most recent available workspace', async () => {
-    const workspaceName = 'pwa-shortcut-ws';
     await seedBrowserWorkspaceAndNote(page, {
-      noteName: 'shortcut-existing-note',
+      noteName: 'older-workspace-note',
+      workspaceName: 'pwa-shortcut-older-ws',
+    });
+    const workspaceName = 'pwa-shortcut-recent-ws';
+    await seedBrowserWorkspaceAndNote(page, {
+      noteName: 'recent-workspace-note',
       workspaceName,
     });
 
@@ -307,5 +405,12 @@ test('manifest search and new-note shortcuts consume their launch query and act 
     await expect
       .poll(() => page.evaluate(() => window.location.search))
       .toBe('');
+
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await expect(page.getByLabel('Note name')).toHaveCount(0);
+    await expect(editor).toBeVisible();
+    await expect
+      .poll(() => editor.getAttribute('data-editor-name'))
+      .toContain(`${workspaceName}:shortcut-created-note.md`);
   });
 });

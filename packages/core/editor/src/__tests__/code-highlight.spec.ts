@@ -9,6 +9,7 @@ import {
   setupBase,
   setupCodeBlock,
   setupParagraph,
+  TextSelection,
 } from '@bangle.io/prosemirror-plugins';
 import type { Parser, ParserOptions } from 'prosemirror-highlight';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -304,11 +305,63 @@ describe('setupCodeHighlight', () => {
         '.prosemirror-block-delete-button',
       ).map((button) => button.getAttribute('aria-label')),
     ).toEqual(['Delete code block', 'Delete code block']);
-    expect(
-      getElements<HTMLButtonElement>(mount, 'button').map(
-        (button) => button.tabIndex,
-      ),
-    ).toEqual([0, 0, 0, 0, 0, 0]);
+    const buttons = getElements<HTMLButtonElement>(mount, 'button');
+    expect(buttons.map((button) => button.tabIndex)).toEqual([
+      0, 0, 0, 0, 0, 0,
+    ]);
+    expect(buttons.map((button) => button.getAttribute('aria-label'))).toEqual([
+      'Edit language',
+      'Copy',
+      'Delete code block',
+      'Edit language',
+      'Copy',
+      'Delete code block',
+    ]);
+  });
+
+  test('lets forward Tab enter editor chrome while retaining the editor Tab trap otherwise', () => {
+    const { mount, view } = createCodeActionEditor([
+      { language: 'js', text: 'const accessible = true;' },
+    ]);
+    const paragraph = view.state.schema.nodes.paragraph;
+    if (!paragraph) {
+      throw new Error('Expected paragraph node type');
+    }
+    const insertParagraph = view.state.tr.insert(
+      0,
+      paragraph.create(null, view.state.schema.text('before')),
+    );
+    insertParagraph.setSelection(TextSelection.create(insertParagraph.doc, 1));
+    view.dispatch(insertParagraph);
+    view.focus();
+
+    const enterChrome = new KeyboardEvent('keydown', {
+      bubbles: true,
+      cancelable: true,
+      key: 'Tab',
+    });
+    view.dom.dispatchEvent(enterChrome);
+    expect(enterChrome.defaultPrevented).toBe(false);
+
+    const leaveBackward = new KeyboardEvent('keydown', {
+      bubbles: true,
+      cancelable: true,
+      key: 'Tab',
+      shiftKey: true,
+    });
+    view.dom.dispatchEvent(leaveBackward);
+    expect(leaveBackward.defaultPrevented).toBe(true);
+
+    for (const button of getElements<HTMLButtonElement>(mount, 'button')) {
+      button.disabled = true;
+    }
+    const noAvailableChrome = new KeyboardEvent('keydown', {
+      bubbles: true,
+      cancelable: true,
+      key: 'Tab',
+    });
+    view.dom.dispatchEvent(noAvailableChrome);
+    expect(noAvailableChrome.defaultPrevented).toBe(true);
   });
 
   test('cancels and blurs an empty language editor without inventing language info', () => {

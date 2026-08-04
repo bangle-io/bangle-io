@@ -451,6 +451,48 @@ describe('math interaction', () => {
     userAgent.mockRestore();
   });
 
+  it('runs the Firefox focus bridge before returning focus to the outer editor', () => {
+    const userAgent = vi
+      .spyOn(window.navigator, 'userAgent', 'get')
+      .mockReturnValue(
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:128.0) Gecko/20100101 Firefox/128.0',
+      );
+    const editor = editorTest.createEditor(doc(p(), mathDisplay('x')));
+    editor.view.dispatch(
+      editor.view.state.tr.setSelection(
+        NodeSelection.create(editor.view.state.doc, 2),
+      ),
+    );
+    const source = mathSource(editor.view, 'math-display');
+    const append = vi.spyOn(document.body, 'append');
+    const focus = vi.spyOn(HTMLElement.prototype, 'focus');
+    const event = new KeyboardEvent('keydown', {
+      key: 'Enter',
+      ctrlKey: true,
+      bubbles: true,
+      cancelable: true,
+    });
+
+    source.dispatchEvent(event);
+
+    const focusBridge = append.mock.calls
+      .flat()
+      .find(
+        (node): node is HTMLButtonElement => node instanceof HTMLButtonElement,
+      );
+    expect(event.defaultPrevented).toBe(true);
+    expect(focusBridge).toBeInstanceOf(HTMLButtonElement);
+    expect(focusBridge?.tabIndex).toBe(-1);
+    expect(focusBridge?.getAttribute('aria-hidden')).toBe('true');
+    expect(focusBridge?.isConnected).toBe(false);
+    expect(focus.mock.contexts).toContain(focusBridge);
+    expect(focus.mock.contexts.at(-1)).toBe(editor.view.dom);
+    expect(editor.view.hasFocus()).toBe(true);
+    append.mockRestore();
+    focus.mockRestore();
+    userAgent.mockRestore();
+  });
+
   it('Ctrl-Backspace deletes a source word instead of the whole math node', () => {
     const editor = editorTest.createEditor(
       doc(p('before ', mathInline('alpha beta'))),

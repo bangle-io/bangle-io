@@ -34,6 +34,8 @@ export type BaseConfig = {
    * Prevent Tab key from moving focus out of the editor.
    * When true, Tab and Shift-Tab keys will be handled by the editor
    * and won't bubble to the browser (only if no other keymap handles them).
+   * Forward Tab still reaches focusable editor chrome rendered inside the
+   * contenteditable, so embedded controls remain keyboard accessible.
    * @default true
    */
   trapTabKey?: boolean;
@@ -82,8 +84,8 @@ export function setupBase(userConfig?: BaseConfig) {
       ),
     trapTabKey: keybinding(
       {
-        Tab: trapTabCommand(config),
-        'Shift-Tab': trapTabCommand(config),
+        Tab: trapTabCommand(config, { enterEditorChrome: true }),
+        'Shift-Tab': trapTabCommand(config, { enterEditorChrome: false }),
       },
       'trapTabKey',
       // Use the lowest priority so this only runs after all other plugins
@@ -120,13 +122,42 @@ export function insertText() {
  * Command to trap Tab key in the editor.
  * Simply returns true to indicate we've handled the key, preventing it from bubbling up.
  */
-function trapTabCommand(config: RequiredConfig): Command {
-  return () => {
-    if (config.trapTabKey) {
-      return true;
+function trapTabCommand(
+  config: RequiredConfig,
+  { enterEditorChrome }: { enterEditorChrome: boolean },
+): Command {
+  return (_state, _dispatch, view) => {
+    if (!config.trapTabKey) {
+      return false;
     }
-    return false;
+    if (
+      enterEditorChrome &&
+      view !== undefined &&
+      view.dom.ownerDocument.activeElement === view.dom &&
+      hasFocusableEditorChrome(view.dom)
+    ) {
+      // Let the browser perform its native sequential-focus step from the
+      // contenteditable root into the first embedded editor control.
+      return false;
+    }
+    return true;
   };
+}
+
+function hasFocusableEditorChrome(editor: HTMLElement): boolean {
+  return [...editor.querySelectorAll<HTMLElement>('[data-editor-chrome]')].some(
+    (chrome) =>
+      [
+        ...chrome.querySelectorAll<HTMLElement>(
+          'button, input, select, textarea, a[href], [tabindex]',
+        ),
+      ].some(
+        (control) =>
+          control.tabIndex >= 0 &&
+          !control.hasAttribute('disabled') &&
+          control.getAttribute('aria-disabled') !== 'true',
+      ),
+  );
 }
 
 // MARKDOWN

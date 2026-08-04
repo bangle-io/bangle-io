@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import {
   collapseEditorSelectionAfterText,
   getEditorLocator,
+  isDarwin,
   readSeededBrowserNote,
   seedBrowserWorkspaceAndNote,
   waitForEditorFocus,
@@ -53,6 +54,7 @@ test('renders and filters the canonical slash menu, then mouse-inserts a persist
   await expect(menu.getByText('No results')).toBeVisible();
 
   await page.keyboard.press('Escape');
+  await expect(menu).toBeHidden();
   await page.keyboard.press('ControlOrMeta+a');
   await page.keyboard.press('Backspace');
   await page.keyboard.insertText('/');
@@ -71,6 +73,106 @@ test('renders and filters the canonical slash menu, then mouse-inserts a persist
     'const viaSlash = true;',
   );
   await expect.poll(() => readSeededBrowserNote(page, note)).toBe(expected);
+});
+
+test('keyboard-selects direct slash matches and persists a second-level heading', async ({
+  page,
+}) => {
+  await page.clock.setFixedTime(FIXED_CALENDAR_DATE);
+  const dateLabel = formatDateLabel(FIXED_CALENDAR_DATE);
+  const note = await seedBrowserWorkspaceAndNote(page, {
+    noteName: 'Slash keyboard',
+    workspaceName: 'slash-command-keyboard',
+  });
+  const editor = getEditorLocator(page, {});
+  const menu = page.getByTestId('slash-command-menu');
+  const selected = menu.locator('[cmdk-item][data-selected="true"]');
+
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('/');
+  await expect(menu).toBeVisible();
+  await page.keyboard.insertText('date');
+  await expect(selected).toHaveAccessibleName(/^Date Pick a date/);
+  await expect(menu.getByRole('option', { name: /Heading 1/ })).toBeHidden();
+  await page.keyboard.press('Enter');
+
+  const calendar = page.locator('[data-slot="calendar"]');
+  await expect(calendar).toBeVisible();
+  await expect(page.locator(daySelector(FIXED_CALENDAR_DATE))).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(editor).toBeFocused();
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(dateLabel);
+
+  await page.keyboard.press('Enter');
+  await page.keyboard.insertText('/');
+  await expect(menu).toBeVisible();
+  await page.keyboard.insertText('head');
+  await expect(selected).toHaveAccessibleName(
+    /^Heading 1 Large section heading/,
+  );
+  await page.keyboard.press('ArrowDown');
+  await expect(selected).toHaveAccessibleName(
+    /^Heading 2 Medium section heading/,
+  );
+  await page.keyboard.press('Enter');
+  await expect(menu).toBeHidden();
+  await page.keyboard.insertText('Keyboard heading');
+
+  await expect(
+    editor.getByRole('heading', { level: 2, name: 'Keyboard heading' }),
+  ).toBeVisible();
+  const expected = `${dateLabel}\n\n## Keyboard heading`;
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(expected);
+});
+
+test('Option+Backspace deletes an escaped slash query on macOS', async ({
+  page,
+}) => {
+  test.skip(!isDarwin, 'Option+Backspace is a macOS word-delete shortcut');
+
+  const note = await seedBrowserWorkspaceAndNote(page, {
+    noteName: 'Slash word delete',
+    workspaceName: 'slash-command-option-backspace',
+  });
+  const editor = getEditorLocator(page, {});
+  const menu = page.getByTestId('slash-command-menu');
+
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('/');
+  await expect(menu).toBeVisible();
+  await page.keyboard.insertText('////');
+
+  await page.keyboard.press('Escape');
+  await expect(menu).toBeHidden();
+  await page.keyboard.down('Alt');
+  await page.keyboard.press('Backspace');
+  await page.keyboard.up('Alt');
+
+  await expect(editor.locator('p')).toHaveCount(1);
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe('');
+});
+
+test('whitespace closes the slash menu and preserves the typed text', async ({
+  page,
+}) => {
+  const note = await seedBrowserWorkspaceAndNote(page, {
+    noteName: 'Slash whitespace',
+    workspaceName: 'slash-command-whitespace',
+  });
+  const editor = getEditorLocator(page, {});
+  const menu = page.getByTestId('slash-command-menu');
+
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText('/');
+  await expect(menu).toBeVisible();
+  await page.keyboard.insertText(' ');
+  await expect(menu).toBeHidden();
+
+  await page.keyboard.insertText('after');
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe('/ after');
 });
 
 test('shows only available table-context slash actions', async ({ page }) => {
@@ -183,18 +285,36 @@ test('drives the synthetic slash-date lifecycle through mouse, keyboard, month n
   await expect(page.locator(daySelector(FIXED_CALENDAR_DATE))).toBeFocused();
   await page.locator(daySelector(FIXED_CALENDAR_DATE)).click();
   await expect(editor).toBeFocused();
+  const afterMouseSelection = formatDateLabel(FIXED_CALENDAR_DATE);
+  await expect
+    .poll(() => readSeededBrowserNote(page, note))
+    .toBe(afterMouseSelection);
 
   await page.keyboard.insertText(' ');
   await openSlashDate();
   await page.keyboard.press('ArrowRight');
   await page.keyboard.press('Enter');
   await expect(editor).toBeFocused();
+  const afterKeyboardSelection = [
+    afterMouseSelection,
+    formatDateLabel(nextDay),
+  ].join(' ');
+  await expect
+    .poll(() => readSeededBrowserNote(page, note))
+    .toBe(afterKeyboardSelection);
 
   await page.keyboard.insertText(' ');
   await openSlashDate();
   await page.getByRole('button', { name: /next month/i }).click();
   await page.locator(daySelector(nextMonthDay)).click();
   await expect(editor).toBeFocused();
+  const afterMonthSelection = [
+    afterKeyboardSelection,
+    formatDateLabel(nextMonthDay),
+  ].join(' ');
+  await expect
+    .poll(() => readSeededBrowserNote(page, note))
+    .toBe(afterMonthSelection);
 
   await page.keyboard.insertText(' ');
   await openSlashDate();
@@ -204,12 +324,7 @@ test('drives the synthetic slash-date lifecycle through mouse, keyboard, month n
   await expect(editor).toBeFocused();
   await page.keyboard.insertText('After Escape');
 
-  const expected = [
-    formatDateLabel(FIXED_CALENDAR_DATE),
-    formatDateLabel(nextDay),
-    formatDateLabel(nextMonthDay),
-    'After Escape',
-  ].join(' ');
+  const expected = `${afterMonthSelection} After Escape`;
   await expect.poll(() => readSeededBrowserNote(page, note)).toBe(expected);
 });
 
@@ -235,8 +350,12 @@ test('keeps direct $date data safe for selection, literal suffixes, and abandonm
 
   await page.keyboard.press('ControlOrMeta+a');
   await page.keyboard.press('Backspace');
-  await editor.pressSequentially('$datefoo');
+  await editor.pressSequentially('$date');
+  await expect(calendar).toBeVisible();
+  await expect(editor).toBeFocused();
+  await editor.pressSequentially('foo', { delay: 100 });
   await expect(calendar).toBeHidden();
+  await expect(editor).toBeFocused();
   await expect(editor).toHaveText('$datefoo');
   await expect.poll(() => readSeededBrowserNote(page, note)).toBe('$datefoo');
 

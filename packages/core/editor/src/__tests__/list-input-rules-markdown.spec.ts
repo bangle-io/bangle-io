@@ -4,6 +4,7 @@ import {
   EditorState,
   EditorView,
   type PMNode,
+  setupList,
   TextSelection,
 } from '@bangle.io/prosemirror-plugins';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -111,6 +112,20 @@ describe('list edits through the full production extension set', () => {
     typeText(editor, '- converted');
     const output = serialize(editor);
     expect(output).toBe('- converted');
+    expectFixedPoint(output);
+  });
+
+  it('keeps a typed ordered list ordered when converting it to a task', () => {
+    const editor = createEditor('', (doc) => TextSelection.create(doc, 1));
+    const list = setupList();
+
+    typeText(editor, '1. typed ordered');
+    expect(list.command.toggleTaskList(editor.state, editor.dispatch)).toBe(
+      true,
+    );
+
+    const output = serialize(editor);
+    expect(output).toBe('1. [ ] typed ordered');
     expectFixedPoint(output);
   });
 

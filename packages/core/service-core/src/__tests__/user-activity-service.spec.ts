@@ -283,6 +283,126 @@ describe('UserActivityService', () => {
     expect(activities).toHaveLength(0);
   });
 
+  describe('cross-workspace recent note reads', () => {
+    it('returns a complete, globally sorted result', async () => {
+      const { userActivityService, workspaceOps } =
+        await setupUserActivityService({ controller });
+      await workspaceOps.updateWorkspaceMetadata(TEST_WS_NAME, (metadata) => ({
+        ...metadata,
+        'ws-activity': [
+          {
+            entityType: 'ws-path',
+            data: { wsPath: TEST_WS_PATH },
+            timestamp: 10,
+          },
+        ],
+      }));
+      await workspaceOps.updateWorkspaceMetadata(TEST_WS_NAME2, (metadata) => ({
+        ...metadata,
+        'ws-activity': [
+          {
+            entityType: 'ws-path',
+            data: { wsPath: TEST_WS_PATH_IN_WS2 },
+            timestamp: 20,
+          },
+        ],
+      }));
+
+      await expect(
+        userActivityService.readRecentWsPathsAcrossWorkspaces(),
+      ).resolves.toEqual({
+        status: 'complete',
+        failures: [],
+        recentWsPaths: [
+          { wsPath: TEST_WS_PATH_IN_WS2, timestamp: 20 },
+          { wsPath: TEST_WS_PATH, timestamp: 10 },
+        ],
+      });
+    });
+
+    it('returns partial data and identifies a single failed workspace read', async () => {
+      const { userActivityService, workspaceOps } =
+        await setupUserActivityService({ controller });
+      await workspaceOps.updateWorkspaceMetadata(TEST_WS_NAME, (metadata) => ({
+        ...metadata,
+        'ws-activity': [
+          {
+            entityType: 'ws-path',
+            data: { wsPath: TEST_WS_PATH },
+            timestamp: 10,
+          },
+        ],
+      }));
+      const failure = new Error('workspace metadata denied');
+      const getWorkspaceMetadata =
+        workspaceOps.getWorkspaceMetadata.bind(workspaceOps);
+      vi.spyOn(workspaceOps, 'getWorkspaceMetadata').mockImplementation(
+        async (wsName) => {
+          if (wsName === TEST_WS_NAME2) {
+            throw failure;
+          }
+          return getWorkspaceMetadata(wsName);
+        },
+      );
+
+      await expect(
+        userActivityService.readRecentWsPathsAcrossWorkspaces(),
+      ).resolves.toEqual({
+        status: 'incomplete',
+        recentWsPaths: [{ wsPath: TEST_WS_PATH, timestamp: 10 }],
+        failures: [
+          {
+            scope: 'workspace-activity',
+            workspaceName: TEST_WS_NAME2,
+            error: failure,
+          },
+        ],
+      });
+    });
+
+    it('returns no candidate when every workspace activity read fails', async () => {
+      const { userActivityService, workspaceOps } =
+        await setupUserActivityService({ controller });
+      const failure = new Error('all workspace metadata denied');
+      vi.spyOn(workspaceOps, 'getWorkspaceMetadata').mockRejectedValue(failure);
+
+      const result =
+        await userActivityService.readRecentWsPathsAcrossWorkspaces();
+
+      expect(result).toEqual({
+        status: 'incomplete',
+        recentWsPaths: [],
+        failures: [
+          {
+            scope: 'workspace-activity',
+            workspaceName: TEST_WS_NAME,
+            error: failure,
+          },
+          {
+            scope: 'workspace-activity',
+            workspaceName: TEST_WS_NAME2,
+            error: failure,
+          },
+        ],
+      });
+    });
+
+    it('distinguishes a workspace-list failure from per-workspace failures', async () => {
+      const { userActivityService, workspaceOps } =
+        await setupUserActivityService({ controller });
+      const failure = new Error('workspace list denied');
+      vi.spyOn(workspaceOps, 'getAllWorkspaces').mockRejectedValue(failure);
+
+      await expect(
+        userActivityService.readRecentWsPathsAcrossWorkspaces(),
+      ).resolves.toEqual({
+        status: 'incomplete',
+        recentWsPaths: [],
+        failures: [{ scope: 'workspace-list', error: failure }],
+      });
+    });
+  });
+
   describe('Starring', () => {
     it('migrates a starred path after the file is durably relocated', async () => {
       const { fileSystem, userActivityService, workspaceOps, goWsPath } =

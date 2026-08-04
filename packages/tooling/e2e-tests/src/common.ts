@@ -3,7 +3,8 @@ import os from 'node:os';
 import path from 'node:path';
 import { expect, type Locator, type Page } from '@playwright/test';
 
-export const ctrlKey = os.platform() === 'darwin' ? 'Meta' : 'Control';
+export const isDarwin = os.platform() === 'darwin';
+export const ctrlKey = isDarwin ? 'Meta' : 'Control';
 export const EDITOR_SELECTOR = '.ProseMirror';
 export const EDITOR_FOCUSED_SELECTOR = `${EDITOR_SELECTOR}.ProseMirror-focused`;
 const DEFAULT_SLEEP_TIME = 20;

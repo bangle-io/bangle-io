@@ -10,9 +10,9 @@ import {
   waitForSeededBrowserNote,
 } from './common';
 
-const AUTHORING_SOURCE = String.raw`Spent $5 on **bold**
-
-Euler $e^{i\pi} + 1 = 1$ with $a **b**$
+const INVALID_TEXT_SELECTION_WARNING =
+  'TextSelection endpoint not pointing into a node with inline content';
+const AUTHORING_SOURCE = String.raw`Euler $e^{i\pi} + 1 = 1$ with $a **b**$
 
 $$
 \notacommand{
@@ -21,6 +21,10 @@ const UNSAFE_SOURCE = [
   String.raw`and \$a\$b\$`,
   '',
   'irreplaceable prose',
+  '',
+  '$$',
+  'valid neighbor',
+  '$$',
   '',
   '```',
   '$$',
@@ -35,6 +39,15 @@ test('authors, renders, recovers, copies, and persists canonical math', async ({
   context,
   page,
 }) => {
+  const invalidSelectionWarnings: string[] = [];
+  page.on('console', (message) => {
+    if (
+      message.type() === 'warning' &&
+      message.text().includes(INVALID_TEXT_SELECTION_WARNING)
+    ) {
+      invalidSelectionWarnings.push(message.text());
+    }
+  });
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   const seeded = await seedBrowserWorkspaceAndNote(page, {
     noteName: 'Math',
@@ -44,9 +57,6 @@ test('authors, renders, recovers, copies, and persists canonical math', async ({
   await editor.click();
   await waitForEditorFocus(page, {});
 
-  await editor.pressSequentially('Spent $5 on **bold**');
-  await expect(editor.locator('strong')).toHaveText('bold');
-  await editor.press('Enter');
   await editor.pressSequentially(
     String.raw`Euler $e^{i\pi} + 1 = 0$ with $a **b**$`,
   );
@@ -55,8 +65,14 @@ test('authors, renders, recovers, copies, and persists canonical math', async ({
   await inlineMath.locator('.math-render').click();
   const inlineSource = inlineMath.locator('.math-src .ProseMirror');
   await expect(inlineSource).toHaveText(String.raw`e^{i\pi} + 1 = 0`);
+  await expect
+    .poll(() =>
+      inlineMath.evaluate((element) => getComputedStyle(element).boxShadow),
+    )
+    .toBe('none');
   await inlineSource.fill(String.raw`e^{i\pi} + 1 = 1`);
   await inlineSource.press('Control+Enter');
+  expect(invalidSelectionWarnings).toEqual([]);
 
   const formattingLikeMath = editor.locator('math-inline').nth(1);
   await formattingLikeMath.locator('.math-render').click();
@@ -79,6 +95,7 @@ test('authors, renders, recovers, copies, and persists canonical math', async ({
   await displaySource.fill(String.raw`\frac{a}{b} + \sqrt{x}`);
   await displaySource.press('End');
   await displaySource.press('ArrowRight');
+  expect(invalidSelectionWarnings).toEqual([]);
   await expect(displayMath.locator('.math-render .katex')).toBeVisible();
   await expect(
     displayMath.locator('math annotation[encoding="application/x-tex"]'),
@@ -93,6 +110,7 @@ test('authors, renders, recovers, copies, and persists canonical math', async ({
   await invalidFallback.click();
   await expect(displaySource).toHaveText(String.raw`\notacommand{`);
   await displaySource.press('Control+Enter');
+  expect(invalidSelectionWarnings).toEqual([]);
 
   await collapseEditorSelectionAfterText(page, 'Euler ');
   await page.keyboard.press('Shift+ArrowRight');
@@ -131,6 +149,7 @@ test('authors, renders, recovers, copies, and persists canonical math', async ({
   await expect
     .poll(() => readSeededBrowserNote(page, seeded))
     .toBe(AUTHORING_SOURCE);
+  expect(invalidSelectionWarnings).toEqual([]);
 });
 
 test('nested math editing keeps select-all and history scoped to the source editor', async ({
@@ -146,13 +165,14 @@ test('nested math editing keeps select-all and history scoped to the source edit
   // opening it so assertions keep addressing the note rather than both views.
   const editor = page.locator('.ProseMirror[data-editor-name]');
   const displayMath = editor.locator('math-display');
+  const outerProse = editor.locator(':scope > p').first();
   await displayMath.locator('.math-render').click();
   const sourceEditor = displayMath.locator('.math-src .ProseMirror');
   await expect(sourceEditor).toBeFocused();
   await sourceEditor.press(`${ctrlKey}+a`);
   await page.keyboard.insertText('xyz');
   await expect(sourceEditor).toHaveText('xyz');
-  await expect(editor).toContainText('KEEP');
+  await expect(outerProse).toHaveText('KEEP');
   await expect
     .poll(() => readSeededBrowserNote(page, seeded))
     .toBe('KEEP\n\n$$\nxyz\n$$');
@@ -160,8 +180,65 @@ test('nested math editing keeps select-all and history scoped to the source edit
   await sourceEditor.press(`${ctrlKey}+z`);
   await expect(sourceEditor).toBeFocused();
   await expect(sourceEditor).toHaveText('abc');
-  await expect(editor).toContainText('KEEP');
+  await expect(outerProse).toHaveText('KEEP');
   await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(source);
+
+  await sourceEditor.press(`${ctrlKey}+Shift+z`);
+  await expect(sourceEditor).toBeFocused();
+  await expect(sourceEditor).toHaveText('xyz');
+  await expect(outerProse).toHaveText('KEEP');
+  await expect
+    .poll(() => readSeededBrowserNote(page, seeded))
+    .toBe('KEEP\n\n$$\nxyz\n$$');
+});
+
+test('currency and existing shell variables keep later input rules active after reload', async ({
+  page,
+}) => {
+  const seeded = await seedBrowserWorkspaceAndNote(page, {
+    noteName: 'Currency',
+    workspaceName: 'math-currency-rules',
+  });
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await editor.pressSequentially(
+    String.raw`Spent $5 on **lunch** [[Home]] and \$1`,
+  );
+  await editor.press('Enter');
+  await editor.pressSequentially('Shell $PATH then ');
+
+  await expect(editor.locator('strong')).toHaveText('lunch');
+  await expect(editor.locator('.wiki-link')).toHaveText('Home');
+  await expect(editor).toContainText('Spent $5 on lunch Home and $1');
+  await expect
+    .poll(() => readSeededBrowserNote(page, seeded))
+    .toBe(String.raw`Spent $5 on **lunch** [[Home]] and \$1
+
+Shell $PATH then `);
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, seeded);
+  const reloadedEditor = getEditorLocator(page, {});
+  await expect(reloadedEditor.locator('strong')).toHaveText('lunch');
+  await expect(reloadedEditor.locator('.wiki-link')).toHaveText('Home');
+  await reloadedEditor.click();
+  await waitForEditorFocus(page, {});
+  await reloadedEditor.press('End');
+  // Reload canonicalizes the trailing paragraph space, so reintroduce the
+  // word boundary required by the bold input rule.
+  await reloadedEditor.pressSequentially(' **bold** [[Home]]');
+
+  await expect(reloadedEditor.locator('strong')).toHaveText(['lunch', 'bold']);
+  await expect(reloadedEditor.locator('.wiki-link')).toHaveText([
+    'Home',
+    'Home',
+  ]);
+  await expect
+    .poll(() => readSeededBrowserNote(page, seeded))
+    .toBe(String.raw`Spent $5 on **lunch** [[Home]] and \$1
+
+Shell $PATH then **bold** [[Home]]`);
 });
 
 test('unsafe math edits and multiline paste preserve following prose as literal durable Markdown', async ({
@@ -170,7 +247,19 @@ test('unsafe math edits and multiline paste preserve following prose as literal 
 }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   const seeded = await seedBrowserWorkspaceAndNote(page, {
-    initialMarkdown: '$x$and $y$\n\nirreplaceable prose\n\n$$\nreplace me\n$$',
+    initialMarkdown: [
+      '$x$and $y$',
+      '',
+      'irreplaceable prose',
+      '',
+      '$$',
+      'valid neighbor',
+      '$$',
+      '',
+      '$$',
+      'replace me',
+      '$$',
+    ].join('\n'),
     noteName: 'Math safety',
     workspaceName: 'math-unsafe-source',
   });
@@ -188,8 +277,15 @@ test('unsafe math edits and multiline paste preserve following prose as literal 
   await secondInlineSource.press('Control+Enter');
 
   const displayMath = editor.locator('math-display');
-  await displayMath.locator('.math-render').click();
-  const displaySource = displayMath.locator('.math-src .ProseMirror');
+  await expect(displayMath).toHaveCount(2);
+  await expect(
+    displayMath
+      .first()
+      .locator('math annotation[encoding="application/x-tex"]'),
+  ).toHaveText('valid neighbor');
+  const unsafeDisplayMath = displayMath.nth(1);
+  await unsafeDisplayMath.locator('.math-render').click();
+  const displaySource = unsafeDisplayMath.locator('.math-src .ProseMirror');
   await displaySource.press(`${ctrlKey}+a`);
   await page.evaluate(() => navigator.clipboard.writeText('a\n$$\nb'));
   await displaySource.press(`${ctrlKey}+v`);
@@ -204,10 +300,16 @@ test('unsafe math edits and multiline paste preserve following prose as literal 
   await waitForSeededBrowserNote(page, seeded);
   const reloadedEditor = getEditorLocator(page, {});
   await expect(reloadedEditor.locator('math-inline')).toHaveCount(0);
-  await expect(reloadedEditor.locator('math-display')).toHaveCount(0);
-  await expect(reloadedEditor.locator('pre code')).toContainText(
-    '$$\na\n$$\nb\n$$',
-  );
+  const reloadedDisplayMath = reloadedEditor.locator('math-display');
+  await expect(reloadedDisplayMath).toHaveCount(1);
+  await expect(
+    reloadedDisplayMath.locator(
+      'math annotation[encoding="application/x-tex"]',
+    ),
+  ).toHaveText('valid neighbor');
+  const fallbackCode = reloadedEditor.locator('pre code');
+  await expect(fallbackCode).toHaveCount(1);
+  await expect(fallbackCode).toContainText('$$\na\n$$\nb\n$$');
   await expect(reloadedEditor.getByText('irreplaceable prose')).toHaveCount(1);
   await expect
     .poll(() => readSeededBrowserNote(page, seeded))

@@ -35,6 +35,19 @@ test('creates, edits, persists, and reloads a slash-inserted table', async ({
   await expect(activeCell).toHaveCount(1);
   await expect(activeCell).toHaveCSS('outline-style', 'solid');
   await expect(activeCell).toHaveCSS('outline-width', '2px');
+  const outline = await activeCell.evaluate((element) => {
+    const color = getComputedStyle(element).outlineColor;
+    const compactColor = color.replaceAll(' ', '');
+    return {
+      color,
+      isTransparent:
+        color === 'transparent' ||
+        compactColor === 'rgba(0,0,0,0)' ||
+        compactColor.endsWith('/0)'),
+    };
+  });
+  expect(outline.color).not.toBe('');
+  expect(outline.isTransparent).toBe(false);
 
   await page.keyboard.insertText('Name');
   await page.keyboard.press('Tab');
@@ -74,7 +87,7 @@ test('creates, edits, persists, and reloads a slash-inserted table', async ({
   await expect(reloadedAlphaCell.locator('br')).toHaveCount(1);
 });
 
-test('table options preserve rich Markdown and accessible editor behavior', async ({
+test('existing rich Markdown tables edit and reload without fidelity loss', async ({
   page,
 }) => {
   const source = [
@@ -88,11 +101,10 @@ test('table options preserve rich Markdown and accessible editor behavior', asyn
   const note = await seedBrowserWorkspaceAndNote(page, {
     initialMarkdown: source,
     noteName: 'Home',
-    workspaceName: 'table-rich-options',
+    workspaceName: 'table-rich-markdown',
   });
   const editor = getEditorLocator(page, {});
   const table = editor.getByRole('table');
-  const tableTrigger = page.getByRole('button', { name: 'Table options' });
 
   await expect(table).toBeVisible();
   await expect(table.getByRole('columnheader', { name: 'Item' })).toBeVisible();
@@ -100,64 +112,16 @@ test('table options preserve rich Markdown and accessible editor behavior', asyn
   await expect(table.getByRole('link', { name: 'docs' })).toBeVisible();
   await expect(table.locator('strong')).toHaveText('important');
 
-  await table.getByRole('cell', { name: /^Nut$/ }).click();
+  await table.getByRole('cell', { exact: true, name: 'Nut' }).click();
   await waitForEditorFocus(page, {});
-  await expect(tableTrigger).toBeVisible();
-  await page.keyboard.press('Escape');
-  await expect(tableTrigger).toHaveCount(0);
   await page.keyboard.press('End');
-  await expect(tableTrigger).toHaveCount(0);
   await page.keyboard.insertText('meg');
-  await expect(tableTrigger).toBeVisible();
-
-  const openMenuWithKeyboard = async () => {
-    await tableTrigger.focus();
-    await expect(tableTrigger).toBeFocused();
-    await page.keyboard.press('Enter');
-    const menu = page.getByRole('menu');
-    await expect(menu).toBeVisible();
-    return menu;
-  };
-
-  await table.getByRole('columnheader', { name: 'Item' }).click();
-  await waitForEditorFocus(page, {});
-  let menu = await openMenuWithKeyboard();
-  await expect(
-    menu.getByRole('menuitem', { name: 'Add row above' }),
-  ).toBeDisabled();
-  await page.keyboard.press('Escape');
-  await waitForEditorFocus(page, {});
-
-  await table.getByRole('cell', { name: /^Nutmeg$/ }).click();
-  await expect(editor.locator('.prosemirror-active-table-cell')).toHaveText(
-    'Nutmeg',
-  );
-  menu = await openMenuWithKeyboard();
-  await menu.getByRole('menuitem', { name: 'Add row below' }).press('Enter');
-  await expect(table.getByRole('row')).toHaveCount(4);
-  await waitForEditorFocus(page, {});
-
-  await table.getByRole('row').last().getByRole('cell').first().click();
-  await expect(editor.locator('.prosemirror-active-table-cell')).toHaveText('');
-  menu = await openMenuWithKeyboard();
-  await menu.getByRole('menuitem', { name: 'Delete row' }).press('Enter');
-  await expect(table.getByRole('row')).toHaveCount(3);
-  await waitForEditorFocus(page, {});
-
-  await table.getByRole('cell', { name: '2' }).click();
-  menu = await openMenuWithKeyboard();
-  const center = menu.getByRole('menuitemradio', { name: 'Center' });
-  await center.focus();
-  await page.keyboard.press('Space');
-  await expect(center).toHaveAttribute('aria-checked', 'true');
-  await page.keyboard.press('Escape');
-  await waitForEditorFocus(page, {});
 
   const expected = [
     '# Inventory',
     '',
     '| Item | Count | Note |',
-    '| :--- | :---: | --- |',
+    '| :--- | ---: | --- |',
     '| Bolt `a \\| b` | 2 | [docs](https://example.com) |',
     '| Nutmeg | 9 | **important** |',
   ].join('\n');
@@ -171,12 +135,140 @@ test('table options preserve rich Markdown and accessible editor behavior', asyn
   await expect(table.locator('strong')).toHaveText('important');
   await expect(table.getByRole('columnheader').nth(1)).toHaveCSS(
     'text-align',
+    'right',
+  );
+  await expect(table.getByRole('cell').nth(1)).toHaveCSS('text-align', 'right');
+});
+
+test('table options are sequentially keyboard reachable and persist structural actions', async ({
+  page,
+}) => {
+  const source = [
+    '# Inventory',
+    '',
+    '| Item | Count | Note |',
+    '| --- | --- | --- |',
+    '| Bolt | 2 | stocked |',
+    '| Nut | 9 | important |',
+  ].join('\n');
+  const note = await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown: source,
+    noteName: 'Home',
+    workspaceName: 'table-structural-options',
+  });
+  const editor = getEditorLocator(page, {});
+  const table = editor.getByRole('table');
+  const tableTrigger = page.getByRole('button', { name: 'Table options' });
+  const menu = page.getByRole('menu');
+  const openMenu = async () => {
+    await tableTrigger.click();
+    await expect(menu).toBeVisible();
+  };
+
+  await table.getByRole('cell', { exact: true, name: 'Nut' }).click();
+  await waitForEditorFocus(page, {});
+  await expect(tableTrigger).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(tableTrigger).toHaveCount(0);
+  await page.keyboard.press('End');
+  await expect(tableTrigger).toHaveCount(0);
+  await page.keyboard.insertText('meg');
+  await expect(tableTrigger).toBeVisible();
+
+  await table.getByRole('columnheader', { name: 'Item' }).click();
+  await table.getByRole('columnheader', { name: 'Item' }).hover();
+  const dragHandle = page.getByRole('button', { name: 'Drag to move' });
+  await expect(dragHandle).toBeVisible();
+  await dragHandle.click();
+  await expect(dragHandle).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(tableTrigger).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(menu).toBeVisible();
+  await expect(
+    menu.getByRole('menuitem', { name: 'Add row above' }),
+  ).toBeDisabled();
+  await page.keyboard.press('Escape');
+  await waitForEditorFocus(page, {});
+
+  await table.getByRole('cell', { exact: true, name: 'Nutmeg' }).click();
+  await openMenu();
+  await menu.getByRole('menuitem', { name: 'Add row below' }).press('Enter');
+  await expect(table.getByRole('row')).toHaveCount(4);
+  await waitForEditorFocus(page, {});
+
+  await table.getByRole('row').last().getByRole('cell').first().click();
+  await openMenu();
+  await menu.getByRole('menuitem', { name: 'Delete row' }).press('Enter');
+  await expect(table.getByRole('row')).toHaveCount(3);
+  await waitForEditorFocus(page, {});
+
+  await table.getByRole('cell', { exact: true, name: '2' }).click();
+  await openMenu();
+  await menu.getByRole('menuitem', { name: 'Add column right' }).press('Enter');
+  await expect(table.getByRole('columnheader')).toHaveCount(4);
+  await waitForEditorFocus(page, {});
+
+  const addedCell = table.getByRole('row').nth(1).getByRole('cell').nth(2);
+  await addedCell.click();
+  await page.keyboard.insertText('temporary');
+  const withAddedColumn = [
+    '# Inventory',
+    '',
+    '| Item | Count |  | Note |',
+    '| --- | --- | --- | --- |',
+    '| Bolt | 2 | temporary | stocked |',
+    '| Nutmeg | 9 |  | important |',
+  ].join('\n');
+  await expect
+    .poll(() => readSeededBrowserNote(page, note))
+    .toBe(withAddedColumn);
+
+  await openMenu();
+  await menu.getByRole('menuitem', { name: 'Delete column' }).press('Enter');
+  await expect(table.getByRole('columnheader')).toHaveCount(3);
+  await waitForEditorFocus(page, {});
+
+  await table.getByRole('cell', { exact: true, name: '2' }).click();
+  await openMenu();
+  const center = menu.getByRole('menuitemradio', { name: 'Center' });
+  await center.press('Space');
+  await expect(center).toHaveAttribute('aria-checked', 'true');
+  await page.keyboard.press('Escape');
+  await waitForEditorFocus(page, {});
+
+  const expected = [
+    '# Inventory',
+    '',
+    '| Item | Count | Note |',
+    '| --- | :---: | --- |',
+    '| Bolt | 2 | stocked |',
+    '| Nutmeg | 9 | important |',
+  ].join('\n');
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(expected);
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, note);
+  await expect(table.getByRole('columnheader').nth(1)).toHaveCSS(
+    'text-align',
     'center',
   );
   await expect(table.getByRole('cell').nth(1)).toHaveCSS(
     'text-align',
     'center',
   );
+
+  await table.getByRole('cell', { exact: true, name: 'Nutmeg' }).click();
+  await waitForEditorFocus(page, {});
+  await openMenu();
+  await menu.getByRole('menuitem', { name: 'Delete table' }).press('Enter');
+  await expect(table).toHaveCount(0);
+  await expect(
+    editor.getByRole('heading', { name: 'Inventory' }),
+  ).toBeVisible();
+  await expect
+    .poll(() => readSeededBrowserNote(page, note))
+    .toBe('# Inventory');
 });
 
 test('wrapped table cells use browser geometry for vertical navigation', async ({
@@ -206,10 +298,29 @@ test('wrapped table cells use browser geometry for vertical navigation', async (
   });
   expect(geometry.height).toBeGreaterThan(geometry.lineHeight * 2);
 
-  const box = await wrappedCell.boundingBox();
-  if (!box) {
-    throw new Error('Expected the wrapped table cell to be visible');
-  }
+  const renderedTextLines = () =>
+    wrappedCell.evaluate((element) => {
+      const rects: DOMRect[] = [];
+      const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+        if (!node.textContent?.trim()) {
+          continue;
+        }
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        rects.push(...range.getClientRects());
+      }
+      return rects
+        .filter((rect) => rect.width > 0 && rect.height > 0)
+        .map((rect) => ({
+          bottom: rect.bottom,
+          height: rect.height,
+          left: rect.left,
+          right: rect.right,
+          top: rect.top,
+          width: rect.width,
+        }));
+    });
   const selectedCellText = () =>
     page.evaluate(() => {
       const anchor = window.getSelection()?.anchorNode;
@@ -217,19 +328,104 @@ test('wrapped table cells use browser geometry for vertical navigation', async (
         anchor instanceof Element ? anchor : anchor?.parentElement;
       return anchorElement?.closest('td, th')?.textContent ?? null;
     });
+  const caretState = () =>
+    page.evaluate(() => {
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) {
+        return null;
+      }
+      const anchor = selection.anchorNode;
+      const anchorElement =
+        anchor instanceof Element ? anchor : anchor?.parentElement;
+      const range = selection.getRangeAt(0).cloneRange();
+      range.collapse(true);
+      const rect = range.getClientRects()[0] ?? range.getBoundingClientRect();
+      return {
+        bottom: rect.bottom,
+        cellText: anchorElement?.closest('td, th')?.textContent ?? null,
+        top: rect.top,
+      };
+    });
+  const clickRenderedLine = async (line: 'first' | 'last') => {
+    const lines = await renderedTextLines();
+    expect(lines.length).toBeGreaterThan(1);
+    const target = line === 'first' ? lines[0] : lines.at(-1);
+    if (!target) {
+      throw new Error(`Expected a ${line} rendered line in the wrapped cell`);
+    }
+    await page.mouse.click(
+      target.left + Math.min(8, target.width / 2),
+      target.top + target.height / 2,
+    );
+    await waitForEditorFocus(page, {});
+    await expect.poll(selectedCellText).toBe(longCell);
+    const caret = await caretState();
+    expect(caret?.cellText).toBe(longCell);
+    expect(caret?.top).toBeGreaterThanOrEqual(target.top - 2);
+    expect(caret?.bottom).toBeLessThanOrEqual(target.bottom + 2);
+    return caret;
+  };
 
-  await wrappedCell.click({
-    position: { x: Math.min(24, box.width - 4), y: geometry.lineHeight / 2 },
-  });
-  await waitForEditorFocus(page, {});
+  const firstLineCaret = await clickRenderedLine('first');
   await page.keyboard.press('ArrowDown');
   await expect.poll(selectedCellText).toBe(longCell);
+  await expect
+    .poll(async () => (await caretState())?.top ?? Number.NEGATIVE_INFINITY)
+    .toBeGreaterThan((firstLineCaret?.top ?? 0) + 1);
 
-  await wrappedCell.click({
-    position: { x: Math.min(24, box.width - 4), y: box.height - 6 },
-  });
+  await clickRenderedLine('last');
   await page.keyboard.press('ArrowDown');
   await expect.poll(selectedCellText).toBe('below');
+
+  await page.keyboard.press('ArrowUp');
+  await expect.poll(selectedCellText).toBe(longCell);
+  const returnedCaret = await caretState();
+  expect(returnedCaret?.cellText).toBe(longCell);
+
+  await page.keyboard.press('ArrowUp');
+  await expect.poll(selectedCellText).toBe(longCell);
+  await expect
+    .poll(async () => (await caretState())?.top ?? Number.POSITIVE_INFINITY)
+    .toBeLessThan((returnedCaret?.top ?? 0) - 1);
+});
+
+test('table boundary keys create and remove a preceding paragraph without losing the caret', async ({
+  page,
+}) => {
+  const source = ['| a | b |', '| --- | --- |', '| c | d |'].join('\n');
+  const note = await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown: source,
+    noteName: 'Home',
+    workspaceName: 'table-boundary-keys',
+  });
+  const editor = getEditorLocator(page, {});
+  const table = editor.getByRole('table');
+  const firstHeader = table.getByRole('columnheader', { name: 'a' });
+  const selectedBlockName = () =>
+    page.evaluate(() => {
+      const anchor = window.getSelection()?.anchorNode;
+      const anchorElement =
+        anchor instanceof Element ? anchor : anchor?.parentElement;
+      return anchorElement?.closest('p, td, th')?.tagName ?? null;
+    });
+
+  await firstHeader.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.press('Home');
+  await page.keyboard.press('ArrowUp');
+
+  await expect(editor.locator('p')).toHaveCount(1);
+  await expect.poll(selectedBlockName).toBe('P');
+
+  await page.keyboard.press('Delete');
+  await expect(editor.locator('p')).toHaveCount(0);
+  await expect.poll(selectedBlockName).toBe('TH');
+
+  await page.keyboard.insertText('restored ');
+  await expect(firstHeader).toHaveText('restored a');
+  await expect
+    .poll(() => readSeededBrowserNote(page, note))
+    .toBe(['| restored a | b |', '| --- | --- |', '| c | d |'].join('\n'));
 });
 
 test('compact tables hug their content width', async ({ page }) => {

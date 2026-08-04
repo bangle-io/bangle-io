@@ -25,7 +25,12 @@ export {
 } from './note-snapshot-service';
 export type { ShortcutServiceConfig } from './shortcut-service';
 export { ShortcutService } from './shortcut-service';
-export { UserActivityService } from './user-activity-service';
+export {
+  type RecentWsPath,
+  type RecentWsPathReadFailure,
+  type RecentWsPathsReadResult,
+  UserActivityService,
+} from './user-activity-service';
 export { WorkbenchStateService } from './workbench-state-service';
 export type {
   AssetDestinationInput,
