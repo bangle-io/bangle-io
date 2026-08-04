@@ -5,6 +5,7 @@ import type {
   EditorService,
   FileSystemService,
   NavigationService,
+  NoteRelocationService,
   NoteSnapshotService,
   ShortcutService,
   UserActivityService,
@@ -104,6 +105,7 @@ export type CoreServices<
   editorService: EditorService;
   fileSystem: FileSystemService;
   navigation: NavigationService;
+  noteRelocation: NoteRelocationService;
   noteSnapshot: NoteSnapshotService;
   shortcut: ShortcutService;
   userActivityService: UserActivityService;

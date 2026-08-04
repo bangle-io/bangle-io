@@ -458,7 +458,7 @@ export class WsPath {
     }
 
     if (this.isDir) {
-      const normalizedPath = this.path.replace(/\/+$/, '');
+      const normalizedPath = trimTrailingPathSeparators(this.path);
       const parts = normalizedPath.split(WsPath.PATH_SEPARATOR);
       const lastPart = parts[parts.length - 1] || '';
       return lastPart.replace(/\/$/, '');
@@ -491,7 +491,7 @@ export class WsPath {
     }
 
     // Remove trailing slashes
-    const normalizedPath = this.path.replace(/\/+$/, '');
+    const normalizedPath = trimTrailingPathSeparators(this.path);
 
     let result = '';
 
@@ -782,6 +782,14 @@ export function toFSPathOrThrow(wsPath: string): string {
 
 export function ensureEndsWith(str: string, suffix: string): string {
   return str.endsWith(suffix) ? str : str + suffix;
+}
+
+function trimTrailingPathSeparators(path: string): string {
+  let end = path.length;
+  while (end > 0 && path[end - 1] === PATH_SEPARATOR) {
+    end -= 1;
+  }
+  return path.slice(0, end);
 }
 
 export function removeStartsWith(str: string, char: string): string {

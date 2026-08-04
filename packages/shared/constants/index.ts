@@ -130,6 +130,7 @@ export const SERVICE_NAME = {
   memoryRouterService: 'memory-router',
   memorySyncDatabaseService: 'memory-sync-database',
   navigationService: 'navigation-service',
+  noteRelocationService: 'note-relocation',
   nodeErrorHandlerService: 'node-error-handler',
   noteSnapshotService: 'note-snapshot',
   shortcutService: 'shortcut',

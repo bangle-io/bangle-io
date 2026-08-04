@@ -10,6 +10,10 @@ type ErrorHandler = (error: BaseError) => void;
 
 type SaveTask = {
   doc: string;
+  relocationCompletion?: {
+    reject: (reason?: unknown) => void;
+    resolve: (value: 'written') => void;
+  };
 };
 
 type EditorSaveSession = {
@@ -35,6 +39,20 @@ type SaveStatusSubscription = {
   wsPath?: string;
 };
 
+export type RelocationHandoff = {
+  markdown: string;
+  outcome: Promise<'discarded' | 'written'>;
+  settle: (outcome: 'discarded' | 'written') => void;
+};
+
+function createRelocationHandoff(markdown: string): RelocationHandoff {
+  let settle!: (outcome: 'discarded' | 'written') => void;
+  const outcome = new Promise<'discarded' | 'written'>((resolve) => {
+    settle = resolve;
+  });
+  return { markdown, outcome, settle };
+}
+
 /**
  * Browser-root state shared by each editor service graph created in this tab.
  * Queued documents can outlive a UI reload, while the current session always
@@ -45,6 +63,9 @@ export type EditorSaveCoordinator = {
   entries: Map<string, SaveEntry>;
   hasPendingOrFailedSave(wsPath?: string): boolean;
   lastHasPendingOrFailed: boolean;
+  loadingEditorCounts: Map<string, number>;
+  relocationHandoffs: Map<string, RelocationHandoff>;
+  settledRelocationHandoffs: Set<string>;
   subscriptions: Set<SaveStatusSubscription>;
 };
 
@@ -65,6 +86,9 @@ export function createEditorSaveCoordinator(): EditorSaveCoordinator {
       return false;
     },
     lastHasPendingOrFailed: false,
+    loadingEditorCounts: new Map(),
+    relocationHandoffs: new Map(),
+    settledRelocationHandoffs: new Set(),
     subscriptions: new Set(),
   };
 }
@@ -88,6 +112,78 @@ export class EditorSaveQueue {
     if (!entry.active) {
       this.startFlush(entry);
     }
+  }
+
+  /**
+   * Writes relocation-generated Markdown through the same per-note queue as
+   * editor changes. If a newer editor change is already pending, leave that
+   * change authoritative instead of applying a stale pre-relocation snapshot.
+   */
+  enqueueRelocationWrite(
+    wsPath: string,
+    doc: string,
+  ): Promise<'superseded' | 'written'> {
+    const existing = this.coordinator.entries.get(wsPath);
+    if (
+      existing &&
+      (existing.active ||
+        existing.pendingTask !== undefined ||
+        existing.failedTask !== undefined ||
+        existing.status.status !== 'clean')
+    ) {
+      return Promise.resolve('superseded');
+    }
+
+    const entry = this.getEntry(wsPath);
+    return new Promise<'written'>((resolve, reject) => {
+      entry.pendingTask = {
+        doc,
+        relocationCompletion: { reject, resolve },
+      };
+      entry.status = { status: 'pending' };
+      this.notifySaveStatusChanged(wsPath);
+      this.startFlush(entry);
+    });
+  }
+
+  beginRelocationAwareLoad(wsPath: string): () => void {
+    this.coordinator.loadingEditorCounts.set(
+      wsPath,
+      (this.coordinator.loadingEditorCounts.get(wsPath) ?? 0) + 1,
+    );
+    return () => {
+      const remaining =
+        (this.coordinator.loadingEditorCounts.get(wsPath) ?? 1) - 1;
+      if (remaining > 0) {
+        this.coordinator.loadingEditorCounts.set(wsPath, remaining);
+      } else {
+        this.coordinator.loadingEditorCounts.delete(wsPath);
+      }
+      this.discardSettledRelocationHandoffIfUnused(wsPath);
+    };
+  }
+
+  getRelocationHandoff(wsPath: string): RelocationHandoff | undefined {
+    return this.coordinator.relocationHandoffs.get(wsPath);
+  }
+
+  createRelocationHandoff(wsPath: string, markdown: string): void {
+    this.coordinator.relocationHandoffs.set(
+      wsPath,
+      createRelocationHandoff(markdown),
+    );
+  }
+
+  completeRelocationHandoff(wsPath: string): void {
+    this.coordinator.relocationHandoffs.get(wsPath)?.settle('written');
+    this.coordinator.settledRelocationHandoffs.add(wsPath);
+    this.discardSettledRelocationHandoffIfUnused(wsPath);
+  }
+
+  discardRelocationHandoff(wsPath: string): void {
+    this.coordinator.relocationHandoffs.get(wsPath)?.settle('discarded');
+    this.coordinator.settledRelocationHandoffs.add(wsPath);
+    this.discardSettledRelocationHandoffIfUnused(wsPath);
   }
 
   getStatus(wsPath: string): EditorSaveStatus {
@@ -201,6 +297,17 @@ export class EditorSaveQueue {
     return entry;
   }
 
+  private discardSettledRelocationHandoffIfUnused(wsPath: string): void {
+    if (
+      !this.coordinator.settledRelocationHandoffs.has(wsPath) ||
+      this.coordinator.loadingEditorCounts.has(wsPath)
+    ) {
+      return;
+    }
+    this.coordinator.relocationHandoffs.delete(wsPath);
+    this.coordinator.settledRelocationHandoffs.delete(wsPath);
+  }
+
   private async flush(entry: SaveEntry): Promise<void> {
     while (entry.pendingTask !== undefined) {
       const task = entry.pendingTask;
@@ -223,7 +330,18 @@ export class EditorSaveQueue {
           throw new Error('Editor save coordinator has no active session');
         }
         await session.writeDoc(writeWsPath, task.doc);
+        task.relocationCompletion?.resolve('written');
       } catch (cause) {
+        if (task.relocationCompletion) {
+          task.relocationCompletion.reject(cause);
+          entry.failedTask = undefined;
+          entry.status =
+            entry.pendingTask === undefined
+              ? { status: 'clean' }
+              : { status: 'pending' };
+          this.notifySaveStatusChanged(entry.wsPath);
+          continue;
+        }
         if (entry.retired) {
           continue;
         }

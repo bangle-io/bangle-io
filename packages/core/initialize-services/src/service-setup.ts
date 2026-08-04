@@ -24,6 +24,8 @@ import {
   EditorService,
   FileSystemService,
   NavigationService,
+  type NoteRelocationEditorAdapter,
+  NoteRelocationService,
   NoteSnapshotService,
   ShortcutService,
   type ShortcutServiceConfig,
@@ -31,6 +33,7 @@ import {
   WorkbenchStateService,
   WorkspaceOpsService,
   WorkspaceStateService,
+  waitForSaveQueueToDrain,
 } from '@bangle.io/service-core';
 import type {
   BaseFileStorageService,
@@ -58,6 +61,7 @@ export const coreServiceClasses = {
   commandRegistry: CommandRegistryService,
   fileSystem: FileSystemService,
   navigation: NavigationService,
+  noteRelocation: NoteRelocationService,
   noteSnapshot: NoteSnapshotService,
   shortcut: ShortcutService,
   editorService: EditorService,
@@ -256,12 +260,36 @@ type CoreInstances = ConstructorToInstance<CoreServiceClassMap> & {
   editorEngine: EditorEngineContract;
 };
 
+function createNoteRelocationEditorAdapter(
+  editorEngine: EditorEngineContract,
+): NoteRelocationEditorAdapter {
+  const waitForSourceSaveDrain = (wsPath: string, timeoutMs: number) =>
+    waitForSaveQueueToDrain(editorEngine, timeoutMs, wsPath);
+
+  if (editorEngine instanceof PmEditorService) {
+    return {
+      discardRelocatedMarkdownHandoff: (destinationWsPath) =>
+        editorEngine.discardRelocatedMarkdownHandoff(destinationWsPath),
+      waitForSourceSaveDrain,
+      writeRelocatedMarkdown: (params) =>
+        editorEngine.writeRelocatedMarkdown(params),
+    };
+  }
+
+  return {
+    discardRelocatedMarkdownHandoff: () => {},
+    waitForSourceSaveDrain,
+    writeRelocatedMarkdown: async () => 'unavailable',
+  };
+}
+
 function toCoreServices(s: CoreInstances): CoreServices {
   return {
     commandDispatcher: s.commandDispatcher,
     commandRegistry: s.commandRegistry,
     fileSystem: s.fileSystem,
     navigation: s.navigation,
+    noteRelocation: s.noteRelocation,
     noteSnapshot: s.noteSnapshot,
     shortcut: s.shortcut,
     editorService: s.editorService,
@@ -358,6 +386,13 @@ export function createServiceSetup<
       })),
     ),
     navigation: slot(NavigationService),
+    noteRelocation: slot(
+      NoteRelocationService,
+      withOverride('noteRelocation', () => ({
+        getEditorAdapter: () =>
+          createNoteRelocationEditorAdapter(getCoreInstances().editorEngine),
+      })),
+    ),
     noteSnapshot: slot(
       NoteSnapshotService,
       withOverride('noteSnapshot', () => ({
@@ -480,6 +515,7 @@ export function createServiceSetup<
       commandRegistry: s.commandRegistry,
       fileSystem: s.fileSystem,
       navigation: s.navigation,
+      noteRelocation: s.noteRelocation,
       noteSnapshot: s.noteSnapshot,
       shortcut: s.shortcut,
       editorService: s.editorService,

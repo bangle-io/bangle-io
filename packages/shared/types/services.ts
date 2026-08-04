@@ -30,6 +30,7 @@ export type CoreServiceSlotId =
   | 'editorService'
   | 'fileSystem'
   | 'navigation'
+  | 'noteRelocation'
   | 'noteSnapshot'
   | 'shortcut'
   | 'userActivityService'
