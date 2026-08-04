@@ -1,0 +1,48 @@
+name: Wiki Link Scale E2E
+
+on:
+  schedule:
+    - cron: '17 5 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wiki-link-scale-e2e
+  cancel-in-progress: false
+
+env:
+  SENTRY_NO_PROGRESS_BAR: 1
+
+jobs:
+  wiki-link-scale:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container: mcr.microsoft.com/playwright:v1.60.0-noble
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        run: |
+          corepack enable
+          corepack prepare --activate
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Install Playwright Browsers
+        run: pnpm -w run e2e-install
+      - name: Run wiki-link scale test
+        run: pnpm --filter '@bangle.io/e2e-tests' run test:wiki-scale
+      - name: Upload Playwright artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: wiki-link-scale-playwright-report
+          path: |
+            packages/tooling/e2e-tests/playwright-report/
+            packages/tooling/e2e-tests/test-results/
+          retention-days: 30

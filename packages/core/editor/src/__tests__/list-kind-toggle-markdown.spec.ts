@@ -17,6 +17,14 @@ describe('list kind toggles', () => {
     expect(serialize(task)).toBe('- [ ] alpha\n- [ ] bravo');
   });
 
+  it('keeps an ordered run loose when converting it to tasks', () => {
+    const ordered = selectAll('1. ordered one\n\n1. ordered two');
+
+    const task = apply(ordered, list.command.toggleTaskList);
+
+    expect(serialize(task)).toBe('1. [ ] ordered one\n\n1. [ ] ordered two');
+  });
+
   it('keeps checked state when a task list detours through a bullet list', () => {
     const checked = selectAll('- [x] alpha\n- [x] bravo');
 

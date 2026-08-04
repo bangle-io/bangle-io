@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { setupBase } from '../base';
 import { setupCodeBlock } from '../code-block';
 import { setupHardBreak } from '../hard-break';
@@ -247,6 +247,41 @@ describe('keyboard behavior', () => {
 });
 
 describe('arrow-key boundary behavior', () => {
+  it('lets the browser keep vertical motion within a wrapped cell before moving rows', () => {
+    const editor = setup.createEditor(
+      doc(tableNode(row(th('wrapped<cursor>')), row(td('next')))),
+    );
+    const endOfTextblock = vi
+      .spyOn(editor.view, 'endOfTextblock')
+      .mockReturnValue(false);
+
+    expect(editor.runKeyDownHandlers('ArrowDown')).toBe(false);
+    expect(endOfTextblock).toHaveBeenCalledExactlyOnceWith('down');
+    expect(editor.selectionParentText()).toBe('wrapped');
+
+    endOfTextblock.mockReturnValue(true);
+    expect(editor.pressKey('ArrowDown')).toBe(true);
+    expect(editor.selectionParentText()).toBe('next');
+  });
+
+  it('lets the browser keep ArrowUp motion within a wrapped cell before leaving the table', () => {
+    const editor = setup.createEditor(
+      doc(p('before'), tableNode(row(th('wrapped<cursor>')), row(td('next')))),
+    );
+    const endOfTextblock = vi
+      .spyOn(editor.view, 'endOfTextblock')
+      .mockReturnValue(false);
+
+    expect(editor.runKeyDownHandlers('ArrowUp')).toBe(false);
+    expect(endOfTextblock).toHaveBeenCalledExactlyOnceWith('up');
+    expect(editor.selectionParentText()).toBe('wrapped');
+
+    endOfTextblock.mockReturnValue(true);
+    expect(editor.pressKey('ArrowUp')).toBe(true);
+    expect(editor.selectionParentType()).toBe('paragraph');
+    expect(editor.selectionParentText()).toBe('before');
+  });
+
   it('ArrowUp on the first row moves into the textblock above', () => {
     const editor = setup.createEditor(
       doc(p('before'), tableNode(row(th('h<cursor>')), row(td('a')))),
@@ -362,6 +397,69 @@ describe('arrow-key boundary behavior', () => {
     );
     const handled = editor.runKeyDownHandlers('ArrowRight');
     expect(handled).toBe(false);
+  });
+});
+
+describe('active table cell decoration', () => {
+  it('follows a text cursor and clears for cell selections and content outside the table', () => {
+    const editor = setup.createEditor(
+      doc(
+        tableNode(row(th('h1'), th('h2')), row(td('a1<cursor>'), td('b1'))),
+        p('outside'),
+      ),
+    );
+    const activeCells = () =>
+      editor.view.dom.querySelectorAll('.prosemirror-active-table-cell');
+
+    expect(activeCells()).toHaveLength(1);
+    expect(activeCells()[0]?.textContent).toBe('a1');
+
+    const cellPositions: number[] = [];
+    editor.view.state.doc.descendants((node, pos) => {
+      if (
+        node.type.name === 'table_header' ||
+        node.type.name === 'table_cell'
+      ) {
+        cellPositions.push(pos);
+      }
+      return true;
+    });
+    const firstCell = cellPositions[0];
+    const lastCell = cellPositions.at(-1);
+    if (firstCell == null || lastCell == null) {
+      throw new Error('Expected table cells');
+    }
+    const nextCell = cellPositions[3];
+    if (nextCell == null) {
+      throw new Error('Expected another body cell');
+    }
+    editor.setSelection(nextCell + 1);
+    expect(activeCells()).toHaveLength(1);
+    expect(activeCells()[0]?.textContent).toBe('b1');
+
+    editor.view.dispatch(
+      editor.view.state.tr.setSelection(
+        new CellSelection(
+          editor.view.state.doc.resolve(firstCell),
+          editor.view.state.doc.resolve(lastCell),
+        ),
+      ),
+    );
+    expect(activeCells()).toHaveLength(0);
+
+    let outsidePos: number | undefined;
+    editor.view.state.doc.descendants((node, pos) => {
+      if (node.type.name === 'paragraph' && node.textContent === 'outside') {
+        outsidePos = pos + 1;
+        return false;
+      }
+      return true;
+    });
+    if (outsidePos == null) {
+      throw new Error('Expected paragraph outside the table');
+    }
+    editor.setSelection(outsidePos);
+    expect(activeCells()).toHaveLength(0);
   });
 });
 

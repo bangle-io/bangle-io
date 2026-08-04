@@ -33,8 +33,8 @@ import {
  * extension set. Keep registration order aligned with `setupExtensions` so
  * schema mark rank and serializer behavior match the application.
  */
-export function createProductionMarkdown() {
-  const extensions = [
+function createProductionMarkdownExtensions() {
+  return [
     setupBase({ docContent: 'frontmatter? block+' }),
     setupFrontmatter(),
     setupBlockquote(),
@@ -54,9 +54,18 @@ export function createProductionMarkdown() {
     setupImage(),
     setupTable(),
   ];
+}
+
+export function createProductionMarkdown() {
+  const extensions = createProductionMarkdownExtensions();
   const resolved = resolve(extensions);
   const schema = new Schema({ nodes: resolved.nodes, marks: resolved.marks });
-  return { schema, ...markdownLoader(extensions, schema) };
+  return {
+    extensions,
+    resolved,
+    schema,
+    ...markdownLoader(extensions, schema),
+  };
 }
 
 /**

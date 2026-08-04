@@ -153,6 +153,19 @@ describe('code block Markdown', () => {
     );
   });
 
+  it("round trips a language-tagged code block as a bullet's sole child", () => {
+    const source = '- ```ts\n  const onlyChild: true = true;\n  ```';
+    const { document, serialized } = expectEquivalentAfterSerialize(source);
+    const [list] = findNodes(document, 'list');
+    const codeBlock = list?.firstChild;
+
+    expect(list?.childCount).toBe(1);
+    expect(codeBlock?.type.name).toBe('code_block');
+    expect(codeBlock?.attrs.language).toBe('ts');
+    expect(codeBlock?.textContent).toBe('const onlyChild: true = true;');
+    expect(serialized).toBe(source);
+  });
+
   it('serializes fenced code blocks inside ordered list items with marker-width indentation', () => {
     const { document, serialized } = expectEquivalentAfterSerialize(
       '1. item\n\n   ```js\n   ordered();\n   ```',

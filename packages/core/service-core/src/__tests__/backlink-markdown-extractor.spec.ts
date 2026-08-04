@@ -155,4 +155,24 @@ describe('extractLinkedWsPathsFromMarkdown', () => {
       }),
     ).toEqual(['notes:folder/sibling.md', 'notes:root.md']);
   });
+
+  it('deduplicates mixed link syntax after resolving duplicate names in the source context', () => {
+    const nestedSource = WsFilePath.fromString('notes:folder/source.md');
+    const rootTarget = WsFilePath.fromString('notes:Target.md');
+    const siblingTarget = WsFilePath.fromString('notes:folder/Target.md');
+    const duplicateIndex = createWikiLinkIndex(
+      [nestedSource, rootTarget, siblingTarget],
+      'notes',
+    );
+
+    expect(
+      extractLinkedWsPathsFromMarkdown({
+        currentWsPath: nestedSource,
+        index: duplicateIndex,
+        markdown: ['[[Target]]', '[Target](Target.md)', '[[./Target]]'].join(
+          '\n',
+        ),
+      }),
+    ).toEqual(['notes:folder/Target.md']);
+  });
 });

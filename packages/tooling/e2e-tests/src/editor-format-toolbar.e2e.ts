@@ -1,239 +1,170 @@
 import { expect, test } from '@playwright/test';
 import {
-  createBrowserWorkspaceAndNote,
-  expectNoPageHorizontalOverflow,
   getEditorLocator,
-  readStoredMarkdown,
+  readSeededBrowserNote,
+  seedBrowserWorkspaceAndNote,
   selectEditorText,
-  writeStoredMarkdown,
+  waitForSeededBrowserNote,
 } from './common';
 
-// The selection toolbar exposes block-type controls (paragraph, headings,
-// lists) alongside the inline mark toggles. Each reflects the selection's
-// current block as an active (aria-pressed) state and toggles it on click.
-//
-// Each line leads with a filler word so the selected word sits mid-block: the
-// text-selection helper concatenates block text without separators, so a word
-// at a block's start would resolve to a cross-block range.
-test('selection toolbar converts block types and reflects the active block', async ({
+test('maps every block active state through paragraph, heading, and list transitions', async ({
   page,
 }) => {
-  const workspaceName = 'format-toolbar';
-  const noteName = 'blocks';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-
+  const source = 'line alpha\n\nline bravo\n\nline charlie';
+  const bullet = 'line alpha\n\n- line bravo\n\nline charlie';
+  const numbered = 'line alpha\n\n1. line bravo\n\nline charlie';
+  const task = 'line alpha\n\n- [ ] line bravo\n\nline charlie';
+  const seeded = await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown: source,
+    noteName: 'Blocks',
+    workspaceName: 'format-toolbar',
+  });
   const editor = getEditorLocator(page, {});
-  await editor.click();
-  await page.keyboard.insertText('line alpha');
-  await page.keyboard.press('Enter');
-  await page.keyboard.insertText('line bravo');
-  await page.keyboard.press('Enter');
-  await page.keyboard.insertText('line charlie');
-
   const toolbar = page.getByRole('toolbar', { name: 'Text formatting' });
-  const paragraph = toolbar.getByRole('button', { name: 'Paragraph' });
-  const heading1 = toolbar.getByRole('button', { name: 'Heading 1' });
-  const bulletList = toolbar.getByRole('button', { name: 'Bullet list' });
+  const controls = {
+    bulletList: toolbar.getByRole('button', { name: 'Bullet list' }),
+    heading1: toolbar.getByRole('button', { name: 'Heading 1' }),
+    heading2: toolbar.getByRole('button', { name: 'Heading 2' }),
+    heading3: toolbar.getByRole('button', { name: 'Heading 3' }),
+    orderedList: toolbar.getByRole('button', { name: 'Numbered list' }),
+    paragraph: toolbar.getByRole('button', { name: 'Paragraph' }),
+    taskList: toolbar.getByRole('button', { name: 'Task list' }),
+  };
+  const expectOnlyActive = async (active: keyof typeof controls) => {
+    for (const [name, control] of Object.entries(controls)) {
+      await expect(control).toHaveAttribute(
+        'aria-pressed',
+        name === active ? 'true' : 'false',
+      );
+    }
+  };
 
-  // A plain paragraph reports itself as the active block. Paragraph is
-  // disabled here because there is nothing to convert — so it never looks
-  // actionable while no-oping.
-  await selectEditorText(page, 'alpha');
-  await expect(toolbar).toBeVisible();
-  await expect(paragraph).toHaveAttribute('aria-pressed', 'true');
-  await expect(paragraph).toBeDisabled();
-  await expect(heading1).toHaveAttribute('aria-pressed', 'false');
-
-  // Convert to a heading: the active state moves to Heading 1 and the
-  // document (and its Markdown) reflect the new block.
-  await heading1.click();
-  await expect(heading1).toHaveAttribute('aria-pressed', 'true');
-  await expect(paragraph).toHaveAttribute('aria-pressed', 'false');
-  await expect(
-    editor.getByRole('heading', { level: 1, name: 'line alpha' }),
-  ).toBeVisible();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('# line alpha\n\nline bravo\n\nline charlie');
-
-  // Clicking the active heading toggles the block back to a paragraph.
-  await heading1.click();
-  await expect(paragraph).toHaveAttribute('aria-pressed', 'true');
-  await expect(heading1).toHaveAttribute('aria-pressed', 'false');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('line alpha\n\nline bravo\n\nline charlie');
-
-  // Convert a different paragraph to a bullet list. The list becomes active
-  // and Paragraph does NOT stay lit, even though a list item still wraps a
-  // paragraph — the toolbar reports the outer block, not the nested one.
-  await selectEditorText(page, 'bravo');
-  await bulletList.click();
-  await expect(bulletList).toHaveAttribute('aria-pressed', 'true');
-  await expect(paragraph).toHaveAttribute('aria-pressed', 'false');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('line alpha\n\n- line bravo\n\nline charlie');
-
-  // Paragraph must be actionable inside a list and lift the item back out to a
-  // plain paragraph — `convertToParagraph` alone no-ops there because the list
-  // item already wraps a paragraph.
-  await expect(paragraph).toBeEnabled();
-  await paragraph.click();
-  await expect(paragraph).toHaveAttribute('aria-pressed', 'true');
-  await expect(bulletList).toHaveAttribute('aria-pressed', 'false');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('line alpha\n\nline bravo\n\nline charlie');
-
-  // Re-apply the list so the reload below exercises list persistence.
-  await bulletList.click();
-  await expect(bulletList).toHaveAttribute('aria-pressed', 'true');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('line alpha\n\n- line bravo\n\nline charlie');
-
-  // The block conversions survive a reload: the stored Markdown is unchanged
-  // and the reloaded editor still reports the list as the active block.
-  await page.reload({ waitUntil: 'networkidle' });
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('line alpha\n\n- line bravo\n\nline charlie');
-  await selectEditorText(page, 'bravo');
-  await expect(toolbar).toBeVisible();
-  await expect(bulletList).toHaveAttribute('aria-pressed', 'true');
-  await expect(paragraph).toHaveAttribute('aria-pressed', 'false');
-});
-
-// "Turn into paragraph" is whole-selection aware: it converts every block in
-// the selection, not just the one under the caret, and flattens nested blocks
-// in a single click.
-test('Paragraph converts an entire mixed or nested selection in one click', async ({
-  page,
-}) => {
-  const workspaceName = 'format-toolbar-paragraph';
-  const noteName = 'para';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-
-  const toolbar = page.getByRole('toolbar', { name: 'Text formatting' });
-  const paragraph = toolbar.getByRole('button', { name: 'Paragraph' });
-
-  // A selection spanning a paragraph and a following heading is not "all
-  // paragraphs", so the control stays actionable and one click converts the
-  // heading too (the caret-block alone would report an already-a-paragraph
-  // no-op).
-  await writeStoredMarkdown(page, workspaceName, noteName, 'alpha\n\n## bravo');
-  await page.reload({ waitUntil: 'networkidle' });
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('alpha\n\n## bravo');
-  await selectEditorText(page, 'alphabravo');
-  await expect(toolbar).toBeVisible();
-  await expect(paragraph).toBeEnabled();
-  await expect(paragraph).toHaveAttribute('aria-pressed', 'false');
-  await paragraph.click();
-  await expect(paragraph).toHaveAttribute('aria-pressed', 'true');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('alpha\n\nbravo');
-
-  // A list nested inside a blockquote flattens to a plain paragraph in a single
-  // click (both the list and the blockquote are peeled off).
-  await writeStoredMarkdown(page, workspaceName, noteName, '> - item');
-  await page.reload({ waitUntil: 'networkidle' });
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('> - item');
-  await selectEditorText(page, 'item');
-  await expect(toolbar).toBeVisible();
-  await expect(paragraph).toBeEnabled();
-  await paragraph.click();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('item');
-  await expect(paragraph).toHaveAttribute('aria-pressed', 'true');
-
-  // The flattening loop must be driven by document progress, not an arbitrary
-  // nesting cap. Ten blockquote levels previously stopped halfway through.
-  const deeplyNested = `${'> '.repeat(10)}- deep item`;
-  await writeStoredMarkdown(page, workspaceName, noteName, deeplyNested);
-  await page.reload({ waitUntil: 'networkidle' });
-  await selectEditorText(page, 'deep item');
-  await expect(paragraph).toBeEnabled();
-  await paragraph.click();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('deep item');
-  await expect(paragraph).toHaveAttribute('aria-pressed', 'true');
-});
-
-// Regression: the block controls used to rewrite every textblock in the range,
-// including code blocks and YAML frontmatter. That dropped the fence and its
-// language and collapsed the newlines inside them, writing the mangled note
-// straight to storage.
-test('block controls leave code blocks and frontmatter intact', async ({
-  page,
-}) => {
-  const workspaceName = 'format-toolbar-literal';
-  const noteName = 'literal';
-  const source =
-    '---\ntitle: my note\n---\n\n# alpha\n\n```js\nconst a = 1;\nconst b = 2;\n```\n\nbravo';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  await writeStoredMarkdown(page, workspaceName, noteName, source);
-  await page.reload({ waitUntil: 'networkidle' });
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(source);
-
-  const editor = getEditorLocator(page, {}).first();
-  const toolbar = page.getByRole('toolbar', { name: 'Text formatting' });
-  await editor.click();
-  await page.keyboard.press('ControlOrMeta+a');
-  await expect(toolbar).toBeVisible();
-
-  // Turning the selection into headings must convert only the prose.
-  await toolbar.getByRole('button', { name: 'Heading 2' }).click();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(
-      '---\ntitle: my note\n---\n\n## alpha\n\n```js\nconst a = 1;\nconst b = 2;\n```\n\n## bravo',
-    );
-
-  // And so must turning it back into paragraphs.
-  await editor.click();
-  await page.keyboard.press('ControlOrMeta+a');
-  await expect(toolbar).toBeVisible();
-  await toolbar.getByRole('button', { name: 'Paragraph' }).click();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(source.replace('# alpha', 'alpha'));
-});
-
-// The toolbar now carries enough controls that it can be wider than a phone
-// viewport. It must wrap within the viewport rather than overflow the page.
-test('selection toolbar wraps instead of overflowing a narrow viewport', async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 320, height: 720 });
-  await createBrowserWorkspaceAndNote(page, {
-    workspaceName: 'format-toolbar-narrow',
-    noteName: 'narrow',
+  await test.step('plain paragraph is the only active block and is a disabled no-op', async () => {
+    await selectEditorText(page, 'alpha');
+    await expect(toolbar).toBeVisible();
+    await expectOnlyActive('paragraph');
+    await expect(controls.paragraph).toBeDisabled();
   });
 
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await page.keyboard.insertText('some selectable body text');
+  await test.step('activate every heading level and return to a paragraph', async () => {
+    await controls.heading1.click();
+    await expectOnlyActive('heading1');
+    await expect(editor.getByRole('heading', { level: 1 })).toHaveText(
+      'line alpha',
+    );
+    await expect
+      .poll(() => readSeededBrowserNote(page, seeded))
+      .toBe('# line alpha\n\nline bravo\n\nline charlie');
 
+    await controls.heading2.click();
+    await expectOnlyActive('heading2');
+    await expect(editor.getByRole('heading', { level: 2 })).toHaveText(
+      'line alpha',
+    );
+    await expect
+      .poll(() => readSeededBrowserNote(page, seeded))
+      .toBe('## line alpha\n\nline bravo\n\nline charlie');
+
+    await controls.heading3.click();
+    await expectOnlyActive('heading3');
+    await expect(editor.getByRole('heading', { level: 3 })).toHaveText(
+      'line alpha',
+    );
+    await expect
+      .poll(() => readSeededBrowserNote(page, seeded))
+      .toBe('### line alpha\n\nline bravo\n\nline charlie');
+
+    await controls.paragraph.click();
+    await expectOnlyActive('paragraph');
+    await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(source);
+  });
+
+  await test.step('activate every list kind and persist the final kind after reload', async () => {
+    await selectEditorText(page, 'bravo');
+    await controls.bulletList.click();
+    await expectOnlyActive('bulletList');
+    await expect(controls.paragraph).toBeEnabled();
+    await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(bullet);
+
+    await controls.paragraph.click();
+    await expectOnlyActive('paragraph');
+    await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(source);
+
+    await controls.orderedList.click();
+    await expectOnlyActive('orderedList');
+    await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(numbered);
+
+    await controls.paragraph.click();
+    await expectOnlyActive('paragraph');
+    await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(source);
+
+    await controls.taskList.click();
+    await expectOnlyActive('taskList');
+    await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(task);
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await waitForSeededBrowserNote(page, seeded);
+    await selectEditorText(page, 'bravo');
+    await expectOnlyActive('taskList');
+    await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(task);
+  });
+});
+
+test('flattens deeply nested blocks to exact Markdown without a nesting cap', async ({
+  page,
+}) => {
+  const source = `${'> '.repeat(10)}- deep item`;
+  const seeded = await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown: source,
+    noteName: 'Deep blocks',
+    workspaceName: 'format-toolbar-deep',
+  });
   const toolbar = page.getByRole('toolbar', { name: 'Text formatting' });
-  await selectEditorText(page, 'selectable');
-  await expect(toolbar).toBeVisible();
+  const paragraph = toolbar.getByRole('button', { name: 'Paragraph' });
 
-  // Every control stays reachable (the row wraps, nothing is clipped away).
-  await expect(toolbar.getByRole('button', { name: 'Bold' })).toBeVisible();
-  await expect(
-    toolbar.getByRole('button', { name: 'Task list' }),
-  ).toBeVisible();
+  await test.step('flatten all blockquote and list levels in one click', async () => {
+    await selectEditorText(page, 'deep item');
+    await expect(toolbar).toBeVisible();
+    await expect(paragraph).toBeEnabled();
+    await expect(paragraph).toHaveAttribute('aria-pressed', 'false');
+    await paragraph.click();
+    await expect(paragraph).toHaveAttribute('aria-pressed', 'true');
+    await expect
+      .poll(() => readSeededBrowserNote(page, seeded))
+      .toBe('deep item');
+  });
+});
 
-  // The page itself must not gain horizontal scroll from the wide toolbar.
-  await expectNoPageHorizontalOverflow(page);
+test('block controls preserve frontmatter and fenced code across select-all conversions', async ({
+  page,
+}) => {
+  const source =
+    '---\ntitle: my note\n---\n\n# alpha\n\n```js\nconst a = 1;\nconst b = 2;\n```\n\nbravo';
+  const headings =
+    '---\ntitle: my note\n---\n\n## alpha\n\n```js\nconst a = 1;\nconst b = 2;\n```\n\n## bravo';
+  const paragraphs = source.replace('# alpha', 'alpha');
+  const seeded = await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown: source,
+    noteName: 'Protected blocks',
+    workspaceName: 'format-toolbar-protected',
+  });
+  const editor = getEditorLocator(page, {}).first();
+  const toolbar = page.getByRole('toolbar', { name: 'Text formatting' });
+
+  await test.step('turn prose into headings without rewriting protected blocks', async () => {
+    await editor.click();
+    await page.keyboard.press('ControlOrMeta+a');
+    await expect(toolbar).toBeVisible();
+    await toolbar.getByRole('button', { name: 'Heading 2' }).click();
+    await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(headings);
+  });
+
+  await test.step('turn prose back into paragraphs without rewriting protected blocks', async () => {
+    await editor.click();
+    await page.keyboard.press('ControlOrMeta+a');
+    await expect(toolbar).toBeVisible();
+    await toolbar.getByRole('button', { name: 'Paragraph' }).click();
+    await expect
+      .poll(() => readSeededBrowserNote(page, seeded))
+      .toBe(paragraphs);
+  });
 });

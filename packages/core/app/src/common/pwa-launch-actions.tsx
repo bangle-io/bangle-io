@@ -1,4 +1,5 @@
 import { useCoreServices } from '@bangle.io/context';
+import type { RecentWsPathsReadResult } from '@bangle.io/service-core';
 import { WsPath } from '@bangle.io/ws-path';
 import { useAtomValue, useSetAtom } from 'jotai';
 import React from 'react';
@@ -6,6 +7,28 @@ import {
   consumePwaLaunchParams,
   subscribePwaLaunchIntents,
 } from './pwa-install';
+
+type Workspace = { name: string };
+type RecentWsPath = { wsPath: string };
+
+/** Chooses a currently available workspace for a manifest new-note launch. */
+export function resolvePwaNewNoteWorkspace(input: {
+  activeWsName: string | undefined;
+  recentWsPaths: readonly RecentWsPath[];
+  workspaces: readonly Workspace[];
+}): string | undefined {
+  const workspaceNames = new Set(
+    input.workspaces.map((workspace) => workspace.name),
+  );
+  if (input.activeWsName && workspaceNames.has(input.activeWsName)) {
+    return input.activeWsName;
+  }
+
+  const recent = input.recentWsPaths
+    .map((entry) => WsPath.safeParse(entry.wsPath).data?.wsName)
+    .find((wsName) => wsName !== undefined && workspaceNames.has(wsName));
+  return recent ?? input.workspaces[0]?.name;
+}
 
 /**
  * Acts on PWA launches that need application services: manifest shortcuts
@@ -21,11 +44,14 @@ export function PwaLaunchActions() {
     workspaceState,
   } = useCoreServices();
   const setOpenOmniSearch = useSetAtom(workbenchState.$openOmniSearch);
-  const workspaces = useAtomValue(workspaceState.$workspaces);
-  const recentWsPaths = useAtomValue(userActivityService.$allRecentWsPaths);
+  const workspaceListState = useAtomValue(workspaceState.$workspaceListState);
+  const workspaces = workspaceListState.data;
   const activeWsName = useAtomValue(navigation.$wsName);
 
   const [newNotePending, setNewNotePending] = React.useState(false);
+  const [recentWsPathsRead, setRecentWsPathsRead] = React.useState<
+    RecentWsPathsReadResult | null | undefined
+  >(undefined);
   const [navigationTargetWsName, setNavigationTargetWsName] = React.useState<
     string | undefined
   >(undefined);
@@ -38,6 +64,7 @@ export function PwaLaunchActions() {
         setOpenOmniSearch(true);
       }
       if (intent.shortcut === 'new-note') {
+        setRecentWsPathsRead(undefined);
         setNewNotePending(true);
       }
     });
@@ -48,11 +75,14 @@ export function PwaLaunchActions() {
   // create-note dialog. With no workspaces at all the welcome page stays.
   React.useEffect(() => {
     if (!newNotePending) {
-      return;
+      return undefined;
     }
 
-    if (
+    const activeWorkspaceIsAvailable =
       activeWsName &&
+      workspaces.some((workspace) => workspace.name === activeWsName);
+    if (
+      activeWorkspaceIsAvailable &&
       (!navigationTargetWsName || activeWsName === navigationTargetWsName)
     ) {
       setNewNotePending(false);
@@ -62,31 +92,71 @@ export function PwaLaunchActions() {
         { prefillName: undefined },
         'ui',
       );
-      return;
+      return undefined;
     }
 
+    if (
+      navigationTargetWsName &&
+      workspaces.some((workspace) => workspace.name === navigationTargetWsName)
+    ) {
+      return undefined;
+    }
     if (navigationTargetWsName) {
-      return;
+      setNavigationTargetWsName(undefined);
+      return undefined;
     }
 
-    const recentWsName = recentWsPaths
-      .map((entry) => WsPath.safeParse(entry.wsPath).data?.wsName)
-      .find((wsName) => wsName !== undefined);
-    const targetWsName = recentWsName ?? workspaces[0]?.name;
+    if (workspaceListState.status !== 'ready') {
+      return undefined;
+    }
+    if (recentWsPathsRead === undefined) {
+      let canceled = false;
+      void userActivityService.readRecentWsPathsAcrossWorkspaces().then(
+        (result) => {
+          if (!canceled) {
+            setRecentWsPathsRead(result);
+          }
+        },
+        () => {
+          if (!canceled) {
+            setRecentWsPathsRead(null);
+          }
+        },
+      );
+      return () => {
+        canceled = true;
+      };
+    }
+    if (recentWsPathsRead?.status !== 'complete') {
+      // Partial activity cannot identify the true newest workspace. Keep the
+      // shortcut pending instead of opening a create dialog against a guessed
+      // fallback workspace; a later launch can start a fresh authoritative
+      // read.
+      return undefined;
+    }
+
+    const targetWsName = resolvePwaNewNoteWorkspace({
+      activeWsName,
+      recentWsPaths: recentWsPathsRead.recentWsPaths,
+      workspaces,
+    });
     if (!targetWsName) {
-      return;
+      return undefined;
     }
 
     setNavigationTargetWsName(targetWsName);
     navigation.goWorkspace(targetWsName);
+    return undefined;
   }, [
     newNotePending,
     activeWsName,
     navigationTargetWsName,
-    recentWsPaths,
+    recentWsPathsRead,
+    workspaceListState.status,
     workspaces,
     navigation,
     commandDispatcher,
+    userActivityService,
   ]);
 
   return null;

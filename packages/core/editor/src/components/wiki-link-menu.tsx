@@ -32,6 +32,16 @@ export type WikiOption = {
 
 const MAX_OPTIONS = 12;
 
+export function clampWikiOptionIndex(
+  selectedIndex: number | undefined,
+  optionCount: number,
+): number {
+  return Math.max(
+    0,
+    Math.min(selectedIndex ?? 0, Math.max(0, optionCount - 1)),
+  );
+}
+
 export function buildWikiLinkOptions({
   excludeWsPath,
   query,
@@ -90,9 +100,9 @@ export function WikiLinkMenu({ editorName }: { editorName: string }) {
     [excludeWsPath, index, query],
   );
 
-  const selectedIndex = Math.max(
-    0,
-    Math.min(active?.selectedIndex ?? 0, Math.max(0, options.length - 1)),
+  const selectedIndex = clampWikiOptionIndex(
+    active?.selectedIndex,
+    options.length,
   );
   const select = useCallback(
     (option: WikiOption | undefined) => {

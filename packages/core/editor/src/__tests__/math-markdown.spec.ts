@@ -152,6 +152,45 @@ $$`;
     expect(markdown.serializer.serialize(reparsed)).toBe(expected);
   });
 
+  it('keeps combined inline and display fallback Markdown at a fixed point', () => {
+    const markdown = createProductionMarkdown();
+    const { schema } = markdown;
+    const document = getNodeType(schema, 'doc').create(null, [
+      getNodeType(schema, 'paragraph').create(null, [
+        schema.text('and '),
+        getNodeType(schema, 'math_inline').create(null, schema.text('a$b')),
+        schema.text('2'),
+      ]),
+      getNodeType(schema, 'math_display').create(null, schema.text('a\n$$\nb')),
+      getNodeType(schema, 'paragraph').create(
+        null,
+        schema.text('irreplaceable prose'),
+      ),
+    ]);
+
+    const serialized = markdown.serializer.serialize(document);
+    const reparsed = markdown.parser.parse(serialized);
+
+    expect(serialized).toBe(
+      [
+        String.raw`and \$a\$b\$2`,
+        '',
+        '```',
+        '$$',
+        'a',
+        '$$',
+        'b',
+        '$$',
+        '```',
+        '',
+        'irreplaceable prose',
+      ].join('\n'),
+    );
+    expect(collectNodeText(reparsed, 'math_inline')).toEqual([]);
+    expect(collectNodeText(reparsed, 'math_display')).toEqual([]);
+    expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
+  });
+
   it('falls back when marked text contributes an earlier dollar on the line', () => {
     const markdown = createProductionMarkdown();
     const { schema } = markdown;

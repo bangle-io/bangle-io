@@ -22,7 +22,14 @@ import {
 
 const CODE_ACTIONS_PLUGIN_KEY = new PluginKey('code-actions');
 const COPY_FEEDBACK_TIMEOUT_MS = 1200;
-const copiedFeedbackUntilByPos = new Map<number, number>();
+// Widget positions are meaningful only within their owning editor. Keeping
+// feedback in a WeakMap avoids a copied block at position N making an
+// unrelated editor's block at the same position render as "Copied".
+const copiedFeedbackUntilByView = new WeakMap<
+  EditorView,
+  Map<number, number>
+>();
+const languageEditorCleanupByContainer = new WeakMap<HTMLElement, () => void>();
 
 type ClipboardApi = {
   writeText: (text: string) => Promise<void>;
@@ -190,6 +197,7 @@ function createActionDecorations(doc: PMNode): DecorationSet {
           ),
         {
           key: `code-language:${pos}:${rawLanguage}`,
+          destroy: destroyLanguageBadgeWidget,
           side: -1,
           ignoreSelection: true,
           stopEvent: isBlockActionEvent,
@@ -238,21 +246,21 @@ function createCopyButtonWidget(
     label: copyLabel,
     onClick: async () => {
       const codeBlockPos = getCodeBlockPos();
-      if (codeBlockPos === undefined) {
-        return;
+      if (codeBlockPos !== undefined) {
+        const copied = await copyTextToClipboard(
+          getCodeBlockText(editorView, codeBlockPos),
+        );
+        if (copied) {
+          showCopyFeedback(button, editorView, codeBlockPos);
+        }
       }
-
-      const copied = await copyTextToClipboard(
-        getCodeBlockText(editorView, codeBlockPos),
-      );
-      if (!copied) {
-        return;
+      if (!editorView.isDestroyed) {
+        editorView.focus();
       }
-      showCopyFeedback(button, codeBlockPos);
-      editorView.focus();
     },
   });
-  updateCopyButtonText(button, getCodeBlockPos());
+  button.setAttribute('aria-live', 'polite');
+  updateCopyButtonText(button, editorView, getCodeBlockPos());
 
   const deleteButton = createBlockActionButton({
     className: 'prosemirror-block-delete-button',
@@ -265,49 +273,71 @@ function createCopyButtonWidget(
   return wrapper;
 }
 
-function showCopyFeedback(button: HTMLButtonElement, codeBlockPos: number) {
+function feedbackByPos(editorView: EditorView): Map<number, number> {
+  let feedback = copiedFeedbackUntilByView.get(editorView);
+  if (!feedback) {
+    feedback = new Map();
+    copiedFeedbackUntilByView.set(editorView, feedback);
+  }
+  return feedback;
+}
+
+function showCopyFeedback(
+  button: HTMLButtonElement,
+  editorView: EditorView,
+  codeBlockPos: number,
+) {
   const until = Date.now() + COPY_FEEDBACK_TIMEOUT_MS;
-  copiedFeedbackUntilByPos.set(codeBlockPos, until);
-  button.textContent = t.app.editor.codeBlock.copied;
-  scheduleCopyFeedbackReset(button, codeBlockPos, until);
+  const feedback = feedbackByPos(editorView);
+  feedback.set(codeBlockPos, until);
+  setCopyButtonText(button, t.app.editor.codeBlock.copied);
+  scheduleCopyFeedbackReset(button, feedback, codeBlockPos, until);
 }
 
 function updateCopyButtonText(
   button: HTMLButtonElement,
+  editorView: EditorView,
   codeBlockPos: number | undefined,
 ) {
   if (codeBlockPos === undefined) {
-    button.textContent = t.app.editor.codeBlock.copy;
+    setCopyButtonText(button, t.app.editor.codeBlock.copy);
     return;
   }
 
-  const until = copiedFeedbackUntilByPos.get(codeBlockPos);
+  const feedback = feedbackByPos(editorView);
+  const until = feedback.get(codeBlockPos);
   if (!until || until <= Date.now()) {
-    copiedFeedbackUntilByPos.delete(codeBlockPos);
-    button.textContent = t.app.editor.codeBlock.copy;
+    feedback.delete(codeBlockPos);
+    setCopyButtonText(button, t.app.editor.codeBlock.copy);
     return;
   }
 
-  button.textContent = t.app.editor.codeBlock.copied;
-  scheduleCopyFeedbackReset(button, codeBlockPos, until);
+  setCopyButtonText(button, t.app.editor.codeBlock.copied);
+  scheduleCopyFeedbackReset(button, feedback, codeBlockPos, until);
 }
 
 function scheduleCopyFeedbackReset(
   button: HTMLButtonElement,
+  feedback: Map<number, number>,
   codeBlockPos: number,
   until: number,
 ) {
   globalThis.setTimeout(
     () => {
-      const activeUntil = copiedFeedbackUntilByPos.get(codeBlockPos);
+      const activeUntil = feedback.get(codeBlockPos);
       if (activeUntil !== undefined && activeUntil > until) {
         return;
       }
-      copiedFeedbackUntilByPos.delete(codeBlockPos);
-      button.textContent = t.app.editor.codeBlock.copy;
+      feedback.delete(codeBlockPos);
+      setCopyButtonText(button, t.app.editor.codeBlock.copy);
     },
     Math.max(0, until - Date.now()),
   );
+}
+
+function setCopyButtonText(button: HTMLButtonElement, text: string) {
+  button.textContent = text;
+  button.setAttribute('aria-label', text);
 }
 
 function getCodeBlockText(
@@ -337,6 +367,13 @@ function createLanguageBadgeWidget(
   );
 
   return wrapper;
+}
+
+function destroyLanguageBadgeWidget(node: Node) {
+  if (!(node instanceof HTMLElement)) {
+    return;
+  }
+  languageEditorCleanupByContainer.get(node)?.();
 }
 
 function createLanguageButton(
@@ -387,6 +424,9 @@ function showLanguageEditor(
     }
     finished = true;
     ownerDocument.removeEventListener('pointerdown', handlePointerDown, true);
+    if (languageEditorCleanupByContainer.get(container) === finish) {
+      languageEditorCleanupByContainer.delete(container);
+    }
     return true;
   };
   const commit = () => {
@@ -432,6 +472,7 @@ function showLanguageEditor(
     commit();
   });
   ownerDocument.addEventListener('pointerdown', handlePointerDown, true);
+  languageEditorCleanupByContainer.set(container, finish);
 
   container.replaceChildren(input);
   input.focus();

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { setupBase } from '../base';
 import { setupBlockquote } from '../blockquote';
 import { setupCodeBlock } from '../code-block';
@@ -473,4 +473,77 @@ describe('code block keymap', () => {
     );
     expect(editor.selectionParentType()).toBe('paragraph');
   });
+
+  it.each([
+    ['MacIntel', true],
+    ['Win32', false],
+  ])('uses the production Alt-Backspace and Ctrl-a/Ctrl-e defaults on %s only when it is a Mac platform', async (platform, shouldDeleteWord) => {
+    const restoreNavigatorPlatform = overrideNavigatorPlatform(platform);
+    vi.resetModules();
+    let platformEditorTest:
+      | ReturnType<typeof createBangerEditorTestSetup>
+      | undefined;
+
+    try {
+      const { setupCodeBlock: setupPlatformCodeBlock } = await import(
+        '../code-block'
+      );
+      const base = setupBase();
+      const { baseKeymap: _baseKeymap, ...basePlugins } = base.plugin;
+      platformEditorTest = createBangerEditorTestSetup({
+        extensions: [
+          { ...base, plugin: basePlugins },
+          setupParagraph(),
+          setupPlatformCodeBlock(),
+        ],
+      });
+      const { codeBlock, doc } = platformEditorTest.builders;
+      const editor = platformEditorTest.createEditor(
+        doc(codeBlock('word<cursor>')),
+      );
+
+      expect(editor.pressKey('Backspace', { altKey: true })).toBe(
+        shouldDeleteWord,
+      );
+      editor.expectDoc(doc(codeBlock(shouldDeleteWord ? '' : 'word')));
+
+      const lineEditor = platformEditorTest.createEditor(
+        doc(codeBlock('one\ntw<cursor>o\nthree')),
+      );
+      expect(lineEditor.pressKey('a', { ctrlKey: true })).toBe(
+        shouldDeleteWord,
+      );
+      expect(lineEditor.selectionParentOffset()).toBe(
+        shouldDeleteWord ? 'one\n'.length : 'one\ntw'.length,
+      );
+
+      lineEditor.setSelection('one\ntw'.length + 1);
+      expect(lineEditor.pressKey('e', { ctrlKey: true })).toBe(
+        shouldDeleteWord,
+      );
+      expect(lineEditor.selectionParentOffset()).toBe(
+        shouldDeleteWord ? 'one\ntwo'.length : 'one\ntw'.length,
+      );
+    } finally {
+      platformEditorTest?.cleanup();
+      restoreNavigatorPlatform();
+      vi.resetModules();
+    }
+  });
 });
+
+function overrideNavigatorPlatform(platform: string) {
+  const descriptor = Object.getOwnPropertyDescriptor(navigator, 'platform');
+  Object.defineProperty(navigator, 'platform', {
+    configurable: true,
+    value: platform,
+  });
+
+  return () => {
+    if (descriptor) {
+      Object.defineProperty(navigator, 'platform', descriptor);
+      return;
+    }
+    Reflect.deleteProperty(navigator, 'platform');
+  };
+}

@@ -28,6 +28,7 @@
   "scripts": {
     "ci": "tsx scripts/run-e2e-ci.ts",
     "test": "playwright test -c ./playwright.config.ts",
+    "test:wiki-scale": "BANGLE_E2E_WIKI_SCALE=1 playwright test -c ./playwright.config.ts src/wiki-links.e2e.ts --grep @wiki-scale",
     "test-ct": "rm -rf playwright/.cache && playwright test -c playwright-ct.config.ts",
     "test-ui-mode": "playwright test --ui -c ./playwright.config.ts"
   },

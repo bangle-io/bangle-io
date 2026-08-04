@@ -3,8 +3,9 @@ import type { EditorView } from 'prosemirror-view';
 /**
  * Shared chrome for the action buttons that live in a block's header band
  * (code block copy/delete, frontmatter delete). One factory so every block
- * action gets identical event handling: pointer events are swallowed before
- * ProseMirror can move the selection into the block.
+ * action gets identical event handling. Buttons remain in normal tab order
+ * for keyboard access, while their pointer and keyboard events stay inside
+ * widget chrome instead of leaking into ProseMirror's document keymap.
  */
 export function createBlockActionButton({
   className,
@@ -15,7 +16,7 @@ export function createBlockActionButton({
   className: string;
   text: string;
   label: string;
-  onClick: () => void;
+  onClick: () => void | Promise<void>;
 }): HTMLButtonElement {
   const button = document.createElement('button');
   button.type = 'button';
@@ -23,18 +24,62 @@ export function createBlockActionButton({
   button.textContent = text;
   button.setAttribute('aria-label', label);
   button.setAttribute('title', label);
-  button.tabIndex = -1;
+  button.tabIndex = 0;
 
   const swallow = (event: Event) => {
     event.preventDefault();
     event.stopPropagation();
   };
+  let skipKeyboardClick = false;
+  const activateFromKeyboard = () => {
+    // Browsers normally suppress the button's synthetic click when the key
+    // event is cancelled. Keep this guard for contenteditable widget hosts
+    // that still dispatch one, so the action runs exactly once.
+    skipKeyboardClick = true;
+    void onClick();
+    // A cancelled key normally produces no click. Clear the guard after this
+    // event turn so a later assistive-technology or programmatic detail-zero
+    // click remains an independent activation.
+    queueMicrotask(() => {
+      skipKeyboardClick = false;
+    });
+  };
+
   button.addEventListener('mousedown', swallow);
   button.addEventListener('pointerdown', swallow);
   button.addEventListener('touchstart', swallow);
+  button.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      swallow(event);
+      if (!event.repeat) {
+        activateFromKeyboard();
+      }
+      return;
+    }
+    if (event.key === ' ') {
+      // Space activates a native button on keyup. Cancelling keydown also
+      // stops the editable host from inserting a space into the document.
+      swallow(event);
+      return;
+    }
+    event.stopPropagation();
+  });
+  button.addEventListener('keyup', (event) => {
+    if (event.key === ' ') {
+      swallow(event);
+      activateFromKeyboard();
+      return;
+    }
+    event.stopPropagation();
+  });
   button.addEventListener('click', (event) => {
     swallow(event);
-    onClick();
+    if (skipKeyboardClick && event.detail === 0) {
+      skipKeyboardClick = false;
+      return;
+    }
+    skipKeyboardClick = false;
+    void onClick();
   });
 
   return button;
@@ -62,7 +107,9 @@ export function isBlockActionEvent(event: Event): boolean {
     event.type === 'mousedown' ||
     event.type === 'pointerdown' ||
     event.type === 'touchstart' ||
-    event.type === 'click'
+    event.type === 'click' ||
+    event.type === 'keydown' ||
+    event.type === 'keyup'
   );
 }
 

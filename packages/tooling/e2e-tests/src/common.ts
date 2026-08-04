@@ -4,7 +4,7 @@ import path from 'node:path';
 import { expect, type Locator, type Page } from '@playwright/test';
 
 export const isDarwin = os.platform() === 'darwin';
-export const ctrlKey = os.platform() === 'darwin' ? 'Meta' : 'Control';
+export const ctrlKey = isDarwin ? 'Meta' : 'Control';
 export const EDITOR_SELECTOR = '.ProseMirror';
 export const EDITOR_FOCUSED_SELECTOR = `${EDITOR_SELECTOR}.ProseMirror-focused`;
 const DEFAULT_SLEEP_TIME = 20;
@@ -367,6 +367,152 @@ export async function createBrowserWorkspaceAndNote(
   await expect
     .poll(() => editor.getAttribute('data-editor-name'))
     .toContain(`${workspaceName}:${fileName}`);
+}
+
+type DebugServices = {
+  core: {
+    fileSystem: {
+      createTextFile(wsPath: string, text: string): Promise<void>;
+      readFileAsText(wsPath: string): Promise<string | undefined>;
+    };
+    navigation: {
+      goWsFile(wsPath: string): void;
+    };
+    workspaceOps: {
+      createWorkspaceInfo(info: {
+        metadata: Record<string, unknown>;
+        name: string;
+        type: 'browser';
+      }): Promise<unknown>;
+    };
+  };
+};
+
+type DebugWindow = Window &
+  typeof globalThis & {
+    services?: DebugServices;
+  };
+
+export type BrowserWorkspaceNoteSeed = {
+  /** Markdown written before the editor first mounts. */
+  initialMarkdown?: string;
+  noteName: string;
+  workspaceName: string;
+};
+
+export type SeededBrowserWorkspaceNote = {
+  noteName: string;
+  workspaceName: string;
+  wsPath: string;
+};
+
+function markdownNoteName(noteName: string): string {
+  return noteName.endsWith('.md') ? noteName : `${noteName}.md`;
+}
+
+function seededNoteWsPath(workspaceName: string, fileName: string): string {
+  // The universal workspace-path package root currently loads configuration
+  // that is unavailable to Playwright's Node test loader. Keep this narrow
+  // top-level-note adapter local until that loader boundary is resolved, and
+  // reject the separators that would make this transport form ambiguous.
+  if (
+    !workspaceName.trim() ||
+    /[:/\\]/.test(workspaceName) ||
+    !fileName.trim() ||
+    fileName.startsWith('/') ||
+    fileName.endsWith('/') ||
+    /[:\\]/.test(fileName)
+  ) {
+    throw new Error('Expected a valid top-level Browser workspace note path');
+  }
+  return `${workspaceName}:${fileName}`;
+}
+
+/**
+ * Creates a Browser workspace and note through the app's debug service graph,
+ * then waits for the navigated editor. Use this opt-in shortcut only when a
+ * test does not cover the workspace/note creation UI itself.
+ */
+export async function seedBrowserWorkspaceAndNote(
+  page: Page,
+  { initialMarkdown = '', noteName, workspaceName }: BrowserWorkspaceNoteSeed,
+): Promise<SeededBrowserWorkspaceNote> {
+  const fileName = markdownNoteName(noteName);
+  const wsPath = seededNoteWsPath(workspaceName, fileName);
+
+  await page.goto('/?debug=true', { waitUntil: 'domcontentloaded' });
+  await expect
+    .poll(() =>
+      page.evaluate(() => Boolean((window as DebugWindow).services?.core)),
+    )
+    .toBe(true);
+  await page.evaluate(
+    async ({ content, targetWsPath, wsName }) => {
+      const services = (window as DebugWindow).services;
+      if (!services) {
+        throw new Error('Debug services are unavailable');
+      }
+      await services.core.workspaceOps.createWorkspaceInfo({
+        metadata: {},
+        name: wsName,
+        type: 'browser',
+      });
+      await services.core.fileSystem.createTextFile(targetWsPath, content);
+      services.core.navigation.goWsFile(targetWsPath);
+    },
+    { content: initialMarkdown, targetWsPath: wsPath, wsName: workspaceName },
+  );
+
+  // On narrow viewports the sidebar is a modal sheet. Direct setup does not
+  // exercise it, so close it before returning an editor ready for the test.
+  if (await page.getByRole('dialog').isVisible()) {
+    await page.keyboard.press('Escape');
+  }
+  await waitForSeededBrowserNote(page, { wsPath });
+
+  return { noteName, workspaceName, wsPath };
+}
+
+/** Waits for the exact editor route and editor identity of a seeded note. */
+export async function waitForSeededBrowserNote(
+  page: Page,
+  { wsPath }: Pick<SeededBrowserWorkspaceNote, 'wsPath'>,
+) {
+  const editor = getEditorLocator(page, {});
+  await expect(editor).toBeVisible();
+  // The editor identity includes its stable instance prefix/suffix; the
+  // canonical note identity is the wsPath segment within it.
+  await expect
+    .poll(() => editor.getAttribute('data-editor-name'))
+    .toContain(wsPath);
+  await expect
+    .poll(() =>
+      page.evaluate((targetWsPath) => {
+        const route = new URLSearchParams(window.location.hash.slice(1));
+        return (
+          route.get('route') === 'editor' &&
+          route.get('wsPath') === targetWsPath
+        );
+      }, wsPath),
+    )
+    .toBe(true);
+  await expect
+    .poll(() => readSeededBrowserNote(page, { wsPath }))
+    .not.toBeUndefined();
+}
+
+/** Reads a directly seeded Browser note through the real file-system service. */
+export async function readSeededBrowserNote(
+  page: Page,
+  { wsPath }: Pick<SeededBrowserWorkspaceNote, 'wsPath'>,
+): Promise<string | undefined> {
+  return page.evaluate(async (targetWsPath) => {
+    const services = (window as DebugWindow).services;
+    if (!services) {
+      throw new Error('Debug services are unavailable');
+    }
+    return services.core.fileSystem.readFileAsText(targetWsPath);
+  }, wsPath);
 }
 
 export async function createBrowserWorkspace(

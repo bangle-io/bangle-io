@@ -92,6 +92,54 @@ function typeText(view: EditorView, text: string) {
   }
 }
 
+function mathSource(view: EditorView, selector: string): HTMLElement {
+  const source = view.dom.querySelector<HTMLElement>(
+    `${selector} .math-src .ProseMirror`,
+  );
+  if (!source) throw new Error(`Expected nested math source for ${selector}`);
+  return source;
+}
+
+function sourceTextPosition(
+  source: HTMLElement,
+  offset: number,
+): { node: Text; offset: number } {
+  const walker = document.createTreeWalker(source, NodeFilter.SHOW_TEXT);
+  let remaining = offset;
+  let current = walker.nextNode();
+  while (current) {
+    const text = current.textContent ?? '';
+    if (remaining <= text.length) {
+      return { node: current as Text, offset: remaining };
+    }
+    remaining -= text.length;
+    current = walker.nextNode();
+  }
+  throw new Error(`Expected text offset ${offset} inside math source`);
+}
+
+function selectMathSource(source: HTMLElement, from: number, to = from): void {
+  const start = sourceTextPosition(source, from);
+  const end = sourceTextPosition(source, to);
+  const range = document.createRange();
+  range.setStart(start.node, start.offset);
+  range.setEnd(end.node, end.offset);
+  const selection = document.getSelection();
+  selection?.removeAllRanges();
+  selection?.addRange(range);
+}
+
+function mathPasteEvent(text: string, types = ['text/plain']): Event {
+  const event = new Event('paste', { bubbles: true, cancelable: true });
+  Object.defineProperty(event, 'clipboardData', {
+    value: {
+      getData: () => text,
+      types,
+    },
+  });
+  return event;
+}
+
 describe('math commands and input rules', () => {
   it('inserts typed inline math with conservative delimiters', () => {
     const editor = editorTest.createEditor(doc(p('<cursor>')));
@@ -314,6 +362,64 @@ describe('math interaction', () => {
     warn.mockRestore();
   });
 
+  it.each([
+    ['ArrowLeft', 0, 1],
+    ['ArrowUp', 0, 1],
+    ['ArrowRight', 3, 8],
+    ['ArrowDown', 3, 8],
+  ])('exits display math with %s only at the matching source boundary', (key, offset, expectedPosition) => {
+    const editor = editorTest.createEditor(doc(p(), mathDisplay('abc'), p()));
+    editor.view.dispatch(
+      editor.view.state.tr.setSelection(
+        NodeSelection.create(editor.view.state.doc, 2),
+      ),
+    );
+    const source = mathSource(editor.view, 'math-display');
+    selectMathSource(source, offset);
+    const event = new KeyboardEvent('keydown', {
+      key,
+      bubbles: true,
+      cancelable: true,
+    });
+
+    source.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(true);
+    expect(editor.selectionParentType()).toBe('paragraph');
+    expect(editor.view.state.selection.from).toBe(expectedPosition);
+    editor.expectDoc(doc(p(), mathDisplay('abc'), p()));
+  });
+
+  it.each([
+    ['ArrowRight', 1, {}],
+    ['ArrowLeft', 0, { shiftKey: true }],
+    ['ArrowDown', 3, { ctrlKey: true }],
+    ['ArrowUp', 0, { altKey: true }],
+    ['ArrowRight', 3, { isComposing: true }],
+  ])('leaves display-math %s fallthroughs to the nested editor', (key, offset, modifiers) => {
+    const editor = editorTest.createEditor(
+      doc(p('before'), mathDisplay('abc'), p('after')),
+    );
+    editor.view.dispatch(
+      editor.view.state.tr.setSelection(
+        NodeSelection.create(editor.view.state.doc, 8),
+      ),
+    );
+    const source = mathSource(editor.view, 'math-display');
+    selectMathSource(source, offset);
+    const event = new KeyboardEvent('keydown', {
+      key,
+      bubbles: true,
+      cancelable: true,
+      ...modifiers,
+    });
+
+    source.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(false);
+    expect(editor.view.state.selection).toBeInstanceOf(NodeSelection);
+  });
+
   it('does not run the Firefox focus bridge for Chromium user agents', () => {
     const userAgent = vi
       .spyOn(window.navigator, 'userAgent', 'get')
@@ -342,6 +448,48 @@ describe('math interaction', () => {
 
     expect(append).not.toHaveBeenCalled();
     append.mockRestore();
+    userAgent.mockRestore();
+  });
+
+  it('runs the Firefox focus bridge before returning focus to the outer editor', () => {
+    const userAgent = vi
+      .spyOn(window.navigator, 'userAgent', 'get')
+      .mockReturnValue(
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:128.0) Gecko/20100101 Firefox/128.0',
+      );
+    const editor = editorTest.createEditor(doc(p(), mathDisplay('x')));
+    editor.view.dispatch(
+      editor.view.state.tr.setSelection(
+        NodeSelection.create(editor.view.state.doc, 2),
+      ),
+    );
+    const source = mathSource(editor.view, 'math-display');
+    const append = vi.spyOn(document.body, 'append');
+    const focus = vi.spyOn(HTMLElement.prototype, 'focus');
+    const event = new KeyboardEvent('keydown', {
+      key: 'Enter',
+      ctrlKey: true,
+      bubbles: true,
+      cancelable: true,
+    });
+
+    source.dispatchEvent(event);
+
+    const focusBridge = append.mock.calls
+      .flat()
+      .find(
+        (node): node is HTMLButtonElement => node instanceof HTMLButtonElement,
+      );
+    expect(event.defaultPrevented).toBe(true);
+    expect(focusBridge).toBeInstanceOf(HTMLButtonElement);
+    expect(focusBridge?.tabIndex).toBe(-1);
+    expect(focusBridge?.getAttribute('aria-hidden')).toBe('true');
+    expect(focusBridge?.isConnected).toBe(false);
+    expect(focus.mock.contexts).toContain(focusBridge);
+    expect(focus.mock.contexts.at(-1)).toBe(editor.view.dom);
+    expect(editor.view.hasFocus()).toBe(true);
+    append.mockRestore();
+    focus.mockRestore();
     userAgent.mockRestore();
   });
 
@@ -402,6 +550,50 @@ describe('math interaction', () => {
     expect(editor.view.state.selection).toBeInstanceOf(NodeSelection);
   });
 
+  it.each([
+    ['math-inline', () => doc(p(mathInline('abc'))), 1],
+    ['math-display', () => doc(p(), mathDisplay('abc'), p()), 2],
+  ])('keeps primary select-all inside a %s source while modifiers and composition fall through', (selector, createDocument, nodePos) => {
+    const editor = editorTest.createEditor(createDocument());
+    editor.view.dispatch(
+      editor.view.state.tr.setSelection(
+        NodeSelection.create(editor.view.state.doc, nodePos),
+      ),
+    );
+    const source = mathSource(editor.view, selector);
+    source.focus();
+    const selectAll = new KeyboardEvent('keydown', {
+      key: 'a',
+      metaKey: isMac,
+      ctrlKey: !isMac,
+      bubbles: true,
+      cancelable: true,
+    });
+
+    source.dispatchEvent(selectAll);
+
+    expect(selectAll.defaultPrevented).toBe(true);
+    expect(document.getSelection()?.toString()).toBe('abc');
+
+    for (const modifiers of [
+      { altKey: true },
+      { shiftKey: true },
+      { isComposing: true },
+    ]) {
+      const event = new KeyboardEvent('keydown', {
+        key: 'a',
+        metaKey: isMac,
+        ctrlKey: !isMac,
+        bubbles: true,
+        cancelable: true,
+        ...modifiers,
+      });
+      source.dispatchEvent(event);
+      expect(event.defaultPrevented).toBe(false);
+    }
+    expect(editor.view.state.selection).toBeInstanceOf(NodeSelection);
+  });
+
   it('undoes outer document history while the math source editor is focused', () => {
     const editor = editorTest.createEditor(doc(p(), mathDisplay('abc'), p()));
     const mathPos = 2;
@@ -433,6 +625,70 @@ describe('math interaction', () => {
     editor.expectDoc(doc(p(), mathDisplay('abc'), p()));
   });
 
+  it('redoes nested-source history and leaves unavailable or composition shortcuts alone', () => {
+    const editor = editorTest.createEditor(doc(p(), mathDisplay('abc'), p()));
+    const mathPos = 2;
+    editor.view.dispatch(
+      editor.view.state.tr.setSelection(
+        NodeSelection.create(editor.view.state.doc, mathPos),
+      ),
+    );
+    editor.view.dispatch(
+      editor.view.state.tr.insertText('d', mathPos + 4, mathPos + 4),
+    );
+    const source = mathSource(editor.view, 'math-display');
+    const undoEvent = new KeyboardEvent('keydown', {
+      key: 'z',
+      metaKey: isMac,
+      ctrlKey: !isMac,
+      bubbles: true,
+      cancelable: true,
+    });
+    source.dispatchEvent(undoEvent);
+    editor.expectDoc(doc(p(), mathDisplay('abc'), p()));
+
+    const redoEvent = new KeyboardEvent('keydown', {
+      key: 'z',
+      metaKey: isMac,
+      ctrlKey: !isMac,
+      shiftKey: true,
+      bubbles: true,
+      cancelable: true,
+    });
+    mathSource(editor.view, 'math-display').dispatchEvent(redoEvent);
+    expect(redoEvent.defaultPrevented).toBe(true);
+    editor.expectDoc(doc(p(), mathDisplay('abcd'), p()));
+
+    const noHistoryEditor = editorTest.createEditor(doc(p(mathInline('x'))));
+    noHistoryEditor.view.dispatch(
+      noHistoryEditor.view.state.tr.setSelection(
+        NodeSelection.create(noHistoryEditor.view.state.doc, 1),
+      ),
+    );
+    const noHistoryEvent = new KeyboardEvent('keydown', {
+      key: 'z',
+      metaKey: isMac,
+      ctrlKey: !isMac,
+      bubbles: true,
+      cancelable: true,
+    });
+    mathSource(noHistoryEditor.view, 'math-inline').dispatchEvent(
+      noHistoryEvent,
+    );
+    expect(noHistoryEvent.defaultPrevented).toBe(false);
+
+    const compositionEvent = new KeyboardEvent('keydown', {
+      key: 'z',
+      metaKey: isMac,
+      ctrlKey: !isMac,
+      isComposing: true,
+      bubbles: true,
+      cancelable: true,
+    });
+    mathSource(editor.view, 'math-display').dispatchEvent(compositionEvent);
+    expect(compositionEvent.defaultPrevented).toBe(false);
+  });
+
   it('keeps multiline plain-text paste inside display math source', () => {
     const editor = editorTest.createEditor(doc(p(), mathDisplay('replace me')));
     editor.view.dispatch(
@@ -460,6 +716,72 @@ describe('math interaction', () => {
 
     expect(event.defaultPrevented).toBe(true);
     editor.expectDoc(doc(p(), mathDisplay('a\n$$\nb')));
+  });
+
+  it('keeps partial and collapsed nested-source pastes isolated and ignores unsafe targets', () => {
+    const editor = editorTest.createEditor(
+      doc(p(), mathDisplay('abcde'), p('following prose')),
+    );
+    editor.view.dispatch(
+      editor.view.state.tr.setSelection(
+        NodeSelection.create(editor.view.state.doc, 2),
+      ),
+    );
+    const firstSource = mathSource(editor.view, 'math-display');
+    selectMathSource(firstSource, 1, 4);
+    const partialPaste = mathPasteEvent('Z');
+    firstSource.dispatchEvent(partialPaste);
+    expect(partialPaste.defaultPrevented).toBe(true);
+    editor.expectDoc(doc(p(), mathDisplay('aZe'), p('following prose')));
+
+    const collapsedSource = mathSource(editor.view, 'math-display');
+    selectMathSource(collapsedSource, 1);
+    const collapsedPaste = mathPasteEvent('\r\nX');
+    collapsedSource.dispatchEvent(collapsedPaste);
+    expect(collapsedPaste.defaultPrevented).toBe(true);
+    editor.expectDoc(doc(p(), mathDisplay('a\nXZe'), p('following prose')));
+
+    const missingPlainSource = mathSource(editor.view, 'math-display');
+    const stopUpstreamPaste = (event: Event) =>
+      event.stopImmediatePropagation();
+    missingPlainSource.addEventListener('paste', stopUpstreamPaste, true);
+    const missingPlainText = mathPasteEvent('ignored', ['text/html']);
+    missingPlainSource.dispatchEvent(missingPlainText);
+    missingPlainSource.removeEventListener('paste', stopUpstreamPaste, true);
+    expect(missingPlainText.defaultPrevented).toBe(false);
+    editor.expectDoc(doc(p(), mathDisplay('a\nXZe'), p('following prose')));
+
+    const outsideTarget = document.createElement('div');
+    editor.view.dom.parentElement?.append(outsideTarget);
+    const outsidePaste = mathPasteEvent('outside');
+    outsideTarget.dispatchEvent(outsidePaste);
+    outsideTarget.remove();
+    editor.expectDoc(doc(p(), mathDisplay('a\nXZe'), p('following prose')));
+
+    const independentEditor = editorTest.createEditor(
+      doc(p(mathInline('safe'))),
+    );
+    independentEditor.view.dispatch(
+      independentEditor.view.state.tr.setSelection(
+        NodeSelection.create(independentEditor.view.state.doc, 1),
+      ),
+    );
+    const independentSource = mathSource(independentEditor.view, 'math-inline');
+    const independentText = independentSource.textContent;
+    selectMathSource(mathSource(editor.view, 'math-display'), 0);
+    const firstEditorPaste = mathPasteEvent('only first editor');
+    mathSource(editor.view, 'math-display').dispatchEvent(firstEditorPaste);
+    expect(firstEditorPaste.defaultPrevented).toBe(true);
+    expect(independentSource.textContent).toBe(independentText);
+
+    const staleSource = mathSource(editor.view, 'math-display');
+    const mathNode = editor.view.state.doc.nodeAt(2);
+    if (!mathNode) throw new Error('Expected display math node');
+    editor.view.dispatch(editor.view.state.tr.delete(2, 2 + mathNode.nodeSize));
+    const stalePaste = mathPasteEvent('stale');
+    staleSource.dispatchEvent(stalePaste);
+    expect(stalePaste.defaultPrevented).toBe(false);
+    expect(editor.view.state.doc.textContent).toContain('following prose');
   });
 
   it('keeps invalid TeX source rendered as a visible error', () => {
@@ -513,6 +835,34 @@ describe('math clipboard text', () => {
     );
     expect(serializeMathClipboardText(ordinarySlice)).toBe(
       ordinarySlice.content.textBetween(0, ordinarySlice.content.size, '\n\n'),
+    );
+  });
+
+  it('preserves portable delimiters across open partial slices of inline and display math', () => {
+    const document = doc(
+      p('before ', mathInline('x'), ' after'),
+      mathDisplay('display'),
+      p('tail ', mathInline('z'), ' done'),
+    );
+    const partialSlice = document.slice(3, 39);
+
+    expect(partialSlice.openStart).toBe(1);
+    expect(partialSlice.openEnd).toBe(1);
+    expect(serializeMathClipboardText(partialSlice)).toBe(
+      'fore $x$ after\n\n$$\ndisplay\n$$\n\ntail $z$ do',
+    );
+  });
+
+  it('keeps block boundaries when a mixed slice starts and ends inside prose', () => {
+    const document = doc(
+      p('left ', mathInline('x'), ' middle'),
+      mathDisplay('display'),
+      p('right ', mathInline('y'), ' end'),
+    );
+    const mixedSlice = document.slice(3, 40);
+
+    expect(serializeMathClipboardText(mixedSlice)).toBe(
+      'ft $x$ middle\n\n$$\ndisplay\n$$\n\nright $y$ end',
     );
   });
 });

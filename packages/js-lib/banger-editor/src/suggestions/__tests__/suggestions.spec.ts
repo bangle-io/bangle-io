@@ -576,7 +576,7 @@ describe('synthetic suggestions and composition', () => {
     expect(editorStore.get(view.state, $suggestions).get(view)).toBeUndefined();
   });
 
-  it('Escape keeps a typed trigger as plain text', () => {
+  it('Escape keeps a typed trigger as plain text and realigns Safari’s native caret', () => {
     const store = createStore();
     const view = createPlainEditor({ text: 'note ', store });
 
@@ -589,6 +589,13 @@ describe('synthetic suggestions and composition', () => {
     expect(view.state.doc.textContent).toBe('note /');
     expect(editorStore.get(view.state, $suggestions).get(view)).toBeUndefined();
     expect(domAtPos).toHaveBeenCalledWith(view.state.selection.head);
+    // This is the platform-independent seam behind Safari's subsequent
+    // Option-Backspace behavior: the native selection must point into the
+    // post-mark-removal DOM at the editor's exact ProseMirror position.
+    const { node, offset } = view.domAtPos(view.state.selection.head);
+    const nativeSelection = view.dom.ownerDocument.getSelection();
+    expect(nativeSelection?.anchorNode).toBe(node);
+    expect(nativeSelection?.anchorOffset).toBe(offset);
   });
 
   it('ignores menu keys while an IME composition is active', () => {

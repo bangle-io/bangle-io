@@ -26,6 +26,20 @@ delta with plain trailing text
 
 gamma`;
 
+const MOVED_SOURCE = `# Two
+
+gamma
+
+# One
+
+alpha
+
+beta
+
+## Sub
+
+delta with plain trailing text`;
+
 function createTestSetup() {
   const collapsible = setupCollapsibleHeading();
   const extensions = [
@@ -132,5 +146,41 @@ describe('collapsible heading Markdown fidelity', () => {
 
     expect(state.doc.eq(docBefore)).toBe(true);
     expect(markdown.serializer.serialize(state.doc)).toBe(SOURCE);
+  });
+
+  it('serializes folded sections exactly after moves in both directions', () => {
+    const down = createState(SOURCE);
+    down.state = apply(
+      down.state,
+      down.collapsible.command.toggleHeadingCollapseAtPos(
+        headingPos(down.state, 'One'),
+      ),
+    );
+    down.state = apply(
+      down.state,
+      down.collapsible.command.moveFoldedHeadingSection(
+        headingPos(down.state, 'One'),
+        down.state.doc.content.size,
+      ),
+    );
+    expect(down.markdown.serializer.serialize(down.state.doc)).toBe(
+      MOVED_SOURCE,
+    );
+
+    const up = createState(SOURCE);
+    up.state = apply(
+      up.state,
+      up.collapsible.command.toggleHeadingCollapseAtPos(
+        headingPos(up.state, 'Two'),
+      ),
+    );
+    up.state = apply(
+      up.state,
+      up.collapsible.command.moveFoldedHeadingSection(
+        headingPos(up.state, 'Two'),
+        0,
+      ),
+    );
+    expect(up.markdown.serializer.serialize(up.state.doc)).toBe(MOVED_SOURCE);
   });
 });

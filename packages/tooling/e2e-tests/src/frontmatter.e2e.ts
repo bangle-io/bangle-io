@@ -1,183 +1,205 @@
 import { expect, test } from '@playwright/test';
 import {
-  createBrowserWorkspaceAndNote,
+  collapseEditorSelectionAfterText,
+  ctrlKey,
   getEditorLocator,
-  readStoredMarkdown,
+  readSeededBrowserNote,
+  seedBrowserWorkspaceAndNote,
   waitForEditorFocus,
+  waitForSeededBrowserNote,
 } from './common';
 
-test('inserts frontmatter at the top via the slash menu and persists it', async ({
+const BODY = 'body text';
+const INSERTED_SOURCE = '---\ntitle: Hello\n---\n\nbody text';
+const TYPED_SOURCE = [
+  '---',
+  'k: v',
+  '  title: typed',
+  '---',
+  '',
+  'body text',
+  '',
+  '---',
+].join('\n');
+const MALFORMED_SOURCE = [
+  '---',
+  'title: [unclosed',
+  ': dangling',
+  '\tkey = {broken',
+  '---',
+  '',
+  'body',
+].join('\n');
+const RECOVERED_MALFORMED_SOURCE = MALFORMED_SOURCE.replace(
+  'body',
+  'body edit',
+);
+
+test('slash insertion restores focus, prevents duplicates, and recovers deleted frontmatter through undo', async ({
   page,
 }) => {
-  const workspaceName = 'fm-slash-insert';
-  await createBrowserWorkspaceAndNote(page, {
-    workspaceName,
+  const seeded = await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown: BODY,
     noteName: 'Home',
+    workspaceName: 'frontmatter-slash',
   });
-
   const editor = getEditorLocator(page, {});
-  await editor.click();
-  await waitForEditorFocus(page, {});
-
-  // Write body content first so the insert visibly lands above it.
-  await page.keyboard.insertText('body text');
-  await page.keyboard.press('Enter');
-
-  await page.keyboard.insertText('/');
   const frontmatterOption = page.getByRole('option', { name: 'Frontmatter' });
+
+  await collapseEditorSelectionAfterText(page, BODY);
+  await page.keyboard.press('Enter');
+  await page.keyboard.insertText('/');
   await expect(frontmatterOption).toBeVisible();
+  // Mouse selection must return focus to the new frontmatter block, so this
+  // metadata is typed without another editor click.
   await frontmatterOption.click();
+  await waitForEditorFocus(page, {});
   await page.keyboard.insertText('title: Hello');
 
-  const frontmatterBlock = editor.locator('pre[data-frontmatter]');
+  const frontmatterBlock = editor.locator(':scope > pre[data-frontmatter]');
+  await expect(frontmatterBlock).toHaveCount(1);
   await expect(frontmatterBlock).toContainText('title: Hello');
-  // The frontmatter block is the first child of the document.
-  await expect(
-    editor.locator('> pre[data-frontmatter]:first-child'),
-  ).toBeVisible();
-
   await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
-    .toBe('---\ntitle: Hello\n---\n\nbody text');
+    .poll(() => readSeededBrowserNote(page, seeded))
+    .toBe(INSERTED_SOURCE);
 
-  // The persisted markdown must survive a reload as the same structure.
-  await page.reload();
-  const reloadedEditor = getEditorLocator(page, {});
-  await expect(reloadedEditor.locator('pre[data-frontmatter]')).toContainText(
-    'title: Hello',
-  );
-  await expect(reloadedEditor).toContainText('body text');
-
-  // The header-band Delete button removes the whole block, content and all.
-  await reloadedEditor
-    .getByRole('button', { name: 'Delete frontmatter' })
-    .click();
-  await expect(reloadedEditor.locator('pre[data-frontmatter]')).toHaveCount(0);
-  await expect(reloadedEditor).toContainText('body text');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
-    .toBe('body text');
-});
-
-test('does not offer a second frontmatter once one exists', async ({
-  page,
-}) => {
-  const workspaceName = 'fm-slash-single';
-  await createBrowserWorkspaceAndNote(page, {
-    workspaceName,
-    noteName: 'Home',
-  });
-
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await waitForEditorFocus(page, {});
-
-  await page.keyboard.insertText('/');
-  const frontmatterOption = page.getByRole('option', { name: 'Frontmatter' });
-  await expect(frontmatterOption).toBeVisible();
-  await frontmatterOption.click();
-  await page.keyboard.insertText('title: once');
-  await expect(editor.locator('pre[data-frontmatter]')).toContainText(
-    'title: once',
-  );
-
-  // Move to the body and open the slash menu again: the item is gone.
   await page.keyboard.press('ArrowDown');
   await page.keyboard.insertText('/');
   await expect(page.getByRole('option', { name: 'Heading 1' })).toBeVisible();
-  await expect(page.getByRole('option', { name: 'Frontmatter' })).toBeHidden();
+  await expect(frontmatterOption).toHaveCount(0);
   await page.keyboard.press('Escape');
+  // Escape intentionally preserves the abandoned slash query; remove it as
+  // ordinary document text before proving the duplicate check was write-safe.
+  await page.keyboard.press('Backspace');
+  await expect
+    .poll(() => readSeededBrowserNote(page, seeded))
+    .toBe(INSERTED_SOURCE);
 
-  await expect(editor.locator('pre[data-frontmatter]')).toHaveCount(1);
-});
-
-test('backspace removes an empty frontmatter block', async ({ page }) => {
-  const workspaceName = 'fm-slash-remove';
-  await createBrowserWorkspaceAndNote(page, {
-    workspaceName,
-    noteName: 'Home',
+  const deleteFrontmatter = editor.getByRole('button', {
+    name: 'Delete frontmatter',
   });
 
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await waitForEditorFocus(page, {});
-  await page.keyboard.insertText('body');
-  await page.keyboard.press('Enter');
-
-  await page.keyboard.insertText('/');
-  const frontmatterOption = page.getByRole('option', { name: 'Frontmatter' });
-  await expect(frontmatterOption).toBeVisible();
-  await frontmatterOption.click();
-  await expect(editor.locator('pre[data-frontmatter]')).toBeVisible();
-
-  await page.keyboard.press('Backspace');
-
+  // Exercise the real pointer path before the keyboard path. The widget must
+  // preserve editor focus and the deletion must remain an undoable editor
+  // transaction regardless of how the button is activated.
+  await deleteFrontmatter.click();
   await expect(editor.locator('pre[data-frontmatter]')).toHaveCount(0);
-  await expect(editor).toContainText('body');
+  await waitForEditorFocus(page, {});
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(BODY);
+
+  await editor.press(`${ctrlKey}+z`);
+  await expect(editor.locator(':scope > pre[data-frontmatter]')).toContainText(
+    'title: Hello',
+  );
   await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
-    .toBe('body');
+    .poll(() => readSeededBrowserNote(page, seeded))
+    .toBe(INSERTED_SOURCE);
+
+  // Preserve the independently wired keyboard activation path.
+  await deleteFrontmatter.focus();
+  await deleteFrontmatter.press('Enter');
+  await expect(editor.locator('pre[data-frontmatter]')).toHaveCount(0);
+  await waitForEditorFocus(page, {});
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(BODY);
+
+  await editor.press(`${ctrlKey}+z`);
+  await expect(editor.locator(':scope > pre[data-frontmatter]')).toContainText(
+    'title: Hello',
+  );
+  await expect
+    .poll(() => readSeededBrowserNote(page, seeded))
+    .toBe(INSERTED_SOURCE);
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, seeded);
+  await expect(
+    getEditorLocator(page, {}).locator(':scope > pre[data-frontmatter]'),
+  ).toContainText('title: Hello');
+  await expect
+    .poll(() => readSeededBrowserNote(page, seeded))
+    .toBe(INSERTED_SOURCE);
 });
 
-test('typing --- at the top of a note creates frontmatter', async ({
+test('typed frontmatter routes browser keys through YAML before later dashes become a horizontal rule', async ({
   page,
 }) => {
-  const workspaceName = 'fm-type-dashes';
-  await createBrowserWorkspaceAndNote(page, {
-    workspaceName,
+  const seeded = await seedBrowserWorkspaceAndNote(page, {
     noteName: 'Home',
+    workspaceName: 'frontmatter-key-routing',
   });
-
   const editor = getEditorLocator(page, {});
+
   await editor.click();
   await waitForEditorFocus(page, {});
-
   await page.keyboard.type('---');
   const frontmatterBlock = editor.locator('pre[data-frontmatter]');
   await expect(frontmatterBlock).toBeVisible();
 
+  // A direct Backspace would undo the input rule and restore literal dashes.
+  // Clear that undo state first, then exercise the empty-block keymap.
+  await page.keyboard.type('x');
+  await page.keyboard.press('Backspace');
+  await page.keyboard.press('Backspace');
+  await expect(frontmatterBlock).toHaveCount(0);
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe('');
+
+  await page.keyboard.type('---');
   await page.keyboard.type('title: typed');
-  await expect(frontmatterBlock).toContainText('title: typed');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
-    .toBe('---\ntitle: typed\n---');
-
-  // Typing --- again below yields a horizontal rule, never a second
-  // frontmatter.
-  await page.keyboard.press('ArrowDown');
-  await page.keyboard.type('---');
-  await expect(editor.locator('hr')).toHaveCount(1);
-  await expect(frontmatterBlock).toHaveCount(1);
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
-    .toBe('---\ntitle: typed\n---\n\n---');
-});
-
-test('ArrowUp on the top row keeps the cursor inside the block', async ({
-  page,
-}) => {
-  const workspaceName = 'fm-arrow-up';
-  await createBrowserWorkspaceAndNote(page, {
-    workspaceName,
-    noteName: 'Home',
-  });
-
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await waitForEditorFocus(page, {});
-
-  await page.keyboard.type('---');
-  await page.keyboard.type('title: x');
-
-  // The cursor must not escape above the first row into a dead gap cursor:
-  // typing after repeated ArrowUp still lands inside the block.
   await page.keyboard.press('ArrowUp');
   await page.keyboard.press('ArrowUp');
   await page.keyboard.type('k: v');
   await page.keyboard.press('Enter');
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('End');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.type(BODY);
+  await page.keyboard.press('Enter');
+  await page.keyboard.type('---');
 
-  await expect(editor.locator('pre[data-frontmatter]')).toContainText('k: v');
+  await expect(frontmatterBlock).toContainText('k: v');
+  await expect(frontmatterBlock).toContainText('  title: typed');
+  await expect(editor.locator('hr')).toHaveCount(1);
   await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
-    .toBe('---\nk: v\ntitle: x\n---');
+    .poll(() => readSeededBrowserNote(page, seeded))
+    .toBe(TYPED_SOURCE);
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, seeded);
+  await expect(getEditorLocator(page, {}).locator('hr')).toHaveCount(1);
+  await expect
+    .poll(() => readSeededBrowserNote(page, seeded))
+    .toBe(TYPED_SOURCE);
+});
+
+test('direct-seeded malformed frontmatter remains byte-for-byte intact while body edits recover normally', async ({
+  page,
+}) => {
+  const seeded = await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown: MALFORMED_SOURCE,
+    noteName: 'Home',
+    workspaceName: 'frontmatter-malformed',
+  });
+  const editor = getEditorLocator(page, {});
+  const frontmatterBlock = editor.locator(':scope > pre[data-frontmatter]');
+
+  await expect(frontmatterBlock).toContainText('title: [unclosed');
+  await expect(frontmatterBlock).toContainText('\tkey = {broken');
+  await expect
+    .poll(() => readSeededBrowserNote(page, seeded))
+    .toBe(MALFORMED_SOURCE);
+
+  await collapseEditorSelectionAfterText(page, 'body');
+  await page.keyboard.insertText(' edit');
+  await expect
+    .poll(() => readSeededBrowserNote(page, seeded))
+    .toBe(RECOVERED_MALFORMED_SOURCE);
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, seeded);
+  await expect(
+    getEditorLocator(page, {}).locator(':scope > pre[data-frontmatter]'),
+  ).toContainText('\tkey = {broken');
+  await expect
+    .poll(() => readSeededBrowserNote(page, seeded))
+    .toBe(RECOVERED_MALFORMED_SOURCE);
 });

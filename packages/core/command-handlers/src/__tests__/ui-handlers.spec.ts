@@ -49,6 +49,49 @@ describe('UI command handlers', () => {
     });
   });
 
+  describe('collapsible heading commands', () => {
+    it('delegates the current-heading toggle to the editor service', async () => {
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ui:toggle-heading-collapse',
+      });
+      const toggle = vi
+        .spyOn(services.editorEngine, 'toggleHeadingCollapse')
+        .mockReturnValue(true);
+
+      dispatch('command::ui:toggle-heading-collapse', null);
+
+      expect(toggle).toHaveBeenCalledExactlyOnceWith();
+    });
+
+    it('delegates expand-all to the editor service', async () => {
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ui:uncollapse-all-headings',
+      });
+      const expandAll = vi
+        .spyOn(services.editorEngine, 'uncollapseAllHeadings')
+        .mockReturnValue(true);
+
+      dispatch('command::ui:uncollapse-all-headings', null);
+
+      expect(expandAll).toHaveBeenCalledExactlyOnceWith();
+    });
+
+    it.each([
+      ['command::ui:collapse-all-headings-1', 1],
+      ['command::ui:collapse-all-headings-2', 2],
+      ['command::ui:collapse-all-headings-3', 3],
+    ] as const)('delegates %s to the requested heading level', async (targetId, level) => {
+      const { dispatch, services } = await setupTest({ targetId });
+      const collapseAll = vi
+        .spyOn(services.editorEngine, 'collapseAllHeadings')
+        .mockReturnValue(true);
+
+      dispatch(targetId, null);
+
+      expect(collapseAll).toHaveBeenCalledExactlyOnceWith(level);
+    });
+  });
+
   describe('command::ui:reload-app', () => {
     it('should reload the app', async () => {
       const { dispatch, testEnv } = await setupTest({

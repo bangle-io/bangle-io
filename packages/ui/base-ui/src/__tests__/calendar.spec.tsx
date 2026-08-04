@@ -99,4 +99,12 @@ describe('Calendar', () => {
     // Month + year dropdowns are rendered as native <select> (role combobox).
     expect(screen.getAllByRole('combobox').length).toBeGreaterThanOrEqual(2);
   });
+
+  it('moves the visible month through the native next-month control', () => {
+    render(<Calendar mode="single" defaultMonth={DECEMBER_2025} />);
+
+    expect(screen.getByText('December 2025')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /next month/i }));
+    expect(screen.getByText('January 2026')).toBeInTheDocument();
+  });
 });

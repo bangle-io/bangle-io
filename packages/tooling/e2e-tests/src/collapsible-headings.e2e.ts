@@ -1,11 +1,11 @@
 import { expect, type Page, test } from '@playwright/test';
 import {
-  createBrowserWorkspaceAndNote,
   getEditorLocator,
   pressAppShortcut,
-  readStoredMarkdown,
+  readSeededBrowserNote,
+  seedBrowserWorkspaceAndNote,
   waitForEditorFocus,
-  writeStoredMarkdown,
+  waitForSeededBrowserNote,
 } from './common';
 
 const SOURCE = [
@@ -24,6 +24,25 @@ const SOURCE = [
   'gamma',
 ].join('\n');
 
+const CURSOR_ESCAPED_SOURCE = [
+  '# One',
+  '',
+  'alpha',
+  '',
+  'beta',
+  '',
+  '## Sub',
+  '',
+  'nested content',
+  '',
+  '# TwoX',
+  '',
+  'gamma',
+].join('\n');
+
+// This is the current Alt/Option+ArrowDown behavior: the folded heading moves
+// past the next heading node, while that next heading's content remains after
+// it. Keep this explicit until product behavior intentionally changes.
 const MOVED_SOURCE = [
   '# Two',
   '',
@@ -40,77 +59,144 @@ const MOVED_SOURCE = [
   'gamma',
 ].join('\n');
 
-async function openSeededNote(page: Page) {
-  const workspaceName = 'collapsible-headings';
-  const noteName = 'Home';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  await writeStoredMarkdown(page, workspaceName, noteName, SOURCE);
-  await page.reload();
+const DRAGGED_SOURCE = [
+  '# Two',
+  '',
+  'gamma',
+  '',
+  '# One',
+  '',
+  'alpha',
+  '',
+  'beta',
+  '',
+  '## Sub',
+  '',
+  'nested content',
+].join('\n');
 
+async function openSeededNote(
+  page: Page,
+  workspaceName = 'collapsible-headings',
+) {
+  const seeded = await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown: SOURCE,
+    noteName: 'Home',
+    workspaceName,
+  });
   const editor = getEditorLocator(page, {});
   await expect(editor.getByText('alpha')).toBeVisible();
-  return { editor, noteName, workspaceName };
+  return { editor, seeded };
 }
 
-test('folds and expands a heading section from the gutter toggle', async ({
+async function waitForAnimationFrame(page: Page) {
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        requestAnimationFrame(() => resolve());
+      }),
+  );
+}
+
+test('folds and expands from the inline trailing toggle without losing focus or Markdown', async ({
   page,
 }) => {
-  const { editor, noteName, workspaceName } = await openSeededNote(page);
-
-  // "One", "Sub", and "Two" all have content beneath them.
+  const { editor, seeded } = await openSeededNote(page);
   const collapseToggles = editor.getByRole('button', {
     name: 'Collapse section',
   });
+
+  // The toggle is in the heading's inline trailing slot, not in the gutter.
   await expect(collapseToggles).toHaveCount(3);
+  const oneHeading = editor.locator('h1', { hasText: 'One' });
+  await expect(
+    oneHeading.locator(
+      '.B-block-trailing-slot > .B-collapsible-heading-toggle',
+    ),
+  ).toHaveCount(1);
+
+  await editor.getByText('One').click();
+  await waitForEditorFocus(page, {});
+  const headingSelectionBefore = await oneHeading.evaluate((heading) => {
+    const selection = window.getSelection();
+    return {
+      anchorInHeading:
+        selection?.anchorNode != null && heading.contains(selection.anchorNode),
+      focusInHeading:
+        selection?.focusNode != null && heading.contains(selection.focusNode),
+      isCollapsed: selection?.isCollapsed,
+    };
+  });
+  expect(headingSelectionBefore.anchorInHeading).toBe(true);
+  expect(headingSelectionBefore.focusInHeading).toBe(true);
 
   await collapseToggles.first().click();
-
-  // Everything under "# One" up to "# Two" is hidden, including the nested
-  // "## Sub" heading; the rest of the note stays visible.
-  await expect(editor.getByText('alpha')).toBeHidden();
-  await expect(editor.getByText('beta')).toBeHidden();
-  await expect(editor.getByText('Sub')).toBeHidden();
-  await expect(editor.getByText('nested content')).toBeHidden();
-  await expect(editor.getByText('One')).toBeVisible();
-  await expect(editor.getByText('gamma')).toBeVisible();
-
-  // Folding is a view concern: the stored Markdown must keep every byte.
+  await expect(editor).toHaveClass(/ProseMirror-focused/);
   await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(SOURCE);
+    .poll(() =>
+      editor.evaluate((element) => document.activeElement === element),
+    )
+    .toBe(true);
+  const headingSelectionAfter = await oneHeading.evaluate((heading) => {
+    const selection = window.getSelection();
+    return {
+      anchorInHeading:
+        selection?.anchorNode != null && heading.contains(selection.anchorNode),
+      focusInHeading:
+        selection?.focusNode != null && heading.contains(selection.focusNode),
+      isCollapsed: selection?.isCollapsed,
+    };
+  });
+  expect(headingSelectionAfter).toEqual(headingSelectionBefore);
+  for (const text of ['alpha', 'beta', 'Sub', 'nested content']) {
+    await expect(editor.getByText(text)).toBeHidden();
+  }
+  for (const text of ['One', 'Two', 'gamma']) {
+    await expect(editor.getByText(text)).toBeVisible();
+  }
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(SOURCE);
 
-  await editor.getByRole('button', { name: 'Expand section' }).click();
+  await editor.getByRole('button', { name: 'Expand section' }).first().click();
   await expect(editor.getByText('alpha')).toBeVisible();
   await expect(editor.getByText('nested content')).toBeVisible();
 });
 
-test('a folded note survives reload with no content lost', async ({ page }) => {
-  const { editor, noteName, workspaceName } = await openSeededNote(page);
+test('a nested fold is session-only and reload restores all stored content', async ({
+  page,
+}) => {
+  const { editor, seeded } = await openSeededNote(
+    page,
+    'collapsible-headings-reload',
+  );
 
-  await editor
-    .getByRole('button', { name: 'Collapse section' })
-    .first()
-    .click();
-  await expect(editor.getByText('alpha')).toBeHidden();
+  const collapseToggles = editor.getByRole('button', {
+    name: 'Collapse section',
+  });
+  await collapseToggles.nth(1).click();
+  await expect(editor.getByText('nested content')).toBeHidden();
+  await expect(editor.getByText('beta')).toBeVisible();
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(SOURCE);
 
-  await page.reload();
-
-  // Fold state is per-session; after reload the full note is visible again
-  // and nothing was written back to storage.
+  // Reload while Sub is still folded. Fold state is view-only, so the
+  // persisted Markdown remounts with the nested content visible.
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, seeded);
   const reloadedEditor = getEditorLocator(page, {});
   await expect(reloadedEditor.getByText('alpha')).toBeVisible();
   await expect(reloadedEditor.getByText('beta')).toBeVisible();
+  await expect(reloadedEditor.getByText('Sub')).toBeVisible();
   await expect(reloadedEditor.getByText('nested content')).toBeVisible();
   await expect(reloadedEditor.getByText('gamma')).toBeVisible();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(SOURCE);
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(SOURCE);
 });
 
-test('the cursor cannot get stranded inside a folded section', async ({
+test('browser cursor navigation escapes a folded section before typing', async ({
   page,
 }) => {
-  const { editor, noteName, workspaceName } = await openSeededNote(page);
+  const { editor, seeded } = await openSeededNote(
+    page,
+    'collapsible-headings-cursor',
+  );
 
   await editor
     .getByRole('button', { name: 'Collapse section' })
@@ -118,8 +204,6 @@ test('the cursor cannot get stranded inside a folded section', async ({
     .click();
   await expect(editor.getByText('alpha')).toBeHidden();
 
-  // Walk from the folded heading towards the hidden region and type: the
-  // text must land in visible content, not vanish into the fold.
   await editor.getByText('One').click();
   await waitForEditorFocus(page, {});
   await page.keyboard.press('End');
@@ -127,21 +211,31 @@ test('the cursor cannot get stranded inside a folded section', async ({
   await page.keyboard.insertText('X');
 
   await expect(editor.getByText('X', { exact: false })).toBeVisible();
-  await expect(editor.getByText('alpha')).toBeHidden();
+  for (const text of ['alpha', 'beta', 'Sub', 'nested content']) {
+    await expect(editor.getByText(text)).toBeHidden();
+  }
+  await expect
+    .poll(() => readSeededBrowserNote(page, seeded))
+    .toBe(CURSOR_ESCAPED_SOURCE);
 
-  // The folded content is still intact in storage alongside the new text.
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, seeded);
+  const reloadedEditor = getEditorLocator(page, {});
+  await expect(reloadedEditor.getByText('One', { exact: true })).toBeVisible();
+  await expect(reloadedEditor.getByText('TwoX', { exact: true })).toBeVisible();
+  await expect(reloadedEditor.getByText('alpha')).toBeVisible();
   await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toContain('alpha');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toContain('X');
+    .poll(() => readSeededBrowserNote(page, seeded))
+    .toBe(CURSOR_ESCAPED_SOURCE);
 });
 
-test('dragging a folded heading moves the whole section without losing content', async ({
+test('native dragging a folded section moves its complete Markdown durably', async ({
   page,
 }) => {
-  const { editor, noteName, workspaceName } = await openSeededNote(page);
+  const { editor, seeded } = await openSeededNote(
+    page,
+    'collapsible-headings-drag',
+  );
 
   await editor
     .getByRole('button', { name: 'Collapse section' })
@@ -149,93 +243,79 @@ test('dragging a folded heading moves the whole section without losing content',
     .click();
   await expect(editor.getByText('alpha')).toBeHidden();
 
-  // Reveal the drag handle by hovering the folded heading, then drive a
-  // native drag from the handle to below the last paragraph. Stepped moves
-  // with settled frames keep the HTML5 drag gesture from collapsing into a
-  // click.
-  const headingBox = await editor.getByText('One').boundingBox();
+  // The toggle contributes to the heading's accessible name, so scope by the
+  // exact heading element/text pair before revealing its owning block handle.
+  const oneHeading = editor.locator('h1').filter({ hasText: /^One/ });
+  const headingBox = await oneHeading.boundingBox();
   const gammaBox = await editor.getByText('gamma').boundingBox();
   if (!headingBox || !gammaBox) {
-    throw new Error('Expected heading and drop target to be visible');
+    throw new Error('Expected folded heading and drop target to be visible');
   }
   await page.mouse.move(
     headingBox.x + headingBox.width / 2,
     headingBox.y + headingBox.height / 2,
   );
-  const handle = page.locator('[data-drag-handle]');
-  await expect(handle).toBeVisible();
-  const handleBox = await handle.boundingBox();
+  const editorContainer = editor.locator('..');
+  const dragHandle = editorContainer.getByRole('button', {
+    name: 'Drag to move',
+  });
+  await expect(dragHandle).toBeVisible();
+  const handleBox = await dragHandle.boundingBox();
   if (!handleBox) {
-    throw new Error('Expected the drag handle to be visible');
+    throw new Error('Expected the folded heading drag handle to be visible');
   }
 
   const startX = handleBox.x + handleBox.width / 2;
   const startY = handleBox.y + handleBox.height / 2;
   const dropX = gammaBox.x + gammaBox.width / 2;
   const dropY = gammaBox.y + gammaBox.height + 12;
-  const settleFrame = () => page.waitForTimeout(60);
-
   await page.mouse.move(startX, startY);
   await page.mouse.down();
-  await settleFrame();
-  // Wiggle towards the drop target to start the drag.
-  await page.mouse.move(startX, startY + 8);
-  await settleFrame();
-  await page.mouse.move((startX + dropX) / 2, (startY + dropY) / 2);
-  await settleFrame();
-  await page.mouse.move(dropX, dropY);
-  await settleFrame();
-  await page.mouse.move(dropX, dropY);
-  await settleFrame();
+  await waitForAnimationFrame(page);
+  await page.mouse.move(startX, startY + 8, { steps: 2 });
+  await waitForAnimationFrame(page);
+  await page.mouse.move(dropX, dropY, { steps: 12 });
+  await waitForAnimationFrame(page);
   await page.mouse.up();
 
-  // The whole section travelled: it is still folded at its new home and
-  // nothing is missing once expanded.
   await expect(editor.getByText('One')).toBeVisible();
   await expect(editor.getByText('alpha')).toBeHidden();
   await expect
-    .poll(async () => {
-      const markdown =
-        (await readStoredMarkdown(page, workspaceName, noteName)) ?? '';
-      return (
-        markdown.indexOf('gamma') !== -1 &&
-        markdown.indexOf('gamma') < markdown.indexOf('# One')
-      );
-    })
-    .toBe(true);
-  const movedMarkdown =
-    (await readStoredMarkdown(page, workspaceName, noteName)) ?? '';
-  for (const line of ['alpha', 'beta', '## Sub', 'nested content', 'gamma']) {
-    expect(movedMarkdown).toContain(line);
-  }
+    .poll(() => readSeededBrowserNote(page, seeded))
+    .toBe(DRAGGED_SOURCE);
 
-  await editor.getByRole('button', { name: 'Expand section' }).click();
-  await expect(editor.getByText('alpha')).toBeVisible();
-  await expect(editor.getByText('nested content')).toBeVisible();
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, seeded);
+  const reloadedEditor = getEditorLocator(page, {});
+  await expect(reloadedEditor.getByText('alpha')).toBeVisible();
+  await expect(reloadedEditor.getByText('nested content')).toBeVisible();
+  await expect(reloadedEditor.getByText('gamma')).toBeVisible();
+  await expect
+    .poll(() => readSeededBrowserNote(page, seeded))
+    .toBe(DRAGGED_SOURCE);
 });
 
-test('moving a folded heading with option arrow moves the whole folded section', async ({
+test('Alt/Option ArrowDown keeps the current folded-heading move semantics', async ({
   page,
 }) => {
-  const { editor, noteName, workspaceName } = await openSeededNote(page);
+  const { editor, seeded } = await openSeededNote(
+    page,
+    'collapsible-headings-keymap',
+  );
 
   await editor
     .getByRole('button', { name: 'Collapse section' })
     .first()
     .click();
-  await expect(editor.getByText('alpha')).toBeHidden();
-
   await editor.getByText('One').click();
   await waitForEditorFocus(page, {});
   await page.keyboard.press('Alt+ArrowDown');
 
-  // The full section moves down by one visible block ("Two"), rather than
-  // jumping over that heading's content, and remains folded at its new home.
   await expect(editor.getByText('alpha')).toBeHidden();
   await expect(editor.getByText('nested content')).toBeHidden();
   await expect(editor.getByText('gamma')).toBeHidden();
   await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
+    .poll(() => readSeededBrowserNote(page, seeded))
     .toBe(MOVED_SOURCE);
 
   await editor.getByRole('button', { name: 'Expand section' }).click();
@@ -247,76 +327,79 @@ test('moving a folded heading with option arrow moves the whole folded section',
 test('nested folds survive folding and unfolding the outer section', async ({
   page,
 }) => {
-  const { editor } = await openSeededNote(page);
+  const { editor, seeded } = await openSeededNote(
+    page,
+    'collapsible-headings-nested',
+  );
   const collapseToggles = editor.getByRole('button', {
     name: 'Collapse section',
   });
 
-  // Fold the inner "## Sub" first (toggles are in document order).
   await collapseToggles.nth(1).click();
   await expect(editor.getByText('nested content')).toBeHidden();
   await expect(editor.getByText('beta')).toBeVisible();
 
-  // Fold the enclosing "# One": everything under it hides, including Sub.
   await collapseToggles.first().click();
   await expect(editor.getByText('alpha')).toBeHidden();
   await expect(editor.getByText('Sub')).toBeHidden();
 
-  // Unfold "# One": Sub comes back still folded.
   await editor.getByRole('button', { name: 'Expand section' }).first().click();
-  await expect(editor.getByText('Sub')).toBeVisible();
   await expect(editor.getByText('alpha')).toBeVisible();
+  await expect(editor.getByText('Sub')).toBeVisible();
   await expect(editor.getByText('nested content')).toBeHidden();
 
-  // Unfold "## Sub": back exactly where we started.
   await editor.getByRole('button', { name: 'Expand section' }).first().click();
   await expect(editor.getByText('nested content')).toBeVisible();
   await expect(
     editor.getByRole('button', { name: 'Expand section' }),
   ).toHaveCount(0);
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(SOURCE);
 });
 
-test('collapse-all and expand-all heading commands work from omni search', async ({
+test('omni search collapses and expands heading sections without writing Markdown', async ({
   page,
 }) => {
-  const { editor } = await openSeededNote(page);
+  const { editor, seeded } = await openSeededNote(
+    page,
+    'collapsible-headings-omni',
+  );
   await editor.getByText('gamma').click();
   await waitForEditorFocus(page, {});
 
   await pressAppShortcut(page, 'k');
   const commandInput = page.getByPlaceholder('Type a command or search...');
   await commandInput.fill('Collapse All Heading 1');
+  const collapseAll = page.getByRole('option', {
+    exact: true,
+    name: 'Collapse All Heading 1 Sections',
+  });
+  await expect(collapseAll).toBeVisible();
   await page.keyboard.press('Enter');
-
-  // Both level-1 sections fold; the nested "## Sub" hides with One's section
-  // but must not gain fold state of its own.
-  await expect(editor.getByText('alpha')).toBeHidden();
-  await expect(editor.getByText('beta')).toBeHidden();
-  await expect(editor.getByText('Sub')).toBeHidden();
-  await expect(editor.getByText('nested content')).toBeHidden();
-  await expect(editor.getByText('gamma')).toBeHidden();
-  await expect(editor.getByText('One')).toBeVisible();
-  await expect(editor.getByText('Two')).toBeVisible();
+  for (const heading of ['One', 'Two']) {
+    await expect(editor.getByText(heading, { exact: true })).toBeVisible();
+  }
+  for (const text of ['alpha', 'beta', 'Sub', 'nested content', 'gamma']) {
+    await expect(editor.getByText(text)).toBeHidden();
+  }
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(SOURCE);
 
   await pressAppShortcut(page, 'k');
   await commandInput.fill('Expand All Heading Sections');
+  const expandAll = page.getByRole('option', {
+    exact: true,
+    name: 'Expand All Heading Sections',
+  });
+  await expect(expandAll).toBeVisible();
   await page.keyboard.press('Enter');
-
-  // Everything is visible again — expand-all also proves collapse-all did
-  // not recursively fold "## Sub" (it comes back expanded).
   for (const text of ['alpha', 'beta', 'Sub', 'nested content', 'gamma']) {
     await expect(editor.getByText(text)).toBeVisible();
   }
-  await expect(
-    editor.getByRole('button', { name: 'Expand section' }),
-  ).toHaveCount(0);
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(SOURCE);
 });
 
-test('the fold toggle trails the last line of a wrapped heading', async ({
+test('the inline fold toggle trails the last line of a wrapped heading', async ({
   page,
 }) => {
-  const workspaceName = 'collapsible-headings-wrap';
-  const noteName = 'Home';
   const longHeading = `# ${'really long heading that keeps going '.repeat(6)}and ends here`;
   const source = [
     longHeading,
@@ -327,47 +410,43 @@ test('the fold toggle trails the last line of a wrapped heading', async ({
     '',
     'tail',
   ].join('\n');
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  await writeStoredMarkdown(page, workspaceName, noteName, source);
-  await page.reload();
-
+  const seeded = await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown: source,
+    noteName: 'Home',
+    workspaceName: 'collapsible-headings-geometry',
+  });
   const editor = getEditorLocator(page, {});
-  const heading = editor.locator('h1').first();
-  await expect(heading).toContainText('and ends here');
+  const longHeadingElement = editor.locator('h1').first();
+  const toggle = longHeadingElement.getByRole('button', {
+    name: 'Collapse section',
+  });
+  await expect(longHeadingElement).toContainText('and ends here');
 
-  const toggle = heading.getByRole('button', { name: 'Collapse section' });
-  const headingBox = await heading.boundingBox();
+  const headingBox = await longHeadingElement.boundingBox();
   const toggleBox = await toggle.boundingBox();
   if (!headingBox || !toggleBox) {
-    throw new Error('Expected the heading and its toggle to be visible');
+    throw new Error('Expected wrapped heading and inline toggle geometry');
   }
-
-  // The heading wraps over multiple lines and the toggle flows with the
-  // inline content, so it sits on the LAST line — inside the heading box,
-  // in its bottom half — not floating beside the first line.
   expect(headingBox.height).toBeGreaterThan(toggleBox.height * 3);
   expect(toggleBox.y).toBeGreaterThan(headingBox.y + headingBox.height / 2);
   expect(toggleBox.y + toggleBox.height).toBeLessThanOrEqual(
     headingBox.y + headingBox.height + 1,
   );
 
-  // Folding still works from the trailing toggle on a wrapped heading.
   await toggle.click();
   await expect(editor.getByText('content below')).toBeHidden();
   await expect(editor.getByText('tail')).toBeVisible();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(source);
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(source);
 
-  await heading.getByRole('button', { name: 'Expand section' }).click();
+  await longHeadingElement
+    .getByRole('button', { name: 'Expand section' })
+    .click();
   await expect(editor.getByText('content below')).toBeVisible();
 });
 
 test('dragging left from heading whitespace selects heading text', async ({
   page,
 }) => {
-  const workspaceName = 'collapsible-heading-whitespace-selection';
-  const noteName = 'Home';
   const source = [
     '# Select Me Heading',
     '',
@@ -377,15 +456,18 @@ test('dragging left from heading whitespace selects heading text', async ({
     '',
     'tail',
   ].join('\n');
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  await writeStoredMarkdown(page, workspaceName, noteName, source);
-  await page.reload();
-
+  await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown: source,
+    noteName: 'Home',
+    workspaceName: 'collapsible-headings-selection',
+  });
   const editor = getEditorLocator(page, {});
-  const heading = editor.locator('h1', { hasText: 'Select Me Heading' });
-  await expect(heading).toBeVisible();
 
-  const dragMetrics = await heading.evaluate((element) => {
+  const selectionHeading = editor.locator('h1', {
+    hasText: 'Select Me Heading',
+  });
+  await selectionHeading.scrollIntoViewIfNeeded();
+  const dragMetrics = await selectionHeading.evaluate((element) => {
     const textNode = [...element.childNodes].find(
       (node): node is Text =>
         node.nodeType === Node.TEXT_NODE &&
@@ -394,44 +476,38 @@ test('dragging left from heading whitespace selects heading text', async ({
     if (!textNode) {
       throw new Error('Expected heading text node');
     }
-
     const range = document.createRange();
     range.selectNodeContents(textNode);
     const textRect = range.getBoundingClientRect();
     const headingRect = element.getBoundingClientRect();
     range.detach();
-
     if (headingRect.right - textRect.right < 48) {
-      throw new Error('Expected empty whitespace to the right of the heading');
+      throw new Error('Expected whitespace after heading text');
     }
-
     return {
       endX: textRect.left + 1,
       startX: headingRect.right - 8,
       y: textRect.top + textRect.height / 2,
     };
   });
-
   await page.mouse.move(dragMetrics.startX, dragMetrics.y);
   await page.mouse.down();
   await page.mouse.move(dragMetrics.endX, dragMetrics.y, { steps: 12 });
   await page.mouse.up();
-
   await expect
     .poll(() => page.evaluate(() => window.getSelection()?.toString() ?? ''))
     .toContain('Select Me Heading');
 });
 
-test('a heading with nothing beneath it shows a disabled toggle', async ({
+test('a heading with nothing beneath it has an inert disabled toggle', async ({
   page,
 }) => {
-  const workspaceName = 'collapsible-headings-empty';
-  const noteName = 'Home';
   const source = ['# Empty', '', '# Full', '', 'content below'].join('\n');
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  await writeStoredMarkdown(page, workspaceName, noteName, source);
-  await page.reload();
-
+  const seeded = await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown: source,
+    noteName: 'Home',
+    workspaceName: 'collapsible-headings-empty',
+  });
   const editor = getEditorLocator(page, {});
   await expect(editor.getByText('content below')).toBeVisible();
 
@@ -444,15 +520,10 @@ test('a heading with nothing beneath it shows a disabled toggle', async ({
 
   await expect(emptyToggle).toBeDisabled();
   await expect(fullToggle).toBeEnabled();
-
-  // Clicking the inert toggle folds nothing and touches nothing.
   await emptyToggle.click({ force: true });
   await expect(editor.getByText('content below')).toBeVisible();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(source);
+  await expect.poll(() => readSeededBrowserNote(page, seeded)).toBe(source);
 
-  // The enabled sibling still folds normally.
   await fullToggle.click();
   await expect(editor.getByText('content below')).toBeHidden();
 });

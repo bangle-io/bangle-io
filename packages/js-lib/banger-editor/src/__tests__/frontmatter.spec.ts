@@ -4,10 +4,11 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { setupBase } from '../base';
 import { setupCodeBlock } from '../code-block';
 import { setupFrontmatter } from '../frontmatter';
+import { setupHistory } from '../history';
 import { setupHorizontalRule } from '../horizontal-rule';
 import { setupParagraph } from '../paragraph';
 import type { EditorView } from '../pm';
-import { DOMParser as PMDOMParser } from '../pm';
+import { DOMParser as PMDOMParser, undo } from '../pm';
 import { createBangerEditorTestSetup } from '../test-helpers';
 
 const frontmatterExt = setupFrontmatter();
@@ -16,6 +17,7 @@ const editorTest = createBangerEditorTestSetup({
     setupBase({ docContent: 'frontmatter? block+' }),
     setupParagraph(),
     setupCodeBlock(),
+    setupHistory(),
     frontmatterExt,
   ],
 });
@@ -29,6 +31,7 @@ const inputRuleEditorTest = createBangerEditorTestSetup({
     setupBase({ docContent: 'frontmatter? block+' }),
     setupParagraph(),
     setupCodeBlock(),
+    setupHistory(),
     setupHorizontalRule(),
     setupFrontmatter(),
   ],
@@ -178,6 +181,19 @@ describe('frontmatter keymap', () => {
     editor.expectDoc(doc(p('body')));
   });
 
+  it('undo restores an empty frontmatter block and keeps the cursor in it', () => {
+    const editor = editorTest.createEditor(
+      doc(frontmatter('<cursor>'), p('body')),
+    );
+
+    expect(editor.pressKey('Backspace')).toBe(true);
+    editor.expectDoc(doc(p('body')));
+    expect(undo(editor.view.state, editor.view.dispatch)).toBe(true);
+
+    editor.expectDoc(doc(frontmatter(), p('body')));
+    expect(editor.selectionParentType()).toBe('frontmatter');
+  });
+
   it('Backspace at the start of a non-empty frontmatter keeps its content', () => {
     const editor = editorTest.createEditor(
       doc(frontmatter('<cursor>title: x'), p('body')),
@@ -292,11 +308,21 @@ describe('frontmatter keymap', () => {
     expect(editor.selectionParentType()).toBe('frontmatter');
     expect(editor.selectionParentOffset()).toBe(0);
   });
+
+  it('does not let a non-empty selection mutate frontmatter through Tab', () => {
+    const editor = editorTest.createEditor(
+      doc(frontmatter('<start>title<end>: x'), p('body')),
+    );
+
+    expect(editor.pressKey('Tab')).toBe(true);
+    editor.expectDoc(doc(frontmatter('<start>title<end>: x'), p('body')));
+  });
 });
 
 describe('frontmatter input rule', () => {
   const { doc: docB, p: pB } = inputRuleEditorTest.builders;
   const frontmatterB = inputRuleEditorTest.nodeBuilder('frontmatter');
+  const codeBlock = inputRuleEditorTest.nodeBuilder('code_block');
   const hr = inputRuleEditorTest.nodeBuilder('horizontalRule');
 
   it('typing --- at the start of an empty document creates frontmatter', () => {
@@ -336,5 +362,17 @@ describe('frontmatter input rule', () => {
     typeText(editor.view, '---');
 
     editor.expectDoc(docB(hr(), pB('keep me')));
+  });
+
+  it('does not turn whitespace-prefixed or code-block dashes into frontmatter', () => {
+    const whitespace = inputRuleEditorTest.createEditor(docB(pB('<cursor> ')));
+    typeText(whitespace.view, '---');
+    // Frontmatter declines because the paragraph is not empty; the lower
+    // priority horizontal-rule rule retains the leading space in its body.
+    whitespace.expectDoc(docB(hr(), pB(' ')));
+
+    const code = inputRuleEditorTest.createEditor(docB(codeBlock('<cursor>')));
+    typeText(code.view, '---');
+    code.expectDoc(docB(codeBlock('---')));
   });
 });

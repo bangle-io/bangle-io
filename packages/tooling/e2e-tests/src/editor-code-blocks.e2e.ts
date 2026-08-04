@@ -1,750 +1,33 @@
 import { expect, test } from '@playwright/test';
 import {
-  clearEditor,
   collapseEditorSelectionAfterText,
-  createBrowserWorkspaceAndNote,
-  ctrlKey,
   expectReadableContrast,
   getEditorLocator,
-  isDarwin,
   pressAppShortcut,
-  readStoredMarkdown,
-  writeStoredMarkdown,
+  readSeededBrowserNote,
+  seedBrowserWorkspaceAndNote,
+  waitForEditorFocus,
+  waitForSeededBrowserNote,
 } from './common';
 
-test('converts a typed fenced-code marker into a persisted code block', async ({
+test('creates a code block through its keyboard lifecycle and persists the exact Markdown', async ({
   page,
 }) => {
-  const workspaceName = 'code-block-fence';
-  const noteName = 'typed-code';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await clearEditor(page, {});
-  await editor.pressSequentially('```js');
-  await page.keyboard.press('Enter');
-  await editor.pressSequentially('console.log("typed");');
-
-  await expect(editor.locator('pre code')).toContainText(
-    'console.log("typed");',
-  );
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('```js\nconsole.log("typed");\n```');
-});
-
-test('converts a typed fenced-code marker inside a list item', async ({
-  page,
-}) => {
-  const workspaceName = 'code-block-list-fence';
-  const noteName = 'typed-list-code';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await clearEditor(page, {});
-  await editor.pressSequentially('- ');
-  await editor.pressSequentially('```js');
-  await page.keyboard.press('Enter');
-  await editor.pressSequentially('console.log("listed");');
-
-  await expect(editor.locator('pre code')).toContainText(
-    'console.log("listed");',
-  );
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('- ```js\n  console.log("listed");\n  ```');
-});
-
-test('converts a typed fenced-code marker inside a blockquote', async ({
-  page,
-}) => {
-  const workspaceName = 'code-block-blockquote-fence';
-  const noteName = 'typed-blockquote-code';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await clearEditor(page, {});
-  await editor.pressSequentially('> ');
-  await editor.pressSequentially('```ts');
-  await page.keyboard.press('Enter');
-  await editor.pressSequentially('const quoted = true;');
-
-  await expect(editor.locator('blockquote pre code')).toContainText(
-    'const quoted = true;',
-  );
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('> ```ts\n> const quoted = true;\n> ```');
-});
-
-test('Shift-Enter adds persisted lines inside nested code blocks', async ({
-  page,
-}) => {
-  const workspaceName = 'nested-code-block-newlines';
-  const noteName = 'nested-newlines';
-  const initialMarkdown = [
-    '- ```js',
-    '  const listed = true;',
-    '  ```',
-    '',
-    '> ```ts',
-    '> const quoted = true;',
-    '> ```',
-  ].join('\n');
-  const expectedMarkdown = [
-    '- ```js',
-    '  const listed = true;',
-    '  return listed;',
-    '  ```',
-    '',
-    '> ```ts',
-    '> const quoted = true;',
-    '> return quoted;',
-    '> ```',
-  ].join('\n');
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  await writeStoredMarkdown(page, workspaceName, noteName, initialMarkdown);
-  await page.reload({ waitUntil: 'networkidle' });
-
-  const editor = getEditorLocator(page, {});
-  // Flat-list renders list items without a native <li>; the first fenced block
-  // is the list-owned block and persisted Markdown below proves its ownership.
-  const listedCode = editor.locator('pre code').first();
-  const quotedCode = editor.locator('blockquote pre code');
-
-  // Place the caret through a DOM Range instead of mouse coordinates +
-  // visual-line End: async syntax highlighting swaps the code text nodes
-  // shortly after load, which can void a coordinate-derived caret or a
-  // native End keypress between the click and the keystroke.
-  await collapseEditorSelectionAfterText(page, 'const listed = true;');
-  await page.keyboard.press('Shift+Enter');
-  await page.keyboard.insertText('return listed;');
-
-  await collapseEditorSelectionAfterText(page, 'const quoted = true;');
-  await page.keyboard.press('Shift+Enter');
-  await page.keyboard.insertText('return quoted;');
-
-  await expect(listedCode).toContainText(
-    'const listed = true;\nreturn listed;',
-  );
-  await expect(quotedCode).toContainText(
-    'const quoted = true;\nreturn quoted;',
-  );
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(expectedMarkdown);
-
-  await page.reload({ waitUntil: 'networkidle' });
-  await expect(editor.locator('pre code').first()).toContainText(
-    'const listed = true;\nreturn listed;',
-  );
-  await expect(editor.locator('blockquote pre code')).toContainText(
-    'const quoted = true;\nreturn quoted;',
-  );
-  await expect(readStoredMarkdown(page, workspaceName, noteName)).resolves.toBe(
-    expectedMarkdown,
-  );
-});
-
-test('copies code-block text from the visible code action', async ({
-  context,
-  page,
-}) => {
-  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-  const workspaceName = 'code-block-copy';
-  const noteName = 'copy-code';
-  const code = 'const copied = true;';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  await writeStoredMarkdown(
-    page,
-    workspaceName,
-    noteName,
-    `\`\`\`ts\n${code}\n\`\`\``,
-  );
-  await page.reload({ waitUntil: 'networkidle' });
-
-  const editor = getEditorLocator(page, {});
-  const codeBlock = editor.locator('pre').filter({ hasText: code });
-  await expect(codeBlock.locator('code')).toContainText(code);
-  await codeBlock.hover();
-
-  const copyButton = codeBlock.getByRole('button', {
-    exact: true,
-    name: 'Copy',
+  const note = await seedBrowserWorkspaceAndNote(page, {
+    noteName: 'Keyboard lifecycle',
+    workspaceName: 'code-block-keyboard-lifecycle',
   });
-  await copyButton.click();
-  await expect(copyButton).toHaveText('Copied');
-  await expect
-    .poll(() => page.evaluate(() => navigator.clipboard.readText()))
-    .toBe(code);
-});
-
-test('deletes a code block from the visible code action', async ({ page }) => {
-  const workspaceName = 'code-block-delete';
-  const noteName = 'delete-code';
-  const code = 'const removeMe = true;';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  await writeStoredMarkdown(
-    page,
-    workspaceName,
-    noteName,
-    `before\n\n\`\`\`ts\n${code}\n\`\`\`\n\nafter`,
-  );
-  await page.reload({ waitUntil: 'networkidle' });
-
   const editor = getEditorLocator(page, {});
-  const codeBlock = editor.locator('pre').filter({ hasText: code });
-  await expect(codeBlock.locator('code')).toContainText(code);
+  const code = 'const shortcutScope = true;';
+  const prose = 'after keyboard lifecycle';
+  const expected = `\`\`\`js\n${code}\n\n\n\`\`\`\n\n${prose}`;
 
-  await codeBlock
-    .getByRole('button', { exact: true, name: 'Delete code block' })
-    .click();
-
-  await expect(editor.locator('pre')).toHaveCount(0);
-  await expect(editor).toContainText('before');
-  await expect(editor).toContainText('after');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('before\n\nafter');
-});
-
-test('keeps code action feedback after refocusing a code block', async ({
-  context,
-  page,
-}) => {
-  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-  const workspaceName = 'code-block-action-feedback';
-  const noteName = 'copy-feedback';
-  const code = 'const copied = true;';
-  const retained = 'const retained = true;';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-
-  const editor = getEditorLocator(page, {});
   await editor.click();
-  await clearEditor(page, {});
-  await editor.pressSequentially('```ts');
-  await page.keyboard.press('Enter');
-  await page.keyboard.insertText(code);
-  const codeBlock = editor.locator('pre').filter({ hasText: code });
-  await expect(codeBlock.locator('code')).toContainText(code);
-  await codeBlock.hover();
-
-  const copyButton = editor.locator('.prosemirror-code-copy-button').first();
-  await copyButton.click();
-  await expect(copyButton).toHaveText('Copied');
-  const codeBox = await codeBlock.locator('code').boundingBox();
-  expect(codeBox).not.toBeNull();
-  if (!codeBox) {
-    return;
-  }
-  await page.mouse.click(codeBox.x + 8, codeBox.y + 12);
-  for (let index = 0; index < code.length; index += 1) {
-    await page.keyboard.press('ArrowRight');
-  }
-
-  await page.keyboard.type(`\n${retained}`);
-
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toContain(retained);
-  await expect(copyButton).toHaveText('Copied');
-});
-
-test('renders syntax-highlighted code with readable contrast in light mode', async ({
-  page,
-}) => {
-  await page.goto('/');
-  await page.evaluate(() => {
-    localStorage.setItem('color-scheme', 'light');
-  });
-
-  const workspaceName = 'code-block-highlight-contrast';
-  const noteName = 'contrast';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  await writeStoredMarkdown(
-    page,
-    workspaceName,
-    noteName,
-    '```ts\nconst readable = true;\n```',
-  );
-  await page.reload({ waitUntil: 'networkidle' });
-
-  const token = getEditorLocator(page, {}).locator('pre code .shiki').first();
-  await expect(token).toBeVisible({ timeout: 15_000 });
-  await expectReadableContrast(token);
-});
-
-test('edits a fenced code-block language badge and persists Markdown', async ({
-  page,
-}) => {
-  const workspaceName = 'code-block-language';
-  const noteName = 'code';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  await writeStoredMarkdown(
-    page,
-    workspaceName,
-    noteName,
-    '```js\nconsole.log("hi");\n```',
-  );
-  await page.reload({ waitUntil: 'networkidle' });
-
-  const editor = getEditorLocator(page, {});
-  const codeBlock = editor.locator('pre').filter({ hasText: 'console.log' });
-  await expect(codeBlock.locator('code')).toContainText('console.log("hi");');
-  await codeBlock.hover();
-
-  const languageButton = page.getByRole('button', { name: 'Edit language' });
-  await expect(languageButton).toHaveText('JS', { timeout: 15_000 });
-  await languageButton.click();
-  await page.getByRole('textbox', { name: 'Edit language' }).fill('typescript');
-  await page.keyboard.press('Enter');
-
-  await expect(page.getByRole('button', { name: 'Edit language' })).toHaveText(
-    'TYPESCRIPT',
-  );
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('```typescript\nconsole.log("hi");\n```');
-
-  await page.reload({ waitUntil: 'networkidle' });
-  await codeBlock.hover();
-  await expect(page.getByRole('button', { name: 'Edit language' })).toHaveText(
-    'TYPESCRIPT',
-  );
-});
-
-test('does not invent language info when an empty language badge editor is cancelled or blurred', async ({
-  page,
-}) => {
-  const workspaceName = 'code-block-empty-language';
-  const noteName = 'code';
-  const markdown = '```\nconsole.log("plain");\n```';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  await writeStoredMarkdown(page, workspaceName, noteName, markdown);
-  await page.reload({ waitUntil: 'networkidle' });
-
-  const editor = getEditorLocator(page, {});
-  const codeBlock = editor.locator('pre').filter({ hasText: 'console.log' });
-  await expect(codeBlock.locator('code')).toContainText(
-    'console.log("plain");',
-  );
-  await codeBlock.hover();
-
-  const languageButton = page.getByRole('button', { name: 'Edit language' });
-  await expect(languageButton).toHaveText('TEXT', { timeout: 15_000 });
-  await languageButton.click();
-  await expect(
-    page.getByRole('textbox', { name: 'Edit language' }),
-  ).toHaveValue('');
-  await page.keyboard.press('Escape');
-  await expect(languageButton).toHaveText('TEXT');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(markdown);
-
-  await languageButton.click();
-  await expect(
-    page.getByRole('textbox', { name: 'Edit language' }),
-  ).toHaveValue('');
-  await editor.click();
-  await expect(languageButton).toHaveText('TEXT');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(markdown);
-});
-
-test('moves a code block with option arrow shortcuts and persists order', async ({
-  page,
-}) => {
-  const workspaceName = 'code-block-move-shortcuts';
-  const noteName = 'move';
-  const code = 'const moved = true;';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await clearEditor(page, {});
-  await editor.pressSequentially('before');
-  await page.keyboard.press('Enter');
-  await page.keyboard.press('Enter');
+  await waitForEditorFocus(page, {});
   await editor.pressSequentially('```js');
   await page.keyboard.press('Enter');
-  await page.keyboard.insertText(code);
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(`before\n\n\`\`\`js\n${code}\n\`\`\``);
-
-  await page.keyboard.down('Alt');
-  await page.keyboard.press('ArrowUp');
-  await page.keyboard.press('ArrowUp');
-  await page.keyboard.up('Alt');
-
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(`\`\`\`js\n${code}\n\`\`\`\n\nbefore`);
-
-  await page.keyboard.down('Alt');
-  await page.keyboard.press('ArrowDown');
-  await page.keyboard.press('ArrowDown');
-  await page.keyboard.up('Alt');
-
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(`before\n\n\`\`\`js\n${code}\n\`\`\``);
-});
-
-test('backspace turns an empty sole code block back into a paragraph', async ({
-  page,
-}) => {
-  const workspaceName = 'code-block-empty-backspace';
-  const noteName = 'empty-backspace';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await clearEditor(page, {});
-  await editor.pressSequentially('```js');
-  await page.keyboard.press('Enter');
-  await expect(editor.locator('pre')).toBeVisible();
-
-  await page.keyboard.press('Backspace');
-
-  await expect(editor.locator('pre')).toHaveCount(0);
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('');
-});
-
-test('forward delete removes an empty paragraph before a code block', async ({
-  page,
-}) => {
-  const workspaceName = 'code-block-forward-delete';
-  const noteName = 'forward-delete';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await clearEditor(page, {});
-  await editor.pressSequentially('```js');
-  await page.keyboard.press('Enter');
-  await expect(editor.locator('pre')).toBeVisible();
-  await page.keyboard.press('ArrowUp');
-
-  await expect(editor.locator('p')).toHaveCount(1);
-  await page.keyboard.press('Delete');
-
-  await expect(editor.locator('pre')).toBeVisible();
-  await expect(editor.locator('p')).toHaveCount(0);
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('```js\n```');
-});
-
-test('clicking below a final code block creates a paragraph for typing', async ({
-  page,
-}) => {
-  const workspaceName = 'code-block-click-below';
-  const noteName = 'click-below';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  await writeStoredMarkdown(
-    page,
-    workspaceName,
-    noteName,
-    '```js\nconst finalBlock = true;\n```',
-  );
-  await page.reload({ waitUntil: 'networkidle' });
-
-  const editor = getEditorLocator(page, {});
-  const codeBlock = editor.locator('pre').filter({
-    hasText: 'const finalBlock = true;',
-  });
-  await expect(codeBlock).toBeVisible();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('```js\nconst finalBlock = true;\n```');
-
-  const editorBox = await editor.boundingBox();
-  const codeBlockBox = await codeBlock.boundingBox();
-  expect(editorBox).not.toBeNull();
-  expect(codeBlockBox).not.toBeNull();
-  if (!editorBox || !codeBlockBox) {
-    return;
-  }
-
-  await page.mouse.click(
-    editorBox.x + editorBox.width / 2,
-    Math.min(
-      codeBlockBox.y + codeBlockBox.height + 64,
-      editorBox.y + editorBox.height - 16,
-    ),
-  );
-  await page.keyboard.insertText('after code');
-
-  await expect(
-    editor.locator('p').filter({ hasText: 'after code' }),
-  ).toBeVisible();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('```js\nconst finalBlock = true;\n```\n\nafter code');
-});
-
-test('modified click below a final code block does not create a paragraph', async ({
-  page,
-}) => {
-  const workspaceName = 'code-block-modified-click-below';
-  const noteName = 'modified-click-below';
-  const markdown = '```js\nconst finalBlock = true;\n```';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-  await writeStoredMarkdown(page, workspaceName, noteName, markdown);
-  await page.reload({ waitUntil: 'networkidle' });
-
-  const editor = getEditorLocator(page, {});
-  const codeBlock = editor.locator('pre').filter({
-    hasText: 'const finalBlock = true;',
-  });
-  await expect(codeBlock).toBeVisible();
-
-  const editorBox = await editor.boundingBox();
-  const codeBlockBox = await codeBlock.boundingBox();
-  expect(editorBox).not.toBeNull();
-  expect(codeBlockBox).not.toBeNull();
-  if (!editorBox || !codeBlockBox) {
-    return;
-  }
-
-  await page.keyboard.down('Shift');
-  await page.mouse.click(
-    editorBox.x + editorBox.width / 2,
-    Math.min(
-      codeBlockBox.y + codeBlockBox.height + 64,
-      editorBox.y + editorBox.height - 16,
-    ),
-  );
-  await page.keyboard.up('Shift');
-
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe(markdown);
-});
-
-test('option backspace deletes the previous word inside a code block on macOS', async ({
-  page,
-}) => {
-  test.skip(!isDarwin, 'Option+Backspace is a macOS word-delete shortcut');
-
-  const workspaceName = 'code-block-option-backspace';
-  const noteName = 'option-backspace';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await clearEditor(page, {});
-  await editor.pressSequentially('```js');
-  await page.keyboard.press('Enter');
-  await editor.pressSequentially('singlelongword');
-  await page.keyboard.down('Alt');
-  await page.keyboard.press('Backspace');
-  await page.keyboard.up('Alt');
-
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('```js\n```');
-
-  await editor.click();
-  await clearEditor(page, {});
-  await editor.pressSequentially('```js');
-  await page.keyboard.press('Enter');
-  await editor.pressSequentially('two words');
-  await page.keyboard.down('Alt');
-  await page.keyboard.press('Backspace');
-  await page.keyboard.up('Alt');
-
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('```js\ntwo \n```');
-});
-
-test('tab and shift tab indent code block lines and persist Markdown', async ({
-  page,
-}) => {
-  const workspaceName = 'code-block-tab-indent';
-  const noteName = 'tab-indent';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await clearEditor(page, {});
-  await editor.pressSequentially('```js');
-  await page.keyboard.press('Enter');
-  await page.keyboard.insertText('const value = true;');
-  await page.keyboard.press('Tab');
-
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('```js\nconst value = true;  \n```');
-
-  await editor.click();
-  await clearEditor(page, {});
-  await editor.pressSequentially('```js');
-  await page.keyboard.press('Enter');
-  await page.keyboard.insertText('  const value = true;');
-  await page.keyboard.press('Shift+Tab');
-
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('```js\nconst value = true;\n```');
-});
-
-test('moves down from a sole code block into a new paragraph', async ({
-  page,
-}) => {
-  const workspaceName = 'code-block-arrow-down';
-  const noteName = 'down';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await clearEditor(page, {});
-  await editor.pressSequentially('```js');
-  await page.keyboard.press('Enter');
-  await editor.pressSequentially('console.log("down");');
-  await page.keyboard.press('ArrowDown');
-  await page.keyboard.insertText('after down');
-
-  await expect(editor.locator('pre')).toBeVisible();
-  await expect(
-    editor.locator('p').filter({ hasText: 'after down' }),
-  ).toBeVisible();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('```js\nconsole.log("down");\n```\n\nafter down');
-});
-
-test('moves up from a sole code block into a new paragraph', async ({
-  page,
-}) => {
-  const workspaceName = 'code-block-arrow-up';
-  const noteName = 'up';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await clearEditor(page, {});
-  await editor.pressSequentially('```js');
-  await page.keyboard.press('Enter');
-  await editor.pressSequentially('const warmup = true;');
-  await page.keyboard.press('ArrowDown');
-  await page.keyboard.insertText('warmup paragraph');
-  await page.reload({ waitUntil: 'networkidle' });
-  await editor.click();
-  await clearEditor(page, {});
-
-  await editor.pressSequentially('```ts');
-  await page.keyboard.press('Enter');
-  await editor.pressSequentially('const up = true;');
-  await page.keyboard.press('Home');
-  await page.keyboard.press('ArrowUp');
-  await page.keyboard.insertText('before up');
-
-  await expect(
-    editor.locator('p').filter({ hasText: 'before up' }),
-  ).toBeVisible();
-  await expect(editor.locator('pre code')).toContainText('const up = true;');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('before up\n\n```ts\nconst up = true;\n```');
-});
-
-test('exits a code block with repeated Enter at the end', async ({ page }) => {
-  const workspaceName = 'code-block-enter-exit';
-  const noteName = 'enter';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await clearEditor(page, {});
-  await editor.pressSequentially('```js');
-  await page.keyboard.press('Enter');
-  await editor.pressSequentially('const enterExit = true;');
-  await page.keyboard.press('Enter');
-  await page.keyboard.press('Enter');
-  await page.keyboard.press('Enter');
-  await page.keyboard.insertText('after enter');
-
-  await expect(editor.locator('pre code')).toContainText(
-    'const enterExit = true;',
-  );
-  await expect(
-    editor.locator('p').filter({ hasText: 'after enter' }),
-  ).toBeVisible();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('```js\nconst enterExit = true;\n\n\n```\n\nafter enter');
-});
-
-test('inserts paragraphs around a code block with primary Enter shortcuts', async ({
-  page,
-}) => {
-  const workspaceName = 'code-block-primary-enter';
-  const noteName = 'primary-enter';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await clearEditor(page, {});
-  await editor.pressSequentially('```js');
-  await page.keyboard.press('Enter');
-  await editor.pressSequentially('const below = true;');
-  await page.keyboard.down(ctrlKey);
-  await page.keyboard.press('Enter');
-  await page.keyboard.up(ctrlKey);
-  await page.keyboard.insertText('after primary enter');
-
-  await expect(editor.locator('pre code')).toContainText('const below = true;');
-  await expect(
-    editor.locator('p').filter({ hasText: 'after primary enter' }),
-  ).toBeVisible();
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('```js\nconst below = true;\n```\n\nafter primary enter');
-
-  await editor.click();
-  await clearEditor(page, {});
-  await editor.pressSequentially('```ts');
-  await page.keyboard.press('Enter');
-  await editor.pressSequentially('const above = true;');
-  await page.keyboard.down(ctrlKey);
-  await page.keyboard.down('Shift');
-  await page.keyboard.press('Enter');
-  await page.keyboard.up('Shift');
-  await page.keyboard.up(ctrlKey);
-  await page.keyboard.insertText('before primary enter');
-
-  await expect(
-    editor.locator('p').filter({ hasText: 'before primary enter' }),
-  ).toBeVisible();
-  await expect(editor.locator('pre code')).toContainText('const above = true;');
-  await expect
-    .poll(() => readStoredMarkdown(page, workspaceName, noteName))
-    .toBe('before primary enter\n\n```ts\nconst above = true;\n```');
-});
-
-test('keeps app shortcuts working while the cursor is in a code block', async ({
-  page,
-}) => {
-  const workspaceName = 'code-block-app-shortcuts';
-  const noteName = 'app-shortcuts';
-  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
-
-  const editor = getEditorLocator(page, {});
-  await editor.click();
-  await clearEditor(page, {});
-  await editor.pressSequentially('```js');
-  await page.keyboard.press('Enter');
-  await editor.pressSequentially('const shortcutScope = true;');
+  await editor.pressSequentially(code);
+  await expect(editor.locator('pre code')).toContainText(code);
 
   const sidebar = page.locator('[data-side="left"][data-state]').first();
   await expect(sidebar).toHaveAttribute('data-state', 'expanded');
@@ -756,7 +39,441 @@ test('keeps app shortcuts working while the cursor is in a code block', async ({
   await editor.click();
   await pressAppShortcut(page, 'Backslash');
   await expect(sidebar).toHaveAttribute('data-state', 'collapsed');
-  await expect(editor.locator('pre code')).toContainText(
-    'const shortcutScope = true;',
+
+  await collapseEditorSelectionAfterText(page, code);
+  await page.keyboard.press('Enter');
+  await page.keyboard.press('Enter');
+  await page.keyboard.press('Enter');
+  await page.keyboard.insertText(prose);
+
+  await expect(editor.locator('p').filter({ hasText: prose })).toBeVisible();
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(expected);
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, note);
+  await expect(editor.locator('pre code')).toContainText(code);
+  await expect(editor.locator('p').filter({ hasText: prose })).toBeVisible();
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(expected);
+});
+
+test('types a nested list code block, keeps Shift-Enter inside it, and reloads highlighted Markdown', async ({
+  page,
+}) => {
+  const note = await seedBrowserWorkspaceAndNote(page, {
+    noteName: 'Nested lifecycle',
+    workspaceName: 'code-block-nested-lifecycle',
+  });
+  const editor = getEditorLocator(page, {});
+  const firstLine = 'const listed: boolean = true;';
+  const secondLine = 'return listed;';
+  const expected = [
+    '- ```ts',
+    `  ${firstLine}`,
+    `  ${secondLine}`,
+    '  ```',
+  ].join('\n');
+
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await editor.pressSequentially('- ');
+  await editor.pressSequentially('```ts');
+  await page.keyboard.press('Enter');
+  await editor.pressSequentially(firstLine);
+
+  const codeBlock = editor.locator('pre').filter({ hasText: firstLine });
+  const highlightedToken = codeBlock.locator('code .shiki').first();
+  await expect(highlightedToken).toBeVisible({ timeout: 15_000 });
+  await collapseEditorSelectionAfterText(page, firstLine);
+  await page.keyboard.press('Shift+Enter');
+  await page.keyboard.insertText(secondLine);
+
+  await expect(codeBlock.locator('code')).toContainText(
+    `${firstLine}\n${secondLine}`,
   );
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(expected);
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, note);
+  await expect(editor.locator('pre code')).toContainText(
+    `${firstLine}\n${secondLine}`,
+  );
+  await expect(editor.locator('pre code .shiki').first()).toBeVisible({
+    timeout: 15_000,
+  });
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(expected);
+});
+
+test('composes and reloads a highlighted blockquote code block through real input rules', async ({
+  page,
+}) => {
+  const code = 'const quoted: boolean = true;';
+  const expected = ['> ```ts', `> ${code}`, '> ```'].join('\n');
+  const note = await seedBrowserWorkspaceAndNote(page, {
+    noteName: 'Blockquote composition',
+    workspaceName: 'code-block-blockquote-composition',
+  });
+  const editor = getEditorLocator(page, {});
+
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await editor.pressSequentially('> ');
+  await editor.pressSequentially('```ts');
+  await page.keyboard.press('Enter');
+  await editor.pressSequentially(code);
+
+  const quotedCode = editor.locator('blockquote pre code');
+  await expect(quotedCode).toContainText(code);
+  await expect(quotedCode.locator('.shiki').first()).toBeVisible({
+    timeout: 15_000,
+  });
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(expected);
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, note);
+  await expect(editor.locator('blockquote pre code')).toContainText(code);
+  await expect(
+    editor.locator('blockquote pre code .shiki').first(),
+  ).toBeVisible({ timeout: 15_000 });
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(expected);
+});
+
+test('tabs naturally through code actions, copies with Space, and re-highlights after a language change', async ({
+  context,
+  page,
+}) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  const firstCode = 'const copied: number = 42;';
+  const secondCode = 'const second = true;';
+  const initial = [
+    'before',
+    '',
+    '```',
+    firstCode,
+    '```',
+    '',
+    '```js',
+    secondCode,
+    '```',
+    '',
+    'after',
+  ].join('\n');
+  const expected = initial.replace('```\n', '```typescript\n');
+  const note = await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown: initial,
+    noteName: 'Keyboard code actions',
+    workspaceName: 'code-block-keyboard-actions',
+  });
+  const editor = getEditorLocator(page, {});
+  const firstBlock = editor.locator('pre').filter({ hasText: firstCode });
+  const secondBlock = editor.locator('pre').filter({ hasText: secondCode });
+  const firstLanguage = firstBlock.getByRole('button', {
+    name: 'Edit language',
+  });
+  const copyButton = firstBlock.locator('.prosemirror-code-copy-button');
+  const deleteButton = firstBlock.getByRole('button', {
+    exact: true,
+    name: 'Delete code block',
+  });
+  const secondLanguage = secondBlock.getByRole('button', {
+    name: 'Edit language',
+  });
+
+  await expect(firstBlock.locator('code')).toContainText(firstCode);
+  await expect(firstBlock.locator('code .shiki')).toHaveCount(0);
+  await editor.locator('p').filter({ hasText: 'before' }).click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.press('Tab');
+  await expect(firstLanguage).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(copyButton).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(deleteButton).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(secondLanguage).toBeFocused();
+
+  await page.keyboard.press('Shift+Tab');
+  await expect(deleteButton).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(copyButton).toHaveAccessibleName('Copy');
+  await expect(copyButton).toBeFocused();
+  await page.keyboard.press('Space');
+  await expect
+    .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+    .toBe(firstCode);
+  await expect(copyButton).toHaveAccessibleName('Copied');
+  await waitForEditorFocus(page, {});
+
+  await page.keyboard.press('Tab');
+  await expect(firstLanguage).toBeFocused();
+  await page.keyboard.press('Enter');
+  await page.getByRole('textbox', { name: 'Edit language' }).fill('TypeScript');
+  await page.keyboard.press('Enter');
+  await expect(firstLanguage).toHaveText('TYPESCRIPT');
+  await expect(copyButton).toHaveAccessibleName('Copied');
+  await waitForEditorFocus(page, {});
+  const highlightedTokens = firstBlock.locator('code .shiki');
+  await expect(highlightedTokens.first()).toBeVisible({ timeout: 15_000 });
+  const highlightedColors = await highlightedTokens.evaluateAll((tokens) => [
+    ...new Set(tokens.map((token) => getComputedStyle(token).color)),
+  ]);
+  expect(highlightedColors.length).toBeGreaterThanOrEqual(2);
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(expected);
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, note);
+  await expect(firstBlock.locator('code .shiki').first()).toBeVisible({
+    timeout: 15_000,
+  });
+  await expect(firstLanguage).toHaveText('TYPESCRIPT');
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(expected);
+});
+
+test('cancels empty language edits and deletes only the targeted code block', async ({
+  page,
+}) => {
+  const plainCode = 'console.log("plain");';
+  const removedCode = 'const remove = false;';
+  const initial = [
+    'before',
+    '',
+    '```',
+    plainCode,
+    '```',
+    '',
+    '```ts',
+    removedCode,
+    '```',
+    '',
+    'after',
+  ].join('\n');
+  const expected = ['before', '', '```', plainCode, '```', '', 'after'].join(
+    '\n',
+  );
+  const note = await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown: initial,
+    noteName: 'Language and delete actions',
+    workspaceName: 'code-block-language-delete-actions',
+  });
+  const editor = getEditorLocator(page, {});
+  const plainBlock = editor.locator('pre').filter({ hasText: plainCode });
+  const removedBlock = editor.locator('pre').filter({ hasText: removedCode });
+  const plainLanguageButton = plainBlock.getByRole('button', {
+    name: 'Edit language',
+  });
+
+  await expect(plainLanguageButton).toHaveText('TEXT');
+  await plainLanguageButton.click();
+  const plainLanguageInput = page.getByRole('textbox', {
+    name: 'Edit language',
+  });
+  await expect(plainLanguageInput).toHaveValue('');
+  await page.keyboard.press('Escape');
+  await expect(plainLanguageButton).toHaveText('TEXT');
+
+  await plainLanguageButton.click();
+  await expect(plainLanguageInput).toHaveValue('');
+  await editor.locator('p').filter({ hasText: 'before' }).click();
+  await expect(plainLanguageButton).toHaveText('TEXT');
+  await waitForEditorFocus(page, {});
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(initial);
+
+  const deleteButton = removedBlock.getByRole('button', {
+    exact: true,
+    name: 'Delete code block',
+  });
+  await deleteButton.click();
+  await expect(removedBlock).toHaveCount(0);
+  await waitForEditorFocus(page, {});
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(expected);
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, note);
+  await expect(editor.locator('pre')).toHaveCount(1);
+  await expect(plainBlock.locator('code')).toContainText(plainCode);
+  await expect(
+    plainBlock.getByRole('button', { name: 'Edit language' }),
+  ).toHaveText('TEXT');
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(expected);
+});
+
+test('uses native code-block indentation, boundary navigation, and movement keys with exact persistence', async ({
+  page,
+}) => {
+  const source = [
+    'before',
+    '',
+    '```js',
+    'alpha',
+    '  beta',
+    '```',
+    '',
+    'after',
+  ].join('\n');
+  const note = await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown: source,
+    noteName: 'Native keyboard',
+    workspaceName: 'code-block-native-keyboard',
+  });
+  const editor = getEditorLocator(page, {});
+
+  await collapseEditorSelectionAfterText(page, 'alpha');
+  await page.keyboard.press('Tab');
+  const indented = source.replace('alpha\n', 'alpha  \n');
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(indented);
+  await expect(editor).toBeFocused();
+
+  await collapseEditorSelectionAfterText(page, '  beta');
+  await page.keyboard.press('Shift+Tab');
+  const outdented = indented.replace('  beta', 'beta');
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(outdented);
+  await expect(editor).toBeFocused();
+
+  await collapseEditorSelectionAfterText(page, 'beta');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.insertText('down ');
+  const movedDown = outdented.replace('\nafter', '\ndown after');
+  await expect(
+    editor.locator('p').filter({ hasText: 'down after' }),
+  ).toBeVisible();
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(movedDown);
+  await expect(editor).toBeFocused();
+
+  await collapseEditorSelectionAfterText(page, 'alpha');
+  await page.keyboard.press('Home');
+  await page.keyboard.press('ArrowUp');
+  await page.keyboard.insertText(' up');
+  const movedUp = movedDown.replace('before', 'before up');
+  await expect(
+    editor.locator('p').filter({ hasText: 'before up' }),
+  ).toBeVisible();
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(movedUp);
+  await expect(editor).toBeFocused();
+
+  await collapseEditorSelectionAfterText(page, 'beta');
+  await page.keyboard.press('Alt+ArrowUp');
+  const blockSource = ['```js', 'alpha  ', 'beta', '```'].join('\n');
+  const movedBefore = [blockSource, '', 'before up', '', 'down after'].join(
+    '\n',
+  );
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(movedBefore);
+  await expect(editor).toBeFocused();
+
+  await page.keyboard.press('Alt+ArrowDown');
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(movedUp);
+  await expect(editor).toBeFocused();
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, note);
+  await expect(editor.locator('pre code')).toContainText('alpha  \nbeta');
+  await expect(
+    editor.locator('p').filter({ hasText: 'before up' }),
+  ).toBeVisible();
+  await expect(
+    editor.locator('p').filter({ hasText: 'down after' }),
+  ).toBeVisible();
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(movedUp);
+});
+
+test('renders multiple readable Shiki token colors from computed CSS', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('color-scheme', 'light');
+  });
+  const highlightedMarkdown = [
+    '```ts',
+    'const total: number = 42;',
+    'function greet(name: string) { return "Hello " + name; }',
+    '```',
+  ].join('\n');
+  const note = await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown: highlightedMarkdown,
+    noteName: 'Syntax contrast',
+    workspaceName: 'code-block-syntax-contrast',
+  });
+  const editor = getEditorLocator(page, {});
+  const tokens = editor.locator('pre code .shiki');
+
+  await expect(tokens.first()).toBeVisible({ timeout: 15_000 });
+  const distinctColorIndexes = await tokens.evaluateAll((elements) => {
+    const seen = new Set<string>();
+    return elements.flatMap((element, index) => {
+      const color = getComputedStyle(element).color;
+      if (seen.has(color)) {
+        return [];
+      }
+      seen.add(color);
+      return [index];
+    });
+  });
+  expect(distinctColorIndexes.length).toBeGreaterThanOrEqual(3);
+  for (const index of distinctColorIndexes.slice(0, 3)) {
+    await expectReadableContrast(tokens.nth(index));
+  }
+  await expect
+    .poll(() => readSeededBrowserNote(page, note))
+    .toBe(highlightedMarkdown);
+});
+
+test('ignores a modified trailing click, then creates and persists prose for an ordinary click', async ({
+  page,
+}) => {
+  const code = 'const finalBlock = true;';
+  const initialMarkdown = `\`\`\`js\n${code}\n\`\`\``;
+  const prose = 'after code';
+  const expected = `${initialMarkdown}\n\n${prose}`;
+  const note = await seedBrowserWorkspaceAndNote(page, {
+    initialMarkdown,
+    noteName: 'Trailing layout',
+    workspaceName: 'code-block-trailing-layout',
+  });
+  const editor = getEditorLocator(page, {});
+  const codeBlock = editor.locator('pre').filter({ hasText: code });
+
+  await expect(codeBlock).toBeVisible();
+  const [editorBox, codeBlockBox] = await Promise.all([
+    editor.boundingBox(),
+    codeBlock.boundingBox(),
+  ]);
+  if (!editorBox || !codeBlockBox) {
+    throw new Error('Expected editor and final code block bounds');
+  }
+  const gapTop = codeBlockBox.y + codeBlockBox.height;
+  const gapBottom = editorBox.y + editorBox.height;
+  expect(gapBottom - gapTop).toBeGreaterThan(16);
+  const clickX = editorBox.x + editorBox.width / 2;
+  const clickY = gapTop + (gapBottom - gapTop) / 2;
+
+  await page.evaluate(() => {
+    const externalControl = document.createElement('button');
+    externalControl.textContent = 'External focus control';
+    document.body.append(externalControl);
+  });
+  const externalControl = page.getByRole('button', {
+    name: 'External focus control',
+  });
+
+  await externalControl.focus();
+  await expect(externalControl).toBeFocused();
+  await expect(editor).not.toBeFocused();
+  await page.keyboard.down('Shift');
+  await page.mouse.click(clickX, clickY);
+  await page.keyboard.up('Shift');
+  await expect(editor.locator('p')).toHaveCount(0);
+  await expect
+    .poll(() => readSeededBrowserNote(page, note))
+    .toBe(initialMarkdown);
+
+  await externalControl.focus();
+  await expect(editor).not.toBeFocused();
+  await page.mouse.click(clickX, clickY);
+  await waitForEditorFocus(page, {});
+  await page.keyboard.insertText(prose);
+  await expect(editor.locator('p').filter({ hasText: prose })).toBeVisible();
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(expected);
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await waitForSeededBrowserNote(page, note);
+  await expect(editor.locator('p').filter({ hasText: prose })).toBeVisible();
+  await expect.poll(() => readSeededBrowserNote(page, note)).toBe(expected);
 });
