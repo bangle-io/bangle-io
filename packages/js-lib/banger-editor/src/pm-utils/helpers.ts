@@ -143,48 +143,58 @@ export function isMarkActiveInSelection(
 }
 
 export function markInputRule(regexp: RegExp, markType: MarkType): InputRule {
-  return new InputRule(regexp, (state, match, start, end) => {
-    const { tr } = state;
-    const m = match.length - 1;
-    let markEnd = end;
-    let markStart = start;
+  return new InputRule(
+    regexp,
+    (state, match, start, end) => {
+      const { tr } = state;
+      const m = match.length - 1;
+      let markEnd = end;
+      let markStart = start;
 
-    const matchMths = match[m];
-    const firstMatch = match[0];
-    const mathOneBeforeM = match[m - 1];
+      const matchMths = match[m];
+      const firstMatch = match[0];
+      const mathOneBeforeM = match[m - 1];
 
-    if (matchMths != null && firstMatch != null && mathOneBeforeM != null) {
-      const matchStart = start + firstMatch.indexOf(mathOneBeforeM);
-      const matchEnd = matchStart + mathOneBeforeM.length - 1;
-      const textStart = matchStart + mathOneBeforeM.lastIndexOf(matchMths);
-      const textEnd = textStart + matchMths.length;
+      if (matchMths != null && firstMatch != null && mathOneBeforeM != null) {
+        const matchStart = start + firstMatch.indexOf(mathOneBeforeM);
+        const matchEnd = matchStart + mathOneBeforeM.length - 1;
+        const textStart = matchStart + mathOneBeforeM.lastIndexOf(matchMths);
+        const textEnd = textStart + matchMths.length;
 
-      const excludedMarks = getMarksBetween(start, end, state)
-        .filter((item) => {
-          return item.mark.type.excludes(markType);
-        })
-        .filter((item) => item.end > matchStart);
+        const excludedMarks = getMarksBetween(start, end, state)
+          .filter((item) => {
+            return item.mark.type.excludes(markType);
+          })
+          .filter((item) => item.end > matchStart);
 
-      if (excludedMarks.length) {
-        return null;
+        if (excludedMarks.length) {
+          return null;
+        }
+
+        if (textEnd < matchEnd) {
+          tr.delete(textEnd, matchEnd);
+        }
+        if (textStart > matchStart) {
+          tr.delete(matchStart, textStart);
+        }
+        markStart = matchStart;
+        markEnd = markStart + matchMths.length;
       }
 
-      if (textEnd < matchEnd) {
-        tr.delete(textEnd, matchEnd);
-      }
-      if (textStart > matchStart) {
-        tr.delete(matchStart, textStart);
-      }
-      markStart = matchStart;
-      markEnd = markStart + matchMths.length;
-    }
-
-    tr.addMark(markStart, markEnd, markType.create());
-    tr.removeStoredMark(markType);
-    return tr;
-  });
+      tr.addMark(markStart, markEnd, markType.create());
+      tr.removeStoredMark(markType);
+      return tr;
+    },
+    { inCodeMark: false },
+  );
 }
 
+/**
+ * Converts Markdown delimiters in pasted text into a mark.
+ *
+ * Capture group 1 is the complete delimiter span and group 2 is the text to
+ * keep. Any boundary whitespace must remain outside group 1.
+ */
 export function markPastePlugin(
   regexp: RegExp,
   type: MarkType,
@@ -199,39 +209,55 @@ export function markPastePlugin(
         let pos = 0;
         let match: RegExpMatchArray | null = null;
 
-        // TODO hardcoded LINK , we should make it dynamic
-        const isLink = !!marks.filter((x) => x.type.name === 'link')[0];
+        const preservesLiteralMarkdown = marks.some(
+          (mark) =>
+            mark.type === type ||
+            mark.type.name === 'link' ||
+            mark.type.spec.code === true,
+        );
 
         while (
-          !isLink &&
+          !preservesLiteralMarkdown &&
           // biome-ignore lint/style/noNonNullAssertion: <explanation>
           // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
           (match = regexp.exec(text!)) !== null
         ) {
-          if (parent?.type.allowsMarkType(type) && match[1]) {
+          const markdownSpan = match[1];
+          const matchedText = match[2];
+          if (
+            parent?.type.allowsMarkType(type) &&
+            matchedText &&
+            markdownSpan
+          ) {
             const start = match.index;
             if (start === undefined) {
               continue;
             }
-            // biome-ignore lint/style/noNonNullAssertion: <explanation>
-            const end = start + match[0]!.length;
-            // biome-ignore lint/style/noNonNullAssertion: <explanation>
-            const textStart = start + match[0]!.indexOf(match[1]);
-            const textEnd = textStart + match[1].length;
+            const fullMatch = match[0];
+            if (!fullMatch) {
+              continue;
+            }
+            const end = start + fullMatch.length;
+            const markdownStart = start + fullMatch.indexOf(markdownSpan);
+            const markdownEnd = markdownStart + markdownSpan.length;
+            const textStart = markdownStart + markdownSpan.indexOf(matchedText);
+            const textEnd = textStart + matchedText.length;
             const attrs =
               getAttrs instanceof Function ? getAttrs(match) : getAttrs;
 
-            // adding text before markdown to nodes
-            if (start > 0) {
-              nodes.push(child.cut(pos, start));
+            if (markdownStart > pos) {
+              nodes.push(child.cut(pos, markdownStart));
             }
 
-            // adding the markdown part to nodes
             nodes.push(
               child
                 .cut(textStart, textEnd)
                 .mark(type.create(attrs).addToSet(child.marks)),
             );
+
+            if (markdownEnd < end) {
+              nodes.push(child.cut(markdownEnd, end));
+            }
 
             pos = end;
           }

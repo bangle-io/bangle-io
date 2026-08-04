@@ -1,3 +1,8 @@
+import {
+  calloutTokenizer,
+  readCalloutTokenMetadata,
+  serializeCalloutMarker,
+} from '@bangle.io/markdown-syntax';
 import { nodes as schemaBasicNodes } from 'prosemirror-schema-basic';
 import { type CollectionType, collection, keybinding } from './common';
 import type { Command, NodeSpec, NodeType, Schema } from './pm';
@@ -25,6 +30,11 @@ export type BlockquoteConfig = {
   keyInsertEmptyParaBelow?: KeyCode;
 };
 
+type BlockquoteAttrs = {
+  calloutMarkerOnOwnLine: boolean;
+  calloutType: string | null;
+};
+
 type RequiredConfig = Required<BlockquoteConfig>;
 
 const DEFAULT_CONFIG: RequiredConfig = {
@@ -46,7 +56,42 @@ export function setupBlockquote(userConfig?: BlockquoteConfig) {
   const { name } = config;
 
   const nodes = {
-    [name]: schemaBasicNodes.blockquote,
+    [name]: {
+      ...schemaBasicNodes.blockquote,
+      attrs: {
+        calloutMarkerOnOwnLine: { default: true },
+        calloutType: { default: null },
+      },
+      parseDOM: [
+        {
+          tag: 'blockquote',
+          getAttrs: (dom) => ({
+            calloutMarkerOnOwnLine:
+              dom instanceof Element
+                ? dom.getAttribute('data-callout-marker') !== 'inline'
+                : true,
+            calloutType:
+              dom instanceof Element ? dom.getAttribute('data-callout') : null,
+          }),
+        },
+      ],
+      toDOM: (node) => {
+        const { calloutMarkerOnOwnLine, calloutType } =
+          node.attrs as BlockquoteAttrs;
+        return calloutType
+          ? [
+              'blockquote',
+              {
+                'data-callout': calloutType,
+                'data-callout-marker': calloutMarkerOnOwnLine
+                  ? 'line'
+                  : 'inline',
+              },
+              0,
+            ]
+          : ['blockquote', 0];
+      },
+    } satisfies NodeSpec,
   } satisfies Record<string, NodeSpec>;
 
   const plugin = {
@@ -195,14 +240,42 @@ export function isBlockquoteActive(config: RequiredConfig): Command {
 function markdown(config: RequiredConfig): CollectionType['markdown'] {
   const { name } = config;
   return {
+    tokenizerPlugins: [calloutTokenizer],
     nodes: {
       [name]: {
         toMarkdown: (state, node) => {
+          const { calloutMarkerOnOwnLine, calloutType } =
+            node.attrs as BlockquoteAttrs;
+          const marker = calloutType
+            ? serializeCalloutMarker(calloutType)
+            : null;
+          if (marker) {
+            state.wrapBlock('> ', null, node, () => {
+              state.write(marker);
+              const firstChild = node.firstChild;
+              const onlyEmptyParagraph =
+                node.childCount === 1 &&
+                firstChild?.type ===
+                  config.getParagraphNodeType(node.type.schema) &&
+                firstChild.childCount === 0;
+              if (!onlyEmptyParagraph) {
+                state.write(calloutMarkerOnOwnLine ? '\n' : ' ');
+                state.renderContent(node);
+              }
+            });
+            return;
+          }
           state.wrapBlock('> ', null, node, () => state.renderContent(node));
         },
         parseMarkdown: {
           blockquote: {
             block: name,
+            getAttrs: (token) => ({
+              calloutMarkerOnOwnLine:
+                readCalloutTokenMetadata(token.meta)?.markerOnOwnLine ?? true,
+              calloutType:
+                readCalloutTokenMetadata(token.meta)?.calloutType ?? null,
+            }),
           },
         },
       },

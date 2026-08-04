@@ -1,0 +1,108 @@
+import { EditorState } from '@bangle.io/prosemirror-plugins';
+import { describe, expect, it } from 'vitest';
+import { createProductionMarkdown } from './production-markdown-test-helpers';
+
+const markdown = createProductionMarkdown();
+
+describe('high-ROI Markdown parity constructs', () => {
+  it.each([
+    ['marker-only callout', '> [!note]\n'],
+    ['callout with a body', '> [!warning]\n> Careful **here**.\n'],
+    ['callout with an adjacent list', '> [!note]\n> - First\n> - Second\n'],
+    ['callout with an adjacent heading', '> [!note]\n> # Heading\n'],
+    [
+      'callout with adjacent fenced code',
+      '> [!note]\n> ```js\n> const value = 1;\n> ```\n',
+    ],
+    ['callout with an empty fenced block', '> [!note]\n> ```\n> ```\n'],
+    ['callout with an adjacent horizontal rule', '> [!note]\n> ***\n'],
+    [
+      'callout with an image-only paragraph',
+      '> [!note]\n> ![Diagram](asset.png)\n',
+    ],
+    [
+      'callout with an adjacent nested callout',
+      '> [!note]\n> > [!tip]\n> > Nested\n',
+    ],
+    ['callout with intentional blank separation', '> [!note]\n>\n> Body\n'],
+    [
+      'callout with a title and multiple paragraphs',
+      '> [!tip] Optional title\n>\n> First paragraph.\n>\n> Second paragraph.\n',
+    ],
+    ['nested callout', '> [!note]\n> Outer\n>\n> > [!tip]\n> > Nested\n'],
+  ])('round trips %s byte-for-byte', (_label, source) => {
+    const doc = markdown.parser.parse(source);
+    expect(markdown.serializer.serialize(doc)).toBe(source.trimEnd());
+    expect(doc.firstChild?.attrs.calloutType).toBeTruthy();
+  });
+
+  it('keeps ordinary blockquotes unchanged', () => {
+    const source = '> Ordinary **quote**.\n';
+    const doc = markdown.parser.parse(source);
+    expect(doc.firstChild?.attrs.calloutType).toBeNull();
+    expect(markdown.serializer.serialize(doc)).toBe(source.trimEnd());
+  });
+
+  it.each([
+    'before ==highlighted== after',
+    '==**bold** and [linked](https://example.com)==',
+  ])('round trips highlight marks: %s', (source) => {
+    const doc = markdown.parser.parse(source);
+    const highlight = markdown.schema.marks.highlight;
+    expect(highlight).toBeDefined();
+    if (!highlight) {
+      throw new Error('highlight mark is missing from the production schema');
+    }
+    expect(doc.rangeHasMark(0, doc.content.size, highlight)).toBe(true);
+    expect(markdown.serializer.serialize(doc)).toBe(source);
+  });
+
+  it('preserves an editor-created nested highlight inside a word', () => {
+    const doc = markdown.parser.parse('word');
+    const state = EditorState.create({ doc, schema: markdown.schema });
+    const highlight = markdown.schema.marks.highlight;
+    const bold = markdown.schema.marks.bold;
+    if (!highlight || !bold) {
+      throw new Error('highlight and bold marks are required');
+    }
+    const edited = state.tr
+      .addMark(1, 3, bold.create())
+      .addMark(1, 3, highlight.create()).doc;
+
+    const serialized = markdown.serializer.serialize(edited);
+    const reparsed = markdown.parser.parse(serialized);
+    expect(reparsed.eq(edited)).toBe(true);
+  });
+
+  it.each([
+    ['highlight into bold', 'highlight', 'bold', '==one **two**== **three**'],
+    ['bold into highlight', 'bold', 'highlight', '**one ==two==** ==three=='],
+    ['bold into italic', 'bold', 'italic', '**one _two_** _three_'],
+    ['italic into bold', 'italic', 'bold', '_one **two**_ **three**'],
+  ])('preserves visible formatting when %s crosses whitespace', (_label, firstName, secondName, expected) => {
+    const state = EditorState.create({
+      doc: markdown.parser.parse('one two three'),
+      schema: markdown.schema,
+    });
+    const first = markdown.schema.marks[firstName];
+    const second = markdown.schema.marks[secondName];
+    if (!first || !second) {
+      throw new Error(`Missing test marks: ${firstName}, ${secondName}`);
+    }
+    const edited = state.tr
+      .addMark(1, 8, first.create())
+      .addMark(5, 14, second.create()).doc;
+
+    const serialized = markdown.serializer.serialize(edited);
+    expect(serialized).toBe(expected);
+    const reparsed = markdown.parser.parse(serialized);
+    let trailingTextKeepsMark = false;
+    reparsed.descendants((node) => {
+      if (node.text === 'three') {
+        trailingTextKeepsMark = node.marks.some((mark) => mark.type === second);
+      }
+    });
+    expect(trailingTextKeepsMark).toBe(true);
+    expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
+  });
+});

@@ -1,4 +1,11 @@
+export {
+  type CalloutTokenMetadata,
+  calloutTokenizer,
+  readCalloutTokenMetadata,
+  serializeCalloutMarker,
+} from './callout-syntax';
 export { frontmatterTokenizer } from './frontmatter-syntax';
+export { highlightTokenizer } from './highlight-syntax';
 export {
   escapeMarkdownLineStart,
   LIST_KIND_ATTR,

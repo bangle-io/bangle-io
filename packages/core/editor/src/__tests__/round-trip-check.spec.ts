@@ -49,13 +49,20 @@ describe('round-trip gate against the real serializer', () => {
     expect(roundTrip(source)).toBe(true);
   });
 
-  // The constructs plan 012 documents as mangling on save. The gate must
-  // flag every one of them so the reformat is visible instead of silent.
+  // Constructs documented by plan 012 or its follow-up fidelity audit as
+  // mangling on save. The gate must flag every one of them so the reformat is
+  // visible instead of silent.
   it.each([
     ['footnote reference', 'A claim.[^1]\n\n[^1]: The source.\n'],
+    [
+      'orphan footnote definition that disappears',
+      'Before.\n\n[^orphan]: definition\n\nAfter.\n',
+    ],
     ['reference link', '[foo][ref]\n\n[ref]: https://example.com\n'],
     ['single-tilde strikethrough', 'this is ~gone~ now\n'],
     ['html entity', 'Tom &amp; Jerry\n'],
+    ['multiline raw HTML that collapses', '<div>\nraw **body**\n</div>\n'],
+    ['unsupported folding callout marker', '> [!note]+ Folded\n> Body\n'],
     ['definition list', 'term\n: definition\n'],
   ])('flags %s as not preserved', (_label, source) => {
     expect(roundTrip(source)).toBe(false);

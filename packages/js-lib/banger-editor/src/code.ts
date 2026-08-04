@@ -59,6 +59,7 @@ export function setupCode(userConfig?: CodeConfig) {
     // marks whose content is not escaped.
     [name]: setPriority(
       {
+        code: true,
         parseDOM: [{ tag: name }],
         toDOM: () => [name, 0],
       } satisfies MarkSpec,
@@ -107,9 +108,7 @@ function pluginPasteRules(config: RequiredConfig) {
     const { name, markdownShortcut } = config;
     const type = getMarkType(schema, name);
 
-    return markdownShortcut
-      ? markPastePlugin(/(?:`)([^`]+)(?:`)/g, type)
-      : null;
+    return markdownShortcut ? markPastePlugin(/(`([^`]+)`)/g, type) : null;
   };
 }
 

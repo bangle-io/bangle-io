@@ -200,6 +200,16 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     engines: BOTH_ENGINES,
   },
   {
+    name: 'highlight',
+    markdown: '==highlight text==',
+    engines: PROSEMIRROR_ONLY,
+  },
+  {
+    name: 'highlight containing bold and link marks',
+    markdown: '==**bold** and [linked](https://example.com)==',
+    engines: PROSEMIRROR_ONLY,
+  },
+  {
     name: 'inline code',
     markdown: '`inline code`',
     engines: BOTH_ENGINES,
@@ -605,6 +615,21 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     name: 'simple blockquote',
     markdown: '> a simple quote',
     engines: BOTH_ENGINES,
+  },
+  {
+    name: 'callout with a body',
+    markdown: '> [!note]\n> Body',
+    engines: PROSEMIRROR_ONLY,
+  },
+  {
+    name: 'callout with an adjacent list',
+    markdown: '> [!note]\n> - First\n> - Second',
+    engines: PROSEMIRROR_ONLY,
+  },
+  {
+    name: 'callout with an inline title',
+    markdown: '> [!warning] Careful **here**',
+    engines: PROSEMIRROR_ONLY,
   },
   {
     name: 'multi-paragraph blockquote',
@@ -1270,6 +1295,21 @@ export const MARKDOWN_CORPUS: readonly MarkdownCorpusFixture[] = [
     name: 'escaped wiki syntax is not reinterpreted as a link',
     markdown: String.raw`\[\[target\]\] and \\[[actual]]`,
     engines: BOTH_ENGINES,
+  },
+
+  // --- Math (prosemirror only until Wordgard gains semantic math nodes) ---
+  // Wordgard happens to preserve some inline dollar-delimited source as plain
+  // text, but that is not feature parity: only the ProseMirror engine parses
+  // these fixtures as editable math nodes today.
+  {
+    name: 'inline math beside prose',
+    markdown: 'Before $x^2 + y^2$ after',
+    engines: PROSEMIRROR_ONLY,
+  },
+  {
+    name: 'display math block',
+    markdown: '$$\nx^2 + y^2\n$$',
+    engines: PROSEMIRROR_ONLY,
   },
 
   // --- GFM tables (prosemirror only until M3) -----------------------------

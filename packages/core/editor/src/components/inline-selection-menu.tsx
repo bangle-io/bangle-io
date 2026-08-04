@@ -19,6 +19,7 @@ import {
   Heading1,
   Heading2,
   Heading3,
+  Highlighter,
   Italic,
   Link as LinkIcon,
   List,
@@ -48,7 +49,6 @@ import { useOutsidePointer } from './use-outside-pointer';
 
 type Extensions = PmEditorService['extensions'];
 type EditorView = NonNullable<ReturnType<PmEditorService['getEditor']>>;
-type EditorState = EditorView['state'];
 type LinkSession = {
   editingLink: boolean;
   initialHref: string;
@@ -229,6 +229,16 @@ function InlineSelectionMenuContent({
             }
           >
             <Strikethrough />
+          </FormatToggle>
+          <FormatToggle
+            active={ext.highlight.query.isHighlightActive(editorView.state)}
+            disabled={!ext.highlight.command.toggleHighlight(editorView.state)}
+            label={t.app.editor.selectionMenu.highlight}
+            onToggle={() =>
+              runCommand(editorView, ext.highlight.command.toggleHighlight)
+            }
+          >
+            <Highlighter />
           </FormatToggle>
           <FormatToggle
             active={ext.code.query.isCodeActive(editorView.state)}
