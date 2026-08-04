@@ -2,6 +2,7 @@ import { markdownLoader as upstreamMarkdownLoader } from '@bangle.dev/pm-markdow
 import type { CollectionType } from '@bangle.io/banger-editor';
 import { createBaseMarkdownTokenizer } from '@bangle.io/markdown-syntax';
 import type { Schema } from 'prosemirror-model';
+import { withBoundarySafeMarks } from './markdown-serializer';
 
 /**
  * Assembles the ProseMirror-stack tokenizer: the engine-neutral base
@@ -24,5 +25,9 @@ function createMarkdownTokenizer(items: readonly CollectionType[]) {
 
 export function markdownLoader(items: CollectionType[], schema: Schema) {
   const tokenizer = createMarkdownTokenizer(items);
-  return upstreamMarkdownLoader(items, schema, tokenizer);
+  const markdown = upstreamMarkdownLoader(items, schema, tokenizer);
+  return {
+    ...markdown,
+    serializer: withBoundarySafeMarks(markdown.serializer),
+  };
 }

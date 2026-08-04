@@ -192,10 +192,8 @@ export function markInputRule(regexp: RegExp, markType: MarkType): InputRule {
 /**
  * Converts Markdown delimiters in pasted text into a mark.
  *
- * The final capture group is the text to keep. A regex with multiple capture
- * groups must put the complete delimiter span in group 1, leaving any boundary
- * whitespace outside it, so the transformation can remove syntax without
- * removing surrounding prose.
+ * Capture group 1 is the complete delimiter span and group 2 is the text to
+ * keep. Any boundary whitespace must remain outside group 1.
  */
 export function markPastePlugin(
   regexp: RegExp,
@@ -224,8 +222,8 @@ export function markPastePlugin(
           // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
           (match = regexp.exec(text!)) !== null
         ) {
-          const matchedText = match[match.length - 1];
-          const markdownSpan = match.length > 2 ? match[1] : match[0];
+          const markdownSpan = match[1];
+          const matchedText = match[2];
           if (
             parent?.type.allowsMarkType(type) &&
             matchedText &&

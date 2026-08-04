@@ -99,7 +99,7 @@ function pluginPasteRules1(config: RequiredConfig) {
       return null;
     }
     const type = getMarkType(schema, config.name);
-    return markPastePlugin(/_([^_]+)_/g, type);
+    return markPastePlugin(/(_([^_]+)_)/g, type);
   };
 }
 
@@ -109,7 +109,7 @@ function pluginPasteRules2(config: RequiredConfig) {
       return null;
     }
     const type = getMarkType(schema, config.name);
-    return markPastePlugin(/\*([^*]+)\*/g, type);
+    return markPastePlugin(/(\*([^*]+)\*)/g, type);
   };
 }
 

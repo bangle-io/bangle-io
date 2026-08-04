@@ -5,7 +5,7 @@ type: plan
 archived: true
 archived_on: 2026-08-03
 created: 2026-07-07
-updated: 2026-08-03
+updated: 2026-08-04
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/615
@@ -98,10 +98,10 @@ The closeout audit corrected assumptions in the original probe:
   grammar accepts conservative ASCII callout types; unsupported or malformed
   variants remain ordinary Markdown and trigger the fidelity warning when the
   normal serializer would rewrite them.
-- **Partially crossing inline marks:** Markdown delimiters are nested, while
-  rich-text selections can overlap. Correctly normalizing those transitions is
-  a serializer-wide concern shared by bold, italic, strike, and highlight, so
-  it remains deferred without product evidence for that broader redesign.
+- **Partially crossing inline marks:** visible formatting across common
+  two-mark whitespace crossings is preserved by a generic serializer boundary
+  normalization. Arbitrary three-or-more mark crossings remain deferred
+  without product evidence for a broader transition-state redesign.
 
 ## Cross-engine boundary
 
@@ -113,7 +113,7 @@ those fixtures in Wordgard without reverse-engineering an implicit contract.
 ## Verification
 
 - `pnpm lint:ci` passed.
-- `pnpm test:ci` passed: 174 files, 3,735 tests passed, 1 skipped.
+- `pnpm test:ci` passed: 174 files, 3,741 tests passed, 1 skipped.
 - `pnpm build` passed with the existing Sentry-token and chunk-size warnings.
 - Focused Playwright coverage for callout import, highlight authoring,
   persistence, and reload passed.

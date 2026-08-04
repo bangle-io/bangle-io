@@ -108,9 +108,7 @@ function pluginPasteRules(config: RequiredConfig) {
     const { name, markdownShortcut } = config;
     const type = getMarkType(schema, name);
 
-    return markdownShortcut
-      ? markPastePlugin(/(?:`)([^`]+)(?:`)/g, type)
-      : null;
+    return markdownShortcut ? markPastePlugin(/(`([^`]+)`)/g, type) : null;
   };
 }
 

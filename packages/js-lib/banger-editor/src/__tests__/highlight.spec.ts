@@ -150,8 +150,10 @@ describe('highlight authoring', () => {
 describe('shared Markdown mark paste behavior', () => {
   it.each([
     ['bold', 'before **bold** after', boldMark('bold')],
+    ['alternate bold', 'before __bold__ after', boldMark('bold')],
     ['strike', 'before ~~strike~~ after', strikeMark('strike')],
     ['italic', 'before _italic_ after', italicMark('italic')],
+    ['alternate italic', 'before *italic* after', italicMark('italic')],
     ['code', 'before `code` after', codeMark('code')],
   ])('preserves prose around pasted %s syntax', (_label, source, marked) => {
     const editor = editorTest.createEditor(doc(p('<cursor>')));

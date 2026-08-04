@@ -236,7 +236,7 @@ div.ProseMirror {
   & mark {
     padding: 0 0.08em;
     border-radius: 0.15em;
-    background-color: hsl(var(--BV-warning) / 0.3);
+    background-color: hsl(48 96% 53% / 0.35);
     color: inherit;
   }
 

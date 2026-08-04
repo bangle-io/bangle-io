@@ -73,4 +73,36 @@ describe('high-ROI Markdown parity constructs', () => {
     const reparsed = markdown.parser.parse(serialized);
     expect(reparsed.eq(edited)).toBe(true);
   });
+
+  it.each([
+    ['highlight into bold', 'highlight', 'bold', '==one **two**== **three**'],
+    ['bold into highlight', 'bold', 'highlight', '**one ==two==** ==three=='],
+    ['bold into italic', 'bold', 'italic', '**one _two_** _three_'],
+    ['italic into bold', 'italic', 'bold', '_one **two**_ **three**'],
+  ])('preserves visible formatting when %s crosses whitespace', (_label, firstName, secondName, expected) => {
+    const state = EditorState.create({
+      doc: markdown.parser.parse('one two three'),
+      schema: markdown.schema,
+    });
+    const first = markdown.schema.marks[firstName];
+    const second = markdown.schema.marks[secondName];
+    if (!first || !second) {
+      throw new Error(`Missing test marks: ${firstName}, ${secondName}`);
+    }
+    const edited = state.tr
+      .addMark(1, 8, first.create())
+      .addMark(5, 14, second.create()).doc;
+
+    const serialized = markdown.serializer.serialize(edited);
+    expect(serialized).toBe(expected);
+    const reparsed = markdown.parser.parse(serialized);
+    let trailingTextKeepsMark = false;
+    reparsed.descendants((node) => {
+      if (node.text === 'three') {
+        trailingTextKeepsMark = node.marks.some((mark) => mark.type === second);
+      }
+    });
+    expect(trailingTextKeepsMark).toBe(true);
+    expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
+  });
 });
