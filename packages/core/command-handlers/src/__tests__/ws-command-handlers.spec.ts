@@ -230,6 +230,146 @@ describe('WS command handlers', () => {
       });
     });
 
+    test('routes Markdown renames through note relocation', async () => {
+      const SOURCE_WS_PATH = 'test-ws:source.md';
+      const DESTINATION_WS_PATH = 'test-ws:destination.md';
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ws:rename-ws-path',
+        workspaces: [{ name: 'test-ws', notes: [SOURCE_WS_PATH] }],
+      });
+      const relocationSpy = vi.spyOn(services.noteRelocation, 'relocate');
+
+      dispatch('command::ws:rename-ws-path', {
+        wsPath: SOURCE_WS_PATH,
+        newWsPath: DESTINATION_WS_PATH,
+      });
+
+      await vi.waitFor(() => {
+        expect(relocationSpy).toHaveBeenCalledWith({
+          destination: expect.objectContaining({ wsPath: DESTINATION_WS_PATH }),
+          source: expect.objectContaining({ wsPath: SOURCE_WS_PATH }),
+        });
+      });
+    });
+
+    test('warns when a Markdown reference could not be updated safely', async () => {
+      const SOURCE_WS_PATH = 'test-ws:source.md';
+      const DESTINATION_WS_PATH = 'test-ws:destination.md';
+      const { dispatch, services, getCommandResults } = await setupTest({
+        targetId: 'command::ws:rename-ws-path',
+        workspaces: [{ name: 'test-ws', notes: [SOURCE_WS_PATH] }],
+      });
+      await services.fileSystem.writeFile(
+        SOURCE_WS_PATH,
+        new File(['[[./missing]]'], 'source.md', { type: 'text/plain' }),
+      );
+      const warningSpy = vi.spyOn(toast, 'warning');
+
+      dispatch('command::ws:rename-ws-path', {
+        wsPath: SOURCE_WS_PATH,
+        newWsPath: DESTINATION_WS_PATH,
+      });
+
+      await vi.waitFor(() => {
+        expect(
+          getCommandResults().filter((result) => result.type === 'success'),
+        ).toHaveLength(1);
+        expect(warningSpy).toHaveBeenCalledWith(
+          t.app.toasts.fileRenameReferenceUpdateIncomplete({
+            fileName: 'destination.md',
+            warningCount: 1,
+          }),
+        );
+      });
+    });
+
+    test('reports the number and reason when a planned rewrite becomes stale', async () => {
+      const SOURCE_WS_PATH = 'test-ws:source.md';
+      const DESTINATION_WS_PATH = 'test-ws:destination.md';
+      const TARGET_WS_PATH = 'test-ws:target.md';
+      const { dispatch, services, getCommandResults } = await setupTest({
+        targetId: 'command::ws:rename-ws-path',
+        workspaces: [
+          { name: 'test-ws', notes: [SOURCE_WS_PATH, TARGET_WS_PATH] },
+        ],
+      });
+      await services.fileSystem.writeFile(
+        SOURCE_WS_PATH,
+        new File([['[[./target]]', '[[./target]]'].join('\n\n')], 'source.md', {
+          type: 'text/plain',
+        }),
+      );
+      const renameFile = services.fileSystem.renameFile.bind(
+        services.fileSystem,
+      );
+      const writeFile = services.fileSystem.writeFile.bind(services.fileSystem);
+      vi.spyOn(services.fileSystem, 'renameFile').mockImplementation(
+        async (args) => {
+          if (args.oldWsPath === SOURCE_WS_PATH) {
+            await writeFile(
+              SOURCE_WS_PATH,
+              new File(['[[./target]]'], 'source.md', {
+                type: 'text/plain',
+              }),
+            );
+          }
+          return renameFile(args);
+        },
+      );
+      const warningSpy = vi.spyOn(toast, 'warning');
+
+      dispatch('command::ws:rename-ws-path', {
+        wsPath: SOURCE_WS_PATH,
+        newWsPath: DESTINATION_WS_PATH,
+      });
+
+      await vi.waitFor(async () => {
+        expect(
+          getCommandResults().filter((result) => result.type === 'success'),
+        ).toHaveLength(1);
+        await expect(
+          services.fileSystem.readFileAsText(DESTINATION_WS_PATH),
+        ).resolves.toBe('[[./target]]');
+        expect(warningSpy).toHaveBeenCalledWith(
+          t.app.toasts.fileRenameReferenceUpdateSkipped({
+            fileName: 'destination.md',
+            reason: t.app.toasts.noteRelocationDestinationContentChanged,
+            warningCount: 2,
+          }),
+        );
+      });
+    });
+
+    test('keeps raw-file renames on the existing file-system path', async () => {
+      const SOURCE_WS_PATH = 'test-ws:source.txt';
+      const DESTINATION_WS_PATH = 'test-ws:destination.txt';
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ws:rename-ws-path',
+        workspaces: [{ name: 'test-ws', notes: [SOURCE_WS_PATH] }],
+      });
+      const relocationSpy = vi.spyOn(services.noteRelocation, 'relocate');
+      const renameSpy = vi.spyOn(services.fileSystem, 'renameFile');
+
+      dispatch('command::ws:rename-ws-path', {
+        wsPath: SOURCE_WS_PATH,
+        newWsPath: DESTINATION_WS_PATH,
+      });
+
+      await vi.waitFor(async () => {
+        await expect(
+          services.fileSystem.readFile(SOURCE_WS_PATH),
+        ).resolves.toBeUndefined();
+        await expect(
+          services.fileSystem.readFile(DESTINATION_WS_PATH),
+        ).resolves.toBeDefined();
+      });
+      expect(relocationSpy).not.toHaveBeenCalled();
+      expect(renameSpy).toHaveBeenCalledWith({
+        oldWsPath: SOURCE_WS_PATH,
+        newWsPath: DESTINATION_WS_PATH,
+      });
+    });
+
     test('blocks relocation when the source save cannot drain', async () => {
       const SOURCE_WS_PATH = 'test-ws:source.md';
       const DESTINATION_WS_PATH = 'test-ws:destination.md';
@@ -419,10 +559,7 @@ describe('WS command handlers', () => {
           }),
         );
       });
-      expect(renameSpy).toHaveBeenCalledWith({
-        oldWsPath: SOURCE_WS_PATH,
-        newWsPath: DESTINATION_WS_PATH,
-      });
+      expect(renameSpy).not.toHaveBeenCalled();
       await expect(
         services.fileSystem.readFile(SOURCE_WS_PATH),
       ).resolves.toBeDefined();
@@ -493,6 +630,58 @@ describe('WS command handlers', () => {
         await expect(
           services.fileSystem.readFile(DESTINATION_WS_PATH),
         ).resolves.toBeDefined();
+      });
+    });
+
+    test('routes Markdown moves through note relocation', async () => {
+      const SOURCE_WS_PATH = 'test-ws:source.md';
+      const DESTINATION_WS_PATH = 'test-ws:archive/source.md';
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ws:move-ws-path',
+        workspaces: [{ name: 'test-ws', notes: [SOURCE_WS_PATH] }],
+      });
+      const relocationSpy = vi.spyOn(services.noteRelocation, 'relocate');
+
+      dispatch('command::ws:move-ws-path', {
+        destDirWsPath: 'test-ws:archive/',
+        wsPath: SOURCE_WS_PATH,
+      });
+
+      await vi.waitFor(() => {
+        expect(relocationSpy).toHaveBeenCalledWith({
+          destination: expect.objectContaining({ wsPath: DESTINATION_WS_PATH }),
+          source: expect.objectContaining({ wsPath: SOURCE_WS_PATH }),
+        });
+      });
+    });
+
+    test('keeps raw-file moves on the existing file-system path', async () => {
+      const SOURCE_WS_PATH = 'test-ws:source.txt';
+      const DESTINATION_WS_PATH = 'test-ws:archive/source.txt';
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ws:move-ws-path',
+        workspaces: [{ name: 'test-ws', notes: [SOURCE_WS_PATH] }],
+      });
+      const relocationSpy = vi.spyOn(services.noteRelocation, 'relocate');
+      const renameSpy = vi.spyOn(services.fileSystem, 'renameFile');
+
+      dispatch('command::ws:move-ws-path', {
+        destDirWsPath: 'test-ws:archive/',
+        wsPath: SOURCE_WS_PATH,
+      });
+
+      await vi.waitFor(async () => {
+        await expect(
+          services.fileSystem.readFile(SOURCE_WS_PATH),
+        ).resolves.toBeUndefined();
+        await expect(
+          services.fileSystem.readFile(DESTINATION_WS_PATH),
+        ).resolves.toBeDefined();
+      });
+      expect(relocationSpy).not.toHaveBeenCalled();
+      expect(renameSpy).toHaveBeenCalledWith({
+        oldWsPath: SOURCE_WS_PATH,
+        newWsPath: DESTINATION_WS_PATH,
       });
     });
 
@@ -572,12 +761,9 @@ describe('WS command handlers', () => {
         );
       });
 
-      // Storage is the atomic conflict authority, and both the dragged note and
-      // the note it collides with keep their original content.
-      expect(renameSpy).toHaveBeenCalledWith({
-        oldWsPath: SOURCE_WS_PATH,
-        newWsPath: EXISTING_WS_PATH,
-      });
+      // The relocation service rejects the known collision before a storage
+      // rename, and both notes keep their original content.
+      expect(renameSpy).not.toHaveBeenCalled();
       await expect(
         services.fileSystem.readFileAsText(SOURCE_WS_PATH),
       ).resolves.toBe('source body');

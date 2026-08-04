@@ -661,11 +661,56 @@ export const t = {
       fileMoveFailed: 'Could not move file',
       fileMoveStarUpdateFailed: ({ fileName }: { fileName: string }) =>
         `Moved ${fileName}, but could not preserve its starred status`,
+      fileMoveReferenceUpdateIncomplete: ({
+        fileName,
+        warningCount,
+      }: {
+        fileName: string;
+        warningCount: number;
+      }) =>
+        `Moved ${fileName}, but ${warningCount} link reference${warningCount === 1 ? '' : 's'} could not be updated safely`,
+      fileMoveReferenceUpdateSkipped: ({
+        fileName,
+        reason,
+        warningCount,
+      }: {
+        fileName: string;
+        reason: string;
+        warningCount: number;
+      }) =>
+        `Moved ${fileName}, but ${warningCount} link reference${warningCount === 1 ? ' was' : 's were'} not updated because ${reason}`,
       fileRenamed: ({ fileName }: { fileName: string }) =>
         `Renamed to ${fileName}`,
       fileRenameFailed: 'Could not rename file',
       fileRenameStarUpdateFailed: ({ fileName }: { fileName: string }) =>
         `Renamed to ${fileName}, but could not preserve its starred status`,
+      fileRenameReferenceUpdateIncomplete: ({
+        fileName,
+        warningCount,
+      }: {
+        fileName: string;
+        warningCount: number;
+      }) =>
+        `Renamed ${fileName}, but ${warningCount} link reference${warningCount === 1 ? '' : 's'} could not be updated safely`,
+      fileRenameReferenceUpdateSkipped: ({
+        fileName,
+        reason,
+        warningCount,
+      }: {
+        fileName: string;
+        reason: string;
+        warningCount: number;
+      }) =>
+        `Renamed ${fileName}, but ${warningCount} link reference${warningCount === 1 ? ' was' : 's were'} not updated because ${reason}`,
+      noteRelocationDestinationContentChanged:
+        'the note changed during the move',
+      noteRelocationEditorContentUnavailable:
+        'the open editor could not safely apply the update',
+      noteRelocationNewerLocalEdit: 'a newer local edit takes precedence',
+      noteRelocationWriteRestoreFailed: ({ fileName }: { fileName: string }) =>
+        `Could not update ${fileName} and could not restore its original path. Check both paths before continuing.`,
+      noteRelocationWriteRestored: ({ fileName }: { fileName: string }) =>
+        `Could not update ${fileName}; it was restored to its original path`,
       folderDeleted: ({ folderName }: { folderName: string }) =>
         `Deleted ${folderName}`,
       folderDeleteFailed: 'Could not delete folder',

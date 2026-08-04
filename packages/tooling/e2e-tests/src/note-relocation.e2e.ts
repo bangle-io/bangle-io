@@ -1,11 +1,21 @@
 import { expect, type Page, test } from '@playwright/test';
 import {
   createBrowserWorkspaceAndNote,
+  ctrlKey,
+  expandFileTreeFolder,
   getEditorLocator,
   readStoredMarkdown,
   waitForEditorFocus,
+  writeStoredFile,
   writeStoredMarkdown,
 } from './common';
+
+const PNG_1X1_BYTES = [
+  137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0, 1, 0,
+  0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196, 137, 0, 0, 0, 13, 73, 68, 65, 84, 120,
+  156, 99, 248, 15, 4, 0, 9, 251, 3, 253, 167, 186, 48, 251, 0, 0, 0, 0, 73, 69,
+  78, 68, 174, 66, 96, 130,
+];
 
 async function openFileAction(
   page: Page,
@@ -28,6 +38,138 @@ function starredLink(page: Page, fileName: string) {
     .locator('..')
     .getByRole('link', { name: fileName });
 }
+
+async function openMarkdownLink(page: Page, name: string) {
+  await page.keyboard.down(ctrlKey);
+  await getEditorLocator(page, {}).getByRole('link', { name }).click();
+  await page.keyboard.up(ctrlKey);
+}
+
+test('moving a note preserves direct relative note and image links across an edit and reload', async ({
+  page,
+}, testInfo) => {
+  const workspaceName = `note-relocation-links-${testInfo.workerIndex}-${Date.now()}`;
+  const sourceName = 'projects/source';
+  const movedName = 'Archive/source';
+  const sourceWsPath = `${workspaceName}:${sourceName}.md`;
+  const movedWsPath = `${workspaceName}:${movedName}.md`;
+  const sourceMarkdown = [
+    '# Relocation source',
+    '',
+    '[Open linked note](./target.md)',
+    '',
+    '![Relocation image](./assets/relocation.png)',
+  ].join('\n');
+  const postMoveEdit = ' Saved after relocation.';
+
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: sourceName,
+  });
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    'projects/target',
+    '# Linked target',
+  );
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'projects/assets/relocation.png',
+    PNG_1X1_BYTES,
+    'image/png',
+  );
+  await writeStoredMarkdown(page, workspaceName, 'Archive/placeholder', '');
+  await writeStoredMarkdown(page, workspaceName, sourceName, sourceMarkdown);
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  const linkedNote = editor.getByRole('link', { name: 'Open linked note' });
+  const image = editor.getByRole('img', { name: 'Relocation image' });
+  await expect(linkedNote).toHaveAttribute('href', './target.md');
+  await expect(image).toBeVisible();
+  await expect(image).toHaveAttribute('src', /^blob:/);
+
+  await expandFileTreeFolder(page, /^projects$/);
+  await openFileAction(page, 'source.md', 'Move');
+  const moveDialog = page.getByRole('dialog', {
+    name: 'Move "source"',
+  });
+  const archiveOption = moveDialog.getByRole('option', { name: /Archive\/?/ });
+  await expect(archiveOption).toBeVisible();
+  await archiveOption.click();
+
+  const movedUrl = `/ws#route=editor&wsPath=${encodeURIComponent(movedWsPath)}`;
+  await expect(page).toHaveURL(movedUrl);
+  await expect
+    .poll(() => editor.getAttribute('data-editor-name'))
+    .toContain(movedWsPath);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, movedName))
+    .toContain('[Open linked note](../projects/target.md)');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, movedName))
+    .toContain('![Relocation image](../projects/assets/relocation.png)');
+
+  // This save must keep the rewritten destinations, not write the mounted
+  // editor's pre-move snapshot back over them.
+  await editor.click();
+  await waitForEditorFocus(page, {});
+  await page.keyboard.press('End');
+  await page.keyboard.type(postMoveEdit);
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, movedName))
+    .toContain(postMoveEdit.trim());
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, movedName))
+    .toContain('[Open linked note](../projects/target.md)');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, movedName))
+    .toContain('![Relocation image](../projects/assets/relocation.png)');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, sourceName))
+    .toBeUndefined();
+
+  await expect(linkedNote).toHaveAttribute('href', '../projects/target.md');
+  await expect(image).toBeVisible();
+  await expect(image).toHaveAttribute('src', /^blob:/);
+  await openMarkdownLink(page, 'Open linked note');
+  await expect(page).toHaveURL(
+    `/ws#route=editor&wsPath=${encodeURIComponent(`${workspaceName}:projects/target.md`)}`,
+  );
+  await expect(
+    getEditorLocator(page, {}).getByRole('heading', {
+      name: 'Linked target',
+    }),
+  ).toBeVisible();
+
+  await page.goBack();
+  await expect(page).toHaveURL(movedUrl);
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(page).toHaveURL(movedUrl);
+  await expect(linkedNote).toHaveAttribute('href', '../projects/target.md');
+  await expect(image).toBeVisible();
+  await expect(image).toHaveAttribute('src', /^blob:/);
+  await openMarkdownLink(page, 'Open linked note');
+  await expect(page).toHaveURL(
+    `/ws#route=editor&wsPath=${encodeURIComponent(`${workspaceName}:projects/target.md`)}`,
+  );
+  await expect(
+    getEditorLocator(page, {}).getByRole('heading', {
+      name: 'Linked target',
+    }),
+  ).toBeVisible();
+
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, movedName))
+    .toContain(postMoveEdit.trim());
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, sourceName))
+    .toBeUndefined();
+  await expect(page).not.toHaveURL(
+    `/ws#route=editor&wsPath=${encodeURIComponent(sourceWsPath)}`,
+  );
+});
 
 test('rename and move preserve the latest content and starred path across tabs and reload', async ({
   context,
