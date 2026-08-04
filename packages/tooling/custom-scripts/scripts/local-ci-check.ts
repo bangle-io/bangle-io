@@ -1,6 +1,4 @@
-#!/usr/bin/env node
-
-import { execFileSync, spawn } from 'node:child_process';
+import { type ChildProcess, execFileSync, spawn } from 'node:child_process';
 import {
   closeSync,
   openSync,
@@ -12,101 +10,130 @@ import {
 } from 'node:fs';
 import { hostname } from 'node:os';
 import { isAbsolute, join, resolve } from 'node:path';
-import { pathToFileURL } from 'node:url';
+
+import { isMainModule } from '../lib';
+import { readCiScripts } from './list-ci-scripts';
 
 const LOCK_FILE_NAME = 'bangle-local-ci.lock';
 const INCOMPLETE_LOCK_GRACE_MS = 10_000;
 const LOCK_POLL_MS = 1_000;
 const LOCK_STATUS_MS = 30_000;
 const INHERITED_LOCK_ENV = 'BANGLE_LOCAL_CI_LOCKED';
+const HANDLED_SIGNALS = ['SIGHUP', 'SIGINT', 'SIGTERM'] as const;
 
-function isRecord(value) {
+type HandledSignal = (typeof HANDLED_SIGNALS)[number];
+
+type LockOwner = Record<string, unknown> & {
+  pid: number;
+  cwd: string;
+  hostname: string;
+  startedAt: string;
+};
+
+type LockRecord = Record<string, unknown>;
+
+type LockAttempt = {
+  acquired: boolean;
+  owner: LockRecord | null;
+};
+
+function isRecord(value: unknown): value is LockRecord {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-export function listCiScripts(packageJson) {
-  if (!isRecord(packageJson) || !isRecord(packageJson.scripts)) {
-    throw new Error('package.json must define a scripts object.');
-  }
-
-  const scripts = Object.keys(packageJson.scripts)
-    .filter((script) => script.endsWith(':ci'))
-    .sort()
-    .reverse();
-  if (scripts.length === 0) {
-    throw new Error('package.json does not define any scripts ending in :ci.');
-  }
-  return scripts;
+function hasErrorCode(error: unknown, code: string): boolean {
+  return isRecord(error) && error.code === code;
 }
 
-export function getCiLockFile(commonGitDirectory, cwd = process.cwd()) {
+export function parseCommandArguments(
+  args: readonly string[],
+): string[] | null {
+  if (args.length === 0) {
+    return null;
+  }
+  if (args[0] !== 'run' || args.length === 1) {
+    throw new Error(
+      'Expected either no arguments or: run <command> [...args].',
+    );
+  }
+  return args.slice(1);
+}
+
+export function getCiLockFile(
+  commonGitDirectory: string,
+  cwd = process.cwd(),
+): string {
   const directory = isAbsolute(commonGitDirectory)
     ? commonGitDirectory
     : resolve(cwd, commonGitDirectory);
   return join(directory, LOCK_FILE_NAME);
 }
 
-export function isProcessRunning(pid) {
-  if (!Number.isInteger(pid) || pid <= 0) {
+export function isProcessRunning(pid: unknown): boolean {
+  if (typeof pid !== 'number' || !Number.isInteger(pid) || pid <= 0) {
     return false;
   }
   try {
     process.kill(pid, 0);
     return true;
   } catch (error) {
-    return error?.code === 'EPERM';
+    return hasErrorCode(error, 'EPERM');
   }
 }
 
-function readLockOwner(lockFile) {
+function readLockOwner(lockFile: string): LockRecord | null {
   try {
-    const owner = JSON.parse(readFileSync(lockFile, 'utf8'));
+    const owner: unknown = JSON.parse(readFileSync(lockFile, 'utf8'));
     return isRecord(owner) ? owner : null;
   } catch (error) {
-    if (error?.code === 'ENOENT' || error instanceof SyntaxError) {
+    if (hasErrorCode(error, 'ENOENT') || error instanceof SyntaxError) {
       return null;
     }
     throw error;
   }
 }
 
-function isFreshIncompleteLock(lockFile) {
+function isFreshIncompleteLock(lockFile: string): boolean {
   try {
     return Date.now() - statSync(lockFile).mtimeMs < INCOMPLETE_LOCK_GRACE_MS;
   } catch (error) {
-    if (error?.code === 'ENOENT') {
+    if (hasErrorCode(error, 'ENOENT')) {
       return false;
     }
     throw error;
   }
 }
 
-function removeStaleLock(lockFile) {
+function removeStaleLock(lockFile: string): boolean {
   const staleFile = `${lockFile}.stale-${process.pid}-${Date.now()}`;
   try {
     renameSync(lockFile, staleFile);
     unlinkSync(staleFile);
     return true;
   } catch (error) {
-    if (error?.code === 'ENOENT') {
+    if (hasErrorCode(error, 'ENOENT')) {
       return false;
     }
     throw error;
   }
 }
 
-export function tryAcquireCiLock(lockFile, owner) {
-  let descriptor;
+export function tryAcquireCiLock(
+  lockFile: string,
+  owner: LockOwner,
+): LockAttempt {
+  let descriptor: number | undefined;
   try {
     descriptor = openSync(lockFile, 'wx');
     writeFileSync(descriptor, `${JSON.stringify(owner, null, 2)}\n`);
     closeSync(descriptor);
+    descriptor = undefined;
     return { acquired: true, owner };
   } catch (error) {
     if (descriptor !== undefined) {
       closeSync(descriptor);
     }
-    if (error?.code !== 'EEXIST') {
+    if (!hasErrorCode(error, 'EEXIST')) {
       throw error;
     }
   }
@@ -124,7 +151,7 @@ export function tryAcquireCiLock(lockFile, owner) {
     : { acquired: false, owner: null };
 }
 
-export function releaseCiLock(lockFile, pid = process.pid) {
+export function releaseCiLock(lockFile: string, pid = process.pid): boolean {
   const owner = readLockOwner(lockFile);
   if (!owner || owner.pid !== pid) {
     return false;
@@ -133,7 +160,7 @@ export function releaseCiLock(lockFile, pid = process.pid) {
   return true;
 }
 
-function formatOwner(owner) {
+function formatOwner(owner: LockRecord | null): string {
   if (!owner) {
     return 'another local CI process';
   }
@@ -146,7 +173,11 @@ function formatOwner(owner) {
     .join(' in ');
 }
 
-async function acquireCiLock(lockFile, owner, wasInterrupted) {
+async function acquireCiLock(
+  lockFile: string,
+  owner: LockOwner,
+  wasInterrupted: () => boolean,
+): Promise<boolean> {
   let lastMessageAt = 0;
   let lastOwner = '';
   while (!wasInterrupted()) {
@@ -160,7 +191,9 @@ async function acquireCiLock(lockFile, owner, wasInterrupted) {
       description !== lastOwner ||
       Date.now() - lastMessageAt >= LOCK_STATUS_MS
     ) {
-      console.log(`Waiting for the Bangle local CI lock held by ${description}.`);
+      console.log(
+        `Waiting for the Bangle local CI lock held by ${description}.`,
+      );
       lastOwner = description;
       lastMessageAt = Date.now();
     }
@@ -169,8 +202,15 @@ async function acquireCiLock(lockFile, owner, wasInterrupted) {
   return false;
 }
 
-function stopProcessTree(child, signal) {
-  if (!child?.pid || child.exitCode !== null || child.signalCode !== null) {
+function stopProcessTree(
+  child: ChildProcess | null,
+  signal: HandledSignal,
+): void {
+  if (
+    !child?.pid ||
+    (child.exitCode !== null && child.exitCode !== undefined) ||
+    (child.signalCode !== null && child.signalCode !== undefined)
+  ) {
     return;
   }
   try {
@@ -185,16 +225,23 @@ function stopProcessTree(child, signal) {
         { stdio: 'ignore' },
       );
     } else {
-      process.kill(-child.pid, signal);
+      execFileSync('kill', [`-${signal}`, '--', `-${child.pid}`], {
+        stdio: 'ignore',
+      });
     }
   } catch (error) {
-    if (error?.code !== 'ESRCH') {
+    if (!hasErrorCode(error, 'ESRCH')) {
       console.error(`Failed to stop the active CI process tree: ${error}`);
     }
   }
 }
 
-function runCommand(command, args, setActiveChild, env = process.env) {
+function runCommand(
+  command: string,
+  args: readonly string[],
+  setActiveChild: (child: ChildProcess | null) => void,
+  env: NodeJS.ProcessEnv = process.env,
+): Promise<number> {
   return new Promise((resolveRun, rejectRun) => {
     const child = spawn(command, args, {
       detached: process.platform !== 'win32',
@@ -210,7 +257,7 @@ function runCommand(command, args, setActiveChild, env = process.env) {
   });
 }
 
-function repositoryContext() {
+function repositoryContext(): { lockFile: string; root: string } {
   const cwd = process.cwd();
   const commonGitDirectory = execFileSync(
     'git',
@@ -224,30 +271,24 @@ function repositoryContext() {
   return { lockFile: getCiLockFile(commonGitDirectory, cwd), root };
 }
 
-async function main() {
+async function main(): Promise<void> {
   const { lockFile, root } = repositoryContext();
-  const separatorIndex = process.argv.indexOf('--');
-  const command =
-    separatorIndex === -1 ? null : process.argv.slice(separatorIndex + 1);
-  if (command?.length === 0) {
-    throw new Error('Expected a command after --.');
-  }
-  const scripts = command
+  const requestedCommand = parseCommandArguments(process.argv.slice(2));
+  const executable = requestedCommand?.[0];
+  const scripts = requestedCommand
     ? []
-    : listCiScripts(
-        JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')),
-      );
-  const owner = {
+    : await readCiScripts(join(root, 'package.json'));
+  const owner: LockOwner = {
     pid: process.pid,
     cwd: root,
     hostname: hostname(),
     startedAt: new Date().toISOString(),
   };
 
-  let activeChild = null;
-  let receivedSignal = null;
-  const handlers = new Map();
-  for (const signal of ['SIGHUP', 'SIGINT', 'SIGTERM']) {
+  let activeChild: ChildProcess | null = null;
+  let receivedSignal: HandledSignal | null = null;
+  const handlers = new Map<HandledSignal, () => void>();
+  for (const signal of HANDLED_SIGNALS) {
     const handler = () => {
       receivedSignal ??= signal;
       stopProcessTree(activeChild, signal);
@@ -257,7 +298,7 @@ async function main() {
   }
 
   let hasLock = false;
-  const failures = [];
+  const failures: string[] = [];
   try {
     const inheritedLock = process.env[INHERITED_LOCK_ENV] === '1';
     hasLock =
@@ -267,17 +308,18 @@ async function main() {
       console.log(`Acquired the Bangle local CI lock for ${root}.`);
     }
 
-    if (command && hasLock && !receivedSignal) {
-      const code = await runCommand(command[0], command.slice(1), (child) => {
+    if (executable && hasLock && !receivedSignal) {
+      const args = requestedCommand?.slice(1) ?? [];
+      const code = await runCommand(executable, args, (child) => {
         activeChild = child;
         if (child && receivedSignal) {
           stopProcessTree(child, receivedSignal);
         }
       });
       if (code !== 0) {
-        failures.push(command.join(' '));
+        failures.push([executable, ...args].join(' '));
       }
-    } else if (hasLock) {
+    } else if (hasLock && !requestedCommand) {
       for (const script of scripts) {
         if (receivedSignal) {
           break;
@@ -310,16 +352,23 @@ async function main() {
   }
 
   if (receivedSignal) {
-    process.exitCode = { SIGHUP: 129, SIGINT: 130, SIGTERM: 143 }[receivedSignal];
+    const signalExitCodes: Record<HandledSignal, number> = {
+      SIGHUP: 129,
+      SIGINT: 130,
+      SIGTERM: 143,
+    };
+    process.exitCode = signalExitCodes[receivedSignal];
   } else if (failures.length > 0) {
     console.error('The following scripts failed:');
-    failures.forEach((script) => console.error(`- ${script}`));
+    for (const script of failures) {
+      console.error(`- ${script}`);
+    }
     process.exitCode = 1;
-  } else if (!command) {
+  } else if (!requestedCommand) {
     console.log('All scripts ran successfully.');
   }
 }
 
-if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {
+if (isMainModule(import.meta.url)) {
   await main();
 }

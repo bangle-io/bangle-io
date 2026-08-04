@@ -7,22 +7,22 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 import {
   getCiLockFile,
-  listCiScripts,
+  parseCommandArguments,
   releaseCiLock,
   tryAcquireCiLock,
-} from './local-ci-check.mjs';
+} from '../local-ci-check';
 
-const temporaryDirectories = [];
+const temporaryDirectories: string[] = [];
 
 afterEach(async () => {
   await Promise.all(
-    temporaryDirectories.splice(0).map((directory) =>
-      rm(directory, { recursive: true, force: true }),
-    ),
+    temporaryDirectories
+      .splice(0)
+      .map((directory) => rm(directory, { recursive: true, force: true })),
   );
 });
 
-async function createLockPath() {
+async function createLockPath(): Promise<string> {
   const directory = await mkdtemp(join(tmpdir(), 'bangle-local-ci-'));
   temporaryDirectories.push(directory);
   return join(directory, 'lock');
@@ -37,32 +37,24 @@ function owner(pid = process.pid) {
   };
 }
 
-describe('listCiScripts', () => {
-  it('returns root CI scripts in reverse alphabetical order', () => {
-    expect(
-      listCiScripts({
-        scripts: {
-          build: 'vite build',
-          'e2e:ci': 'playwright test',
-          'lint:ci': 'biome ci .',
-          'test:ci': 'vitest run',
-        },
-      }),
-    ).toEqual(['test:ci', 'lint:ci', 'e2e:ci']);
+describe('parseCommandArguments', () => {
+  it('uses no command for the aggregate runner', () => {
+    expect(parseCommandArguments([])).toBeNull();
   });
 
-  it.each([{}, { scripts: null }, { scripts: [] }])(
-    'rejects an invalid scripts field',
-    (packageJson) => {
-      expect(() => listCiScripts(packageJson)).toThrow(
-        'package.json must define a scripts object.',
-      );
-    },
-  );
+  it('returns a command following the run subcommand', () => {
+    expect(parseCommandArguments(['run', 'pnpm', 'test:ci'])).toEqual([
+      'pnpm',
+      'test:ci',
+    ]);
+  });
 
-  it('rejects a package without CI scripts', () => {
-    expect(() => listCiScripts({ scripts: { build: 'vite build' } })).toThrow(
-      'package.json does not define any scripts ending in :ci.',
+  it.each([
+    ['run'],
+    ['--', 'pnpm', 'test:ci'],
+  ])('rejects invalid command arguments', (...args) => {
+    expect(() => parseCommandArguments(args)).toThrow(
+      'Expected either no arguments or: run <command> [...args].',
     );
   });
 });
