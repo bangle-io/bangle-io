@@ -18,10 +18,11 @@ related_issues: []
 ---
 
 > DONE Completed the pragmatic high-ROI parity slice on 2026-08-03 in PR
-> #695. Callouts, highlights, math corpus and backlink alignment, and safety-gate
-> coverage shipped. Final verification passed with `pnpm lint:ci`,
-> `pnpm test:ci`, `pnpm build`, the focused Playwright workflow, and
-> `pnpm local-ci-check`. Footnotes, bare-URL source provenance,
+> #695. This archived state lands with the PR, so no separate post-merge plan
+> move is required. Callouts, highlights, math corpus and backlink alignment,
+> and safety-gate coverage are complete. Final verification passed with
+> `pnpm lint:ci`, `pnpm test:ci`, `pnpm build`, the focused Playwright workflow,
+> and `pnpm local-ci-check`. Footnotes, bare-URL source provenance,
 > reference-definition preservation, and rich raw HTML remain intentionally
 > deferred.
 
@@ -112,12 +113,12 @@ those fixtures in Wordgard without reverse-engineering an implicit contract.
 ## Verification
 
 - `pnpm lint:ci` passed.
-- `pnpm test:ci` passed: 174 files, 3,736 tests passed, 1 skipped.
+- `pnpm test:ci` passed: 174 files, 3,735 tests passed, 1 skipped.
 - `pnpm build` passed with the existing Sentry-token and chunk-size warnings.
 - Focused Playwright coverage for callout import, highlight authoring,
   persistence, and reload passed.
 - `pnpm local-ci-check` passed, including 220 E2E tests, 8 component tests, and
-  the desktop persistence smoke. Two unrelated E2E tests passed on retry.
+  the desktop persistence smoke. One unrelated E2E test passed on retry.
 
 Further Markdown parity work should be evidence-driven under a focused issue or
 plan, or coordinated with the source-editor and Wordgard roadmaps, rather than
