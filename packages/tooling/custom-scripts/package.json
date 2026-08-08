@@ -21,7 +21,7 @@
     "fs-extra": "^11.3.6",
     "globby": "^16.2.0",
     "p-map": "^7.0.5",
-    "postcss": "^8.5.16",
+    "postcss": "^8.5.26",
     "zod": "^4.4.3"
   },
   "devDependencies": {},

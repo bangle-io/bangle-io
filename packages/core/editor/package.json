@@ -41,7 +41,7 @@
     "@bangle.io/ws-path": "workspace:*",
     "@benrbray/prosemirror-math": "1.0.0",
     "@floating-ui/dom": "^1.7.6",
-    "@types/react": "^19.2.17",
+    "@types/react": "^19.2.18",
     "date-fns": "^4.4.0",
     "github-slugger": "^2.0.0",
     "jotai": "^2.20.1",

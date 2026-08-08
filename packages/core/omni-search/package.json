@@ -33,7 +33,7 @@
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@tanstack/react-virtual": "^3.14.5",
-    "@types/react": "^19.2.17",
+    "@types/react": "^19.2.18",
     "jotai": "^2.20.1",
     "lucide-react": "^1.23.0",
     "react": "19.2.7"

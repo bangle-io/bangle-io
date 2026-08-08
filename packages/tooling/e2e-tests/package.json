@@ -38,13 +38,13 @@
     "@bangle.io/ui-components": "workspace:*",
     "@playwright/experimental-ct-react": "1.62.1",
     "@playwright/test": "1.62.1",
-    "@storybook/react": "^10.4.6",
-    "@tailwindcss/vite": "^4.3.2",
-    "@types/node": "^26.1.0",
-    "@types/react": "^19.2.17",
+    "@storybook/react": "^10.5.7",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.18",
     "react": "19.2.7",
     "react-dom": "19.2.7",
-    "tsx": "^4.22.5"
+    "tsx": "^4.23.11"
   },
   "devDependencies": {}
 }
