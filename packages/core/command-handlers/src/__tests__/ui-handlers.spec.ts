@@ -53,27 +53,28 @@ describe('UI command handlers', () => {
       });
     });
 
-    it.each(
-      SETTINGS_PAGE_DEFINITIONS,
-    )('should navigate to $id settings', async (settingsPage) => {
-      const { dispatch, services } = await setupTest({
-        targetId: settingsPage.commandId,
-      });
-
-      dispatch(settingsPage.commandId, null);
-
-      await vi.waitFor(() => {
-        expect(services.navigation.resolveAtoms().routeInfo).toEqual({
-          route: settingsPage.route,
-          payload: {
-            returnTo: services.navigation.toUri({
-              route: 'welcome',
-              payload: {},
-            }),
-          },
+    it.each(SETTINGS_PAGE_DEFINITIONS)(
+      'should navigate to $id settings',
+      async (settingsPage) => {
+        const { dispatch, services } = await setupTest({
+          targetId: settingsPage.commandId,
         });
-      });
-    });
+
+        dispatch(settingsPage.commandId, null);
+
+        await vi.waitFor(() => {
+          expect(services.navigation.resolveAtoms().routeInfo).toEqual({
+            route: settingsPage.route,
+            payload: {
+              returnTo: services.navigation.toUri({
+                route: 'welcome',
+                payload: {},
+              }),
+            },
+          });
+        });
+      },
+    );
 
     it('should preserve returnTo while navigating between settings pages', async () => {
       const { dispatch, services } = await setupTest({

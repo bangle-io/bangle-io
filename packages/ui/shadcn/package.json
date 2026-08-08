@@ -51,7 +51,7 @@
     "react-dom": "19.2.7"
   },
   "devDependencies": {
-    "@storybook/react": "^10.4.6",
+    "@storybook/react": "^10.5.7",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2"
   }

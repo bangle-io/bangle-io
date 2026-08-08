@@ -41,13 +41,11 @@ describe('resolveInternalWsPath', () => {
     ).toBe('notes:other/name.markdown');
   });
 
-  it.each([
-    '../../escape.md',
-    '%2Fetc.md',
-    'bad%ZZ.md',
-    'other:name.md',
-  ])('rejects unsafe path %s', (target) =>
-    expect(resolveInternalWsPath(folderName, target)).toBeUndefined());
+  it.each(['../../escape.md', '%2Fetc.md', 'bad%ZZ.md', 'other:name.md'])(
+    'rejects unsafe path %s',
+    (target) =>
+      expect(resolveInternalWsPath(folderName, target)).toBeUndefined(),
+  );
 });
 
 describe('resolveWikiLinkTarget', () => {

@@ -49,6 +49,6 @@
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
-    "@storybook/react": "^10.4.6"
+    "@storybook/react": "^10.5.7"
   }
 }
