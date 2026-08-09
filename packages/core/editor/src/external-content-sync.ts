@@ -59,7 +59,7 @@ function sleep(ms: number, signal: AbortSignal | undefined): Promise<void> {
  * content while preserving the selection near its previous position. Returns
  * undefined when applying a non-empty document would unexpectedly blank it.
  */
-function buildExternalDocReplace(
+export function buildExternalDocReplace(
   view: EditorView,
   parsedDoc: EditorView['state']['doc'],
 ): Transaction | undefined {

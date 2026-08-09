@@ -535,6 +535,14 @@ describe('WsPath', () => {
       }
     });
 
+    it('rejects a long repeated trailing separator run', () => {
+      const result = WsPath.safeParse(`ws:dir${'/'.repeat(10_000)}`);
+      expect(result.ok).toBe(false);
+      if (!result.ok && result.validationError) {
+        expect(result.validationError.reason).toMatch(/Contains consecutive/);
+      }
+    });
+
     it('should reject path with double slash at start', () => {
       const result = WsPath.safeParse('ws://file.txt');
       expect(result.ok).toBe(false);

@@ -553,4 +553,49 @@ describe('EditorSaveQueue', () => {
     expect(status.error.message).toBe('sync unavailable');
     expect(emitAppError).toHaveBeenCalledTimes(1);
   });
+
+  it('runs a relocation rewrite before an edit that arrives while it writes', async () => {
+    const relocationWrite = createDeferred<void>();
+    const writes: string[] = [];
+    const queue = new EditorSaveQueue((_: string, doc: string) => {
+      writes.push(doc);
+      return writes.length === 1 ? relocationWrite.promise : Promise.resolve();
+    }, vi.fn());
+
+    const relocation = queue.enqueueRelocationWrite(
+      'workspace:renamed.md',
+      'rewritten durable snapshot',
+    );
+    queue.enqueue('workspace:renamed.md', 'newer editor content');
+
+    expect(writes).toEqual(['rewritten durable snapshot']);
+    relocationWrite.resolve();
+
+    await expect(relocation).resolves.toBe('written');
+    await vi.waitFor(() => {
+      expect(queue.getStatus('workspace:renamed.md')).toEqual({
+        status: 'clean',
+      });
+    });
+    expect(writes).toEqual([
+      'rewritten durable snapshot',
+      'newer editor content',
+    ]);
+  });
+
+  it('does not queue a relocation rewrite over a newer pending edit', async () => {
+    const pendingWrite = createDeferred<void>();
+    const queue = new EditorSaveQueue(() => pendingWrite.promise, vi.fn());
+
+    queue.enqueue('workspace:renamed.md', 'newer editor content');
+
+    await expect(
+      queue.enqueueRelocationWrite(
+        'workspace:renamed.md',
+        'stale relocation snapshot',
+      ),
+    ).resolves.toBe('superseded');
+
+    pendingWrite.resolve();
+  });
 });

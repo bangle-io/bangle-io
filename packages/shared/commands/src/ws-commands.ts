@@ -133,7 +133,12 @@ export const wsCommands = narrow([
     title: 'Rename Note',
     omniSearch: false,
     dependencies: {
-      services: ['editorEngine', 'fileSystem', 'userActivityService'],
+      services: [
+        'editorEngine',
+        'fileSystem',
+        'noteRelocation',
+        'userActivityService',
+      ],
     },
     args: {
       wsPath: T.String,
@@ -145,7 +150,12 @@ export const wsCommands = narrow([
     title: 'Move Note',
     omniSearch: false,
     dependencies: {
-      services: ['editorEngine', 'fileSystem', 'userActivityService'],
+      services: [
+        'editorEngine',
+        'fileSystem',
+        'noteRelocation',
+        'userActivityService',
+      ],
     },
     args: {
       wsPath: T.String,

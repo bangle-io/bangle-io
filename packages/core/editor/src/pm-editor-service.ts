@@ -8,6 +8,7 @@ import {
 import { SERVICE_NAME } from '@bangle.io/constants';
 import type { EditorAction, EditorEngineContract } from '@bangle.io/context';
 import {
+  type EditorProps,
   type EditorView,
   markdownLoader,
   type Schema,
@@ -48,9 +49,13 @@ import type { MarkdownAssetReference } from './asset-file-plugin';
 import {
   type EditorSaveCoordinator,
   EditorSaveQueue,
+  type RelocationHandoff,
 } from './editor-save-queue';
 import { setupExtensions } from './extensions';
-import { ExternalContentSync } from './external-content-sync';
+import {
+  buildExternalDocReplace,
+  ExternalContentSync,
+} from './external-content-sync';
 import { findHeadingIndexBySlug } from './heading-slug';
 import { createLocalImageNodeView } from './local-image-node-view';
 import { createEditor, serializeEditorDocumentForSave } from './pm-setup';
@@ -395,14 +400,7 @@ export class PmEditorService
     if (external && this.saveQueue.hasPendingOrFailed(oldWsPath)) {
       return;
     }
-    this.saveQueue.relocate(oldWsPath, newWsPath);
-
-    for (const [domNode, editor] of this.editors) {
-      if (editor.wsPath !== oldWsPath) {
-        continue;
-      }
-      this.editors.set(domNode, { ...editor, wsPath: newWsPath });
-    }
+    this.retargetRelocatedEditors(oldWsPath, newWsPath);
   }
 
   mountEditor({
@@ -442,8 +440,24 @@ export class PmEditorService
     name: string;
     wsPath: string;
   }): Promise<void> {
+    const finishEditorLoad = this.saveQueue.beginRelocationAwareLoad(wsPath);
     try {
-      const content = await this.dependencies.fileSystem.readFileAsText(wsPath);
+      // Capture a relocation handoff before the read begins. The relocation
+      // write can complete while this read is in flight and remove its
+      // temporary handoff; this load must still use the rebased source it
+      // observed when it started rather than mounting a stale disk snapshot.
+      const relocationHandoff = this.saveQueue.getRelocationHandoff(wsPath);
+      const diskContent =
+        await this.dependencies.fileSystem.readFileAsText(wsPath);
+      const handoff =
+        relocationHandoff ?? this.saveQueue.getRelocationHandoff(wsPath);
+      const content = handoff
+        ? await this.resolveRelocationHandoffContent({
+            diskContent,
+            handoff,
+            wsPath,
+          })
+        : diskContent;
       const editorEntry = this.editors.get(domNode);
       if (!editorEntry || 'editorView' in editorEntry) {
         // Editor was unmounted or already initialized, don't create new editorView
@@ -529,6 +543,8 @@ export class PmEditorService
           wsPath,
         }),
       );
+    } finally {
+      finishEditorLoad();
     }
   }
 
@@ -865,6 +881,205 @@ export class PmEditorService
 
   retryFailedSave(wsPath?: string): boolean {
     return this.saveQueue.retryFailed(wsPath);
+  }
+
+  async writeRelocatedMarkdown({
+    destinationWsPath,
+    markdown,
+    sourceWsPath,
+  }: {
+    destinationWsPath: string;
+    markdown: string;
+    sourceWsPath: string;
+  }): Promise<'superseded' | 'unavailable' | 'written'> {
+    if (
+      this.saveQueue.hasPendingOrFailed(sourceWsPath) ||
+      this.saveQueue.hasPendingOrFailed(destinationWsPath)
+    ) {
+      return 'superseded';
+    }
+
+    this.retargetRelocatedEditors(sourceWsPath, destinationWsPath);
+
+    const views = [...this.readyEditors()].filter(
+      (editor) => editor.wsPath === destinationWsPath,
+    );
+    const replacements = [] as Array<{
+      editor: ReadyEditorEntry;
+      originalEditable: EditorProps['editable'];
+      originalDoc: EditorView['state']['doc'];
+      originalMarkdown: string;
+      replacement: Transaction;
+    }>;
+
+    for (const editor of views) {
+      if (editor.editorView.composing) {
+        return 'unavailable';
+      }
+
+      let parsed: EditorView['state']['doc'];
+      try {
+        parsed = this.getMarkdown(editor.editorView.state.schema).parser.parse(
+          markdown,
+        );
+      } catch {
+        return 'unavailable';
+      }
+      if (!isMarkdownContentPreserved(markdown, collectLinkTargets(parsed))) {
+        return 'unavailable';
+      }
+
+      const replacement = buildExternalDocReplace(editor.editorView, parsed);
+      if (!replacement) {
+        return 'unavailable';
+      }
+      replacements.push({
+        editor,
+        originalEditable: editor.editorView.props.editable,
+        originalDoc: editor.editorView.state.doc,
+        originalMarkdown: editor.loadedMarkdown,
+        replacement,
+      });
+    }
+
+    this.saveQueue.createRelocationHandoff(destinationWsPath, markdown);
+    this.setRelocationEditorsEditable(replacements, false);
+    this.applyRelocationEditorReplacements(replacements, markdown);
+    let writeResult: 'superseded' | 'written' | undefined;
+    try {
+      writeResult = await this.saveQueue.enqueueRelocationWrite(
+        destinationWsPath,
+        markdown,
+      );
+      if (writeResult === 'superseded') {
+        this.restoreRelocationEditorReplacements(replacements);
+        this.saveQueue.discardRelocationHandoff(destinationWsPath);
+      } else {
+        this.saveQueue.completeRelocationHandoff(destinationWsPath);
+      }
+      return writeResult;
+    } catch (error) {
+      this.restoreRelocationEditorReplacements(replacements);
+      throw error;
+    } finally {
+      this.setRelocationEditorsEditable(replacements, true);
+    }
+  }
+
+  discardRelocatedMarkdownHandoff(destinationWsPath: string): void {
+    this.saveQueue.discardRelocationHandoff(destinationWsPath);
+  }
+
+  private async resolveRelocationHandoffContent({
+    diskContent,
+    handoff,
+    wsPath,
+  }: {
+    diskContent: string | undefined;
+    handoff: RelocationHandoff | undefined;
+    wsPath: string;
+  }): Promise<string | undefined> {
+    if (!handoff) {
+      return diskContent;
+    }
+    if ((await handoff.outcome) === 'written') {
+      return handoff.markdown;
+    }
+    return this.dependencies.fileSystem.readFileAsText(wsPath);
+  }
+
+  private retargetRelocatedEditors(
+    sourceWsPath: string,
+    destinationWsPath: string,
+  ): void {
+    // File-system rename events normally perform this retarget first. Keep
+    // this idempotent fallback because a relocation can resume immediately
+    // after `renameFile()` while event delivery or route replacement is still
+    // being scheduled; without it the editor handoff can miss the open view.
+    this.saveQueue.relocate(sourceWsPath, destinationWsPath);
+    for (const [domNode, editor] of this.editors) {
+      if (editor.wsPath === sourceWsPath) {
+        this.editors.set(domNode, { ...editor, wsPath: destinationWsPath });
+      }
+    }
+  }
+
+  private setRelocationEditorsEditable(
+    replacements: readonly {
+      editor: ReadyEditorEntry;
+      originalEditable: EditorProps['editable'];
+    }[],
+    editable: boolean,
+  ): void {
+    for (const { editor, originalEditable } of replacements) {
+      if (!editor.editorView.isDestroyed) {
+        editor.editorView.setProps({
+          editable: editable ? originalEditable : () => false,
+        });
+      }
+    }
+  }
+
+  private applyRelocationEditorReplacements(
+    replacements: readonly {
+      editor: ReadyEditorEntry;
+      originalEditable: EditorProps['editable'];
+      replacement: Transaction;
+    }[],
+    markdown: string,
+  ): void {
+    this.applyingExternalSync = true;
+    try {
+      for (const { editor, replacement } of replacements) {
+        if (!editor.editorView.isDestroyed) {
+          editor.editorView.dispatch(replacement);
+          editor.loadedDoc = editor.editorView.state.doc;
+          editor.loadedMarkdown = markdown;
+          this.checkRoundTripFidelity({
+            content: markdown,
+            editorView: editor.editorView,
+            wsPath: editor.wsPath,
+          });
+        }
+      }
+    } finally {
+      this.applyingExternalSync = false;
+    }
+  }
+
+  private restoreRelocationEditorReplacements(
+    replacements: readonly {
+      editor: ReadyEditorEntry;
+      originalEditable: EditorProps['editable'];
+      originalDoc: EditorView['state']['doc'];
+      originalMarkdown: string;
+    }[],
+  ): void {
+    this.applyingExternalSync = true;
+    try {
+      for (const { editor, originalDoc, originalMarkdown } of replacements) {
+        if (editor.editorView.isDestroyed) {
+          continue;
+        }
+        const replacement = buildExternalDocReplace(
+          editor.editorView,
+          originalDoc,
+        );
+        if (!replacement) {
+          continue;
+        }
+        editor.editorView.dispatch(replacement);
+        editor.loadedDoc = editor.editorView.state.doc;
+        editor.loadedMarkdown = originalMarkdown;
+        this.checkRoundTripFidelity({
+          content: originalMarkdown,
+          editorView: editor.editorView,
+          wsPath: editor.wsPath,
+        });
+      }
+    } finally {
+      this.applyingExternalSync = false;
+    }
   }
 
   getEditor(name: string) {

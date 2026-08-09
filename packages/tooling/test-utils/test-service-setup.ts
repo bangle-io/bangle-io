@@ -10,6 +10,7 @@ import {
   type CoreConfigOverrides,
   createEditorSaveCoordinator,
   createServiceSetup,
+  type EditorSaveCoordinator,
 } from '@bangle.io/initialize-services/setup';
 import { slot } from '@bangle.io/poor-mans-di';
 import {
@@ -67,6 +68,7 @@ function createTestServiceSetup(
   commandHandlers: Array<{ id: string; handler: CommandHandler }>,
   coreConfigOverrides: CoreConfigOverrides | undefined,
   editorEngineId: EditorEngineId,
+  editorSaveCoordinator: EditorSaveCoordinator,
 ): TestServiceSetup {
   return createServiceSetup({
     commonOpts,
@@ -91,7 +93,7 @@ function createTestServiceSetup(
     },
     fileStorageSlots: ['fileStorageMemory'],
     editorEngineId,
-    editorSaveCoordinator: createEditorSaveCoordinator(),
+    editorSaveCoordinator,
     coreConfigOverrides,
   });
 }
@@ -122,12 +124,14 @@ export function createTestEnvironment({
   commandHandlers = defaultCommandHandlers,
   coreConfigOverrides,
   editorEngineId = 'prosemirror',
+  editorSaveCoordinator = createEditorSaveCoordinator(),
 }: {
   controller?: AbortController;
   commands?: BangleAppCommand[];
   commandHandlers?: Array<{ id: string; handler: CommandHandler }>;
   coreConfigOverrides?: CoreConfigOverrides;
   editorEngineId?: EditorEngineId;
+  editorSaveCoordinator?: EditorSaveCoordinator;
 } = {}): TestEnvironment {
   const { commonOpts, mockLog, rootEmitter } = makeTestCommonOpts({
     controller,
@@ -140,6 +144,7 @@ export function createTestEnvironment({
     commandHandlers,
     coreConfigOverrides,
     editorEngineId,
+    editorSaveCoordinator,
   );
 
   return {

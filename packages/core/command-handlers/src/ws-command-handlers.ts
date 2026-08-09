@@ -5,7 +5,11 @@ import {
   throwAppError,
 } from '@bangle.io/base-utils';
 import { EDITOR_SAVE_DRAIN_TIMEOUT_MS } from '@bangle.io/constants';
-import { waitForSaveQueueToDrain } from '@bangle.io/service-core';
+import {
+  NoteRelocationContentWriteError,
+  type NoteRelocationWarning,
+  waitForSaveQueueToDrain,
+} from '@bangle.io/service-core';
 import { toast } from '@bangle.io/ui-components';
 import { WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { c, getCtx } from './helper';
@@ -55,6 +59,14 @@ function rethrowRelocationError(
   fileName: string,
   fallbackMessage: string,
 ): never {
+  if (error instanceof NoteRelocationContentWriteError) {
+    toast.error(
+      error.compensation === 'restored'
+        ? t.app.toasts.noteRelocationWriteRestored({ fileName })
+        : t.app.toasts.noteRelocationWriteRestoreFailed({ fileName }),
+    );
+    throw error;
+  }
   if (isAppError(error)) {
     if (getAppErrorCause(error)?.name === 'error::file:already-existing') {
       throwAppError(
@@ -68,6 +80,60 @@ function rethrowRelocationError(
 
   toast.error(fallbackMessage);
   throw error;
+}
+
+function showRelocationWarnings({
+  fileName,
+  operation,
+  warnings,
+}: {
+  fileName: string;
+  operation: 'move' | 'rename';
+  warnings: readonly NoteRelocationWarning[];
+}): void {
+  const unsupportedReferenceCount = warnings.reduce(
+    (count, warning) =>
+      warning.kind === 'unsupported-reference' ? count + warning.count : count,
+    0,
+  );
+  if (unsupportedReferenceCount > 0) {
+    toast.warning(
+      operation === 'rename'
+        ? t.app.toasts.fileRenameReferenceUpdateIncomplete({
+            fileName,
+            warningCount: unsupportedReferenceCount,
+          })
+        : t.app.toasts.fileMoveReferenceUpdateIncomplete({
+            fileName,
+            warningCount: unsupportedReferenceCount,
+          }),
+    );
+  }
+
+  for (const warning of warnings) {
+    if (warning.kind === 'unsupported-reference') {
+      continue;
+    }
+    const reason =
+      warning.kind === 'destination-content-changed'
+        ? t.app.toasts.noteRelocationDestinationContentChanged
+        : warning.kind === 'newer-local-edit'
+          ? t.app.toasts.noteRelocationNewerLocalEdit
+          : t.app.toasts.noteRelocationEditorContentUnavailable;
+    toast.warning(
+      operation === 'rename'
+        ? t.app.toasts.fileRenameReferenceUpdateSkipped({
+            fileName,
+            reason,
+            warningCount: warning.skippedReferences,
+          })
+        : t.app.toasts.fileMoveReferenceUpdateSkipped({
+            fileName,
+            reason,
+            warningCount: warning.skippedReferences,
+          }),
+    );
+  }
 }
 
 async function assertSourceSavesDrained(
@@ -228,10 +294,10 @@ export const wsCommandHandlers = [
   c(
     'command::ws:rename-ws-path',
     async (
-      { editorEngine, fileSystem, userActivityService },
+      { editorEngine, fileSystem, noteRelocation, userActivityService },
       { wsPath, newWsPath },
     ) => {
-      const oldPath = WsPath.fromString(wsPath);
+      const oldPath = WsPath.assertFile(wsPath);
       const newPath = WsPath.fromString(newWsPath);
 
       if (!oldPath.wsName) {
@@ -257,23 +323,31 @@ export const wsCommandHandlers = [
       }
 
       const newFilePath = WsPath.assertFile(newWsPath);
+      let relocationWarnings: readonly NoteRelocationWarning[] = [];
       if (wsPath === newWsPath) {
         return;
       }
 
-      await assertSourceSavesDrained(
-        editorEngine,
-        [{ oldWsPath: wsPath, newWsPath }],
-        'rename',
-      );
-
       // Keep the open note visible while the storage write is in flight.
       // WorkspaceState follows the durable rename event once it lands.
       try {
-        await fileSystem.renameFile({
-          oldWsPath: wsPath,
-          newWsPath,
-        });
+        if (oldPath.isMarkdown() && newFilePath.isMarkdown()) {
+          const receipt = await noteRelocation.relocate({
+            destination: newFilePath,
+            source: oldPath,
+          });
+          relocationWarnings = receipt.warnings;
+        } else {
+          await assertSourceSavesDrained(
+            editorEngine,
+            [{ oldWsPath: wsPath, newWsPath }],
+            'rename',
+          );
+          await fileSystem.renameFile({
+            oldWsPath: wsPath,
+            newWsPath,
+          });
+        }
       } catch (error) {
         rethrowRelocationError(
           error,
@@ -293,7 +367,13 @@ export const wsCommandHandlers = [
             fileName: newFilePath.fileName,
           }),
         );
-      } else {
+      }
+      showRelocationWarnings({
+        fileName: newFilePath.fileName,
+        operation: 'rename',
+        warnings: relocationWarnings,
+      });
+      if (starResult !== 'failed' && relocationWarnings.length === 0) {
         toast.success(
           t.app.toasts.fileRenamed({ fileName: newFilePath.fileName }),
         );
@@ -304,7 +384,7 @@ export const wsCommandHandlers = [
   c(
     'command::ws:move-ws-path',
     async (
-      { editorEngine, fileSystem, userActivityService },
+      { editorEngine, fileSystem, noteRelocation, userActivityService },
       { wsPath, destDirWsPath },
     ) => {
       const filePath = WsPath.assertFile(wsPath);
@@ -330,19 +410,28 @@ export const wsCommandHandlers = [
         return;
       }
 
-      await assertSourceSavesDrained(
-        editorEngine,
-        [{ oldWsPath: wsPath, newWsPath }],
-        'move',
-      );
-
+      let relocationWarnings: readonly NoteRelocationWarning[] = [];
       // Keep the open note visible while the storage write is in flight.
       // WorkspaceState follows the durable rename event once it lands.
       try {
-        await fileSystem.renameFile({
-          oldWsPath: wsPath,
-          newWsPath,
-        });
+        const newFilePath = WsPath.assertFile(newWsPath);
+        if (filePath.isMarkdown() && newFilePath.isMarkdown()) {
+          const receipt = await noteRelocation.relocate({
+            destination: newFilePath,
+            source: filePath,
+          });
+          relocationWarnings = receipt.warnings;
+        } else {
+          await assertSourceSavesDrained(
+            editorEngine,
+            [{ oldWsPath: wsPath, newWsPath }],
+            'move',
+          );
+          await fileSystem.renameFile({
+            oldWsPath: wsPath,
+            newWsPath,
+          });
+        }
       } catch (error) {
         rethrowRelocationError(
           error,
@@ -362,7 +451,13 @@ export const wsCommandHandlers = [
             fileName: filePath.fileName,
           }),
         );
-      } else {
+      }
+      showRelocationWarnings({
+        fileName: filePath.fileName,
+        operation: 'move',
+        warnings: relocationWarnings,
+      });
+      if (starResult !== 'failed' && relocationWarnings.length === 0) {
         toast.success(t.app.toasts.fileMoved({ fileName: filePath.fileName }));
       }
     },
