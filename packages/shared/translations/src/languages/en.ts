@@ -195,6 +195,11 @@ export const t = {
       allFilesHeading: 'All Files',
       filteredHeading: 'Filtered',
       noResults: 'No results found.',
+      searchingNoteContents: 'Searching note contents…',
+      partialResults: ({ count }: { count: number }) =>
+        count === 1
+          ? '1 note could not be searched.'
+          : `${count} notes could not be searched.`,
     },
     sidebar: {
       newLabel: 'New',

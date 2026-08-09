@@ -23,11 +23,17 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { useAtom, useAtomValue } from 'jotai';
 import { FileText, SquareChevronRight } from 'lucide-react';
 import React, { useMemo } from 'react';
+import {
+  type ContentSearchResult,
+  MIN_CONTENT_SEARCH_QUERY_LENGTH,
+  searchWorkspaceContent,
+} from './content-search';
 
 const MAX_COMMANDS_PER_GROUP = 5;
 const MAX_FILES_GLOBAL = 100;
 const MAX_RECENT_FILES = 5;
 const MAX_RECENT_COMMANDS = 3;
+const CONTENT_SEARCH_DEBOUNCE_MS = 250;
 
 const EDITOR_ACTIONS_BY_COMMAND_ID: Readonly<Record<string, EditorAction>> = {
   'command::editor:toggle-heading-1': {
@@ -78,6 +84,102 @@ function itemIcon(item: CommandItemProp) {
   ) : (
     <FileText aria-hidden />
   );
+}
+
+type ContentSearchState = {
+  status: 'idle' | 'searching' | 'complete';
+  matches: ContentSearchResult[];
+  failedFileCount: number;
+};
+
+const EMPTY_CONTENT_SEARCH_STATE: ContentSearchState = {
+  status: 'idle',
+  matches: [],
+  failedFileCount: 0,
+};
+
+function useWorkspaceContentSearch({
+  active,
+  query,
+  wsPaths,
+  currentWsPath,
+  recentWsPaths,
+  readText,
+}: {
+  active: boolean;
+  query: string;
+  wsPaths: string[];
+  currentWsPath?: string;
+  recentWsPaths: string[];
+  readText: (
+    wsPath: string,
+    signal: AbortSignal,
+  ) => Promise<string | undefined>;
+}): ContentSearchState {
+  const [state, setState] = React.useState<ContentSearchState>(
+    EMPTY_CONTENT_SEARCH_STATE,
+  );
+  const searchRunId = React.useRef(0);
+
+  React.useEffect(() => {
+    const runId = ++searchRunId.current;
+    if (!active || query.length < MIN_CONTENT_SEARCH_QUERY_LENGTH) {
+      setState(EMPTY_CONTENT_SEARCH_STATE);
+      return;
+    }
+
+    const abortController = new AbortController();
+    const isCurrentRun = () =>
+      searchRunId.current === runId && !abortController.signal.aborted;
+    setState({ status: 'searching', matches: [], failedFileCount: 0 });
+
+    const timeoutId = setTimeout(() => {
+      void searchWorkspaceContent({
+        wsPaths,
+        currentWsPath,
+        recentWsPaths,
+        query,
+        signal: abortController.signal,
+        readText,
+        onMatch: (match) => {
+          if (!isCurrentRun()) {
+            return;
+          }
+          setState((current) => ({
+            ...current,
+            matches: [...current.matches, match],
+          }));
+        },
+      })
+        .then((result) => {
+          if (!isCurrentRun()) {
+            return;
+          }
+          setState({
+            status: 'complete',
+            matches: result.matches,
+            failedFileCount: result.failedFileCount,
+          });
+        })
+        .catch(() => {
+          if (!isCurrentRun()) {
+            return;
+          }
+          setState((current) => ({
+            ...current,
+            status: 'complete',
+            failedFileCount: current.failedFileCount + 1,
+          }));
+        });
+    }, CONTENT_SEARCH_DEBOUNCE_MS);
+
+    return () => {
+      clearTimeout(timeoutId);
+      abortController.abort();
+    };
+  }, [active, currentWsPath, query, readText, recentWsPaths, wsPaths]);
+
+  return state;
 }
 
 function CommandGroupSection({
@@ -256,11 +358,13 @@ function FilteredRoute({
   search,
   recentWsPaths,
   recentCommands,
+  contentSearch,
 }: {
   baseItems: CommandItemProp[];
   search: string;
   recentWsPaths: string[];
   recentCommands: string[];
+  contentSearch: ContentSearchState;
 }) {
   const parentRef = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
@@ -273,66 +377,143 @@ function FilteredRoute({
     return searchItems(baseItems, search, { recentCommands, recentWsPaths });
   }, [baseItems, search, recentCommands, recentWsPaths]);
 
+  const displayItems = useMemo(() => {
+    const contentMatchesByWsPath = new Map(
+      contentSearch.matches.map((match) => [match.wsPath, match]),
+    );
+    const fileItemsByWsPath = new Map(
+      baseItems.flatMap((item) =>
+        item.metadata.type === 'file'
+          ? ([[item.metadata.wsPath, item]] as const)
+          : [],
+      ),
+    );
+    const includedFilePaths = new Set<string>();
+    const results: Array<{
+      item: CommandItemProp;
+      contentMatch?: ContentSearchResult;
+    }> = filteredItems.map((item) => {
+      if (item.metadata.type === 'file') {
+        includedFilePaths.add(item.metadata.wsPath);
+        return {
+          item,
+          contentMatch: contentMatchesByWsPath.get(item.metadata.wsPath),
+        };
+      }
+      return { item };
+    });
+
+    for (const contentMatch of contentSearch.matches) {
+      if (includedFilePaths.has(contentMatch.wsPath)) {
+        continue;
+      }
+      const item = fileItemsByWsPath.get(contentMatch.wsPath);
+      if (item) {
+        results.push({ item, contentMatch });
+      }
+    }
+
+    return results;
+  }, [baseItems, contentSearch.matches, filteredItems]);
+
   const rowVirtualizer = useVirtualizer({
-    count: filteredItems.length,
+    count: displayItems.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 44,
+    estimateSize: () => 56,
     overscan: 7,
     scrollPaddingStart: 24,
   });
 
-  if (filteredItems.length === 0) {
-    return null;
+  const statusMessage =
+    contentSearch.status === 'searching'
+      ? t.app.omniSearch.searchingNoteContents
+      : contentSearch.failedFileCount > 0
+        ? t.app.omniSearch.partialResults({
+            count: contentSearch.failedFileCount,
+          })
+        : undefined;
+
+  if (displayItems.length === 0) {
+    return statusMessage && contentSearch.status !== 'searching' ? (
+      <div className="px-4 pb-3 text-muted-foreground text-xs" role="status">
+        {statusMessage}
+      </div>
+    ) : null;
   }
 
   return (
-    <CommandGroup
-      heading={t.app.omniSearch.filteredHeading}
-      ref={parentRef}
-      style={{ height: '428px', overflowY: 'auto' }}
-    >
-      <div
-        style={{
-          height: `${rowVirtualizer.getTotalSize()}px`,
-          position: 'relative',
-        }}
+    <>
+      <CommandGroup
+        heading={t.app.omniSearch.filteredHeading}
+        ref={parentRef}
+        style={{ height: '428px', overflowY: 'auto' }}
       >
-        {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-          const item = filteredItems[virtualRow.index];
-          if (!item) {
-            return null;
-          }
-          const key = item.id;
-          return (
-            <div
-              key={key}
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                height: `${virtualRow.size}px`,
-                transform: `translateY(${virtualRow.start}px)`,
-                width: '100%',
-              }}
-            >
-              <CommandItem id={key} title={item.title} onSelect={item.onSelect}>
-                <CommandMenuRow
-                  icon={itemIcon(item)}
+        <div
+          style={{
+            height: `${rowVirtualizer.getTotalSize()}px`,
+            position: 'relative',
+          }}
+        >
+          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+            const result = displayItems[virtualRow.index];
+            if (!result) {
+              return null;
+            }
+            const { item, contentMatch } = result;
+            const key = item.id;
+            return (
+              <div
+                data-index={virtualRow.index}
+                key={key}
+                ref={rowVirtualizer.measureElement}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  transform: `translateY(${virtualRow.start}px)`,
+                  width: '100%',
+                }}
+              >
+                <CommandItem
+                  id={key}
                   title={item.title}
-                  keybindings={item.keybindings}
-                />
-              </CommandItem>
-            </div>
-          );
-        })}
-      </div>
-    </CommandGroup>
+                  onSelect={item.onSelect}
+                >
+                  <CommandMenuRow
+                    icon={itemIcon(item)}
+                    title={item.title}
+                    description={
+                      contentMatch ? (
+                        <>
+                          {contentMatch.snippet.before}
+                          <mark className="rounded-sm bg-pop px-0.5 text-pop-foreground">
+                            {contentMatch.snippet.match}
+                          </mark>
+                          {contentMatch.snippet.after}
+                        </>
+                      ) : undefined
+                    }
+                    keybindings={item.keybindings}
+                  />
+                </CommandItem>
+              </div>
+            );
+          })}
+        </div>
+      </CommandGroup>
+      {statusMessage && (
+        <div className="px-4 pb-3 text-muted-foreground text-xs" role="status">
+          {statusMessage}
+        </div>
+      )}
+    </>
   );
 }
 export function OmniSearch() {
   const {
     workspaceState,
     commandDispatcher,
+    fileSystem,
     userActivityService,
     workbenchState,
     commandRegistry,
@@ -355,11 +536,29 @@ export function OmniSearch() {
   const commandInputRef = React.useRef<HTMLInputElement>(null);
 
   const wsPaths = useAtomValue(workspaceState.$wsPaths);
+  const noteWsPaths = useAtomValue(workspaceState.$noteWsPaths);
   const [search, updateSearch] = useAtom(workbenchState.$omniSearchInput);
   const route = useAtomValue(workbenchState.$omniSearchRoute);
   const recentWsPaths = useAtomValue(userActivityService.$recentWsPaths);
   const recentCommands = useAtomValue(userActivityService.$recentCommands);
   const cleanedSearch = useAtomValue(workbenchState.$cleanSearchTerm);
+  const wsPathStrings = useMemo(
+    () => noteWsPaths.map((wsPath) => wsPath.wsPath),
+    [noteWsPaths],
+  );
+  const readText = React.useCallback(
+    (wsPath: string, signal: AbortSignal) =>
+      fileSystem.readFileAsText(wsPath, { signal }),
+    [fileSystem],
+  );
+  const contentSearch = useWorkspaceContentSearch({
+    active: open && route === 'omni-filtered',
+    query: cleanedSearch,
+    wsPaths: wsPathStrings,
+    currentWsPath: activeWsPath?.wsPath,
+    recentWsPaths,
+    readText,
+  });
 
   const onCommand = React.useCallback(
     (cmd: Command) => {
@@ -459,11 +658,16 @@ export function OmniSearch() {
             search={cleanedSearch}
             recentWsPaths={recentWsPaths}
             recentCommands={recentCommands}
+            contentSearch={contentSearch}
           />
         )}
 
         <CommandEmpty>
-          <span>{t.app.omniSearch.noResults}</span>
+          <span>
+            {contentSearch.status === 'searching'
+              ? t.app.omniSearch.searchingNoteContents
+              : t.app.omniSearch.noResults}
+          </span>
         </CommandEmpty>
       </CommandList>
     </CommandDialog>

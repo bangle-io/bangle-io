@@ -153,6 +153,11 @@ export const t = {
       allFilesHeading: 'Alle Dateien',
       filteredHeading: 'Gefiltert',
       noResults: 'Keine Ergebnisse gefunden.',
+      searchingNoteContents: 'Notizinhalte werden durchsucht…',
+      partialResults: ({ count }: { count: number }) =>
+        count === 1
+          ? '1 Notiz konnte nicht durchsucht werden.'
+          : `${count} Notizen konnten nicht durchsucht werden.`,
     },
     sidebar: {
       newLabel: 'Neu',
