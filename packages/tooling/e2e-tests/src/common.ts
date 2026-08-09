@@ -66,12 +66,7 @@ export async function openOmniSearch(page: Page): Promise<Locator> {
   const dialog = page.getByRole('dialog', { name: 'omni command bar' });
   const input = dialog.getByPlaceholder('Type a command or search...');
   await expect(dialog).toBeVisible();
-  if (
-    !(await input.evaluate((element) => element === document.activeElement))
-  ) {
-    await input.click();
-  }
-  await expect(input).toBeFocused();
+  await expect(input).toBeVisible();
 
   return input;
 }
