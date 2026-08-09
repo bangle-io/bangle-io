@@ -86,7 +86,10 @@ describe('IdbDatabaseService blocked upgrade', () => {
     // IndexedDB completes the queued requests after the blocker closes. The
     // failed services close their late connections, so a reload can recover.
     oldTabDb.close();
-    const recovered = createService();
+    // Recovery uses a realistic startup window while the uncancellable timed-
+    // out requests ahead of it drain. The short timeout above only proves the
+    // bounded-failure behavior for a genuinely blocked upgrade.
+    const recovered = createService(1_000);
     await recovered.service.mount();
     const snapshots = { tableName: DATABASE_TABLE_NAME.noteSnapshots } as const;
     await recovered.service.updateEntry(
