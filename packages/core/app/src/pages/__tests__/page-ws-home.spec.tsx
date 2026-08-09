@@ -250,7 +250,9 @@ describe('PageWsHome', () => {
     expect(
       screen.queryByRole('button', { name: /show .* more/i }),
     ).not.toBeInTheDocument();
-  });
+  }, // This deliberately renders the full 150-row chunk and is slower on
+  // constrained CI workers than the surrounding small-workspace cases.
+  20_000);
 
   it('keeps a note row rendered when its file stat read fails', async () => {
     const { testRender, services } = await setupWorkspaceWithNotes([

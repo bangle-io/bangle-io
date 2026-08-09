@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isValidHttpUrl, normalizeHttpUrl } from '../link-menu';
+import { normalizeHttpUrl } from '../floating-link-editor';
 
 describe('normalizeHttpUrl', () => {
   it('defaults bare web addresses and host ports to HTTPS', () => {
@@ -43,6 +43,5 @@ describe('normalizeHttpUrl', () => {
     expect(normalizeHttpUrl('javascript:alert(1)')).toBeUndefined();
     expect(normalizeHttpUrl('mailto:user@example.com')).toBeUndefined();
     expect(normalizeHttpUrl('note.md#')).toBeUndefined();
-    expect(isValidHttpUrl('javascript:alert(1)')).toBe(false);
   });
 });

@@ -3,13 +3,7 @@ import { useAtomValue } from 'jotai';
 import React from 'react';
 import type { PmEditorService } from '../pm-editor-service';
 import { useEditorCoreServices } from '../use-editor-core-services';
-import {
-  FloatingLinkEditor,
-  isValidHttpUrl,
-  normalizeHttpUrl,
-} from './floating-link-editor';
-
-export { isValidHttpUrl, normalizeHttpUrl };
+import { FloatingLinkEditor } from './floating-link-editor';
 
 /** Floating link editor for an existing link under a collapsed cursor. */
 export function LinkMenu({ editorName }: { editorName: string }) {

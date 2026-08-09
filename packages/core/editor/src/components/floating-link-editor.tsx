@@ -28,10 +28,6 @@ export function normalizeHttpUrl(urlString: string): string | undefined {
   return normalizeLinkTarget(urlString)?.href;
 }
 
-export function isValidHttpUrl(urlString: string): boolean {
-  return Boolean(normalizeHttpUrl(urlString));
-}
-
 type LinkEditorProps = {
   value: string;
   onChange: (value: string) => void;
