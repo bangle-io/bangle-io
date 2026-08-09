@@ -247,10 +247,12 @@ test('keeps code action feedback after refocusing a code block', async ({
 
   await page.keyboard.type(`\n${retained}`);
 
+  // Assert the widget survived the refocus/edit immediately: copy feedback is
+  // intentionally transient and may expire while the durable save is polled.
+  await expect(copyButton).toHaveText('Copied');
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, noteName))
     .toContain(retained);
-  await expect(copyButton).toHaveText('Copied');
 });
 
 test('renders syntax-highlighted code with readable contrast in light mode', async ({
