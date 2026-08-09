@@ -32,16 +32,13 @@ import {
   ArrowUpDown,
   EllipsisVertical,
   FileText,
-  FolderInput,
   FolderOpen,
-  Link as LinkIcon,
-  Pencil,
   SlidersHorizontal,
   Star,
-  Trash2,
 } from 'lucide-react';
 import React from 'react';
 import { getTimestampDisplay } from '../../common/get-relative-time';
+import { getSingleNoteActions } from '../note-actions/single-note-actions';
 
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData extends RowData, TValue> {
@@ -138,6 +135,11 @@ function TimestampCell({ timestamp }: { timestamp: number | undefined }) {
 function NoteRowActions({ note }: { note: NotesTableNote }) {
   const coreServices = useCoreServices();
   const strings = t.app.components.notesTable;
+  const noteActions = getSingleNoteActions({
+    commandDispatcher: coreServices.commandDispatcher,
+    source: 'NotesTable.NoteActions',
+    wsPath: note.wsPath,
+  });
 
   return (
     <DropdownMenu.DropdownMenu>
@@ -172,56 +174,17 @@ function NoteRowActions({ note }: { note: NotesTableNote }) {
             {note.isStarred ? strings.unstarAction : strings.starAction}
           </span>
         </DropdownMenu.DropdownMenuItem>
-        <DropdownMenu.DropdownMenuItem
-          onClick={() =>
-            coreServices.commandDispatcher.dispatch(
-              'command::ui:rename-note-dialog',
-              { wsPath: note.wsPath },
-              'ui',
-            )
-          }
-        >
-          <Pencil className="mr-2 h-4 w-4" />
-          <span>{strings.renameAction}</span>
-        </DropdownMenu.DropdownMenuItem>
-        <DropdownMenu.DropdownMenuItem
-          onClick={() =>
-            coreServices.commandDispatcher.dispatch(
-              'command::ui:move-note-dialog',
-              { wsPath: note.wsPath },
-              'ui',
-            )
-          }
-        >
-          <FolderInput className="mr-2 h-4 w-4" />
-          <span>{strings.moveAction}</span>
-        </DropdownMenu.DropdownMenuItem>
-        <DropdownMenu.DropdownMenuItem
-          onClick={() =>
-            coreServices.commandDispatcher.dispatch(
-              'command::ui:copy-workspace-path',
-              { wsPath: note.wsPath },
-              'ui',
-            )
-          }
-        >
-          <LinkIcon className="mr-2 h-4 w-4" />
-          <span>{strings.copyPathAction}</span>
-        </DropdownMenu.DropdownMenuItem>
-        <DropdownMenu.DropdownMenuSeparator />
-        <DropdownMenu.DropdownMenuItem
-          variant="destructive"
-          onClick={() =>
-            coreServices.commandDispatcher.dispatch(
-              'command::ui:delete-note-dialog',
-              { wsPath: note.wsPath },
-              'ui',
-            )
-          }
-        >
-          <Trash2 className="mr-2 h-4 w-4" />
-          <span>{strings.deleteAction}</span>
-        </DropdownMenu.DropdownMenuItem>
+        {noteActions.map(
+          ({ Icon, id, label, run, separatorBefore, variant }) => (
+            <React.Fragment key={id}>
+              {separatorBefore ? <DropdownMenu.DropdownMenuSeparator /> : null}
+              <DropdownMenu.DropdownMenuItem onClick={run} variant={variant}>
+                <Icon className="mr-2 h-4 w-4" />
+                <span>{label}</span>
+              </DropdownMenu.DropdownMenuItem>
+            </React.Fragment>
+          ),
+        )}
       </DropdownMenu.DropdownMenuContent>
     </DropdownMenu.DropdownMenu>
   );

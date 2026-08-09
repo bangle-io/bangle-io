@@ -18,4 +18,17 @@ describe('handleRouteInfo', () => {
       payload: { path: route },
     });
   });
+
+  it('decodes the diagnostics settings route and its return target', () => {
+    expect(
+      handleRouteInfo('settings-diagnostics', {
+        returnTo: '/ws#route=editor&wsPath=notes%3Aindex.md',
+      }),
+    ).toEqual({
+      route: 'settings-diagnostics',
+      payload: {
+        returnTo: '/ws#route=editor&wsPath=notes%3Aindex.md',
+      },
+    });
+  });
 });

@@ -9,9 +9,14 @@ test('an outdated tab is blocked with a reload prompt when a newer version runs'
     const channel = new BroadcastChannel('bangle_io_channel');
     channel.addEventListener('message', (event) => {
       const message = event.data as {
-        data?: { event?: string; payload?: { reply?: boolean } };
+        data?: {
+          version?: number;
+          event?: string;
+          payload?: { reply?: boolean };
+        };
       };
       if (
+        message.data?.version !== 1 ||
         message.data?.event !== 'event::app:build-presence' ||
         message.data.payload?.reply !== false
       ) {
@@ -20,6 +25,7 @@ test('an outdated tab is blocked with a reload prompt when a newer version runs'
       channel.postMessage({
         senderId: 'future-build-tab',
         data: {
+          version: 1,
           event: 'event::app:build-presence',
           payload: {
             protocol: 1,

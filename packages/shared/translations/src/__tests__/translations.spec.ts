@@ -15,6 +15,6 @@ describe('omni search translations', () => {
   ])('%s messages are non-empty strings', (_language, messages) => {
     expect(messages).toBeDefined();
     expect(Object.values(messages ?? {})).not.toContain('');
-    expect(Object.values(messages ?? {})).toHaveLength(8);
+    expect(Object.values(messages ?? {})).toHaveLength(19);
   });
 });

@@ -6,6 +6,7 @@ import { LinkedMentions } from '../components/backlinks/linked-mentions';
 import { EditorSurface } from '../components/editor-surface';
 import { NoteNotFoundView } from '../components/feedback/note-not-found-view';
 import { WorkspaceNotFoundView } from '../components/feedback/workspace-not-found-view';
+import { EditorSaveStatus } from '../components/navigation/editor-save-status';
 import { AppHeader } from '../layout/app-header';
 import { PageContentContainer } from '../layout/main-content-container';
 
@@ -73,7 +74,15 @@ export function PageEditor() {
 
   return (
     <>
-      <AppHeader />
+      <AppHeader>
+        {editorWsPath ? (
+          <EditorSaveStatus
+            key={editorKey}
+            source={coreServices.editorEngine}
+            wsPath={editorWsPath.wsPath}
+          />
+        ) : null}
+      </AppHeader>
       <PageContentContainer applyPadding={false}>
         {editorWsPath && currentWsName ? (
           <>

@@ -54,6 +54,13 @@ export type AppRouteInfo =
       };
     }
   | {
+      route: 'settings-diagnostics';
+      metadata?: Record<string, string>;
+      payload: {
+        returnTo?: string;
+      };
+    }
+  | {
       route: 'welcome';
       metadata?: Record<string, string>;
       payload: Record<string, never>;

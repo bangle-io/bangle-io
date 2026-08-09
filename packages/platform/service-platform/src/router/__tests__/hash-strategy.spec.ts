@@ -125,6 +125,21 @@ describe('HashStrategy', () => {
         hash: '#route=settings-workspaces',
       });
     });
+
+    it('should encode diagnostics settings with its return target', () => {
+      const routeInfo: AppRouteInfo = {
+        route: 'settings-diagnostics',
+        payload: {
+          returnTo: '/ws#route=editor&wsPath=notes%3Aindex.md',
+        },
+      };
+
+      expect(strategy.encodeRouteInfo(routeInfo, basePath)).toEqual({
+        pathname: '/app',
+        search: '',
+        hash: '#route=settings-diagnostics&returnTo=%2Fws%23route%3Deditor%26wsPath%3Dnotes%253Aindex.md',
+      });
+    });
   });
 
   describe('decodeRouteInfo', () => {
@@ -219,6 +234,21 @@ describe('HashStrategy', () => {
         payload: {},
       });
     });
+
+    it('should decode diagnostics settings with its return target', () => {
+      const encoded: EncodedRoute = {
+        pathname: '/app',
+        search: '',
+        hash: '#route=settings-diagnostics&returnTo=%2Fws%23route%3Deditor%26wsPath%3Dnotes%253Aindex.md',
+      };
+
+      expect(strategy.decodeRouteInfo(encoded, basePath)).toEqual({
+        route: 'settings-diagnostics',
+        payload: {
+          returnTo: '/ws#route=editor&wsPath=notes%3Aindex.md',
+        },
+      });
+    });
   });
 
   describe('bidirectional conversion', () => {
@@ -248,6 +278,14 @@ describe('HashStrategy', () => {
         routeInfo: {
           route: 'settings-general',
           payload: {},
+        },
+        basePath: '/app',
+      },
+      {
+        name: 'diagnostics settings route with basePath',
+        routeInfo: {
+          route: 'settings-diagnostics',
+          payload: { returnTo: '/ws#route=welcome' },
         },
         basePath: '/app',
       },

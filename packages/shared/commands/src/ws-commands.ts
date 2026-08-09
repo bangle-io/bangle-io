@@ -173,8 +173,12 @@ export const wsCommands = narrow([
     title: 'Clone Note',
     omniSearch: 'note',
     keywords: ['clone', 'duplicate', 'copy'],
-    dependencies: { services: ['workspaceState', 'fileSystem', 'navigation'] },
-    args: null,
+    dependencies: {
+      services: ['workspaceState', 'fileSystem', 'navigation', 'editorEngine'],
+    },
+    args: {
+      wsPath: T.Optional(T.String),
+    },
   },
   {
     id: 'command::ws:recover-note-snapshot',

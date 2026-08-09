@@ -8,12 +8,12 @@ import {
   Copy,
   ExternalLink,
   FolderPlus,
-  Move,
   Pencil,
   PlusIcon,
   Trash2,
 } from 'lucide-react';
 import { useMemo } from 'react';
+import { getSingleNoteActions } from '../components/note-actions/single-note-actions';
 
 /**
  * Builds the context-menu actions for sidebar file-tree entries. Extracted
@@ -142,7 +142,12 @@ export function useSidebarFileActions({
           });
         };
 
-        if (filePath) {
+        if (selectedFileWsPaths.length > 1) {
+          pushDeleteSelectedFilesAction();
+          return actions;
+        }
+
+        if (filePath && !filePath.isNote()) {
           actions.push({
             id: 'copy-path',
             label: t.app.components.appSidebar.copyPathActionTitle,
@@ -196,12 +201,6 @@ export function useSidebarFileActions({
             },
           });
 
-          if (selectedFileWsPaths.length > 1) {
-            pushDeleteSelectedFilesAction();
-
-            return actions;
-          }
-
           actions.push({
             id: 'delete-file',
             label: t.app.components.appSidebar.deleteActionTitle,
@@ -224,63 +223,20 @@ export function useSidebarFileActions({
         }
 
         if (filePath?.isNote()) {
-          if (selectedFileWsPaths.length > 1) {
-            pushDeleteSelectedFilesAction();
-
-            return actions;
-          }
-
-          actions.push({
-            id: 'rename',
-            label: t.app.components.appSidebar.renameActionTitle,
-            Icon: Pencil,
-            onClick: ({ entry }) => {
-              const wsPath = getFileWsPath(entry.path);
-              if (!wsPath) {
-                return;
-              }
-              commandDispatcher.dispatch(
-                'command::ui:rename-note-dialog',
-                { wsPath },
-                'ui',
-              );
-            },
-          });
-
-          actions.push({
-            id: 'move',
-            label: t.app.components.appSidebar.moveActionTitle,
-            Icon: Move,
-            onClick: ({ entry }) => {
-              const wsPath = getFileWsPath(entry.path);
-              if (!wsPath) {
-                return;
-              }
-              commandDispatcher.dispatch(
-                'command::ui:move-note-dialog',
-                { wsPath },
-                'ui',
-              );
-            },
-          });
-
-          actions.push({
-            id: 'delete',
-            label: t.app.components.appSidebar.deleteActionTitle,
-            Icon: Trash2,
-            variant: 'destructive' as const,
-            onClick: ({ entry }) => {
-              const wsPath = getFileWsPath(entry.path);
-              if (!wsPath) {
-                return;
-              }
-              commandDispatcher.dispatch(
-                'command::ui:delete-note-dialog',
-                { wsPath },
-                'ui',
-              );
-            },
-          });
+          actions.push(
+            ...getSingleNoteActions({
+              commandDispatcher,
+              source: 'AppSidebar.NoteActions',
+              wsPath: filePath.wsPath,
+            }).map(({ Icon, id, label, run, separatorBefore, variant }) => ({
+              id,
+              label,
+              Icon,
+              onClick: run,
+              separatorBefore,
+              variant,
+            })),
+          );
         }
 
         return actions;

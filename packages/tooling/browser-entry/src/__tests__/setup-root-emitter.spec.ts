@@ -1,11 +1,42 @@
 import { MemoryBroadcastChannel } from '@bangle.io/browser-utils';
 import { Logger } from '@bangle.io/logger';
-import { CROSS_TAB_EVENTS } from '@bangle.io/root-emitter';
-import { describe, expect, test, vi } from 'vitest';
+import type { CrossTabRootEvent, RootEvents } from '@bangle.io/root-emitter';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 import { setupCrossTabComms } from '../setup-root-emitter';
 
-// Replace the global BroadcastChannel with our MemoryBroadcastChannel
 vi.stubGlobal('BroadcastChannel', MemoryBroadcastChannel);
+
+const sender = { id: 'other-tab', tag: 'test' };
+
+const validCrossTabEvents = [
+  {
+    event: 'event::file:update',
+    payload: {
+      type: 'file-rename',
+      wsPath: 'notes:renamed.md',
+      oldWsPath: 'notes:original.md',
+      sender,
+    },
+  },
+  {
+    event: 'event::file:force-update',
+    payload: { wsName: 'notes', sender },
+  },
+  {
+    event: 'event::app:reload-ui',
+    payload: { sender },
+  },
+  {
+    event: 'event::app:build-presence',
+    payload: {
+      protocol: 1,
+      buildId: 'build-42',
+      builtAt: 1_700_000_000_000,
+      reply: false,
+      sender,
+    },
+  },
+] as const satisfies readonly CrossTabRootEvent[];
 
 interface TestSetup {
   pubSub: ReturnType<typeof setupCrossTabComms>;
@@ -15,6 +46,7 @@ interface TestSetup {
 }
 
 let tabCounter = 0;
+const activeAbortControllers: AbortController[] = [];
 
 function setup(): TestSetup {
   const abortController = new AbortController();
@@ -28,144 +60,200 @@ function setup(): TestSetup {
     logger,
     abortController.signal,
   );
+  activeAbortControllers.push(abortController);
 
-  return {
-    pubSub,
-    abortController,
-    logger,
-    tabId,
-  };
+  return { pubSub, abortController, logger, tabId };
 }
 
-describe('setupCrossTabComms', () => {
-  test('should emit cross-tab events to other tabs', () => {
-    const setup1 = setup();
-    const setup2 = setup();
+function receive(setup: TestSetup, senderId: string, data: unknown): void {
+  setup.pubSub.broadcastBus._channel.onmessage?.(
+    new MessageEvent('message', {
+      data: { senderId, data, timestamp: Date.now() },
+    }),
+  );
+}
 
-    const subscriberSpy = vi.fn();
-
-    setup1.pubSub.subscriber.on(CROSS_TAB_EVENTS[0], subscriberSpy);
-
-    const testPayload = { test: 'data' };
-    setup2.pubSub.publisher.emit(CROSS_TAB_EVENTS[0], testPayload);
-
-    expect(subscriberSpy).toHaveBeenCalledWith(testPayload);
-  });
-
-  test('should receive cross-tab events from other tabs', () => {
-    const setup1 = setup();
-    const setup2 = setup();
-
-    const subscriberSpy = vi.fn();
-
-    setup1.pubSub.subscriber.on(CROSS_TAB_EVENTS[0], subscriberSpy);
-
-    const testPayload = { test: 'data' };
-    setup2.pubSub.publisher.emit(CROSS_TAB_EVENTS[0], testPayload);
-
-    expect(subscriberSpy).toHaveBeenCalledWith(testPayload);
-  });
-
-  test('should handle messages from same tab', () => {
-    const { pubSub, tabId } = setup();
-
-    const subscriberSpy = vi.fn();
-
-    pubSub.subscriber.on(CROSS_TAB_EVENTS[0], subscriberSpy);
-
-    // Simulate receiving a message from the same tab via broadcastChannel
-    const testMessage = {
-      senderId: tabId,
-      data: {
-        event: CROSS_TAB_EVENTS[0],
-        payload: { test: 'data' },
-      },
-      timestamp: Date.now(),
-    };
-
-    pubSub.broadcastBus._channel.onmessage?.(
-      new MessageEvent('message', { data: testMessage }),
-    );
-
-    expect(subscriberSpy).toHaveBeenCalled();
-  });
-
-  test('should cleanup resources on abort', () => {
-    const { pubSub, abortController } = setup();
-    const destroyPublisherSpy = vi.spyOn(pubSub.publisher, 'destroy');
-    const destroySubscriberSpy = vi.spyOn(pubSub.subscriber, 'destroy');
-
+afterEach(() => {
+  for (const abortController of activeAbortControllers.splice(0)) {
     abortController.abort();
+  }
+  vi.restoreAllMocks();
+});
 
-    expect(destroyPublisherSpy).toHaveBeenCalled();
-    expect(destroySubscriberSpy).toHaveBeenCalled();
+describe('setupCrossTabComms', () => {
+  test.each(
+    validCrossTabEvents,
+  )('receives versioned $event messages from another tab', (event) => {
+    const setup1 = setup();
+    const subscriberSpy = vi.fn();
+    setup1.pubSub.subscriber.on(event.event, subscriberSpy);
+
+    receive(setup1, 'different-tab', { version: 1, ...event });
+
+    expect(subscriberSpy).toHaveBeenCalledOnce();
+    expect(subscriberSpy).toHaveBeenCalledWith(event.payload);
   });
 
-  test('should not broadcast non-cross-tab events', () => {
-    const { pubSub } = setup();
-    const sendSpy = vi.spyOn(pubSub.broadcastBus, 'send');
+  test.each(
+    validCrossTabEvents,
+  )('receives legacy $event messages from another tab', (event) => {
+    const setup1 = setup();
     const subscriberSpy = vi.fn();
-    const regularEvent = 'regular-event';
+    setup1.pubSub.subscriber.on(event.event, subscriberSpy);
 
-    pubSub.subscriber.on(regularEvent, subscriberSpy);
-    pubSub.publisher.emit(regularEvent, { test: 'data' });
+    receive(setup1, 'different-tab', event);
+
+    expect(subscriberSpy).toHaveBeenCalledOnce();
+    expect(subscriberSpy).toHaveBeenCalledWith(event.payload);
+  });
+
+  test('sends v1 envelopes that retain event and payload for legacy receivers', () => {
+    const setup1 = setup();
+    const event = validCrossTabEvents[0];
+    const sendSpy = vi.spyOn(setup1.pubSub.broadcastBus, 'send');
+    const subscriberSpy = vi.fn();
+    setup1.pubSub.subscriber.on(event.event, subscriberSpy);
+
+    setup1.pubSub.publisher.emit(event.event, event.payload);
+
+    expect(sendSpy).toHaveBeenCalledWith({ version: 1, ...event });
+    expect(subscriberSpy).toHaveBeenCalledOnce();
+    expect(subscriberSpy).toHaveBeenCalledWith(event.payload);
+  });
+
+  test('delivers each cross-tab event once to the sender and another tab', () => {
+    const senderSetup = setup();
+    const receiverSetup = setup();
+    const event = validCrossTabEvents[1];
+    const senderSpy = vi.fn();
+    const receiverSpy = vi.fn();
+    senderSetup.pubSub.subscriber.on(event.event, senderSpy);
+    receiverSetup.pubSub.subscriber.on(event.event, receiverSpy);
+
+    senderSetup.pubSub.publisher.emit(event.event, event.payload);
+
+    expect(senderSpy).toHaveBeenCalledOnce();
+    expect(receiverSpy).toHaveBeenCalledOnce();
+    expect(senderSpy).toHaveBeenCalledWith(event.payload);
+    expect(receiverSpy).toHaveBeenCalledWith(event.payload);
+  });
+
+  test('preserves valid same-tab messages injected by the transport', () => {
+    const setup1 = setup();
+    const event = validCrossTabEvents[2];
+    const subscriberSpy = vi.fn();
+    setup1.pubSub.subscriber.on(event.event, subscriberSpy);
+
+    receive(setup1, setup1.tabId, { version: 1, ...event });
+
+    expect(subscriberSpy).toHaveBeenCalledOnce();
+    expect(subscriberSpy).toHaveBeenCalledWith(event.payload);
+  });
+
+  test('does not broadcast local-only root events', () => {
+    const setup1 = setup();
+    const sendSpy = vi.spyOn(setup1.pubSub.broadcastBus, 'send');
+    const subscriberSpy = vi.fn();
+    const event: Extract<RootEvents, { event: 'event::editor:reload-editor' }> =
+      {
+        event: 'event::editor:reload-editor',
+        payload: { wsName: 'notes', sender },
+      };
+    setup1.pubSub.subscriber.on(event.event, subscriberSpy);
+
+    setup1.pubSub.publisher.emit(event.event, event.payload);
 
     expect(sendSpy).not.toHaveBeenCalled();
-    expect(subscriberSpy).toHaveBeenCalledTimes(1);
+    expect(subscriberSpy).toHaveBeenCalledOnce();
+    expect(subscriberSpy).toHaveBeenCalledWith(event.payload);
   });
 
-  test('should broadcast cross-tab events via TypedBroadcastBus', () => {
-    const { pubSub } = setup();
-    const sendSpy = vi.spyOn(pubSub.broadcastBus, 'send');
-    const subscriberSpy = vi.fn();
-
-    pubSub.subscriber.on(CROSS_TAB_EVENTS[0], subscriberSpy);
-
-    const testPayload = { test: 'data' };
-    pubSub.publisher.emit(CROSS_TAB_EVENTS[0], testPayload);
-
-    expect(sendSpy).toHaveBeenCalledTimes(1);
-    expect(sendSpy).toHaveBeenCalledWith({
-      event: CROSS_TAB_EVENTS[0],
-      payload: testPayload,
-    });
-
-    expect(subscriberSpy).toHaveBeenCalledWith(testPayload);
-  });
-
-  test('should ignore messages not in CROSS_TAB_EVENTS', () => {
-    const { pubSub } = setup();
-    const subscriberSpy = vi.fn();
-
-    pubSub.subscriber.on('some-other-event', subscriberSpy);
-
-    const testMessage = {
-      senderId: 'different-tab',
-      data: {
-        event: 'some-other-event',
-        payload: { test: 'data' },
+  test.each([
+    undefined,
+    null,
+    'not an object',
+    [],
+    { version: 2, ...validCrossTabEvents[0] },
+    { version: '1', ...validCrossTabEvents[0] },
+    Object.create({ version: 2, ...validCrossTabEvents[0] }),
+    { version: 1, event: 'event::unknown', payload: {} },
+    { version: 1, event: 'event::file:update', payload: {} },
+    {
+      version: 1,
+      event: 'event::file:update',
+      payload: {
+        ...validCrossTabEvents[0].payload,
+        type: 'unrecognized-file-event',
       },
-      timestamp: Date.now(),
-    };
+    },
+    {
+      version: 1,
+      event: 'event::file:update',
+      payload: { ...validCrossTabEvents[0].payload, wsPath: '' },
+    },
+    {
+      version: 1,
+      event: 'event::file:update',
+      payload: { ...validCrossTabEvents[0].payload, oldWsPath: 123 },
+    },
+    {
+      version: 1,
+      event: 'event::file:force-update',
+      payload: { sender, wsName: 123 },
+    },
+    {
+      version: 1,
+      event: 'event::app:reload-ui',
+      payload: { sender: { id: 123 } },
+    },
+    {
+      version: 1,
+      event: 'event::app:build-presence',
+      payload: {
+        ...validCrossTabEvents[3].payload,
+        builtAt: Number.NaN,
+      },
+    },
+    {
+      event: 'event::app:build-presence',
+      payload: { ...validCrossTabEvents[3].payload, protocol: 2 },
+    },
+    new Proxy(
+      {},
+      {
+        get() {
+          throw new Error('malformed frame');
+        },
+      },
+    ),
+  ])('drops malformed inbound frames without emitting: %#', (data) => {
+    const setup1 = setup();
+    const subscriberSpy = vi.fn();
+    const warnSpy = vi
+      .spyOn(setup1.logger, 'warn')
+      .mockImplementation(() => undefined);
+    setup1.pubSub.subscriber.on('event::file:update', subscriberSpy);
 
-    // Simulate receiving the message via broadcastChannel
-    pubSub.broadcastBus._channel.onmessage?.(
-      new MessageEvent('message', { data: testMessage }),
-    );
+    expect(() => receive(setup1, 'different-tab', data)).not.toThrow();
 
     expect(subscriberSpy).not.toHaveBeenCalled();
+    expect(warnSpy).toHaveBeenCalledOnce();
   });
 
-  test('should not emit duplicate events for CROSS_TAB_EVENTS', () => {
-    const { pubSub } = setup();
-    const subscriberSpy = vi.fn();
+  test('cleans up the emitters and transport subscriptions on abort', () => {
+    const setup1 = setup();
+    const destroyPublisherSpy = vi.spyOn(setup1.pubSub.publisher, 'destroy');
+    const destroySubscriberSpy = vi.spyOn(setup1.pubSub.subscriber, 'destroy');
+    const sendSpy = vi.spyOn(setup1.pubSub.broadcastBus, 'send');
 
-    pubSub.subscriber.on(CROSS_TAB_EVENTS[0], subscriberSpy);
+    setup1.abortController.abort();
+    setup1.pubSub.publisher.emit(
+      validCrossTabEvents[0].event,
+      validCrossTabEvents[0].payload,
+    );
 
-    const testPayload = { test: 'data' };
-    pubSub.publisher.emit(CROSS_TAB_EVENTS[0], testPayload);
-
-    expect(subscriberSpy).toHaveBeenCalledTimes(1);
-    expect(subscriberSpy).toHaveBeenCalledWith(testPayload);
+    expect(destroyPublisherSpy).toHaveBeenCalledOnce();
+    expect(destroySubscriberSpy).toHaveBeenCalledOnce();
+    expect(sendSpy).not.toHaveBeenCalled();
   });
 });

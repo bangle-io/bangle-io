@@ -102,30 +102,39 @@ async function assertSourceSavesDrained(
 }
 
 export const wsCommandHandlers = [
-  c('command::ws:new-note-from-input', ({ navigation }, { inputPath }, key) => {
-    const { dispatch } = getCtx(key);
-    validateInputPath(inputPath);
+  c(
+    'command::ws:new-note-from-input',
+    async ({ navigation }, { inputPath }, key) => {
+      const { execute } = getCtx(key);
+      validateInputPath(inputPath);
 
-    const { wsName } = navigation.resolveAtoms();
+      const { wsName } = navigation.resolveAtoms();
 
-    if (!wsName) {
-      throwAppError(
-        'error::workspace:not-opened',
-        t.app.errors.workspace.notOpened,
-        {
-          wsPath: inputPath,
-        },
-      );
-    }
+      if (!wsName) {
+        throwAppError(
+          'error::workspace:not-opened',
+          t.app.errors.workspace.notOpened,
+          {
+            wsPath: inputPath,
+          },
+        );
+      }
 
-    // Add .md extension if not present
-    if (!inputPath.endsWith(WsPath.DEFAULT_NOTE_EXTENSION)) {
-      inputPath = inputPath + WsPath.DEFAULT_NOTE_EXTENSION;
-    }
-    const wsPath = WsPath.fromParts(wsName, inputPath).toString();
+      // Add .md extension if not present
+      if (!inputPath.endsWith(WsPath.DEFAULT_NOTE_EXTENSION)) {
+        inputPath = inputPath + WsPath.DEFAULT_NOTE_EXTENSION;
+      }
+      const wsPath = WsPath.fromParts(wsName, inputPath).toString();
 
-    dispatch('command::ws:create-note', { wsPath, navigate: true });
-  }),
+      const result = await execute('command::ws:create-note', {
+        wsPath,
+        navigate: true,
+      });
+      if (result.type === 'failure') {
+        throw result.error;
+      }
+    },
+  ),
 
   c(
     'command::ws:create-note',
@@ -368,31 +377,37 @@ export const wsCommandHandlers = [
     },
   ),
 
-  c('command::ws:quick-new-note', ({ workspaceState }, { pathPrefix }, key) => {
-    const { store, dispatch } = getCtx(key);
-    const wsPaths = store.get(workspaceState.$noteWsPaths) || [];
+  c(
+    'command::ws:quick-new-note',
+    async ({ workspaceState }, { pathPrefix }, key) => {
+      const { store, execute } = getCtx(key);
+      const wsPaths = store.get(workspaceState.$noteWsPaths) || [];
 
-    const untitledNotes = wsPaths
-      .map((path) => path.fileNameWithoutExtension)
-      .filter((name) => name.startsWith('untitled-'))
-      .map((name) => {
-        const num = Number.parseInt(name.replace('untitled-', ''), 10);
-        return Number.isNaN(num) ? 0 : num;
+      const untitledNotes = wsPaths
+        .map((path) => path.fileNameWithoutExtension)
+        .filter((name) => name.startsWith('untitled-'))
+        .map((name) => {
+          const num = Number.parseInt(name.replace('untitled-', ''), 10);
+          return Number.isNaN(num) ? 0 : num;
+        });
+
+      const nextNum =
+        untitledNotes.length > 0 ? Math.max(...untitledNotes) + 1 : 1;
+      const newNoteName = `untitled-${nextNum}`;
+
+      const result = await execute('command::ws:new-note-from-input', {
+        inputPath: pathPrefix
+          ? WsPath.pathJoin(pathPrefix, newNoteName)
+          : newNoteName,
       });
+      if (result.type === 'failure') {
+        throw result.error;
+      }
+    },
+  ),
 
-    const nextNum =
-      untitledNotes.length > 0 ? Math.max(...untitledNotes) + 1 : 1;
-    const newNoteName = `untitled-${nextNum}`;
-
-    dispatch('command::ws:new-note-from-input', {
-      inputPath: pathPrefix
-        ? WsPath.pathJoin(pathPrefix, newNoteName)
-        : newNoteName,
-    });
-  }),
-
-  c('command::ws:create-directory', (_, { dirWsPath }, key) => {
-    const { dispatch } = getCtx(key);
+  c('command::ws:create-directory', async (_, { dirWsPath }, key) => {
+    const { execute } = getCtx(key);
     const dirPath = WsPath.fromString(dirWsPath).asDir();
 
     if (!dirPath) {
@@ -405,9 +420,12 @@ export const wsCommandHandlers = [
       );
     }
     // We do not support bare directories, so create a note as a placeholder
-    dispatch('command::ws:quick-new-note', {
+    const result = await execute('command::ws:quick-new-note', {
       pathPrefix: dirPath.path,
     });
+    if (result.type === 'failure') {
+      throw result.error;
+    }
   }),
 
   c(
@@ -607,11 +625,30 @@ export const wsCommandHandlers = [
 
   c(
     'command::ws:clone-note',
-    async ({ workspaceState, fileSystem, navigation }, _args, key) => {
+    async (
+      { workspaceState, fileSystem, navigation, editorEngine },
+      { wsPath },
+      key,
+    ) => {
       const { store } = getCtx(key);
-      const currentWsPath = store.get(workspaceState.$currentWsPath);
+      const explicitWsPath =
+        wsPath === undefined ? undefined : WsPath.safeParseFile(wsPath).data;
 
-      if (!currentWsPath) {
+      if (
+        wsPath !== undefined &&
+        (!explicitWsPath?.isNote() || explicitWsPath.wsPath !== wsPath)
+      ) {
+        throwAppError(
+          'error::file:invalid-note-path',
+          t.app.errors.file.invalidNotePath,
+          { invalidWsPath: wsPath },
+        );
+      }
+
+      const targetWsPath =
+        explicitWsPath ?? store.get(workspaceState.$currentWsPath);
+
+      if (!targetWsPath) {
         throwAppError(
           'error::workspace:not-opened',
           t.app.errors.workspace.noNoteOpenToClone,
@@ -619,8 +656,25 @@ export const wsCommandHandlers = [
         );
       }
 
+      const drained = await waitForSaveQueueToDrain(
+        editorEngine,
+        EDITOR_SAVE_DRAIN_TIMEOUT_MS,
+        targetWsPath.wsPath,
+      );
+      if (!drained) {
+        throwAppError(
+          'error::file:invalid-operation',
+          t.app.errors.file.cloneBlockedByUnsavedChanges,
+          {
+            operation: 'clone',
+            oldWsPath: targetWsPath.wsPath,
+            newWsPath: targetWsPath.wsPath,
+          },
+        );
+      }
+
       // Determine base name by stripping any existing '-copy-<n>' suffix
-      const origName = currentWsPath.fileNameWithoutExtension;
+      const origName = targetWsPath.fileNameWithoutExtension;
       const copyRegex = /^(.*?)(-copy-\d+)?$/;
       const match = origName.match(copyRegex);
       const base = match ? match[1] : origName;
@@ -633,7 +687,7 @@ export const wsCommandHandlers = [
         const noteFile = noteParsed.asFile();
         if (noteFile) {
           const noteParent = noteFile.getParent();
-          if (noteParent?.path === currentWsPath.getParent()?.path) {
+          if (noteParent?.path === targetWsPath.getParent()?.path) {
             siblingNames.add(noteFile.fileNameWithoutExtension);
           }
         }
@@ -650,15 +704,15 @@ export const wsCommandHandlers = [
       const newFileName = candidate + WsPath.DEFAULT_NOTE_EXTENSION;
 
       // Use replaceFileName to create the new WsPath
-      const newWsPath = currentWsPath.replaceFileName(newFileName).wsPath;
+      const newWsPath = targetWsPath.replaceFileName(newFileName).wsPath;
 
-      const originalFile = await fileSystem.readFile(currentWsPath.wsPath);
+      const originalFile = await fileSystem.readFile(targetWsPath.wsPath);
       if (!originalFile) {
         throwAppError(
           'error::file:invalid-note-path',
           t.app.errors.file.originalNoteNotFound,
           {
-            invalidWsPath: currentWsPath.wsPath,
+            invalidWsPath: targetWsPath.wsPath,
           },
         );
       }
@@ -676,7 +730,7 @@ export const wsCommandHandlers = [
   c(
     'command::ws:daily-note',
     async ({ workspaceState, fileSystem, navigation }, args, key) => {
-      const { store, dispatch } = getCtx(key);
+      const { store, execute } = getCtx(key);
       const wsName = store.get(workspaceState.$currentWsName);
       const currentWsPath = store.get(workspaceState.$currentWsPath);
 
@@ -722,10 +776,13 @@ export const wsCommandHandlers = [
       if (exists) {
         navigation.goWsPath(dailyNoteWsPath);
       } else {
-        dispatch('command::ws:create-note', {
+        const result = await execute('command::ws:create-note', {
           wsPath: dailyNoteWsPath,
           navigate: true,
         });
+        if (result.type === 'failure') {
+          throw result.error;
+        }
       }
     },
   ),

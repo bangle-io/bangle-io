@@ -25,6 +25,7 @@ import {
 } from '@bangle.io/ui-components';
 import { useAtom, useAtomValue } from 'jotai';
 import {
+  Activity,
   ArrowLeft,
   BriefcaseBusiness,
   Download,
@@ -37,6 +38,7 @@ import React from 'react';
 import { usePwaInstall } from '../common/use-pwa-install';
 import { AppHeader } from '../layout/app-header';
 import { PageContentContainer } from '../layout/main-content-container';
+import { DiagnosticsSettingsPage } from './page-settings-diagnostics';
 import { RecoverySettingsPage } from './page-settings-recovery';
 import { WorkspacesSettingsPage } from './page-settings-workspaces';
 
@@ -89,6 +91,11 @@ const SETTINGS_PAGE_META: Record<
     label: t.app.settings.nav.recovery,
     icon: History,
     title: t.app.settings.recovery.title,
+  },
+  diagnostics: {
+    label: t.app.settings.nav.diagnostics,
+    icon: Activity,
+    title: t.app.settings.diagnostics.title,
   },
 };
 
@@ -314,16 +321,33 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
                   />
                 </SettingsPage.SettingsSection>
               </>
-            ) : activePage === 'workspaces' ? (
-              <WorkspacesSettingsPage />
             ) : (
-              <RecoverySettingsPage />
+              <SettingsSubpage activePage={activePage} />
             )}
           </SettingsPage.SettingsPageContent>
         </SettingsPage.SettingsPageLayout>
       </PageContentContainer>
     </>
   );
+}
+
+function SettingsSubpage({
+  activePage,
+}: {
+  activePage: Exclude<SettingsPageId, 'general'>;
+}) {
+  switch (activePage) {
+    case 'workspaces':
+      return <WorkspacesSettingsPage />;
+    case 'recovery':
+      return <RecoverySettingsPage />;
+    case 'diagnostics':
+      return <DiagnosticsSettingsPage />;
+    default: {
+      const _exhaustiveCheck: never = activePage;
+      throw new Error(`Unknown settings page: ${_exhaustiveCheck}`);
+    }
+  }
 }
 
 function AssetLocationSelect({

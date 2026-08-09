@@ -63,6 +63,20 @@ const TREE_UNSAFE_CSS = `
   [data-type='context-menu-anchor'] {
     z-index: 40;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    :host,
+    :host *,
+    :host *::after,
+    :host *::before {
+      animation-delay: 0ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-delay: 0ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 `;
 
 const CONTEXT_MENU_WIDTH = 176;
@@ -748,26 +762,38 @@ export function PierreFileTree({
                   <span className="block truncate">{basename(entry.path)}</span>
                 </div>
                 {actions.map(
-                  ({ disabled, Icon, id, label, onClick, variant }) => (
-                    <button
-                      key={id}
-                      type="button"
-                      className={cn(
-                        'mt-0.5 flex h-7 w-full items-center gap-2 rounded-sm px-2 text-left text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50',
-                        variant === 'destructive' && 'text-destructive',
-                      )}
-                      disabled={disabled}
-                      onClick={() => {
-                        context.close({ restoreFocus: false });
-                        onClick({
-                          entry,
-                          selectedEntries: menuSelectedEntries,
-                        });
-                      }}
-                    >
-                      {Icon && <Icon className="size-4" />}
-                      <span className="truncate">{label}</span>
-                    </button>
+                  ({
+                    disabled,
+                    Icon,
+                    id,
+                    label,
+                    onClick,
+                    separatorBefore,
+                    variant,
+                  }) => (
+                    <React.Fragment key={id}>
+                      {separatorBefore ? (
+                        <hr className="my-1 border-border border-t" />
+                      ) : null}
+                      <button
+                        type="button"
+                        className={cn(
+                          'mt-0.5 flex h-7 w-full items-center gap-2 rounded-sm px-2 text-left text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50',
+                          variant === 'destructive' && 'text-destructive',
+                        )}
+                        disabled={disabled}
+                        onClick={() => {
+                          context.close({ restoreFocus: false });
+                          onClick({
+                            entry,
+                            selectedEntries: menuSelectedEntries,
+                          });
+                        }}
+                      >
+                        {Icon && <Icon className="size-4" />}
+                        <span className="truncate">{label}</span>
+                      </button>
+                    </React.Fragment>
                   ),
                 )}
               </div>

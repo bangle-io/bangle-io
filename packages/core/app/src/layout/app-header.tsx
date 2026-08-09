@@ -5,17 +5,24 @@ import {
   Button,
   buttonVariants,
   cn,
+  DropdownMenu,
   Separator,
   Sidebar,
   StarButton,
 } from '@bangle.io/ui-components';
 import { WsPath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue } from 'jotai';
-import { ChevronsRightLeft, Home, MoveHorizontal } from 'lucide-react';
+import {
+  ChevronsRightLeft,
+  EllipsisVertical,
+  Home,
+  MoveHorizontal,
+} from 'lucide-react';
 import React from 'react';
 import { MarkdownFidelityNotice } from '../components/navigation/markdown-fidelity-notice';
 import { NoteBreadcrumb } from '../components/navigation/note-breadcrumb';
 import { WsNameBreadcrumb } from '../components/navigation/ws-name-breadcrumb'; // Import WsNameBreadcrumb
+import { getSingleNoteActions } from '../components/note-actions/single-note-actions';
 
 const isWideScreen = checkWidescreen();
 
@@ -52,8 +59,9 @@ export function AppHeader({ children }: AppHeaderProps) {
           currentWsName={currentWsName}
           wsPaths={wsPaths.map((wsPath) => wsPath.wsPath)}
         />
-        {showEditorToolbar && currentWsName && (
+        {currentWsPath && currentWsName && (
           <ToolbarRightSection
+            currentWsPath={currentWsPath.wsPath}
             wideEditor={wideEditor}
             toggleEditor={() => {
               setWideEditor((prev) => !prev);
@@ -147,11 +155,13 @@ function HomeBreadcrumb({
 }
 
 interface ToolbarRightSectionProps {
+  currentWsPath: string;
   wideEditor: boolean;
   toggleEditor: () => void;
 }
 
 function ToolbarRightSection({
+  currentWsPath,
   wideEditor,
   toggleEditor,
 }: ToolbarRightSectionProps) {
@@ -159,15 +169,16 @@ function ToolbarRightSection({
   const isCurrentWsPathStarred = useAtomValue(
     coreServices.userActivityService.$isCurrentWsPathStarred,
   );
-  const currentWsPathValue = useAtomValue(
-    coreServices.workspaceState.$currentWsPath,
-  );
-  const currentWsPathString = currentWsPathValue?.wsPath;
+  const noteActions = getSingleNoteActions({
+    commandDispatcher: coreServices.commandDispatcher,
+    source: 'AppHeader.NoteActions',
+    wsPath: currentWsPath,
+  });
 
   const handleStarClick = () => {
     coreServices.commandDispatcher.dispatch(
       'command::workspace:toggle-star',
-      { wsPath: currentWsPathString },
+      { wsPath: currentWsPath },
       'AppHeader.ToolbarRightSection',
     );
   };
@@ -178,7 +189,6 @@ function ToolbarRightSection({
         isStarred={isCurrentWsPathStarred}
         onClick={handleStarClick}
         className="ml-2"
-        disabled={!currentWsPathString}
         title={
           isCurrentWsPathStarred
             ? t.app.common.unstarItem
@@ -201,6 +211,41 @@ function ToolbarRightSection({
           <span className="sr-only">{t.app.toolbar.toggleMaxWidth}</span>
         </Button>
       )}
+      {noteActions.length > 0 ? (
+        <DropdownMenu.DropdownMenu>
+          <DropdownMenu.DropdownMenuTrigger
+            render={
+              <Button
+                aria-label={t.app.components.noteActions.menuLabel}
+                className="ml-2 h-7 w-7"
+                size="icon"
+                title={t.app.components.noteActions.menuLabel}
+                variant="ghost"
+              >
+                <EllipsisVertical aria-hidden="true" className="h-4 w-4" />
+              </Button>
+            }
+          />
+          <DropdownMenu.DropdownMenuContent align="end" className="min-w-44">
+            {noteActions.map(
+              ({ Icon, id, label, run, separatorBefore, variant }) => (
+                <React.Fragment key={id}>
+                  {separatorBefore ? (
+                    <DropdownMenu.DropdownMenuSeparator />
+                  ) : null}
+                  <DropdownMenu.DropdownMenuItem
+                    onClick={run}
+                    variant={variant}
+                  >
+                    <Icon className="mr-2 h-4 w-4" />
+                    <span>{label}</span>
+                  </DropdownMenu.DropdownMenuItem>
+                </React.Fragment>
+              ),
+            )}
+          </DropdownMenu.DropdownMenuContent>
+        </DropdownMenu.DropdownMenu>
+      ) : null}
     </div>
   );
 }

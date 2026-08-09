@@ -6,7 +6,11 @@ import {
   isAppError,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
-import type { EditorAction, EditorEngineContract } from '@bangle.io/context';
+import type {
+  EditorAction,
+  EditorEngineContract,
+  EditorSavePhase,
+} from '@bangle.io/context';
 import {
   type EditorView,
   markdownLoader,
@@ -857,6 +861,10 @@ export class PmEditorService
 
   hasPendingOrFailedSave(wsPath?: string): boolean {
     return this.saveQueue.hasPendingOrFailed(wsPath);
+  }
+
+  getSaveStatus(wsPath: string): EditorSavePhase {
+    return this.saveQueue.getStatus(wsPath).status;
   }
 
   subscribeToSaveStatus(listener: () => void, wsPath?: string): () => void {

@@ -147,6 +147,10 @@ export class EditorWService
     return false;
   }
 
+  getSaveStatus(_wsPath: string): 'clean' {
+    return 'clean';
+  }
+
   retryFailedSave(_wsPath?: string): boolean {
     return false;
   }

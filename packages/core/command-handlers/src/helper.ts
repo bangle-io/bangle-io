@@ -9,8 +9,8 @@ import {
 import type { InferType, Validator } from '@bangle.io/mini-js-utils';
 import type {
   Command,
+  CommandExecutionResult,
   CommandHandler,
-  CommandHandlerContext,
   CommandKey,
   Store,
 } from '@bangle.io/types';
@@ -66,11 +66,6 @@ export function useC<T extends BangleAppCommand['id']>(
   }, [id, coreServices, handler]);
 }
 
-export type ChildDispatcher<TId extends BangleAppCommand['id']> = (
-  id: TId,
-  args: CommandArgs<Extract<BangleAppCommand, { id: TId }>>,
-) => void;
-
 type ChildCommandsIds<T extends string> = Extract<
   BangleAppCommand,
   { id: T }
@@ -82,14 +77,26 @@ type ChildCommandsIds<T extends string> = Extract<
     : never
   : never;
 
-export function getCtx<T extends string>(
+export type ChildDispatcher<TParent extends BangleAppCommand['id']> = <
+  TId extends ChildCommandsIds<TParent>,
+>(
+  id: TId,
+  args: CommandArgs<Extract<BangleAppCommand, { id: TId }>>,
+) => void;
+
+export type ChildExecutor<TParent extends BangleAppCommand['id']> = <
+  TId extends ChildCommandsIds<TParent>,
+>(
+  id: TId,
+  args: CommandArgs<Extract<BangleAppCommand, { id: TId }>>,
+) => Promise<CommandExecutionResult>;
+
+export function getCtx<T extends BangleAppCommand['id']>(
   key: CommandKey<T>,
 ): {
   store: Store;
-  dispatch: <TInput extends ChildCommandsIds<T>>(
-    id: TInput,
-    args: CommandArgs<Extract<BangleAppCommand, { id: TInput }>>,
-  ) => void;
+  dispatch: ChildDispatcher<T>;
+  execute: ChildExecutor<T>;
 } {
   const result = commandKeyToContext.get(key);
   if (!result) {
@@ -99,6 +106,7 @@ export function getCtx<T extends string>(
   }
   return {
     dispatch: result.context.dispatch,
+    execute: result.context.execute,
     store: result.context.store,
-  } satisfies CommandHandlerContext;
+  };
 }

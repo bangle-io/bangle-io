@@ -35,6 +35,11 @@ export const t = {
       toggleMaxWidth: 'Maximale Breite umschalten',
     },
     editor: {
+      saveStatus: {
+        saved: 'Gespeichert',
+        saving: 'Wird gespeichert…',
+        retry: 'Erneut versuchen',
+      },
       selectionMenu: {
         label: 'Textformatierung',
         bold: 'Fett',
@@ -153,6 +158,30 @@ export const t = {
       allFilesHeading: 'Alle Dateien',
       filteredHeading: 'Gefiltert',
       noResults: 'Keine Ergebnisse gefunden.',
+      savedContentDialogTitle: 'Gespeicherte Notizinhalte durchsuchen',
+      savedContentInputPlaceholder: 'Gespeichertes Markdown durchsuchen...',
+      savedContentHeading: 'Gespeicherte Notizinhalte',
+      savedContentPrompt:
+        'Durchsuchen Sie das aktuell in diesem Arbeitsbereich gespeicherte Markdown.',
+      savedContentLoading: 'Gespeicherte Notizen werden durchsucht...',
+      savedContentNoWorkspace:
+        'Oeffnen Sie einen Arbeitsbereich, um gespeicherte Notizen zu durchsuchen.',
+      savedContentNoResults:
+        'Keine passenden Zeilen in gespeicherten Notizen gefunden.',
+      savedContentError:
+        'Gespeicherte Notizen konnten nicht durchsucht werden.',
+      savedContentLine: ({ lineNumber }: { lineNumber: number }) =>
+        `Zeile ${lineNumber}`,
+      savedContentPartial: ({
+        oversizedCount,
+        unreadableCount,
+      }: {
+        oversizedCount: number;
+        unreadableCount: number;
+      }) =>
+        `Teilergebnisse: ${unreadableCount} nicht lesbare und ${oversizedCount} zu grosse gespeicherte Notizen wurden uebersprungen.`,
+      savedContentTruncated:
+        'Die ersten 100 passenden Zeilen werden in Notizreihenfolge angezeigt.',
     },
     sidebar: {
       newLabel: 'Neu',
@@ -456,6 +485,8 @@ export const t = {
           'Datei kann während des Umbenennens nicht verschoben werden. Verwenden Sie den Verschiebebefehl.',
         cannotRenameToDifferentWorkspace:
           'Notiz kann nicht in einen anderen Arbeitsbereich umbenannt werden',
+        cloneBlockedByUnsavedChanges:
+          'Diese Notiz kann erst dupliziert werden, wenn die neuesten Änderungen gespeichert sind',
         alreadyExistsInDest: ({ fileName }: { fileName: string }) =>
           `Eine Notiz mit dem Namen „${fileName}“ existiert bereits im Zielordner`,
         originalNoteNotFound: 'Originalnotiz nicht gefunden',
@@ -640,6 +671,15 @@ export const t = {
     },
     landingPage: 'Startseite',
     components: {
+      noteActions: {
+        menuLabel: 'Notizaktionen',
+        rename: 'Umbenennen',
+        move: 'Verschieben',
+        duplicate: 'Duplizieren',
+        copyPath: 'Pfad kopieren',
+        recover: 'Wiederherstellen',
+        delete: 'Löschen',
+      },
       appSidebar: {
         openedLabel: 'Geöffnet',
         filesLabel: 'Dateien',

@@ -2,12 +2,11 @@
  * @vitest-environment happy-dom
  */
 
-import { BaseFileSystemError, FILE_NOT_FOUND_ERROR } from '@bangle.io/baby-fs';
 import { FILE_STORAGE_MAX_FILE_SIZE_BYTES } from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { FileStorageMemory } from '../file-storage-memory';
-import { testCrossWorkspaceRenameContract } from './file-storage-rename-contract';
+import { testFileStorageProviderContract } from './file-storage-provider-contract';
 
 async function setup() {
   const { commonOpts } = createTestEnvironment();
@@ -27,7 +26,7 @@ async function setup() {
 }
 
 describe('FileStorageMemory', () => {
-  testCrossWorkspaceRenameContract(setup);
+  testFileStorageProviderContract(setup);
 
   beforeEach(() => {
     // Clear internal state if needed
@@ -164,21 +163,21 @@ describe('FileStorageMemory', () => {
     });
   });
 
-  it('provider contract: deleteFile throws FILE_NOT_FOUND_ERROR for a non-existent file and does not emit a change event', async () => {
+  it('maps a missing delete to the typed provider error without emitting', async () => {
     const { service, onChange } = await setup();
     const wsPath = 'myWorkspace:doesNotExist.md';
 
     await expect(service.deleteFile(wsPath)).rejects.toMatchObject({
-      code: FILE_NOT_FOUND_ERROR,
+      cause: expect.objectContaining({
+        name: 'error::file-storage:file-does-not-exist',
+        payload: expect.objectContaining({ wsPath }),
+      }),
     });
-    await expect(service.deleteFile(wsPath)).rejects.toBeInstanceOf(
-      BaseFileSystemError,
-    );
 
     expect(onChange).not.toHaveBeenCalled();
   });
 
-  it('provider contract: renameFile throws FILE_NOT_FOUND_ERROR for a non-existent file and does not emit a change event or create the destination', async () => {
+  it('maps a missing rename to the typed provider error without side effects', async () => {
     const { service, onChange } = await setup();
     const oldPath = 'myWorkspace:doesNotExist.md';
     const newPath = 'myWorkspace:renamed.md';
@@ -186,11 +185,11 @@ describe('FileStorageMemory', () => {
     await expect(
       service.renameFile(oldPath, { newWsPath: newPath }),
     ).rejects.toMatchObject({
-      code: FILE_NOT_FOUND_ERROR,
+      cause: expect.objectContaining({
+        name: 'error::file-storage:file-does-not-exist',
+        payload: expect.objectContaining({ wsPath: oldPath }),
+      }),
     });
-    await expect(
-      service.renameFile(oldPath, { newWsPath: newPath }),
-    ).rejects.toBeInstanceOf(BaseFileSystemError);
 
     expect(onChange).not.toHaveBeenCalled();
     expect(await service.fileExists(newPath)).toBe(false);

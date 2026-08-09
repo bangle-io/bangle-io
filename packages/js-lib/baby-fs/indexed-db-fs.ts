@@ -240,12 +240,24 @@ export class IndexedDBFileSystem extends BaseFileSystem {
   async unlink(filePath: string) {
     this._verifyFilePath(filePath);
 
-    await catchUpstream(
-      this._db().then((db) =>
-        db.delete(indexedDBFileSystemTableName, filePath),
-      ),
-      'Error deleting file',
+    const db = await this._db();
+    const transaction = db.transaction(
+      indexedDBFileSystemTableName,
+      'readwrite',
     );
+    const store = transaction.objectStore(indexedDBFileSystemTableName);
+    const file = await store.get(filePath);
+
+    if (file == null) {
+      await transaction.done;
+      throw new IndexedDBFileSystemError({
+        message: `File "${filePath}" not found`,
+        code: FILE_NOT_FOUND_ERROR,
+      });
+    }
+
+    await store.delete(filePath);
+    await transaction.done;
     await this._fileMetadata.del(filePath);
   }
 

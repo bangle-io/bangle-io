@@ -72,7 +72,24 @@ export class FileStorageIndexedDB
   async deleteFile(wsPath: string): Promise<void> {
     await this.mountPromise;
     const fsPath = toFSPathOrThrow(wsPath);
-    await this.idb.unlink(fsPath);
+    try {
+      await this.idb.unlink(fsPath);
+    } catch (error) {
+      if (
+        error instanceof BaseFileSystemError &&
+        error.code === FILE_NOT_FOUND_ERROR
+      ) {
+        throwAppError(
+          'error::file-storage:file-does-not-exist',
+          'Cannot delete file because it does not exist',
+          {
+            wsPath,
+            storage: this.name,
+          },
+        );
+      }
+      throw error;
+    }
 
     this.emitChange({
       type: 'delete',
@@ -100,12 +117,28 @@ export class FileStorageIndexedDB
   async fileStat(wsPath: string) {
     await this.mountPromise;
     const fsPath = toFSPathOrThrow(wsPath);
-    const stat = await this.idb.stat(fsPath);
-
-    return {
-      ctime: stat.mtimeMs,
-      mtime: stat.mtimeMs,
-    };
+    try {
+      const stat = await this.idb.stat(fsPath);
+      return {
+        ctime: stat.mtimeMs,
+        mtime: stat.mtimeMs,
+      };
+    } catch (error) {
+      if (
+        error instanceof BaseFileSystemError &&
+        error.code === FILE_NOT_FOUND_ERROR
+      ) {
+        throwAppError(
+          'error::file-storage:file-does-not-exist',
+          'File does not exist',
+          {
+            wsPath,
+            storage: this.name,
+          },
+        );
+      }
+      throw error;
+    }
   }
 
   async listAllFiles(
@@ -156,6 +189,19 @@ export class FileStorageIndexedDB
         throwAppError('error::file:already-existing', 'File already exists', {
           wsPath: newWsPath,
         });
+      }
+      if (
+        error instanceof BaseFileSystemError &&
+        error.code === FILE_NOT_FOUND_ERROR
+      ) {
+        throwAppError(
+          'error::file-storage:file-does-not-exist',
+          'Cannot rename file because it does not exist',
+          {
+            wsPath,
+            storage: this.name,
+          },
+        );
       }
       throw error;
     }

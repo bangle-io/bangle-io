@@ -354,9 +354,26 @@ function SidebarRail({ className, ...props }: React.ComponentProps<'hr'>) {
         startX: number;
         startWidth: number;
         direction: 1 | -1;
+        latestWidth: number;
       }
     | undefined
   >(undefined);
+  const previewFrameRef = React.useRef<number | undefined>(undefined);
+
+  const cancelPreviewFrame = React.useCallback(() => {
+    if (previewFrameRef.current === undefined) {
+      return;
+    }
+    cancelAnimationFrame(previewFrameRef.current);
+    previewFrameRef.current = undefined;
+  }, []);
+
+  React.useEffect(() => {
+    return () => {
+      cancelPreviewFrame();
+      dragRef.current = undefined;
+    };
+  }, [cancelPreviewFrame]);
 
   const resizeDirection = (element: HTMLElement): 1 | -1 => {
     return element.closest('[data-side="right"]') ? -1 : 1;
@@ -370,6 +387,7 @@ function SidebarRail({ className, ...props }: React.ComponentProps<'hr'>) {
 
     const nextWidth =
       drag.startWidth + (event.clientX - drag.startX) * drag.direction;
+    cancelPreviewFrame();
     dragRef.current = undefined;
     commitWidth(nextWidth);
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
@@ -419,12 +437,14 @@ function SidebarRail({ className, ...props }: React.ComponentProps<'hr'>) {
         }
 
         event.preventDefault();
+        cancelPreviewFrame();
         event.currentTarget.setPointerCapture(event.pointerId);
         dragRef.current = {
           pointerId: event.pointerId,
           startX: event.clientX,
           startWidth: width,
           direction: resizeDirection(event.currentTarget),
+          latestWidth: width,
         };
         previewWidth(width);
       }}
@@ -433,14 +453,24 @@ function SidebarRail({ className, ...props }: React.ComponentProps<'hr'>) {
         if (!drag || drag.pointerId !== event.pointerId) {
           return;
         }
-        previewWidth(
-          drag.startWidth + (event.clientX - drag.startX) * drag.direction,
-        );
+        drag.latestWidth =
+          drag.startWidth + (event.clientX - drag.startX) * drag.direction;
+        if (previewFrameRef.current !== undefined) {
+          return;
+        }
+        previewFrameRef.current = requestAnimationFrame(() => {
+          previewFrameRef.current = undefined;
+          const activeDrag = dragRef.current;
+          if (activeDrag) {
+            previewWidth(activeDrag.latestWidth);
+          }
+        });
       }}
       onPointerUp={finishPointerResize}
       onPointerCancel={(event) => {
         const drag = dragRef.current;
         if (drag?.pointerId === event.pointerId) {
+          cancelPreviewFrame();
           dragRef.current = undefined;
           commitWidth(drag.startWidth);
         }

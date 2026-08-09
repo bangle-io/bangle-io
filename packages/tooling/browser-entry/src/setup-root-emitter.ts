@@ -4,11 +4,20 @@ import { Emitter, type EventMessage } from '@bangle.io/mini-js-utils';
 import {
   CROSS_TAB_EVENTS,
   type CrossTabEvent,
+  type CrossTabRootEvent,
   RootEmitter,
+  type RootEventWireEnvelope,
+  rootEventWireCodec,
 } from '@bangle.io/root-emitter';
 
 function isCrossTabEvent(event: string): event is CrossTabEvent {
   return CROSS_TAB_EVENTS.some((crossTabEvent) => crossTabEvent === event);
+}
+
+function isCrossTabRootEvent(
+  event: EventMessage<string, unknown>,
+): event is CrossTabRootEvent {
+  return isCrossTabEvent(event.event);
 }
 
 export function setupCrossTabComms(
@@ -17,7 +26,9 @@ export function setupCrossTabComms(
   logger: Logger,
   abortSignal: AbortSignal,
 ) {
-  const broadcastBus = new TypedBroadcastBus<EventMessage<string, unknown>>({
+  const broadcastBus = new TypedBroadcastBus<
+    RootEventWireEnvelope<CrossTabRootEvent>
+  >({
     name: broadcastChannelName,
     senderId: tabId,
     logger: logger,
@@ -28,9 +39,9 @@ export function setupCrossTabComms(
   const subscriber = new Emitter();
 
   publisher.onAll((message) => {
-    if (isCrossTabEvent(message.event)) {
+    if (isCrossTabRootEvent(message)) {
       logger.debug('post-cross-tab', message.event);
-      broadcastBus.send(message);
+      broadcastBus.send(rootEventWireCodec.encode(message));
     } else {
       logger.debug('post', message.event);
       subscriber.emit(message.event, message.payload);
@@ -38,13 +49,14 @@ export function setupCrossTabComms(
   });
 
   broadcastBus.subscribe((message) => {
-    const { data } = message;
-    if (isCrossTabEvent(data.event)) {
-      logger.debug(`received message ${message.senderId}`, data.event);
-      subscriber.emit(data.event, data.payload);
-    } else {
-      logger.warn('rejected message', data);
+    const event = rootEventWireCodec.decode(message.data);
+    if (!event) {
+      logger.warn('rejected cross-tab message');
+      return;
     }
+
+    logger.debug(`received message ${message.senderId}`, event.event);
+    subscriber.emit(event.event, event.payload);
   }, abortSignal);
 
   abortSignal.addEventListener(

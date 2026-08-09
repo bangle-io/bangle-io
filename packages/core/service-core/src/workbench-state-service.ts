@@ -32,7 +32,11 @@ import {
   reduceFileTreeExpansion,
 } from './file-tree-expansion-state';
 
-type Route = 'omni-home' | 'omni-command' | 'omni-filtered';
+export type OmniSearchRoute =
+  | 'omni-home'
+  | 'omni-command'
+  | 'omni-filtered'
+  | 'omni-content-search';
 
 const AssetLocationPreferenceValidator = {
   validate: isAssetLocationPreference,
@@ -66,7 +70,10 @@ const FileTreeExpandedPathsByWorkspaceValidator = {
   typeName: 'file-tree-expanded-paths-by-workspace',
 };
 
-function determineOmniSearchRoute(input: string, currentRoute: Route): Route {
+function determineOmniSearchRoute(
+  input: string,
+  currentRoute: OmniSearchRoute,
+): OmniSearchRoute {
   switch (currentRoute) {
     case 'omni-home': {
       if (input.startsWith('>')) {
@@ -88,6 +95,9 @@ function determineOmniSearchRoute(input: string, currentRoute: Route): Route {
         return 'omni-home';
       }
       return 'omni-filtered';
+    }
+    case 'omni-content-search': {
+      return 'omni-content-search';
     }
     default: {
       return 'omni-home';
@@ -146,7 +156,7 @@ export class WorkbenchStateService extends BaseService {
       >)
   >();
   $omniSearchInput = atom('');
-  $omniSearchRoute = atom<Route>('omni-home');
+  $omniSearchRoute = atom<OmniSearchRoute>('omni-home');
   $openAllFiles = atom(false);
   $allFilesSearchInput = atom('');
 
@@ -200,6 +210,7 @@ export class WorkbenchStateService extends BaseService {
           const open = get(this.$openOmniSearch);
           if (!open) {
             set(this.$omniSearchInput, '');
+            set(this.$omniSearchRoute, 'omni-home');
           }
         }),
         () => {},
@@ -227,6 +238,12 @@ export class WorkbenchStateService extends BaseService {
   public goToCommandRoute() {
     this.store.set(this.$openOmniSearch, true);
     this.store.set(this.$omniSearchInput, '>');
+  }
+
+  public goToContentSearchRoute() {
+    this.store.set(this.$omniSearchInput, '');
+    this.store.set(this.$omniSearchRoute, 'omni-content-search');
+    this.store.set(this.$openOmniSearch, true);
   }
 
   public reloadUi() {

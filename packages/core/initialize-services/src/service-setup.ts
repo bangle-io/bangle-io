@@ -30,6 +30,7 @@ import {
   UserActivityService,
   WorkbenchStateService,
   WorkspaceOpsService,
+  WorkspaceSearchService,
   WorkspaceStateService,
 } from '@bangle.io/service-core';
 import type {
@@ -63,6 +64,7 @@ export const coreServiceClasses = {
   editorService: EditorService,
   workbenchState: WorkbenchStateService,
   workspaceOps: WorkspaceOpsService,
+  workspaceSearch: WorkspaceSearchService,
   workspaceState: WorkspaceStateService,
   userActivityService: UserActivityService,
 } satisfies Record<
@@ -267,6 +269,7 @@ function toCoreServices(s: CoreInstances): CoreServices {
     editorService: s.editorService,
     workbenchState: s.workbenchState,
     workspaceOps: s.workspaceOps,
+    workspaceSearch: s.workspaceSearch,
     workspaceState: s.workspaceState,
     userActivityService: s.userActivityService,
     editorEngine: s.editorEngine,
@@ -388,10 +391,9 @@ export function createServiceSetup<
                 id: command.id,
                 keys,
               },
-              handler: (event) => {
-                getCoreInstances().commandDispatcher.dispatch(
-                  command.id,
-                  event,
+              handler: () => {
+                getCoreInstances().commandDispatcher.dispatchDefault(
+                  command,
                   `keyboard(${keys})`,
                 );
               },
@@ -426,6 +428,7 @@ export function createServiceSetup<
       })),
     ),
     workspaceOps: slot(WorkspaceOpsService),
+    workspaceSearch: slot(WorkspaceSearchService),
     workspaceState: slot(
       WorkspaceStateService,
       withOverride('workspaceState', () => ({
@@ -485,6 +488,7 @@ export function createServiceSetup<
       editorService: s.editorService,
       workbenchState: s.workbenchState,
       workspaceOps: s.workspaceOps,
+      workspaceSearch: s.workspaceSearch,
       workspaceState: s.workspaceState,
       userActivityService: s.userActivityService,
       editorEngine: s.editorEngine,

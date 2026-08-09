@@ -119,6 +119,16 @@ export type AppError =
         wsPath: string;
       };
     }
+  | {
+      name: `error::file:batch-recovery-uncertain`;
+      payload: {
+        operation: 'delete' | 'rename';
+        primaryError: Error;
+        residualCount: number;
+        rollbackFailureCount: number;
+        wsName?: string;
+      };
+    }
 
   // User Activity errors
   | {

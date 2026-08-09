@@ -1,3 +1,3 @@
 export { commandHandlers } from './handlers';
-export type { ChildDispatcher } from './helper';
+export type { ChildDispatcher, ChildExecutor } from './helper';
 export { c, getCtx, useC } from './helper';

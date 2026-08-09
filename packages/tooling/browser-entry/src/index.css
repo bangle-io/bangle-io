@@ -282,6 +282,21 @@ html[data-bangle-window-controls-overlay="visible"][data-bangle-window-controls-
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    animation-delay: 0ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 :root {
   --bangle-app-titlebar-height: 40px;
   --bangle-titlebar-area-x: 0px;

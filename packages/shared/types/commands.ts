@@ -44,6 +44,10 @@ export type Command = {
 export type CommandHandlerContext = {
   store: Store;
   dispatch: (commandId: string, args: unknown) => void;
+  execute: (
+    commandId: string,
+    args: unknown,
+  ) => Promise<CommandExecutionResult>;
 };
 export type CommandHandler = (
   services: Record<string, BaseService>,
@@ -58,6 +62,24 @@ export type CommandDispatchResult = {
   command: Command;
   from: string;
 };
+
+/**
+ * The settled outcome of a command execution. Unlike `dispatch`, `execute`
+ * never leaves command failures as a rejected promise.
+ */
+export type CommandExecutionResult =
+  | {
+      type: 'success';
+      command: Command;
+      from: string;
+    }
+  | {
+      type: 'failure';
+      command?: Command;
+      commandId: string;
+      from: string;
+      error: unknown;
+    };
 
 export type CommandArgs<C extends Command> = C['args'] extends null
   ? null

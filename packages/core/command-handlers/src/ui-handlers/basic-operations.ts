@@ -28,6 +28,10 @@ export const basicOperationsHandlers = [
     },
   ),
 
+  c('command::ui:search-saved-notes', ({ workbenchState }) => {
+    workbenchState.goToContentSearchRoute();
+  }),
+
   c('command::ui:switch-theme', ({ workbenchState }, _, key) => {
     const { store, dispatch } = getCtx(key);
     const currentPref = store.get(workbenchState.$themePref);
@@ -140,6 +144,10 @@ export const basicOperationsHandlers = [
 
   c('command::ui:open-settings-recovery', ({ navigation }) => {
     navigation.goSettingsPage('settings-recovery');
+  }),
+
+  c('command::ui:open-settings-diagnostics', ({ navigation }) => {
+    navigation.goSettingsPage('settings-diagnostics');
   }),
 
   c(

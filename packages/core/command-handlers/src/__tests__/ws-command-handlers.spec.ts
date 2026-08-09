@@ -776,7 +776,7 @@ describe('WS command handlers', () => {
       const initialCount =
         services.workspaceState.resolveAtoms().wsPaths.length;
 
-      dispatch('command::ws:clone-note', null);
+      dispatch('command::ws:clone-note', { wsPath: undefined });
 
       await vi.waitFor(async () => {
         const wsPaths = services.workspaceState.resolveAtoms().wsPaths;
@@ -799,6 +799,79 @@ describe('WS command handlers', () => {
           expect(cloneContent).toBe(originalContent);
         }
       });
+    });
+
+    test('clones an explicit note and drains that exact save queue', async () => {
+      const SOURCE_WS_PATH = 'test-ws:first.md';
+      const CURRENT_WS_PATH = 'test-ws:second.md';
+      const EXPECTED_CLONE = 'test-ws:first-copy-1.md';
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ws:clone-note',
+        workspaces: [
+          { name: 'test-ws', notes: [SOURCE_WS_PATH, CURRENT_WS_PATH] },
+        ],
+        autoNavigate: 'ws-path',
+      });
+      const checkedPaths: Array<string | undefined> = [];
+      vi.spyOn(
+        services.editorEngine,
+        'hasPendingOrFailedSave',
+      ).mockImplementation((wsPath) => {
+        checkedPaths.push(wsPath);
+        return false;
+      });
+
+      dispatch('command::ws:clone-note', { wsPath: SOURCE_WS_PATH });
+
+      await vi.waitFor(async () => {
+        await expect(
+          services.fileSystem.readFile(EXPECTED_CLONE),
+        ).resolves.toBeDefined();
+        expect(services.navigation.resolveAtoms().wsPath?.wsPath).toBe(
+          EXPECTED_CLONE,
+        );
+      });
+      expect(checkedPaths.length).toBeGreaterThan(0);
+      expect(checkedPaths.every((path) => path === SOURCE_WS_PATH)).toBe(true);
+    });
+
+    test('does not read, create, or navigate when the explicit source cannot drain', async () => {
+      const SOURCE_WS_PATH = 'test-ws:first.md';
+      const CURRENT_WS_PATH = 'test-ws:second.md';
+      const { dispatch, services, getCommandResults } = await setupTest({
+        targetId: 'command::ws:clone-note',
+        workspaces: [
+          { name: 'test-ws', notes: [SOURCE_WS_PATH, CURRENT_WS_PATH] },
+        ],
+        autoNavigate: 'ws-path',
+      });
+      vi.spyOn(services.editorEngine, 'hasPendingOrFailedSave').mockReturnValue(
+        true,
+      );
+      vi.spyOn(services.editorEngine, 'subscribeToSaveStatus').mockReturnValue(
+        vi.fn(),
+      );
+      const readFile = vi.spyOn(services.fileSystem, 'readFile');
+      const createFile = vi.spyOn(services.fileSystem, 'createFile');
+
+      vi.useFakeTimers();
+      try {
+        dispatch('command::ws:clone-note', { wsPath: SOURCE_WS_PATH });
+        await vi.advanceTimersByTimeAsync(EDITOR_SAVE_DRAIN_TIMEOUT_MS);
+      } finally {
+        vi.useRealTimers();
+      }
+
+      await vi.waitFor(() => {
+        expect(
+          getCommandResults().filter((result) => result.type === 'failure'),
+        ).toHaveLength(1);
+      });
+      expect(readFile).not.toHaveBeenCalled();
+      expect(createFile).not.toHaveBeenCalled();
+      expect(services.navigation.resolveAtoms().wsPath?.wsPath).toBe(
+        CURRENT_WS_PATH,
+      );
     });
   });
 

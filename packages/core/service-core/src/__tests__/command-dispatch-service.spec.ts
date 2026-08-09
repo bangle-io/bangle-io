@@ -6,6 +6,7 @@ import {
 } from '@bangle.io/base-utils';
 import { bangleAppCommands } from '@bangle.io/commands';
 import { commandKeyToContext } from '@bangle.io/constants';
+import { T } from '@bangle.io/mini-js-utils';
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import type {
   Command,
@@ -37,8 +38,34 @@ function getCtx(key: CommandKey<string>) {
   }
   return {
     dispatch: result.context.dispatch,
+    execute: result.context.execute,
     store: result.context.store,
   } satisfies CommandHandlerContext;
+}
+
+function executeRegisteredCommand(
+  dispatchService: CommandDispatchService,
+  id: string,
+  args: unknown,
+  from = 'testSource',
+) {
+  return dispatchService.execute(
+    // @ts-expect-error exercises runtime validation against test commands.
+    id,
+    args,
+    from,
+  );
+}
+
+function createDeferred() {
+  let resolve: (() => void) | undefined;
+  const promise = new Promise<void>((promiseResolve) => {
+    resolve = promiseResolve;
+  });
+  return {
+    promise,
+    resolve: () => resolve?.(),
+  };
 }
 
 async function setup() {
@@ -155,7 +182,7 @@ describe('CommandDispatchService', () => {
       {
         fileSystem: expect.any(TestService),
       },
-      {},
+      null,
       {
         key: expect.any(String),
       },
@@ -305,8 +332,9 @@ describe('CommandDispatchService', () => {
     ).toThrow(/Command "nonExistentCommand" not found/);
   });
 
-  test('should warn when handler for command is not found', async () => {
-    const { mockLog, commandRegistry, dispatchService } = await setup();
+  test('should report a missing handler as a command failure', async () => {
+    const { mockLog, commandRegistry, dispatchService, dispatchedCommands } =
+      await setup();
     const command = {
       id: 'command::ui:toggle-sidebar',
       keywords: ['test', 'command'],
@@ -316,12 +344,35 @@ describe('CommandDispatchService', () => {
     } as const satisfies Command;
 
     commandRegistry.register(command);
-    dispatchService.dispatch(command.id, null, 'testSource');
+    const result = await dispatchService.execute(
+      command.id,
+      null,
+      'testSource',
+    );
 
     expect(mockLog.warn).toHaveBeenCalledWith(
       '[command-dispatch]',
       'Handler for command "command::ui:toggle-sidebar" not found.',
     );
+    expect(result).toMatchObject({
+      type: 'failure',
+      command,
+      commandId: command.id,
+      from: 'testSource',
+    });
+    if (result.type === 'failure') {
+      expect(result.error).toHaveProperty(
+        'message',
+        'Handler for command "command::ui:toggle-sidebar" not found.',
+      );
+    }
+    expect(dispatchedCommands).toEqual([
+      {
+        type: 'failure',
+        command,
+        from: 'testSource',
+      },
+    ]);
   });
 
   test('should not include services not specified in command.services', async () => {
@@ -343,14 +394,11 @@ describe('CommandDispatchService', () => {
 
     dispatchService.dispatch('command::ui:toggle-sidebar', null, 'testSource');
 
-    // handler should be called with an empty object
-    expect(handler).toHaveBeenCalledWith(
-      {},
-      {},
-      {
-        key: expect.any(String),
-      },
-    );
+    // Handler receives only the services declared by the command and the
+    // command's exact null input.
+    expect(handler).toHaveBeenCalledWith({}, null, {
+      key: expect.any(String),
+    });
   });
 
   test('should throw error when dispatch service is not ready', async () => {
@@ -620,7 +668,7 @@ describe('CommandDispatchService', () => {
       dispatchService.dispatch(
         // @ts-expect-error custom command
         'command::fail',
-        {},
+        null,
         'testSource',
       ),
     ).toThrow(/Command failed/);
@@ -653,7 +701,7 @@ describe('CommandDispatchService', () => {
     dispatchService.dispatch(
       // @ts-expect-error custom command
       'command::async',
-      {},
+      null,
       'testSource',
     );
 
@@ -666,7 +714,7 @@ describe('CommandDispatchService', () => {
       {
         fileSystem: expect.any(TestService),
       },
-      {},
+      null,
       {
         key: expect.any(String),
       },
@@ -677,5 +725,361 @@ describe('CommandDispatchService', () => {
       command: asyncCommand,
       from: 'testSource',
     });
+  });
+
+  test('validates null, records, required and optional fields, arrays, and unknown fields before invoking a handler', async () => {
+    const { commandRegistry, dispatchService } = await setup();
+    const command = {
+      id: 'command::validation',
+      dependencies: { services: [] },
+      args: {
+        title: T.String,
+        tags: T.Array(T.String),
+        page: T.Optional(T.Number),
+      },
+    } as const satisfies Command;
+    const handler = vi.fn();
+    commandRegistry.register(command);
+    commandRegistry.registerHandler({ id: command.id, handler });
+
+    const invalidOutcomes = await Promise.all([
+      executeRegisteredCommand(dispatchService, command.id, null),
+      executeRegisteredCommand(dispatchService, command.id, []),
+      executeRegisteredCommand(dispatchService, command.id, {
+        title: 'A note',
+      }),
+      executeRegisteredCommand(dispatchService, command.id, {
+        title: 'A note',
+        tags: ['one', 2],
+      }),
+      executeRegisteredCommand(dispatchService, command.id, {
+        title: 'A note',
+        tags: [],
+        ignored: true,
+      }),
+    ]);
+    for (const outcome of invalidOutcomes) {
+      expect(outcome.type).toBe('failure');
+    }
+    expect(invalidOutcomes[0]).toHaveProperty(
+      'error.message',
+      'Command "command::validation" requires an argument record.',
+    );
+    expect(invalidOutcomes[1]).toHaveProperty(
+      'error.message',
+      'Command "command::validation" requires an argument record.',
+    );
+    expect(invalidOutcomes[2]).toHaveProperty(
+      'error.message',
+      expect.stringContaining('tags'),
+    );
+    expect(invalidOutcomes[3]).toHaveProperty(
+      'error.message',
+      expect.stringContaining('tags'),
+    );
+    expect(invalidOutcomes[4]).toHaveProperty(
+      'error.message',
+      expect.stringContaining('unknown argument'),
+    );
+
+    await expect(
+      executeRegisteredCommand(dispatchService, command.id, {
+        title: 'A note',
+        tags: ['one'],
+        page: undefined,
+      }),
+    ).resolves.toMatchObject({ type: 'success' });
+    expect(handler).toHaveBeenCalledOnce();
+
+    const nullCommand = {
+      id: 'command::null-validation',
+      dependencies: { services: [] },
+      args: null,
+    } as const satisfies Command;
+    commandRegistry.register(nullCommand);
+    commandRegistry.registerHandler({ id: nullCommand.id, handler });
+
+    const nullOutcome = await executeRegisteredCommand(
+      dispatchService,
+      nullCommand.id,
+      {},
+    );
+    expect(nullOutcome).toHaveProperty('type', 'failure');
+    expect(nullOutcome).toHaveProperty(
+      'error.message',
+      expect.stringContaining('requires null'),
+    );
+    expect(handler).toHaveBeenCalledOnce();
+  });
+
+  test('settles async failures without an unhandled rejection and focuses only after settlement', async () => {
+    const {
+      commandRegistry,
+      dispatchService,
+      dispatchedCommands,
+      focusEditor,
+    } = await setup();
+    const deferred = createDeferred();
+    const command = {
+      id: 'command::async-focus',
+      dependencies: { services: [] },
+      omniSearch: 'global',
+      args: null,
+    } as const satisfies Command;
+    commandRegistry.register(command);
+    commandRegistry.registerHandler({
+      id: command.id,
+      handler: async () => {
+        await deferred.promise;
+      },
+    });
+
+    const execution = executeRegisteredCommand(
+      dispatchService,
+      command.id,
+      null,
+    );
+    expect(focusEditor).not.toHaveBeenCalled();
+    expect(dispatchedCommands).toEqual([]);
+
+    deferred.resolve();
+    await expect(execution).resolves.toMatchObject({ type: 'success' });
+    expect(focusEditor).toHaveBeenCalledOnce();
+
+    const rejectedCommand = {
+      id: 'command::async-rejection',
+      dependencies: { services: [] },
+      args: null,
+    } as const satisfies Command;
+    const error = new Error('async failure');
+    commandRegistry.register(rejectedCommand);
+    commandRegistry.registerHandler({
+      id: rejectedCommand.id,
+      handler: async () => {
+        throw error;
+      },
+    });
+
+    dispatchService.dispatch(
+      // @ts-expect-error exercises a registered test command.
+      rejectedCommand.id,
+      null,
+      'testSource',
+    );
+    await vi.waitFor(() => {
+      expect(dispatchedCommands).toContainEqual({
+        type: 'failure',
+        command: rejectedCommand,
+        from: 'testSource',
+      });
+    });
+  });
+
+  test('awaits child success and propagates a child AppError once through the parent failure', async () => {
+    const { commonOpts, commandRegistry, dispatchService, dispatchedCommands } =
+      await setup();
+    const parent = {
+      id: 'command::parent-execute',
+      dependencies: { commands: ['command::child-execute'] },
+      args: null,
+    } as const satisfies Command;
+    const child = {
+      id: 'command::child-execute',
+      dependencies: { services: [] },
+      args: null,
+    } as const satisfies Command;
+    commandRegistry.register(parent);
+    commandRegistry.register(child);
+    commandRegistry.registerHandler({
+      id: parent.id,
+      handler: async (_services, _args, key) => {
+        const outcome = await getCtx(key).execute(child.id, null);
+        if (outcome.type === 'failure') {
+          throw outcome.error;
+        }
+      },
+    });
+    commandRegistry.registerHandler({ id: child.id, handler: vi.fn() });
+
+    await expect(
+      executeRegisteredCommand(dispatchService, parent.id, null),
+    ).resolves.toMatchObject({ type: 'success' });
+    expect(dispatchedCommands).toEqual([
+      { type: 'success', command: child, from: parent.id },
+      { type: 'success', command: parent, from: 'testSource' },
+    ]);
+
+    const failingParent = {
+      id: 'command::failing-parent-execute',
+      dependencies: { commands: ['command::failing-child-execute'] },
+      args: null,
+    } as const satisfies Command;
+    const failingChild = {
+      id: 'command::failing-child-execute',
+      dependencies: { services: [] },
+      args: null,
+    } as const satisfies Command;
+    const appError = createAppError(
+      'error::workspace:no-note-opened',
+      'No note is currently open.',
+      {},
+    );
+    commandRegistry.register(failingParent);
+    commandRegistry.register(failingChild);
+    commandRegistry.registerHandler({
+      id: failingParent.id,
+      handler: async (_services, _args, key) => {
+        const outcome = await getCtx(key).execute(failingChild.id, null);
+        if (outcome.type === 'failure') {
+          throw outcome.error;
+        }
+      },
+    });
+    commandRegistry.registerHandler({
+      id: failingChild.id,
+      handler: async () => {
+        throw appError;
+      },
+    });
+
+    await expect(
+      executeRegisteredCommand(dispatchService, failingParent.id, null),
+    ).resolves.toMatchObject({
+      type: 'failure',
+      command: failingParent,
+      error: appError,
+    });
+    await vi.waitFor(() => {
+      expect(commonOpts.emitAppError).toHaveBeenCalledTimes(1);
+      expect(commonOpts.emitAppError).toHaveBeenCalledWith(appError);
+    });
+  });
+
+  test('keeps async ancestry per execution for nested cycles and concurrent roots', async () => {
+    const { commandRegistry, dispatchService } = await setup();
+    const commandA = {
+      id: 'command::async-A',
+      dependencies: { commands: ['command::async-B'] },
+      args: null,
+    } as const satisfies Command;
+    const commandB = {
+      id: 'command::async-B',
+      dependencies: { commands: ['command::async-C'] },
+      args: null,
+    } as const satisfies Command;
+    const commandC = {
+      id: 'command::async-C',
+      dependencies: { commands: ['command::async-B'] },
+      args: null,
+    } as const satisfies Command;
+    const runChild = async (key: CommandKey<string>, id: string) => {
+      const outcome = await getCtx(key).execute(id, null);
+      if (outcome.type === 'failure') {
+        throw outcome.error;
+      }
+    };
+    commandRegistry.register(commandA);
+    commandRegistry.register(commandB);
+    commandRegistry.register(commandC);
+    commandRegistry.registerHandler({
+      id: commandA.id,
+      handler: async (_services, _args, key) => runChild(key, commandB.id),
+    });
+    commandRegistry.registerHandler({
+      id: commandB.id,
+      handler: async (_services, _args, key) => {
+        await Promise.resolve();
+        await runChild(key, commandC.id);
+      },
+    });
+    commandRegistry.registerHandler({
+      id: commandC.id,
+      handler: async (_services, _args, key) => {
+        await Promise.resolve();
+        await runChild(key, commandB.id);
+      },
+    });
+
+    const cycleOutcome = await executeRegisteredCommand(
+      dispatchService,
+      commandA.id,
+      null,
+    );
+    expect(cycleOutcome).toHaveProperty('type', 'failure');
+    expect(cycleOutcome).toHaveProperty(
+      'error.message',
+      expect.stringContaining('cyclic dependency'),
+    );
+
+    const concurrentParent = {
+      id: 'command::concurrent-parent',
+      dependencies: { commands: ['command::concurrent-child'] },
+      args: null,
+    } as const satisfies Command;
+    const concurrentChild = {
+      id: 'command::concurrent-child',
+      dependencies: { services: [] },
+      args: null,
+    } as const satisfies Command;
+    const childHandler = vi.fn();
+    commandRegistry.register(concurrentParent);
+    commandRegistry.register(concurrentChild);
+    commandRegistry.registerHandler({
+      id: concurrentParent.id,
+      handler: async (_services, _args, key) => {
+        await Promise.resolve();
+        await runChild(key, concurrentChild.id);
+      },
+    });
+    commandRegistry.registerHandler({
+      id: concurrentChild.id,
+      handler: childHandler,
+    });
+
+    const outcomes = await Promise.all([
+      executeRegisteredCommand(dispatchService, concurrentParent.id, null),
+      executeRegisteredCommand(dispatchService, concurrentParent.id, null),
+    ]);
+    expect(outcomes).toEqual([
+      expect.objectContaining({ type: 'success' }),
+      expect.objectContaining({ type: 'success' }),
+    ]);
+    expect(childHandler).toHaveBeenCalledTimes(2);
+  });
+
+  test('uses schema-declared defaults for dynamic shortcut and omni command launches', async () => {
+    const { commandRegistry, dispatchService } = await setup();
+    const nullInputCommand = {
+      id: 'command::shortcut-default',
+      dependencies: { services: [] },
+      args: null,
+    } as const satisfies Command;
+    const optionalInputCommand = {
+      id: 'command::omni-default',
+      dependencies: { services: [] },
+      args: { prefill: T.Optional(T.String) },
+    } as const satisfies Command;
+    const nullInputHandler = vi.fn();
+    const optionalInputHandler = vi.fn();
+    commandRegistry.register(nullInputCommand);
+    commandRegistry.register(optionalInputCommand);
+    commandRegistry.registerHandler({
+      id: nullInputCommand.id,
+      handler: nullInputHandler,
+    });
+    commandRegistry.registerHandler({
+      id: optionalInputCommand.id,
+      handler: optionalInputHandler,
+    });
+
+    dispatchService.dispatchDefault(nullInputCommand, 'keyboard(ctrl-x)');
+    dispatchService.dispatchDefault(optionalInputCommand, 'omni-search');
+
+    expect(nullInputHandler).toHaveBeenCalledWith({}, null, expect.anything());
+    expect(optionalInputHandler).toHaveBeenCalledWith(
+      {},
+      { prefill: undefined },
+      expect.anything(),
+    );
   });
 });

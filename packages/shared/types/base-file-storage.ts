@@ -57,6 +57,13 @@ export interface BaseFileStorageProvider {
   readonly workspaceType: WorkspaceStorageType;
 
   /**
+   * Missing-file behavior is consistent across providers: `readFile` returns
+   * `undefined`, `fileExists` returns `false`, and `deleteFile`, `renameFile`,
+   * and `fileStat` reject with
+   * `error::file-storage:file-does-not-exist`.
+   */
+
+  /**
    * Creates a new file. Implementations must reject with
    * `error::file:already-existing` when the target exists and must not
    * overwrite existing content.

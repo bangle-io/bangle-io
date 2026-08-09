@@ -222,6 +222,14 @@ test('unlink', async () => {
   );
 });
 
+test('unlink rejects when the file is missing', async () => {
+  const fs = new IndexedDBFileSystem();
+
+  await expect(fs.unlink('hola/missing')).rejects.toMatchObject({
+    code: FILE_NOT_FOUND_ERROR,
+  });
+});
+
 test('opendirRecursive root', async () => {
   const fs = new IndexedDBFileSystem();
 

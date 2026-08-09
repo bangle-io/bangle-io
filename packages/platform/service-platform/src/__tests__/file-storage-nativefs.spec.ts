@@ -9,14 +9,22 @@ import { createTestEnvironment } from '@bangle.io/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { FileStorageNativeFs } from '../file-storage-nativefs';
 import type { PageReturnInfo } from '../router/page-return';
-import { testCrossWorkspaceRenameContract } from './file-storage-rename-contract';
+import { testFileStorageProviderContract } from './file-storage-provider-contract';
 
 class FakeFileHandle {
   readonly kind = 'file';
   private file: File;
 
   constructor(readonly name: string) {
-    this.file = new File([''], name);
+    this.file = this.withTimestamp(new File([''], name));
+  }
+
+  private withTimestamp(file: File): File {
+    Object.defineProperty(file, 'lastModified', {
+      configurable: true,
+      value: Date.now(),
+    });
+    return file;
   }
 
   async getFile(): Promise<File> {
@@ -26,10 +34,11 @@ class FakeFileHandle {
   async createWritable(): Promise<FileSystemWritableFileStream> {
     return {
       write: async (content: FileSystemWriteChunkType) => {
-        this.file =
-          content instanceof File
-            ? content
-            : new File([content as BlobPart], this.name);
+        this.file = this.withTimestamp(
+          new File([content as BlobPart], this.name, {
+            type: content instanceof File ? content.type : undefined,
+          }),
+        );
       },
       close: async () => {},
     } as FileSystemWritableFileStream;
@@ -132,6 +141,9 @@ async function setup(
     rootName,
     onEntryVisited,
   ) as unknown as FileSystemDirectoryHandle;
+  const rootDirHandles = new Map<string, FileSystemDirectoryHandle>([
+    ['myWorkspace', rootDirHandle],
+  ]);
   const service = new FileStorageNativeFs(
     {
       ctx: commonOpts,
@@ -141,7 +153,17 @@ async function setup(
     },
     null,
     {
-      getRootDirHandle: async () => ({ handle: rootDirHandle }),
+      getRootDirHandle: async (wsName) => {
+        let handle = rootDirHandles.get(wsName);
+        if (!handle) {
+          handle = new FakeDirectoryHandle(
+            wsName,
+            onEntryVisited,
+          ) as unknown as FileSystemDirectoryHandle;
+          rootDirHandles.set(wsName, handle);
+        }
+        return { handle };
+      },
       onChange,
       ...(options.withExternalChange
         ? {
@@ -159,6 +181,7 @@ async function setup(
     onChange,
     onExternalChange,
     rootDirHandle,
+    rootDirHandles,
     triggerPageReturn,
   };
 }
@@ -217,7 +240,7 @@ async function setupExternalChangeWatching() {
 }
 
 describe('FileStorageNativeFs', () => {
-  testCrossWorkspaceRenameContract(setup);
+  testFileStorageProviderContract(setup);
 
   it('declares a larger native storage file-size limit', async () => {
     const { service } = await setup();

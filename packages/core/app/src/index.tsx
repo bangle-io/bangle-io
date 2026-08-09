@@ -103,6 +103,7 @@ function routeUsesWorkspaceFileTree(route: AppRouteInfo['route']): boolean {
     case 'settings-general':
     case 'settings-workspaces':
     case 'settings-recovery':
+    case 'settings-diagnostics':
       return false;
     default: {
       const _exhaustiveCheck: never = route;
@@ -139,6 +140,7 @@ function AppRoutes() {
     case 'settings-general':
     case 'settings-workspaces':
     case 'settings-recovery':
+    case 'settings-diagnostics':
       return <PageSettings />;
 
     default: {

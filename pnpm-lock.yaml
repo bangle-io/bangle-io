@@ -97,6 +97,9 @@ importers:
       '@bangle.io/base-utils':
         specifier: workspace:*
         version: link:../../shared/base-utils
+      '@bangle.io/browser-utils':
+        specifier: workspace:*
+        version: link:../../js-lib/browser-utils
       '@bangle.io/config':
         specifier: workspace:*
         version: link:../../shared/config
@@ -173,6 +176,9 @@ importers:
       '@bangle.io/base-utils':
         specifier: workspace:*
         version: link:../../shared/base-utils
+      '@bangle.io/browser-utils':
+        specifier: workspace:*
+        version: link:../../js-lib/browser-utils
       '@bangle.io/commands':
         specifier: workspace:*
         version: link:../../shared/commands

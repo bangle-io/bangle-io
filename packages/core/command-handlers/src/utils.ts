@@ -1,4 +1,7 @@
 import { throwAppError } from '@bangle.io/base-utils';
+
+export { writeTextToClipboard } from '@bangle.io/browser-utils';
+
 import { WsPath } from '@bangle.io/ws-path';
 
 const MAX_PATH_LENGTH = 255;
@@ -46,32 +49,6 @@ export function validateInputPath(inputPath: unknown): void {
       t.app.errors.wsPath.pathTooLong,
       { invalidWsPath: inputPath },
     );
-  }
-}
-
-/**
- * Writes text to the clipboard, falling back to a hidden textarea and
- * `execCommand('copy')` when the async Clipboard API is unavailable.
- */
-export async function writeTextToClipboard(value: string): Promise<void> {
-  if (navigator.clipboard?.writeText) {
-    await navigator.clipboard.writeText(value);
-    return;
-  }
-
-  const textArea = document.createElement('textarea');
-  textArea.value = value;
-  textArea.setAttribute('readonly', 'true');
-  textArea.style.position = 'fixed';
-  textArea.style.left = '-9999px';
-  document.body.append(textArea);
-  textArea.select();
-  try {
-    if (!document.execCommand('copy')) {
-      throw new Error('Clipboard copy command failed');
-    }
-  } finally {
-    textArea.remove();
   }
 }
 

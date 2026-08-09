@@ -19,6 +19,12 @@ import type {
 } from '@bangle.io/types';
 import { isVisibleWorkspaceFilePath, WsPath } from '@bangle.io/ws-path';
 import { atom } from 'jotai';
+import {
+  type CompensatedFileBatchOutcome,
+  createCompensatedFileBatchError,
+  type FileBatchCompensationResult,
+  runCompensatedFileBatch,
+} from './compensated-file-batch';
 import type { NoteSnapshotService } from './note-snapshot-service';
 import type { WorkspaceOpsService } from './workspace-ops-service';
 
@@ -74,10 +80,68 @@ type RenameFilePair = {
   newWsPath: string;
 };
 
+type DeleteFileBatchEntry = {
+  file: File;
+  storageService: BaseFileStorageService;
+  wsPath: string;
+};
+
+type RenameFileBatchEntry = RenameFilePair & {
+  file: File;
+  storageService: BaseFileStorageService;
+};
+
 function throwIfAborted(signal: AbortSignal | undefined): void {
   if (signal?.aborted) {
     throw signal.reason ?? new Error('Operation aborted');
   }
+}
+
+function throwInvalidFileBatch(
+  operation: 'delete' | 'rename',
+  message: string,
+  oldWsPath: string,
+  newWsPath: string,
+): never {
+  throwAppError('error::file:invalid-operation', message, {
+    operation: `${operation}-batch`,
+    oldWsPath,
+    newWsPath,
+  });
+}
+
+async function fileContentsMatch(first: File, second: File): Promise<boolean> {
+  if (first.size !== second.size) {
+    return false;
+  }
+
+  const [firstBytes, secondBytes] = await Promise.all([
+    first.arrayBuffer(),
+    second.arrayBuffer(),
+  ]);
+  const firstView = new Uint8Array(firstBytes);
+  const secondView = new Uint8Array(secondBytes);
+
+  return firstView.every((value, index) => value === secondView[index]);
+}
+
+function uncertainCompensation(message: string): FileBatchCompensationResult {
+  return { error: new Error(message), status: 'uncertain' };
+}
+
+function batchWorkspaceName(wsPaths: readonly string[]): string | undefined {
+  let sharedWsName: string | undefined;
+
+  for (const wsPath of wsPaths) {
+    const wsName = WsPath.assertFile(wsPath).wsName;
+    if (sharedWsName === undefined) {
+      sharedWsName = wsName;
+    } else if (sharedWsName !== wsName) {
+      return undefined;
+    }
+  }
+
+  return sharedWsName;
 }
 
 /**
@@ -460,17 +524,10 @@ export class FileSystemService extends BaseService {
     });
   }
 
-  // Storage-only primitives (no change emission). Batch operations use these so
-  // they can perform every durable write first and then announce the changes in
-  // a single synchronous burst — see `deleteFiles`/`renameFiles`.
+  // Storage-only primitive (no change emission).
   private async deleteFileFromStorage(wsPath: string): Promise<void> {
     const storageService = await this.getStorageService({ wsPath });
     await storageService.deleteFile(wsPath, {});
-  }
-
-  private async createFileInStorage(wsPath: string, file: File): Promise<void> {
-    const storageService = await this.getStorageService({ wsPath });
-    await storageService.createFile(wsPath, file, {});
   }
 
   public async deleteFile(wsPath: string): Promise<void> {
@@ -486,10 +543,24 @@ export class FileSystemService extends BaseService {
 
   public async deleteFiles(wsPaths: readonly string[]): Promise<void> {
     await this.mountPromise;
+    const sourcePaths = new Set<string>();
+    for (const wsPath of wsPaths) {
+      const filePath = WsPath.assertFile(wsPath);
+      if (sourcePaths.has(filePath.wsPath)) {
+        throwInvalidFileBatch(
+          'delete',
+          'Cannot delete the same file more than once in a batch',
+          filePath.wsPath,
+          filePath.wsPath,
+        );
+      }
+      sourcePaths.add(filePath.wsPath);
+    }
+
     const files = await Promise.all(
       wsPaths.map(async (wsPath) => {
-        WsPath.assertFile(wsPath);
-        const file = await this.readFile(wsPath);
+        const storageService = await this.getStorageService({ wsPath });
+        const file = await storageService.readFile(wsPath, {});
 
         if (!file) {
           throwAppError(
@@ -501,35 +572,52 @@ export class FileSystemService extends BaseService {
           );
         }
 
-        return { file, wsPath };
+        return { file, storageService, wsPath };
       }),
     );
 
-    const deleted: Array<{ file: File; wsPath: string }> = [];
-
-    try {
-      for (const entry of files) {
-        await this.deleteFileFromStorage(entry.wsPath);
-        deleted.push(entry);
-      }
-    } catch (error) {
-      // Restore anything already removed so a partial batch never loses data.
-      for (const entry of [...deleted].reverse()) {
-        if (!(await this.exists(entry.wsPath))) {
-          await this.createFileInStorage(entry.wsPath, entry.file);
-        }
-      }
-      // No change was announced mid-batch and the rollback returns storage to
-      // its pre-batch state, so the tree is already consistent — nothing to emit.
-      throw error;
-    }
+    const outcome = await runCompensatedFileBatch(files, {
+      apply: (entry) => entry.storageService.deleteFile(entry.wsPath, {}),
+      compensate: (entry) => this.restoreDeletedBatchEntry(entry),
+      describe: (entry) => ({ sourceWsPath: entry.wsPath }),
+    });
+    this.handleCompensatedFileBatchOutcome(
+      outcome,
+      'delete',
+      batchWorkspaceName(wsPaths),
+    );
 
     // Announce every deletion synchronously so the workspace re-lists exactly
     // once for the whole batch instead of once per file (Jotai batches the
     // synchronous counter writes into a single re-scan).
-    for (const entry of deleted) {
+    for (const entry of files) {
       this.onChange({ type: 'file-delete', payload: { wsPath: entry.wsPath } });
     }
+  }
+
+  private async restoreDeletedBatchEntry(
+    entry: DeleteFileBatchEntry,
+  ): Promise<FileBatchCompensationResult> {
+    const existingFile = await entry.storageService.readFile(entry.wsPath, {});
+    if (existingFile) {
+      return (await fileContentsMatch(existingFile, entry.file))
+        ? { status: 'restored' }
+        : uncertainCompensation(
+            `Delete rollback found different content at ${entry.wsPath}`,
+          );
+    }
+
+    // createFile is deliberately used instead of writeFile: every provider's
+    // contract rejects a concurrent replacement rather than overwriting it.
+    await entry.storageService.createFile(entry.wsPath, entry.file, {});
+    const restoredFile = await entry.storageService.readFile(entry.wsPath, {});
+    if (restoredFile && (await fileContentsMatch(restoredFile, entry.file))) {
+      return { status: 'restored' };
+    }
+
+    return uncertainCompensation(
+      `Delete rollback could not verify restored content at ${entry.wsPath}`,
+    );
   }
 
   public async renameFile({
@@ -582,26 +670,68 @@ export class FileSystemService extends BaseService {
 
   public async renameFiles(pairs: readonly RenameFilePair[]): Promise<void> {
     await this.mountPromise;
-    const oldPathSet = new Set(pairs.map((pair) => pair.oldWsPath));
+    const oldPathSet = new Set<string>();
+    const newPathSet = new Set<string>();
 
-    await Promise.all(
+    for (const { oldWsPath, newWsPath } of pairs) {
+      const oldPath = WsPath.assertFile(oldWsPath);
+      const newPath = WsPath.assertFile(newWsPath);
+
+      if (oldPath.wsName !== newPath.wsName) {
+        throwAppError(
+          'error::file:invalid-operation',
+          'Cannot rename file across different workspaces',
+          {
+            operation: 'rename',
+            oldWsPath,
+            newWsPath,
+          },
+        );
+      }
+
+      if (oldPathSet.has(oldPath.wsPath)) {
+        throwInvalidFileBatch(
+          'rename',
+          'Cannot rename the same source more than once in a batch',
+          oldPath.wsPath,
+          newPath.wsPath,
+        );
+      }
+      if (newPathSet.has(newPath.wsPath)) {
+        throwInvalidFileBatch(
+          'rename',
+          'Cannot use the same destination more than once in a batch',
+          oldPath.wsPath,
+          newPath.wsPath,
+        );
+      }
+
+      oldPathSet.add(oldPath.wsPath);
+      newPathSet.add(newPath.wsPath);
+    }
+
+    for (const { oldWsPath, newWsPath } of pairs) {
+      if (oldPathSet.has(WsPath.assertFile(newWsPath).wsPath)) {
+        throwInvalidFileBatch(
+          'rename',
+          'Rename batches cannot depend on another source path',
+          oldWsPath,
+          newWsPath,
+        );
+      }
+    }
+
+    const entries = await Promise.all(
       pairs.map(async ({ oldWsPath, newWsPath }) => {
-        const oldPath = WsPath.assertFile(oldWsPath);
-        const newPath = WsPath.assertFile(newWsPath);
+        const storageService = await this.getStorageService({
+          wsPath: oldWsPath,
+        });
+        const [file, destinationExists] = await Promise.all([
+          storageService.readFile(oldWsPath, {}),
+          storageService.fileExists(newWsPath, {}),
+        ]);
 
-        if (oldPath.wsName !== newPath.wsName) {
-          throwAppError(
-            'error::file:invalid-operation',
-            'Cannot rename file across different workspaces',
-            {
-              operation: 'rename',
-              oldWsPath,
-              newWsPath,
-            },
-          );
-        }
-
-        if (!(await this.exists(oldWsPath))) {
+        if (!file) {
           throwAppError(
             'error::file:invalid-note-path',
             'Cannot rename missing file',
@@ -611,39 +741,128 @@ export class FileSystemService extends BaseService {
           );
         }
 
-        if ((await this.exists(newWsPath)) && !oldPathSet.has(newWsPath)) {
+        if (destinationExists) {
           throwAppError('error::file:already-existing', 'File already exists', {
             wsPath: newWsPath,
           });
         }
+
+        return { file, newWsPath, oldWsPath, storageService };
       }),
     );
 
-    const renamed: RenameFilePair[] = [];
-
-    try {
-      for (const pair of pairs) {
-        await this.renameFileInStorage(pair.oldWsPath, pair.newWsPath);
-        renamed.push(pair);
-      }
-    } catch (error) {
-      // Reverse the renames that already landed so a partial batch never leaves
-      // notes stranded under half-applied paths.
-      for (const pair of [...renamed].reverse()) {
-        if (await this.exists(pair.newWsPath)) {
-          await this.renameFileInStorage(pair.newWsPath, pair.oldWsPath);
-        }
-      }
-      throw error;
-    }
+    const outcome = await runCompensatedFileBatch(entries, {
+      apply: (entry) =>
+        entry.storageService.renameFile(entry.oldWsPath, {
+          newWsPath: entry.newWsPath,
+        }),
+      compensate: (entry) => this.restoreRenamedBatchEntry(entry),
+      describe: (entry) => ({
+        destinationWsPath: entry.newWsPath,
+        sourceWsPath: entry.oldWsPath,
+      }),
+    });
+    this.handleCompensatedFileBatchOutcome(
+      outcome,
+      'rename',
+      batchWorkspaceName(pairs.map((pair) => pair.oldWsPath)),
+    );
 
     // Announce every rename synchronously so the workspace re-lists exactly once
     // for the whole batch instead of once per file.
-    for (const pair of renamed) {
+    for (const pair of pairs) {
       this.onChange({
         type: 'file-rename',
         payload: { oldWsPath: pair.oldWsPath, wsPath: pair.newWsPath },
       });
+    }
+  }
+
+  private async restoreRenamedBatchEntry(
+    entry: RenameFileBatchEntry,
+  ): Promise<FileBatchCompensationResult> {
+    const [sourceFile, destinationFile] = await Promise.all([
+      entry.storageService.readFile(entry.oldWsPath, {}),
+      entry.storageService.readFile(entry.newWsPath, {}),
+    ]);
+
+    if (sourceFile) {
+      if (destinationFile) {
+        return uncertainCompensation(
+          `Rename rollback found both ${entry.oldWsPath} and ${entry.newWsPath}`,
+        );
+      }
+
+      return (await fileContentsMatch(sourceFile, entry.file))
+        ? { status: 'restored' }
+        : uncertainCompensation(
+            `Rename rollback found different content at ${entry.oldWsPath}`,
+          );
+    }
+
+    if (!destinationFile) {
+      return uncertainCompensation(
+        `Rename rollback could not find ${entry.oldWsPath} or ${entry.newWsPath}`,
+      );
+    }
+
+    if (!(await fileContentsMatch(destinationFile, entry.file))) {
+      return uncertainCompensation(
+        `Rename rollback found different content at ${entry.newWsPath}`,
+      );
+    }
+
+    await entry.storageService.renameFile(entry.newWsPath, {
+      newWsPath: entry.oldWsPath,
+    });
+    const [restoredSource, remainingDestination] = await Promise.all([
+      entry.storageService.readFile(entry.oldWsPath, {}),
+      entry.storageService.readFile(entry.newWsPath, {}),
+    ]);
+
+    if (
+      restoredSource &&
+      !remainingDestination &&
+      (await fileContentsMatch(restoredSource, entry.file))
+    ) {
+      return { status: 'restored' };
+    }
+
+    return uncertainCompensation(
+      `Rename rollback could not verify ${entry.oldWsPath}`,
+    );
+  }
+
+  private handleCompensatedFileBatchOutcome(
+    outcome: CompensatedFileBatchOutcome,
+    operation: 'delete' | 'rename',
+    wsName: string | undefined,
+  ): void {
+    switch (outcome.status) {
+      case 'applied':
+        return;
+      case 'rolled-back':
+        // The exact provider rejection is part of the method's established
+        // interface when storage was fully restored.
+        throw outcome.primaryError;
+      case 'residual-uncertainty': {
+        const error = createCompensatedFileBatchError(
+          outcome,
+          operation,
+          wsName,
+        );
+        this.config.emitter.emit('event::file:force-update', {
+          ...(wsName ? { wsName } : {}),
+          sender: getEventSenderMetadata({ tag: this.name }),
+        });
+        throw error;
+      }
+      default: {
+        const _exhaustiveCheck: never = outcome;
+        throw new Error('Unexpected compensated file batch outcome', {
+          cause: _exhaustiveCheck,
+        });
+      }
     }
   }
 

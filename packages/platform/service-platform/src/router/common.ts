@@ -145,6 +145,13 @@ export function handleRouteInfo(
       };
     }
 
+    case 'settings-diagnostics': {
+      return {
+        route: 'settings-diagnostics',
+        payload: params.returnTo ? { returnTo: params.returnTo } : {},
+      };
+    }
+
     default:
       return { route: 'not-found', payload: { path: route } };
   }

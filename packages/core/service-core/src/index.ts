@@ -43,5 +43,10 @@ export {
   writeAssetFile,
 } from './workspace-asset-storage';
 export { WorkspaceOpsService } from './workspace-ops-service';
+export {
+  type SavedMarkdownSearchResult,
+  type SearchSavedMarkdownInput,
+  WorkspaceSearchService,
+} from './workspace-search-service';
 export type { BacklinkIndexState } from './workspace-state-service';
 export { WorkspaceStateService } from './workspace-state-service';

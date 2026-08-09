@@ -17,4 +17,5 @@ export interface Action<T = void> {
   Icon?: React.ComponentType<{ className?: string }>;
   disabled?: boolean;
   variant?: 'default' | 'destructive';
+  separatorBefore?: boolean;
 }

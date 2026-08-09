@@ -130,6 +130,7 @@ describe('EditorWService (M0b read-only stub)', () => {
     const { service, controller } = await setup();
 
     expect(service.engineId).toBe('wordgard');
+    expect(service.getSaveStatus(NOTE_WS_PATH)).toBe('clean');
     expect(service.hasPendingOrFailedSave()).toBe(false);
     expect(service.hasPendingOrFailedSave(NOTE_WS_PATH)).toBe(false);
     expect(service.retryFailedSave(NOTE_WS_PATH)).toBe(false);

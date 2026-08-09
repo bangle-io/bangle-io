@@ -1,12 +1,13 @@
-import { getEventSenderMetadata } from '@bangle.io/base-utils';
+import { getEventSenderMetadata, isAppError } from '@bangle.io/base-utils';
 import {
   EXTERNAL_FILE_CHANGE_SENDER_TAG,
   FILE_STORAGE_MAX_FILE_SIZE_BYTES,
   WORKSPACE_STORAGE_TYPE,
 } from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
-import type { BaseFileStorageService } from '@bangle.io/types';
+import type { BaseFileStorageService, RootEvents } from '@bangle.io/types';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { CompensatedFileBatchError } from '../compensated-file-batch';
 import { FileSystemService } from '../file-system-service';
 
 describe('FileSystemService.getStorageServiceForType', () => {
@@ -79,6 +80,54 @@ describe('FileSystemService', () => {
     return file;
   }
 
+  function isCompensatedFileBatchError(
+    error: unknown,
+  ): error is CompensatedFileBatchError {
+    return isAppError(error) && 'batchOutcome' in error;
+  }
+
+  type FileEvent = Extract<
+    RootEvents,
+    { event: 'event::file:force-update' | 'event::file:update' }
+  >;
+
+  function captureFileEvents(
+    rootEmitter: ReturnType<typeof createTestEnvironment>['rootEmitter'],
+  ): FileEvent[] {
+    const events: FileEvent[] = [];
+    rootEmitter.on(
+      'event::file:force-update',
+      (payload) => {
+        events.push({ event: 'event::file:force-update', payload });
+      },
+      controller.signal,
+    );
+    rootEmitter.on(
+      'event::file:update',
+      (payload) => {
+        events.push({ event: 'event::file:update', payload });
+      },
+      controller.signal,
+    );
+    return events;
+  }
+
+  async function expectResidualBatchError(
+    promise: Promise<void>,
+  ): Promise<CompensatedFileBatchError> {
+    try {
+      await promise;
+    } catch (error) {
+      expect(isAppError(error)).toBe(true);
+      if (isCompensatedFileBatchError(error)) {
+        return error;
+      }
+      throw error;
+    }
+
+    throw new Error('Expected a residual file batch error');
+  }
+
   async function setupFileSystemTest({
     controller = new AbortController(),
   } = {}) {
@@ -99,6 +148,7 @@ describe('FileSystemService', () => {
 
     return {
       fileSystem: services.fileSystem,
+      rootEmitter: testEnv.rootEmitter,
       store: testEnv.store,
       workspaceOps: services.workspaceOps,
       storage,
@@ -288,36 +338,46 @@ describe('FileSystemService', () => {
   });
 
   it('rolls back completed batch renames when a later rename fails', async () => {
-    const { fileSystem, storage } = await setupFileSystemTest({ controller });
+    const { fileSystem, rootEmitter, storage } = await setupFileSystemTest({
+      controller,
+    });
     const first = `${TEST_WS_NAME}:old/one.md`;
     const second = `${TEST_WS_NAME}:old/two.md`;
     await fileSystem.createTextFile(first, 'one');
     await fileSystem.createTextFile(second, 'two');
+    const events = captureFileEvents(rootEmitter);
+    const primaryError = new Error('rename failed');
 
     // Fail at the real storage boundary so the test exercises the genuine
     // partial-failure path regardless of how the batch is structured internally.
     const renameFile = storage.renameFile.bind(storage);
-    const failingRename: typeof storage.renameFile = (wsPath, options) => {
+    const failingRename: typeof storage.renameFile = async (
+      wsPath,
+      options,
+    ) => {
       if (wsPath === second) {
-        throw new Error('rename failed');
+        // A provider can durably mutate and still reject. The failed entry must
+        // therefore be assessed and reversed along with fulfilled entries.
+        await renameFile(wsPath, options);
+        throw primaryError;
       }
 
       return renameFile(wsPath, options);
     };
     vi.spyOn(storage, 'renameFile').mockImplementation(failingRename);
 
-    await expect(
-      fileSystem.renameFiles([
-        { oldWsPath: first, newWsPath: `${TEST_WS_NAME}:new/one.md` },
-        { oldWsPath: second, newWsPath: `${TEST_WS_NAME}:new/two.md` },
-      ]),
-    ).rejects.toThrow('rename failed');
+    const rejected = fileSystem.renameFiles([
+      { oldWsPath: first, newWsPath: `${TEST_WS_NAME}:new/one.md` },
+      { oldWsPath: second, newWsPath: `${TEST_WS_NAME}:new/two.md` },
+    ]);
+    await expect(rejected).rejects.toBe(primaryError);
 
     await expect(fileSystem.readFileAsText(first)).resolves.toBe('one');
     await expect(fileSystem.readFileAsText(second)).resolves.toBe('two');
     await expect(
       fileSystem.readFileAsText(`${TEST_WS_NAME}:new/one.md`),
     ).resolves.toBeUndefined();
+    expect(events).toEqual([]);
   });
 
   it('rejects cross-workspace batch renames before mutating storage', async () => {
@@ -357,34 +417,287 @@ describe('FileSystemService', () => {
   });
 
   it('restores completed batch deletes when a later delete fails', async () => {
-    const { fileSystem, storage } = await setupFileSystemTest({ controller });
+    const { fileSystem, rootEmitter, storage } = await setupFileSystemTest({
+      controller,
+    });
     const first = `${TEST_WS_NAME}:old/one.md`;
     const second = `${TEST_WS_NAME}:old/two.md`;
     await fileSystem.createTextFile(first, 'one');
     await fileSystem.createTextFile(second, 'two');
+    const events = captureFileEvents(rootEmitter);
+    const primaryError = new Error('delete failed');
 
     const deleteFile = storage.deleteFile.bind(storage);
     const failingDelete: typeof storage.deleteFile = (wsPath, options) => {
       if (wsPath === second) {
-        throw new Error('delete failed');
+        throw primaryError;
       }
 
       return deleteFile(wsPath, options);
     };
     vi.spyOn(storage, 'deleteFile').mockImplementation(failingDelete);
 
-    await expect(fileSystem.deleteFiles([first, second])).rejects.toThrow(
-      'delete failed',
+    await expect(fileSystem.deleteFiles([first, second])).rejects.toBe(
+      primaryError,
     );
 
     await expect(fileSystem.readFileAsText(first)).resolves.toBe('one');
     await expect(fileSystem.readFileAsText(second)).resolves.toBe('two');
+    expect(events).toEqual([]);
+  });
+
+  it('reports a failed delete recreate as residual uncertainty and refreshes once', async () => {
+    const { fileSystem, rootEmitter, storage } = await setupFileSystemTest({
+      controller,
+    });
+    const first = `${TEST_WS_NAME}:delete-recreate/one.md`;
+    const second = `${TEST_WS_NAME}:delete-recreate/two.md`;
+    await fileSystem.createTextFile(first, 'one');
+    await fileSystem.createTextFile(second, 'two');
+    const events = captureFileEvents(rootEmitter);
+    const primaryError = new Error('delete primary failure');
+    const rollbackError = new Error('recreate failed');
+    const realDelete = storage.deleteFile.bind(storage);
+    const realCreate = storage.createFile.bind(storage);
+
+    vi.spyOn(storage, 'deleteFile').mockImplementation((wsPath, options) => {
+      if (wsPath === second) {
+        throw primaryError;
+      }
+      return realDelete(wsPath, options);
+    });
+    vi.spyOn(storage, 'createFile').mockImplementation(
+      (wsPath, file, options) => {
+        if (wsPath === first) {
+          throw rollbackError;
+        }
+        return realCreate(wsPath, file, options);
+      },
+    );
+
+    const error = await expectResidualBatchError(
+      fileSystem.deleteFiles([first, second]),
+    );
+
+    expect(error.batchOutcome.primaryError).toBe(primaryError);
+    expect(error.batchOutcome.appliedEntries).toEqual([
+      { sourceWsPath: first },
+    ]);
+    expect(error.batchOutcome.residualEntries).toEqual([
+      { sourceWsPath: first },
+    ]);
+    expect(error.batchOutcome.rollbackFailures).toEqual([
+      { entry: { sourceWsPath: first }, error: rollbackError },
+    ]);
+    expect(events.map((event) => event.event)).toEqual([
+      'event::file:force-update',
+    ]);
+    expect(events[0]?.payload).toMatchObject({ wsName: TEST_WS_NAME });
+  });
+
+  it('reports a failed reverse rename with its exact cause and residual entry', async () => {
+    const { fileSystem, rootEmitter, storage } = await setupFileSystemTest({
+      controller,
+    });
+    const first = `${TEST_WS_NAME}:rename-reverse/one.md`;
+    const second = `${TEST_WS_NAME}:rename-reverse/two.md`;
+    const firstDestination = `${TEST_WS_NAME}:renamed/one.md`;
+    const secondDestination = `${TEST_WS_NAME}:renamed/two.md`;
+    await fileSystem.createTextFile(first, 'one');
+    await fileSystem.createTextFile(second, 'two');
+    const events = captureFileEvents(rootEmitter);
+    const primaryError = new Error('rename primary failure');
+    const rollbackError = new Error('reverse rename failed');
+    const realRename = storage.renameFile.bind(storage);
+
+    vi.spyOn(storage, 'renameFile').mockImplementation((wsPath, options) => {
+      if (wsPath === second) {
+        throw primaryError;
+      }
+      if (wsPath === firstDestination) {
+        throw rollbackError;
+      }
+      return realRename(wsPath, options);
+    });
+
+    const error = await expectResidualBatchError(
+      fileSystem.renameFiles([
+        { oldWsPath: first, newWsPath: firstDestination },
+        { oldWsPath: second, newWsPath: secondDestination },
+      ]),
+    );
+
+    expect(error.batchOutcome.primaryError).toBe(primaryError);
+    expect(error.batchOutcome.appliedEntries).toEqual([
+      { sourceWsPath: first, destinationWsPath: firstDestination },
+    ]);
+    expect(error.batchOutcome.residualEntries).toEqual([
+      { sourceWsPath: first, destinationWsPath: firstDestination },
+    ]);
+    expect(error.batchOutcome.rollbackFailures).toEqual([
+      {
+        entry: { sourceWsPath: first, destinationWsPath: firstDestination },
+        error: rollbackError,
+      },
+    ]);
+    expect(events.map((event) => event.event)).toEqual([
+      'event::file:force-update',
+    ]);
+    expect(events[0]?.payload).toMatchObject({ wsName: TEST_WS_NAME });
+  });
+
+  it('does not overwrite an external replacement while rolling back deletes', async () => {
+    const { fileSystem, rootEmitter, storage } = await setupFileSystemTest({
+      controller,
+    });
+    const first = `${TEST_WS_NAME}:delete-race/one.md`;
+    const second = `${TEST_WS_NAME}:delete-race/two.md`;
+    await fileSystem.createTextFile(first, 'original');
+    await fileSystem.createTextFile(second, 'two');
+    const events = captureFileEvents(rootEmitter);
+    const primaryError = new Error('delete primary failure');
+    const realDelete = storage.deleteFile.bind(storage);
+    const realCreate = storage.createFile.bind(storage);
+    const createFile = vi.spyOn(storage, 'createFile');
+
+    vi.spyOn(storage, 'deleteFile').mockImplementation(
+      async (wsPath, options) => {
+        if (wsPath === second) {
+          await realCreate(
+            first,
+            new File(['external replacement'], 'one.md'),
+            {},
+          );
+          throw primaryError;
+        }
+        return realDelete(wsPath, options);
+      },
+    );
+
+    const error = await expectResidualBatchError(
+      fileSystem.deleteFiles([first, second]),
+    );
+
+    expect(error.batchOutcome.primaryError).toBe(primaryError);
+    expect(error.batchOutcome.residualEntries).toEqual([
+      { sourceWsPath: first },
+    ]);
+    await expect(fileSystem.readFileAsText(first)).resolves.toBe(
+      'external replacement',
+    );
+    expect(createFile).not.toHaveBeenCalled();
+    expect(events.map((event) => event.event)).toEqual([
+      'event::file:force-update',
+    ]);
+  });
+
+  it('treats a provider fault during rollback inspection as residual uncertainty', async () => {
+    const { fileSystem, rootEmitter, storage } = await setupFileSystemTest({
+      controller,
+    });
+    const first = `${TEST_WS_NAME}:provider-fault/one.md`;
+    const second = `${TEST_WS_NAME}:provider-fault/two.md`;
+    await fileSystem.createTextFile(first, 'one');
+    await fileSystem.createTextFile(second, 'two');
+    const events = captureFileEvents(rootEmitter);
+    const primaryError = new Error('delete primary failure');
+    const providerError = new Error('provider read failed');
+    const realDelete = storage.deleteFile.bind(storage);
+    const realRead = storage.readFile.bind(storage);
+    let primaryFailed = false;
+
+    vi.spyOn(storage, 'deleteFile').mockImplementation((wsPath, options) => {
+      if (wsPath === second) {
+        primaryFailed = true;
+        throw primaryError;
+      }
+      return realDelete(wsPath, options);
+    });
+    vi.spyOn(storage, 'readFile').mockImplementation((wsPath, options) => {
+      if (primaryFailed && wsPath === first) {
+        throw providerError;
+      }
+      return realRead(wsPath, options);
+    });
+
+    const error = await expectResidualBatchError(
+      fileSystem.deleteFiles([first, second]),
+    );
+
+    expect(error.batchOutcome.primaryError).toBe(primaryError);
+    expect(error.batchOutcome.rollbackFailures).toEqual([
+      { entry: { sourceWsPath: first }, error: providerError },
+    ]);
+    expect(events.map((event) => event.event)).toEqual([
+      'event::file:force-update',
+    ]);
+  });
+
+  it('rejects duplicate, colliding, dependent, and cyclic batches before mutation', async () => {
+    const { fileSystem, rootEmitter, storage } = await setupFileSystemTest({
+      controller,
+    });
+    const first = `${TEST_WS_NAME}:preflight/one.md`;
+    const second = `${TEST_WS_NAME}:preflight/two.md`;
+    const third = `${TEST_WS_NAME}:preflight/three.md`;
+    const destination = `${TEST_WS_NAME}:preflight/destination.md`;
+    await fileSystem.createTextFile(first, 'one');
+    await fileSystem.createTextFile(second, 'two');
+    await fileSystem.createTextFile(third, 'three');
+    await fileSystem.createTextFile(destination, 'destination');
+    const events = captureFileEvents(rootEmitter);
+    const deleteFile = vi.spyOn(storage, 'deleteFile');
+    const renameFile = vi.spyOn(storage, 'renameFile');
+
+    await expect(fileSystem.deleteFiles([first, first])).rejects.toMatchObject({
+      cause: expect.objectContaining({ name: 'error::file:invalid-operation' }),
+    });
+    await expect(
+      fileSystem.renameFiles([
+        { oldWsPath: first, newWsPath: `${TEST_WS_NAME}:new/one.md` },
+        { oldWsPath: first, newWsPath: `${TEST_WS_NAME}:new/two.md` },
+      ]),
+    ).rejects.toMatchObject({
+      cause: expect.objectContaining({ name: 'error::file:invalid-operation' }),
+    });
+    await expect(
+      fileSystem.renameFiles([
+        { oldWsPath: first, newWsPath: `${TEST_WS_NAME}:new/same.md` },
+        { oldWsPath: second, newWsPath: `${TEST_WS_NAME}:new/same.md` },
+      ]),
+    ).rejects.toMatchObject({
+      cause: expect.objectContaining({ name: 'error::file:invalid-operation' }),
+    });
+    await expect(
+      fileSystem.renameFiles([
+        { oldWsPath: first, newWsPath: second },
+        { oldWsPath: second, newWsPath: third },
+      ]),
+    ).rejects.toMatchObject({
+      cause: expect.objectContaining({ name: 'error::file:invalid-operation' }),
+    });
+    await expect(
+      fileSystem.renameFiles([
+        { oldWsPath: first, newWsPath: second },
+        { oldWsPath: second, newWsPath: first },
+      ]),
+    ).rejects.toMatchObject({
+      cause: expect.objectContaining({ name: 'error::file:invalid-operation' }),
+    });
+    await expect(
+      fileSystem.renameFiles([{ oldWsPath: first, newWsPath: destination }]),
+    ).rejects.toMatchObject({
+      cause: expect.objectContaining({ name: 'error::file:already-existing' }),
+    });
+
+    expect(deleteFile).not.toHaveBeenCalled();
+    expect(renameFile).not.toHaveBeenCalled();
+    expect(events).toEqual([]);
   });
 
   it('announces batch deletes in one burst after every durable write, so the workspace re-lists once', async () => {
-    const { fileSystem, store, storage } = await setupFileSystemTest({
-      controller,
-    });
+    const { fileSystem, rootEmitter, store, storage } =
+      await setupFileSystemTest({ controller });
     const paths = [
       `${TEST_WS_NAME}:batch/a.md`,
       `${TEST_WS_NAME}:batch/b.md`,
@@ -393,6 +706,7 @@ describe('FileSystemService', () => {
     for (const wsPath of paths) {
       await fileSystem.createTextFile(wsPath, 'x');
     }
+    const events = captureFileEvents(rootEmitter);
 
     const realDelete = storage.deleteFile.bind(storage);
     // Record the delete-change counter observed *during* each durable delete.
@@ -411,6 +725,45 @@ describe('FileSystemService', () => {
     expect(deleteCountDuringWrites).toEqual([before, before, before]);
     // ...and all three land together afterwards.
     expect(store.get(fileSystem.$fileDeleteCount)).toBe(before + paths.length);
+    expect(events).toHaveLength(paths.length);
+    expect(events).toEqual(
+      paths.map((wsPath) => ({
+        event: 'event::file:update',
+        payload: expect.objectContaining({ type: 'file-delete', wsPath }),
+      })),
+    );
+  });
+
+  it('announces individual rename events only after the whole batch succeeds', async () => {
+    const { fileSystem, rootEmitter } = await setupFileSystemTest({
+      controller,
+    });
+    const pairs = [
+      {
+        oldWsPath: `${TEST_WS_NAME}:rename-success/one.md`,
+        newWsPath: `${TEST_WS_NAME}:renamed-success/one.md`,
+      },
+      {
+        oldWsPath: `${TEST_WS_NAME}:rename-success/two.md`,
+        newWsPath: `${TEST_WS_NAME}:renamed-success/two.md`,
+      },
+    ];
+    await fileSystem.createTextFile(pairs[0]!.oldWsPath, 'one');
+    await fileSystem.createTextFile(pairs[1]!.oldWsPath, 'two');
+    const events = captureFileEvents(rootEmitter);
+
+    await fileSystem.renameFiles(pairs);
+
+    expect(events).toEqual(
+      pairs.map(({ oldWsPath, newWsPath }) => ({
+        event: 'event::file:update',
+        payload: expect.objectContaining({
+          oldWsPath,
+          type: 'file-rename',
+          wsPath: newWsPath,
+        }),
+      })),
+    );
   });
 });
 

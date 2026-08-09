@@ -222,14 +222,34 @@ describe('UI command handlers', () => {
     });
   });
 
+  describe('command::ui:search-saved-notes', () => {
+    it('opens Omni in its persistent saved-content search mode', async () => {
+      const { dispatch, testEnv, services } = await setupTest({
+        targetId: 'command::ui:search-saved-notes',
+      });
+
+      dispatch('command::ui:search-saved-notes', null);
+
+      expect(testEnv.store.get(services.workbenchState.$openOmniSearch)).toBe(
+        true,
+      );
+      expect(testEnv.store.get(services.workbenchState.$omniSearchRoute)).toBe(
+        'omni-content-search',
+      );
+
+      testEnv.store.set(services.workbenchState.$omniSearchInput, 'needle');
+      expect(testEnv.store.get(services.workbenchState.$omniSearchRoute)).toBe(
+        'omni-content-search',
+      );
+    });
+  });
+
   describe('command::ui:switch-theme', () => {
     it('should open the theme switcher dialog and update theme preference when selected', async () => {
       const { dispatch, testEnv, services } = await setupTest({
         targetId: 'command::ui:switch-theme',
       });
-      dispatch('command::ui:switch-theme', {
-        prefill: undefined,
-      });
+      dispatch('command::ui:switch-theme', {});
       const dialog = testEnv.store.get(
         services.workbenchState.$singleSelectDialog,
       );

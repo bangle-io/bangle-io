@@ -35,6 +35,7 @@ export type CoreServiceSlotId =
   | 'userActivityService'
   | 'workbenchState'
   | 'workspaceOps'
+  | 'workspaceSearch'
   | 'workspaceState';
 
 export type PlatformServiceSlotId =

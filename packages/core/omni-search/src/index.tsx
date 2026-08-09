@@ -23,6 +23,10 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { useAtom, useAtomValue } from 'jotai';
 import { FileText, SquareChevronRight } from 'lucide-react';
 import React, { useMemo } from 'react';
+import {
+  SavedMarkdownSearchRoute,
+  useSavedMarkdownSearch,
+} from './saved-markdown-search';
 
 const MAX_COMMANDS_PER_GROUP = 5;
 const MAX_FILES_GLOBAL = 100;
@@ -337,6 +341,7 @@ export function OmniSearch() {
     workbenchState,
     commandRegistry,
     editorEngine,
+    workspaceSearch,
   } = useCoreServices();
   const [open, setOpen] = useAtom(workbenchState.$openOmniSearch);
   const activeWsName = useAtomValue(workspaceState.$currentWsName);
@@ -365,12 +370,7 @@ export function OmniSearch() {
     (cmd: Command) => {
       setOpen(false);
       requestAnimationFrame(() => {
-        commandDispatcher.dispatch(
-          // @ts-expect-error - command id will be correct
-          cmd.id,
-          {},
-          'omni-search',
-        );
+        commandDispatcher.dispatchDefault(cmd, 'omni-search');
       });
     },
     [commandDispatcher, setOpen],
@@ -421,6 +421,23 @@ export function OmniSearch() {
     commandInputRef.current?.focus();
   }, [workbenchState]);
 
+  const savedMarkdownSearchState = useSavedMarkdownSearch({
+    open: open && route === 'omni-content-search',
+    query: search,
+    service: workspaceSearch,
+    wsName: activeWsName,
+  });
+
+  const onSavedMarkdownSelect = React.useCallback(
+    (wsPath: string) => {
+      setOpen(false);
+      commandDispatcher.dispatch('command::ws:go-ws-path', { wsPath }, 'ui');
+    },
+    [commandDispatcher, setOpen],
+  );
+
+  const contentSearchActive = route === 'omni-content-search';
+
   return (
     <CommandDialog
       open={open}
@@ -431,11 +448,19 @@ export function OmniSearch() {
         }
       }}
       shouldFilter={false}
-      screenReaderTitle={t.app.omniSearch.dialogTitle}
+      screenReaderTitle={
+        contentSearchActive
+          ? t.app.omniSearch.savedContentDialogTitle
+          : t.app.omniSearch.dialogTitle
+      }
     >
       <CommandInput
         ref={commandInputRef}
-        placeholder={t.app.omniSearch.inputPlaceholder}
+        placeholder={
+          contentSearchActive
+            ? t.app.omniSearch.savedContentInputPlaceholder
+            : t.app.omniSearch.inputPlaceholder
+        }
         value={search}
         onValueChange={(value) => {
           updateSearch(value);
@@ -461,10 +486,20 @@ export function OmniSearch() {
             recentCommands={recentCommands}
           />
         )}
+        {contentSearchActive && (
+          <SavedMarkdownSearchRoute
+            onSelect={onSavedMarkdownSelect}
+            query={search}
+            state={savedMarkdownSearchState}
+            wsName={activeWsName}
+          />
+        )}
 
-        <CommandEmpty>
-          <span>{t.app.omniSearch.noResults}</span>
-        </CommandEmpty>
+        {!contentSearchActive && (
+          <CommandEmpty>
+            <span>{t.app.omniSearch.noResults}</span>
+          </CommandEmpty>
+        )}
       </CommandList>
     </CommandDialog>
   );

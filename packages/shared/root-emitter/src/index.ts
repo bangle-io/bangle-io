@@ -94,6 +94,203 @@ export const CROSS_TAB_EVENTS = [
   'event::app:build-presence',
 ] as const satisfies RootEvents['event'][];
 export type CrossTabEvent = (typeof CROSS_TAB_EVENTS)[number];
+
+export type CrossTabRootEvent = Extract<RootEvents, { event: CrossTabEvent }>;
+
+/**
+ * The inner payload sent through the cross-tab transport.
+ *
+ * `event` and `payload` intentionally remain at the top level so tabs running
+ * the pre-versioned protocol can still read messages emitted by newer tabs.
+ */
+export type RootEventWireEnvelope<TEvent extends CrossTabRootEvent> = TEvent & {
+  version: 1;
+};
+
+const FILE_UPDATE_TYPES = new Set([
+  'file-create',
+  'file-content-update',
+  'file-delete',
+  'file-rename',
+]);
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function hasOwn(value: Record<string, unknown>, key: string): boolean {
+  return Object.hasOwn(value, key);
+}
+
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === 'string' && value.length > 0;
+}
+
+function isEventSenderMetadata(value: unknown): value is EventSenderMetadata {
+  if (!isRecord(value) || !hasOwn(value, 'id') || !isNonEmptyString(value.id)) {
+    return false;
+  }
+
+  return (
+    !hasOwn(value, 'tag') ||
+    value.tag === undefined ||
+    typeof value.tag === 'string'
+  );
+}
+
+function isFileUpdatePayload(
+  value: unknown,
+): value is Extract<
+  CrossTabRootEvent,
+  { event: 'event::file:update' }
+>['payload'] {
+  if (
+    !isRecord(value) ||
+    !hasOwn(value, 'type') ||
+    typeof value.type !== 'string' ||
+    !FILE_UPDATE_TYPES.has(value.type) ||
+    !hasOwn(value, 'wsPath') ||
+    !isNonEmptyString(value.wsPath) ||
+    !hasOwn(value, 'sender') ||
+    !isEventSenderMetadata(value.sender)
+  ) {
+    return false;
+  }
+
+  // This boundary only establishes that a path is safely shaped for the wire.
+  // Full workspace-path parsing belongs to the workspace-path package; importing
+  // it here would couple the shared event transport to that higher-level policy.
+  return (
+    !hasOwn(value, 'oldWsPath') ||
+    value.oldWsPath === undefined ||
+    isNonEmptyString(value.oldWsPath)
+  );
+}
+
+function isForceUpdatePayload(
+  value: unknown,
+): value is Extract<
+  CrossTabRootEvent,
+  { event: 'event::file:force-update' }
+>['payload'] {
+  if (
+    !isRecord(value) ||
+    !hasOwn(value, 'sender') ||
+    !isEventSenderMetadata(value.sender)
+  ) {
+    return false;
+  }
+
+  return (
+    !hasOwn(value, 'wsName') ||
+    value.wsName === undefined ||
+    isNonEmptyString(value.wsName)
+  );
+}
+
+function isReloadUiPayload(
+  value: unknown,
+): value is Extract<
+  CrossTabRootEvent,
+  { event: 'event::app:reload-ui' }
+>['payload'] {
+  return (
+    isRecord(value) &&
+    hasOwn(value, 'sender') &&
+    isEventSenderMetadata(value.sender)
+  );
+}
+
+function isBuildPresencePayload(
+  value: unknown,
+): value is Extract<
+  CrossTabRootEvent,
+  { event: 'event::app:build-presence' }
+>['payload'] {
+  return (
+    isRecord(value) &&
+    hasOwn(value, 'protocol') &&
+    value.protocol === 1 &&
+    hasOwn(value, 'buildId') &&
+    isNonEmptyString(value.buildId) &&
+    hasOwn(value, 'builtAt') &&
+    typeof value.builtAt === 'number' &&
+    Number.isFinite(value.builtAt) &&
+    hasOwn(value, 'reply') &&
+    typeof value.reply === 'boolean' &&
+    hasOwn(value, 'sender') &&
+    isEventSenderMetadata(value.sender)
+  );
+}
+
+function decodeRootEventWireMessage(
+  value: unknown,
+): CrossTabRootEvent | undefined {
+  try {
+    if (
+      !isRecord(value) ||
+      !hasOwn(value, 'event') ||
+      !hasOwn(value, 'payload') ||
+      ('version' in value && (!hasOwn(value, 'version') || value.version !== 1))
+    ) {
+      return undefined;
+    }
+
+    switch (value.event) {
+      case 'event::file:update': {
+        if (!isFileUpdatePayload(value.payload)) {
+          return undefined;
+        }
+        return { event: value.event, payload: value.payload };
+      }
+      case 'event::file:force-update': {
+        if (!isForceUpdatePayload(value.payload)) {
+          return undefined;
+        }
+        return { event: value.event, payload: value.payload };
+      }
+      case 'event::app:reload-ui': {
+        if (!isReloadUiPayload(value.payload)) {
+          return undefined;
+        }
+        return { event: value.event, payload: value.payload };
+      }
+      case 'event::app:build-presence': {
+        if (!isBuildPresencePayload(value.payload)) {
+          return undefined;
+        }
+        return { event: value.event, payload: value.payload };
+      }
+      default:
+        return undefined;
+    }
+  } catch {
+    // BroadcastChannel normally structured-clones plain data, but malformed
+    // frames can also be injected directly in development and test contexts.
+    return undefined;
+  }
+}
+
+/**
+ * Codec for the root-event payload nested inside `TypedBroadcastBus` frames.
+ * It accepts both the versioned v1 envelope and legacy `{ event, payload }`
+ * envelopes while all new outbound frames use v1.
+ */
+export const rootEventWireCodec = {
+  encode<TEvent extends CrossTabRootEvent>(
+    event: TEvent,
+  ): RootEventWireEnvelope<TEvent> {
+    return {
+      version: 1,
+      ...event,
+    };
+  },
+
+  decode(value: unknown): CrossTabRootEvent | undefined {
+    return decodeRootEventWireMessage(value);
+  },
+};
+
 export class RootEmitter {
   private publisher: Emitter;
   private subscriber: Emitter;

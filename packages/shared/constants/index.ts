@@ -48,6 +48,19 @@ export const SETTINGS_PAGE_DEFINITIONS = [
       'restore',
     ],
   },
+  {
+    id: 'diagnostics',
+    route: 'settings-diagnostics',
+    commandId: 'command::ui:open-settings-diagnostics',
+    commandTitle: 'Settings - Diagnostics',
+    commandKeywords: [
+      'settings',
+      'diagnostics',
+      'support',
+      'environment',
+      'storage',
+    ],
+  },
 ] as const;
 export type SettingsPageDefinition = (typeof SETTINGS_PAGE_DEFINITIONS)[number];
 export type SettingsPageId = SettingsPageDefinition['id'];
@@ -137,6 +150,7 @@ export const SERVICE_NAME = {
   userActivityService: 'user-activity',
   workbenchStateService: 'workbench-state',
   workspaceOpsService: 'workspace-ops',
+  workspaceSearchService: 'workspace-search',
   workspaceStateService: 'workspace-state',
   pmEditorService: 'pmEditorService',
   editorWService: 'editor-w',

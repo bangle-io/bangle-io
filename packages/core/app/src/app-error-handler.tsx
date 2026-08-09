@@ -1,9 +1,91 @@
 import { getGithubUrl, handleAppError } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
-import { useCoreServices, useLogger } from '@bangle.io/context';
+import {
+  type EditorEngineContract,
+  useCoreServices,
+  useLogger,
+} from '@bangle.io/context';
 import type { AppError, RootEmitter } from '@bangle.io/types';
 import { toast } from '@bangle.io/ui-components';
 import React, { useEffect } from 'react';
+
+type SaveFailureSource = Pick<
+  EditorEngineContract,
+  'getSaveStatus' | 'retryFailedSave' | 'subscribeToSaveStatus'
+>;
+
+export type SaveFailureToastTarget = {
+  dismiss: (wsPath: string) => void;
+  show: (wsPath: string, retry: () => void) => void;
+};
+
+/**
+ * Keeps every infinite save-failure toast bound to the queue state for its
+ * exact path. Retry never dismisses optimistically: the pending transition
+ * emitted by the queue is what withdraws the failure UI.
+ */
+export function createSaveFailureToastManager(
+  source: SaveFailureSource,
+  target: SaveFailureToastTarget,
+): {
+  dispose: () => void;
+  show: (wsPath: string) => void;
+} {
+  type Watcher = {
+    active: boolean;
+    unsubscribe: () => void;
+  };
+  const watchers = new Map<string, Watcher>();
+
+  const stop = (wsPath: string, dismiss: boolean) => {
+    const watcher = watchers.get(wsPath);
+    if (!watcher) {
+      return;
+    }
+    watcher.active = false;
+    watcher.unsubscribe();
+    watchers.delete(wsPath);
+    if (dismiss) {
+      target.dismiss(wsPath);
+    }
+  };
+
+  const show = (wsPath: string) => {
+    stop(wsPath, false);
+
+    const watcher: Watcher = { active: true, unsubscribe: () => {} };
+    watchers.set(wsPath, watcher);
+    const syncWithQueue = () => {
+      if (!watcher.active || source.getSaveStatus(wsPath) === 'failed') {
+        return;
+      }
+      stop(wsPath, true);
+    };
+    watcher.unsubscribe = source.subscribeToSaveStatus(syncWithQueue, wsPath);
+    if (!watcher.active) {
+      // Handles a source that calls its listener synchronously while
+      // subscribing before the real unsubscribe function was assigned.
+      watcher.unsubscribe();
+      return;
+    }
+    syncWithQueue();
+
+    if (watcher.active) {
+      target.show(wsPath, () => {
+        source.retryFailedSave(wsPath);
+      });
+    }
+  };
+
+  return {
+    show,
+    dispose: () => {
+      for (const wsPath of [...watchers.keys()]) {
+        stop(wsPath, true);
+      }
+    },
+  };
+}
 
 export function shouldReportAppError(appError: AppError): boolean {
   switch (appError.name) {
@@ -33,6 +115,24 @@ export function AppErrorHandler({ rootEmitter }: { rootEmitter: RootEmitter }) {
 
   useEffect(() => {
     const controller = new AbortController();
+    const saveFailureToasts = createSaveFailureToastManager(
+      coreServices.editorEngine,
+      {
+        dismiss: (wsPath) => {
+          toast.dismiss(`editor-save-failed:${wsPath}`);
+        },
+        show: (wsPath, retry) => {
+          toast.error(t.app.toasts.saveFailed, {
+            id: `editor-save-failed:${wsPath}`,
+            duration: Number.POSITIVE_INFINITY,
+            action: {
+              label: t.app.toasts.retrySave,
+              onClick: retry,
+            },
+          });
+        },
+      },
+    );
     const showUnexpectedError = (error: Error) => {
       toast.error(error.message, {
         duration: Number.POSITIVE_INFINITY,
@@ -75,23 +175,7 @@ export function AppErrorHandler({ rootEmitter }: { rootEmitter: RootEmitter }) {
 
         switch (appError.name) {
           case 'error::editor:save-failed': {
-            const toastId = `editor-save-failed:${appError.payload.wsPath}`;
-            toast.error(t.app.toasts.saveFailed, {
-              id: toastId,
-              duration: Number.POSITIVE_INFINITY,
-              action: {
-                label: t.app.toasts.retrySave,
-                onClick: () => {
-                  if (
-                    coreServices.editorEngine.retryFailedSave(
-                      appError.payload.wsPath,
-                    )
-                  ) {
-                    toast.dismiss(toastId);
-                  }
-                },
-              },
-            });
+            saveFailureToasts.show(appError.payload.wsPath);
             return;
           }
 
@@ -160,6 +244,7 @@ export function AppErrorHandler({ rootEmitter }: { rootEmitter: RootEmitter }) {
 
     return () => {
       controller.abort();
+      saveFailureToasts.dispose();
     };
   }, [rootEmitter, coreServices, logger]);
 

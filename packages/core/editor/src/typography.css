@@ -745,10 +745,3 @@ div.ProseMirror {
     opacity: 0.25;
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  div.ProseMirror .B-collapsible-heading-toggle,
-  div.ProseMirror .B-collapsible-heading-toggle svg {
-    transition: none;
-  }
-}

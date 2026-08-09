@@ -14,6 +14,7 @@ const [
   GENERAL_SETTINGS_PAGE,
   WORKSPACES_SETTINGS_PAGE,
   RECOVERY_SETTINGS_PAGE,
+  DIAGNOSTICS_SETTINGS_PAGE,
 ] = SETTINGS_PAGE_DEFINITIONS;
 
 // pattern command::ui:{action}-{target}
@@ -48,6 +49,17 @@ export const uiCommands = narrow([
     args: {
       prefill: T.Optional(T.String),
     },
+  },
+  {
+    id: 'command::ui:search-saved-notes',
+    title: 'Search Saved Notes',
+    keywords: ['search', 'find', 'saved', 'note', 'markdown', 'content'],
+    dependencies: { services: ['workbenchState'] },
+    omniSearch: 'workspace',
+    keybindings: ['ctrl', 'shift', 'f'],
+    allowShortcutInInputs: true,
+    autoFocusEditor: false,
+    args: null,
   },
   {
     id: 'command::ui:switch-theme',
@@ -116,6 +128,17 @@ export const uiCommands = narrow([
     id: RECOVERY_SETTINGS_PAGE.commandId,
     title: RECOVERY_SETTINGS_PAGE.commandTitle,
     keywords: [...RECOVERY_SETTINGS_PAGE.commandKeywords],
+    omniSearch: 'global',
+    dependencies: {
+      services: ['navigation'],
+    },
+    autoFocusEditor: false,
+    args: null,
+  },
+  {
+    id: DIAGNOSTICS_SETTINGS_PAGE.commandId,
+    title: DIAGNOSTICS_SETTINGS_PAGE.commandTitle,
+    keywords: [...DIAGNOSTICS_SETTINGS_PAGE.commandKeywords],
     omniSearch: 'global',
     dependencies: {
       services: ['navigation'],

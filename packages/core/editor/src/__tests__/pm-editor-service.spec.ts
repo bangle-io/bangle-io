@@ -3,12 +3,101 @@
 import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
 import { TextSelection } from '@bangle.io/prosemirror-plugins';
 import { createTestEnvironment, waitForExpect } from '@bangle.io/test-utils';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { PmEditorService } from '../pm-editor-service';
 
 const TEST_WS_NAME = 'test-ws';
 
 describe('PmEditorService', () => {
+  test('exposes exact primitive save phases through pending, failed, retry, and clean', async () => {
+    const controller = new AbortController();
+    const testEnv = createTestEnvironment({ controller });
+    const services = testEnv.instantiateAll();
+    await testEnv.mountAll();
+    const noteWsPath = `${TEST_WS_NAME}:save-status.md`;
+
+    await services.workspaceOps.createWorkspaceInfo({
+      name: TEST_WS_NAME,
+      type: WORKSPACE_STORAGE_TYPE.Memory,
+      metadata: {},
+    });
+    await services.fileSystem.createTextFile(noteWsPath, 'Initial');
+
+    if (!(services.editorEngine instanceof PmEditorService)) {
+      throw new Error('Expected the ProseMirror editor engine');
+    }
+    const service = services.editorEngine;
+    const domNode = document.createElement('div');
+    document.body.append(domNode);
+    const unmount = service.mountEditor({
+      domNode,
+      wsPath: noteWsPath,
+      name: 'save-status-editor',
+    });
+    await waitForExpect(() => {
+      expect(service.getEditor('save-status-editor')).toBeDefined();
+    });
+
+    expect(service.getSaveStatus(noteWsPath)).toBe('clean');
+    const exactListener = vi.fn();
+    const otherListener = vi.fn();
+    const unsubscribe = service.subscribeToSaveStatus(
+      exactListener,
+      noteWsPath,
+    );
+    const unsubscribeOther = service.subscribeToSaveStatus(
+      otherListener,
+      `${TEST_WS_NAME}:other.md`,
+    );
+
+    let releaseWrite: (() => void) | undefined;
+    const deferredWrite = new Promise<void>((resolve) => {
+      releaseWrite = resolve;
+    });
+    const originalWrite = services.fileSystem.writeFile.bind(
+      services.fileSystem,
+    );
+    const writeSpy = vi
+      .spyOn(services.fileSystem, 'writeFile')
+      .mockImplementation(() => deferredWrite);
+
+    const view = service.getEditor('save-status-editor');
+    if (!view) {
+      throw new Error('Expected the editor to be ready');
+    }
+    view.focus();
+    expect(service.insertMarkdownAtSelection(' pending')).toBe(true);
+    expect(service.getSaveStatus(noteWsPath)).toBe('pending');
+    expect(otherListener).not.toHaveBeenCalled();
+
+    releaseWrite?.();
+    await waitForExpect(() => {
+      expect(service.getSaveStatus(noteWsPath)).toBe('clean');
+    });
+
+    const failure = new Error('injected write failure');
+    writeSpy.mockRejectedValueOnce(failure);
+    expect(service.insertMarkdownAtSelection(' failed')).toBe(true);
+    await waitForExpect(() => {
+      expect(service.getSaveStatus(noteWsPath)).toBe('failed');
+    });
+
+    writeSpy.mockImplementation(originalWrite);
+    expect(service.retryFailedSave(noteWsPath)).toBe(true);
+    expect(service.getSaveStatus(noteWsPath)).toBe('pending');
+    await waitForExpect(() => {
+      expect(service.getSaveStatus(noteWsPath)).toBe('clean');
+    });
+    expect(exactListener).toHaveBeenCalled();
+    expect(otherListener).not.toHaveBeenCalled();
+
+    unsubscribeOther();
+    unsubscribe();
+    unmount();
+    controller.abort();
+    domNode.remove();
+  });
+
   test('parses Markdown with the active editor schema across sessions', async () => {
     const controller = new AbortController();
     const testEnv = createTestEnvironment({ controller });

@@ -40,6 +40,11 @@ export const t = {
       toggleMaxWidth: 'Toggle Max Width',
     },
     editor: {
+      saveStatus: {
+        saved: 'Saved',
+        saving: 'Saving…',
+        retry: 'Retry',
+      },
       fidelityNotice: {
         label: 'Markdown compatibility',
         title: 'Some Markdown cannot be fully preserved',
@@ -195,6 +200,27 @@ export const t = {
       allFilesHeading: 'All Files',
       filteredHeading: 'Filtered',
       noResults: 'No results found.',
+      savedContentDialogTitle: 'Search saved note contents',
+      savedContentInputPlaceholder: 'Search saved note Markdown...',
+      savedContentHeading: 'Saved note contents',
+      savedContentPrompt:
+        'Search the Markdown currently saved in this workspace.',
+      savedContentLoading: 'Searching saved notes...',
+      savedContentNoWorkspace: 'Open a workspace to search its saved notes.',
+      savedContentNoResults: 'No matching lines in saved notes.',
+      savedContentError: 'Saved notes could not be searched.',
+      savedContentLine: ({ lineNumber }: { lineNumber: number }) =>
+        `Line ${lineNumber}`,
+      savedContentPartial: ({
+        oversizedCount,
+        unreadableCount,
+      }: {
+        oversizedCount: number;
+        unreadableCount: number;
+      }) =>
+        `Partial results: skipped ${unreadableCount} unreadable and ${oversizedCount} oversized saved notes.`,
+      savedContentTruncated:
+        'Showing the first 100 matching lines in saved-note order.',
     },
     sidebar: {
       newLabel: 'New',
@@ -298,10 +324,25 @@ export const t = {
         recoverAsNewNote: 'Recover as new note',
         closeButton: 'Close',
       },
+      diagnostics: {
+        title: 'Diagnostics',
+        description:
+          'Review a privacy-safe summary of this app and browser capabilities. It never includes notes, workspace names, file paths, or device details.',
+        reportTitle: 'Diagnostics report',
+        reportDescription:
+          'The report is prepared before copying so the final text can be copied in one click.',
+        reportLabel: 'Diagnostics report',
+        preparingReport: 'Preparing diagnostics…',
+        preparingButton: 'Preparing…',
+        copyButton: 'Copy diagnostics',
+        copied: 'Diagnostics copied',
+        copyFailed: 'Copy failed',
+      },
       nav: {
         general: 'General',
         workspaces: 'Workspaces',
         recovery: 'Recover',
+        diagnostics: 'Diagnostics',
       },
     },
     pageAsset: {
@@ -545,6 +586,8 @@ export const t = {
           'Cannot rename note to a different workspace',
         relocationBlockedByUnsavedChanges:
           'Cannot rename or move this note until its latest changes are saved',
+        cloneBlockedByUnsavedChanges:
+          'Cannot duplicate this note until its latest changes are saved',
         alreadyExistsInDest: ({ fileName }: { fileName: string }) =>
           `A note named "${fileName}" already exists in the destination folder`,
         originalNoteNotFound: 'Original note not found',
@@ -749,6 +792,15 @@ export const t = {
     },
     landingPage: 'Landing page',
     components: {
+      noteActions: {
+        menuLabel: 'Note actions',
+        rename: 'Rename',
+        move: 'Move',
+        duplicate: 'Duplicate',
+        copyPath: 'Copy Path',
+        recover: 'Recover',
+        delete: 'Delete',
+      },
       appSidebar: {
         openedLabel: 'Opened',
         starredLabel: 'Starred',

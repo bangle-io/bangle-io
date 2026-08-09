@@ -1,4 +1,3 @@
-import { BaseFileSystemError, FILE_NOT_FOUND_ERROR } from '@bangle.io/baby-fs';
 import {
   BaseService,
   type BaseServiceContext,
@@ -79,10 +78,14 @@ export class FileStorageMemory
     const fileEntryPath = toFSPathOrThrow(wsPath);
 
     if (!this.fileEntries.has(fileEntryPath)) {
-      throw new BaseFileSystemError({
-        message: 'File not found',
-        code: FILE_NOT_FOUND_ERROR,
-      });
+      throwAppError(
+        'error::file-storage:file-does-not-exist',
+        'Cannot delete file because it does not exist',
+        {
+          wsPath,
+          storage: this.name,
+        },
+      );
     }
 
     this.fileEntries.delete(fileEntryPath);
@@ -104,10 +107,14 @@ export class FileStorageMemory
     const entry = this.fileEntries.get(fileEntryPath);
 
     if (!entry) {
-      throw new BaseFileSystemError({
-        message: 'File not found',
-        code: FILE_NOT_FOUND_ERROR,
-      });
+      throwAppError(
+        'error::file-storage:file-does-not-exist',
+        'File does not exist',
+        {
+          wsPath,
+          storage: this.name,
+        },
+      );
     }
 
     return {
@@ -150,10 +157,14 @@ export class FileStorageMemory
     const entry = this.fileEntries.get(oldPath);
 
     if (!entry) {
-      throw new BaseFileSystemError({
-        message: 'File not found',
-        code: FILE_NOT_FOUND_ERROR,
-      });
+      throwAppError(
+        'error::file-storage:file-does-not-exist',
+        'Cannot rename file because it does not exist',
+        {
+          wsPath,
+          storage: this.name,
+        },
+      );
     }
 
     if (this.fileEntries.has(newPath)) {

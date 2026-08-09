@@ -10,6 +10,7 @@ import type {
   UserActivityService,
   WorkbenchStateService,
   WorkspaceOpsService,
+  WorkspaceSearchService,
   WorkspaceStateService,
 } from '@bangle.io/service-core';
 import type { CommandExcludedServiceSlotId } from '@bangle.io/types';
@@ -19,6 +20,9 @@ export type {
   NoteSnapshotMetadata,
   NoteSnapshotRecord,
 } from '@bangle.io/service-core';
+
+/** Stable, serializable snapshot of one note's durable-save state. */
+export type EditorSavePhase = 'clean' | 'pending' | 'failed';
 
 /**
  * The engine-agnostic contract of the service powering the note editing
@@ -35,6 +39,7 @@ export type {
  *   durable write succeeds.
  * - A failed load never writes fallback or normalized content back to
  *   storage.
+ * - `getSaveStatus` is the exact-path primitive snapshot for save-status UI.
  * - `hasPendingOrFailedSave` is the source of truth for dirty-state UI and
  *   navigation save protection.
  */
@@ -58,6 +63,8 @@ export type EditorEngineContract = BaseService & {
   captureMarkdownInsertion: () => ((markdownText: string) => boolean) | null;
   collapseAllHeadings: (level: number) => boolean;
   focusEditor: () => void;
+  /** Returns the current durable-save phase for exactly one workspace path. */
+  getSaveStatus: (wsPath: string) => EditorSavePhase;
   getSelectionMarkdown: () => string | null;
   hasPendingOrFailedSave: (wsPath?: string) => boolean;
   /**
@@ -109,6 +116,7 @@ export type CoreServices<
   userActivityService: UserActivityService;
   workbenchState: WorkbenchStateService;
   workspaceOps: WorkspaceOpsService;
+  workspaceSearch: WorkspaceSearchService;
   workspaceState: WorkspaceStateService;
 };
 

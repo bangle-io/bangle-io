@@ -19,6 +19,7 @@ const expectedOmniSearchCommandIds: Record<OmniSearchScope, string[]> = {
     'command::ui:create-workspace-dialog',
     'command::ui:delete-workspace-dialog',
     'command::ui:open-settings',
+    'command::ui:open-settings-diagnostics',
     'command::ui:open-settings-general',
     'command::ui:open-settings-recovery',
     'command::ui:open-settings-workspaces',
@@ -31,6 +32,7 @@ const expectedOmniSearchCommandIds: Record<OmniSearchScope, string[]> = {
   workspace: [
     'command::ui:create-directory-dialog',
     'command::ui:create-note-dialog',
+    'command::ui:search-saved-notes',
     'command::ui:toggle-all-files',
     'command::ws:daily-note',
     'command::ws:go-ws-home',
