@@ -49,6 +49,56 @@ async function expectVerticalGap(
     .toBe(expectedGap);
 }
 
+async function expectEditorTopInset(
+  editor: Locator,
+  firstBlock: Locator,
+  expectedInset: number,
+) {
+  await expect
+    .poll(async () => {
+      const editorBox = await editor.boundingBox();
+      const firstBlockBox = await firstBlock.boundingBox();
+
+      if (!editorBox || !firstBlockBox) {
+        return undefined;
+      }
+
+      return firstBlockBox.y - editorBox.y;
+    })
+    .toBe(expectedInset);
+}
+
+test('keeps every first heading level clear of the editor top edge', async ({
+  page,
+}) => {
+  const workspaceName = 'editor-first-heading-spacing';
+  const noteName = 'First heading';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+
+  const editor = getEditorLocator(page, {});
+  await expect(editor).toHaveCSS('padding-top', '24px');
+  await expect(editor).toHaveCSS('padding-bottom', '24px');
+
+  for (let level = 1; level <= 6; level += 1) {
+    const headingText = `First heading level ${level}`;
+    await writeStoredMarkdown(
+      page,
+      workspaceName,
+      noteName,
+      `${'#'.repeat(level)} ${headingText}\n\nBody`,
+    );
+    await page.reload({ waitUntil: 'networkidle' });
+
+    const heading = editor.getByRole('heading', {
+      level,
+      name: headingText,
+    });
+    await expect(heading).toHaveCSS('margin-top', '0px');
+    await expect(heading).toHaveCSS('padding-top', '0px');
+    await expectEditorTopInset(editor, heading, 24);
+  }
+});
+
 test('uses a consistent type scale and spacing rhythm for headings', async ({
   page,
 }) => {
@@ -143,9 +193,13 @@ test('uses a consistent type scale and spacing rhythm for headings', async ({
     },
   ] as const;
 
-  await expect(
-    editor.getByRole('heading', { level: 1, name: 'Page title' }),
-  ).toHaveCSS('padding-top', '24px');
+  const pageTitle = editor.getByRole('heading', {
+    level: 1,
+    name: 'Page title',
+  });
+  await expect(pageTitle).toHaveCSS('margin-top', '0px');
+  await expect(pageTitle).toHaveCSS('padding-top', '0px');
+  await expectEditorTopInset(editor, pageTitle, 24);
 
   for (const expectation of headingExpectations) {
     const heading = editor
@@ -160,6 +214,54 @@ test('uses a consistent type scale and spacing rhythm for headings', async ({
       Number.parseFloat(expectation.marginTop),
     );
   }
+});
+
+test('preserves deliberate frontmatter and adjacent-heading gaps', async ({
+  page,
+}) => {
+  const workspaceName = 'editor-heading-transitions';
+  const noteName = 'Heading transitions';
+  await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
+  await writeStoredMarkdown(
+    page,
+    workspaceName,
+    noteName,
+    [
+      '---',
+      'title: Heading transitions',
+      '---',
+      '',
+      '# Title after frontmatter',
+      '## Adjacent H2',
+      '# Adjacent H1',
+    ].join('\n'),
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  const frontmatter = editor.locator('pre[data-frontmatter]');
+  const title = editor.getByRole('heading', {
+    level: 1,
+    name: 'Title after frontmatter',
+  });
+  const adjacentH2 = editor.getByRole('heading', {
+    level: 2,
+    name: 'Adjacent H2',
+  });
+  const adjacentH1 = editor.getByRole('heading', {
+    level: 1,
+    name: 'Adjacent H1',
+  });
+
+  await expect(frontmatter).toHaveCSS('margin-top', '0px');
+  await expectEditorTopInset(editor, frontmatter, 24);
+  await expect(title).toHaveCSS('margin-top', '24px');
+  await expect(title).toHaveCSS('padding-top', '0px');
+  await expectVerticalGap(frontmatter, title, 32);
+  await expect(adjacentH2).toHaveCSS('margin-top', '8px');
+  await expectVerticalGap(title, adjacentH2, 24);
+  await expect(adjacentH1).toHaveCSS('margin-top', '8px');
+  await expectVerticalGap(adjacentH2, adjacentH1, 16);
 });
 
 test('keeps supported block and inline nodes on a coherent typography rhythm', async ({
@@ -223,7 +325,7 @@ test('keeps supported block and inline nodes on a coherent typography rhythm', a
         fontSize: '16px',
         lineHeight: '24px',
         marginBottom: '8px',
-        marginTop: '8px',
+        marginTop: '0px',
         paddingBottom: '15.2px',
         paddingTop: '40.8px',
       },
@@ -315,6 +417,12 @@ test('keeps supported block and inline nodes on a coherent typography rhythm', a
       expectation.metrics,
     );
   }
+
+  await expectEditorTopInset(
+    editor,
+    editor.locator('pre[data-frontmatter]'),
+    24,
+  );
 
   const inlineExpectations = [
     {

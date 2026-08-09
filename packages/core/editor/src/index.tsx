@@ -60,7 +60,7 @@ export function Editor({
           data-editor-name={name}
           data-editor-engine={editorEngine.engineId}
           className={cx(
-            'ProseMirror box-border min-h-full min-w-0 max-w-full py-8 outline-0 outline-hidden',
+            'ProseMirror box-border min-h-full min-w-0 max-w-full py-6 outline-0 outline-hidden',
             '[&_:not(pre)_code]:rounded-md [&_:not(pre)_code]:bg-muted/40 [&_:not(pre)_code]:px-1.5 [&_:not(pre)_code]:py-0.5 [&_:not(pre)_code]:font-mono',
             "[&_pre]:bg-muted/30 [&_span[data-mention='tag']]:text-primary [&_span[data-mention='user']]:text-accent",
             className,
