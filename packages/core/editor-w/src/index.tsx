@@ -69,7 +69,7 @@ export function Editor({
           data-editor-name={name}
           data-editor-engine={editorEngine.engineId}
           className={cx(
-            'box-border min-h-full min-w-0 max-w-full whitespace-pre-wrap py-8 font-mono text-sm',
+            'box-border min-h-full min-w-0 max-w-full whitespace-pre-wrap py-6 font-mono text-sm',
             className,
           )}
         />

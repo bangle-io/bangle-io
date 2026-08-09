@@ -11,8 +11,9 @@ import { PageContentContainer } from '../layout/main-content-container';
 
 const MAIN_EDITOR_NAME = 'main-editor';
 
-// APP_MAIN_CONTENT_PADDING with the left side widened for the block handle.
-const EDITOR_CONTENT_PADDING = `py-4 pt-0 pr-4 md:pr-6 ${EDITOR_GUTTER_PADDING_LEFT}`;
+// Horizontal page gutters, with the left side widened for the block handle.
+// The editor engine owns its vertical content inset.
+const EDITOR_CONTENT_PADDING = `pr-4 md:pr-6 ${EDITOR_GUTTER_PADDING_LEFT}`;
 
 type SaveStatusSource = Pick<
   EditorEngineContract,

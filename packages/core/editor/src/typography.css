@@ -5,32 +5,20 @@ div.ProseMirror {
     flex-direction: column;
   }
 
-  & p:first-child,
-  & h1:first-child,
-  & h2:first-child,
-  & h3:first-child,
-  & h4:first-child,
-  & h5:first-child,
-  & h6:first-child {
+  /* The editor surface owns the document-edge inset. Scope margin resets to
+     direct document children so nested blocks keep their local rhythm. */
+  & > :first-child {
     margin-top: 0;
   }
 
-  & p:last-child,
-  & h1:last-child,
-  & h2:last-child,
-  & h3:last-child,
-  & h4:last-child,
-  & h5:last-child,
-  & h6:last-child {
+  & > :last-child {
     margin-bottom: 0;
   }
 
-  /* The first top-level heading is typically the page title. Frontmatter may
-     precede it, but nested H1s (for example in lists) are ordinary content. */
-  & > h1:first-child,
-  & > pre[data-frontmatter]:first-child + h1 {
-    margin-top: 0;
-    padding-top: 1.5rem;
+  /* Frontmatter has its own bottom margin; use a uniform heading margin here
+     to preserve the intended 2rem inter-block gap without title padding. */
+  & > pre[data-frontmatter]:first-child + :is(h1, h2, h3, h4, h5, h6) {
+    margin-top: 1.5rem;
   }
 
   & h1,
@@ -249,7 +237,7 @@ div.ProseMirror {
      both margins into a large, jarring gap. Tighten the top margin in that
      case while preserving the normal spacing when a heading follows body
      text. */
-  & :is(h1, h2, h3, h4, h5, h6) + :is(h2, h3, h4, h5, h6) {
+  & :is(h1, h2, h3, h4, h5, h6) + :is(h1, h2, h3, h4, h5, h6) {
     margin-top: 0.5rem;
   }
 
@@ -475,6 +463,17 @@ div.ProseMirror {
 
   & .prosemirror-flat-list {
     line-height: 1.5;
+
+    /* List headings are nested document content, so they need a local edge
+       reset rather than inheriting the top-level document rule above. */
+    & > .list-content > :is(h1, h2, h3, h4, h5, h6):first-child {
+      margin-top: 0;
+    }
+
+    & > .list-content > :is(h1, h2, h3, h4, h5, h6):last-child {
+      margin-bottom: 0;
+    }
+
     &::before,
     & > .list-marker {
       top: 0.5rem;
