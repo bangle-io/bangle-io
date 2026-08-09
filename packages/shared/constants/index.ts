@@ -113,6 +113,15 @@ export const FILE_STORAGE_MAX_FILE_SIZE_BYTES = {
   nativeFs: 250 * 1024 * 1024,
 } as const;
 
+export const TEXT_SEARCH_QUERY_MIN_LENGTH = 3;
+export const TEXT_SEARCH_QUERY_MAX_LENGTH = 500;
+
+export function normalizeTextSearchQuery(
+  query: string | undefined,
+): string | undefined {
+  return query?.trim().slice(0, TEXT_SEARCH_QUERY_MAX_LENGTH) || undefined;
+}
+
 // Add all service names here
 export const SERVICE_NAME = {
   browserErrorHandlerService: 'browser-error-handler',

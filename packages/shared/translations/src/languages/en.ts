@@ -195,11 +195,11 @@ export const t = {
       allFilesHeading: 'All Files',
       filteredHeading: 'Filtered',
       noResults: 'No results found.',
-      searchingNoteContents: 'Searching note contents…',
-      partialResults: ({ count }: { count: number }) =>
-        count === 1
-          ? '1 note could not be searched.'
-          : `${count} notes could not be searched.`,
+      searchActionsHeading: 'Search Actions',
+      searchNoteText: ({ query }: { query: string }) =>
+        `Search note text for “${query}”`,
+      searchNoteTextDescription:
+        'Search saved note contents in this workspace.',
     },
     sidebar: {
       newLabel: 'New',
@@ -722,6 +722,49 @@ export const t = {
       noNotesMessage: 'No notes found in this workspace.',
       newNoteButton: 'New Note',
       switchWorkspaceButton: 'Switch Workspace',
+    },
+    pageTextSearch: {
+      title: 'Search Note Text',
+      description: ({ wsName }: { wsName: string }) =>
+        `Find text in saved Markdown notes in “${wsName}”.`,
+      inputLabel: 'Search note text',
+      inputPlaceholder: 'Search saved note contents…',
+      searchButton: 'Search',
+      intro: 'Enter a phrase to search this workspace.',
+      minimumQuery: ({ count }: { count: number }) =>
+        `Enter at least ${count} characters.`,
+      searching: 'Searching saved note contents…',
+      resultSummary: ({
+        matches,
+        notes,
+        query,
+      }: {
+        matches: number;
+        notes: number;
+        query: string;
+      }) =>
+        `Results for “${query}”: ${matches} ${
+          matches === 1 ? 'match' : 'matches'
+        } in ${notes} ${notes === 1 ? 'note' : 'notes'}`,
+      noteMatchCount: ({ count }: { count: number }) =>
+        count === 1 ? '1 match' : `${count} matches`,
+      lineLabel: ({ line }: { line: number }) => `Line ${line}`,
+      openNote: ({ fileName }: { fileName: string }) => `Open ${fileName}:`,
+      noMatches: ({ query }: { query: string }) =>
+        `No saved note text matches “${query}”.`,
+      noNotes: 'This workspace has no notes to search.',
+      partialResults: ({ count }: { count: number }) =>
+        count === 1
+          ? '1 note could not be searched. Results may be incomplete.'
+          : `${count} notes could not be searched. Results may be incomplete.`,
+      allFilesFailed:
+        'Bangle could not read any notes for this search. Your notes were not changed.',
+      fileTreeError:
+        'Bangle could not load this workspace’s notes. Retry before searching.',
+      truncated: ({ count }: { count: number }) =>
+        `Showing the first ${count} matches. Refine your search to see others.`,
+      unexpectedError: 'Search stopped unexpectedly. Try again.',
+      retryButton: 'Retry',
     },
     pageNativeFsRecovery: {
       title: 'Reconnect your workspace folder',

@@ -138,6 +138,23 @@ describe('PathBasedStrategy', () => {
       });
     });
 
+    it('should encode text search route', () => {
+      const routeInfo: AppRouteInfo = {
+        route: 'text-search',
+        payload: {
+          wsName: 'notes',
+          query: 'C++',
+          preferredWsPath: 'notes:daily.md',
+        },
+      };
+
+      expect(strategy.encodeRouteInfo(routeInfo, basePath)).toEqual({
+        pathname: '/app/text-search',
+        search: '?wsName=notes&query=C%2B%2B&preferredWsPath=notes%3Adaily.md',
+        hash: '',
+      });
+    });
+
     it('should handle empty basePath', () => {
       const routeInfo: AppRouteInfo = {
         route: 'editor',
@@ -219,6 +236,26 @@ describe('PathBasedStrategy', () => {
       expect(result).toEqual({
         route: 'ws-home',
         payload: { wsName: 'test' },
+      });
+    });
+
+    it('should decode text search route', () => {
+      expect(
+        strategy.decodeRouteInfo(
+          {
+            pathname: '/text-search',
+            search:
+              '?wsName=notes&query=C%2B%2B&preferredWsPath=notes%3Adaily.md',
+          },
+          basePath,
+        ),
+      ).toEqual({
+        route: 'text-search',
+        payload: {
+          wsName: 'notes',
+          query: 'C++',
+          preferredWsPath: 'notes:daily.md',
+        },
       });
     });
 
