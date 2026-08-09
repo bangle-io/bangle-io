@@ -228,6 +228,8 @@ describe('PageWsHome', () => {
     ).toBeInTheDocument();
   });
 
+  // This deliberately renders the full 150-row chunk and is slower on
+  // constrained CI workers than the surrounding small-workspace cases.
   it('renders large workspaces in chunks behind a show-more control', async () => {
     const noteNames = Array.from(
       { length: 160 },
@@ -250,9 +252,7 @@ describe('PageWsHome', () => {
     expect(
       screen.queryByRole('button', { name: /show .* more/i }),
     ).not.toBeInTheDocument();
-  }, // This deliberately renders the full 150-row chunk and is slower on
-  // constrained CI workers than the surrounding small-workspace cases.
-  20_000);
+  }, 20_000);
 
   it('keeps a note row rendered when its file stat read fails', async () => {
     const { testRender, services } = await setupWorkspaceWithNotes([

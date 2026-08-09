@@ -186,22 +186,21 @@ describe('serializing constructed documents', () => {
       expected: '- > first\n\n  > extra\n\n- second',
       expectedTypes: ['Blockquote', 'Blockquote'],
     },
-  ])('renders an edited tight item with $name as loose', ({
-    blocks,
-    expected,
-    expectedTypes,
-  }) => {
-    const serialized = codec.serialize(listDocument(blocks()));
-    const reparsed = codec.parse(serialized);
-    const list = reparsed.content[0];
-    if (!list?.isPlot) throw new Error('expected a list');
-    const first = list.content[0];
-    if (!first?.isPlot) throw new Error('expected a list item');
+  ])(
+    'renders an edited tight item with $name as loose',
+    ({ blocks, expected, expectedTypes }) => {
+      const serialized = codec.serialize(listDocument(blocks()));
+      const reparsed = codec.parse(serialized);
+      const list = reparsed.content[0];
+      if (!list?.isPlot) throw new Error('expected a list');
+      const first = list.content[0];
+      if (!first?.isPlot) throw new Error('expected a list item');
 
-    expect(serialized).toBe(expected);
-    expect(first.content.map((node) => node.name)).toEqual(expectedTypes);
-    expect(codec.serialize(reparsed)).toBe(serialized);
-  });
+      expect(serialized).toBe(expected);
+      expect(first.content.map((node) => node.name)).toEqual(expectedTypes);
+      expect(codec.serialize(reparsed)).toBe(serialized);
+    },
+  );
 
   it.each([
     ['a bullet', '- nested-looking', '\\- nested-looking'],
@@ -213,30 +212,33 @@ describe('serializing constructed documents', () => {
     ['a paren ordered marker', '1) ordered-looking', '1\\) ordered-looking'],
     ['a space-prefixed bullet', ' - nested-looking', '&#32;- nested-looking'],
     ['a tab-prefixed quote', '\t> quote-looking', '&#9;> quote-looking'],
-  ])('keeps $name literal after an editor-created hard break', (_name, text, escaped) => {
-    const first = Paragraph.create([
-      Leaf.text('before'),
-      LineBreak,
-      Leaf.text(text),
-    ]);
-    const serialized = codec.serialize(listDocument([first]));
-    const reparsed = codec.parse(serialized);
-    const list = reparsed.content[0];
-    if (!list?.isPlot) throw new Error('expected a list');
-    const item = list.content[0];
-    if (!item?.isPlot) throw new Error('expected a list item');
-    const reparsedParagraph = item.content[0];
-    if (!reparsedParagraph?.isPlot) throw new Error('expected a paragraph');
+  ])(
+    'keeps $name literal after an editor-created hard break',
+    (_name, text, escaped) => {
+      const first = Paragraph.create([
+        Leaf.text('before'),
+        LineBreak,
+        Leaf.text(text),
+      ]);
+      const serialized = codec.serialize(listDocument([first]));
+      const reparsed = codec.parse(serialized);
+      const list = reparsed.content[0];
+      if (!list?.isPlot) throw new Error('expected a list');
+      const item = list.content[0];
+      if (!item?.isPlot) throw new Error('expected a list item');
+      const reparsedParagraph = item.content[0];
+      if (!reparsedParagraph?.isPlot) throw new Error('expected a paragraph');
 
-    expect(serialized).toBe(`- before\\\n  ${escaped}\n- second`);
-    expect(reparsedParagraph.content.map((node) => node.name)).toEqual([
-      'Text',
-      'LineBreak',
-      'Text',
-    ]);
-    expect(item.textContent()).toBe(`before\n${text}`);
-    expect(codec.serialize(reparsed)).toBe(serialized);
-  });
+      expect(serialized).toBe(`- before\\\n  ${escaped}\n- second`);
+      expect(reparsedParagraph.content.map((node) => node.name)).toEqual([
+        'Text',
+        'LineBreak',
+        'Text',
+      ]);
+      expect(item.textContent()).toBe(`before\n${text}`);
+      expect(codec.serialize(reparsed)).toBe(serialized);
+    },
+  );
 
   it.each([
     ['a paragraph', () => paragraph('after'), 'Paragraph'],
@@ -257,22 +259,25 @@ describe('serializing constructed documents', () => {
       () => BulletList.create([ListItem.create([paragraph('nested')])]),
       'BulletList',
     ],
-  ])('keeps $name nested after leading empty editor paragraphs', (_name, block, expectedType) => {
-    const meaningful = block();
-    const serialized = codec.serialize(
-      listDocument([Paragraph.create([]), Paragraph.create([]), meaningful]),
-    );
-    const reparsed = codec.parse(serialized);
-    const list = reparsed.content[0];
-    if (!list?.isPlot) throw new Error('expected a list');
-    const item = list.content[0];
-    if (!item?.isPlot) throw new Error('expected a list item');
+  ])(
+    'keeps $name nested after leading empty editor paragraphs',
+    (_name, block, expectedType) => {
+      const meaningful = block();
+      const serialized = codec.serialize(
+        listDocument([Paragraph.create([]), Paragraph.create([]), meaningful]),
+      );
+      const reparsed = codec.parse(serialized);
+      const list = reparsed.content[0];
+      if (!list?.isPlot) throw new Error('expected a list');
+      const item = list.content[0];
+      if (!item?.isPlot) throw new Error('expected a list item');
 
-    expect(item.content).toHaveLength(1);
-    expect(item.content[0]?.name).toBe(expectedType);
-    expect(list.content).toHaveLength(2);
-    expect(codec.serialize(reparsed)).toBe(serialized);
-  });
+      expect(item.content).toHaveLength(1);
+      expect(item.content[0]?.name).toBe(expectedType);
+      expect(list.content).toHaveLength(2);
+      expect(codec.serialize(reparsed)).toBe(serialized);
+    },
+  );
 
   it('keeps representable compound items tight and disambiguates a leading thematic break', () => {
     const tight = listDocument([
@@ -308,18 +313,21 @@ describe('serializing constructed documents', () => {
       '\t> literal quote',
       '- &#9;> literal quote\n- second',
     ],
-  ])('keeps editor-created paragraph text beginning with $name literal', (_name, text, expected) => {
-    const serialized = codec.serialize(listDocument([paragraph(text)]));
-    const reparsed = codec.parse(serialized);
-    const list = reparsed.content[0];
-    if (!list?.isPlot) throw new Error('expected a list');
-    const item = list.content[0];
-    if (!item?.isPlot) throw new Error('expected a list item');
+  ])(
+    'keeps editor-created paragraph text beginning with $name literal',
+    (_name, text, expected) => {
+      const serialized = codec.serialize(listDocument([paragraph(text)]));
+      const reparsed = codec.parse(serialized);
+      const list = reparsed.content[0];
+      if (!list?.isPlot) throw new Error('expected a list');
+      const item = list.content[0];
+      if (!item?.isPlot) throw new Error('expected a list item');
 
-    expect(serialized).toBe(expected);
-    expect(item.textContent()).toBe(text);
-    expect(codec.serialize(reparsed)).toBe(serialized);
-  });
+      expect(serialized).toBe(expected);
+      expect(item.textContent()).toBe(text);
+      expect(codec.serialize(reparsed)).toBe(serialized);
+    },
+  );
 
   it.each([
     {
@@ -357,28 +365,26 @@ describe('serializing constructed documents', () => {
       expectedType: 'Blockquote',
       ordered: true,
     },
-  ])('preserves task state when an edited task starts with $name', ({
-    block,
-    expected,
-    expectedType,
-    ordered,
-  }) => {
-    const serialized = codec.serialize(taskListDocument(block(), ordered));
-    const reparsed = codec.parse(serialized);
-    const list = reparsed.content[0];
-    if (!list?.isPlot) throw new Error('expected a list');
-    const first = list.content[0];
-    if (!first?.isPlot) throw new Error('expected a list item');
+  ])(
+    'preserves task state when an edited task starts with $name',
+    ({ block, expected, expectedType, ordered }) => {
+      const serialized = codec.serialize(taskListDocument(block(), ordered));
+      const reparsed = codec.parse(serialized);
+      const list = reparsed.content[0];
+      if (!list?.isPlot) throw new Error('expected a list');
+      const first = list.content[0];
+      if (!first?.isPlot) throw new Error('expected a list item');
 
-    expect(serialized).toBe(expected);
-    expect(list.name).toBe(ordered ? 'OrderedList' : 'BulletList');
-    expect(first.name).toBe('TaskItem');
-    expect(first.content.map((node) => node.name)).toEqual([
-      'Paragraph',
-      expectedType,
-    ]);
-    expect(codec.serialize(reparsed)).toBe(serialized);
-  });
+      expect(serialized).toBe(expected);
+      expect(list.name).toBe(ordered ? 'OrderedList' : 'BulletList');
+      expect(first.name).toBe('TaskItem');
+      expect(first.content.map((node) => node.name)).toEqual([
+        'Paragraph',
+        expectedType,
+      ]);
+      expect(codec.serialize(reparsed)).toBe(serialized);
+    },
+  );
 
   it('drops trailing hard breaks', () => {
     const doc = schema.doc([

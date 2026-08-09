@@ -32,24 +32,23 @@ describe('inserting a list item writes stable Markdown', () => {
       below: ['- [x] alpha', '- [ ] ', '- [x] bravo'].join('\n'),
       above: ['- [ ] ', '- [x] alpha', '- [x] bravo'].join('\n'),
     },
-  ])('$name run keeps one list either side of the new item', ({
-    source,
-    below,
-    above,
-  }) => {
-    const withBelow = serialize(
-      apply(caretAfter(source, 'alpha'), list.command.insertEmptyListBelow),
-    );
-    expect(withBelow).toBe(below);
-    // A marker change here would split the run into two Markdown lists.
-    expect(reserialize(withBelow)).toBe(withBelow);
+  ])(
+    '$name run keeps one list either side of the new item',
+    ({ source, below, above }) => {
+      const withBelow = serialize(
+        apply(caretAfter(source, 'alpha'), list.command.insertEmptyListBelow),
+      );
+      expect(withBelow).toBe(below);
+      // A marker change here would split the run into two Markdown lists.
+      expect(reserialize(withBelow)).toBe(withBelow);
 
-    const withAbove = serialize(
-      apply(caretAfter(source, 'alpha'), list.command.insertEmptyListAbove),
-    );
-    expect(withAbove).toBe(above);
-    expect(reserialize(withAbove)).toBe(withAbove);
-  });
+      const withAbove = serialize(
+        apply(caretAfter(source, 'alpha'), list.command.insertEmptyListAbove),
+      );
+      expect(withAbove).toBe(above);
+      expect(reserialize(withAbove)).toBe(withAbove);
+    },
+  );
 
   it('keeps a new task item unchecked and leaves the source item checked', () => {
     const next = apply(

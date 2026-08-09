@@ -35,15 +35,12 @@ describe('workspace file visibility policy', () => {
     expect(isVisibleWorkspaceFilePath('not a wsPath')).toBe(false);
   });
 
-  it.each([
-    '.git',
-    'node_modules',
-    'dist',
-    'coverage',
-    '__pycache__',
-  ])('identifies ignored path segment %s', (segment) => {
-    expect(isIgnoredWorkspacePathSegment(segment)).toBe(true);
-  });
+  it.each(['.git', 'node_modules', 'dist', 'coverage', '__pycache__'])(
+    'identifies ignored path segment %s',
+    (segment) => {
+      expect(isIgnoredWorkspacePathSegment(segment)).toBe(true);
+    },
+  );
 
   it('matches ASCII ignore lists without locale-sensitive lowercasing', () => {
     expect(isIgnoredWorkspacePathSegment('DIST')).toBe(true);
@@ -52,22 +49,22 @@ describe('workspace file visibility policy', () => {
 });
 
 describe('transient swap files', () => {
-  it.each([
-    'ws:note.md.crswap',
-    'ws:docs/other.MD.CRSWAP',
-  ])('hides Chromium swap file %s from workspace listings and watchers', (wsPath) => {
-    expect(isVisibleWorkspaceFilePath(wsPath)).toBe(false);
-  });
+  it.each(['ws:note.md.crswap', 'ws:docs/other.MD.CRSWAP'])(
+    'hides Chromium swap file %s from workspace listings and watchers',
+    (wsPath) => {
+      expect(isVisibleWorkspaceFilePath(wsPath)).toBe(false);
+    },
+  );
 
-  it.each([
-    'ws:export.tmp',
-    'ws:notes/recovered.swp',
-  ])('keeps possibly-legitimate temp-suffixed user file %s visible', (wsPath) => {
-    // .tmp/.swp can be real pre-existing user files (and the asset
-    // pipeline accepts them), so listings and the native FS watcher both
-    // keep them visible; only `.crswap` above is hidden.
-    expect(isVisibleWorkspaceFilePath(wsPath)).toBe(true);
-  });
+  it.each(['ws:export.tmp', 'ws:notes/recovered.swp'])(
+    'keeps possibly-legitimate temp-suffixed user file %s visible',
+    (wsPath) => {
+      // .tmp/.swp can be real pre-existing user files (and the asset
+      // pipeline accepts them), so listings and the native FS watcher both
+      // keep them visible; only `.crswap` above is hidden.
+      expect(isVisibleWorkspaceFilePath(wsPath)).toBe(true);
+    },
+  );
 
   it('still shows regular notes and assets', () => {
     expect(isVisibleWorkspaceFilePath('ws:note.md')).toBe(true);

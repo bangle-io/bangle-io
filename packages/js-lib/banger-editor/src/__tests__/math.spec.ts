@@ -118,15 +118,15 @@ describe('math commands and input rules', () => {
     editor.expectDoc(doc(p(mathInline('x'), '+', mathInline('y'))));
   });
 
-  it.each([
-    '$x$5',
-    '$x$$y$',
-  ])('restores ambiguous typed delimiters as raw text: %s', (source) => {
-    const editor = editorTest.createEditor(doc(p('<cursor>')));
-    typeText(editor.view, source);
+  it.each(['$x$5', '$x$$y$'])(
+    'restores ambiguous typed delimiters as raw text: %s',
+    (source) => {
+      const editor = editorTest.createEditor(doc(p('<cursor>')));
+      typeText(editor.view, source);
 
-    editor.expectDoc(doc(p(source)));
-  });
+      editor.expectDoc(doc(p(source)));
+    },
+  );
 
   it('leaves currency and whitespace-delimited dollars as text', () => {
     const editor = editorTest.createEditor(doc(p('<cursor>')));
@@ -191,15 +191,16 @@ describe('math commands and input rules', () => {
     ['hard break', () => hardBreak()],
   ];
 
-  it.each(
-    precedingAtomCases,
-  )('preserves a preceding %s when typing inline math', (_label, atom) => {
-    const preceding = atom();
-    const editor = editorTest.createEditor(doc(p(preceding, '<cursor>')));
-    typeText(editor.view, '$x$');
+  it.each(precedingAtomCases)(
+    'preserves a preceding %s when typing inline math',
+    (_label, atom) => {
+      const preceding = atom();
+      const editor = editorTest.createEditor(doc(p(preceding, '<cursor>')));
+      typeText(editor.view, '$x$');
 
-    editor.expectDoc(doc(p(preceding, mathInline('x'))));
-  });
+      editor.expectDoc(doc(p(preceding, mathInline('x'))));
+    },
+  );
 
   it('does not create inline math across an inline atom', () => {
     const editor = editorTest.createEditor(doc(p('$', image(), 'x<cursor>')));

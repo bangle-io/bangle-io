@@ -138,11 +138,14 @@ describe('listTokenizer tightness', () => {
   it.each([
     ['a paragraph item follows', '- > q\n  >\n- b'],
     ['all items are blockquotes', '- > q\n  >\n- > b'],
-  ])('does not treat a blockquote marker line as a list separator when %s', (_name, markdown) => {
-    const tokens = tokenize(markdown);
-    const open = tokens.find((token) => token.type === 'bullet_list_open');
-    expect(open?.attrGet(LIST_TIGHT_ATTR)).toBe('true');
-  });
+  ])(
+    'does not treat a blockquote marker line as a list separator when %s',
+    (_name, markdown) => {
+      const tokens = tokenize(markdown);
+      const open = tokens.find((token) => token.type === 'bullet_list_open');
+      expect(open?.attrGet(LIST_TIGHT_ATTR)).toBe('true');
+    },
+  );
 
   it('does not borrow tightness from a following list when an item only contains a nested list', () => {
     const tokens = tokenize(
@@ -286,17 +289,20 @@ describe('listTokenizer task detection', () => {
       'true',
       '**continued task**',
     ],
-  ])('strips a hard break after a %s task marker', (_name, markdown, checked, content) => {
-    const tokens = tokenize(markdown);
-    const [item] = listItems(tokens);
-    const inline = tokens.find((token) => token.type === 'inline');
+  ])(
+    'strips a hard break after a %s task marker',
+    (_name, markdown, checked, content) => {
+      const tokens = tokenize(markdown);
+      const [item] = listItems(tokens);
+      const inline = tokens.find((token) => token.type === 'inline');
 
-    expect(item?.attrGet(TASK_CHECKED_ATTR)).toBe(checked);
-    expect(inline?.content).toBe(content);
-    expect(inline?.children?.some((child) => child.type === 'hardbreak')).toBe(
-      false,
-    );
-  });
+      expect(item?.attrGet(TASK_CHECKED_ATTR)).toBe(checked);
+      expect(inline?.content).toBe(content);
+      expect(
+        inline?.children?.some((child) => child.type === 'hardbreak'),
+      ).toBe(false);
+    },
+  );
 
   it.each([
     ['no space after bracket', '- [ ]no'],

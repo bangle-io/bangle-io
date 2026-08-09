@@ -12,17 +12,12 @@ describe('getShardArgs', () => {
     expect(getShardArgs('2/2')).toEqual(['--shard=2/2']);
   });
 
-  it.each([
-    '0/2',
-    '3/2',
-    '1/0',
-    '1',
-    '1/2/3',
-    '1.5/2',
-    '1/2.5',
-  ])('rejects invalid shard value %s', (value) => {
-    expect(() => getShardArgs(value)).toThrow(
-      'BANGLE_E2E_SHARD must use Playwright shard syntax such as 1/2.',
-    );
-  });
+  it.each(['0/2', '3/2', '1/0', '1', '1/2/3', '1.5/2', '1/2.5'])(
+    'rejects invalid shard value %s',
+    (value) => {
+      expect(() => getShardArgs(value)).toThrow(
+        'BANGLE_E2E_SHARD must use Playwright shard syntax such as 1/2.',
+      );
+    },
+  );
 });

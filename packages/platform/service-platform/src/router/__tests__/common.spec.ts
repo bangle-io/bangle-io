@@ -10,12 +10,13 @@ const RETIRED_ROUTE_IDS = [
 ] as const;
 
 describe('handleRouteInfo', () => {
-  it.each(
-    RETIRED_ROUTE_IDS,
-  )('decodes retired route "%s" as not-found', (route) => {
-    expect(handleRouteInfo(route, {})).toEqual({
-      route: 'not-found',
-      payload: { path: route },
-    });
-  });
+  it.each(RETIRED_ROUTE_IDS)(
+    'decodes retired route "%s" as not-found',
+    (route) => {
+      expect(handleRouteInfo(route, {})).toEqual({
+        route: 'not-found',
+        payload: { path: route },
+      });
+    },
+  );
 });

@@ -231,37 +231,38 @@ describe.sequential('local CI CLI', () => {
     it.each([
       { exitCode: 130, signal: 'SIGINT' as const },
       { exitCode: 143, signal: 'SIGTERM' as const },
-    ])('stops descendants and releases the lock on $signal', async ({
-      exitCode,
-      signal,
-    }) => {
-      const repository = await createGitRepository();
-      const lockFile = getCiLockFile('.git', repository);
-      const runner = startRunner(repository, [
-        'run',
-        process.execPath,
-        '-e',
-        SPAWN_GRANDCHILD_SCRIPT,
-      ]);
-      await expectOutput(runner, 'grandchild:');
-      const grandchildPid = readPid(runner.readOutput(), 'grandchild:');
-      await expect
-        .poll(() => readActiveChildPid(lockFile), {
-          interval: 25,
-          timeout: 5_000,
-        })
-        .toBeGreaterThan(0);
+    ])(
+      'stops descendants and releases the lock on $signal',
+      async ({ exitCode, signal }) => {
+        const repository = await createGitRepository();
+        const lockFile = getCiLockFile('.git', repository);
+        const runner = startRunner(repository, [
+          'run',
+          process.execPath,
+          '-e',
+          SPAWN_GRANDCHILD_SCRIPT,
+        ]);
+        await expectOutput(runner, 'grandchild:');
+        const grandchildPid = readPid(runner.readOutput(), 'grandchild:');
+        await expect
+          .poll(() => readActiveChildPid(lockFile), {
+            interval: 25,
+            timeout: 5_000,
+          })
+          .toBeGreaterThan(0);
 
-      expect(runner.child.kill(signal)).toBe(true);
-      expect((await waitForExit(runner.child)).code).toBe(exitCode);
-      await expect
-        .poll(() => isProcessRunning(grandchildPid), {
-          interval: 25,
-          timeout: 5_000,
-        })
-        .toBe(false);
-      expect(existsSync(lockFile)).toBe(false);
-    }, 15_000);
+        expect(runner.child.kill(signal)).toBe(true);
+        expect((await waitForExit(runner.child)).code).toBe(exitCode);
+        await expect
+          .poll(() => isProcessRunning(grandchildPid), {
+            interval: 25,
+            timeout: 5_000,
+          })
+          .toBe(false);
+        expect(existsSync(lockFile)).toBe(false);
+      },
+      15_000,
+    );
 
     it('keeps contenders queued after hard coordinator death', async () => {
       const repository = await createGitRepository();

@@ -17,19 +17,20 @@ describe('Markdown golden corpus (ProseMirror engine)', () => {
     (fixture) => fixture.engines.includes('prosemirror'),
   );
 
-  it.each(
-    fixtures.map((fixture) => [fixture.name, fixture] as const),
-  )('round trips byte-identically: %s', (_name, fixture) => {
-    const markdown = createProductionMarkdown();
-    const roundTrip = (input: string) =>
-      markdown.serializer.serialize(markdown.parser.parse(input));
+  it.each(fixtures.map((fixture) => [fixture.name, fixture] as const))(
+    'round trips byte-identically: %s',
+    (_name, fixture) => {
+      const markdown = createProductionMarkdown();
+      const roundTrip = (input: string) =>
+        markdown.serializer.serialize(markdown.parser.parse(input));
 
-    const expected = fixture.canonical ?? fixture.markdown;
-    expect(roundTrip(fixture.markdown)).toBe(expected);
-    if (fixture.canonical !== undefined) {
-      // The canonical form must itself be stable, or the "normalization"
-      // never converges and every save would rewrite the note.
-      expect(roundTrip(fixture.canonical)).toBe(fixture.canonical);
-    }
-  });
+      const expected = fixture.canonical ?? fixture.markdown;
+      expect(roundTrip(fixture.markdown)).toBe(expected);
+      if (fixture.canonical !== undefined) {
+        // The canonical form must itself be stable, or the "normalization"
+        // never converges and every save would rewrite the note.
+        expect(roundTrip(fixture.canonical)).toBe(fixture.canonical);
+      }
+    },
+  );
 });

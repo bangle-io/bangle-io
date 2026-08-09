@@ -37,10 +37,13 @@ describe('production math Markdown', () => {
   it.each([
     String.raw`\$foo [bar](https://example.com/a$b)`,
     String.raw`\$foo ![bar](https://example.com/a$b)`,
-  ])('preserves an escaped dollar before a dollar in an attribute: %s', (source) => {
-    expect(roundTrip(source)).toBe(source);
-    expect(roundTrip(roundTrip(source))).toBe(source);
-  });
+  ])(
+    'preserves an escaped dollar before a dollar in an attribute: %s',
+    (source) => {
+      expect(roundTrip(source)).toBe(source);
+      expect(roundTrip(roundTrip(source))).toBe(source);
+    },
+  );
 
   it.each([
     '[$x$](https://example.com)',
@@ -85,9 +88,12 @@ $$`;
     ['$$\nunclosed', '$$ unclosed'],
     ['`$code$`', '`$code$`'],
     ['```\n$$\nx\n$$\n```', '```\n$$\nx\n$$\n```'],
-  ])('leaves ambiguous or code-contained source as ordinary Markdown: %s', (source, expected) => {
-    expect(roundTrip(source)).toBe(expected);
-  });
+  ])(
+    'leaves ambiguous or code-contained source as ordinary Markdown: %s',
+    (source, expected) => {
+      expect(roundTrip(source)).toBe(expected);
+    },
+  );
 
   it('keeps unsupported KaTeX byte-identical and structurally stable', () => {
     const source =
@@ -132,25 +138,28 @@ $$`;
     ['trailing whitespace', 'x ', '', String.raw`\$x \$`],
     ['trailing backslash', 'x\\', '', String.raw`\$x\\\$`],
     ['following digit', 'x', '2', String.raw`\$x\$2`],
-  ])('falls back to non-destructive text for inline math with %s', (_label, content, suffix, expected) => {
-    const markdown = createProductionMarkdown();
-    const { schema } = markdown;
-    const children = [
-      getNodeType(schema, 'math_inline').create(null, schema.text(content)),
-    ];
-    if (suffix) children.push(schema.text(suffix));
-    const document = getNodeType(schema, 'doc').create(
-      null,
-      getNodeType(schema, 'paragraph').create(null, children),
-    );
+  ])(
+    'falls back to non-destructive text for inline math with %s',
+    (_label, content, suffix, expected) => {
+      const markdown = createProductionMarkdown();
+      const { schema } = markdown;
+      const children = [
+        getNodeType(schema, 'math_inline').create(null, schema.text(content)),
+      ];
+      if (suffix) children.push(schema.text(suffix));
+      const document = getNodeType(schema, 'doc').create(
+        null,
+        getNodeType(schema, 'paragraph').create(null, children),
+      );
 
-    const serialized = markdown.serializer.serialize(document);
-    const reparsed = markdown.parser.parse(serialized);
+      const serialized = markdown.serializer.serialize(document);
+      const reparsed = markdown.parser.parse(serialized);
 
-    expect(serialized).toBe(expected);
-    expect(collectNodeText(reparsed, 'math_inline')).toEqual([]);
-    expect(markdown.serializer.serialize(reparsed)).toBe(expected);
-  });
+      expect(serialized).toBe(expected);
+      expect(collectNodeText(reparsed, 'math_inline')).toEqual([]);
+      expect(markdown.serializer.serialize(reparsed)).toBe(expected);
+    },
+  );
 
   it('falls back when marked text contributes an earlier dollar on the line', () => {
     const markdown = createProductionMarkdown();
@@ -206,41 +215,44 @@ $$`;
   it.each([
     ['unindented', '$$'],
     ['indented', '  $$'],
-  ])('does not close display math on an %s delimiter line inside its source', (_label, delimiterLine) => {
-    const markdown = createProductionMarkdown();
-    const { schema } = markdown;
-    const document = getNodeType(schema, 'doc').create(null, [
-      getNodeType(schema, 'math_display').create(
-        null,
-        schema.text(`a\n${delimiterLine}\nb`),
-      ),
-      getNodeType(schema, 'paragraph').create(
-        null,
-        schema.text('important text'),
-      ),
-    ]);
+  ])(
+    'does not close display math on an %s delimiter line inside its source',
+    (_label, delimiterLine) => {
+      const markdown = createProductionMarkdown();
+      const { schema } = markdown;
+      const document = getNodeType(schema, 'doc').create(null, [
+        getNodeType(schema, 'math_display').create(
+          null,
+          schema.text(`a\n${delimiterLine}\nb`),
+        ),
+        getNodeType(schema, 'paragraph').create(
+          null,
+          schema.text('important text'),
+        ),
+      ]);
 
-    const serialized = markdown.serializer.serialize(document);
-    const reparsed = markdown.parser.parse(serialized);
+      const serialized = markdown.serializer.serialize(document);
+      const reparsed = markdown.parser.parse(serialized);
 
-    expect(serialized).toBe(
-      [
-        '```',
-        '$$',
-        'a',
-        delimiterLine,
-        'b',
-        '$$',
-        '```',
-        '',
-        'important text',
-      ].join('\n'),
-    );
-    expect(collectNodeText(reparsed, 'math_display')).toEqual([]);
-    expect(collectNodeText(reparsed, 'code_block')).toEqual([
-      `$$\na\n${delimiterLine}\nb\n$$`,
-    ]);
-    expect(reparsed.textContent).toContain('important text');
-    expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
-  });
+      expect(serialized).toBe(
+        [
+          '```',
+          '$$',
+          'a',
+          delimiterLine,
+          'b',
+          '$$',
+          '```',
+          '',
+          'important text',
+        ].join('\n'),
+      );
+      expect(collectNodeText(reparsed, 'math_display')).toEqual([]);
+      expect(collectNodeText(reparsed, 'code_block')).toEqual([
+        `$$\na\n${delimiterLine}\nb\n$$`,
+      ]);
+      expect(reparsed.textContent).toContain('important text');
+      expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
+    },
+  );
 });

@@ -49,14 +49,14 @@ describe('parseCommandArguments', () => {
     ]);
   });
 
-  it.each([
-    ['run'],
-    ['--', 'pnpm', 'test:ci'],
-  ])('rejects invalid command arguments', (...args) => {
-    expect(() => parseCommandArguments(args)).toThrow(
-      'Expected either no arguments or: run <command> [...args].',
-    );
-  });
+  it.each([['run'], ['--', 'pnpm', 'test:ci']])(
+    'rejects invalid command arguments',
+    (...args) => {
+      expect(() => parseCommandArguments(args)).toThrow(
+        'Expected either no arguments or: run <command> [...args].',
+      );
+    },
+  );
 });
 
 describe('CI lock', () => {

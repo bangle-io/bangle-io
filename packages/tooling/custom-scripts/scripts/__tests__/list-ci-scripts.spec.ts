@@ -16,15 +16,14 @@ describe('list-ci-scripts', () => {
     ).toEqual(['test:ci', 'lint:ci', 'e2e:ci']);
   });
 
-  it.each([
-    {},
-    { scripts: null },
-    { scripts: [] },
-  ])('rejects an invalid scripts field', (packageJson) => {
-    expect(() => listCiScripts(packageJson)).toThrow(
-      'package.json must define a scripts object.',
-    );
-  });
+  it.each([{}, { scripts: null }, { scripts: [] }])(
+    'rejects an invalid scripts field',
+    (packageJson) => {
+      expect(() => listCiScripts(packageJson)).toThrow(
+        'package.json must define a scripts object.',
+      );
+    },
+  );
 
   it('rejects a package without CI scripts', () => {
     expect(() => listCiScripts({ scripts: { build: 'vite build' } })).toThrow(

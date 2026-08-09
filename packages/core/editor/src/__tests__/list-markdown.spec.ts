@@ -53,25 +53,28 @@ describe('ProseMirror list Markdown metadata', () => {
       '\t> literal quote',
       '- &#9;> literal quote\n- sibling',
     ],
-  ])('keeps editor-created paragraph text beginning with $name literal', (_name, text, expected) => {
-    const markdown = createProductionMarkdown();
-    const parsed = markdown.parser.parse('- seed\n- sibling');
-    const paragraph = markdown.schema.nodes.paragraph;
-    if (!paragraph) throw new Error('expected paragraph node');
-    const first = parsed.child(0);
-    const edited = parsed.type.create(parsed.attrs, [
-      first.type.create(first.attrs, [
-        paragraph.create(null, markdown.schema.text(text)),
-      ]),
-      parsed.child(1),
-    ]);
+  ])(
+    'keeps editor-created paragraph text beginning with $name literal',
+    (_name, text, expected) => {
+      const markdown = createProductionMarkdown();
+      const parsed = markdown.parser.parse('- seed\n- sibling');
+      const paragraph = markdown.schema.nodes.paragraph;
+      if (!paragraph) throw new Error('expected paragraph node');
+      const first = parsed.child(0);
+      const edited = parsed.type.create(parsed.attrs, [
+        first.type.create(first.attrs, [
+          paragraph.create(null, markdown.schema.text(text)),
+        ]),
+        parsed.child(1),
+      ]);
 
-    const serialized = markdown.serializer.serialize(edited);
-    const reparsed = markdown.parser.parse(serialized);
-    expect(serialized).toBe(expected);
-    expect(reparsed.child(0).textContent).toBe(text);
-    expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
-  });
+      const serialized = markdown.serializer.serialize(edited);
+      const reparsed = markdown.parser.parse(serialized);
+      expect(serialized).toBe(expected);
+      expect(reparsed.child(0).textContent).toBe(text);
+      expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
+    },
+  );
 
   it('keeps continuation content nested when an edit empties its leading paragraph', () => {
     const markdown = createProductionMarkdown();
@@ -98,33 +101,38 @@ describe('ProseMirror list Markdown metadata', () => {
     ['a paren ordered marker', '1) ordered-looking', '1\\) ordered-looking'],
     ['a space-prefixed bullet', ' - nested-looking', '&#32;- nested-looking'],
     ['a tab-prefixed quote', '\t> quote-looking', '&#9;> quote-looking'],
-  ])('keeps $name literal after an editor-created hard break', (_name, text, escaped) => {
-    const markdown = createProductionMarkdown();
-    const parsed = markdown.parser.parse('- seed\n- sibling');
-    const paragraph = markdown.schema.nodes.paragraph;
-    const hardBreak = markdown.schema.nodes.hard_break;
-    if (!paragraph || !hardBreak) throw new Error('expected paragraph nodes');
-    const first = parsed.child(0);
-    const edited = parsed.type.create(parsed.attrs, [
-      first.type.create(first.attrs, [
-        paragraph.create(null, [
-          markdown.schema.text('before'),
-          hardBreak.create(),
-          markdown.schema.text(text),
+  ])(
+    'keeps $name literal after an editor-created hard break',
+    (_name, text, escaped) => {
+      const markdown = createProductionMarkdown();
+      const parsed = markdown.parser.parse('- seed\n- sibling');
+      const paragraph = markdown.schema.nodes.paragraph;
+      const hardBreak = markdown.schema.nodes.hard_break;
+      if (!paragraph || !hardBreak) throw new Error('expected paragraph nodes');
+      const first = parsed.child(0);
+      const edited = parsed.type.create(parsed.attrs, [
+        first.type.create(first.attrs, [
+          paragraph.create(null, [
+            markdown.schema.text('before'),
+            hardBreak.create(),
+            markdown.schema.text(text),
+          ]),
         ]),
-      ]),
-      parsed.child(1),
-    ]);
+        parsed.child(1),
+      ]);
 
-    const serialized = markdown.serializer.serialize(edited);
-    const reparsed = markdown.parser.parse(serialized);
-    expect(serialized).toBe(`- before\\\n  ${escaped}\n- sibling`);
-    expect(reparsed.child(0).childCount).toBe(1);
-    expect(reparsed.child(0).firstChild?.type.name).toBe('paragraph');
-    expect(reparsed.child(0).firstChild?.child(1).type.name).toBe('hard_break');
-    expect(reparsed.child(0).textContent).toBe(`before${text}`);
-    expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
-  });
+      const serialized = markdown.serializer.serialize(edited);
+      const reparsed = markdown.parser.parse(serialized);
+      expect(serialized).toBe(`- before\\\n  ${escaped}\n- sibling`);
+      expect(reparsed.child(0).childCount).toBe(1);
+      expect(reparsed.child(0).firstChild?.type.name).toBe('paragraph');
+      expect(reparsed.child(0).firstChild?.child(1).type.name).toBe(
+        'hard_break',
+      );
+      expect(reparsed.child(0).textContent).toBe(`before${text}`);
+      expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
+    },
+  );
 
   it.each([
     ['a paragraph', 'after', 'paragraph'],
@@ -133,30 +141,33 @@ describe('ProseMirror list Markdown metadata', () => {
     ['a heading', '# heading', 'heading'],
     ['a fence', '```\ncode\n```', 'code_block'],
     ['a nested list', '- nested', 'list'],
-  ])('keeps $name nested after leading empty editor paragraphs', (_name, source, expectedType) => {
-    const markdown = createProductionMarkdown();
-    const parsed = markdown.parser.parse('- seed\n- sibling');
-    const paragraph = markdown.schema.nodes.paragraph;
-    const meaningful = markdown.parser.parse(source).firstChild;
-    if (!paragraph || !meaningful) throw new Error('expected block nodes');
-    const first = parsed.child(0);
-    const edited = parsed.type.create(parsed.attrs, [
-      first.type.create(first.attrs, [
-        paragraph.create(),
-        paragraph.create(),
-        meaningful,
-      ]),
-      parsed.child(1),
-    ]);
+  ])(
+    'keeps $name nested after leading empty editor paragraphs',
+    (_name, source, expectedType) => {
+      const markdown = createProductionMarkdown();
+      const parsed = markdown.parser.parse('- seed\n- sibling');
+      const paragraph = markdown.schema.nodes.paragraph;
+      const meaningful = markdown.parser.parse(source).firstChild;
+      if (!paragraph || !meaningful) throw new Error('expected block nodes');
+      const first = parsed.child(0);
+      const edited = parsed.type.create(parsed.attrs, [
+        first.type.create(first.attrs, [
+          paragraph.create(),
+          paragraph.create(),
+          meaningful,
+        ]),
+        parsed.child(1),
+      ]);
 
-    const serialized = markdown.serializer.serialize(edited);
-    const reparsed = markdown.parser.parse(serialized);
-    expect(reparsed.childCount).toBe(2);
-    expect(reparsed.child(0).childCount).toBe(1);
-    expect(reparsed.child(0).firstChild?.type.name).toBe(expectedType);
-    expect(reparsed.child(0).textContent).toBe(meaningful.textContent);
-    expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
-  });
+      const serialized = markdown.serializer.serialize(edited);
+      const reparsed = markdown.parser.parse(serialized);
+      expect(reparsed.childCount).toBe(2);
+      expect(reparsed.child(0).childCount).toBe(1);
+      expect(reparsed.child(0).firstChild?.type.name).toBe(expectedType);
+      expect(reparsed.child(0).textContent).toBe(meaningful.textContent);
+      expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
+    },
+  );
 
   it('serializes a mixed tightness run as loose', () => {
     const markdown = createProductionMarkdown();
@@ -202,33 +213,35 @@ describe('ProseMirror list Markdown metadata', () => {
       expected: '- > first\n\n  | h |\n  | --- |\n  | cell |\n\n- second',
       expectedTypes: ['blockquote', 'table'],
     },
-  ])('renders an edited tight item with $name as loose', ({
-    blocks,
-    expected,
-    expectedTypes,
-  }) => {
-    const markdown = createProductionMarkdown();
-    const parsed = markdown.parser.parse('- first\n- second');
-    const first = parsed.child(0);
-    const children = blocks.map((source) => {
-      const child = markdown.parser.parse(source).firstChild;
-      if (!child) throw new Error(`expected a block for ${source}`);
-      return child;
-    });
-    const changed = first.type.create(first.attrs, children);
-    const edited = parsed.type.create(parsed.attrs, [changed, parsed.child(1)]);
+  ])(
+    'renders an edited tight item with $name as loose',
+    ({ blocks, expected, expectedTypes }) => {
+      const markdown = createProductionMarkdown();
+      const parsed = markdown.parser.parse('- first\n- second');
+      const first = parsed.child(0);
+      const children = blocks.map((source) => {
+        const child = markdown.parser.parse(source).firstChild;
+        if (!child) throw new Error(`expected a block for ${source}`);
+        return child;
+      });
+      const changed = first.type.create(first.attrs, children);
+      const edited = parsed.type.create(parsed.attrs, [
+        changed,
+        parsed.child(1),
+      ]);
 
-    const serialized = markdown.serializer.serialize(edited);
-    const reparsed = markdown.parser.parse(serialized);
-    expect(serialized).toBe(expected);
-    expect(
-      Array.from(
-        { length: reparsed.child(0).childCount },
-        (_, index) => reparsed.child(0).child(index).type.name,
-      ),
-    ).toEqual(expectedTypes);
-    expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
-  });
+      const serialized = markdown.serializer.serialize(edited);
+      const reparsed = markdown.parser.parse(serialized);
+      expect(serialized).toBe(expected);
+      expect(
+        Array.from(
+          { length: reparsed.child(0).childCount },
+          (_, index) => reparsed.child(0).child(index).type.name,
+        ),
+      ).toEqual(expectedTypes);
+      expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
+    },
+  );
 
   it('keeps representable compound items tight and disambiguates a leading thematic break', () => {
     const markdown = createProductionMarkdown();
@@ -308,39 +321,37 @@ describe('ProseMirror list Markdown metadata', () => {
       expectedType: 'blockquote',
       ordered: true,
     },
-  ])('preserves task state when an edited task starts with $name', ({
-    expected,
-    expectedType,
-    ordered,
-    source,
-  }) => {
-    const markdown = createProductionMarkdown();
-    const parsed = markdown.parser.parse(
-      ordered ? '1. [ ] first\n1. [ ] second' : '- [ ] first\n- [ ] second',
-    );
-    const block = markdown.parser.parse(source).firstChild;
-    if (!block) throw new Error(`expected a block for ${source}`);
-    const first = parsed.child(0);
-    const edited = parsed.type.create(parsed.attrs, [
-      first.type.create(first.attrs, [block]),
-      parsed.child(1),
-    ]);
+  ])(
+    'preserves task state when an edited task starts with $name',
+    ({ expected, expectedType, ordered, source }) => {
+      const markdown = createProductionMarkdown();
+      const parsed = markdown.parser.parse(
+        ordered ? '1. [ ] first\n1. [ ] second' : '- [ ] first\n- [ ] second',
+      );
+      const block = markdown.parser.parse(source).firstChild;
+      if (!block) throw new Error(`expected a block for ${source}`);
+      const first = parsed.child(0);
+      const edited = parsed.type.create(parsed.attrs, [
+        first.type.create(first.attrs, [block]),
+        parsed.child(1),
+      ]);
 
-    const serialized = markdown.serializer.serialize(edited);
-    const reparsed = markdown.parser.parse(serialized);
-    expect(serialized).toBe(expected);
-    expect(reparsed.child(0).attrs).toMatchObject({
-      kind: 'task',
-      listKind: ordered ? 'ordered' : 'bullet',
-    });
-    expect(
-      Array.from(
-        { length: reparsed.child(0).childCount },
-        (_, index) => reparsed.child(0).child(index).type.name,
-      ),
-    ).toEqual(['paragraph', expectedType]);
-    expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
-  });
+      const serialized = markdown.serializer.serialize(edited);
+      const reparsed = markdown.parser.parse(serialized);
+      expect(serialized).toBe(expected);
+      expect(reparsed.child(0).attrs).toMatchObject({
+        kind: 'task',
+        listKind: ordered ? 'ordered' : 'bullet',
+      });
+      expect(
+        Array.from(
+          { length: reparsed.child(0).childCount },
+          (_, index) => reparsed.child(0).child(index).type.name,
+        ),
+      ).toEqual(['paragraph', expectedType]);
+      expect(markdown.serializer.serialize(reparsed)).toBe(serialized);
+    },
+  );
 
   it('computes list-run tightness in linear work', () => {
     const markdown = createProductionMarkdown();

@@ -21,15 +21,16 @@ describe('golden corpus (wordgard)', () => {
     (f) => f.engines.includes('wordgard'),
   );
 
-  it.each(
-    wordgardFixtures.map((f) => [f.name, f] as const),
-  )('%s', (_name, fixture) => {
-    const expected = fixture.canonical ?? fixture.markdown;
-    expect(roundTrip(fixture.markdown)).toBe(expected);
-    if (fixture.canonical !== undefined) {
-      // The canonical form must itself be stable, or the "normalization"
-      // never converges and every save would rewrite the note.
-      expect(roundTrip(fixture.canonical)).toBe(fixture.canonical);
-    }
-  });
+  it.each(wordgardFixtures.map((f) => [f.name, f] as const))(
+    '%s',
+    (_name, fixture) => {
+      const expected = fixture.canonical ?? fixture.markdown;
+      expect(roundTrip(fixture.markdown)).toBe(expected);
+      if (fixture.canonical !== undefined) {
+        // The canonical form must itself be stable, or the "normalization"
+        // never converges and every save would rewrite the note.
+        expect(roundTrip(fixture.canonical)).toBe(fixture.canonical);
+      }
+    },
+  );
 });
