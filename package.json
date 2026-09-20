@@ -68,8 +68,8 @@
     "knip": "knip",
     "knip:ci": "pnpm run knip && pnpm run knip:production && pnpm run knip:production-dependencies && pnpm run knip:production-unlisted",
     "knip:production": "knip -c knip.production.json --production",
-    "knip:production-dependencies": "knip -c knip.production-dependencies.json --production --strict --include dependencies --workspace @bangle.io/browser-entry --workspace @bangle.io/desktop-entry --workspace @bangle.io/mobile-entry",
-    "knip:production-unlisted": "knip -c knip.production-unlisted.json --production --strict --include unlisted,binaries --workspace @bangle.io/browser-entry --workspace @bangle.io/desktop-entry --workspace @bangle.io/mobile-entry",
+    "knip:production-dependencies": "knip -c knip.production-dependencies.json --production --strict --include dependencies --workspace @bangle.io/browser-entry --workspace @bangle.io/desktop-entry --workspace @bangle.io/mobile-entry --workspace @bangle.io/usage-worker",
+    "knip:production-unlisted": "knip -c knip.production-unlisted.json --production --strict --include unlisted,binaries --workspace @bangle.io/browser-entry --workspace @bangle.io/desktop-entry --workspace @bangle.io/mobile-entry --workspace @bangle.io/usage-worker",
     "lint:fix": "biome check . --fix",
     "lint": "biome check .",
     "local-ci-check": "bun packages/tooling/custom-scripts/scripts/local-ci-check.ts",
@@ -78,11 +78,11 @@
     "start": "pnpm -r --filter \"browser-entry\" run dev",
     "storybook": "pnpm -r --filter \"storybook\" run storybook",
     "typecheck": "tsgo -b tsconfig.tsgo.json && pnpm --filter \"@bangle.io/mobile-entry\" run typecheck",
-    "usage:dev": "wrangler dev --config packages/tooling/browser-entry/usage/wrangler.jsonc",
-    "usage:deploy": "wrangler deploy --config packages/tooling/browser-entry/usage/wrangler.jsonc",
-    "usage:migrate": "wrangler d1 migrations apply USAGE_DB --remote --config packages/tooling/browser-entry/usage/wrangler.jsonc",
-    "usage:migrate:local": "wrangler d1 migrations apply USAGE_DB --local --config packages/tooling/browser-entry/usage/wrangler.jsonc",
-    "usage:report": "bun packages/tooling/browser-entry/usage/report.ts"
+    "usage:dev": "pnpm --filter @bangle.io/usage-worker run dev",
+    "usage:deploy": "pnpm --filter @bangle.io/usage-worker run deploy",
+    "usage:migrate": "pnpm --filter @bangle.io/usage-worker run migrate",
+    "usage:migrate:local": "pnpm --filter @bangle.io/usage-worker run migrate:local",
+    "usage:report": "pnpm --filter @bangle.io/usage-worker run report"
   },
   "type": "module",
   "packageManager": "pnpm@11.6.0+sha512.9a36518224080c6fe5165afdcfe79bfa118c29be703f3f462b1e32efe1e98e47e8750b148e08286250aad4113cc7993ca413c4e2cd447752708c2ee5751bc95f"

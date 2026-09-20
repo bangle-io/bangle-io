@@ -3,8 +3,8 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const mode = process.argv.includes('--local') ? '--local' : '--remote';
-const config = fileURLToPath(new URL('./wrangler.jsonc', import.meta.url));
-const queries = readFileSync(new URL('./report.sql', import.meta.url), 'utf8')
+const config = fileURLToPath(new URL('../wrangler.jsonc', import.meta.url));
+const queries = readFileSync(new URL('../report.sql', import.meta.url), 'utf8')
   .split(';')
   .filter((sql) => sql.trim());
 const labels = [

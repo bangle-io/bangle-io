@@ -1,0 +1,33 @@
+{
+  "name": "@bangle.io/usage",
+  "description": "Daily app activity measurement",
+  "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/core/usage"
+  },
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "homepage": "https://bangle.io",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "env": "browser",
+    "kind": "app"
+  },
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "scripts": {},
+  "dependencies": {
+    "jotai": "^2.20.1"
+  },
+  "devDependencies": {}
+}

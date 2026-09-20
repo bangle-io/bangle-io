@@ -3,8 +3,8 @@ import type {
   EditorSaveCoordinator,
   initializeServices,
 } from '@bangle.io/initialize-services';
+import { startUsageTracking } from '@bangle.io/usage';
 import type { createStore } from 'jotai';
-import { UsageTracker } from './usage-tracker';
 
 /** Installs app-only activity measurement; previews and desktop stay excluded. */
 export function setupUsage({
@@ -34,88 +34,15 @@ export function setupUsage({
     return;
 
   try {
-    const tracker = new UsageTracker({
-      storage: window.localStorage,
-      send: async (summary, requestSignal) => {
-        const response = await fetch('/api/usage', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(summary),
-          credentials: 'omit',
-          referrerPolicy: 'no-referrer',
-          signal: requestSignal,
-        });
-        // A missing Worker can fall through to the Pages SPA with HTTP 200.
-        return response.status === 204;
-      },
+    startUsageTracking({
+      store,
+      enabled: services.core.workbenchState.$usageAnalyticsEnabled,
+      isNoteReady: () => services.core.editorEngine.hasReadyEditor(),
+      subscribeToSavedEdits: (listener) =>
+        editorSaveCoordinator.subscribeSuccessfulSave(listener),
+      signal,
     });
-    const preference = services.core.workbenchState.$usageAnalyticsEnabled;
-    tracker.setEnabled(store.get(preference));
-    let lastInteraction = Number.NEGATIVE_INFINITY;
-    let readingMs = 0;
-    let lastTick = performance.now();
-    const unsubscribePreference = store.sub(preference, () => {
-      readingMs = 0;
-      lastInteraction = Number.NEGATIVE_INFINITY;
-      tracker.setEnabled(store.get(preference));
-    });
-    const interact = (event: Event) => {
-      if (event.isTrusted && document.visibilityState === 'visible')
-        lastInteraction = performance.now();
-    };
-    for (const event of ['pointerdown', 'keydown', 'wheel']) {
-      document.addEventListener(event, interact, {
-        passive: true,
-        capture: true,
-        signal,
-      });
-    }
-    document.addEventListener(
-      'visibilitychange',
-      () => {
-        lastTick = performance.now();
-        readingMs = 0;
-        lastInteraction = Number.NEGATIVE_INFINITY;
-      },
-      { signal },
-    );
-    const unsubscribeSave = editorSaveCoordinator.subscribeSuccessfulSave(
-      () => {
-        if (performance.now() - lastInteraction < 60_000)
-          void tracker.record('edited');
-      },
-    );
-    const timer = setInterval(() => {
-      const now = performance.now();
-      const elapsed = Math.min(now - lastTick, 5_000);
-      lastTick = now;
-      const noteVisible =
-        document.querySelector(
-          '.ProseMirror, [data-editor-w-status="ready"]',
-        ) !== null;
-      if (
-        !store.get(preference) ||
-        document.visibilityState !== 'visible' ||
-        !noteVisible ||
-        now - lastInteraction >= 60_000
-      ) {
-        readingMs = 0;
-        return;
-      }
-      readingMs += elapsed;
-      if (readingMs >= 30_000) void tracker.record('read');
-    }, 5_000);
-    signal.addEventListener(
-      'abort',
-      () => {
-        clearInterval(timer);
-        unsubscribePreference();
-        unsubscribeSave();
-        tracker.destroy();
-      },
-      { once: true },
-    );
   } catch {
-    // Analytics setup must not prevent the editor from starting.
+    // Unavailable settings must not prevent the editor from starting.
   }
 }

@@ -457,6 +457,12 @@ importers:
         specifier: workspace:*
         version: link:../../tooling/test-utils
 
+  packages/core/usage:
+    dependencies:
+      jotai:
+        specifier: ^2.20.1
+        version: 2.20.1(@babel/core@7.29.7)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.2.7)
+
   packages/js-lib/baby-fs:
     dependencies:
       '@bangle.io/mini-js-utils':
@@ -818,6 +824,9 @@ importers:
       '@bangle.io/translations':
         specifier: workspace:*
         version: link:../../shared/translations
+      '@bangle.io/usage':
+        specifier: workspace:*
+        version: link:../../core/usage
       '@sentry/browser':
         specifier: ^10.63.0
         version: 10.63.0
@@ -1122,6 +1131,12 @@ importers:
       wait-for-expect:
         specifier: ^4.0.0
         version: 4.0.0
+
+  packages/tooling/usage-worker:
+    devDependencies:
+      wrangler:
+        specifier: ^4.120.0
+        version: 4.120.0
 
   packages/ui/base-ui:
     dependencies:

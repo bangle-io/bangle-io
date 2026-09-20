@@ -36,7 +36,17 @@ test('counts meaningful reading and saved edits once per browser day across relo
   expect(summaries).toEqual([]);
   const editor = getEditorLocator(page, {});
   await editor.click();
-  await page.clock.runFor(30_000);
+  await page.clock.runFor(20_000);
+  await openSettings(page);
+  await expect(editor).not.toBeVisible();
+  await page.clock.runFor(35_000);
+  expect(summaries).toEqual([]);
+  await page.getByRole('link', { name: 'Back to app' }).click();
+  await expect(editor).toBeVisible();
+  await editor.click();
+  await page.clock.runFor(25_000);
+  expect(summaries).toEqual([]);
+  await page.clock.runFor(5_000);
   await expect.poll(() => summaries.length).toBe(1);
   expect(summaries[0]).toEqual({
     version: 1,
@@ -75,6 +85,47 @@ test('counts meaningful reading and saved edits once per browser day across relo
     read: false,
     edited: true,
   });
+});
+
+test('counts reading through the Wordgard editor readiness signal', async ({
+  page,
+}) => {
+  const summaries: Record<string, unknown>[] = [];
+  await page.route('**/api/usage', async (route) => {
+    summaries.push(route.request().postDataJSON());
+    await route.fulfill({ status: 204 });
+  });
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName: 'usage-wordgard',
+    noteName: 'read-only-note',
+  });
+  await getEditorLocator(page, {}).click();
+  await page.keyboard.insertText('Read this in either editor');
+  await expect
+    .poll(() => readStoredMarkdown(page, 'usage-wordgard', 'read-only-note'))
+    .toContain('Read this in either editor');
+  await page.clock.install({ time: new Date('2026-09-19T12:00:00Z') });
+  const url = new URL(page.url());
+  url.searchParams.set('usageTest', 'true');
+  url.searchParams.set('editorEngine', 'wordgard');
+  await page.goto(url.toString());
+  const editor = page.locator('[data-editor-engine="wordgard"]');
+  await expect(editor).toContainText('Read this in either editor');
+  await page.clock.runFor(35_000);
+  expect(summaries).toEqual([]);
+  await editor.click();
+  await page.clock.runFor(30_000);
+  await expect.poll(() => summaries.length).toBe(1);
+  expect(summaries[0]).toEqual({
+    version: 1,
+    installationId: expect.any(String),
+    day: '2026-09-19',
+    read: true,
+    edited: false,
+  });
+  await expect
+    .poll(() => readStoredMarkdown(page, 'usage-wordgard', 'read-only-note'))
+    .toContain('Read this in either editor');
 });
 
 test('usage opt-out persists across reloads and is respected by another open tab', async ({

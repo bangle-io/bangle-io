@@ -1,16 +1,16 @@
 import { readFileSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import { afterEach, describe, expect, it } from 'vitest';
-import worker from '../../usage/worker';
+import worker from '../worker';
 
 type Environment = Parameters<typeof worker.fetch>[1];
 const databases: DatabaseSync[] = [];
 const schema = readFileSync(
-  new URL('../../usage/migrations/0001_usage.sql', import.meta.url),
+  new URL('../../migrations/0001_usage.sql', import.meta.url),
   'utf8',
 );
 const report = readFileSync(
-  new URL('../../usage/report.sql', import.meta.url),
+  new URL('../../report.sql', import.meta.url),
   'utf8',
 );
 const ID = '550e8400-e29b-41d4-a716-446655440000';

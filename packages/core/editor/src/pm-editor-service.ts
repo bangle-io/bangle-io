@@ -855,6 +855,10 @@ export class PmEditorService
     return { status: 'missing' };
   }
 
+  hasReadyEditor(): boolean {
+    return !this.readyEditors().next().done;
+  }
+
   hasPendingOrFailedSave(wsPath?: string): boolean {
     return this.saveQueue.hasPendingOrFailed(wsPath);
   }

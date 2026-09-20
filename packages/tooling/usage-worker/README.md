@@ -9,6 +9,17 @@ Measurement is enabled by default. Settings → General → Share basic usage
 turns it off for this browser, including other open tabs. Use that setting in
 your own browser to exclude development/manual testing on production.
 
+## Ownership
+
+`@bangle.io/usage` owns browser activity rules, identity and delivery. Its
+`startUsageTracking` entry receives the sharing preference, an editor-readiness
+query, a subscription to successful saves and the app lifetime. It does not
+inspect editor markup or receive note content. Browser startup only gates
+production collection and connects these signals.
+
+`@bangle.io/usage-worker` owns the independent Worker deployment, D1 schema,
+cleanup and reports. Run its commands through the root `usage:*` aliases below.
+
 ## What the numbers mean
 
 - **Active installation:** a random ID stored in this browser, with either
@@ -62,8 +73,8 @@ pnpm usage:migrate
 ```
 
 Wrangler automatically provisions the `USAGE_DB` D1 binding on first deployment
-and writes its ID into `usage/wrangler.jsonc`. Keep that ID for subsequent
-migrations and reporting. `usage:deploy` creates the narrow Worker route and
+and writes its ID into `packages/tooling/usage-worker/wrangler.jsonc`. Keep that
+ID for subsequent migrations and reporting. `usage:deploy` creates the narrow Worker route and
 retention schedule. Until migrations finish the endpoint returns 503, which the
 client retries. Complete both steps **before releasing the new app build** via
 the normal production release workflow. The Pages Wrangler configuration does
@@ -95,7 +106,7 @@ pnpm usage:dev
 
 These commands use a local D1 database. The Worker still requires the production
 Origin header when testing requests. `wrangler deploy --dry-run --config
-packages/tooling/browser-entry/usage/wrangler.jsonc` validates the Worker bundle
+packages/tooling/usage-worker/wrangler.jsonc` validates the Worker bundle
 without deployment. The unit tests exercise the schema and report SQL using
 real SQLite, including duplicate delivery, failures and retention cleanup.
 

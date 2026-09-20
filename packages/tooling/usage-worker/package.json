@@ -1,0 +1,37 @@
+{
+  "name": "@bangle.io/usage-worker",
+  "description": "App usage collection and reporting on Cloudflare",
+  "license": "AGPL-3.0-or-later",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "packages/tooling/usage-worker"
+  },
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "homepage": "https://bangle.io",
+  "bugs": "https://github.com/bangle-io/bangle-io/issues",
+  "banglePackageConfig": {
+    "env": "nodejs",
+    "kind": "app"
+  },
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy --config wrangler.jsonc",
+    "dev": "wrangler dev --config wrangler.jsonc",
+    "migrate": "wrangler d1 migrations apply USAGE_DB --remote --config wrangler.jsonc",
+    "migrate:local": "wrangler d1 migrations apply USAGE_DB --local --config wrangler.jsonc",
+    "report": "bun scripts/report.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "wrangler": "^4.120.0"
+  }
+}

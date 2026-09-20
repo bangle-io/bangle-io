@@ -43,6 +43,7 @@
     "@bangle.io/mini-js-utils": "workspace:*",
     "@bangle.io/root-emitter": "workspace:*",
     "@bangle.io/translations": "workspace:*",
+    "@bangle.io/usage": "workspace:*",
     "@sentry/browser": "^10.63.0",
     "@sentry/vite-plugin": "^5.3.0",
     "@tailwindcss/vite": "^4.3.3",

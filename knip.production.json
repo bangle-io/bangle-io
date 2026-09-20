@@ -32,17 +32,14 @@
     },
     "packages/tooling/browser-entry": {
       "entry": [
-        "index.html",
-        "usage/worker.ts",
-        "usage/report.ts"
+        "index.html"
       ],
       "ignoreFiles": [
         "src/default-theme.css"
       ],
       "project": [
         "src/**/*.{css,ts,tsx}",
-        "translations-plugin.ts",
-        "usage/**/*.ts"
+        "translations-plugin.ts"
       ],
       "vite": {
         "config": [
@@ -57,6 +54,9 @@
       "project": [
         "**/*.ts"
       ]
+    },
+    "packages/tooling/usage-worker": {
+      "entry": ["scripts/report.ts!"]
     },
     "packages/tooling/desktop-entry": {
       "entry": [
