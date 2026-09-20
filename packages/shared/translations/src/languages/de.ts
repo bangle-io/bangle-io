@@ -153,6 +153,11 @@ export const t = {
       allFilesHeading: 'Alle Dateien',
       filteredHeading: 'Gefiltert',
       noResults: 'Keine Ergebnisse gefunden.',
+      searchActionsHeading: 'Suchaktionen',
+      searchNoteText: ({ query }: { query: string }) =>
+        `Notiztext nach „${query}“ durchsuchen`,
+      searchNoteTextDescription:
+        'Gespeicherte Notizinhalte in diesem Arbeitsbereich durchsuchen.',
     },
     sidebar: {
       newLabel: 'Neu',
@@ -616,6 +621,50 @@ export const t = {
       noNotesMessage: 'Keine Notizen in diesem Arbeitsbereich gefunden.',
       newNoteButton: 'Neue Notiz',
       switchWorkspaceButton: 'Arbeitsbereich wechseln',
+    },
+    pageTextSearch: {
+      title: 'Notiztext durchsuchen',
+      description: ({ wsName }: { wsName: string }) =>
+        `Text in gespeicherten Markdown-Notizen in „${wsName}“ finden.`,
+      inputLabel: 'Notiztext durchsuchen',
+      inputPlaceholder: 'Gespeicherte Notizinhalte durchsuchen…',
+      searchButton: 'Suchen',
+      intro: 'Gib einen Ausdruck ein, um diesen Arbeitsbereich zu durchsuchen.',
+      minimumQuery: ({ count }: { count: number }) =>
+        `Gib mindestens ${count} Zeichen ein.`,
+      searching: 'Gespeicherte Notizinhalte werden durchsucht…',
+      resultSummary: ({
+        matches,
+        notes,
+        query,
+      }: {
+        matches: number;
+        notes: number;
+        query: string;
+      }) =>
+        `Ergebnisse für „${query}“: ${matches} Treffer in ${notes} ${
+          notes === 1 ? 'Notiz' : 'Notizen'
+        }`,
+      noteMatchCount: ({ count }: { count: number }) =>
+        count === 1 ? '1 Treffer' : `${count} Treffer`,
+      lineLabel: ({ line }: { line: number }) => `Zeile ${line}`,
+      openNote: ({ fileName }: { fileName: string }) => `${fileName} öffnen:`,
+      noMatches: ({ query }: { query: string }) =>
+        `Kein gespeicherter Notiztext entspricht „${query}“.`,
+      noNotes: 'Dieser Arbeitsbereich enthält keine durchsuchbaren Notizen.',
+      partialResults: ({ count }: { count: number }) =>
+        count === 1
+          ? '1 Notiz konnte nicht durchsucht werden. Die Ergebnisse können unvollständig sein.'
+          : `${count} Notizen konnten nicht durchsucht werden. Die Ergebnisse können unvollständig sein.`,
+      allFilesFailed:
+        'Bangle konnte für diese Suche keine Notiz lesen. Deine Notizen wurden nicht verändert.',
+      fileTreeError:
+        'Bangle konnte die Notizen dieses Arbeitsbereichs nicht laden. Versuche es vor der Suche erneut.',
+      truncated: ({ count }: { count: number }) =>
+        `Die ersten ${count} Treffer werden angezeigt. Verfeinere die Suche, um weitere zu sehen.`,
+      unexpectedError:
+        'Die Suche wurde unerwartet beendet. Versuche es erneut.',
+      retryButton: 'Erneut versuchen',
     },
     noteNotFoundView: {
       title: 'Notiz nicht gefunden',

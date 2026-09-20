@@ -66,6 +66,18 @@ describe('QueryStringStrategy', () => {
       });
     });
 
+    it('should encode text search route', () => {
+      const routeInfo: AppRouteInfo = {
+        route: 'text-search',
+        payload: { wsName: 'notes', query: 'C++' },
+      };
+
+      expect(strategy.encodeRouteInfo(routeInfo, basePath)).toEqual({
+        pathname: '/app',
+        search: '?route=text-search&wsName=notes&query=C%2B%2B',
+      });
+    });
+
     it('should handle empty basePath', () => {
       const routeInfo: AppRouteInfo = {
         route: 'welcome',
@@ -104,6 +116,21 @@ describe('QueryStringStrategy', () => {
       expect(result).toEqual({
         route: 'ws-home',
         payload: { wsName: 'test' },
+      });
+    });
+
+    it('should decode text search route', () => {
+      expect(
+        strategy.decodeRouteInfo(
+          {
+            pathname: '/app',
+            search: '?route=text-search&wsName=notes&query=C%2B%2B',
+          },
+          basePath,
+        ),
+      ).toEqual({
+        route: 'text-search',
+        payload: { wsName: 'notes', query: 'C++' },
       });
     });
 

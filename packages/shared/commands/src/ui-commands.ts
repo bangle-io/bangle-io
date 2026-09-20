@@ -126,6 +126,19 @@ export const uiCommands = narrow([
 
   // GROUP: NOTES MANAGEMENT
   {
+    id: 'command::ui:search-note-text',
+    title: 'Search Note Text',
+    keywords: ['search', 'find', 'text', 'content', 'contents', 'notes'],
+    dependencies: {
+      services: ['navigation', 'workspaceState'],
+    },
+    omniSearch: 'workspace',
+    autoFocusEditor: false,
+    args: {
+      query: T.Optional(T.String),
+    },
+  },
+  {
     id: 'command::ui:create-note-dialog',
     title: 'New Note',
     keywords: ['new', 'create', 'note'],

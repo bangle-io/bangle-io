@@ -27,6 +27,7 @@ import {
   PageNativeFsRecovery,
   PageNotFound,
   PageSettings,
+  PageTextSearch,
   PageWelcome,
   PageWsHome,
 } from './pages';
@@ -97,6 +98,7 @@ function routeUsesWorkspaceFileTree(route: AppRouteInfo['route']): boolean {
     case 'editor':
     case 'asset':
     case 'ws-home':
+    case 'text-search':
       return true;
     case 'welcome':
     case 'not-found':
@@ -132,6 +134,8 @@ function AppRoutes() {
       return <PageAsset />;
     case 'ws-home':
       return <PageWsHome />;
+    case 'text-search':
+      return <PageTextSearch />;
     case 'welcome':
       return <PageWelcome />;
     case 'not-found':

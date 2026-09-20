@@ -5,6 +5,7 @@ import {
 } from '@bangle.io/base-utils';
 import {
   isSettingsRouteInfo,
+  normalizeTextSearchQuery,
   SERVICE_NAME,
   type SettingsRoute,
 } from '@bangle.io/constants';
@@ -78,7 +79,7 @@ export class NavigationService extends BaseService {
     // else fallback to parsing from routeInfo
 
     const routeInfo = get(this.$routeInfo);
-    if (routeInfo.route === 'ws-home') {
+    if (routeInfo.route === 'ws-home' || routeInfo.route === 'text-search') {
       return routeInfo.payload.wsName;
     }
     if (routeInfo.route === 'editor' || routeInfo.route === 'asset') {
@@ -203,6 +204,32 @@ export class NavigationService extends BaseService {
         payload: { wsName: targetWsName },
       });
     }
+  }
+
+  public goTextSearch(
+    {
+      wsName,
+      query,
+      preferredWsPath,
+    }: {
+      wsName: string;
+      query?: string;
+      preferredWsPath?: string;
+    },
+    options?: { replace?: boolean; state?: RouterState },
+  ) {
+    const normalizedQuery = normalizeTextSearchQuery(query);
+    this.go(
+      {
+        route: 'text-search',
+        payload: {
+          wsName,
+          ...(normalizedQuery ? { query: normalizedQuery } : {}),
+          ...(preferredWsPath ? { preferredWsPath } : {}),
+        },
+      },
+      options,
+    );
   }
 
   public goNotFound(originalPath?: string) {

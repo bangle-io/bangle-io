@@ -1,3 +1,4 @@
+import { normalizeTextSearchQuery } from '@bangle.io/constants';
 import type { AppRouteInfo } from '@bangle.io/types';
 import { WsPath } from '@bangle.io/ws-path';
 
@@ -107,6 +108,31 @@ export function handleRouteInfo(
       return {
         route: 'ws-home',
         payload: { wsName },
+      };
+    }
+
+    case 'text-search': {
+      const wsName = params.wsName || '';
+      const result = WsPath.validation.validateWsName(wsName);
+      if (!result.ok) {
+        return { route: 'not-found', payload: { path: '/invalid-wsName' } };
+      }
+
+      const preferredWsPath = params.preferredWsPath?.trim();
+      const preferredPath = preferredWsPath
+        ? WsPath.safeParseFile(preferredWsPath).data
+        : undefined;
+      const query = normalizeTextSearchQuery(params.query ?? undefined);
+
+      return {
+        route: 'text-search',
+        payload: {
+          wsName,
+          ...(query ? { query } : {}),
+          ...(preferredPath?.isMarkdown() && preferredPath.wsName === wsName
+            ? { preferredWsPath: preferredPath.wsPath }
+            : {}),
+        },
       };
     }
 

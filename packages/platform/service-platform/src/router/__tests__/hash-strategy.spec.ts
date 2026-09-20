@@ -71,6 +71,19 @@ describe('HashStrategy', () => {
       });
     });
 
+    it('should encode text search route info into the hash', () => {
+      const routeInfo: AppRouteInfo = {
+        route: 'text-search',
+        payload: { wsName: 'notes', query: 'C++' },
+      };
+
+      expect(strategy.encodeRouteInfo(routeInfo, basePath)).toEqual({
+        pathname: '/app',
+        search: '',
+        hash: '#route=text-search&wsName=notes&query=C%2B%2B',
+      });
+    });
+
     it('should handle empty payload fields', () => {
       const routeInfo: AppRouteInfo = {
         route: 'editor',
@@ -139,6 +152,22 @@ describe('HashStrategy', () => {
       expect(result).toEqual({
         route: 'editor',
         payload: { wsPath: 'test:file.md' },
+      });
+    });
+
+    it('should decode text search from the hash', () => {
+      expect(
+        strategy.decodeRouteInfo(
+          {
+            pathname: '/app',
+            search: '',
+            hash: '#route=text-search&wsName=notes&query=C%2B%2B',
+          },
+          basePath,
+        ),
+      ).toEqual({
+        route: 'text-search',
+        payload: { wsName: 'notes', query: 'C++' },
       });
     });
 
