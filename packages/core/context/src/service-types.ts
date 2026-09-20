@@ -59,6 +59,8 @@ export type EditorEngineContract = BaseService & {
   collapseAllHeadings: (level: number) => boolean;
   focusEditor: () => void;
   getSelectionMarkdown: () => string | null;
+  /** True when a mounted editor has finished loading successfully. */
+  hasReadyEditor: () => boolean;
   hasPendingOrFailedSave: (wsPath?: string) => boolean;
   /**
    * Parses and inserts Markdown at the current selection. Returns false when

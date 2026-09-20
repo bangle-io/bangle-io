@@ -102,6 +102,7 @@ export class WorkbenchStateService extends BaseService {
   static deps = ['syncDatabase'] as const;
 
   private $_wideEditor: PrimitiveAtom<boolean> | undefined;
+  private $_usageAnalyticsEnabled: PrimitiveAtom<boolean> | undefined;
   private $_sidebarOpen: PrimitiveAtom<boolean> | undefined;
   private $_sidebarWidth: PrimitiveAtom<number> | undefined;
   private $_linkedMentionsCollapsed: PrimitiveAtom<boolean> | undefined;
@@ -281,6 +282,20 @@ export class WorkbenchStateService extends BaseService {
       });
     }
     return this.$_wideEditor;
+  }
+
+  get $usageAnalyticsEnabled() {
+    if (!this.$_usageAnalyticsEnabled) {
+      this.$_usageAnalyticsEnabled = atomStorage({
+        serviceName: this.name,
+        key: 'usage-analytics-enabled',
+        initValue: true,
+        syncDb: this.dep.syncDatabase,
+        validator: T.Boolean,
+        logger: this.logger,
+      });
+    }
+    return this.$_usageAnalyticsEnabled;
   }
 
   get $sidebarOpen() {

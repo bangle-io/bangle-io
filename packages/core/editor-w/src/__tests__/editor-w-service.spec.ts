@@ -37,21 +37,25 @@ describe('EditorWService (M0b read-only stub)', () => {
     const { service, controller } = await setup();
     const domNode = document.createElement('div');
 
+    expect(service.hasReadyEditor()).toBe(false);
     const cleanup = service.mountEditor({
       domNode,
       wsPath: NOTE_WS_PATH,
       name: 'main-editor',
     });
 
+    expect(service.hasReadyEditor()).toBe(false);
     await waitForExpect(() => {
       expect(domNode.dataset.editorWStatus).toBe('ready');
     });
+    expect(service.hasReadyEditor()).toBe(true);
     expect(domNode.textContent).toBe(NOTE_CONTENT);
     // Read-only stub: nothing is editable.
     expect(domNode.querySelector('[contenteditable="true"]')).toBeNull();
     expect(domNode.getAttribute('contenteditable')).toBeNull();
 
     cleanup();
+    expect(service.hasReadyEditor()).toBe(false);
     controller.abort();
   });
 
@@ -119,6 +123,7 @@ describe('EditorWService (M0b read-only stub)', () => {
     await waitForExpect(() => {
       expect(domNode.dataset.editorWStatus).toBe('failed');
     });
+    expect(service.hasReadyEditor()).toBe(false);
     expect(domNode.textContent).toBe(t.app.editorW.loadFailed);
     expect(mockLog.error).toHaveBeenCalled();
 

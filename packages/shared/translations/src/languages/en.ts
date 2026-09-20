@@ -224,6 +224,9 @@ export const t = {
         appSection: 'App',
         versionTitle: 'Version',
         versionDescription: 'The version and build identity of this app.',
+        usageTitle: 'Share basic usage',
+        usageDescription:
+          'Helps us understand active and returning users through daily reading and editing activity. Note contents and filenames stay on your device.',
         installPwaTitle: 'Install Bangle.io',
         installPwaDescription:
           'Add Bangle.io to this device and open it in its own app window.',

@@ -55,6 +55,9 @@
         "**/*.ts"
       ]
     },
+    "packages/tooling/usage-worker": {
+      "entry": ["scripts/report.ts!"]
+    },
     "packages/tooling/desktop-entry": {
       "entry": [
         "electron-builder.config.cjs",

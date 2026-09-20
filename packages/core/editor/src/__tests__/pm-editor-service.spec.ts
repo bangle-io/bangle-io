@@ -35,14 +35,17 @@ describe('PmEditorService', () => {
     const secondDomNode = document.createElement('div');
     document.body.append(firstDomNode, secondDomNode);
 
+    expect(service.hasReadyEditor()).toBe(false);
     const unmountFirst = service.mountEditor({
       domNode: firstDomNode,
       wsPath: `${TEST_WS_NAME}:first.md`,
       name: 'first-editor',
     });
+    expect(service.hasReadyEditor()).toBe(false);
     await waitForExpect(() => {
       expect(service.getEditor('first-editor')).toBeDefined();
     });
+    expect(service.hasReadyEditor()).toBe(true);
 
     const unmountSecond = service.mountEditor({
       domNode: secondDomNode,
@@ -100,10 +103,36 @@ describe('PmEditorService', () => {
     expect(secondEditor.state.doc.textContent).toBe('from Markdown');
 
     unmountSecond();
+    expect(service.hasReadyEditor()).toBe(true);
     unmountFirst();
+    expect(service.hasReadyEditor()).toBe(false);
     controller.abort();
     firstDomNode.remove();
     secondDomNode.remove();
+  });
+
+  test('a failed note load never reports a ready editor', async () => {
+    const controller = new AbortController();
+    const env = createTestEnvironment({ controller });
+    const services = env.instantiateAll();
+    await env.mountAll();
+    const service = services.editorEngine;
+    if (!(service instanceof PmEditorService))
+      throw new Error('Expected ProseMirror');
+    const unmount = service.mountEditor({
+      domNode: document.createElement('div'),
+      wsPath: 'unknown-workspace:note.md',
+      name: 'failed-editor',
+    });
+    expect(service.hasReadyEditor()).toBe(false);
+    await waitForExpect(() => {
+      expect(service.getEditorLoadStatus('failed-editor').status).toBe(
+        'failed',
+      );
+    });
+    expect(service.hasReadyEditor()).toBe(false);
+    unmount();
+    controller.abort();
   });
 
   test('toggleHeading and insertTable act on the active editor', async () => {

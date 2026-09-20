@@ -122,6 +122,10 @@ export class EditorWService
     this.editors.delete(domNode);
   }
 
+  hasReadyEditor(): boolean {
+    return [...this.editors.values()].some((entry) => entry.status === 'ready');
+  }
+
   focusEditor(): void {
     // Read-only stub: nothing focusable to hand the cursor to.
   }

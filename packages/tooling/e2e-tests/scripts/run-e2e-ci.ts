@@ -132,7 +132,7 @@ async function main() {
       port,
       '--strictPort',
     ],
-    { stdio: 'pipe' },
+    { stdio: 'pipe', env: process.env },
   );
 
   pipeWithPrefix(server.stdout, process.stdout);

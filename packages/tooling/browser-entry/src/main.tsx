@@ -16,6 +16,7 @@ import { createRoot } from 'react-dom/client';
 import { setupAppBuildGuard } from './app-build-guard';
 import { setupRootEmitter } from './setup-root-emitter';
 import { initializeSentry } from './setup-sentry';
+import { setupUsage } from './setup-usage';
 
 const isDebug =
   window.location.hostname === 'localhost' ||
@@ -79,6 +80,13 @@ async function main(logger: Logger) {
   }
 
   const root = createRoot(rootElement);
+
+  setupUsage({
+    services,
+    store,
+    editorSaveCoordinator,
+    signal: abortController.signal,
+  });
 
   root.render(
     <StrictMode>
