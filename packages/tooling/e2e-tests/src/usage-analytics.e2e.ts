@@ -200,3 +200,72 @@ test('an unavailable usage endpoint does not interrupt saving and retries after 
   await expect.poll(() => summaries.length).toBe(2);
   expect(summaries[1]).toEqual(summaries[0]);
 });
+
+test('opt-out discards queued activity even when a busy lock delays clearing until after opt-in', async ({
+  page,
+}) => {
+  let available = false;
+  const summaries: Record<string, unknown>[] = [];
+  await page.route('**/api/usage', async (route) => {
+    summaries.push(route.request().postDataJSON());
+    await route.fulfill({ status: available ? 204 : 503 });
+  });
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName: 'usage-toggle',
+    noteName: 'my-note',
+  });
+  await page.clock.install();
+  await startMeasurement(page);
+  await getEditorLocator(page, {}).click();
+  await page.clock.runFor(30_000);
+  await expect.poll(() => summaries.length).toBe(1);
+  expect(summaries[0]).toMatchObject({ read: true, edited: false });
+
+  await page.evaluate(
+    () =>
+      new Promise<void>((locked) => {
+        void navigator.locks.request('bangle:usage:v1', async () => {
+          const released = new Promise<void>((resolve) => {
+            window.addEventListener(
+              'release-usage-test-lock',
+              () => resolve(),
+              {
+                once: true,
+              },
+            );
+          });
+          locked();
+          await released;
+        });
+      }),
+  );
+  const preference = await openSettings(page);
+  await preference.getByRole('radio', { name: 'Disabled' }).click();
+  await preference.getByRole('radio', { name: 'Enabled' }).click();
+  available = true;
+  await page.evaluate(() => {
+    window.dispatchEvent(new Event('release-usage-test-lock'));
+  });
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => JSON.parse(localStorage.getItem('bangle:usage:v1') ?? '{}').days,
+      ),
+    )
+    .toEqual({});
+
+  await page.getByRole('link', { name: 'Back to app' }).click();
+  await getEditorLocator(page, {}).click();
+  await page.keyboard.insertText('Only this new activity should be shared');
+  await page.clock.runFor(1_000);
+  await expect.poll(() => summaries.length).toBe(2);
+  expect(summaries[1]).toEqual({
+    ...summaries[0],
+    read: false,
+    edited: true,
+  });
+  await page.reload();
+  await expect(getEditorLocator(page, {})).toContainText(
+    'Only this new activity should be shared',
+  );
+});

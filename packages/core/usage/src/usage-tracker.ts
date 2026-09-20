@@ -30,7 +30,6 @@ export class UsageTracker {
   private disposed = false;
   private sending = false;
   private generation = 0;
-  private retryAt = 0;
   private retryDelay = 30_000;
   private retryTimer: ReturnType<typeof setTimeout> | undefined;
   private request: AbortController | undefined;
@@ -54,7 +53,6 @@ export class UsageTracker {
       void this.flush();
     } else {
       void this.lock(() => {
-        if (this.enabled || this.disposed) return;
         const state = this.load();
         if (state) this.save({ id: state.id, days: {} });
       }).catch(() => {});
@@ -94,7 +92,6 @@ export class UsageTracker {
   private cancelRequest(): void {
     clearTimeout(this.retryTimer);
     this.retryTimer = undefined;
-    this.retryAt = 0;
     this.request?.abort();
   }
 
@@ -153,7 +150,7 @@ export class UsageTracker {
       !this.enabled ||
       this.disposed ||
       this.sending ||
-      this.now() < this.retryAt
+      this.retryTimer !== undefined
     )
       return;
     this.sending = true;
@@ -202,8 +199,8 @@ export class UsageTracker {
       }
     } catch {
       if (this.enabled && !this.disposed && generation === this.generation) {
-        this.retryAt = this.now() + this.retryDelay;
         this.retryTimer = setTimeout(() => {
+          this.retryTimer = undefined;
           void this.flush();
         }, this.retryDelay);
         this.retryDelay = Math.min(this.retryDelay * 2, 300_000);

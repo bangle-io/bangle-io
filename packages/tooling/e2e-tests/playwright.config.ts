@@ -98,7 +98,7 @@ export default defineConfig({
   webServer: useExternalServer
     ? undefined
     : {
-        command: `BANGLE_USAGE_TESTING=1 BANGLE_DEV_PORT=${PORT} pnpm --dir ../browser-entry exec vite --configLoader runner --host localhost --port ${PORT} --strictPort`,
+        command: `BANGLE_DEV_PORT=${PORT} pnpm --dir ../browser-entry exec vite --configLoader runner --host localhost --port ${PORT} --strictPort`,
         url: BASE_URL,
         reuseExistingServer: !isCI,
       },

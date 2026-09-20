@@ -7,8 +7,6 @@ type DeepReadonly<T> = T extends Function
 // // biome-ignore lint/style/noVar: <explanation>
 declare const t: DeepReadonly<import('@bangle.io/translations').Translations>;
 
-declare const __BANGLE_USAGE_TESTING__: boolean;
-
 // biome-ignore lint/style/noVar: <explanation>
 declare var __BANGLE_BUILD_TIME_CONFIG__: string | undefined;
 // biome-ignore lint/style/noVar: <explanation>

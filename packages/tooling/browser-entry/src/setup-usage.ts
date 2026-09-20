@@ -22,8 +22,7 @@ export function setupUsage({
     APP_ENV === 'production' &&
     window.location.origin === 'https://app.bangle.io';
   const testing =
-    typeof __BANGLE_USAGE_TESTING__ !== 'undefined' &&
-    __BANGLE_USAGE_TESTING__ &&
+    APP_ENV === 'local' &&
     ['localhost', '127.0.0.1'].includes(window.location.hostname) &&
     new URLSearchParams(window.location.search).get('usageTest') === 'true';
   if (

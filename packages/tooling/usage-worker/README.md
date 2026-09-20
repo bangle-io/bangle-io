@@ -110,6 +110,7 @@ packages/tooling/usage-worker/wrangler.jsonc` validates the Worker bundle
 without deployment. The unit tests exercise the schema and report SQL using
 real SQLite, including duplicate delivery, failures and retention cleanup.
 
-Playwright enables collection only with `BANGLE_USAGE_TESTING=1` at build/dev
-startup, a localhost URL, and `?usageTest=true`. Tests intercept `/api/usage`;
-normal previews, local builds and desktop builds do not send production data.
+Local app builds enable collection only on localhost with `?usageTest=true`.
+Playwright uses this explicit opt-in and intercepts `/api/usage`; no special
+build flag is required. Requests stay on the local origin, and production,
+staging and desktop builds cannot use this test opt-in.

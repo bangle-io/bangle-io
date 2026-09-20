@@ -123,6 +123,44 @@ describe('daily usage summaries', () => {
     });
   });
 
+  it('retries after the scheduled delay when the system clock moves backward', async () => {
+    const { tracker, send } = setup(vi.fn<Send>(async () => false));
+    await tracker.record('edited');
+    await vi.advanceTimersByTimeAsync(0);
+    expect(send).toHaveBeenCalledTimes(1);
+
+    vi.setSystemTime(new Date('2026-09-19T11:59:00Z'));
+    send.mockResolvedValue(true);
+    await vi.advanceTimersByTimeAsync(29_999);
+    expect(send).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(send).toHaveBeenCalledTimes(2);
+    expect(send.mock.calls[1]?.[0]).toEqual(send.mock.calls[0]?.[0]);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('discards queued activity before an immediate opt-in can deliver it', async () => {
+    const { tracker, send } = setup(vi.fn<Send>(async () => false));
+    await tracker.record('read');
+    await vi.advanceTimersByTimeAsync(0);
+    expect(send).toHaveBeenCalledTimes(1);
+
+    send.mockResolvedValue(true);
+    tracker.setEnabled(false);
+    tracker.setEnabled(true);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(send).toHaveBeenCalledTimes(1);
+
+    await tracker.record('edited');
+    await vi.advanceTimersByTimeAsync(0);
+    expect(send).toHaveBeenCalledTimes(2);
+    expect(send.mock.calls[1]?.[0]).toEqual({
+      ...send.mock.calls[0]?.[0],
+      read: false,
+      edited: true,
+    });
+  });
+
   it('expires offline summaries after seven days and tolerates full storage', async () => {
     const { tracker, send } = setup(vi.fn<Send>(async () => false));
     await tracker.record('read');
