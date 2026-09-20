@@ -132,7 +132,7 @@ async function main() {
       port,
       '--strictPort',
     ],
-    { stdio: 'pipe' },
+    { stdio: 'pipe', env: { ...process.env, BANGLE_USAGE_TESTING: '1' } },
   );
 
   pipeWithPrefix(server.stdout, process.stdout);

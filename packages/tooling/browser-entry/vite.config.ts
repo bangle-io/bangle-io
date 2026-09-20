@@ -108,6 +108,9 @@ export default defineConfig(async (env) => {
     ],
     define: {
       ...envVars.globalIdentifiers,
+      __BANGLE_USAGE_TESTING__: JSON.stringify(
+        envVars.appEnv === 'local' && process.env.BANGLE_USAGE_TESTING === '1',
+      ),
     },
   };
 });

@@ -46,12 +46,21 @@ export type EditorSaveCoordinator = {
   hasPendingOrFailedSave(wsPath?: string): boolean;
   lastHasPendingOrFailed: boolean;
   subscriptions: Set<SaveStatusSubscription>;
+  successfulSaveListeners: Set<() => void>;
+  /** Observes durable editor writes without exposing document contents or paths. */
+  subscribeSuccessfulSave(listener: () => void): () => void;
 };
 
 export function createEditorSaveCoordinator(): EditorSaveCoordinator {
   const entries = new Map<string, SaveEntry>();
+  const successfulSaveListeners = new Set<() => void>();
   return {
     entries,
+    successfulSaveListeners,
+    subscribeSuccessfulSave(listener) {
+      successfulSaveListeners.add(listener);
+      return () => successfulSaveListeners.delete(listener);
+    },
     hasPendingOrFailedSave: (wsPath) => {
       if (wsPath !== undefined) {
         const entry = entries.get(wsPath);
@@ -223,6 +232,13 @@ export class EditorSaveQueue {
           throw new Error('Editor save coordinator has no active session');
         }
         await session.writeDoc(writeWsPath, task.doc);
+        for (const listener of this.coordinator.successfulSaveListeners) {
+          try {
+            listener();
+          } catch {
+            // An observer must never turn a durable write into a failed save.
+          }
+        }
       } catch (cause) {
         if (entry.retired) {
           continue;

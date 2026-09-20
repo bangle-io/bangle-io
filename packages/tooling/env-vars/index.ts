@@ -90,7 +90,6 @@ interface EnvVarsOptions {
 interface HtmlInjections {
   inlinedScripts: string;
   favicon: string;
-  goatAnalytics: string;
 }
 
 interface GlobalIdentifiers {
@@ -140,39 +139,6 @@ export default ({
       helpDocsVersion,
     },
   });
-  const goatAnalytics =
-    appEnv !== 'production'
-      ? ''
-      : `
-<script>
-  async function sha256(message) {
-    const msgBuffer = new TextEncoder().encode(message);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    return hashHex;
-  }
-
-  window.goatcounter = {no_onload: true}
-  window.addEventListener('hashchange', async function(e) {
-      const pathname = location.pathname;
-      const searchAndHash = location.search + location.hash;
-      let obfuscatedPath = pathname;
-
-      if (searchAndHash) {
-          const hashedPart = await sha256(searchAndHash);
-          obfuscatedPath += '|' + hashedPart;
-      }
-      if (typeof window.goatcounter.count === 'function') {
-        window.goatcounter.count({
-          path: obfuscatedPath,
-        });
-      }
-  });
-</script>
-<script data-goatcounter="https://bangle-io.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>      
-`;
-
   bangleConfig.print();
 
   return {
@@ -186,7 +152,6 @@ export default ({
 ${inlinedScripts.join(';\n\n')}
 </script>`.trim(),
       favicon: getFavicon(appEnv),
-      goatAnalytics,
     },
     globalIdentifiers: {
       __BANGLE_BUILD_TIME_CONFIG__: JSON.stringify(bangleConfig.serialize()),

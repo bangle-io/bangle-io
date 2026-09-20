@@ -151,6 +151,9 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
   const routeInfo = useAtomValue(navigation.$routeInfo);
   const themePref = useAtomValue(workbenchState.$themePref);
   const [wideEditor, setWideEditor] = useAtom(workbenchState.$wideEditor);
+  const [usageEnabled, setUsageEnabled] = useAtom(
+    workbenchState.$usageAnalyticsEnabled,
+  );
   const pwaInstall = usePwaInstall();
   const [assetLocationPreference, setAssetLocationPreference] = useAtom(
     workbenchState.$assetLocationPreference,
@@ -234,6 +237,32 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
                       title={t.app.settings.general.installPwaTitle}
                     />
                   ) : null}
+                  <SettingsPage.SettingsRow
+                    control={
+                      <SegmentedControl
+                        aria-label={t.app.settings.general.usageTitle}
+                        onValueChange={(value) => {
+                          setUsageEnabled(value === 'enabled');
+                        }}
+                        value={usageEnabled ? 'enabled' : 'disabled'}
+                      >
+                        <RadioGroupItem
+                          className={SEGMENTED_ITEM_CLASS}
+                          value="enabled"
+                        >
+                          {t.app.settings.general.enabled}
+                        </RadioGroupItem>
+                        <RadioGroupItem
+                          className={SEGMENTED_ITEM_CLASS}
+                          value="disabled"
+                        >
+                          {t.app.settings.general.disabled}
+                        </RadioGroupItem>
+                      </SegmentedControl>
+                    }
+                    description={t.app.settings.general.usageDescription}
+                    title={t.app.settings.general.usageTitle}
+                  />
                   {pwaInstall.canOpenInApp ? (
                     <SettingsPage.SettingsRow
                       control={

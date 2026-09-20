@@ -43,6 +43,45 @@ function getFirstEmittedAppError(
 }
 
 describe('EditorSaveQueue', () => {
+  it('reports successful writes only after durability, without letting observers fail a save', async () => {
+    const coordinator = createEditorSaveCoordinator();
+    const saved = vi.fn();
+    const unsubscribe = coordinator.subscribeSuccessfulSave(saved);
+    coordinator.subscribeSuccessfulSave(() => {
+      throw new Error('Observer unavailable');
+    });
+    const write = createDeferred<void>();
+    const errors = vi.fn();
+    const queue = new EditorSaveQueue(() => write.promise, errors, coordinator);
+    queue.enqueue('workspace:private.md', 'private contents');
+    expect(saved).not.toHaveBeenCalled();
+    write.resolve();
+    await vi.waitFor(() => expect(queue.hasPendingOrFailed()).toBe(false));
+    expect(saved.mock.calls).toEqual([[]]);
+    expect(errors).not.toHaveBeenCalled();
+    unsubscribe();
+    queue.enqueue('workspace:private.md', 'new content');
+    await vi.waitFor(() => expect(queue.hasPendingOrFailed()).toBe(false));
+    expect(saved).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not count a failed write as successful activity', async () => {
+    const coordinator = createEditorSaveCoordinator();
+    const saved = vi.fn();
+    coordinator.subscribeSuccessfulSave(saved);
+    const errors = vi.fn();
+    const queue = new EditorSaveQueue(
+      async () => {
+        throw new Error('Disk full');
+      },
+      errors,
+      coordinator,
+    );
+    queue.enqueue('workspace:private.md', 'private contents');
+    await vi.waitFor(() => expect(errors).toHaveBeenCalledOnce());
+    expect(saved).not.toHaveBeenCalled();
+  });
+
   it('notifies subscribers as protection becomes dirty and clean', async () => {
     const write = createDeferred<void>();
     const listener = vi.fn();

@@ -32,14 +32,17 @@
     },
     "packages/tooling/browser-entry": {
       "entry": [
-        "index.html"
+        "index.html",
+        "usage/worker.ts",
+        "usage/report.ts"
       ],
       "ignoreFiles": [
         "src/default-theme.css"
       ],
       "project": [
         "src/**/*.{css,ts,tsx}",
-        "translations-plugin.ts"
+        "translations-plugin.ts",
+        "usage/**/*.ts"
       ],
       "vite": {
         "config": [
