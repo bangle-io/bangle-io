@@ -1,4 +1,3 @@
-import { checkWidescreen } from '@bangle.io/base-utils';
 import { useCoreServices } from '@bangle.io/context';
 import {
   Breadcrumb,
@@ -8,6 +7,7 @@ import {
   Separator,
   Sidebar,
   StarButton,
+  useIsMobile,
 } from '@bangle.io/ui-components';
 import { WsPath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue } from 'jotai';
@@ -16,8 +16,6 @@ import React from 'react';
 import { MarkdownFidelityNotice } from '../components/navigation/markdown-fidelity-notice';
 import { NoteBreadcrumb } from '../components/navigation/note-breadcrumb';
 import { WsNameBreadcrumb } from '../components/navigation/ws-name-breadcrumb'; // Import WsNameBreadcrumb
-
-const isWideScreen = checkWidescreen();
 
 export interface AppHeaderProps {
   children?: React.ReactNode;
@@ -36,6 +34,7 @@ export function AppHeader({ children }: AppHeaderProps) {
   const [wideEditor, setWideEditor] = useAtom(
     coreServices.workbenchState.$wideEditor,
   );
+  const isMobile = useIsMobile();
 
   const showEditorToolbar = Boolean(currentWsPath);
 
@@ -55,6 +54,7 @@ export function AppHeader({ children }: AppHeaderProps) {
         {showEditorToolbar && currentWsName && (
           <ToolbarRightSection
             wideEditor={wideEditor}
+            showMaxWidthControl={!isMobile}
             toggleEditor={() => {
               setWideEditor((prev) => !prev);
             }}
@@ -147,11 +147,13 @@ function HomeBreadcrumb({
 }
 
 interface ToolbarRightSectionProps {
+  showMaxWidthControl: boolean;
   wideEditor: boolean;
   toggleEditor: () => void;
 }
 
 function ToolbarRightSection({
+  showMaxWidthControl,
   wideEditor,
   toggleEditor,
 }: ToolbarRightSectionProps) {
@@ -185,7 +187,7 @@ function ToolbarRightSection({
             : t.app.common.starItem
         }
       />
-      {isWideScreen && (
+      {showMaxWidthControl && (
         <Button
           variant="ghost"
           size="icon"

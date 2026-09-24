@@ -59,7 +59,15 @@ export function App({
             <PwaOpenInAppPrompt />
             <PwaLaunchActions />
             <OmniSearch />
-            <Toaster position="top-right" />
+            <Toaster
+              position="top-right"
+              mobilePosition="bottom-center"
+              mobileOffset={{
+                bottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))',
+                left: 'calc(1rem + env(safe-area-inset-left, 0px))',
+                right: 'calc(1rem + env(safe-area-inset-right, 0px))',
+              }}
+            />
             <AppErrorHandler rootEmitter={rootEmitter} />
             <SaveProtection />
             <AppSidebar>
