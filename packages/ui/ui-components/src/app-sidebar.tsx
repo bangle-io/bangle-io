@@ -73,7 +73,8 @@ export type AppSidebarProps = {
     selectedEntries: readonly FileTreeEntry[],
   ) => readonly FileTreeEntryAction[];
   onCreateDirectory: (pathPrefix: string | undefined) => void;
-  onCreateNote: (pathPrefix: string | undefined) => void;
+  onCreateNote: (path: string) => void;
+  newNoteFileName: string;
   onMoveFile: (
     sourceRelativePath: string,
     destinationDirectory: string | undefined,
@@ -208,6 +209,7 @@ export function AppSidebar({
   getActionsForEntry,
   onCreateDirectory,
   onCreateNote,
+  newNoteFileName,
   onMoveFile,
   onOpenFile,
   showNoteFilesOnly,
@@ -278,6 +280,7 @@ export function AppSidebar({
               getActionsForEntry={getActionsForEntry}
               onCreateDirectory={onCreateDirectory}
               onCreateNote={onCreateNote}
+              newNoteFileName={newNoteFileName}
               onMoveFile={onMoveFile}
               onOpenFile={onOpenFile}
               showNoteFilesOnly={showNoteFilesOnly}

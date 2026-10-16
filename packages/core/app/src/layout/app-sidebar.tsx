@@ -1,6 +1,6 @@
 import { useCoreServices } from '@bangle.io/context';
 import { Sidebar, AppSidebar as UIAppSidebar } from '@bangle.io/ui-components';
-import { WsDirPath, WsPath } from '@bangle.io/ws-path';
+import { getNextUntitledNoteName, WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import React from 'react';
 import { SidebarFooterMenu } from './sidebar-footer-menu';
@@ -95,15 +95,18 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             'ui',
           );
         }}
-        onCreateNote={(pathPrefix) => {
+        onCreateNote={(path) => {
           commandDispatcher.dispatch(
-            'command::ws:quick-new-note',
-            {
-              pathPrefix,
-            },
+            'command::ws:new-note-from-input',
+            { inputPath: path },
             'ui',
           );
         }}
+        newNoteFileName={
+          getNextUntitledNoteName(
+            noteWsPaths.map((wsPath) => wsPath.fileNameWithoutExtension),
+          ) + WsPath.DEFAULT_NOTE_EXTENSION
+        }
         onMoveFile={(sourceRelativePath, destinationDirectory) => {
           if (!activeWsName) {
             return;

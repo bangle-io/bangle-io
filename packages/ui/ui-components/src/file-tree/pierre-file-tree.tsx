@@ -46,7 +46,8 @@ const TREE_UNSAFE_CSS = `
     font-weight: 600;
   }
 
-  button[data-type='item'][data-item-type='file'] > [data-item-section='icon'] {
+  /* No tag: Pierre renders the inline-rename row as a div, not a button. */
+  [data-type='item'][data-item-type='file'] > [data-item-section='icon'] {
     display: none;
   }
 
@@ -263,7 +264,10 @@ export interface PierreFileTreeProps {
   className?: string;
   filePaths: readonly string[];
   onCreateDirectory: (pathPrefix: string | undefined) => void;
-  onCreateNote: (pathPrefix: string | undefined) => void;
+  /** Creates a note at the relative path typed into the inline new-note row. */
+  onCreateNote: (path: string) => void;
+  /** Name prefilled in the inline new-note row, e.g. `untitled-3.md`. */
+  newNoteFileName: string;
   onMoveFile: (
     sourceRelativePath: string,
     destinationDirectory: string | undefined,
@@ -283,6 +287,7 @@ export function PierreFileTree({
   filePaths,
   onCreateDirectory,
   onCreateNote,
+  newNoteFileName,
   onMoveFile,
   onOpenFile,
   showNoteFilesOnly,
@@ -322,6 +327,12 @@ export function PierreFileTree({
   const dragSourcePathRef = useRef<string | null>(null);
   const onOpenFileRef = useRef(onOpenFile);
   const onMoveFileRef = useRef(onMoveFile);
+  const onCreateNoteRef = useRef(onCreateNote);
+  // The not-yet-created row whose name the user is typing, VS Code style.
+  const pendingNewNoteRef = useRef<{
+    pathPrefix: string | undefined;
+    placeholderPath: string;
+  } | null>(null);
   const pendingUserOpenPathRef = useRef<string | null>(null);
   const selectedPathRef = useRef<string | null>(null);
   const activeSelectedPathRef = useRef<string | null>(null);
@@ -332,6 +343,7 @@ export function PierreFileTree({
   filePathSetRef.current = filePathSet;
   onOpenFileRef.current = onOpenFile;
   onMoveFileRef.current = onMoveFile;
+  onCreateNoteRef.current = onCreateNote;
   treePathsRef.current = treePaths;
   // The file the active route points at. Kept current on every render so
   // `onSelectionChange` can tell a genuine user open from a route-driven
@@ -510,6 +522,12 @@ export function PierreFileTree({
       onOpenFileRef.current(normalizedPath);
     },
     paths: treePaths,
+    // Inline rename only names a new note; existing files use the rename
+    // dialog.
+    renaming: {
+      canRename: ({ path }) =>
+        path === pendingNewNoteRef.current?.placeholderPath,
+    },
     search: false,
     unsafeCSS: TREE_UNSAFE_CSS,
   });
@@ -518,6 +536,65 @@ export function PierreFileTree({
   useEffect(() => {
     resetModelPathsPreservingExpansion(model, treePaths);
   }, [model, treePaths]);
+
+  const startNewNote = (pathPrefix: string | undefined): void => {
+    const placeholderPath = pathPrefix
+      ? `${pathPrefix}/${newNoteFileName}`
+      : newNoteFileName;
+    pendingNewNoteRef.current = { pathPrefix, placeholderPath };
+    model.add(placeholderPath);
+    model.startRenaming(placeholderPath, { removeIfCanceled: true });
+  };
+
+  // Pierre only reports changed names, so commit the typed name ourselves on
+  // Enter or blur; an untouched default name must create the note too.
+  useEffect(() => {
+    const root = rootElementRef.current;
+    if (!root) {
+      return;
+    }
+
+    const commitNewNote = (event: Event): void => {
+      const input = event.composedPath()[0];
+      const pending = pendingNewNoteRef.current;
+      if (!pending || !(input instanceof HTMLInputElement)) {
+        return;
+      }
+
+      pendingNewNoteRef.current = null;
+      const name = input.value.trim();
+      // Drop the placeholder row; the real file appears once it is created.
+      resetModelPathsPreservingExpansion(model, treePathsRef.current);
+      if (name) {
+        onCreateNoteRef.current(
+          pending.pathPrefix ? `${pending.pathPrefix}/${name}` : name,
+        );
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent): void => {
+      if (!pendingNewNoteRef.current || event.isComposing) {
+        return;
+      }
+
+      if (event.key === 'Escape') {
+        // Let Pierre remove the placeholder row.
+        pendingNewNoteRef.current = null;
+      } else if (event.key === 'Enter') {
+        event.preventDefault();
+        event.stopPropagation();
+        commitNewNote(event);
+      }
+    };
+
+    const abortController = new AbortController();
+    const { signal } = abortController;
+    root.addEventListener('keydown', handleKeyDown, { capture: true, signal });
+    root.addEventListener('focusout', commitNewNote, { signal });
+    return () => {
+      abortController.abort();
+    };
+  }, [model]);
 
   useEffect(() => {
     const nextSelectedPath = activeTreePaths.at(-1) ?? null;
@@ -627,7 +704,7 @@ export function PierreFileTree({
             className="inline-flex size-6 items-center justify-center rounded-sm text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             aria-label={t.app.components.appSidebar.newFileActionTitle}
             title={t.app.components.appSidebar.newFileActionTitle}
-            onClick={() => onCreateNote(undefined)}
+            onClick={() => startNewNote(undefined)}
           >
             <FilePlus2 className="size-3.5" />
           </button>
@@ -705,6 +782,7 @@ export function PierreFileTree({
                         onClick({
                           entry,
                           selectedEntries: menuSelectedEntries,
+                          startNewNote,
                         });
                       }}
                     >

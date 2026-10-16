@@ -244,6 +244,9 @@ test('file explorer creates folders, opens notes, and survives reload', async ({
     await explorer.getByRole('treeitem', { name: /^docs$/ }).focus();
     await page.keyboard.press('Shift+F10');
     await page.getByRole('button', { name: 'New Note Here' }).click();
+    // Accept the suggested name in the inline input.
+    await expect(explorer.getByRole('textbox')).toHaveValue('untitled-2.md');
+    await page.keyboard.press('Enter');
 
     await expect(
       page

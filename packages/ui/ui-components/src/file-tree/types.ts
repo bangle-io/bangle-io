@@ -10,6 +10,8 @@ export interface FileTreeEntry {
 interface FileTreeEntryActionContext {
   entry: FileTreeEntry;
   selectedEntries: readonly FileTreeEntry[];
+  /** Opens the inline name input for a new note inside `pathPrefix`. */
+  startNewNote: (pathPrefix: string | undefined) => void;
 }
 
 export type FileTreeEntryAction = Action<FileTreeEntryActionContext>;
