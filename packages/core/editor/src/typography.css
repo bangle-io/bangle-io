@@ -25,9 +25,10 @@ div.ProseMirror {
     margin-bottom: 0;
   }
 
-  /* The first heading is typically the page title; give it breathing room
-     from the top of the editor. */
-  & h1:first-child {
+  /* Breathing room between the header and the note, whatever its first block
+     is (heading of any level, paragraph, list, frontmatter). The page passes
+     `pt-0` to the editor, so this cannot live on a first-child rule. */
+  & {
     padding-top: 1.5rem;
   }
 
