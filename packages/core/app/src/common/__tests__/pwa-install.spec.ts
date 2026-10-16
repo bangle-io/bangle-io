@@ -96,6 +96,22 @@ describe('app document title', () => {
     expect(documentRef.title).toBe('Bangle.io');
     expect(documentRef.subtitle).toBe('Notes');
   });
+
+  it('prefixes the title with the current file and workspace', () => {
+    const documentRef = { title: '' } as Document;
+
+    pwaInstall.syncAppDocumentTitle(documentRef, { wsName: 'work' });
+    expect(documentRef.title).toBe('work - Bangle.io');
+
+    pwaInstall.syncAppDocumentTitle(documentRef, {
+      wsName: 'work',
+      fileName: 'todo.md',
+    });
+    expect(documentRef.title).toBe('todo.md - work - Bangle.io');
+
+    pwaInstall.syncAppDocumentTitle(documentRef, {});
+    expect(documentRef.title).toBe('Bangle.io');
+  });
 });
 
 describe('window controls overlay', () => {
