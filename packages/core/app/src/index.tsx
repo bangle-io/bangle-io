@@ -67,10 +67,17 @@ export function App({
 }
 
 function BrowserAppDocumentSetup() {
+  const { navigation } = useCoreServices();
+  const wsName = useAtomValue(navigation.$wsName);
+  const fileName = useAtomValue(navigation.$activeWsFilePath)?.fileName;
+
+  React.useEffect(() => {
+    syncAppDocumentTitle(document, { wsName, fileName });
+  }, [wsName, fileName]);
+
   React.useEffect(() => {
     const abortController = new AbortController();
 
-    syncAppDocumentTitle(document);
     initializePwaInstallPromptTracking(window);
     syncWindowControlsOverlayState({
       documentRef: document,

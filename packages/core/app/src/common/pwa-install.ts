@@ -99,12 +99,22 @@ function getWindowControlsOverlayControls(
   return 'none';
 }
 
-export function syncAppDocumentTitle(documentRef: Document | undefined) {
+/**
+ * Sets the browser/PWA title to the current location, most specific first,
+ * e.g. `note.md - my-workspace - Bangle.io`, so tabs and windows are
+ * distinguishable.
+ */
+export function syncAppDocumentTitle(
+  documentRef: Document | undefined,
+  location: { wsName?: string; fileName?: string } = {},
+) {
   if (!documentRef) {
     return;
   }
 
-  documentRef.title = APP_DOCUMENT_TITLE;
+  documentRef.title = [location.fileName, location.wsName, APP_DOCUMENT_TITLE]
+    .filter(Boolean)
+    .join(' - ');
 
   const documentWithSubtitle = documentRef as DocumentWithSubtitle;
   if ('subtitle' in documentWithSubtitle) {
