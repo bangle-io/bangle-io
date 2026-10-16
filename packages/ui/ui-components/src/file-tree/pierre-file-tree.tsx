@@ -46,7 +46,8 @@ const TREE_UNSAFE_CSS = `
     font-weight: 600;
   }
 
-  button[data-type='item'][data-item-type='file'] > [data-item-section='icon'] {
+  /* No tag: Pierre renders the inline-rename row as a div, not a button. */
+  [data-type='item'][data-item-type='file'] > [data-item-section='icon'] {
     display: none;
   }
 

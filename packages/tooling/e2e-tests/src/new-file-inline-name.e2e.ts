@@ -12,6 +12,12 @@ test('New File asks for the note name inline before creating it', async ({
   const nameInput = explorer.getByRole('textbox');
   await expect(nameInput).toBeFocused();
   await expect(nameInput).toHaveValue('untitled-1.md');
+  // File rows show names only, including the row being named.
+  const nameRowIcon = explorer
+    .locator("[data-type='item']", { has: page.getByRole('textbox') })
+    .locator("[data-item-section='icon']");
+  await expect(nameRowIcon).toHaveCount(1);
+  await expect(nameRowIcon).toBeHidden();
   expect(
     await readStoredMarkdown(page, workspaceName, 'untitled-1'),
   ).toBeUndefined();
