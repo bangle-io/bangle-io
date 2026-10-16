@@ -66,3 +66,23 @@ export function isVisibleWorkspaceFilePath(
 
   return true;
 }
+
+const UNTITLED_NOTE_PREFIX = 'untitled-';
+
+/**
+ * The default name (without extension) for a new note: `untitled-N`, one past
+ * the highest `untitled-N` among `noteNames`.
+ */
+export function getNextUntitledNoteName(noteNames: Iterable<string>): string {
+  let highest = 0;
+  for (const name of noteNames) {
+    if (!name.startsWith(UNTITLED_NOTE_PREFIX)) {
+      continue;
+    }
+    const num = Number.parseInt(name.slice(UNTITLED_NOTE_PREFIX.length), 10);
+    if (!Number.isNaN(num)) {
+      highest = Math.max(highest, num);
+    }
+  }
+  return `${UNTITLED_NOTE_PREFIX}${highest + 1}`;
+}

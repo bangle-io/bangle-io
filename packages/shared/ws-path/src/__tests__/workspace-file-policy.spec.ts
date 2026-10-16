@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  getNextUntitledNoteName,
   isIgnoredWorkspacePathSegment,
   isVisibleWorkspaceFilePath,
 } from '../workspace-file-policy';
@@ -48,5 +49,19 @@ describe('workspace file visibility policy', () => {
   it('matches ASCII ignore lists without locale-sensitive lowercasing', () => {
     expect(isIgnoredWorkspacePathSegment('DIST')).toBe(true);
     expect(isVisibleWorkspaceFilePath('garden:assets/THUMBS.DB')).toBe(false);
+  });
+});
+
+describe('getNextUntitledNoteName', () => {
+  it('numbers past the highest untitled note', () => {
+    expect(getNextUntitledNoteName([])).toBe('untitled-1');
+    expect(
+      getNextUntitledNoteName([
+        'untitled-2',
+        'notes',
+        'untitled-9',
+        'untitled-x',
+      ]),
+    ).toBe('untitled-10');
   });
 });
