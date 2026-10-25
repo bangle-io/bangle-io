@@ -45,7 +45,7 @@
     "test": "vitest run src --configLoader runner"
   },
   "dependencies": {
-    "electron": "43.0.0",
+    "electron": "43.8.1",
     "electron-updater": "^6.8.9",
     "vite": "^8.1.3"
   },
