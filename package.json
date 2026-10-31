@@ -22,7 +22,7 @@
     "@vitest/browser": "^4.1.9",
     "@vitest/coverage-v8": "4.1.9",
     "fake-indexeddb": "^6.2.5",
-    "happy-dom": "^20.10.6",
+    "happy-dom": "^21.0.4",
     "jsdom": "^29.1.1",
     "knip": "^6.24.0",
     "plop": "^4.0.5",
