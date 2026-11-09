@@ -54,14 +54,8 @@ export function useSidebarFileActions({
             id: 'new-note-here',
             label: t.app.components.appSidebar.newNoteHereActionTitle,
             Icon: PlusIcon,
-            onClick: ({ entry }) => {
-              commandDispatcher.dispatch(
-                'command::ws:quick-new-note',
-                {
-                  pathPrefix: entry.path,
-                },
-                'ui',
-              );
+            onClick: ({ entry, startNewNote }) => {
+              startNewNote(entry.path);
             },
           });
 

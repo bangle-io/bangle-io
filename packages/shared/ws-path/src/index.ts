@@ -31,6 +31,7 @@ export {
 } from './markdown-link-target';
 export type { EncodedRoute, RouteStrategy } from './route-strategy';
 export {
+  getNextUntitledNoteName,
   isIgnoredWorkspacePathSegment,
   isVisibleWorkspaceDirectoryName,
   isVisibleWorkspaceFilePath,

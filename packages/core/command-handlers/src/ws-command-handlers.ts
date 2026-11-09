@@ -7,7 +7,7 @@ import {
 import { EDITOR_SAVE_DRAIN_TIMEOUT_MS } from '@bangle.io/constants';
 import { waitForSaveQueueToDrain } from '@bangle.io/service-core';
 import { toast } from '@bangle.io/ui-components';
-import { WsDirPath, WsPath } from '@bangle.io/ws-path';
+import { getNextUntitledNoteName, WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { c, getCtx } from './helper';
 
 import { validateInputPath } from './utils';
@@ -372,17 +372,9 @@ export const wsCommandHandlers = [
     const { store, dispatch } = getCtx(key);
     const wsPaths = store.get(workspaceState.$noteWsPaths) || [];
 
-    const untitledNotes = wsPaths
-      .map((path) => path.fileNameWithoutExtension)
-      .filter((name) => name.startsWith('untitled-'))
-      .map((name) => {
-        const num = Number.parseInt(name.replace('untitled-', ''), 10);
-        return Number.isNaN(num) ? 0 : num;
-      });
-
-    const nextNum =
-      untitledNotes.length > 0 ? Math.max(...untitledNotes) + 1 : 1;
-    const newNoteName = `untitled-${nextNum}`;
+    const newNoteName = getNextUntitledNoteName(
+      wsPaths.map((path) => path.fileNameWithoutExtension),
+    );
 
     dispatch('command::ws:new-note-from-input', {
       inputPath: pathPrefix

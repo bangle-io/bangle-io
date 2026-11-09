@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  getNextUntitledNoteName,
   isIgnoredWorkspacePathSegment,
   isVisibleWorkspaceFilePath,
 } from '../workspace-file-policy';
@@ -69,5 +70,19 @@ describe('transient swap files', () => {
   it('still shows regular notes and assets', () => {
     expect(isVisibleWorkspaceFilePath('ws:note.md')).toBe(true);
     expect(isVisibleWorkspaceFilePath('ws:image.png')).toBe(true);
+  });
+});
+
+describe('getNextUntitledNoteName', () => {
+  it('numbers past the highest untitled note', () => {
+    expect(getNextUntitledNoteName([])).toBe('untitled-1');
+    expect(
+      getNextUntitledNoteName([
+        'untitled-2',
+        'notes',
+        'untitled-9',
+        'untitled-x',
+      ]),
+    ).toBe('untitled-10');
   });
 });
