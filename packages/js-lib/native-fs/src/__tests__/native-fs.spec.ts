@@ -133,7 +133,7 @@ describe('createFile and writeFile', () => {
     expect(await fs.readFileText('a.md')).toBe('old');
   });
 
-  it('requests an exclusive writable and falls back when unsupported', async () => {
+  it('requests an exclusive writable, falls back when unsupported, and remembers the answer', async () => {
     const { fs, root, seeded } = setup({ 'a.md': 'old' });
     await seeded;
     const handle = getEntry(root, 'a.md') as FakeFileHandle;
@@ -143,8 +143,68 @@ describe('createFile and writeFile', () => {
 
     handle.supportsWritableMode = false;
     await fs.writeFile('a.md', new Blob(['two']));
-    expect(handle.sawWritableModes).toEqual(['exclusive', undefined]);
+    expect(handle.sawWritableModes).toEqual([
+      'exclusive',
+      'exclusive', // rejected with TypeError...
+      undefined, // ...then the fallback
+    ]);
     expect(await fs.readFileText('a.md')).toBe('two');
+
+    // Support is an engine property: after one TypeError the failed
+    // exclusive attempt is not repeated on subsequent writes.
+    await fs.writeFile('a.md', new Blob(['three']));
+    expect(handle.sawWritableModes).toEqual([
+      'exclusive',
+      'exclusive',
+      undefined,
+      undefined,
+    ]);
+    expect(await fs.readFileText('a.md')).toBe('three');
+  });
+
+  it('does not latch the exclusive-unsupported memo on a non-TypeError failure', async () => {
+    const { fs, root, seeded } = setup({ 'a.md': 'old' });
+    await seeded;
+    const handle = getEntry(root, 'a.md') as FakeFileHandle;
+
+    // Hold an exclusive writable so the next exclusive attempt fails with a
+    // NoModificationAllowedError DOMException — a real lock contention, not
+    // the TypeError an engine without `mode` support throws.
+    const held = await handle.createWritable({ mode: 'exclusive' });
+
+    const error = await fs.writeFile('a.md', new Blob(['new'])).catch((e) => e);
+    expect(error).toBeInstanceOf(Error);
+    // A lock error must propagate, not silently retry in siloed mode (which
+    // would defeat the lock): no `undefined`-mode attempt follows.
+    expect(handle.sawWritableModes).toEqual(['exclusive', 'exclusive']);
+    expect(await fs.readFileText('a.md')).toBe('old');
+
+    // The memo stays unset: once the lock is released, the next write asks
+    // for an exclusive writable again and succeeds.
+    await held.abort();
+    await fs.writeFile('a.md', new Blob(['new']));
+    expect(handle.sawWritableModes).toEqual([
+      'exclusive',
+      'exclusive',
+      'exclusive',
+    ]);
+    expect(await fs.readFileText('a.md')).toBe('new');
+  });
+
+  it('resolves an existing file once per overwrite (autosave hot path)', async () => {
+    const { fs, root, seeded } = setup({ 'a.md': 'old' });
+    await seeded;
+    let fileHandleLookups = 0;
+    const realGetFileHandle = root.getFileHandle.bind(root);
+    root.getFileHandle = async (name, options) => {
+      fileHandleLookups += 1;
+      return realGetFileHandle(name, options);
+    };
+
+    await fs.writeFile('a.md', new Blob(['new']));
+    // The probe doubles as the resolution — no second directory walk.
+    expect(fileHandleLookups).toBe(1);
+    expect(await fs.readFileText('a.md')).toBe('new');
   });
 
   it('aborts the writable on write failure so partial content is not committed', async () => {
@@ -657,13 +717,13 @@ describe('cross-tab locking', () => {
 });
 
 describe('watch', () => {
-  it('returns false when FileSystemObserver is unavailable', async () => {
+  it('reports not armed when FileSystemObserver is unavailable', async () => {
     const { fs } = setup();
     const controller = new AbortController();
-    const supported = await fs.watch(() => undefined, {
+    const { armed } = await fs.watch(() => undefined, {
       signal: controller.signal,
     });
-    expect(supported).toBe(false);
+    expect(armed).toBe(false);
   });
 
   it('maps change records and disconnects on abort', async () => {
@@ -685,10 +745,10 @@ describe('watch', () => {
 
     const controller = new AbortController();
     const batches: unknown[] = [];
-    const supported = await fs.watch((changes) => batches.push(changes), {
+    const { armed } = await fs.watch((changes) => batches.push(changes), {
       signal: controller.signal,
     });
-    expect(supported).toBe(true);
+    expect(armed).toBe(true);
     expect(observe).toHaveBeenCalledWith(fs.rootHandle, { recursive: true });
 
     capturedCallback?.(
@@ -717,6 +777,29 @@ describe('watch', () => {
       ],
     ]);
 
+    controller.abort();
+    expect(disconnect).toHaveBeenCalledTimes(1);
+  });
+
+  it('stop disconnects once and survives a later abort', async () => {
+    const { fs } = setup();
+    const disconnect = vi.fn();
+    class FakeObserver {
+      observe = vi.fn(async () => undefined);
+      disconnect = disconnect;
+    }
+    vi.stubGlobal('FileSystemObserver', FakeObserver);
+
+    const controller = new AbortController();
+    const { armed, stop } = await fs.watch(() => undefined, {
+      signal: controller.signal,
+    });
+    expect(armed).toBe(true);
+
+    // Callers re-arming a watcher stop the old one; the signal firing later
+    // must not disconnect a second time.
+    stop();
+    stop();
     controller.abort();
     expect(disconnect).toHaveBeenCalledTimes(1);
   });

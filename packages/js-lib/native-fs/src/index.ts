@@ -12,6 +12,7 @@ export {
   type NativeFsChange,
   type NativeFsOpts,
   type NativeFsStat,
+  type NativeFsWatchHandle,
 } from './native-fs';
 export { joinPath, splitFilePath, splitPath } from './path';
 export {
@@ -20,7 +21,7 @@ export {
   queryPermission,
   requestPermission,
 } from './permissions';
-export { pickDirectory } from './picker';
+export { pickDirectory, revealDirectoryLocation } from './picker';
 export {
   isFileSystemDirectoryHandle,
   supportsFileSystemObserver,

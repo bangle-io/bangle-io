@@ -6,7 +6,7 @@ import { DATABASE_TABLE_NAME } from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import type { DatabaseQueryOptions } from '@bangle.io/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { IdbDatabaseService } from '../idb-database';
+import { DB_NAME, DB_VERSION, IdbDatabaseService } from '../idb-database';
 
 async function setup() {
   const { commonOpts } = createTestEnvironment();
@@ -96,5 +96,27 @@ describe('IdbDatabaseService', () => {
 
     await service.updateEntry(key, () => ({ value: 'v3' }), options);
     expect(callback).not.toHaveBeenCalled();
+  });
+
+  it('reports and releases a database invalidated by a newer schema', async () => {
+    const { commonOpts } = createTestEnvironment();
+    const context = {
+      ctx: commonOpts,
+      serviceContext: {
+        abortSignal: commonOpts.rootAbortSignal,
+      },
+    };
+    const onDatabaseInvalidated = vi.fn();
+    const service = new IdbDatabaseService(context, null, {
+      onDatabaseInvalidated,
+    });
+    await service.mount();
+
+    indexedDB.open(DB_NAME, DB_VERSION + 1);
+
+    await vi.waitFor(() => {
+      expect(onDatabaseInvalidated).toHaveBeenCalledTimes(1);
+    });
+    await expect(service.getEntry('any-key', options)).rejects.toThrow();
   });
 });

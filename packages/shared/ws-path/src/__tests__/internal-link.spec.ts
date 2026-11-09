@@ -41,13 +41,11 @@ describe('resolveInternalWsPath', () => {
     ).toBe('notes:other/name.markdown');
   });
 
-  it.each([
-    '../../escape.md',
-    '%2Fetc.md',
-    'bad%ZZ.md',
-    'other:name.md',
-  ])('rejects unsafe path %s', (target) =>
-    expect(resolveInternalWsPath(folderName, target)).toBeUndefined());
+  it.each(['../../escape.md', '%2Fetc.md', 'bad%ZZ.md', 'other:name.md'])(
+    'rejects unsafe path %s',
+    (target) =>
+      expect(resolveInternalWsPath(folderName, target)).toBeUndefined(),
+  );
 });
 
 describe('resolveWikiLinkTarget', () => {
@@ -66,6 +64,9 @@ describe('resolveWikiLinkTarget', () => {
     ).toBe('notes:folder/bugs in bangle.io.md');
     expect(resolveWikiLinkTarget(home, 'Mixed.md', index)?.wsPath).toBe(
       'notes:folder/Mixed.md',
+    );
+    expect(resolveWikiLinkTarget(home, ' home.md ', index)?.wsPath).toBe(
+      'notes:home.md',
     );
   });
 
@@ -180,6 +181,13 @@ describe('createMissingWikiLinkTarget', () => {
     expect(
       createMissingWikiLinkTarget(folderName, 'new note.markdown')?.wsPath,
     ).toBe('notes:new note.markdown');
+    expect(
+      createMissingWikiLinkTarget(folderName, ' new note.md ')?.wsPath,
+    ).toBe('notes:new note.md');
+    expect(
+      createMissingWikiLinkTarget(folderName, ' another note ')?.wsPath,
+    ).toBe('notes:another note.md');
+    expect(createMissingWikiLinkTarget(folderName, '   ')).toBeUndefined();
   });
 
   it('creates explicit targets at root-relative or current-relative paths', () => {

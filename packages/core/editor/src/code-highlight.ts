@@ -192,7 +192,7 @@ function createActionDecorations(doc: PMNode): DecorationSet {
           key: `code-language:${pos}:${rawLanguage}`,
           side: -1,
           ignoreSelection: true,
-          stopEvent: isCodeActionEvent,
+          stopEvent: isBlockActionEvent,
         },
       ),
     );
@@ -205,7 +205,7 @@ function createActionDecorations(doc: PMNode): DecorationSet {
           key: `code-copy:${pos}`,
           side: -1,
           ignoreSelection: true,
-          stopEvent: isCodeActionEvent,
+          stopEvent: isBlockActionEvent,
         },
       ),
     );
@@ -223,8 +223,6 @@ function codeBlockPosFromWidget(getWidgetPos: CodeBlockPosResolver) {
   };
 }
 
-const isCodeActionEvent = isBlockActionEvent;
-
 function createCopyButtonWidget(
   getCodeBlockPos: CodeBlockPosResolver,
   editorView: EditorView,
@@ -234,42 +232,27 @@ function createCopyButtonWidget(
   wrapper.className = 'prosemirror-code-copy-widget';
   markEditorChrome(wrapper);
 
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.className = 'prosemirror-code-copy-button';
-  button.setAttribute('aria-label', copyLabel);
-  button.setAttribute('title', copyLabel);
-  button.tabIndex = -1;
-  updateCopyButtonText(button, getCodeBlockPos());
-  button.addEventListener('mousedown', (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-  });
-  button.addEventListener('pointerdown', (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-  });
-  button.addEventListener('touchstart', (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-  });
-  button.addEventListener('click', async (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    const codeBlockPos = getCodeBlockPos();
-    if (codeBlockPos === undefined) {
-      return;
-    }
+  const button = createBlockActionButton({
+    className: 'prosemirror-code-copy-button',
+    text: copyLabel,
+    label: copyLabel,
+    onClick: async () => {
+      const codeBlockPos = getCodeBlockPos();
+      if (codeBlockPos === undefined) {
+        return;
+      }
 
-    const copied = await copyTextToClipboard(
-      getCodeBlockText(editorView, codeBlockPos),
-    );
-    if (!copied) {
-      return;
-    }
-    showCopyFeedback(button, codeBlockPos);
-    editorView.focus();
+      const copied = await copyTextToClipboard(
+        getCodeBlockText(editorView, codeBlockPos),
+      );
+      if (!copied) {
+        return;
+      }
+      showCopyFeedback(button, codeBlockPos);
+      editorView.focus();
+    },
   });
+  updateCopyButtonText(button, getCodeBlockPos());
 
   const deleteButton = createBlockActionButton({
     className: 'prosemirror-block-delete-button',
@@ -363,32 +346,14 @@ function createLanguageButton(
   editorView: EditorView,
 ): HTMLButtonElement {
   const editLanguageLabel = t.app.editor.codeBlock.editLanguage;
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.className = 'prosemirror-code-language-button';
-  button.textContent = (language || DEFAULT_CODE_BLOCK_LANGUAGE).toUpperCase();
-  button.setAttribute('aria-label', editLanguageLabel);
-  button.setAttribute('title', editLanguageLabel);
-  button.tabIndex = -1;
-  button.addEventListener('mousedown', (event) => {
-    event.preventDefault();
-    event.stopPropagation();
+  return createBlockActionButton({
+    className: 'prosemirror-code-language-button',
+    text: (language || DEFAULT_CODE_BLOCK_LANGUAGE).toUpperCase(),
+    label: editLanguageLabel,
+    onClick: () => {
+      showLanguageEditor(container, editorView, getCodeBlockPos, language);
+    },
   });
-  button.addEventListener('pointerdown', (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-  });
-  button.addEventListener('touchstart', (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-  });
-  button.addEventListener('click', (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    showLanguageEditor(container, editorView, getCodeBlockPos, language);
-  });
-
-  return button;
 }
 
 function showLanguageEditor(

@@ -1,4 +1,5 @@
 import type { DATABASE_TABLE_NAME } from '@bangle.io/constants';
+import type { JsonValue } from '@bangle.io/mini-js-utils';
 
 export type DatabaseQueryOptions = {
   tableName: (typeof DATABASE_TABLE_NAME)[keyof typeof DATABASE_TABLE_NAME];
@@ -17,7 +18,7 @@ export type SyncDatabaseChange = {
   type: 'create' | 'update' | 'delete';
   tableName: SyncDatabaseQueryOptions['tableName'];
   key: string;
-  value: unknown;
+  value: JsonValue | undefined;
 };
 
 /**
@@ -63,19 +64,22 @@ export interface BaseAppSyncDatabase {
   getEntry(
     key: string,
     options: SyncDatabaseQueryOptions,
-  ): { found: boolean; value: unknown };
+  ): { found: boolean; value: JsonValue | undefined };
 
   updateEntry(
     key: string,
-    updateCallback: (options: { value: unknown; found: boolean }) => null | {
-      value: unknown;
+    updateCallback: (options: {
+      value: JsonValue | undefined;
+      found: boolean;
+    }) => null | {
+      value: JsonValue;
     },
     options: SyncDatabaseQueryOptions,
-  ): { value: unknown; found: boolean };
+  ): { value: JsonValue | undefined; found: boolean };
 
   deleteEntry(key: string, options: SyncDatabaseQueryOptions): void;
 
-  getAllEntries(options: SyncDatabaseQueryOptions): unknown[];
+  getAllEntries(options: SyncDatabaseQueryOptions): JsonValue[];
 
   /**
    * Subscribe to changes in the database.

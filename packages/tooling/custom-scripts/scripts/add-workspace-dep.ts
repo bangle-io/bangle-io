@@ -1,6 +1,7 @@
 import {
   collectAllDependencies,
   isAValidBanglePackage,
+  isMainModule,
   makeLogger,
   setup,
 } from '../lib';
@@ -13,13 +14,15 @@ function main() {
   });
 }
 
-void main();
+if (isMainModule(import.meta.url)) {
+  void main();
+}
 
 /**
  * Adds a workspace dependency to package.json if it is not already there.
  * bun packages/tooling/custom-scripts/scripts/add-workspace-dep.ts
  */
-async function addWorkspaceDep({
+export async function addWorkspaceDep({
   packagesMap,
 }: Awaited<ReturnType<typeof setup>>): Promise<void> {
   const { default: pMap } = await import('p-map');

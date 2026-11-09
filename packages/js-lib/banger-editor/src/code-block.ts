@@ -689,7 +689,7 @@ function getCodeBlockInfo(language: unknown): string {
   return typeof language === 'string' ? language : '';
 }
 
-function createCodeFence(text: string, info: string): string {
+export function createCodeFence(text: string, info: string): string {
   const marker = info.includes('`') ? '~' : '`';
   const longestRun = longestFenceMarkerRun(text, marker);
   return marker.repeat(Math.max(3, longestRun + 1));

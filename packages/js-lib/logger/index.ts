@@ -1,4 +1,5 @@
 type LogLevelName = 'debug' | 'info' | 'warn' | 'error';
+type LoggerConsole = Pick<Console, LogLevelName>;
 
 const LogLevelPriority: { [key in LogLevelName]: number } = {
   debug: 10,
@@ -26,7 +27,7 @@ export class Logger {
   constructor(
     private prefix = '',
     private localLogLevel: LogLevelName | null = null,
-    private loggerConsole = console,
+    private loggerConsole: LoggerConsole = console,
   ) {}
 
   /**
@@ -49,25 +50,25 @@ export class Logger {
     return LogLevelPriority[level] >= LogLevelPriority[this.effectiveLogLevel];
   }
 
-  private log(level: LogLevelName, ...message: any[]): void {
+  private log(level: LogLevelName, ...message: unknown[]): void {
     if (this.shouldLog(level)) {
       this.loggerConsole[level](`[${this.prefix}]`, ...message);
     }
   }
 
-  public debug(...message: any[]): void {
+  public debug(...message: unknown[]): void {
     this.log('debug', ...message);
   }
 
-  public info(...message: any[]): void {
+  public info(...message: unknown[]): void {
     this.log('info', ...message);
   }
 
-  public warn(...message: any[]): void {
+  public warn(...message: unknown[]): void {
     this.log('warn', ...message);
   }
 
-  public error(...message: any[]): void {
+  public error(...message: unknown[]): void {
     this.log('error', ...message);
 
     // If the first message is an Error instance, send it to the error reporter

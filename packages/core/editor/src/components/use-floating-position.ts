@@ -59,7 +59,6 @@ export function useFloatingPosition({
     }
 
     const cleanup = autoUpdate(anchor, floating, async () => {
-      // drawRectangle(anchor); // for debugging
       const { x, y } = await computePosition(anchor, floating, {
         strategy: 'absolute',
         placement,
@@ -96,32 +95,4 @@ export function useFloatingPosition({
   ]);
 
   return floatingRef;
-}
-
-function _drawRectangle(el: VirtualElement) {
-  const rect = el.getBoundingClientRect();
-  const RECTANGLE_ID = 'floating-debug-rectangle';
-  let div = document.getElementById(RECTANGLE_ID);
-
-  if (!div) {
-    div = document.createElement('div');
-    div.id = RECTANGLE_ID;
-    document.body.appendChild(div);
-  }
-
-  Object.assign(div.style, {
-    position: 'absolute',
-    left: `${rect.left}px`,
-    top: `${rect.top}px`,
-    width: `${rect.width}px`,
-    height: `${rect.height}px`,
-    backgroundColor: 'rgba(0, 255, 0, 0.2)',
-    border: '2px solid rgba(0, 255, 0, 0.5)',
-    pointerEvents: 'none',
-    zIndex: '9999',
-  });
-
-  return () => {
-    div?.remove();
-  };
 }

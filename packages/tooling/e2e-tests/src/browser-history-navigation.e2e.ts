@@ -14,6 +14,7 @@ async function createNoteViaDialog(page: Page, noteName: string) {
   await page.getByRole('menuitem', { name: 'New Note' }).click();
   await page.getByLabel('Note name').fill(noteName);
   await page.getByRole('button', { name: 'Create' }).click();
+  await expect(page).toHaveURL(editorUrl(`${noteName}.md`));
   await expect(getEditorLocator(page, {})).toBeVisible();
 }
 
@@ -22,6 +23,16 @@ async function openNoteFromExplorer(page: Page, fileName: string) {
   await explorer.getByRole('treeitem', { name: fileName }).click();
   await expect(page).toHaveURL(editorUrl(fileName));
 }
+
+test('retired direct routes render the normal not-found page', async ({
+  page,
+}) => {
+  await page.goto('/#route=fatal-error&error=old');
+
+  await expect(
+    page.getByRole('heading', { name: 'Page Not Found' }),
+  ).toBeVisible();
+});
 
 // Regression: opening a note from the file explorer must create exactly one
 // browser-history entry. A stale implementation re-fired the tree's "open"

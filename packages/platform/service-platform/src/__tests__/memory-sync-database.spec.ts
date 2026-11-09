@@ -5,6 +5,7 @@ import type {
 } from '@bangle.io/types';
 import { describe, expect, it } from 'vitest';
 import { MemorySyncDatabaseService } from '../memory-sync-database';
+import { testSyncDatabaseJsonContract } from './sync-database-json-contract';
 
 async function setup() {
   const { commonOpts, mockLog, controller } = makeTestCommonOpts();
@@ -27,6 +28,8 @@ async function setup() {
 
 describe('MemorySyncDatabaseService', () => {
   const options: SyncDatabaseQueryOptions = { tableName: 'sync' };
+
+  testSyncDatabaseJsonContract(setup);
 
   it('should store and retrieve entries', async () => {
     const { service } = await setup();

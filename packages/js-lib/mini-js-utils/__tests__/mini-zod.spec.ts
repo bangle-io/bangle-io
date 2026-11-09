@@ -45,7 +45,7 @@ describe('Validators', () => {
     // @ts-expect-error
     const _result2: InferType<typeof numberArrayValidator> = [1, '4', 3];
 
-    expectType<string[], InferType<typeof stringArrayValidator>>(null as any);
+    expectType<string[], InferType<typeof stringArrayValidator>>([]);
   });
 
   test('ObjectValidator should validate objects with given shape', () => {
@@ -61,7 +61,7 @@ describe('Validators', () => {
     expectType<
       { name: string; age: number },
       InferType<typeof personValidator>
-    >(null as any);
+    >({ name: 'Alice', age: 30 });
 
     const nestedObjectValidator = T.Object({
       person: personValidator,

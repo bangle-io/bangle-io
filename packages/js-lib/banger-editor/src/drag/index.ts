@@ -1,9 +1,14 @@
 import { collection } from '../common';
 import type { EditorState, PMNode } from '../pm';
 import { createDragHandleEventsPlugin } from './drag-handle';
+import {
+  BLOCK_HANDLE_BUTTON_GAP,
+  DEFAULT_BLOCK_HANDLE_LABELS,
+} from './drag-handle-ui';
 import { createDragHandleViewPlugin } from './drag-handle-view';
 import type {
   GlobalDragHandlePluginOptions,
+  HandleOrientationArgs,
   NodeOffsetCalculationArgs,
 } from './helpers';
 
@@ -29,6 +34,16 @@ function defaultCalculateNodeOffset(args: NodeOffsetCalculationArgs) {
 function defaultIsDoc(_state: EditorState, node: PMNode) {
   return node.type.name === 'doc';
 }
+
+function defaultGetHandleOrientation({
+  rect,
+  gutterWidth,
+}: HandleOrientationArgs) {
+  const horizontalClusterWidth = rect.width * 2 + BLOCK_HANDLE_BUTTON_GAP;
+  return gutterWidth >= horizontalClusterWidth + 6
+    ? ('horizontal' as const)
+    : ('vertical' as const);
+}
 function defaultIsListItem(_state: EditorState, node: PMNode) {
   return node.type.name === 'list';
 }
@@ -42,7 +57,9 @@ export function setupDragNode(config: DragConfig) {
     scrollTreshold: 100,
     excludedTags: [],
     customNodes: [],
-    dragHandleSelector: '',
+    labels: DEFAULT_BLOCK_HANDLE_LABELS,
+    getHandleOrientation: defaultGetHandleOrientation,
+    onBlockAdd: () => {},
     isTableRow: defaultIsTableRow,
     isListItem: defaultIsListItem,
     isDoc: defaultIsDoc,

@@ -10,30 +10,14 @@ import { narrow } from './common';
 // stable, so the commands are written inline (rather than generated) to keep
 // per-command literal types flowing into `BangleAppCommand` without a cast.
 // The `command.spec` test asserts these stay in sync with SETTINGS_PAGE_DEFINITIONS.
-const [GENERAL_SETTINGS_PAGE, WORKSPACES_SETTINGS_PAGE] =
-  SETTINGS_PAGE_DEFINITIONS;
+const [
+  GENERAL_SETTINGS_PAGE,
+  WORKSPACES_SETTINGS_PAGE,
+  RECOVERY_SETTINGS_PAGE,
+] = SETTINGS_PAGE_DEFINITIONS;
 
 // pattern command::ui:{action}-{target}
 export const uiCommands = narrow([
-  // GROUP: TEST
-  {
-    id: 'command::ui:test-no-use',
-    disabled: true,
-    keywords: ['new', 'create', 'workspace'],
-    dependencies: {
-      services: ['workspaceOps'],
-      commands: [
-        'command::ui:delete-note-dialog',
-        'command::ui:create-note-dialog',
-        'command::ws:go-workspace',
-      ],
-    },
-    args: {
-      workspaceType: T.String,
-      wsName: T.String,
-    },
-  },
-
   // GROUP: BASIC UI OPERATIONS
   {
     id: 'command::ui:toggle-sidebar',
@@ -42,7 +26,7 @@ export const uiCommands = narrow([
     dependencies: {
       services: ['workbenchState'],
     },
-    omniSearch: true,
+    omniSearch: 'global',
     keybindings: ['ctrl', '\\'],
     args: null,
   },
@@ -53,7 +37,7 @@ export const uiCommands = narrow([
     dependencies: {
       services: ['workbenchState'],
     },
-    omniSearch: true,
+    omniSearch: 'global',
     args: null,
   },
   {
@@ -68,7 +52,7 @@ export const uiCommands = narrow([
   {
     id: 'command::ui:switch-theme',
     title: 'Switch Theme',
-    omniSearch: true,
+    omniSearch: 'global',
     keywords: ['theme', 'change', 'switch'],
     dependencies: {
       services: ['workbenchState'],
@@ -80,7 +64,7 @@ export const uiCommands = narrow([
   {
     id: 'command::ui:switch-editor-engine',
     title: 'Switch Editor Engine',
-    omniSearch: true,
+    omniSearch: 'global',
     keywords: [
       'editor',
       'engine',
@@ -99,7 +83,7 @@ export const uiCommands = narrow([
     id: SETTINGS_DEFAULT_COMMAND.id,
     title: SETTINGS_DEFAULT_COMMAND.title,
     keywords: [...SETTINGS_DEFAULT_COMMAND.keywords],
-    omniSearch: true,
+    omniSearch: 'global',
     dependencies: {
       services: ['navigation'],
     },
@@ -110,7 +94,7 @@ export const uiCommands = narrow([
     id: GENERAL_SETTINGS_PAGE.commandId,
     title: GENERAL_SETTINGS_PAGE.commandTitle,
     keywords: [...GENERAL_SETTINGS_PAGE.commandKeywords],
-    omniSearch: true,
+    omniSearch: 'global',
     dependencies: {
       services: ['navigation'],
     },
@@ -121,7 +105,18 @@ export const uiCommands = narrow([
     id: WORKSPACES_SETTINGS_PAGE.commandId,
     title: WORKSPACES_SETTINGS_PAGE.commandTitle,
     keywords: [...WORKSPACES_SETTINGS_PAGE.commandKeywords],
-    omniSearch: true,
+    omniSearch: 'global',
+    dependencies: {
+      services: ['navigation'],
+    },
+    autoFocusEditor: false,
+    args: null,
+  },
+  {
+    id: RECOVERY_SETTINGS_PAGE.commandId,
+    title: RECOVERY_SETTINGS_PAGE.commandTitle,
+    keywords: [...RECOVERY_SETTINGS_PAGE.commandKeywords],
+    omniSearch: 'global',
     dependencies: {
       services: ['navigation'],
     },
@@ -138,16 +133,37 @@ export const uiCommands = narrow([
       services: ['workbenchState'],
       commands: ['command::ws:new-note-from-input', 'command::ui:focus-editor'],
     },
-    omniSearch: true,
+    omniSearch: 'workspace',
     autoFocusEditor: false,
     args: {
       prefillName: T.Optional(T.String),
     },
   },
   {
+    id: 'command::ui:recover-note',
+    title: 'Recover Note',
+    omniSearch: 'note',
+    keywords: [
+      'recover',
+      'restore',
+      'snapshot',
+      'history',
+      'version',
+      'versions',
+      'backup',
+    ],
+    dependencies: {
+      services: ['navigation', 'workspaceState'],
+    },
+    autoFocusEditor: false,
+    args: {
+      wsPath: T.Optional(T.String),
+    },
+  },
+  {
     id: 'command::ui:delete-note-dialog',
     title: 'Delete Note',
-    omniSearch: true,
+    omniSearch: 'note',
     keywords: ['delete', 'note', 'remove'],
     dependencies: {
       services: ['workbenchState', 'workspaceState'],
@@ -192,7 +208,7 @@ export const uiCommands = narrow([
       services: ['workspaceState', 'workbenchState'],
       commands: ['command::ws:rename-ws-path', 'command::ui:focus-editor'],
     },
-    omniSearch: true,
+    omniSearch: 'note',
     autoFocusEditor: false,
     args: {
       wsPath: T.Optional(T.String),
@@ -235,7 +251,7 @@ export const uiCommands = narrow([
         'command::ui:create-directory-dialog',
       ],
     },
-    omniSearch: true,
+    omniSearch: 'note',
     autoFocusEditor: false,
     args: {
       wsPath: T.Optional(T.String),
@@ -250,7 +266,7 @@ export const uiCommands = narrow([
       services: ['workbenchState', 'workspaceState'],
       commands: ['command::ws:create-directory'],
     },
-    omniSearch: true,
+    omniSearch: 'workspace',
     autoFocusEditor: false,
     args: {
       pathPrefix: T.Optional(T.String),
@@ -289,7 +305,7 @@ export const uiCommands = narrow([
     title: 'New Workspace',
     keywords: ['new', 'create', 'workspace'],
     dependencies: { services: ['workbenchState'] },
-    omniSearch: true,
+    omniSearch: 'global',
     autoFocusEditor: false,
     args: null,
   },
@@ -300,7 +316,7 @@ export const uiCommands = narrow([
     dependencies: {
       services: ['workbenchState', 'workspaceState', 'navigation'],
     },
-    omniSearch: true,
+    omniSearch: 'global',
     args: null,
   },
   {
@@ -311,7 +327,7 @@ export const uiCommands = narrow([
       services: ['workbenchState', 'workspaceState'],
       commands: ['command::ws:delete-workspace'],
     },
-    omniSearch: true,
+    omniSearch: 'global',
     autoFocusEditor: false,
     args: null,
   },
@@ -343,11 +359,25 @@ export const uiCommands = narrow([
     omniSearch: false,
   },
   {
+    // Reveal-only: anchors the OS directory picker at the workspace's stored
+    // handle so the dialog shows its on-disk path. Unlike the reconnect
+    // command above it never rebinds the handle or mutates metadata.
+    id: 'command::ui:locate-native-fs-workspace',
+    dependencies: {
+      services: ['workspaceOps'],
+    },
+    autoFocusEditor: false,
+    args: {
+      wsName: T.String,
+    },
+    omniSearch: false,
+  },
+  {
     id: 'command::ui:toggle-all-files',
     title: 'View All Files',
     keywords: ['files', 'list', 'browse', 'all'],
     dependencies: { services: ['workbenchState'] },
-    omniSearch: true,
+    omniSearch: 'workspace',
     autoFocusEditor: false,
     args: {
       prefillInput: T.Optional(T.String),
@@ -361,7 +391,7 @@ export const uiCommands = narrow([
     dependencies: {
       services: ['workbenchState', 'workspaceState'],
     },
-    omniSearch: true,
+    omniSearch: 'note',
     args: null,
   },
 
@@ -372,7 +402,7 @@ export const uiCommands = narrow([
     dependencies: {
       services: ['workbenchState', 'workspaceState', 'editorEngine'],
     },
-    omniSearch: true,
+    omniSearch: 'note',
     args: null,
   },
 
@@ -383,7 +413,7 @@ export const uiCommands = narrow([
     dependencies: {
       services: ['editorEngine'],
     },
-    omniSearch: true,
+    omniSearch: 'note',
     autoFocusEditor: false,
     args: null,
   },
@@ -395,7 +425,7 @@ export const uiCommands = narrow([
     dependencies: {
       services: ['editorEngine'],
     },
-    omniSearch: true,
+    omniSearch: 'note',
     autoFocusEditor: false,
     args: null,
   },
@@ -407,7 +437,7 @@ export const uiCommands = narrow([
     dependencies: {
       services: ['editorEngine'],
     },
-    omniSearch: true,
+    omniSearch: 'note',
     args: null,
   },
 
@@ -418,7 +448,7 @@ export const uiCommands = narrow([
     dependencies: {
       services: ['editorEngine'],
     },
-    omniSearch: true,
+    omniSearch: 'note',
     args: null,
   },
 
@@ -429,7 +459,7 @@ export const uiCommands = narrow([
     dependencies: {
       services: ['editorEngine'],
     },
-    omniSearch: true,
+    omniSearch: 'note',
     args: null,
   },
 
@@ -440,7 +470,7 @@ export const uiCommands = narrow([
     dependencies: {
       services: ['editorEngine'],
     },
-    omniSearch: true,
+    omniSearch: 'note',
     args: null,
   },
 
@@ -451,7 +481,7 @@ export const uiCommands = narrow([
     dependencies: {
       services: ['editorEngine'],
     },
-    omniSearch: true,
+    omniSearch: 'note',
     args: null,
   },
 ]);

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bangle Project Operator"
+  short_description: "Keep the Bangle project aligned with the repo"
+  default_prompt: "Use $bangle-project-operator to triage this request against the Bangle repo and update the project board."

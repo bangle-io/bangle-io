@@ -10,6 +10,7 @@ import { ChevronDown, Table } from 'lucide-react';
 import React from 'react';
 import type { PmEditorService } from '../pm-editor-service';
 import { useEditorCoreServices } from '../use-editor-core-services';
+import { isTableActionAvailable, TABLE_ACTIONS } from './table-actions';
 import {
   FLOATING_INITIAL_STYLE,
   useFloatingPosition,
@@ -91,27 +92,19 @@ function TableMenuContent({
             return false;
           }}
         >
-          <DropdownMenu.DropdownMenuItem
-            disabled={!ext.table.command.addRowAbove(editorView.state)}
-            onClick={() => run(ext.table.command.addRowAbove)}
-          >
-            {t.app.editor.tableMenu.addRowAbove}
-          </DropdownMenu.DropdownMenuItem>
-          <DropdownMenu.DropdownMenuItem
-            onClick={() => run(ext.table.command.addRowBelow)}
-          >
-            {t.app.editor.tableMenu.addRowBelow}
-          </DropdownMenu.DropdownMenuItem>
-          <DropdownMenu.DropdownMenuItem
-            onClick={() => run(ext.table.command.addColumnLeft)}
-          >
-            {t.app.editor.tableMenu.addColumnLeft}
-          </DropdownMenu.DropdownMenuItem>
-          <DropdownMenu.DropdownMenuItem
-            onClick={() => run(ext.table.command.addColumnRight)}
-          >
-            {t.app.editor.tableMenu.addColumnRight}
-          </DropdownMenu.DropdownMenuItem>
+          {TABLE_ACTIONS.filter((action) => action.section === 'insert').map(
+            (action) => (
+              <DropdownMenu.DropdownMenuItem
+                key={action.id}
+                disabled={
+                  !isTableActionAvailable(action, ext, editorView.state)
+                }
+                onClick={() => run(action.command(ext))}
+              >
+                {action.title()}
+              </DropdownMenu.DropdownMenuItem>
+            ),
+          )}
           <DropdownMenu.DropdownMenuSeparator />
           <DropdownMenu.DropdownMenuLabel>
             {t.app.editor.tableMenu.alignColumn}
@@ -142,22 +135,24 @@ function TableMenuContent({
             </DropdownMenu.DropdownMenuRadioItem>
           </DropdownMenu.DropdownMenuRadioGroup>
           <DropdownMenu.DropdownMenuSeparator />
-          <DropdownMenu.DropdownMenuItem
-            onClick={() => run(ext.table.command.deleteRow)}
-          >
-            {t.app.editor.tableMenu.deleteRow}
-          </DropdownMenu.DropdownMenuItem>
-          <DropdownMenu.DropdownMenuItem
-            onClick={() => run(ext.table.command.deleteColumn)}
-          >
-            {t.app.editor.tableMenu.deleteColumn}
-          </DropdownMenu.DropdownMenuItem>
-          <DropdownMenu.DropdownMenuItem
-            className="text-destructive focus:text-destructive"
-            onClick={() => run(ext.table.command.deleteTable)}
-          >
-            {t.app.editor.tableMenu.deleteTable}
-          </DropdownMenu.DropdownMenuItem>
+          {TABLE_ACTIONS.filter((action) => action.section === 'delete').map(
+            (action) => (
+              <DropdownMenu.DropdownMenuItem
+                key={action.id}
+                className={
+                  action.destructive
+                    ? 'text-destructive focus:text-destructive'
+                    : undefined
+                }
+                disabled={
+                  !isTableActionAvailable(action, ext, editorView.state)
+                }
+                onClick={() => run(action.command(ext))}
+              >
+                {action.title()}
+              </DropdownMenu.DropdownMenuItem>
+            ),
+          )}
         </DropdownMenu.DropdownMenuContent>
       </DropdownMenu.DropdownMenu>
     </div>

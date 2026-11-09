@@ -1,4 +1,5 @@
 import { keybinding, PRIORITY } from '../common';
+import type { EditorView } from '../pm';
 import { store } from '../store';
 import {
   $suggestion,
@@ -18,10 +19,16 @@ export const suggestionKeymap = () =>
             ? store.get(state, $suggestions).get(view)
             : store.get(state, $suggestion);
           if (suggestion) {
-            return removeSuggestMark({
+            // removeSuggestMark keeps typed trigger text but deletes
+            // synthetic (programmatically opened) triggers entirely.
+            const handled = removeSuggestMark({
               markName: suggestion.markName,
               selection: state.selection,
             })(state, dispatch, view);
+            if (handled && view) {
+              resyncDOMCursor(view);
+            }
+            return handled;
           }
           return false;
         },
@@ -29,7 +36,9 @@ export const suggestionKeymap = () =>
       [
         'ArrowDown',
         (state, _dispatch, view) => {
-          if (!view) return false;
+          // During IME composition arrow keys navigate the composition
+          // candidates, not the menu.
+          if (!view || view.composing) return false;
           const suggestions = store.get(state, $suggestions);
           const suggestion = suggestions.get(view);
           if (suggestion) {
@@ -57,7 +66,7 @@ export const suggestionKeymap = () =>
       [
         'ArrowUp',
         (state, _dispatch, view) => {
-          if (!view) return false;
+          if (!view || view.composing) return false;
           const suggestions = store.get(state, $suggestions);
           const suggestion = suggestions.get(view);
           if (suggestion) {
@@ -78,7 +87,9 @@ export const suggestionKeymap = () =>
       [
         'Enter',
         (state, _dispatch, view) => {
-          if (!view) return false;
+          // Enter confirming an IME composition (Japanese, Chinese, Korean)
+          // must never select the highlighted menu item.
+          if (!view || view.composing) return false;
           const suggestion = store.get(state, $suggestions).get(view);
           if (suggestion) {
             const ui = store.get(state, $suggestionUi).get(view);
@@ -95,3 +106,19 @@ export const suggestionKeymap = () =>
     'suggestion',
     PRIORITY.suggestionKey,
   );
+
+/**
+ * Removing a suggestion mark unwraps the text node that owns the browser
+ * selection. Safari can leave its native caret associated with that old DOM
+ * shape even though ProseMirror's selection is unchanged. Its next native
+ * Option-Backspace then inserts a paragraph instead of deleting backward.
+ * Explicitly collapsing the DOM selection onto the current document node
+ * keeps the browser and editor selections aligned after Escape.
+ */
+function resyncDOMCursor(view: EditorView) {
+  if (!view.hasFocus() || !view.state.selection.empty) {
+    return;
+  }
+  const { node, offset } = view.domAtPos(view.state.selection.head);
+  view.dom.ownerDocument.getSelection()?.collapse(node, offset);
+}

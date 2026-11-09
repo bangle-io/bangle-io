@@ -1,17 +1,19 @@
 import { isAbortError } from '@bangle.io/mini-js-utils';
 import { expect, test, vi } from 'vitest';
-import { IndexedDBFileSystem } from '../indexed-db-fs';
+import {
+  FILE_ALREADY_EXISTS_ERROR,
+  FILE_NOT_FOUND_ERROR,
+  UPSTREAM_ERROR,
+} from '../error-codes';
+import {
+  IndexedDBFileSystem,
+  IndexedDBFileSystemError,
+} from '../indexed-db-fs';
 
-const toFile = (str: any) => {
+const toFile = (str: string) => {
   const file = new File([str], 'foo.txt', { type: 'text/plain' });
 
   return file;
-};
-
-const _serializeMap = (map: any) => {
-  return Promise.all(
-    [...map.entries()].map(async (r) => [r[0], await r[1]?.text()]),
-  );
 };
 
 test('writeFile', async () => {
@@ -31,9 +33,16 @@ test('createFile rejects existing files without overwriting', async () => {
   const fs = new IndexedDBFileSystem();
   await fs.createFile('hola/hi', toFile('original'));
 
-  await expect(
-    fs.createFile('hola/hi', toFile('replacement')),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
+  const error = await fs
+    .createFile('hola/hi', toFile('replacement'))
+    .catch((cause: unknown) => cause);
+
+  expect(error).toBeInstanceOf(IndexedDBFileSystemError);
+  expect(error).toMatchObject({
+    code: FILE_ALREADY_EXISTS_ERROR,
+    cause: expect.objectContaining({ name: 'ConstraintError' }),
+  });
+  expect(error).toMatchInlineSnapshot(
     `[IndexedDBFileSystemError: File "hola/hi" already exists]`,
   );
 
@@ -48,6 +57,29 @@ test('readFile', async () => {
 
   const data = await fs.readFileAsText('hola/hi');
   expect(data).toMatchInlineSnapshot(`"my-data"`);
+});
+
+test('readFile preserves the upstream IndexedDB failure as its cause', async () => {
+  const fs = new IndexedDBFileSystem();
+  await fs.writeFile('hola/hi', toFile('my-data'));
+
+  const cause = new Error('forced IndexedDB failure');
+  const transactionSpy = vi
+    .spyOn(IDBDatabase.prototype, 'transaction')
+    .mockImplementationOnce(() => {
+      throw cause;
+    });
+
+  try {
+    const error = await fs
+      .readFile('hola/hi')
+      .catch((readError: unknown) => readError);
+
+    expect(error).toBeInstanceOf(IndexedDBFileSystemError);
+    expect(error).toMatchObject({ code: UPSTREAM_ERROR, cause });
+  } finally {
+    transactionSpy.mockRestore();
+  }
 });
 
 test('stat', async () => {
@@ -109,107 +141,74 @@ test('rename throws error if new file already exists', async () => {
   );
 });
 
-test('rename keeps the source when the destination write fails', async () => {
+test('writeExistingFile rejects a missing file without creating it', async () => {
   const fs = new IndexedDBFileSystem();
-  await fs.writeFile('hola/hi', toFile('mydata'));
 
-  const writeSpy = vi
-    .spyOn(fs, 'writeFile')
-    .mockRejectedValueOnce(new Error('forced quota failure'));
-
-  await expect(fs.rename('hola/hi', 'ebola/two')).rejects.toThrow(
-    'forced quota failure',
+  await expect(
+    fs.writeExistingFile('write-existing/missing', toFile('new data')),
+  ).rejects.toThrow('File "write-existing/missing" not found');
+  await expect(fs.readFile('write-existing/missing')).rejects.toThrow(
+    'not found',
   );
-  writeSpy.mockRestore();
-
-  await expect((await fs.readFile('hola/hi')).text()).resolves.toBe('mydata');
-  await expect(fs.readFile('ebola/two')).rejects.toThrow('not found');
 });
 
-test('rename keeps the source when the destination copy is incomplete', async () => {
+test('rename serializes with an update without losing acknowledged content', async () => {
   const fs = new IndexedDBFileSystem();
-  await fs.writeFile('hola/hi', toFile('mydata'));
+  const oldPath = 'rename-update/old';
+  const newPath = 'rename-update/new';
+  await fs.createFile(oldPath, toFile('old data'));
 
-  const originalWriteFile = fs.writeFile.bind(fs);
-  const writeSpy = vi
-    .spyOn(fs, 'writeFile')
-    .mockImplementation(async (filePath) => {
-      // Simulate a partial write: the destination lands truncated.
-      await originalWriteFile(filePath, toFile('my'));
+  const [renameResult, updateResult] = await Promise.allSettled([
+    fs.rename(oldPath, newPath),
+    fs.writeExistingFile(oldPath, toFile('latest data')),
+  ]);
+
+  expect(renameResult.status).toBe('fulfilled');
+  if (updateResult.status === 'fulfilled') {
+    await expect((await fs.readFile(newPath)).text()).resolves.toBe(
+      'latest data',
+    );
+  } else {
+    expect(updateResult.reason).toMatchObject({ code: FILE_NOT_FOUND_ERROR });
+    await expect((await fs.readFile(newPath)).text()).resolves.toBe('old data');
+  }
+  await expect(fs.readFile(oldPath)).rejects.toThrow('not found');
+});
+
+test('rename serializes with destination creation without overwriting it', async () => {
+  const fs = new IndexedDBFileSystem();
+  const oldPath = 'rename-create/old';
+  const newPath = 'rename-create/new';
+  await fs.createFile(oldPath, toFile('source data'));
+
+  const [renameResult, createResult] = await Promise.allSettled([
+    fs.rename(oldPath, newPath),
+    fs.createFile(newPath, toFile('created data')),
+  ]);
+
+  expect(
+    [renameResult, createResult].filter(({ status }) => status === 'fulfilled'),
+  ).toHaveLength(1);
+  if (renameResult.status === 'fulfilled') {
+    expect(createResult).toMatchObject({
+      status: 'rejected',
+      reason: { code: FILE_ALREADY_EXISTS_ERROR },
     });
-
-  await expect(fs.rename('hola/hi', 'ebola/two')).rejects.toThrow(
-    'written incompletely',
-  );
-  writeSpy.mockRestore();
-
-  await expect((await fs.readFile('hola/hi')).text()).resolves.toBe('mydata');
-});
-
-test('rename keeps the source when the destination has same-length corrupt content', async () => {
-  const fs = new IndexedDBFileSystem();
-  await fs.writeFile('hola/hi', toFile('mydata'));
-
-  const originalWriteFile = fs.writeFile.bind(fs);
-  const writeSpy = vi
-    .spyOn(fs, 'writeFile')
-    .mockImplementation(async (filePath) => {
-      // Simulate a corrupt write: same byte length, different content.
-      await originalWriteFile(filePath, toFile('MYDATA'));
+    await expect((await fs.readFile(newPath)).text()).resolves.toBe(
+      'source data',
+    );
+    await expect(fs.readFile(oldPath)).rejects.toThrow('not found');
+  } else {
+    expect(renameResult.reason).toMatchObject({
+      code: FILE_ALREADY_EXISTS_ERROR,
     });
-
-  await expect(fs.rename('hola/hi', 'ebola/two')).rejects.toThrow(
-    'does not match the source content',
-  );
-  writeSpy.mockRestore();
-
-  await expect((await fs.readFile('hola/hi')).text()).resolves.toBe('mydata');
-});
-
-test('rename keeps the source when the destination cannot be read back', async () => {
-  const fs = new IndexedDBFileSystem();
-  await fs.writeFile('hola/hi', toFile('mydata'));
-
-  const originalReadFile = fs.readFile.bind(fs);
-  let destinationReads = 0;
-  const readSpy = vi
-    .spyOn(fs, 'readFile')
-    .mockImplementation(async (filePath) => {
-      if (filePath === 'ebola/two') {
-        destinationReads += 1;
-        // First read is the pre-rename existence check (must report absent);
-        // second read is the post-write verification (forced failure).
-        if (destinationReads > 1) {
-          throw new Error('forced verification read failure');
-        }
-      }
-      return originalReadFile(filePath);
-    });
-
-  await expect(fs.rename('hola/hi', 'ebola/two')).rejects.toThrow(
-    'could not read back',
-  );
-  readSpy.mockRestore();
-
-  await expect((await fs.readFile('hola/hi')).text()).resolves.toBe('mydata');
-});
-
-test('rename surfaces unlink failures while both copies exist', async () => {
-  const fs = new IndexedDBFileSystem();
-  await fs.writeFile('hola/hi', toFile('mydata'));
-
-  const unlinkSpy = vi
-    .spyOn(fs, 'unlink')
-    .mockRejectedValueOnce(new Error('forced unlink failure'));
-
-  await expect(fs.rename('hola/hi', 'ebola/two')).rejects.toThrow(
-    'forced unlink failure',
-  );
-  unlinkSpy.mockRestore();
-
-  // Duplicate copies are the recoverable outcome; no content may be lost.
-  await expect((await fs.readFile('hola/hi')).text()).resolves.toBe('mydata');
-  await expect((await fs.readFile('ebola/two')).text()).resolves.toBe('mydata');
+    await expect((await fs.readFile(newPath)).text()).resolves.toBe(
+      'created data',
+    );
+    await expect((await fs.readFile(oldPath)).text()).resolves.toBe(
+      'source data',
+    );
+  }
 });
 
 test('unlink', async () => {

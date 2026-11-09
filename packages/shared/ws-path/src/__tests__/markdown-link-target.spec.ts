@@ -122,14 +122,12 @@ describe('getInternalLinkHeading', () => {
     expect(getInternalLinkHeading(href)).toBe(expected);
   });
 
-  it.each([
-    'note.md',
-    'note.md#',
-    'note.md#bad%encoding',
-    '#line%0Abreak',
-  ])('rejects missing or malformed heading in %j', (href) => {
-    expect(getInternalLinkHeading(href)).toBeUndefined();
-  });
+  it.each(['note.md', 'note.md#', 'note.md#bad%encoding', '#line%0Abreak'])(
+    'rejects missing or malformed heading in %j',
+    (href) => {
+      expect(getInternalLinkHeading(href)).toBeUndefined();
+    },
+  );
 });
 
 describe('resolveInternalLink', () => {
@@ -204,9 +202,12 @@ describe('resolveInternalLink', () => {
       '../notes with spaces/linked note.md',
       'workspace:notes with spaces/linked note.md',
     ],
-  ])('resolves interoperable Markdown path %j from %j', (currentWsPath, href, expected) => {
-    expect(resolveInternalLink(currentWsPath, href)).toBe(expected);
-  });
+  ])(
+    'resolves interoperable Markdown path %j from %j',
+    (currentWsPath, href, expected) => {
+      expect(resolveInternalLink(currentWsPath, href)).toBe(expected);
+    },
+  );
 
   it.each([
     '../../outside.md',

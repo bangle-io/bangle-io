@@ -38,8 +38,9 @@ function displayText(attrs: WikiLinkAttrs): string {
   if (attrs.label !== null) {
     return attrs.label;
   }
-  const finalSegment = attrs.target.split('/').filter(Boolean).at(-1);
-  return (finalSegment ?? attrs.target).replace(/\.(?:md|markdown)$/i, '');
+  const target = attrs.target.trim();
+  const finalSegment = target.split('/').filter(Boolean).at(-1);
+  return (finalSegment ?? target).replace(/\.(?:md|markdown)$/i, '');
 }
 
 function attrsFromDomTarget(target: EventTarget | null): WikiLinkAttrs | null {

@@ -3,6 +3,7 @@ import {
   createBrowserWorkspaceAndNote,
   ctrlKey,
   EDITOR_SELECTOR,
+  expandFileTreeFolder,
   getEditorLocator,
   readStoredMarkdown,
   selectEditorText,
@@ -179,7 +180,7 @@ test('pastes workspace-backed image and PDF assets, reloads, and opens asset pag
   page,
 }, testInfo) => {
   const workspaceName = `asset-workflow-${testInfo.workerIndex}-${Date.now()}`;
-  const noteName = 'source';
+  const noteName = 'nested/source';
   await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
 
   const editor = getEditorLocator(page, {});
@@ -213,7 +214,14 @@ test('pastes workspace-backed image and PDF assets, reloads, and opens asset pag
     editor.getByRole('link', { name: 'Spec Sheet.PDF' }),
   ).toBeVisible();
 
-  await editor.getByRole('link', { name: 'Spec Sheet.PDF' }).click();
+  const assetLink = editor.getByRole('link', { name: 'Spec Sheet.PDF' });
+  const sourceUrl = page.url();
+  await assetLink.click();
+  await expect(page).toHaveURL(sourceUrl);
+  await expect(page.getByRole('textbox', { name: 'Link URL' })).toHaveValue(
+    /assets\/spec-sheet-.*\.pdf/,
+  );
+  await page.getByRole('button', { name: 'Open link' }).click();
   await expect(
     page.getByRole('heading', { name: /spec-sheet-.*\.pdf/i }),
   ).toBeVisible();
@@ -402,6 +410,7 @@ test('copies workspace paths and smart-links pasted or dropped existing assets',
   await page.reload({ waitUntil: 'networkidle' });
 
   const explorer = page.getByTestId('bangle-file-explorer');
+  await expandFileTreeFolder(page, /^assets$/);
   await expect(
     explorer.getByRole('treeitem', { name: /^assets$/ }),
   ).toBeVisible();
@@ -501,6 +510,7 @@ test('drags existing sidebar assets into the editor as smart Markdown links', as
   await page.reload({ waitUntil: 'networkidle' });
 
   const explorer = page.getByTestId('bangle-file-explorer');
+  await expandFileTreeFolder(page, /^assets$/);
   const editor = getEditorLocator(page, {});
   await expect(editor).toBeVisible();
   const editorRoute = page.url();
@@ -674,6 +684,105 @@ test('renders an image asset inline when the asset URL is opened directly', asyn
     'download',
     'photo.png',
   );
+});
+
+test('hands a generic asset to Android through the native app chooser', async ({
+  page,
+}, testInfo) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'canShare', {
+      configurable: true,
+      value: (data: ShareData) =>
+        data.files?.length === 1 && data.files[0]?.type === 'application/pdf',
+    });
+    Object.defineProperty(navigator, 'share', {
+      configurable: true,
+      value: async (data: ShareData) => {
+        const file = data.files?.[0];
+        if (!file) {
+          throw new Error('Expected one shared file');
+        }
+        (
+          window as typeof window & {
+            __sharedAsset?: {
+              bytes: number[];
+              name: string;
+              title: string | undefined;
+              type: string;
+            };
+          }
+        ).__sharedAsset = {
+          bytes: [...new Uint8Array(await file.arrayBuffer())],
+          name: file.name,
+          title: data.title,
+          type: file.type,
+        };
+      },
+    });
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+
+  const workspaceName = `asset-native-open-${testInfo.workerIndex}-${Date.now()}`;
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'nested/source',
+  });
+  await writeStoredFile(
+    page,
+    workspaceName,
+    'assets/portal-da-nota-fiscal.pdf',
+    [37, 80, 68, 70, 45, 49, 46, 52, 10],
+    'application/pdf',
+  );
+
+  await page.goto(
+    `/ws#route=asset&wsPath=${encodeURIComponent(
+      `${workspaceName}:assets/portal-da-nota-fiscal.pdf`,
+    )}`,
+  );
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const heading = page.getByRole('heading', {
+    name: 'portal-da-nota-fiscal.pdf',
+  });
+  const openExternallyButton = page.getByRole('button', {
+    name: 'Open in another app',
+  });
+  await expect
+    .poll(async () => {
+      const headingBox = await heading.boundingBox();
+      const buttonBox = await openExternallyButton.boundingBox();
+      if (!headingBox || !buttonBox) {
+        return false;
+      }
+      return buttonBox.y >= headingBox.y + headingBox.height;
+    })
+    .toBe(true);
+
+  await openExternallyButton.click();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (
+            window as typeof window & {
+              __sharedAsset?: {
+                bytes: number[];
+                name: string;
+                title: string | undefined;
+                type: string;
+              };
+            }
+          ).__sharedAsset,
+      ),
+    )
+    .toEqual({
+      bytes: [37, 80, 68, 70, 45, 49, 46, 52, 10],
+      name: 'portal-da-nota-fiscal.pdf',
+      title: 'portal-da-nota-fiscal.pdf',
+      type: 'application/pdf',
+    });
+  await expect(page.getByRole('link', { name: 'Download' })).toBeVisible();
 });
 
 test('renders a text asset inline when the asset URL is opened directly', async ({

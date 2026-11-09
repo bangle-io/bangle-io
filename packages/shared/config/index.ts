@@ -9,6 +9,11 @@ export const APP_ENV: string = config.build.appEnv;
 export const IS_PRODUCTION_APP_ENV = APP_ENV === 'production';
 export const RELEASE_VERSION: string = config.build.releaseVersion;
 export const RELEASE_ID: string = config.build.releaseId;
+// Stable identity and ordering metadata for detecting mixed app builds across
+// tabs. RELEASE_ID contains the full deployment SHA in production; the short
+// commit suffix keeps local/dev builds distinct as well.
+export const APP_BUILD_ID = `${RELEASE_ID}:${config.build.commitHash}`;
+export const APP_BUILD_TIME = config.build.buildTime;
 // a less intimidating thing that is shown in the UI
 // for production it is release version but for other env we show the whole thing
 // for better debugging

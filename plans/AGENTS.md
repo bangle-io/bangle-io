@@ -25,6 +25,10 @@ Add `002-*` only when a new plan cannot reasonably live inside an existing plan.
 Do not renumber existing plans after they are referenced by commits, issues, or
 pull requests.
 
+Never reuse a number, including after archiving — pick the next one above every
+plan in both `plans/` and `plans/archived/`. Reuse has already made `003`,
+`010`, `014`, and `015` ambiguous in commit history.
+
 ## Frontmatter
 
 Every plan must start with YAML frontmatter:

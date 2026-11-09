@@ -14,6 +14,7 @@ import type {
   FileStorageChangeEvent,
 } from '@bangle.io/types';
 import { toFSPathOrThrow, WsPath } from '@bangle.io/ws-path';
+import { assertSameWorkspaceRename } from './file-storage-utils';
 
 interface FileEntry {
   file: File;
@@ -26,8 +27,6 @@ export class FileStorageMemory
   implements BaseFileStorageProvider
 {
   public readonly workspaceType = WORKSPACE_STORAGE_TYPE.Memory;
-  public readonly displayName = 'Memory Storage';
-  public readonly description = 'Temporarily saves data in memory';
   public readonly maxFileSizeBytes = FILE_STORAGE_MAX_FILE_SIZE_BYTES.memory;
 
   private fileEntries = new Map<string, FileEntry>();
@@ -117,10 +116,6 @@ export class FileStorageMemory
     };
   }
 
-  isSupported() {
-    return true;
-  }
-
   async listAllFiles(
     wsName: string,
     abortSignal: AbortSignal,
@@ -149,6 +144,7 @@ export class FileStorageMemory
     { newWsPath }: { newWsPath: string },
   ): Promise<void> {
     await this.mountPromise;
+    assertSameWorkspaceRename(wsPath, newWsPath);
     const oldPath = toFSPathOrThrow(wsPath);
     const newPath = toFSPathOrThrow(newWsPath);
     const entry = this.fileEntries.get(oldPath);

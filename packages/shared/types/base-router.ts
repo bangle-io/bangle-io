@@ -3,13 +3,6 @@ import type { Emitter } from '@bangle.io/mini-js-utils';
 
 export type AppRouteInfo =
   | {
-      route: 'fatal-error';
-      metadata?: Record<string, string>;
-      payload: {
-        error: Error;
-      };
-    }
-  | {
       route: 'ws-home';
       metadata?: Record<string, string>;
       payload: {
@@ -28,20 +21,6 @@ export type AppRouteInfo =
       metadata?: Record<string, string>;
       payload: {
         wsPath: string;
-      };
-    }
-  | {
-      route: 'native-fs-auth-failed';
-      metadata?: Record<string, string>;
-      payload: {
-        wsName: string;
-      };
-    }
-  | {
-      route: 'native-fs-auth-req';
-      metadata?: Record<string, string>;
-      payload: {
-        wsName: string;
       };
     }
   | {
@@ -66,23 +45,18 @@ export type AppRouteInfo =
       };
     }
   | {
+      route: 'settings-recovery';
+      metadata?: Record<string, string>;
+      payload: {
+        returnTo?: string;
+        /** Prefills the snapshot search filter (e.g. a note's wsPath). */
+        search?: string;
+      };
+    }
+  | {
       route: 'welcome';
       metadata?: Record<string, string>;
       payload: Record<string, never>;
-    }
-  | {
-      route: 'workspace-not-found';
-      metadata?: Record<string, string>;
-      payload: {
-        wsName: string;
-      };
-    }
-  | {
-      route: 'ws-path-not-found';
-      metadata?: Record<string, string>;
-      payload: {
-        wsPath: string;
-      };
     };
 
 export type PageLifeCycleEvent = {

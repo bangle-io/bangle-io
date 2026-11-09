@@ -16,6 +16,7 @@ import {
   PlusIcon,
   Search,
   Settings2,
+  Sparkles,
 } from 'lucide-react';
 import React from 'react';
 
@@ -24,7 +25,11 @@ import React from 'react';
  * actions, and external links. Extracted from AppSidebar so the sidebar
  * component stays a thin composition layer.
  */
-export function SidebarFooterMenu() {
+export function SidebarFooterMenu({
+  canCreateFiles,
+}: {
+  canCreateFiles: boolean;
+}) {
   const { commandDispatcher, workbenchState } = useCoreServices();
   const setOpenOmniSearch = useSetAtom(workbenchState.$openOmniSearch);
 
@@ -34,15 +39,19 @@ export function SidebarFooterMenu() {
         {t.app.sidebar.newLabel}
       </DropdownMenu.DropdownMenuLabel>
       <DropdownMenu.DropdownMenuItem
-        onClick={() =>
+        disabled={!canCreateFiles}
+        onClick={() => {
+          if (!canCreateFiles) {
+            return;
+          }
           commandDispatcher.dispatch(
             'command::ui:create-note-dialog',
             {
               prefillName: undefined,
             },
             'ui',
-          )
-        }
+          );
+        }}
       >
         <PlusIcon className="mr-2 h-4 w-4" />
         <span>{t.app.common.newNote}</span>
@@ -97,6 +106,17 @@ export function SidebarFooterMenu() {
           className="mr-2 h-4 w-4 grayscale"
         />
         <span>{t.app.sidebar.homepage}</span>
+      </DropdownMenu.DropdownMenuItem>
+      <DropdownMenu.DropdownMenuItem
+        onClick={() =>
+          window.open(
+            'https://github.com/bangle-io/bangle-io/blob/main/CHANGELOG.md',
+            '_blank',
+          )
+        }
+      >
+        <Sparkles className="mr-2 h-4 w-4" />
+        <span>{t.app.sidebar.whatsNew}</span>
       </DropdownMenu.DropdownMenuItem>
       <DropdownMenu.DropdownMenuItem
         onClick={() =>

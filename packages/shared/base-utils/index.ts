@@ -1,6 +1,6 @@
-import { isPlainObject } from '@bangle.io/mini-js-utils';
+import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
+import { EXTERNAL_FILE_CHANGE_SENDER_TAG } from '@bangle.io/constants';
 import type { EventSenderMetadata } from '@bangle.io/types';
-import { BaseService } from './base-service';
 
 export type { ErrorReporter } from '@bangle.io/logger';
 export { Logger, setErrorReporter, setGlobalLogLevel } from '@bangle.io/logger';
@@ -11,6 +11,8 @@ export type {
   EventMessage,
   IfEquals,
   InferType,
+  JsonValue,
+  JsonValueSnapshotResult,
   Validator,
 } from '@bangle.io/mini-js-utils';
 export {
@@ -18,6 +20,7 @@ export {
   BaseError,
   browserInfo,
   createEmptyArray,
+  createJsonValueSnapshot,
   DuoWeakMap,
   deepMerge,
   difference,
@@ -29,6 +32,7 @@ export {
   isChrome,
   isDarwin,
   isFirefox,
+  isJsonValue,
   isMac,
   isMobile,
   isPlainObject,
@@ -50,23 +54,7 @@ export {
   atomWithCompare,
   createAsyncAtom,
 } from './jotai';
-export {
-  changeColorScheme,
-  checkWidescreen,
-  listenToResize,
-  setRootWidescreenClass,
-} from './misc';
-export {
-  acquireLockIfAvailable,
-  rafSchedule,
-  safeCancelAnimationFrame,
-  safeCancelIdleCallback,
-  safeIdleRefCallback,
-  safeNavigatorStorageGetDirectory,
-  safeRequestAnimationFrame,
-  safeRequestIdleCallback,
-  safeScrollIntoViewIfNeeded,
-} from './safe-js';
+export { checkWidescreen } from './misc';
 export type { AppErrorName } from './throw-app-error';
 export {
   createAppError,
@@ -81,28 +69,25 @@ export function getEventSenderMetadata({
 }: {
   tag?: undefined | string;
 }): EventSenderMetadata {
+  // The per-browsing-context id lets cross-tab event listeners tell their own
+  // tab's events apart from another tab's (e.g. note snapshot throttling).
   return {
-    id: 'bangle-app',
+    id: BROWSING_CONTEXT_ID,
     tag: tag,
   };
 }
-export function isWorkerGlobalScope() {
-  return (
-    typeof WorkerGlobalScope !== 'undefined' &&
-    // eslint-disable-next-line no-restricted-globals, no-undef
-    self instanceof WorkerGlobalScope
-  );
-}
-export function flatServices(services: Record<string, unknown>): BaseService[] {
-  return Object.values(services).flatMap((service): BaseService[] => {
-    if (service instanceof BaseService) {
-      return [service];
-    }
 
-    if (isPlainObject(service)) {
-      return flatServices(service as Record<string, unknown>);
-    }
-
-    return [];
-  });
+/**
+ * Where an app event came from, relative to the listening context. The two
+ * axes are independent: a storage watcher reports this tab's own writes
+ * (`watcher` without `foreignTab`), while another tab's watcher is both.
+ * `external` means "not caused by this context's own code path".
+ */
+export function classifyEventSender(
+  sender: EventSenderMetadata,
+  selfSenderId: string,
+): { external: boolean; foreignTab: boolean; watcher: boolean } {
+  const watcher = sender.tag === EXTERNAL_FILE_CHANGE_SENDER_TAG;
+  const foreignTab = sender.id !== selfSenderId;
+  return { external: watcher || foreignTab, foreignTab, watcher };
 }

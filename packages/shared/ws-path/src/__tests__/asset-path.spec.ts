@@ -44,27 +44,20 @@ describe('resolveLocalMarkdownAsset', () => {
 });
 
 describe('isEmbeddableImageExtension', () => {
-  it.each([
-    '.avif',
-    '.gif',
-    '.jpg',
-    '.jpeg',
-    '.png',
-    '.svg',
-    '.webp',
-  ])('accepts embeddable image extension %s', (extension) => {
-    expect(isEmbeddableImageExtension(extension)).toBe(true);
-    expect(isEmbeddableImageExtension(extension.toUpperCase())).toBe(true);
-  });
+  it.each(['.avif', '.gif', '.jpg', '.jpeg', '.png', '.svg', '.webp'])(
+    'accepts embeddable image extension %s',
+    (extension) => {
+      expect(isEmbeddableImageExtension(extension)).toBe(true);
+      expect(isEmbeddableImageExtension(extension.toUpperCase())).toBe(true);
+    },
+  );
 
-  it.each([
-    '',
-    '.pdf',
-    '.mov',
-    'png',
-  ])('rejects non-embeddable image extension %s', (extension) => {
-    expect(isEmbeddableImageExtension(extension)).toBe(false);
-  });
+  it.each(['', '.pdf', '.mov', 'png'])(
+    'rejects non-embeddable image extension %s',
+    (extension) => {
+      expect(isEmbeddableImageExtension(extension)).toBe(false);
+    },
+  );
 });
 
 describe('relativeMarkdownAssetHref', () => {
@@ -190,16 +183,12 @@ describe('assetPreviewKindForExtension', () => {
     expect(assetPreviewKindForExtension('Json')).toBe('text');
   });
 
-  it.each([
-    '',
-    '.zip',
-    '.exe',
-    '.bin',
-    '.unknown',
-    undefined,
-  ])('returns undefined for non-previewable extension %j', (extension) => {
-    expect(assetPreviewKindForExtension(extension)).toBeUndefined();
-  });
+  it.each(['', '.zip', '.exe', '.bin', '.unknown', undefined])(
+    'returns undefined for non-previewable extension %j',
+    (extension) => {
+      expect(assetPreviewKindForExtension(extension)).toBeUndefined();
+    },
+  );
 });
 
 describe('getAssetPreviewKind', () => {

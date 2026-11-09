@@ -11,6 +11,11 @@ related_prs: []
 related_issues: []
 ---
 
+> DONE Completed on 2026-06-14 in commit `b7a8ee9e`. The toolchain compatibility
+> shims were either removed or explicitly retained with upstream exit criteria;
+> verification passed with install, lint, audit, build, unit, E2E, and
+> Playwright CLI production-preview smoke checks.
+
 # Upgrade Wrap-up
 
 ## Summary

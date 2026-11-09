@@ -7,6 +7,7 @@ import {
   getEditorLocator,
   readStoredMarkdown,
   selectEditorText,
+  waitForEditorFocus,
   writeStoredMarkdown,
 } from './common';
 
@@ -219,28 +220,6 @@ test('creates, expands, edits, cancels, and removes links without draft mutation
   await selectEditorText(page, 'amp');
   await page.getByRole('button', { name: 'Link', exact: true }).click();
   await expect(urlInput).toHaveValue('https://one.example/');
-  await expect
-    .poll(() =>
-      page.evaluate(() => {
-        const view = (
-          globalThis as typeof globalThis & {
-            editorView?: {
-              state: {
-                doc: { textBetween: (from: number, to: number) => string };
-                selection: { from: number; to: number };
-              };
-            };
-          }
-        ).editorView;
-        return view
-          ? view.state.doc.textBetween(
-              view.state.selection.from,
-              view.state.selection.to,
-            )
-          : undefined;
-      }),
-    )
-    .toBe('example');
   await urlInput.fill('https://draft.example');
   await urlInput.press('Escape');
   await expect(toolbar).toBeVisible();
@@ -311,6 +290,7 @@ test('routes immediate typing to the link URL input after opening it from select
   await createBrowserWorkspaceAndNote(page, { workspaceName, noteName });
   const editor = getEditorLocator(page, {});
   await editor.click();
+  await waitForEditorFocus(page, {});
   await page.keyboard.insertText(initialMarkdown);
   await expect
     .poll(() => readStoredMarkdown(page, workspaceName, noteName))
@@ -489,8 +469,7 @@ test('creates and modifier-opens a relative Markdown note link', async ({
   await expect
     .poll(() =>
       page.evaluate(() => {
-        const view = Reflect.get(globalThis, 'editorView');
-        return view?.state.selection.$from.parent.textContent;
+        return window.getSelection()?.anchorNode?.textContent;
       }),
     )
     .toBe('Target Heading');

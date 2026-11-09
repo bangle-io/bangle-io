@@ -25,6 +25,8 @@ import { atom } from 'jotai';
 export class NavigationService extends BaseService {
   static deps = ['router'] as const;
 
+  private navigationVersion = 0;
+
   $routeInfo!: WritableAtom<AppRouteInfo, [AppRouteInfo], void>;
   $lifeCycle = atom<{
     current: PageLifeCycleState;
@@ -79,11 +81,7 @@ export class NavigationService extends BaseService {
     if (routeInfo.route === 'ws-home') {
       return routeInfo.payload.wsName;
     }
-    if (
-      routeInfo.route === 'editor' ||
-      routeInfo.route === 'asset' ||
-      routeInfo.route === 'ws-path-not-found'
-    ) {
+    if (routeInfo.route === 'editor' || routeInfo.route === 'asset') {
       return WsPath.safeParse(routeInfo.payload.wsPath).data?.wsName;
     }
 
@@ -102,12 +100,14 @@ export class NavigationService extends BaseService {
   }
 
   hookMount() {
-    this.syncRouteInfoAtom();
+    this.navigationVersion += 1;
+    this.store.set(this.$routeInfo, this.routerService.routeInfo);
     this.syncPageLifeCycleAtom();
     this.routerService.emitter.on(
       'event::router:route-update',
       () => {
-        this.syncRouteInfoAtom();
+        this.navigationVersion += 1;
+        this.store.set(this.$routeInfo, this.routerService.routeInfo);
       },
       this.abortSignal,
     );
@@ -142,15 +142,24 @@ export class NavigationService extends BaseService {
     return this.routerService.toUri(routeInfo);
   }
 
-  public fromUri(uri: string): AppRouteInfo {
-    return this.routerService.fromUri(uri);
-  }
-
   public go(
     to: AppRouteInfo,
     options?: { replace?: boolean; state?: RouterState },
   ) {
+    this.navigationVersion += 1;
     this.routerService.navigate(to, options);
+  }
+
+  /**
+   * Captures the current navigation intent so async work can avoid overwriting
+   * a navigation requested or observed before that work completes.
+   */
+  public captureNavigationVersion(): number {
+    return this.navigationVersion;
+  }
+
+  public isNavigationVersionCurrent(version: number): boolean {
+    return version === this.navigationVersion;
   }
 
   public goWsPath(wsPath: string) {
@@ -212,15 +221,33 @@ export class NavigationService extends BaseService {
   }
 
   public goSettingsPage(route: SettingsRoute) {
-    const currentRoute = this.store.get(this.$routeInfo);
-    const returnTo = isSettingsRouteInfo(currentRoute)
-      ? currentRoute.payload.returnTo
-      : this.toUri(currentRoute);
-
+    const returnTo = this.settingsReturnTo();
     this.go({
       route,
       payload: returnTo ? { returnTo } : {},
     });
+  }
+
+  /**
+   * Opens the settings Recover page, optionally prefilling the snapshot
+   * search filter (e.g. with a note's wsPath to show only its versions).
+   */
+  public goRecoverySettings(options: { search?: string } = {}) {
+    const returnTo = this.settingsReturnTo();
+    this.go({
+      route: 'settings-recovery',
+      payload: {
+        ...(returnTo ? { returnTo } : {}),
+        ...(options.search ? { search: options.search } : {}),
+      },
+    });
+  }
+
+  private settingsReturnTo(): string | undefined {
+    const currentRoute = this.store.get(this.$routeInfo);
+    return isSettingsRouteInfo(currentRoute)
+      ? currentRoute.payload.returnTo
+      : this.toUri(currentRoute);
   }
 
   private get routerService() {
@@ -231,9 +258,5 @@ export class NavigationService extends BaseService {
     const { current, previous } = this.routerService.lifeCycle;
     this.logger.debug(`page lifecycle changed from ${previous} to ${current}`);
     this.store.set(this.$lifeCycle, { current, previous });
-  }
-
-  private syncRouteInfoAtom() {
-    this.store.set(this.$routeInfo, this.routerService.routeInfo);
   }
 }

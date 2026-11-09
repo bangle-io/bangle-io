@@ -31,7 +31,6 @@
     "@bangle.io/base-ui": "workspace:*",
     "@bangle.io/base-utils": "workspace:*",
     "@bangle.io/constants": "workspace:*",
-    "@bangle.io/translations": "workspace:*",
     "@bangle.io/types": "workspace:*",
     "@bangle.io/ui-misc": "workspace:*",
     "@pierre/trees": "1.0.0-beta.5",
@@ -41,6 +40,7 @@
     "sonner": "^2.0.7"
   },
   "devDependencies": {
-    "@storybook/react": "^10.4.6"
+    "@storybook/react": "^10.5.7",
+    "@testing-library/react": "^16.3.2"
   }
 }

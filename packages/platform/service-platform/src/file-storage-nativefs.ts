@@ -2,7 +2,6 @@ import {
   assertIsDefined,
   BaseService,
   type BaseServiceContext,
-  isWorkerGlobalScope,
   throwAppError,
 } from '@bangle.io/base-utils';
 import {
@@ -15,19 +14,59 @@ import {
   isNativeFsError,
   NATIVE_FS_ERROR_CODE,
   NativeFs,
-  supportsNativeFs,
+  type NativeFsChange,
+  supportsFileSystemObserver,
 } from '@bangle.io/native-fs';
 import type {
   BaseFileStorageProvider,
   FileStorageChangeEvent,
+  FileStorageExternalChangeEvent,
 } from '@bangle.io/types';
-import { isVisibleWorkspaceDirectoryName, WsPath } from '@bangle.io/ws-path';
+import {
+  isIgnoredWorkspacePathSegment,
+  isVisibleWorkspaceDirectoryName,
+  isVisibleWorkspaceFilePath,
+  WsPath,
+} from '@bangle.io/ws-path';
+import { assertSameWorkspaceRename } from './file-storage-utils';
+import type { PageReturnInfo } from './router/page-return';
 
 type Config = {
   getRootDirHandle: (
     wsName: string,
   ) => Promise<{ handle: FileSystemDirectoryHandle }>;
   onChange: (event: FileStorageChangeEvent) => void;
+  /**
+   * External watcher events. Self-write records intentionally flow through;
+   * downstream content comparison coalesces echoes without hiding a real
+   * overwrite that happened just after a local save. Live observer delivery
+   * is content-only; structural changes reconcile on page return.
+   */
+  onExternalChange?: (event: FileStorageExternalChangeEvent) => void;
+  /**
+   * Page-return fallback for unsupported, failed, or potentially starved
+   * observers.
+   */
+  subscribePageReturn?: (
+    listener: (info: PageReturnInfo) => void,
+    signal: AbortSignal,
+  ) => void;
+};
+
+/** How the watcher should treat a path from an observer record. */
+type WatchPathClass =
+  | { kind: 'file'; wsPath: string }
+  | { kind: 'ignored' }
+  | { kind: 'coarse' };
+
+type FsCacheEntry = {
+  fs: NativeFs;
+  /** A watcher saw structure that must be reconciled on the next return. */
+  pendingStructuralRefresh: boolean;
+  /** `starting` deduplicates setup; only `armed` may skip revalidation. */
+  watchState: 'idle' | 'starting' | 'armed';
+  /** Disconnects the current observer, so re-arming cannot stack a second. */
+  stopWatch?: () => void;
 };
 
 export class FileStorageNativeFs
@@ -35,11 +74,10 @@ export class FileStorageNativeFs
   implements BaseFileStorageProvider
 {
   public readonly workspaceType = WORKSPACE_STORAGE_TYPE.NativeFS;
-  public readonly displayName = 'Native Storage';
-  public readonly description = 'Saves data on your hard drive';
   public readonly maxFileSizeBytes = FILE_STORAGE_MAX_FILE_SIZE_BYTES.nativeFs;
 
-  private fsCache: Map<string, NativeFs> = new Map();
+  private fsCache: Map<string, FsCacheEntry> = new Map();
+  private fsLoads: Map<string, Promise<FsCacheEntry>> = new Map();
 
   constructor(
     context: BaseServiceContext,
@@ -51,8 +89,15 @@ export class FileStorageNativeFs
 
   async hookMount(): Promise<void> {
     assertIsDefined(this.config.getRootDirHandle, 'getRootDirHandle');
+    if (this.config.onExternalChange) {
+      this.config.subscribePageReturn?.(
+        (info) => this.revalidateOnPageReturn(info),
+        this.abortSignal,
+      );
+    }
     this.addCleanup(() => {
       this.fsCache.clear();
+      this.fsLoads.clear();
     });
   }
 
@@ -92,23 +137,237 @@ export class FileStorageNativeFs
       );
     }
 
-    const cachedFs = this.fsCache.get(wsName);
-    if (cachedFs) {
-      return cachedFs;
+    const cached = this.fsCache.get(wsName);
+    if (cached) {
+      return cached.fs;
+    }
+    let load = this.fsLoads.get(wsName);
+    if (!load) {
+      load = this.config.getRootDirHandle(wsName).then(({ handle }) => {
+        // The lock scope is the workspace name (not the folder basename) so
+        // cross-tab write serialization stays keyed to the workspace identity.
+        const fs = new NativeFs({ rootHandle: handle, lockScope: wsName });
+        const entry: FsCacheEntry = {
+          fs,
+          pendingStructuralRefresh: false,
+          watchState: 'idle',
+        };
+        if (!this.abortSignal.aborted) {
+          // A load that outlived teardown must not refill the cache the
+          // cleanup just cleared.
+          this.fsCache.set(wsName, entry);
+          this.startWatching(wsName, entry);
+        }
+        return entry;
+      });
+      this.fsLoads.set(wsName, load);
+    }
+    try {
+      return (await load).fs;
+    } finally {
+      if (this.fsLoads.get(wsName) === load) {
+        this.fsLoads.delete(wsName);
+      }
+    }
+  }
+
+  // ---- external change watching ----
+
+  private startWatching(wsName: string, entry: FsCacheEntry): void {
+    if (
+      !this.config.onExternalChange ||
+      entry.watchState !== 'idle' ||
+      // Unsupported browsers use page-return revalidation.
+      !supportsFileSystemObserver()
+    ) {
+      return;
+    }
+    entry.watchState = 'starting';
+    // A re-arm (after an `errored` record) must disconnect the broken
+    // observer; otherwise every error cycle leaves another one attached,
+    // duplicating every change it still reports.
+    entry.stopWatch?.();
+    entry.stopWatch = undefined;
+
+    // Watching is best-effort; page return retries a failed start.
+    void entry.fs
+      .watch((changes) => this.handleWatchChanges(wsName, changes), {
+        signal: this.abortSignal,
+      })
+      .then(({ armed, stop }) => {
+        entry.watchState = armed ? 'armed' : 'idle';
+        entry.stopWatch = armed ? stop : undefined;
+      })
+      .catch((error) => {
+        entry.watchState = 'idle';
+        this.logger.warn(
+          `Unable to watch native FS workspace "${wsName}" for external changes`,
+          error,
+        );
+      });
+  }
+
+  /**
+   * Re-arms unhealthy watchers. Hidden returns always refresh because the
+   * browser may have starved observers; plain refocus refreshes when a watcher
+   * is unavailable or reported deferred structure. Refreshes are scoped to
+   * the workspaces this provider actually holds, so unrelated workspaces are
+   * left alone.
+   */
+  private revalidateOnPageReturn(info: PageReturnInfo): void {
+    const onExternalChange = this.config.onExternalChange;
+    if (!onExternalChange) {
+      return;
+    }
+    for (const [wsName, entry] of this.fsCache) {
+      const wasArmed = entry.watchState === 'armed';
+      this.startWatching(wsName, entry);
+      if (
+        info.returnedFromHidden ||
+        !wasArmed ||
+        entry.pendingStructuralRefresh
+      ) {
+        entry.pendingStructuralRefresh = false;
+        onExternalChange({ type: 'refresh', wsName });
+      }
+    }
+  }
+
+  /**
+   * Classifies a record as a targeted visible file, an ignored hidden path,
+   * or an ambiguous structural path.
+   */
+  private classifyWatchPath(
+    wsName: string,
+    relativePath: string,
+  ): WatchPathClass {
+    // Locations the workspace listing never shows cannot change it, whatever
+    // shape their paths have. This runs before the file-shape parse because
+    // extensionless paths (`.git/HEAD`, `node_modules/.bin/tsc`) do not parse
+    // as files — without it, ordinary `git` and `npm` activity inside a
+    // workspace would each force a full re-list.
+    if (relativePath.split('/').some(isIgnoredWorkspacePathSegment)) {
+      return { kind: 'ignored' };
+    }
+    const result = WsPath.safeFromParts(wsName, relativePath);
+    const wsPath = result.ok && result.data ? result.data.wsPath : undefined;
+    if (wsPath === undefined) {
+      return { kind: 'coarse' };
+    }
+    if (!WsPath.safeParseFile(wsPath).data) {
+      return { kind: 'coarse' };
+    }
+    if (!isVisibleWorkspaceFilePath(wsPath)) {
+      return { kind: 'ignored' };
+    }
+    return { kind: 'file', wsPath };
+  }
+
+  /**
+   * Content updates that are safe to apply live, deduplicated in arrival
+   * order. FileSystemObserver does not identify the writer or describe a
+   * multi-step operation as one transaction. Applying structural records
+   * immediately can therefore expose an app rename's copy/delete fallback as
+   * a real deletion in this or another tab. App mutations already publish
+   * typed logical events; external structural changes reconcile through the
+   * page-return/manual refresh path.
+   *
+   * `appeared` and invisible-to-visible moves may be atomic replacements of
+   * an existing file. Treating their destination as a content update keeps
+   * common editor/sync-tool saves live without adding or removing tree paths.
+   */
+  private translateWatchChanges(
+    wsName: string,
+    changes: NativeFsChange[],
+  ): {
+    contentUpdates: Array<
+      Extract<FileStorageExternalChangeEvent, { type: 'update' }>
+    >;
+    hasDeferredStructure: boolean;
+  } {
+    const wsPaths = new Set<string>();
+    let hasDeferredStructure = false;
+
+    for (const change of changes) {
+      if (change.type === 'errored' || change.type === 'unknown') {
+        hasDeferredStructure = true;
+        continue;
+      }
+      if (change.type === 'moved') {
+        const from = change.movedFromPath
+          ? this.classifyWatchPath(wsName, change.movedFromPath)
+          : ({ kind: 'coarse' } as const);
+        const to = this.classifyWatchPath(wsName, change.path);
+        if (from.kind !== 'ignored' || to.kind !== 'ignored') {
+          hasDeferredStructure = true;
+        }
+        if (
+          change.kind !== 'directory' &&
+          to.kind === 'file' &&
+          from.kind !== 'file'
+        ) {
+          wsPaths.add(to.wsPath);
+        }
+        continue;
+      }
+
+      const classified = this.classifyWatchPath(wsName, change.path);
+      if (
+        change.type === 'disappeared' ||
+        change.kind === 'directory' ||
+        change.type === 'appeared'
+      ) {
+        if (classified.kind !== 'ignored') {
+          hasDeferredStructure = true;
+        }
+      }
+      if (change.type === 'disappeared' || change.kind === 'directory') {
+        continue;
+      }
+      if (classified.kind !== 'file') {
+        if (change.type === 'modified' && classified.kind === 'coarse') {
+          hasDeferredStructure = true;
+        }
+        continue;
+      }
+      if (change.type === 'appeared' || change.type === 'modified') {
+        wsPaths.add(classified.wsPath);
+      }
     }
 
-    const { handle: rootDirHandle } =
-      await this.config.getRootDirHandle(wsName);
+    return {
+      contentUpdates: [...wsPaths].map((wsPath) => ({
+        type: 'update',
+        wsPath,
+      })),
+      hasDeferredStructure,
+    };
+  }
 
-    // The lock scope is the workspace name (not the folder basename) so
-    // cross-tab write serialization stays keyed to the workspace identity.
-    const fs = new NativeFs({
-      rootHandle: rootDirHandle,
-      lockScope: wsName,
-    });
+  private handleWatchChanges(wsName: string, changes: NativeFsChange[]): void {
+    const onExternalChange = this.config.onExternalChange;
+    if (!onExternalChange) {
+      return;
+    }
 
-    this.fsCache.set(wsName, fs);
-    return fs;
+    const entry = this.fsCache.get(wsName);
+    const { contentUpdates, hasDeferredStructure } = this.translateWatchChanges(
+      wsName,
+      changes,
+    );
+    if (entry && hasDeferredStructure) {
+      entry.pendingStructuralRefresh = true;
+    }
+
+    if (changes.some((change) => change.type === 'errored')) {
+      // Observation broke; re-arm on the next page return.
+      if (entry) {
+        entry.watchState = 'idle';
+      }
+    }
+    for (const event of contentUpdates) {
+      onExternalChange(event);
+    }
   }
 
   /**
@@ -194,14 +453,6 @@ export class FileStorageNativeFs
     }
   }
 
-  isSupported() {
-    // TODO we donot have a great way to detect if supported in worker
-    if (isWorkerGlobalScope()) {
-      return true;
-    }
-    return supportsNativeFs();
-  }
-
   async listAllFiles(
     wsName: string,
     abortSignal: AbortSignal,
@@ -259,6 +510,7 @@ export class FileStorageNativeFs
     },
   ): Promise<void> {
     await this.mountPromise;
+    assertSameWorkspaceRename(wsPath, newWsPath);
     const fs = await this.getFs({ wsPath });
     try {
       await fs.moveFile(

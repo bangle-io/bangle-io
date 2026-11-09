@@ -1,0 +1,72 @@
+name: E2E shard
+
+on:
+  workflow_call:
+    inputs:
+      shard:
+        description: One-based shard number out of two
+        required: true
+        type: number
+    outputs:
+      outcome:
+        description: Combined browser and component test outcome
+        value: ${{ jobs.e2e-shard.outputs.outcome }}
+
+permissions:
+  contents: read
+
+jobs:
+  e2e-shard:
+    name: E2E shard ${{ inputs.shard }}/2
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container: mcr.microsoft.com/playwright:v1.62.1-noble
+    outputs:
+      outcome: ${{ steps.outcome.outputs.value }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        run: |
+          corepack enable
+          corepack prepare --activate
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run browser E2E shard
+        id: browser-tests
+        continue-on-error: true
+        env:
+          BANGLE_E2E_SHARD: ${{ inputs.shard }}/2
+        run: pnpm --filter "@bangle.io/e2e-tests" run ci
+      - name: Run component tests
+        id: component-tests
+        if: ${{ inputs.shard == 1 && !cancelled() }}
+        continue-on-error: true
+        run: pnpm run e2e-ct-test
+      - name: Record shard outcome
+        id: outcome
+        if: ${{ !cancelled() }}
+        env:
+          BROWSER_OUTCOME: ${{ steps.browser-tests.outcome }}
+          COMPONENT_OUTCOME: ${{ steps.component-tests.outcome }}
+          RUNS_COMPONENT_TESTS: ${{ inputs.shard == 1 }}
+        run: |
+          outcome=success
+          if [ "$BROWSER_OUTCOME" != "success" ]; then
+            outcome=failure
+          fi
+          if [ "$RUNS_COMPONENT_TESTS" = "true" ] && [ "$COMPONENT_OUTCOME" != "success" ]; then
+            outcome=failure
+          fi
+          echo "value=$outcome" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-shard-${{ inputs.shard }}
+          path: |
+            packages/tooling/e2e-tests/playwright-report/
+            packages/tooling/e2e-tests/test-results/
+          retention-days: 30

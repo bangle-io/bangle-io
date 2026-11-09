@@ -87,6 +87,20 @@ describe('frontmatter Markdown', () => {
     expect(serialized).toBe(source);
   });
 
+  it('preserves malformed YAML content verbatim', () => {
+    // Frontmatter is raw text to the editor: YAML a parser would reject
+    // (unclosed flow sequence, dangling key, tab indentation) must survive
+    // the round trip byte-for-byte, never dropped or "repaired".
+    const source =
+      '---\ntitle: [unclosed\n: dangling\n\tkey = {broken\n---\n\nbody';
+    const { document, serialized } = expectEquivalentAfterSerialize(source);
+
+    expect(serialized).toBe(source);
+    expect(findNodes(document, 'frontmatter')[0]?.textContent).toBe(
+      'title: [unclosed\n: dangling\n\tkey = {broken',
+    );
+  });
+
   it('normalizes a YAML ... document-end close to a --- fence', () => {
     // `...` is accepted on parse for Jekyll/Pandoc compatibility; the next
     // save intentionally writes the canonical `---` close.

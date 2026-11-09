@@ -1,60 +1,162 @@
-import { LIST_KIND_ATTR, TASK_CHECKED_ATTR } from '@bangle.io/markdown-syntax';
-import type { MarkdownSerializerState } from 'prosemirror-markdown';
+import { collection, keybinding, PRIORITY, setPriority } from './common';
 import {
-  type CollectionType,
-  collection,
-  keybinding,
-  PRIORITY,
-  setPriority,
-} from './common';
-import type { Command, EditorState, PMNode } from './pm';
+  LIST_KIND,
+  type ListKindType,
+  type MarkdownListAttrs,
+  type MarkdownListKind,
+  readListAttrs,
+} from './list-attrs';
+import { listMarkdown } from './list-markdown';
+import type {
+  Command,
+  DOMOutputSpec,
+  EditorState,
+  NodeSpec,
+  NodeType,
+  PMNode,
+  PMSelection,
+  ResolvedPos,
+  Transaction,
+} from './pm';
 import {
   backspaceCommand,
   createDedentListCommand,
   createIndentListCommand,
-  createListPlugins,
+  createListEventPlugin,
+  createListRenderingPlugin,
   createListSpec,
   createMoveListCommand,
+  createSafariInputMethodWorkaroundPlugin,
   createToggleListCommand,
   createUnwrapListCommand,
+  DOMSerializer,
+  defaultAttributesGetter,
   deleteCommand,
   enterCommand,
+  findCheckboxInListItem,
+  findListsRange,
   inputRules,
   isListNode,
   isListType,
   type ListAttributes,
-  type ListKind,
+  ListDOMSerializer,
+  listToDOM,
+  Plugin,
+  type Schema,
+  unwrapListSlice,
   wrappingListInputRule,
 } from './pm';
-import { findParentNode, getNodeType, type PluginContext } from './pm-utils';
+import {
+  findParentNode,
+  findParentNodeClosestToPos,
+  getNodeType,
+  insertNodeAdjacentToNode,
+  type PluginContext,
+} from './pm-utils';
 
-const LIST_KIND = {
-  BULLET: 'bullet',
-  ORDERED: 'ordered',
-  TASK: 'task',
-  TOGGLE: 'toggle',
-} as const satisfies Record<string, ListKind>;
+export type { ListKindType } from './list-attrs';
 
-// Export the type for external use
-export type ListKindType = (typeof LIST_KIND)[keyof typeof LIST_KIND];
-
-/**
- * Helper to read typed list attributes from a node
- * Returns null if the node is not a list node
- */
-function readListAttrs(
-  node?: PMNode,
-): (ListAttributes & { kind: ListKindType }) | null {
-  if (!node || !isListNode(node)) {
-    return null;
-  }
-  const { kind, checked, collapsed, order } = node.attrs;
+function markdownListDomAttributes(
+  node: PMNode,
+): Record<string, string | undefined> {
+  const attrs = readListAttrs(node);
   return {
-    kind,
-    ...(kind === LIST_KIND.TASK ? { checked } : {}),
-    ...(kind === LIST_KIND.TOGGLE ? { collapsed } : {}),
-    ...(kind === LIST_KIND.ORDERED ? { order } : {}),
+    ...defaultAttributesGetter(node),
+    'data-list-container-kind': attrs?.listKind,
+    'data-list-tight': String(attrs?.tight ?? true),
   };
+}
+
+function markdownListToDOM(node: PMNode, nativeList = false): DOMOutputSpec {
+  const output = listToDOM({
+    node,
+    nativeList,
+    getAttributes: markdownListDomAttributes,
+    ...(nativeList ? { getMarkers: () => null } : {}),
+  });
+  if (!nativeList) return output;
+  if (!Array.isArray(output)) {
+    throw new Error('Unexpected flat-list clipboard DOM output');
+  }
+  const attrs = readListAttrs(node);
+  return [
+    attrs?.listKind === LIST_KIND.ORDERED ? 'ol' : 'ul',
+    ...output.slice(1),
+  ];
+}
+
+function createMarkdownListSpec(): NodeSpec {
+  const spec = createListSpec();
+  return {
+    ...spec,
+    attrs: {
+      ...spec.attrs,
+      listKind: { default: null },
+      tight: { default: true },
+    },
+    toDOM: markdownListToDOM,
+    parseDOM: spec.parseDOM?.map((rule) => ({
+      ...rule,
+      getAttrs: (dom) => {
+        const attrs = rule.getAttrs?.(dom);
+        if (attrs === false) return false;
+        if (typeof dom === 'string') return attrs ?? null;
+        const kind = dom.getAttribute('data-list-container-kind');
+        const itemKind = dom.getAttribute('data-list-kind');
+        const checkbox = findCheckboxInListItem(dom);
+        const isTask =
+          attrs?.kind === LIST_KIND.TASK ||
+          itemKind === LIST_KIND.TASK ||
+          dom.hasAttribute('data-task-list-item') ||
+          checkbox !== undefined;
+        return {
+          ...(attrs ?? {}),
+          ...(isTask
+            ? {
+                kind: LIST_KIND.TASK,
+                checked:
+                  checkbox?.hasAttribute('checked') ??
+                  (attrs?.checked === true ||
+                    dom.hasAttribute('data-list-checked') ||
+                    dom.hasAttribute('data-checked')),
+              }
+            : {}),
+          listKind:
+            kind === LIST_KIND.ORDERED || kind === LIST_KIND.BULLET
+              ? kind
+              : attrs?.kind === LIST_KIND.ORDERED ||
+                  dom.parentElement?.tagName === 'OL'
+                ? LIST_KIND.ORDERED
+                : LIST_KIND.BULLET,
+          tight: dom.getAttribute('data-list-tight') !== 'false',
+        };
+      },
+    })),
+  };
+}
+
+function createMarkdownListPlugins(
+  schema: Schema,
+  listNodeName: string,
+): Plugin[] {
+  const clipboardSerializer = new ListDOMSerializer(
+    {
+      ...DOMSerializer.nodesFromSchema(schema),
+      [listNodeName]: (node) => markdownListToDOM(node, true),
+    },
+    DOMSerializer.marksFromSchema(schema),
+  );
+  return [
+    createListEventPlugin(),
+    createListRenderingPlugin(),
+    new Plugin({
+      props: {
+        clipboardSerializer,
+        transformCopied: unwrapListSlice,
+      },
+    }),
+    createSafariInputMethodWorkaroundPlugin(),
+  ];
 }
 
 type ListConfig = {
@@ -64,6 +166,8 @@ type ListConfig = {
   keyDedentList?: string | false;
   keyDeleteList?: string | false;
   keyIndentList?: string | false;
+  keyInsertEmptyListAbove?: string | false;
+  keyInsertEmptyListBelow?: string | false;
   keyMoveListDown?: string | false;
   keyMoveListUp?: string | false;
   keyToggleBulletList?: string | false;
@@ -82,6 +186,10 @@ const DEFAULT_CONFIG: RequiredConfig = {
   keyDedentList: 'Shift-Tab',
   keyDeleteList: 'Delete',
   keyIndentList: 'Tab',
+  // Mirrors the paragraph/heading/blockquote/code-block bindings so the
+  // shortcut keeps working when the caret sits inside a list item.
+  keyInsertEmptyListAbove: 'Mod-Shift-Enter',
+  keyInsertEmptyListBelow: 'Mod-Enter',
   keyMoveListDown: 'Alt-ArrowDown',
   keyMoveListUp: 'Alt-ArrowUp',
   keyToggleBulletList: 'Mod-Shift-8',
@@ -89,7 +197,9 @@ const DEFAULT_CONFIG: RequiredConfig = {
   keyToggleTaskList: 'Mod-Shift-7',
   keyToggleToggleList: 'Mod-Shift-6',
   keyUnwrapList: 'Shift-Mod-0',
-  keyToggleTaskChecked: 'Mod-Enter',
+  // Moved off `Mod-Enter` so insert-below behaves the same in every list item
+  // instead of being swallowed by the checkbox toggle inside task lists.
+  keyToggleTaskChecked: 'Alt-Enter',
 };
 
 export function setupList(userConfig: Partial<ListConfig> = {}) {
@@ -100,13 +210,15 @@ export function setupList(userConfig: Partial<ListConfig> = {}) {
 
   const { listNodeName } = config;
   const nodeSpec = {
-    [listNodeName]: setPriority(createListSpec(), PRIORITY.listSpec),
+    [listNodeName]: setPriority(createMarkdownListSpec(), PRIORITY.listSpec),
   };
 
   const plugin = {
     inputRules: pluginInputRules(config),
     keybindings: pluginKeybindings(config),
-    listPlugins: ({ schema }: PluginContext) => createListPlugins({ schema }),
+    insertKeybindings: pluginInsertKeybindings(config),
+    listPlugins: ({ schema }: PluginContext) =>
+      createMarkdownListPlugins(schema, listNodeName),
   };
 
   return collection({
@@ -116,6 +228,8 @@ export function setupList(userConfig: Partial<ListConfig> = {}) {
     command: {
       dedentList: dedentList(config),
       indentList: indentList(config),
+      insertEmptyListAbove: insertEmptyListAbove(config),
+      insertEmptyListBelow: insertEmptyListBelow(config),
       moveListDown: moveListDown(config),
       moveListUp: moveListUp(config),
       toggleBulletList: toggleBulletList(config),
@@ -132,7 +246,7 @@ export function setupList(userConfig: Partial<ListConfig> = {}) {
       isTaskListActive: isTaskListActive(config),
       isToggleListActive: isToggleListActive(config),
     },
-    markdown: markdown(config),
+    markdown: listMarkdown(listNodeName),
   });
 }
 
@@ -143,15 +257,17 @@ function pluginInputRules(_config: RequiredConfig) {
       rules: [
         wrappingListInputRule(/^\s*([-*])\s$/, {
           kind: LIST_KIND.BULLET,
+          listKind: LIST_KIND.BULLET,
         }),
         wrappingListInputRule(/^(\d+)\.\s$/, {
           kind: LIST_KIND.ORDERED,
+          listKind: LIST_KIND.ORDERED,
           order: 1,
         }),
-        wrappingListInputRule(/^\s*(\[([ |x])\])\s$/, {
+        wrappingListInputRule(/^\s*\[([ xX])\]\s$/, ({ match }) => ({
           kind: LIST_KIND.TASK,
-          checked: false,
-        }),
+          checked: match[1]?.toLowerCase() === 'x',
+        })),
         // wrappingListInputRule(/^\s*(>)\s$/, {
         //   kind: LIST_KIND.TOGGLE,
         //   collapsed: true,
@@ -164,7 +280,7 @@ function pluginInputRules(_config: RequiredConfig) {
 function pluginKeybindings(config: RequiredConfig) {
   return keybinding(
     [
-      ['Enter', enterCommand],
+      ['Enter', enterListCommand(config)],
       [config.keyBackspaceList, backspaceCommand],
       ['Delete', deleteCommand],
       [config.keyDedentList, dedentList(config)],
@@ -182,28 +298,86 @@ function pluginKeybindings(config: RequiredConfig) {
   );
 }
 
+/**
+ * Registered below the default priority so a heading, blockquote or code block
+ * inside a list item keeps handling insert-above/below itself, rather than the
+ * winner depending on the order extensions happen to be registered in.
+ *
+ * A table binds only insert-below (`exitTableBelow`), so insert-above would
+ * otherwise reach this keymap; `insertEmptySiblingList` declines any caret that
+ * is not directly inside the item to keep the two directions consistent.
+ */
+function pluginInsertKeybindings(config: RequiredConfig) {
+  return keybinding(
+    [
+      [config.keyInsertEmptyListAbove, insertEmptyListAbove(config)],
+      [config.keyInsertEmptyListBelow, insertEmptyListBelow(config)],
+    ],
+    'list-insert',
+    PRIORITY.listInsertKeymap,
+  );
+}
+
 // COMMANDS
 function toggleBulletList(_config: RequiredConfig): Command {
-  return (state, dispatch) => {
-    return createToggleListCommand({ kind: LIST_KIND.BULLET })(state, dispatch);
-  };
+  return toggleList({
+    kind: LIST_KIND.BULLET,
+    listKind: LIST_KIND.BULLET,
+  });
 }
 
 function toggleOrderedList(_config: RequiredConfig): Command {
-  return (state, dispatch) => {
-    return createToggleListCommand({ kind: LIST_KIND.ORDERED, order: 1 })(
-      state,
-      dispatch,
-    );
-  };
+  return toggleList({
+    kind: LIST_KIND.ORDERED,
+    listKind: LIST_KIND.ORDERED,
+    order: 1,
+  });
 }
 
 function toggleTaskList(_config: RequiredConfig): Command {
-  return (state, dispatch) => {
-    return createToggleListCommand({ kind: LIST_KIND.TASK, checked: false })(
-      state,
-      dispatch,
-    );
+  return toggleList({
+    kind: LIST_KIND.TASK,
+    // `checked` is deliberately not set here. Forcing it to false cleared the
+    // boxes of items that were already checked whenever a task list was
+    // converted to another kind and back, so correcting a mis-click lost
+    // state that undo would have kept. New task items still start unchecked
+    // via the node spec's default.
+    //
+    // `listKind` is likewise left alone: an ordered container that becomes a
+    // task list stays ordered, which Markdown writes as `1. [ ] item`.
+  });
+}
+
+type ToggleListAttrs = ListAttributes & {
+  kind: ListKindType;
+  listKind?: MarkdownListKind;
+};
+
+function toggleList(targetAttrs: ToggleListAttrs): Command {
+  const command = createToggleListCommand(targetAttrs);
+  const targetListKind = targetAttrs.listKind;
+  return (state, dispatch, view) => {
+    // Only the marker is a whole-list property in Markdown, so only a marker
+    // change converts the run. Task-ness is per item, which is why the task
+    // toggle carries no `listKind` and always defers to the library command.
+    if (targetListKind) {
+      const positions = findSelectedListRun(state.selection);
+      // Keep converting while any item still lacks the target marker. Once the
+      // whole run matches, defer so a second press toggles the list off.
+      const needsMarker = positions.some(
+        (pos) => !hasMarker(state.doc.nodeAt(pos), targetListKind),
+      );
+      if (needsMarker) {
+        if (dispatch) {
+          const tr = state.tr;
+          setRunMarker(tr, positions, targetListKind);
+          dispatch(tr.scrollIntoView());
+        }
+        return true;
+      }
+    }
+
+    return command(state, dispatch, view);
   };
 }
 
@@ -217,12 +391,274 @@ function toggleToggleList(_config: RequiredConfig): Command {
   };
 }
 
-function indentList(_config: RequiredConfig): Command {
-  return createIndentListCommand();
+function enterListCommand(config: RequiredConfig): Command {
+  return (state, dispatch, view) => {
+    const type = getNodeType(state.schema, config.listNodeName);
+    const source = findParentNode(
+      (node: PMNode) => isListNode(node) && node.type === type,
+    )(state.selection);
+
+    return enterCommand(
+      state,
+      dispatch
+        ? (tr) => {
+            const target = findParentNode(
+              (node: PMNode) => isListNode(node) && node.type === type,
+            )(tr.selection);
+            const sourceAttrs = readListAttrs(source?.node);
+            if (sourceAttrs && source) {
+              const positions = new Set([
+                tr.mapping.map(source.pos, -1),
+                ...(target ? [target.pos] : []),
+              ]);
+              for (const pos of positions) {
+                const node = tr.doc.nodeAt(pos);
+                const attrs = readListAttrs(node ?? undefined);
+                if (!node || attrs?.kind !== sourceAttrs.kind) continue;
+                tr.setNodeMarkup(pos, null, {
+                  ...node.attrs,
+                  listKind: sourceAttrs.listKind,
+                  tight: sourceAttrs.tight,
+                });
+              }
+            }
+            dispatch(tr);
+          }
+        : undefined,
+      view,
+    );
+  };
 }
 
-function dedentList(_config: RequiredConfig): Command {
-  return createDedentListCommand();
+function indentList(_config: RequiredConfig): Command {
+  const command = createIndentListCommand();
+  return (state, dispatch, view) => {
+    if (!dispatch) return command(state, undefined, view);
+
+    const existingListNodes = new WeakSet<PMNode>();
+    state.doc.descendants((node) => {
+      if (isListNode(node)) existingListNodes.add(node);
+    });
+
+    return command(
+      state,
+      (tr) => {
+        normalizeNewIndentationPlaceholders(tr, existingListNodes);
+        dispatch(tr);
+      },
+      view,
+    );
+  };
+}
+
+function normalizeNewIndentationPlaceholders(
+  tr: Transaction,
+  existingListNodes: WeakSet<PMNode>,
+) {
+  // Flat-list copies item attrs onto list-only wrappers used for skipped
+  // indentation levels. Only normalize wrappers created by this transaction.
+  const positions: number[] = [];
+  tr.doc.descendants((node, pos) => {
+    const attrs = readListAttrs(node);
+    if (
+      attrs?.kind === LIST_KIND.TASK &&
+      !existingListNodes.has(node) &&
+      isListNode(node.firstChild)
+    ) {
+      positions.push(pos);
+    }
+  });
+
+  for (const pos of positions) {
+    const node = tr.doc.nodeAt(pos);
+    const attrs = readListAttrs(node ?? undefined);
+    if (!node || !attrs) continue;
+    tr.setNodeMarkup(pos, null, {
+      ...node.attrs,
+      checked: false,
+      kind: attrs.listKind,
+      order: attrs.listKind === LIST_KIND.ORDERED ? 1 : null,
+    });
+  }
+}
+
+function dedentList(config: RequiredConfig): Command {
+  const command = createDedentListCommand();
+  return (state, dispatch, view) => {
+    if (!dispatch) return command(state, undefined, view);
+
+    const type = getNodeType(state.schema, config.listNodeName);
+    const destinationAttrs = findDedentDestinationAttrs(state.selection, type);
+
+    return command(
+      state,
+      destinationAttrs
+        ? (tr) => {
+            // Adopt the destination run's marker only. Taking its `kind` too
+            // would rewrite a dedented task into a plain bullet and drop the
+            // checkbox from the Markdown.
+            const lifted = findListAtPos(tr.selection.$from, type);
+            if (lifted) {
+              setRunMarker(
+                tr,
+                [lifted.pos],
+                destinationAttrs.listKind,
+                destinationAttrs.tight,
+              );
+            }
+            dispatch(tr);
+          }
+        : dispatch,
+      view,
+    );
+  };
+}
+
+/**
+ * The sibling items a marker change has to cover: every item the selection
+ * touches, widened to the neighbours that already share the selection's marker,
+ * because Markdown writes those as a single list.
+ *
+ * The range itself comes from the list library, so a selection that starts and
+ * ends at different nesting depths, runs backwards, or selects a whole node all
+ * resolve to the same set of siblings.
+ */
+function findSelectedListRun(selection: PMSelection): number[] {
+  const range = findListsRange(selection.$from, selection.$to);
+  if (!range) return [];
+
+  const { parent, depth } = range;
+  const listKind = readListAttrs(parent.child(range.startIndex))?.listKind;
+  if (!listKind) return [];
+
+  let startIndex = range.startIndex;
+  let endIndex = range.endIndex;
+  while (startIndex > 0 && hasMarker(parent.child(startIndex - 1), listKind)) {
+    startIndex--;
+  }
+  while (
+    endIndex < parent.childCount &&
+    hasMarker(parent.child(endIndex), listKind)
+  ) {
+    endIndex++;
+  }
+
+  return Array.from({ length: endIndex - startIndex }, (_, offset) =>
+    range.$from.posAtIndex(startIndex + offset, depth),
+  );
+}
+
+function findDedentDestinationAttrs(
+  selection: PMSelection,
+  type: NodeType,
+): MarkdownListAttrs | null {
+  const source = findListAtPos(selection.$from, type);
+  const endSource = findListAtPos(selection.$to, type);
+  // A range can lift items to different destination depths, each with its own
+  // list kind. The single-item caret workflow has one unambiguous destination.
+  if (!source || source.node !== endSource?.node) return null;
+
+  // Only the item's own parent, never a further ancestor. Nesting always puts a
+  // list directly inside a list, so anything else in between (a blockquote, say)
+  // means the lift lands somewhere this marker does not describe.
+  const parent = selection.$from.node(source.depth - 1);
+  return parent.type === type ? readListAttrs(parent) : null;
+}
+
+function findListAtPos($pos: ResolvedPos, type: NodeType) {
+  return findParentNodeClosestToPos(
+    $pos,
+    (node: PMNode) => node.type === type && isListNode(node),
+  );
+}
+
+function hasMarker(
+  node: PMNode | null | undefined,
+  listKind: MarkdownListKind,
+): boolean {
+  return readListAttrs(node ?? undefined)?.listKind === listKind;
+}
+
+/**
+ * Rewrites only the container marker of the given items.
+ *
+ * `kind` has to follow the marker for plain bullet/ordered items. It is what
+ * `readListAttrs` derives the marker from, and what the list library renders
+ * from, so leaving it behind would show a bullet while serializing `1.`.
+ *
+ * A task or toggle item keeps its own `kind`, so its checkbox survives the
+ * change and Markdown writes the combination the user asked for, `1. [x] item`.
+ *
+ * `order` is always cleared: the run renumbers itself, Markdown always emits
+ * `1.`, and only a run's first item can carry an explicit start.
+ */
+function setRunMarker(
+  tr: Transaction,
+  positions: readonly number[],
+  listKind: MarkdownListKind,
+  tight?: boolean,
+) {
+  for (const pos of positions) {
+    const node = tr.doc.nodeAt(pos);
+    const attrs = readListAttrs(node ?? undefined);
+    if (!node || !attrs) continue;
+    const isPlainMarker =
+      attrs.kind === LIST_KIND.BULLET || attrs.kind === LIST_KIND.ORDERED;
+    tr.setNodeMarkup(pos, null, {
+      ...node.attrs,
+      listKind,
+      ...(isPlainMarker ? { kind: listKind } : {}),
+      order: null,
+      ...(tight === undefined ? {} : { tight }),
+    });
+  }
+}
+
+function insertEmptyListAbove(config: RequiredConfig): Command {
+  return insertEmptySiblingList(config, 'above');
+}
+
+function insertEmptyListBelow(config: RequiredConfig): Command {
+  return insertEmptySiblingList(config, 'below');
+}
+
+/**
+ * Adds an empty item next to the caret's item, matching the run's marker so the
+ * surrounding Markdown list is not split into two lists.
+ *
+ * Item-specific state is deliberately not inherited: a fresh item starts
+ * unchecked and expanded, and carries no explicit `order` so the run keeps
+ * numbering itself.
+ */
+function insertEmptySiblingList(
+  config: RequiredConfig,
+  side: 'above' | 'below',
+): Command {
+  return (state, dispatch, view) => {
+    const type = getNodeType(state.schema, config.listNodeName);
+    return insertNodeAdjacentToNode(type, side, (found, { selection }) => {
+      // Only claim the key for a block the item directly contains. A caret
+      // inside a table cell (or any other nested structure) belongs to that
+      // structure, so leaking through to here would yank the caret out of it
+      // into a brand new item. Declining keeps such a caret behaving the same
+      // as it does in a table outside a list.
+      if (selection.$from.depth !== found.depth + 1) return null;
+
+      const attrs = readListAttrs(found.node);
+      if (!attrs) return null;
+      return type.createAndFill({
+        ...found.node.attrs,
+        // Normalized rather than copied raw: an item that never carried an
+        // explicit `listKind` still hands the sibling the marker it renders
+        // with, the same repair `enterListCommand` applies.
+        listKind: attrs.listKind,
+        tight: attrs.tight,
+        checked: false,
+        collapsed: false,
+        order: null,
+      });
+    })(state, dispatch, view);
+  };
 }
 
 function moveListUp(_config: RequiredConfig): Command {
@@ -323,137 +759,4 @@ function isInsideList(config: RequiredConfig) {
     const type = getNodeType(state.schema, listNodeName);
     return isListType(type);
   };
-}
-
-/**
- * Provides ProseMirror's parse and serialize handling for bullet, ordered,
- * and task lists. Toggle list is ignored in the parse/serialize logic.
- */
-function markdown(config: RequiredConfig): CollectionType['markdown'] {
-  const { listNodeName } = config;
-  return {
-    nodes: {
-      [listNodeName]: {
-        // For serialization:
-        toMarkdown: (state, node, parent, index) => {
-          flatListToMarkdown(state, node, parent ?? null, index ?? 0, 0, true);
-        },
-        // For parsing:
-        parseMarkdown: {
-          bullet_list: {
-            ignore: true,
-          },
-          ordered_list: {
-            ignore: true,
-          },
-          list_item: {
-            block: listNodeName,
-            getAttrs: (tok) => {
-              const kind = tok.attrGet(LIST_KIND_ATTR);
-              if (kind === LIST_KIND.TASK) {
-                const isChecked = tok.attrGet(TASK_CHECKED_ATTR) === 'true';
-                return { kind: LIST_KIND.TASK, checked: isChecked };
-              }
-              if (kind === 'ordered') {
-                return { kind: LIST_KIND.ORDERED };
-              }
-
-              return { kind: LIST_KIND.BULLET };
-            },
-          },
-        },
-      },
-    },
-  };
-}
-
-function flatListToMarkdown(
-  state: MarkdownSerializerState,
-  node: PMNode,
-  parent: PMNode | null,
-  index: number,
-  level = 0,
-  tight = false,
-) {
-  // 1) Possibly add a blank line before this item, depending on tight & previous sibling
-  maybeAddBlankLine(state, node, parent, index, level, tight);
-
-  // 2) Determine bullet/marker
-  let marker = '-';
-  const attrs = readListAttrs(node);
-  if (attrs?.kind === LIST_KIND.ORDERED) {
-    marker = '1.';
-  } else if (attrs?.kind === LIST_KIND.TASK) {
-    marker = attrs.checked ? '- [x]' : '- [ ]';
-  }
-
-  // 3) Indentation grows with nesting level.
-  //    level=0 => ""; level=1 => "  "; etc.
-  const baseIndent = '  '.repeat(level);
-  const firstDelim = `${baseIndent + marker} `;
-  const continuationDelim = ' '.repeat(firstDelim.length);
-
-  // 4) Wrap each list(...) node as one item.
-  //    "wrapBlock" will prefix the first line with (firstDelim) and subsequent lines with (delim).
-  //    That ensures correct indentation for multiline content inside this item.
-  state.wrapBlock(
-    continuationDelim, // delim => subsequent lines
-    firstDelim, // firstDelim => first line
-    node,
-    () => {
-      // Render normal (non-list) children inside this item
-      node.forEach((child, childOffset) => {
-        if (child.type.name !== node.type.name) {
-          state.render(child, node, childOffset);
-        }
-      });
-    },
-  );
-
-  node.forEach((child, childOffset) => {
-    if (child.type.name === node.type.name) {
-      flatListToMarkdown(state, child, node, childOffset, level + 1, tight);
-    }
-  });
-}
-
-function maybeAddBlankLine(
-  state: MarkdownSerializerState,
-  node: PMNode,
-  parent: PMNode | null,
-  index: number,
-  level: number,
-  tight: boolean,
-) {
-  // 1) If we're "tight," skip extra blank lines altogether
-  if (tight) return;
-
-  // 2) If there's no parent or we're in nested lists (level > 0),
-  //    you may choose not to add blank lines. Adjust as you like.
-  if (!parent || level > 0) return;
-
-  // 3) If this is the first child in the parent, no previous sibling => no blank line
-  if (index === 0) return;
-
-  // 4) Retrieve the *previous* sibling
-  const prevSibling = parent.child(index - 1);
-
-  // 5) Decide if we want a blank line. For example:
-  //    Insert a blank line if it's a "separate block"
-  if (isSeparateBlock(prevSibling, node)) {
-    // "flushClose(1)" ensures exactly one blank line,
-    // "flushClose(2)" can produce 2 blank lines, etc.
-    // Adjust to match your styling preference.
-    (state as any).flushClose(1);
-  }
-}
-
-/**
- * Custom logic to decide if we consider two siblings "separate blocks."
- * You can expand or replace this with checks for paragraph, blockquote,
- * or any other condition where you want a blank line between siblings.
- */
-function isSeparateBlock(prevNode: PMNode, currentNode: PMNode): boolean {
-  // Example: if they're different node types, treat them as separate blocks
-  return prevNode.type.name !== currentNode.type.name;
 }

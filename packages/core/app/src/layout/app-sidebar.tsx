@@ -3,6 +3,7 @@ import { Sidebar, AppSidebar as UIAppSidebar } from '@bangle.io/ui-components';
 import { getNextUntitledNoteName, WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import React from 'react';
+import { usePwaInstall } from '../common/use-pwa-install';
 import { SidebarFooterMenu } from './sidebar-footer-menu';
 import { useSidebarFileActions } from './use-sidebar-file-actions';
 
@@ -25,7 +26,10 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   const [showNoteFilesOnly, setShowNoteFilesOnly] = useAtom(
     workbenchState.$showNoteFilesOnlyInSidebar,
   );
-  const activeWsName = useAtomValue(navigation.$wsName);
+  const fileTreeExpandedPathsByWorkspace = useAtomValue(
+    workbenchState.$fileTreeExpandedPathsByWorkspace,
+  );
+  const activeWsName = useAtomValue(workspaceState.$currentWsName);
   const activeWsPaths = useAtomValue(workspaceState.$activeWsPaths);
   const wsPaths = useAtomValue(workspaceState.$wsPaths);
   const noteWsPaths = useAtomValue(workspaceState.$noteWsPaths);
@@ -58,6 +62,63 @@ export const AppSidebar = ({ children }: SidebarProps) => {
     commandDispatcher,
   });
 
+  const pwaInstall = usePwaInstall();
+  const pwaAction = React.useMemo(() => {
+    if (pwaInstall.canInstall || pwaInstall.isInstalling) {
+      return {
+        kind: 'install' as const,
+        label: pwaInstall.isInstalling
+          ? t.app.sidebar.installingApp
+          : t.app.sidebar.installApp,
+        disabled: pwaInstall.isInstalling,
+        onClick: () => {
+          void pwaInstall.install();
+        },
+      };
+    }
+
+    if (pwaInstall.canOpenInApp) {
+      return {
+        kind: 'open-in-app' as const,
+        label: t.app.sidebar.openInApp,
+        onClick: () => {
+          pwaInstall.openInApp();
+        },
+      };
+    }
+
+    return undefined;
+  }, [pwaInstall]);
+
+  const handleFileTreeDirectoryExpansionChange = React.useCallback(
+    (path: string, expanded: boolean) => {
+      if (activeWsName) {
+        workbenchState.setFileTreeDirectoryExpanded(
+          activeWsName,
+          path,
+          expanded,
+        );
+      }
+    },
+    [activeWsName, workbenchState],
+  );
+  const handleRevealFileTreePaths = React.useCallback(
+    (paths: readonly string[]) => {
+      if (activeWsName) {
+        workbenchState.revealFileTreePaths(activeWsName, paths);
+      }
+    },
+    [activeWsName, workbenchState],
+  );
+  const handleCollapseFileTree = React.useCallback(
+    (keepExpandedPaths: readonly string[]) => {
+      if (activeWsName) {
+        workbenchState.collapseFileTree(activeWsName, keepExpandedPaths);
+      }
+    },
+    [activeWsName, workbenchState],
+  );
+
   return (
     <Sidebar.SidebarProvider
       open={sidebarOpen}
@@ -86,7 +147,11 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             payload: { wsName },
           })
         }
+        canCreateFiles={Boolean(activeWsName)}
         onCreateDirectory={(pathPrefix) => {
+          if (!activeWsName) {
+            return;
+          }
           commandDispatcher.dispatch(
             'command::ui:create-directory-dialog',
             {
@@ -96,6 +161,9 @@ export const AppSidebar = ({ children }: SidebarProps) => {
           );
         }}
         onCreateNote={(path) => {
+          if (!activeWsName) {
+            return;
+          }
           commandDispatcher.dispatch(
             'command::ws:new-note-from-input',
             { inputPath: path },
@@ -166,6 +234,17 @@ export const AppSidebar = ({ children }: SidebarProps) => {
             : undefined
         }
         activeFilePaths={activeWsPaths.map((wsPath) => wsPath.path)}
+        expandedFileTreePaths={
+          activeWsName &&
+          Object.hasOwn(fileTreeExpandedPathsByWorkspace, activeWsName)
+            ? fileTreeExpandedPathsByWorkspace[activeWsName]
+            : undefined
+        }
+        onFileTreeDirectoryExpansionChange={
+          handleFileTreeDirectoryExpansionChange
+        }
+        onRevealFileTreePaths={handleRevealFileTreePaths}
+        onCollapseFileTree={handleCollapseFileTree}
         commandButtonClassName="desktop-titlebar-no-drag"
         showNoteFilesOnly={showNoteFilesOnly}
         onShowNoteFilesOnlyChange={setShowNoteFilesOnly}
@@ -175,8 +254,11 @@ export const AppSidebar = ({ children }: SidebarProps) => {
         sidebarHeaderClassName="desktop-sidebar-titlebar-header desktop-titlebar-drag"
         workspaceSwitcherWrapperClassName="desktop-titlebar-no-drag"
         getActionsForEntry={getActionsForEntry}
+        pwaAction={pwaAction}
         footerTitle={t.app.sidebar.footerTitle}
-        footerChildren={<SidebarFooterMenu />}
+        footerChildren={
+          <SidebarFooterMenu canCreateFiles={Boolean(activeWsName)} />
+        }
       />
       <Sidebar.SidebarInset>{children}</Sidebar.SidebarInset>
     </Sidebar.SidebarProvider>

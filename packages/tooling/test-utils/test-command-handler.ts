@@ -1,9 +1,5 @@
 import { commandHandlers as defaultCommandHandlers } from '@bangle.io/command-handlers';
-import {
-  type BangleAppCommand,
-  type EnabledBangleAppCommand,
-  getEnabledCommands,
-} from '@bangle.io/commands';
+import { type BangleAppCommand, bangleAppCommands } from '@bangle.io/commands';
 import type { CommandExposedServices } from '@bangle.io/context';
 import type {
   CommandDispatchService,
@@ -13,7 +9,7 @@ import type { CommandArgs, RootEvents } from '@bangle.io/types';
 import { createTestEnvironment } from './test-service-setup';
 
 type TestCommandHandlerArgs = {
-  commands?: EnabledBangleAppCommand[];
+  commands?: BangleAppCommand[];
   commandHandlers?: CommandHandlerConfig[];
   target: CommandHandlerConfig;
   testEnvArgs?: Parameters<typeof createTestEnvironment>[0];
@@ -35,7 +31,7 @@ export type TestCommandHandlerReturnType = {
 };
 
 export function testCommandHandler({
-  commands = getEnabledCommands(),
+  commands = bangleAppCommands,
   commandHandlers = defaultCommandHandlers,
   target,
   testEnvArgs = {},

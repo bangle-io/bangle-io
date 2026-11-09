@@ -32,6 +32,13 @@ Use this skill to convert short Bangle follow-ups into the next concrete action.
 
 - Re-read the cited code and tests before editing.
 - Implement only fixes that match the user's scope and improve the branch.
+- Prefer changes that reduce total uncertainty and complexity. Type and lint
+  cleanup has strong ROI when it clarifies a real boundary, improves useful
+  caller inference, or makes an invalid state unrepresentable. Reconsider it
+  when satisfying the rule adds conditional type machinery, assertions, or
+  downstream churn without a concrete new guarantee. Type-level wildcards and
+  runtime boundary leaks can look similar in a scan but have different risk;
+  judge the resulting API and implementation, not the warning count alone.
 - After edits, run focused checks first, then the required `AGENTS.md` gates for the changed surface.
 
 ### UI, UX, or Playwright follow-up
@@ -49,7 +56,7 @@ Use this skill to convert short Bangle follow-ups into the next concrete action.
 ### Planning or project task
 
 - For durable plans under `plans/`, read `plans/AGENTS.md` first.
-- For "add a task", "track this", or Bangle project board requests, use `bangle-project-task`.
+- For adding, updating, triaging, scheduling, or reconciling Bangle project items, use `bangle-project-operator`.
 - When a plan is fully done, move it to `plans/archived/`, set `status: completed`, set `archived: true`, set `archived_on: YYYY-MM-DD` in the YAML frontmatter, update `updated`, and include the DONE note required by `plans/AGENTS.md`.
 
 ## Close Out

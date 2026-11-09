@@ -16,7 +16,6 @@ import {
 import { T } from '@bangle.io/mini-js-utils';
 import type {
   AssetLocationPreference,
-  BaseDatabaseService,
   BaseSyncDatabaseService,
   ScopedEmitter,
 } from '@bangle.io/types';
@@ -27,12 +26,44 @@ import type {
 } from '@bangle.io/ui-components';
 import { atom, type PrimitiveAtom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
+import {
+  type FileTreeExpandedPathsByWorkspace,
+  type FileTreeExpansionAction,
+  reduceFileTreeExpansion,
+} from './file-tree-expansion-state';
 
 type Route = 'omni-home' | 'omni-command' | 'omni-filtered';
 
 const AssetLocationPreferenceValidator = {
   validate: isAssetLocationPreference,
   typeName: 'asset-location-preference',
+};
+
+/**
+ * Column visibility overrides for the workspace notes table, keyed by column
+ * id. Columns absent from the record use the table's own defaults.
+ */
+export type NotesTableColumnVisibility = Record<string, boolean>;
+
+const NotesTableColumnVisibilityValidator = {
+  validate: (value: unknown): value is NotesTableColumnVisibility =>
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    Object.values(value).every((visible) => typeof visible === 'boolean'),
+  typeName: 'notes-table-column-visibility',
+};
+
+const FileTreeExpandedPathsByWorkspaceValidator = {
+  validate: (value: unknown): value is FileTreeExpandedPathsByWorkspace =>
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    Object.values(value).every(
+      (paths) =>
+        Array.isArray(paths) && paths.every((path) => typeof path === 'string'),
+    ),
+  typeName: 'file-tree-expanded-paths-by-workspace',
 };
 
 function determineOmniSearchRoute(input: string, currentRoute: Route): Route {
@@ -68,20 +99,34 @@ function determineOmniSearchRoute(input: string, currentRoute: Route): Route {
  * Manages UI state such as theme preferences, dialogs, and omni-search state
  */
 export class WorkbenchStateService extends BaseService {
-  static deps = ['database', 'syncDatabase'] as const;
+  static deps = ['syncDatabase'] as const;
 
   private $_wideEditor: PrimitiveAtom<boolean> | undefined;
+  private $_usageAnalyticsEnabled: PrimitiveAtom<boolean> | undefined;
   private $_sidebarOpen: PrimitiveAtom<boolean> | undefined;
   private $_sidebarWidth: PrimitiveAtom<number> | undefined;
   private $_linkedMentionsCollapsed: PrimitiveAtom<boolean> | undefined;
   private $_showNoteFilesOnlyInSidebar: PrimitiveAtom<boolean> | undefined;
+  private $_pwaOpenInAppPromptSeen: PrimitiveAtom<boolean> | undefined;
+  private $_fileTreeExpandedPathsByWorkspace:
+    | PrimitiveAtom<FileTreeExpandedPathsByWorkspace>
+    | undefined;
   private $_assetLocationPreference:
     | PrimitiveAtom<AssetLocationPreference>
+    | undefined;
+  private $_notesTableColumnVisibility:
+    | PrimitiveAtom<NotesTableColumnVisibility>
     | undefined;
 
   $openWsDialog = atom(false);
   $openOmniSearch = atom(false);
   $themePref = atom<ThemeConfig['defaultPreference']>('system');
+  /**
+   * True once this tab is known to run an older app version than another tab
+   * (storage schema handshake). The app blocks the tab behind a reload
+   * dialog; there is deliberately no way to unset it short of reloading.
+   */
+  $staleTab = atom(false);
   $singleInputDialog = atom<
     | undefined
     | ({
@@ -119,12 +164,11 @@ export class WorkbenchStateService extends BaseService {
   constructor(
     context: BaseServiceContext,
     private dep: {
-      database: BaseDatabaseService;
       syncDatabase: BaseSyncDatabaseService;
     },
     private config: {
       themeManager: ThemeManager;
-      emitter: ScopedEmitter<'event::app:reload-ui'>;
+      emitter: ScopedEmitter<'event::app:reload-ui' | 'event::app:stale-tab'>;
     },
   ) {
     super(SERVICE_NAME.workbenchStateService, context, dep);
@@ -132,6 +176,13 @@ export class WorkbenchStateService extends BaseService {
   }
 
   hookMount() {
+    this.config.emitter.on(
+      'event::app:stale-tab',
+      () => {
+        this.store.set(this.$staleTab, true);
+      },
+      this.abortSignal,
+    );
     this.addCleanup(
       this.config.themeManager.onThemeChange(({ preference }) => {
         this.store.set(this.$themePref, preference);
@@ -169,10 +220,6 @@ export class WorkbenchStateService extends BaseService {
     this.config.themeManager.setPreference(preference);
   }
 
-  public updateOmniSearchInput(input: string) {
-    this.store.set(this.$omniSearchInput, input);
-  }
-
   public resetOmniSearch() {
     this.store.set(this.$omniSearchInput, '');
     this.store.set(this.$omniSearchRoute, 'omni-home');
@@ -189,6 +236,40 @@ export class WorkbenchStateService extends BaseService {
     });
   }
 
+  public setFileTreeDirectoryExpanded(
+    workspaceName: string,
+    path: string,
+    expanded: boolean,
+  ) {
+    this.updateFileTreeExpansion({
+      type: 'set-directory',
+      workspaceName,
+      path,
+      expanded,
+    });
+  }
+
+  public revealFileTreePaths(workspaceName: string, paths: readonly string[]) {
+    this.updateFileTreeExpansion({ type: 'reveal', workspaceName, paths });
+  }
+
+  public collapseFileTree(
+    workspaceName: string,
+    keepExpandedPaths: readonly string[],
+  ) {
+    this.updateFileTreeExpansion({
+      type: 'collapse-all',
+      workspaceName,
+      keepExpandedPaths,
+    });
+  }
+
+  private updateFileTreeExpansion(action: FileTreeExpansionAction) {
+    this.store.set(this.$fileTreeExpandedPathsByWorkspace, (current) =>
+      reduceFileTreeExpansion(current, action),
+    );
+  }
+
   get $wideEditor() {
     if (!this.$_wideEditor) {
       this.$_wideEditor = atomStorage({
@@ -201,6 +282,20 @@ export class WorkbenchStateService extends BaseService {
       });
     }
     return this.$_wideEditor;
+  }
+
+  get $usageAnalyticsEnabled() {
+    if (!this.$_usageAnalyticsEnabled) {
+      this.$_usageAnalyticsEnabled = atomStorage({
+        serviceName: this.name,
+        key: 'usage-analytics-enabled',
+        initValue: true,
+        syncDb: this.dep.syncDatabase,
+        validator: T.Boolean,
+        logger: this.logger,
+      });
+    }
+    return this.$_usageAnalyticsEnabled;
   }
 
   get $sidebarOpen() {
@@ -261,6 +356,48 @@ export class WorkbenchStateService extends BaseService {
       });
     }
     return this.$_showNoteFilesOnlyInSidebar;
+  }
+
+  get $pwaOpenInAppPromptSeen() {
+    if (!this.$_pwaOpenInAppPromptSeen) {
+      this.$_pwaOpenInAppPromptSeen = atomStorage({
+        serviceName: this.name,
+        key: 'pwa-open-in-app-prompt-seen',
+        initValue: false,
+        syncDb: this.dep.syncDatabase,
+        validator: T.Boolean,
+        logger: this.logger,
+      });
+    }
+    return this.$_pwaOpenInAppPromptSeen;
+  }
+
+  get $fileTreeExpandedPathsByWorkspace() {
+    if (!this.$_fileTreeExpandedPathsByWorkspace) {
+      this.$_fileTreeExpandedPathsByWorkspace = atomStorage({
+        serviceName: this.name,
+        key: 'file-tree-expanded-paths-by-workspace',
+        initValue: {},
+        syncDb: this.dep.syncDatabase,
+        validator: FileTreeExpandedPathsByWorkspaceValidator,
+        logger: this.logger,
+      });
+    }
+    return this.$_fileTreeExpandedPathsByWorkspace;
+  }
+
+  get $notesTableColumnVisibility() {
+    if (!this.$_notesTableColumnVisibility) {
+      this.$_notesTableColumnVisibility = atomStorage({
+        serviceName: this.name,
+        key: 'notes-table-column-visibility',
+        initValue: {},
+        syncDb: this.dep.syncDatabase,
+        validator: NotesTableColumnVisibilityValidator,
+        logger: this.logger,
+      });
+    }
+    return this.$_notesTableColumnVisibility;
   }
 
   get $assetLocationPreference() {

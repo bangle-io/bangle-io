@@ -76,8 +76,57 @@ export const t = {
         collapse: 'Verlinkte Erwähnungen einklappen',
         expand: 'Verlinkte Erwähnungen ausklappen',
       },
+      placeholder: {
+        emptyDoc: "Schreib etwas oder drücke '/' für Befehle…",
+        emptyBlock: "Drücke '/' für Befehle",
+      },
+      blockHandle: {
+        addBlock: 'Block hinzufügen',
+        addBelowHint: 'Klicken, um darunter einzufügen',
+        addAboveHint: ({ modifier }: { modifier: string }) =>
+          `${modifier}-Klick fügt darüber ein`,
+        dragHandle: 'Ziehen zum Verschieben',
+      },
       slashCommand: {
+        groupBasic: 'Grundbausteine',
+        groupLists: 'Listen',
+        groupTime: 'Zeit',
+        groupTable: 'Tabelle',
+        empty: 'Keine Ergebnisse',
+        paragraph: 'Text',
+        paragraphDesc: 'Einfacher Absatztext',
+        heading1: 'Überschrift 1',
+        heading1Desc: 'Große Abschnittsüberschrift',
+        heading2: 'Überschrift 2',
+        heading2Desc: 'Mittlere Abschnittsüberschrift',
+        heading3: 'Überschrift 3',
+        heading3Desc: 'Kleine Abschnittsüberschrift',
+        codeBlock: 'Codeblock',
+        codeBlockDesc: 'Code mit Syntaxhervorhebung',
+        mathBlock: 'Matheblock',
+        mathBlockDesc: 'Bearbeitbare TeX-Gleichung',
         table: 'Tabelle',
+        tableDesc: 'Einfache Tabelle einfügen',
+        frontmatter: 'Frontmatter',
+        frontmatterDesc: 'YAML-Eigenschaften am Anfang',
+        bulletList: 'Aufzählung',
+        bulletListDesc: 'Einfache Liste mit Punkten',
+        numberedList: 'Nummerierte Liste',
+        numberedListDesc: 'Liste mit Nummerierung',
+        todoList: 'To-do-Liste',
+        todoListDesc: 'Aufgaben mit Kontrollkästchen',
+        date: 'Datum',
+        dateDesc: 'Datum aus dem Kalender wählen',
+        today: 'Heute',
+        todayDesc: 'Heutiges Datum einfügen',
+        yesterday: 'Gestern',
+        yesterdayDesc: 'Gestriges Datum einfügen',
+        nextWeek: 'Nächste Woche',
+        nextWeekDesc: 'Datum der nächsten Woche einfügen',
+        nextMonth: 'Nächster Monat',
+        nextMonthDesc: 'Datum des nächsten Monats einfügen',
+        hintSelect: 'Enter zum Auswählen',
+        hintDismiss: 'Esc zum Schließen',
       },
       tableMenu: {
         label: 'Tabellenoptionen',
@@ -94,6 +143,16 @@ export const t = {
         deleteColumn: 'Spalte löschen',
         deleteTable: 'Tabelle löschen',
       },
+    },
+    omniSearch: {
+      dialogTitle: 'Omni-Befehlsleiste',
+      inputPlaceholder: 'Befehl eingeben oder suchen...',
+      viewAllCommands: 'Alle Befehle anzeigen',
+      recentNotesHeading: 'Letzte Notizen',
+      commandsHeading: '> Befehle',
+      allFilesHeading: 'Alle Dateien',
+      filteredHeading: 'Gefiltert',
+      noResults: 'Keine Ergebnisse gefunden.',
     },
     sidebar: {
       newLabel: 'Neu',
@@ -154,13 +213,46 @@ export const t = {
         openWorkspace: 'Arbeitsbereich öffnen',
         deleteWorkspace: 'Arbeitsbereich löschen',
       },
+      recovery: {
+        title: 'Wiederherstellen',
+        description:
+          'Bangle speichert regelmäßig Schnappschüsse Ihrer Notizen während der Bearbeitung. Stellen Sie jeden Schnappschuss als neue Notiz wieder her — Ihre aktuellen Notizen werden nie überschrieben.',
+        searchPlaceholder: 'Notizen durchsuchen...',
+        searchLabel: 'Schnappschüsse durchsuchen',
+        workspaceLabel: 'Arbeitsbereich',
+        allWorkspaces: 'Alle Arbeitsbereiche',
+        emptyTitle: 'Noch keine Schnappschüsse',
+        emptyDescription:
+          'Schnappschüsse werden automatisch erstellt, sobald Sie Notizen in diesem Arbeitsbereich bearbeiten.',
+        noMatches: 'Keine Schnappschüsse entsprechen Ihrer Suche.',
+        noteColumn: 'Notiz',
+        timeColumn: 'Erstellt',
+        wordCountColumn: 'Wörter',
+        actionsColumn: 'Aktionen',
+        recoverAction: 'Wiederherstellen',
+        loading: 'Schnappschüsse werden geladen...',
+        loadFailed: 'Schnappschüsse konnten nicht geladen werden.',
+        noWorkspaces:
+          'Erstellen Sie einen Arbeitsbereich, um Notiz-Schnappschüsse zu sammeln.',
+        previewTitle: ({ fileName }: { fileName: string }) =>
+          `Schnappschuss von ${fileName}`,
+        previewLoading: 'Schnappschuss wird geladen...',
+        previewUnavailable:
+          'Dieser Schnappschuss ist nicht mehr verfügbar. Er wurde möglicherweise bereinigt.',
+        recoverAsNewNote: 'Als neue Notiz wiederherstellen',
+        closeButton: 'Schließen',
+      },
       nav: {
         general: 'Allgemein',
         workspaces: 'Arbeitsbereiche',
+        recovery: 'Wiederherstellen',
       },
     },
     pageAsset: {
       downloadButton: 'Download',
+      openExternallyButton: 'In einer anderen App öffnen',
+      openExternallyFailed:
+        'Die App-Auswahl konnte nicht geöffnet werden. Laden Sie die Datei stattdessen herunter.',
       loading: 'Asset wird geladen...',
       unavailable: 'Dieses Asset kann nicht geladen werden.',
       noPreview:
@@ -169,6 +261,12 @@ export const t = {
       audioUnsupported: 'Ihr Browser kann dieses Audioformat nicht abspielen.',
     },
     dialogs: {
+      staleTab: {
+        title: 'Eine neuere Version von Bangle läuft',
+        description:
+          'Ein anderer Tab hat eine neuere Version von Bangle geöffnet. Laden Sie diesen Tab neu, um alles synchron zu halten — Ihre Notizen sind sicher.',
+        reloadButton: 'Tab neu laden',
+      },
       changeTheme: {
         searchPlaceholder: 'Wählen Sie eine Theme-Einstellung',
         title: 'Theme ändern',
@@ -399,6 +497,8 @@ export const t = {
       },
     },
     toasts: {
+      editorCommandUnavailable:
+        'Dieser Editor-Befehl ist hier nicht möglich. Setze den Cursor in einen normalen Textblock und versuche es erneut.',
       assetSaveInProgress: ({
         fileName,
         remainingCount,
@@ -456,6 +556,12 @@ export const t = {
       fileCreated: ({ fileName }: { fileName: string }) =>
         `${fileName} erstellt`,
       fileCreateFailed: 'Datei konnte nicht erstellt werden',
+      snapshotNotFound:
+        'Schnappschuss nicht gefunden. Er wurde möglicherweise bereinigt.',
+      snapshotRecovered: ({ fileName }: { fileName: string }) =>
+        `Schnappschuss als ${fileName} wiederhergestellt`,
+      snapshotRecoverFailed:
+        'Schnappschuss konnte nicht wiederhergestellt werden',
       fileDeleted: ({ fileName }: { fileName: string }) =>
         `${fileName} geloescht`,
       fileDeleteFailed: 'Datei konnte nicht geloescht werden',
@@ -489,28 +595,12 @@ export const t = {
       createWorkspacePrompt:
         'Erstellen Sie einen Arbeitsbereich, um loszulegen.',
     },
-    pageFatalError: {
-      title: 'Schwerwiegender Fehler',
-      description:
-        'Etwas ist ernsthaft schiefgelaufen. Wir entschuldigen uns für die Unannehmlichkeiten.',
-      reloadButton: 'App neu laden',
-      reportButton: 'Problem melden',
-    },
     pageStartupError: {
       title: 'Bangle konnte nicht gestartet werden',
       description:
         'Ein erforderlicher Dienst ist beim Start fehlgeschlagen. Ihre Notizen wurden nicht geändert.',
       detailsLabel: 'Details zum Startfehler',
       reloadButton: 'App neu laden',
-    },
-    pageNativeFsAuthFailed: {
-      title: 'Authentifizierung fehlgeschlagen. Bitte versuchen Sie es erneut',
-      tryAgainButton: 'Erneut versuchen',
-    },
-    pageNativeFsAuthReq: {
-      title:
-        'Authentifizierung erforderlich. Bitte erlauben Sie den Zugriff, um fortzufahren',
-      authorizeButton: 'Autorisieren',
     },
     pageNotFound: {
       title: 'Seite nicht gefunden',
@@ -523,13 +613,9 @@ export const t = {
       switchWorkspaceButton: 'Arbeitsbereich wechseln',
     },
     pageWsHome: {
-      recentNotesHeading: 'Zuletzt verwendete Notizen',
       noNotesMessage: 'Keine Notizen in diesem Arbeitsbereich gefunden.',
       newNoteButton: 'Neue Notiz',
       switchWorkspaceButton: 'Arbeitsbereich wechseln',
-    },
-    pageWsPathNotFound: {
-      // Using NoteNotFoundView strings
     },
     noteNotFoundView: {
       title: 'Notiz nicht gefunden',
@@ -563,6 +649,7 @@ export const t = {
         newFileActionTitle: 'Neue Datei',
         newFileActionSr: 'Datei erstellen',
         newFolderActionTitle: 'Neuer Ordner',
+        collapseAllFoldersActionTitle: 'Alle Ordner einklappen',
         showNoteFilesOnlyActionTitle: 'Nur Notizen anzeigen',
         newNoteHereActionTitle: 'Neue Notiz hier',
         newFolderHereActionTitle: 'Neuer Ordner hier',
@@ -582,6 +669,30 @@ export const t = {
         mobileTitle: 'Seitenleiste',
         mobileDescription:
           'Arbeitsbereiche, Notizen und App-Aktionen navigieren.',
+      },
+      notesTable: {
+        searchPlaceholder: 'Notizen filtern',
+        columnsButton: 'Spalten',
+        nameColumn: 'Name',
+        locationColumn: 'Ort',
+        modifiedColumn: 'Geändert',
+        lastOpenedColumn: 'Zuletzt geöffnet',
+        noteCount: ({ count }: { count: number }) =>
+          count === 1 ? '1 Notiz' : `${count} Notizen`,
+        noResultsMessage: 'Keine Notizen entsprechen deinem Filter.',
+        showMoreButton: ({ count }: { count: number }) =>
+          `${count} weitere anzeigen`,
+        starredIndicatorSr: 'Favorit',
+        sortSr: ({ column }: { column: string }) => `Nach ${column} sortieren`,
+        rowActionsSr: ({ fileName }: { fileName: string }) =>
+          `Aktionen für ${fileName}`,
+        openAction: 'Öffnen',
+        starAction: 'Favorit hinzufügen',
+        unstarAction: 'Favorit entfernen',
+        renameAction: 'Umbenennen',
+        moveAction: 'Verschieben',
+        copyPathAction: 'Pfad kopieren',
+        deleteAction: 'Löschen',
       },
       breadcrumb: {
         moreSr: 'Mehr',

@@ -5,6 +5,7 @@ import {
 } from '@bangle.io/prosemirror-plugins';
 import {
   Button,
+  Separator,
   Toggle,
   Tooltip,
   TooltipContent,
@@ -15,11 +16,24 @@ import { useAtomValue } from 'jotai';
 import {
   Bold,
   Code,
+  Heading1,
+  Heading2,
+  Heading3,
   Italic,
   Link as LinkIcon,
+  List,
+  ListChecks,
+  ListOrdered,
+  Pilcrow,
   Strikethrough,
 } from 'lucide-react';
 import React, { useRef, useState } from 'react';
+import {
+  isSelectionAllHeadings,
+  isSelectionAllTopLevelParagraphs,
+  setParagraphInSelection,
+  toggleHeadingInSelection,
+} from '../block-format';
 import type { PmEditorService } from '../pm-editor-service';
 import { useEditorCoreServices } from '../use-editor-core-services';
 import {
@@ -34,9 +48,26 @@ import { useOutsidePointer } from './use-outside-pointer';
 
 type Extensions = PmEditorService['extensions'];
 type EditorView = NonNullable<ReturnType<PmEditorService['getEditor']>>;
+type EditorState = EditorView['state'];
 type LinkSession = {
   editingLink: boolean;
   initialHref: string;
+};
+
+const HEADING_LEVELS = [1, 2, 3] as const;
+
+const HEADING_ICONS: Record<(typeof HEADING_LEVELS)[number], typeof Heading1> =
+  {
+    1: Heading1,
+    2: Heading2,
+    3: Heading3,
+  };
+
+// Read lazily: `t` is installed on the global at bootstrap, after module load.
+const HEADING_LABELS: Record<(typeof HEADING_LEVELS)[number], () => string> = {
+  1: () => t.app.editor.selectionMenu.heading1,
+  2: () => t.app.editor.selectionMenu.heading2,
+  3: () => t.app.editor.selectionMenu.heading3,
 };
 
 export function InlineSelectionMenu({ editorName }: { editorName: string }) {
@@ -112,6 +143,30 @@ function InlineSelectionMenuContent({
     onOutside: dismiss,
   });
 
+  // Availability is a dry-run of each command, so a control is enabled only
+  // when clicking it would actually change the document. Recomputed per editor
+  // state rather than per render: the selection-menu atom hands back a fresh
+  // object on every view update, and the list dry-runs walk the whole selection
+  // — together that made a select-all in a long note re-scan it on each render.
+  const blockState = React.useMemo(() => {
+    const state = editorView.state;
+    return {
+      paragraphActive: isSelectionAllTopLevelParagraphs(state),
+      paragraphEnabled: setParagraphInSelection(state),
+      headings: HEADING_LEVELS.map((level) => ({
+        level,
+        active: isSelectionAllHeadings(state, level),
+        enabled: toggleHeadingInSelection(level)(state),
+      })),
+      bulletActive: ext.list.query.isBulletListActive(state),
+      bulletEnabled: ext.list.command.toggleBulletList(state),
+      orderedActive: ext.list.query.isOrderedListActive(state),
+      orderedEnabled: ext.list.command.toggleOrderedList(state),
+      taskActive: ext.list.query.isTaskListActive(state),
+      taskEnabled: ext.list.command.toggleTaskList(state),
+    };
+  }, [editorView.state, ext]);
+
   return linkSession ? (
     <FloatingLinkEditor
       anchorEl={anchorEl}
@@ -133,7 +188,10 @@ function InlineSelectionMenuContent({
     >
       <div
         aria-label={t.app.editor.selectionMenu.label}
-        className="flex items-center gap-0.5 rounded-md border bg-popover p-0.5 shadow-xs"
+        // Wrap rather than overflow: on a narrow viewport the max-width clamp
+        // (see the wrapper's `max-w-[calc(100vw-1rem)]`) would otherwise push
+        // the trailing controls off-screen and force horizontal page scroll.
+        className="flex flex-wrap items-center gap-0.5 rounded-md border bg-popover p-0.5 shadow-xs"
         onKeyDown={(event) => {
           if (event.key === 'Escape') {
             event.preventDefault();
@@ -144,15 +202,15 @@ function InlineSelectionMenuContent({
         role="toolbar"
       >
         <TooltipProvider delay={300}>
-          <MarkToggle
+          <FormatToggle
             active={ext.bold.query.isBoldActive(editorView.state)}
             disabled={!ext.bold.command.toggleBold(editorView.state)}
             label={t.app.editor.selectionMenu.bold}
             onToggle={() => runCommand(editorView, ext.bold.command.toggleBold)}
           >
             <Bold />
-          </MarkToggle>
-          <MarkToggle
+          </FormatToggle>
+          <FormatToggle
             active={ext.italic.query.isItalicActive(editorView.state)}
             disabled={!ext.italic.command.toggleItalic(editorView.state)}
             label={t.app.editor.selectionMenu.italic}
@@ -161,8 +219,8 @@ function InlineSelectionMenuContent({
             }
           >
             <Italic />
-          </MarkToggle>
-          <MarkToggle
+          </FormatToggle>
+          <FormatToggle
             active={ext.strike.query.isStrikeActive(editorView.state)}
             disabled={!ext.strike.command.toggleStrike(editorView.state)}
             label={t.app.editor.selectionMenu.strike}
@@ -171,15 +229,15 @@ function InlineSelectionMenuContent({
             }
           >
             <Strikethrough />
-          </MarkToggle>
-          <MarkToggle
+          </FormatToggle>
+          <FormatToggle
             active={ext.code.query.isCodeActive(editorView.state)}
             disabled={!ext.code.command.toggleCode(editorView.state)}
             label={t.app.editor.selectionMenu.inlineCode}
             onToggle={() => runCommand(editorView, ext.code.command.toggleCode)}
           >
             <Code />
-          </MarkToggle>
+          </FormatToggle>
           <ToolbarButton
             disabled={
               !ext.link.query.linkAllowedInRange(
@@ -208,6 +266,64 @@ function InlineSelectionMenuContent({
           >
             <LinkIcon />
           </ToolbarButton>
+          <Separator className="mx-0.5 h-6" orientation="vertical" />
+          <FormatToggle
+            // Pressed when the selection is already plain top-level paragraphs.
+            // Disabled tracks the command's own dry-run, so a selection it
+            // cannot change (inside a table cell, say) is not offered.
+            active={blockState.paragraphActive}
+            disabled={!blockState.paragraphEnabled}
+            label={t.app.editor.selectionMenu.paragraph}
+            onToggle={() => runCommand(editorView, setParagraphInSelection)}
+          >
+            <Pilcrow />
+          </FormatToggle>
+          {blockState.headings.map(({ active, enabled, level }) => {
+            const HeadingIcon = HEADING_ICONS[level];
+            return (
+              <FormatToggle
+                active={active}
+                disabled={!enabled}
+                key={level}
+                label={HEADING_LABELS[level]()}
+                onToggle={() =>
+                  runCommand(editorView, toggleHeadingInSelection(level))
+                }
+              >
+                <HeadingIcon />
+              </FormatToggle>
+            );
+          })}
+          <FormatToggle
+            active={blockState.bulletActive}
+            disabled={!blockState.bulletEnabled}
+            label={t.app.editor.selectionMenu.bulletList}
+            onToggle={() =>
+              runCommand(editorView, ext.list.command.toggleBulletList)
+            }
+          >
+            <List />
+          </FormatToggle>
+          <FormatToggle
+            active={blockState.orderedActive}
+            disabled={!blockState.orderedEnabled}
+            label={t.app.editor.selectionMenu.orderedList}
+            onToggle={() =>
+              runCommand(editorView, ext.list.command.toggleOrderedList)
+            }
+          >
+            <ListOrdered />
+          </FormatToggle>
+          <FormatToggle
+            active={blockState.taskActive}
+            disabled={!blockState.taskEnabled}
+            label={t.app.editor.selectionMenu.taskList}
+            onToggle={() =>
+              runCommand(editorView, ext.list.command.toggleTaskList)
+            }
+          >
+            <ListChecks />
+          </FormatToggle>
         </TooltipProvider>
       </div>
     </div>
@@ -219,7 +335,7 @@ function runCommand(editorView: EditorView, command: Command) {
   editorView.focus();
 }
 
-function MarkToggle({
+function FormatToggle({
   active,
   children,
   disabled,

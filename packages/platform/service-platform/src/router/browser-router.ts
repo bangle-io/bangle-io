@@ -35,7 +35,6 @@ export class BrowserRouterService
     dependencies: null,
     private config: {
       basePath?: string;
-      isStatic?: boolean;
       strategy: RouteStrategy;
     },
   ) {
@@ -52,10 +51,6 @@ export class BrowserRouterService
 
   private get basePath() {
     return this.config.basePath ?? '';
-  }
-
-  private get isStatic() {
-    return this.config.isStatic ?? false;
   }
 
   get routeInfo() {
@@ -141,12 +136,7 @@ export class BrowserRouterService
     }
 
     const doNavigate = () => {
-      const encoded = this.config.strategy.encodeRouteInfo(to, this.basePath);
-      const searchPart = encoded.search ?? '';
-      const hashPart = encoded.hash ?? '';
-      const url = `${encoded.pathname}${searchPart}${hashPart}`;
-
-      navigate(url, options);
+      navigate(this.toUri(to), options);
     };
 
     if (!this.mounted) {

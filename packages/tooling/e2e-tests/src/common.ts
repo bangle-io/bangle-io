@@ -9,6 +9,23 @@ export const EDITOR_SELECTOR = '.ProseMirror';
 export const EDITOR_FOCUSED_SELECTOR = `${EDITOR_SELECTOR}.ProseMirror-focused`;
 const DEFAULT_SLEEP_TIME = 20;
 
+export async function expandFileTreeFolder(page: Page, name: string | RegExp) {
+  const explorer = page.getByTestId('bangle-file-explorer');
+  const folder = explorer.getByRole('treeitem', { name });
+
+  await expect(folder).toBeVisible();
+  await expect(async () => {
+    if ((await folder.getAttribute('aria-expanded')) !== 'true') {
+      await folder.focus();
+      await expect(folder).toBeFocused();
+      await page.keyboard.press('ArrowRight');
+    }
+    await expect(folder).toHaveAttribute('aria-expanded', 'true', {
+      timeout: 1_000,
+    });
+  }).toPass();
+}
+
 /**
  * Presses an *app-level* keyboard shortcut (e.g. Cmd/Ctrl+K for omni-search).
  *
@@ -41,6 +58,17 @@ export async function pressAppShortcut(page: Page, key: string) {
     return isMac || isIPhone || isIPad;
   });
   await page.keyboard.press(`${isRuntimeDarwin ? 'Meta' : 'Control'}+${key}`);
+}
+
+export async function openOmniSearch(page: Page): Promise<Locator> {
+  await pressAppShortcut(page, 'k');
+
+  const dialog = page.getByRole('dialog', { name: 'omni command bar' });
+  const input = dialog.getByPlaceholder('Type a command or search...');
+  await expect(dialog).toBeVisible();
+  await expect(input).toBeVisible();
+
+  return input;
 }
 
 function sleep(t = DEFAULT_SLEEP_TIME) {
@@ -325,7 +353,15 @@ export async function createBrowserWorkspaceAndNote(
   await page.getByRole('button', { name: 'New Note' }).click();
   await page.getByLabel('Note name').fill(noteName);
   await page.getByRole('button', { name: 'Create' }).click();
-  await expect(getEditorLocator(page, {})).toBeVisible();
+  const editor = getEditorLocator(page, {});
+  const fileName = noteName.endsWith('.md') ? noteName : `${noteName}.md`;
+  await expect(editor).toBeVisible();
+  // A previous note editor can remain visible while navigation mounts the new
+  // one. Waiting for the exact editor identity prevents immediate follow-up
+  // typing or shortcuts from targeting a stale view that is about to unmount.
+  await expect
+    .poll(() => editor.getAttribute('data-editor-name'))
+    .toContain(`${workspaceName}:${fileName}`);
 }
 
 export async function createBrowserWorkspace(

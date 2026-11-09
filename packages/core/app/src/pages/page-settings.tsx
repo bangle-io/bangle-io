@@ -8,7 +8,6 @@ import {
 } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
 import type {
-  AppRouteInfo,
   AssetLocationPreference,
   ThemePreference,
 } from '@bangle.io/types';
@@ -29,24 +28,17 @@ import {
   ArrowLeft,
   BriefcaseBusiness,
   Download,
+  ExternalLink,
+  History,
   type LucideIcon,
   Settings2,
 } from 'lucide-react';
 import React from 'react';
-import {
-  getPwaInstallSnapshot,
-  promptPwaInstall,
-  subscribePwaInstallPrompt,
-} from '../common/pwa-install';
+import { usePwaInstall } from '../common/use-pwa-install';
 import { AppHeader } from '../layout/app-header';
 import { PageContentContainer } from '../layout/main-content-container';
+import { RecoverySettingsPage } from './page-settings-recovery';
 import { WorkspacesSettingsPage } from './page-settings-workspaces';
-
-const THEME_VALUES = [
-  'system',
-  'light',
-  'dark',
-] as const satisfies readonly ThemePreference[];
 
 const THEME_OPTIONS: Array<{ value: ThemePreference; label: string }> = [
   { value: 'system', label: t.app.dialogs.changeTheme.options.system },
@@ -93,26 +85,55 @@ const SETTINGS_PAGE_META: Record<
     icon: BriefcaseBusiness,
     title: t.app.settings.workspaces.title,
   },
+  recovery: {
+    label: t.app.settings.nav.recovery,
+    icon: History,
+    title: t.app.settings.recovery.title,
+  },
 };
 
 function isThemePreference(value: unknown): value is ThemePreference {
-  return THEME_VALUES.some((theme) => theme === value);
+  return THEME_OPTIONS.some((option) => option.value === value);
 }
 
-function getSettingsReturnTo(routeInfo: AppRouteInfo) {
-  if (!isSettingsRouteInfo(routeInfo)) {
+function hasUnsafeAppHrefCharacter(href: string) {
+  return [...href].some((character) => {
+    const codePoint = character.codePointAt(0) ?? 0;
+    return (
+      character === '\\' ||
+      codePoint <= 0x1f ||
+      (codePoint >= 0x7f && codePoint <= 0x9f)
+    );
+  });
+}
+
+/** @internal Exported from this module only for focused URL-boundary tests. */
+export function safeAppHref(
+  href: string | undefined,
+  currentHref = window.location.href,
+) {
+  if (!href || hasUnsafeAppHrefCharacter(href)) {
     return undefined;
   }
 
-  return routeInfo.payload.returnTo;
-}
+  try {
+    const currentUrl = new URL(currentHref);
+    const targetUrl = new URL(href, currentUrl);
 
-function safeAppHref(href: string | undefined) {
-  if (!href?.startsWith('/') || href.startsWith('//')) {
+    if (
+      !href.startsWith('/') ||
+      href.startsWith('//') ||
+      targetUrl.pathname.startsWith('//') ||
+      targetUrl.protocol !== currentUrl.protocol ||
+      targetUrl.host !== currentUrl.host
+    ) {
+      return undefined;
+    }
+
+    return `${targetUrl.pathname}${targetUrl.search}${targetUrl.hash}`;
+  } catch {
     return undefined;
   }
-
-  return href;
 }
 
 export function PageSettings() {
@@ -130,11 +151,16 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
   const routeInfo = useAtomValue(navigation.$routeInfo);
   const themePref = useAtomValue(workbenchState.$themePref);
   const [wideEditor, setWideEditor] = useAtom(workbenchState.$wideEditor);
-  const pwaInstall = usePwaInstallPrompt();
+  const [usageEnabled, setUsageEnabled] = useAtom(
+    workbenchState.$usageAnalyticsEnabled,
+  );
+  const pwaInstall = usePwaInstall();
   const [assetLocationPreference, setAssetLocationPreference] = useAtom(
     workbenchState.$assetLocationPreference,
   );
-  const returnTo = safeAppHref(getSettingsReturnTo(routeInfo));
+  const returnTo = safeAppHref(
+    isSettingsRouteInfo(routeInfo) ? routeInfo.payload.returnTo : undefined,
+  );
 
   const backHref =
     returnTo ??
@@ -194,6 +220,7 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
                     <SettingsPage.SettingsRow
                       control={
                         <Button
+                          data-testid="settings-install-app"
                           disabled={pwaInstall.isInstalling}
                           onClick={() => {
                             void pwaInstall.install();
@@ -208,6 +235,50 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
                       }
                       description={t.app.settings.general.installPwaDescription}
                       title={t.app.settings.general.installPwaTitle}
+                    />
+                  ) : null}
+                  <SettingsPage.SettingsRow
+                    control={
+                      <SegmentedControl
+                        aria-label={t.app.settings.general.usageTitle}
+                        onValueChange={(value) => {
+                          setUsageEnabled(value === 'enabled');
+                        }}
+                        value={usageEnabled ? 'enabled' : 'disabled'}
+                      >
+                        <RadioGroupItem
+                          className={SEGMENTED_ITEM_CLASS}
+                          value="enabled"
+                        >
+                          {t.app.settings.general.enabled}
+                        </RadioGroupItem>
+                        <RadioGroupItem
+                          className={SEGMENTED_ITEM_CLASS}
+                          value="disabled"
+                        >
+                          {t.app.settings.general.disabled}
+                        </RadioGroupItem>
+                      </SegmentedControl>
+                    }
+                    description={t.app.settings.general.usageDescription}
+                    title={t.app.settings.general.usageTitle}
+                  />
+                  {pwaInstall.canOpenInApp ? (
+                    <SettingsPage.SettingsRow
+                      control={
+                        <Button
+                          data-testid="settings-open-in-app"
+                          onClick={() => {
+                            pwaInstall.openInApp();
+                          }}
+                          type="button"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                          {t.app.settings.general.openInAppButton}
+                        </Button>
+                      }
+                      description={t.app.settings.general.openInAppDescription}
+                      title={t.app.settings.general.openInAppTitle}
                     />
                   ) : null}
                 </SettingsPage.SettingsSection>
@@ -272,27 +343,16 @@ function SettingsLayout({ activePage }: { activePage: SettingsPageId }) {
                   />
                 </SettingsPage.SettingsSection>
               </>
-            ) : (
+            ) : activePage === 'workspaces' ? (
               <WorkspacesSettingsPage />
+            ) : (
+              <RecoverySettingsPage />
             )}
           </SettingsPage.SettingsPageContent>
         </SettingsPage.SettingsPageLayout>
       </PageContentContainer>
     </>
   );
-}
-
-function usePwaInstallPrompt() {
-  const snapshot = React.useSyncExternalStore(
-    subscribePwaInstallPrompt,
-    getPwaInstallSnapshot,
-    getPwaInstallSnapshot,
-  );
-
-  return {
-    ...snapshot,
-    install: promptPwaInstall,
-  };
 }
 
 function AssetLocationSelect({

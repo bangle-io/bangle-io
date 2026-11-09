@@ -48,7 +48,7 @@ export interface WorkspaceConfig {
 export interface CreateWorkspaceDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onDone: (config: WorkspaceConfig) => void;
+  onDone: (config: WorkspaceConfig) => void | Promise<void>;
   storageTypes: StorageTypeConfig[];
   onDirectoryPick?: () => Promise<DirectoryPickResult>;
   validateWorkspace: (config: WorkspaceConfig) => WorkspaceValidation;
@@ -56,6 +56,8 @@ export interface CreateWorkspaceDialogProps {
 
 type BaseState = {
   error?: ErrorInfo;
+  isSubmitting?: boolean;
+  submissionFailed?: boolean;
 };
 
 type SelectTypeState = BaseState & {
@@ -83,7 +85,9 @@ type Action =
   | { type: 'UPDATE_SELECTED_STORAGE'; storage: WorkspaceStorageType }
   | { type: 'UPDATE_WORKSPACE_NAME'; name: string }
   | { type: 'UPDATE_DIRECTORY_HANDLE'; dirHandle?: FileSystemDirectoryHandle }
-  | { type: 'UPDATE_ERROR'; error?: ErrorInfo };
+  | { type: 'UPDATE_ERROR'; error?: ErrorInfo }
+  | { type: 'START_SUBMIT' }
+  | { type: 'SUBMIT_FAILED'; error: ErrorInfo };
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
@@ -113,7 +117,21 @@ function reducer(state: State, action: Action): State {
       }
       return state;
     case 'UPDATE_ERROR':
-      return { ...state, error: action.error };
+      return { ...state, error: action.error, submissionFailed: false };
+    case 'START_SUBMIT':
+      return {
+        ...state,
+        error: undefined,
+        isSubmitting: true,
+        submissionFailed: false,
+      };
+    case 'SUBMIT_FAILED':
+      return {
+        ...state,
+        error: action.error,
+        isSubmitting: false,
+        submissionFailed: true,
+      };
     case 'RESET_TO_TYPE_SELECT':
       return {
         stage: 'select-type',
@@ -143,6 +161,12 @@ export function CreateWorkspaceDialog({
     selected: defaultStorage,
   });
 
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!state.isSubmitting) {
+      onOpenChange(nextOpen);
+    }
+  };
+
   useEffect(() => {
     if (open) {
       dispatch({ type: 'RESET_TO_TYPE_SELECT', defaultStorage });
@@ -151,7 +175,7 @@ export function CreateWorkspaceDialog({
 
   if (storageTypes.length === 0) {
     return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
@@ -175,7 +199,7 @@ export function CreateWorkspaceDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-xl">
         {state.stage === 'select-type' && (
           <StageSelectStorage
@@ -322,10 +346,11 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
   onDone,
   onCancel,
 }) => {
-  const { name, error } = state;
+  const { name, error, isSubmitting, submissionFailed } = state;
 
   const ref = useRef<HTMLInputElement>(null);
   const workspaceNameId = useId();
+  const submitWorkspace = useWorkspaceSubmit(dispatch, onDone);
 
   useEffect(() => {
     ref.current?.focus();
@@ -337,11 +362,12 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      handleSubmit();
+      event.preventDefault();
+      void handleSubmit();
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const config: WorkspaceConfig = {
       type: 'browser',
       name,
@@ -358,7 +384,7 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
       });
       return;
     }
-    onDone({ type: 'browser', name });
+    await submitWorkspace(config);
   };
 
   const handleBack = () => {
@@ -393,18 +419,24 @@ const StageEnterWorkspaceName: React.FC<StageEnterWorkspaceNameProps> = ({
       </div>
       <WorkspaceDialogFooter
         leadingAction={
-          <Button variant="outline" onClick={handleBack}>
+          <Button
+            variant="outline"
+            onClick={handleBack}
+            disabled={isSubmitting}
+          >
             {t.app.common.backButton}
           </Button>
         }
       >
-        <Button variant="outline" onClick={onCancel}>
+        <Button variant="outline" onClick={onCancel} disabled={isSubmitting}>
           {t.app.common.cancelButton}
         </Button>
         <Button
           type="submit"
-          onClick={handleSubmit}
-          disabled={Boolean(error) || !name}
+          onClick={() => void handleSubmit()}
+          disabled={
+            (Boolean(error) && !submissionFailed) || !name || isSubmitting
+          }
         >
           {t.app.common.createButton}
         </Button>
@@ -430,7 +462,8 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
   onDone,
   onCancel,
 }) => {
-  const { dirHandle, error } = state;
+  const { dirHandle, error, isSubmitting } = state;
+  const submitWorkspace = useWorkspaceSubmit(dispatch, onDone);
 
   const handlePickDirectory = async () => {
     if (!onDirectoryPick) {
@@ -461,7 +494,7 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
     dispatch({ type: 'NAVIGATE_TO_TYPE_SELECT' });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const dirName = dirHandle?.name || '';
     const config: WorkspaceConfig = {
       type: 'nativefs',
@@ -480,7 +513,7 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
       });
       return;
     }
-    onDone({ type: 'nativefs', name: dirName, dirHandle });
+    await submitWorkspace(config);
   };
 
   return (
@@ -498,18 +531,25 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
 
       <div className="space-y-4 py-4">
         {!dirHandle ? (
-          <Button onClick={handlePickDirectory} disabled={!onDirectoryPick}>
+          <Button
+            onClick={handlePickDirectory}
+            disabled={!onDirectoryPick || isSubmitting}
+          >
             <FolderOpen />
             <span>{t.app.dialogs.createWorkspace.pickDirectoryButton}</span>
           </Button>
         ) : (
           <div className="flex items-center space-x-2">
-            <Button onClick={handlePickDirectory}>
+            <Button onClick={handlePickDirectory} disabled={isSubmitting}>
               <Check />
               <span>{dirHandle.name}</span>
             </Button>
 
-            <Button variant="outline" onClick={handleClearDirectory}>
+            <Button
+              variant="outline"
+              onClick={handleClearDirectory}
+              disabled={isSubmitting}
+            >
               {t.app.common.clearButton}
             </Button>
           </div>
@@ -519,15 +559,22 @@ const StagePickDirectory: React.FC<StagePickDirectoryProps> = ({
 
       <WorkspaceDialogFooter
         leadingAction={
-          <Button variant="outline" onClick={handleBack}>
+          <Button
+            variant="outline"
+            onClick={handleBack}
+            disabled={isSubmitting}
+          >
             {t.app.common.backButton}
           </Button>
         }
       >
-        <Button variant="outline" onClick={onCancel}>
+        <Button variant="outline" onClick={onCancel} disabled={isSubmitting}>
           {t.app.common.cancelButton}
         </Button>
-        <Button onClick={handleSubmit} disabled={!dirHandle}>
+        <Button
+          onClick={() => void handleSubmit()}
+          disabled={!dirHandle || isSubmitting}
+        >
           {t.app.common.createButton}
         </Button>
       </WorkspaceDialogFooter>
@@ -594,9 +641,46 @@ const ListItem: React.FC<ListItemProps> = ({
 const ErrorMessage: React.FC<{ error?: ErrorInfo }> = ({ error }) => {
   if (!error) return null;
   return (
-    <div className="rounded-sm bg-destructive p-2 text-destructive-foreground text-sm">
+    <div
+      className="rounded-sm bg-destructive p-2 text-destructive-foreground text-sm"
+      role="alert"
+    >
       {error.title && <strong>{error.title}: </strong>}
       {error.message}
     </div>
   );
 };
+
+function toSubmissionErrorInfo(error: unknown): ErrorInfo {
+  return {
+    message:
+      error instanceof Error && error.message
+        ? error.message
+        : t.app.dialogs.createWorkspace.createFailed,
+  };
+}
+
+function useWorkspaceSubmit(
+  dispatch: React.Dispatch<Action>,
+  onDone: CreateWorkspaceDialogProps['onDone'],
+) {
+  const submittingRef = useRef(false);
+
+  return async (config: WorkspaceConfig): Promise<void> => {
+    if (submittingRef.current) {
+      return;
+    }
+
+    submittingRef.current = true;
+    dispatch({ type: 'START_SUBMIT' });
+    try {
+      await onDone(config);
+    } catch (submissionError) {
+      submittingRef.current = false;
+      dispatch({
+        type: 'SUBMIT_FAILED',
+        error: toSubmissionErrorInfo(submissionError),
+      });
+    }
+  };
+}

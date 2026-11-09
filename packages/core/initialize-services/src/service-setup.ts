@@ -1,9 +1,10 @@
 import { assertIsDefined } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
-import type { EnabledBangleAppCommand } from '@bangle.io/commands';
+import type { BangleAppCommand } from '@bangle.io/commands';
+import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
 import type { EditorEngineId } from '@bangle.io/constants';
 import type { CoreServices, EditorEngineContract } from '@bangle.io/context';
-import { PmEditorService } from '@bangle.io/editor';
+import { type EditorSaveCoordinator, PmEditorService } from '@bangle.io/editor';
 import { EditorWService } from '@bangle.io/editor-w';
 import {
   type ConstructorConfig,
@@ -23,6 +24,7 @@ import {
   EditorService,
   FileSystemService,
   NavigationService,
+  NoteSnapshotService,
   ShortcutService,
   type ShortcutServiceConfig,
   UserActivityService,
@@ -56,6 +58,7 @@ export const coreServiceClasses = {
   commandRegistry: CommandRegistryService,
   fileSystem: FileSystemService,
   navigation: NavigationService,
+  noteSnapshot: NoteSnapshotService,
   shortcut: ShortcutService,
   editorService: EditorService,
   workbenchState: WorkbenchStateService,
@@ -198,7 +201,7 @@ type FileStorageSlot<TPlatformMap extends PlatformServiceMap> = {
 export type ServiceSetupOptions<TPlatformMap extends PlatformServiceMap> = {
   commonOpts: BaseServiceCommonOptions;
   rootEmitter: RootEmitter;
-  commands: EnabledBangleAppCommand[];
+  commands: BangleAppCommand[];
   commandHandlers: Array<{ id: string; handler: CommandHandler }>;
   themeManager: ThemeManager;
   /**
@@ -227,6 +230,8 @@ export type ServiceSetupOptions<TPlatformMap extends PlatformServiceMap> = {
   fileStorageSlots: ReadonlyArray<FileStorageSlot<TPlatformMap>>;
   /** The editor engine powering the editing surface. */
   editorEngineId: EditorEngineId;
+  /** Browser-root save state retained when the UI service graph reloads. */
+  editorSaveCoordinator: EditorSaveCoordinator;
   /** Optional per-slot decorators over the canonical core configs. */
   coreConfigOverrides?: CoreConfigOverrides;
 };
@@ -257,6 +262,7 @@ function toCoreServices(s: CoreInstances): CoreServices {
     commandRegistry: s.commandRegistry,
     fileSystem: s.fileSystem,
     navigation: s.navigation,
+    noteSnapshot: s.noteSnapshot,
     shortcut: s.shortcut,
     editorService: s.editorService,
     workbenchState: s.workbenchState,
@@ -287,6 +293,7 @@ export function createServiceSetup<
     shortcutTarget,
     fileStorageSlots,
     editorEngineId,
+    editorSaveCoordinator,
     coreConfigOverrides,
   } = options;
   const platformServices: TPlatformMap = options.platformServices;
@@ -347,17 +354,34 @@ export function createServiceSetup<
           );
           return fileStorageServices;
         },
+        selfSenderId: BROWSING_CONTEXT_ID,
       })),
     ),
     navigation: slot(NavigationService),
+    noteSnapshot: slot(
+      NoteSnapshotService,
+      withOverride('noteSnapshot', () => ({
+        emitter: rootEmitter.scoped(
+          ['event::file:update'],
+          commonOpts.rootAbortSignal,
+        ),
+        selfSenderId: BROWSING_CONTEXT_ID,
+      })),
+    ),
     shortcut: slot(
       ShortcutService,
       withOverride('shortcut', () => ({
         target: shortcutTarget,
         shortcuts: commands
-          .filter((command) => command.keybindings)
+          .filter(
+            (
+              command,
+            ): command is Extract<
+              BangleAppCommand,
+              { keybindings: string[] }
+            > => 'keybindings' in command && command.keybindings !== undefined,
+          )
           .map((command): ShortcutServiceConfig => {
-            assertIsDefined(command.keybindings);
             const keys = command.keybindings.join('-');
             return {
               keyBinding: {
@@ -372,7 +396,8 @@ export function createServiceSetup<
                 );
               },
               options: {
-                ...(command.allowShortcutInInputs
+                ...('allowShortcutInInputs' in command &&
+                command.allowShortcutInInputs
                   ? { allowInInput: true }
                   : {}),
                 unique: true,
@@ -395,13 +420,18 @@ export function createServiceSetup<
       withOverride('workbenchState', () => ({
         themeManager,
         emitter: rootEmitter.scoped(
-          ['event::app:reload-ui'],
+          ['event::app:reload-ui', 'event::app:stale-tab'],
           commonOpts.rootAbortSignal,
         ),
       })),
     ),
     workspaceOps: slot(WorkspaceOpsService),
-    workspaceState: slot(WorkspaceStateService),
+    workspaceState: slot(
+      WorkspaceStateService,
+      withOverride('workspaceState', () => ({
+        hasPendingOrFailedSave: editorSaveCoordinator.hasPendingOrFailedSave,
+      })),
+    ),
     userActivityService: slot(
       UserActivityService,
       withOverride('userActivityService', () => ({
@@ -411,9 +441,12 @@ export function createServiceSetup<
         ),
       })),
     ),
-    editorEngine: slot(
-      editorEngineId === 'wordgard' ? EditorWService : PmEditorService,
-    ),
+    editorEngine:
+      editorEngineId === 'wordgard'
+        ? slot(EditorWService)
+        : slot(PmEditorService, () => ({
+            saveCoordinator: editorSaveCoordinator,
+          })),
   } satisfies Record<CoreServiceSlotId, AppServiceMapEntry>;
 
   // Core slots always win the join; the annotation drops any phantom core
@@ -447,6 +480,7 @@ export function createServiceSetup<
       commandRegistry: s.commandRegistry,
       fileSystem: s.fileSystem,
       navigation: s.navigation,
+      noteSnapshot: s.noteSnapshot,
       shortcut: s.shortcut,
       editorService: s.editorService,
       workbenchState: s.workbenchState,

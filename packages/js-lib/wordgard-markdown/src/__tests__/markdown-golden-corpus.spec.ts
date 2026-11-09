@@ -1,4 +1,4 @@
-import { MARKDOWN_CORPUS } from '@bangle.io/test-utils';
+import { MARKDOWN_CORPUS, MARKDOWN_SPEC_CORPUS } from '@bangle.io/test-utils';
 import { describe, expect, it } from 'vitest';
 import { createNoteMarkdownCodec } from '../codec';
 
@@ -17,19 +17,20 @@ import { createNoteMarkdownCodec } from '../codec';
 describe('golden corpus (wordgard)', () => {
   const codec = createNoteMarkdownCodec();
   const roundTrip = (input: string) => codec.serialize(codec.parse(input));
-  const wordgardFixtures = MARKDOWN_CORPUS.filter((f) =>
-    f.engines.includes('wordgard'),
+  const wordgardFixtures = [...MARKDOWN_CORPUS, ...MARKDOWN_SPEC_CORPUS].filter(
+    (f) => f.engines.includes('wordgard'),
   );
 
-  it.each(
-    wordgardFixtures.map((f) => [f.name, f] as const),
-  )('%s', (_name, fixture) => {
-    const expected = fixture.canonical ?? fixture.markdown;
-    expect(roundTrip(fixture.markdown)).toBe(expected);
-    if (fixture.canonical !== undefined) {
-      // The canonical form must itself be stable, or the "normalization"
-      // never converges and every save would rewrite the note.
-      expect(roundTrip(fixture.canonical)).toBe(fixture.canonical);
-    }
-  });
+  it.each(wordgardFixtures.map((f) => [f.name, f] as const))(
+    '%s',
+    (_name, fixture) => {
+      const expected = fixture.canonical ?? fixture.markdown;
+      expect(roundTrip(fixture.markdown)).toBe(expected);
+      if (fixture.canonical !== undefined) {
+        // The canonical form must itself be stable, or the "normalization"
+        // never converges and every save would rewrite the note.
+        expect(roundTrip(fixture.canonical)).toBe(fixture.canonical);
+      }
+    },
+  );
 });

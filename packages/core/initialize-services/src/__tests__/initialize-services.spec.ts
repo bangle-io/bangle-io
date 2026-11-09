@@ -1,13 +1,11 @@
 // @vitest-environment jsdom
 import { BaseService } from '@bangle.io/base-utils';
 import { ThemeManager } from '@bangle.io/color-scheme-manager';
+import { createEditorSaveCoordinator } from '@bangle.io/editor';
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import { expect, test } from 'vitest';
 import { initializeServices } from '../index';
 
-test('works', () => {
-  expect(true).toBe(true);
-});
 test('initializeServices returns unique service names', async () => {
   const { commonOpts, rootEmitter, controller } = makeTestCommonOpts();
 
@@ -17,6 +15,7 @@ test('initializeServices returns unique service names', async () => {
     commonOpts.store,
     new ThemeManager(),
     controller.signal,
+    createEditorSaveCoordinator(),
   );
 
   const serviceNames = Object.keys(services.core);

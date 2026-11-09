@@ -1,4 +1,4 @@
-import { collection, keybinding } from './common';
+import { collection, keybinding, PRIORITY } from './common';
 import {
   type Command,
   Decoration,
@@ -6,14 +6,15 @@ import {
   dropPoint,
   type EditorState,
   type EditorView,
-  NodeSelection,
   Plugin,
   PluginKey,
   type PMNode,
   Selection,
+  type Transaction,
 } from './pm';
 import {
   findParentNodeOfType,
+  findSelectedNodeOfType,
   getNodeType,
   isNodeSelection,
   type KeyCode,
@@ -34,6 +35,8 @@ export type CollapsibleHeadingConfig = {
   /** Node name of the heading this plugin folds. Defaults to `heading`. */
   headingName?: string;
   keyToggleCollapse?: KeyCode;
+  keyMoveDown?: KeyCode;
+  keyMoveUp?: KeyCode;
   /** Accessible label for the fold toggle when the section is expanded. */
   collapseLabel?: string;
   /** Accessible label for the fold toggle when the section is folded. */
@@ -45,6 +48,8 @@ type RequiredConfig = Required<CollapsibleHeadingConfig>;
 const DEFAULT_CONFIG: RequiredConfig = {
   headingName: 'heading',
   keyToggleCollapse: false,
+  keyMoveDown: 'Alt-ArrowDown',
+  keyMoveUp: 'Alt-ArrowUp',
   collapseLabel: 'Collapse section',
   expandLabel: 'Expand section',
 };
@@ -112,6 +117,166 @@ export function getHeadingFoldRange(
   }
 
   return to === from ? null : { headingPos, from, to };
+}
+
+function findAdjacentSectionDropPos(
+  doc: PMNode,
+  currentRange: HeadingFoldRange,
+  headingName: string,
+  direction: 'up' | 'down',
+  foldedRanges: readonly HeadingFoldRange[],
+): number | null {
+  const { headingPos } = currentRange;
+  const heading = doc.nodeAt(headingPos);
+  if (!heading || heading.type.name !== headingName) {
+    return null;
+  }
+
+  if (direction === 'down') {
+    const nextFoldedSection = foldedRanges.find(
+      (range) => range.headingPos === currentRange.to,
+    );
+    if (nextFoldedSection) {
+      return nextFoldedSection.to;
+    }
+    const nextSibling = doc.nodeAt(currentRange.to);
+    if (!nextSibling) {
+      return null;
+    }
+    return currentRange.to + nextSibling.nodeSize;
+  }
+
+  const previousFoldedSection = foldedRanges.find(
+    (range) => range.to === headingPos,
+  );
+  if (previousFoldedSection) {
+    return previousFoldedSection.headingPos;
+  }
+
+  const $heading = doc.resolve(headingPos);
+  const previousIndex = $heading.index() - 1;
+  if (previousIndex < 0) {
+    return null;
+  }
+  return headingPos - $heading.parent.child(previousIndex).nodeSize;
+}
+
+type SiblingRange = {
+  from: number;
+  to: number;
+};
+
+/**
+ * Moves a closed range of siblings to a raw drop position without deleting
+ * the source range. Instead, the intervening siblings move around it, which
+ * lets ProseMirror map selections and plugin anchors inside the source.
+ */
+function moveSiblingRange(
+  tr: Transaction,
+  source: SiblingRange,
+  rawDropPos: number,
+): Transaction | null {
+  const { from, to } = source;
+  if (
+    from < 0 ||
+    from >= to ||
+    to > tr.doc.content.size ||
+    rawDropPos < 0 ||
+    rawDropPos > tr.doc.content.size ||
+    (rawDropPos >= from && rawDropPos <= to)
+  ) {
+    return null;
+  }
+
+  const sourceSlice = tr.doc.slice(from, to);
+  const dropPos = dropPoint(tr.doc, rawDropPos, sourceSlice);
+  if (
+    dropPos == null ||
+    (dropPos >= from && dropPos <= to) ||
+    !tr.doc.resolve(from).sameParent(tr.doc.resolve(dropPos))
+  ) {
+    return null;
+  }
+
+  const movingDown = dropPos > to;
+  const neighborFrom = movingDown ? to : dropPos;
+  const neighborTo = movingDown ? dropPos : from;
+  const neighbor = tr.doc.slice(neighborFrom, neighborTo);
+  if (neighbor.content.size === 0) {
+    return null;
+  }
+
+  const swapFrom = Math.min(from, dropPos);
+  const swapTo = Math.max(to, dropPos);
+  const $swapFrom = tr.doc.resolve(swapFrom);
+  const $swapTo = tr.doc.resolve(swapTo);
+  const swappedContent = movingDown
+    ? neighbor.content.append(sourceSlice.content)
+    : sourceSlice.content.append(neighbor.content);
+  if (
+    !$swapFrom.parent.canReplace(
+      $swapFrom.index(),
+      $swapTo.index(),
+      swappedContent,
+    )
+  ) {
+    return null;
+  }
+
+  tr.delete(neighborFrom, neighborTo);
+  tr.insert(movingDown ? from : tr.mapping.map(to), neighbor.content);
+  return tr;
+}
+
+function remapFoldedHeadingPos(
+  tr: Transaction,
+  pos: number,
+  oldDoc: PMNode,
+  newDoc: PMNode,
+  headingName: string,
+): number | null {
+  const mapped = tr.mapping.mapResult(pos);
+  if (!mapped.deleted) {
+    return mapped.pos;
+  }
+
+  const heading = oldDoc.nodeAt(pos);
+  if (!heading || heading.type.name !== headingName) {
+    return null;
+  }
+
+  // Changing a heading's markup replaces its boundary tokens and creates a
+  // new node object even though its content is unchanged. Preserve the fold
+  // only when the mapped position still contains the same heading type and
+  // exact immutable content fragment; this avoids transferring a deleted
+  // heading's fold to an unrelated neighbor.
+  const replacement = newDoc.nodeAt(mapped.pos);
+  if (
+    replacement?.type === heading.type &&
+    replacement.content === heading.content
+  ) {
+    return mapped.pos;
+  }
+
+  // Reordering sibling ranges is represented as delete + insert, so a folded
+  // heading inside the moved range can be reported as deleted. ProseMirror
+  // nodes are immutable and the inserted slice retains the heading object;
+  // recovering that identity also keeps the fold anchored through history's
+  // inverse undo/redo transactions.
+  let recovered: number | null = null;
+  let duplicate = false;
+  newDoc.descendants((node, nodePos) => {
+    if (node !== heading) {
+      return true;
+    }
+    if (recovered != null) {
+      duplicate = true;
+      return false;
+    }
+    recovered = nodePos;
+    return false;
+  });
+  return duplicate ? null : recovered;
 }
 
 export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
@@ -197,16 +362,15 @@ export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
   /**
    * Moves a folded heading together with its hidden section to `dropPos`.
    * Nested fold state inside the section is preserved by re-anchoring it
-   * relative to the heading's new position. Fails (returns false) for drops
-   * inside the section itself and for non-top-level headings.
+   * relative to the heading's new position. The source and resolved drop
+   * position must share a parent, so a move cannot silently change the
+   * section's nesting. Fails (returns false) for drops inside the section
+   * itself.
    */
   const moveFoldedSection = (headingPos: number, dropPos: number): Command => {
     return (state, dispatch) => {
       const pluginState = key.getState(state);
       if (!pluginState?.folded.includes(headingPos)) {
-        return false;
-      }
-      if (state.doc.resolve(headingPos).depth !== 0) {
         return false;
       }
       const range = getHeadingFoldRange(
@@ -217,29 +381,16 @@ export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
       if (!range) {
         return false;
       }
-      if (dropPos >= headingPos && dropPos <= range.to) {
+      const tr = moveSiblingRange(
+        state.tr,
+        { from: headingPos, to: range.to },
+        dropPos,
+      );
+      if (!tr) {
         return false;
       }
-      const slice = state.doc.slice(headingPos, range.to);
-      const insertPos = dropPoint(state.doc, dropPos, slice);
-      if (
-        insertPos == null ||
-        (insertPos >= headingPos && insertPos <= range.to)
-      ) {
-        return false;
-      }
+
       if (dispatch) {
-        const tr = state.tr;
-        tr.delete(headingPos, range.to);
-        const mapped = tr.mapping.map(insertPos);
-        tr.insert(mapped, slice.content);
-        tr.setMeta(key, {
-          type: 'fold',
-          positions: pluginState.folded
-            .filter((pos) => pos >= headingPos && pos < range.to)
-            .map((pos) => mapped + (pos - headingPos)),
-        } satisfies FoldMeta);
-        tr.setSelection(NodeSelection.create(tr.doc, mapped));
         tr.scrollIntoView();
         dispatch(tr);
       }
@@ -256,6 +407,49 @@ export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
       dispatch(state.tr.setMeta(key, { type: 'unfoldAll' } satisfies FoldMeta));
     }
     return true;
+  };
+
+  const moveFoldedSectionByDirection = (direction: 'up' | 'down'): Command => {
+    return (state, dispatch) => {
+      const headingType = getNodeType(state.schema, config.headingName);
+      const found =
+        findSelectedNodeOfType(headingType)(state.selection) ??
+        findParentNodeOfType(headingType)(state.selection);
+      const pluginState = key.getState(state);
+      if (!found || !pluginState?.folded.includes(found.pos)) {
+        return false;
+      }
+      if (!isNodeSelection(state.selection) && !state.selection.empty) {
+        return false;
+      }
+
+      const currentRange = pluginState.ranges.find(
+        (range) => range.headingPos === found.pos,
+      );
+      if (!currentRange) {
+        return true;
+      }
+      const dropPos = findAdjacentSectionDropPos(
+        state.doc,
+        currentRange,
+        config.headingName,
+        direction,
+        pluginState.ranges,
+      );
+      // Do not fall through to the ordinary heading keymap: it would move
+      // only the heading and tear apart the folded section at the boundary.
+      if (dropPos == null) {
+        return true;
+      }
+
+      const move = moveFoldedSection(found.pos, dropPos);
+      if (!dispatch) {
+        move(state);
+        return true;
+      }
+      move(state, dispatch);
+      return true;
+    };
   };
 
   const listCollapsedHeadings = (state: EditorState) => {
@@ -288,7 +482,12 @@ export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
 
   const plugin = {
     fold: pluginFold(config, key, toggleAtPos, moveFoldedSection),
-    keybindings: pluginKeybindings(config, toggleAtSelection),
+    keybindings: pluginKeybindings(
+      config,
+      toggleAtSelection,
+      moveFoldedSectionByDirection('up'),
+      moveFoldedSectionByDirection('down'),
+    ),
   };
 
   return collection({
@@ -308,11 +507,21 @@ export function setupCollapsibleHeading(userConfig?: CollapsibleHeadingConfig) {
   });
 }
 
-function pluginKeybindings(config: RequiredConfig, toggleAtSelection: Command) {
+function pluginKeybindings(
+  config: RequiredConfig,
+  toggleAtSelection: Command,
+  moveUp: Command,
+  moveDown: Command,
+) {
   return () => {
     return keybinding(
-      [[config.keyToggleCollapse, toggleAtSelection]],
+      [
+        [config.keyToggleCollapse, toggleAtSelection],
+        [config.keyMoveUp, moveUp],
+        [config.keyMoveDown, moveDown],
+      ],
       'collapsible-heading',
+      PRIORITY.high,
     );
   };
 }
@@ -333,14 +542,20 @@ function pluginFold(
         init: (_, state) => {
           return buildPluginState(state.doc, [], config, toggleAtPos);
         },
-        apply: (tr, prev, _oldState, newState) => {
+        apply: (tr, prev, oldState, newState) => {
           const meta = tr.getMeta(key) as FoldMeta | undefined;
 
           let folded = prev.folded;
           if (tr.docChanged) {
             folded = folded.flatMap((pos) => {
-              const result = tr.mapping.mapResult(pos);
-              return result.deleted ? [] : [result.pos];
+              const mapped = remapFoldedHeadingPos(
+                tr,
+                pos,
+                oldState.doc,
+                newState.doc,
+                config.headingName,
+              );
+              return mapped == null ? [] : [mapped];
             });
           }
 

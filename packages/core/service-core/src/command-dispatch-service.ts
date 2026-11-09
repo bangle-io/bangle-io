@@ -167,7 +167,7 @@ export class CommandDispatchService extends BaseService {
       const autoFocus =
         options?.overrideAutoFocus ??
         command.autoFocusEditor ??
-        command.omniSearch;
+        Boolean(command.omniSearch);
 
       if (autoFocus === true) {
         this.config.focusEditor();

@@ -150,6 +150,10 @@ The `local-ci-check` script runs all CI validation scripts defined in package.js
 - `desktop:ci` - Electron desktop tests, build, and smoke test
 
 This ensures your changes will pass CI before pushing to the repository.
+Full unit, browser, desktop, and aggregate local CI runs share a repository
+lock, so concurrent runs from linked worktrees queue instead of competing for
+the same machine. The waiting command reports the PID and worktree holding the
+lock and continues automatically when it is released.
 
 `knip:ci` runs two passes:
 
@@ -271,14 +275,6 @@ bun packages/tooling/custom-scripts/scripts/add-workspace-dep.ts
 
 Automatically adds missing workspace dependencies to package.json files based on actual imports in TypeScript source files.
 
-**Add miscellaneous dependencies**
-
-```bash
-bun packages/tooling/custom-scripts/scripts/add-misc-dep.ts
-```
-
-Adds whitelisted dependencies to packages that import them but don't have them declared in package.json.
-
 ### Code Formatting and Validation
 
 **Format all package.json files**
@@ -288,14 +284,6 @@ bun packages/tooling/custom-scripts/scripts/format-package-json.ts
 ```
 
 Standardizes and sorts all package.json files in the workspace according to project conventions.
-
-**Format all files**
-
-```bash
-bun packages/tooling/custom-scripts/scripts/format-all.ts
-```
-
-Runs the package.json formatter across the entire workspace.
 
 **Validate workspace**
 

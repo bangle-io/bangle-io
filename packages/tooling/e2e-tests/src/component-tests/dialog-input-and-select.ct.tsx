@@ -1,4 +1,7 @@
-import { dialogInputAndSelectStories as stories } from '@bangle.io/ui-components/testing';
+import {
+  DialogCreateNoteInput,
+  DialogLongSingleSelect,
+} from '@bangle.io/ui-components/testing';
 import { expect, test } from '@playwright/experimental-ct-react';
 import React from 'react';
 
@@ -6,7 +9,7 @@ test('single input dialog exposes a direct form flow', async ({
   mount,
   page,
 }) => {
-  await mount(<stories.CreateNoteInput />);
+  await mount(<DialogCreateNoteInput />);
 
   const dialog = page.getByRole('dialog', { name: 'Create Note' });
   await expect(dialog).toBeVisible();
@@ -30,7 +33,7 @@ test('single select keeps input focus model and scrolls active option', async ({
   mount,
   page,
 }) => {
-  await mount(<stories.LongSingleSelect />);
+  await mount(<DialogLongSingleSelect />);
 
   const dialog = page.getByRole('dialog', { name: 'Move Note' });
   await expect(

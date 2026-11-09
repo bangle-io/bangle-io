@@ -5,30 +5,20 @@ div.ProseMirror {
     flex-direction: column;
   }
 
-  & p:first-child,
-  & h1:first-child,
-  & h2:first-child,
-  & h3:first-child,
-  & h4:first-child,
-  & h5:first-child,
-  & h6:first-child {
+  /* The editor surface owns the document-edge inset. Scope margin resets to
+     direct document children so nested blocks keep their local rhythm. */
+  & > :first-child {
     margin-top: 0;
   }
 
-  & p:last-child,
-  & h1:last-child,
-  & h2:last-child,
-  & h3:last-child,
-  & h4:last-child,
-  & h5:last-child,
-  & h6:last-child {
+  & > :last-child {
     margin-bottom: 0;
   }
 
-  /* The first heading is typically the page title; give it breathing room
-     from the top of the editor. */
-  & h1:first-child {
-    padding-top: 1.5rem;
+  /* Frontmatter has its own bottom margin; use a uniform heading margin here
+     to preserve the intended 2rem inter-block gap without title padding. */
+  & > pre[data-frontmatter]:first-child + :is(h1, h2, h3, h4, h5, h6) {
+    margin-top: 1.5rem;
   }
 
   & h1,
@@ -93,6 +83,88 @@ div.ProseMirror {
     background-color: hsl(var(--BV-wiki-link-missing-hover-background));
   }
 
+  & .math-node {
+    min-width: 0.75em;
+    min-height: 1em;
+    border-radius: 0.3rem;
+    color: hsl(var(--BV-foreground));
+    font-size: 1em;
+    font-family: inherit;
+  }
+
+  & math-inline {
+    display: inline-block;
+    max-width: 100%;
+    overflow-x: auto;
+    vertical-align: baseline;
+  }
+
+  & math-inline .math-render {
+    padding: 0 0.1em;
+    font-size: 1em;
+  }
+
+  & math-display {
+    margin: 0.5rem 0;
+    padding: 0.75rem 1rem;
+    overflow-x: auto;
+    border: 1px solid transparent;
+  }
+
+  & math-display .math-render {
+    min-width: max-content;
+  }
+
+  & .math-node .math-src {
+    color: hsl(var(--BV-foreground));
+  }
+
+  & .math-node .math-src .ProseMirror {
+    border: 1px solid hsl(var(--BV-border));
+    border-radius: 0.3rem;
+    padding: 0.15rem 0.35rem;
+    background: hsl(var(--BV-muted) / 0.35);
+    color: hsl(var(--BV-foreground));
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", monospace;
+    white-space: pre-wrap;
+  }
+
+  & .math-node .math-src .ProseMirror:focus {
+    border-color: hsl(var(--BV-pop) / 0.6);
+    box-shadow: none;
+    outline: none;
+  }
+
+  & .math-node.ProseMirror-selectednode {
+    background: hsl(var(--BV-muted) / 0.12);
+    box-shadow: 0 0 0 1px hsl(var(--BV-pop) / 0.45);
+    outline: none;
+  }
+
+  & .math-node.ProseMirror-selectednode:focus-within {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  & .math-node .katex-error,
+  & .math-node .math-render.parse-error {
+    color: hsl(var(--BV-destructive));
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", monospace;
+    white-space: pre-wrap;
+  }
+
+  & .math-node.empty-math .math-render::before {
+    color: hsl(var(--BV-muted-foreground));
+  }
+
+  & p::selection,
+  & p > *::selection,
+  & .math-node.math-select .math-render {
+    background-color: hsl(var(--BV-pop) / 0.25);
+  }
+
   &.bangle-link-open-modifier a {
     cursor: pointer;
   }
@@ -130,30 +202,33 @@ div.ProseMirror {
   }
 
   & h1 {
-    margin: 1rem 0;
-    font-size: 2.25em;
+    margin: 2rem 0 1rem;
+    font-size: 2.25rem;
   }
 
   & h2 {
-    margin: 1.75em 0 0.5em;
-    font-size: 1.75em;
+    margin: 1.5rem 0 0.5rem;
+    font-size: 1.5rem;
   }
 
   & h3 {
-    margin: 1.5em 0 0.5em;
-    font-size: 1.375em;
+    margin: 1.25rem 0 0.5rem;
+    font-size: 1.25rem;
   }
 
   & h4 {
-    margin: 1em 0;
-    font-size: 1.125em;
+    margin: 1rem 0 0.5rem;
+    font-size: 1.125rem;
   }
 
   & h5 {
-    margin: 0.5em 0;
+    margin: 0.75rem 0 0.5rem;
+    font-size: 1rem;
   }
 
   & h6 {
+    margin: 0.75rem 0 0.5rem;
+    font-size: 0.875rem;
     opacity: 0.8;
   }
 
@@ -162,8 +237,8 @@ div.ProseMirror {
      both margins into a large, jarring gap. Tighten the top margin in that
      case while preserving the normal spacing when a heading follows body
      text. */
-  & :is(h1, h2, h3, h4, h5, h6) + :is(h2, h3, h4, h5, h6) {
-    margin-top: 0.5em;
+  & :is(h1, h2, h3, h4, h5, h6) + :is(h1, h2, h3, h4, h5, h6) {
+    margin-top: 0.5rem;
   }
 
   & img,
@@ -174,7 +249,7 @@ div.ProseMirror {
   }
 
   & code:not(pre code) {
-    font-size: 0.9em;
+    font-size: 0.95em;
     font-weight: 500;
     padding: 0.125em 0.25em;
     border-radius: 0.375rem;
@@ -374,12 +449,12 @@ div.ProseMirror {
   }
 
   & hr {
-    margin: 2em 0;
+    margin: 1rem 0;
   }
 
   & .prosemirror-horizontal-rule {
-    padding: 1em 0;
-    margin: 1em 0;
+    padding: 0;
+    margin: 1rem 0;
 
     & hr {
       margin: 0;
@@ -388,6 +463,17 @@ div.ProseMirror {
 
   & .prosemirror-flat-list {
     line-height: 1.5;
+
+    /* List headings are nested document content, so they need a local edge
+       reset rather than inheriting the top-level document rule above. */
+    & > .list-content > :is(h1, h2, h3, h4, h5, h6):first-child {
+      margin-top: 0;
+    }
+
+    & > .list-content > :is(h1, h2, h3, h4, h5, h6):last-child {
+      margin-bottom: 0;
+    }
+
     &::before,
     & > .list-marker {
       top: 0.5rem;
@@ -395,19 +481,19 @@ div.ProseMirror {
     &:has(> div.list-content > h1) {
       &::before,
       & > .list-marker {
-        top: 1em;
+        top: 0.65rem;
       }
     }
     &:has(> div.list-content > h2) {
       &::before,
       & > .list-marker {
-        top: 0.6em;
+        top: 0.2rem;
       }
     }
     &:has(> div.list-content > h3) {
       &::before,
       & > .list-marker {
-        top: 0.25em;
+        top: 0.05rem;
       }
     }
     &:has(> div.list-content > h4) {
@@ -419,13 +505,13 @@ div.ProseMirror {
     &:has(> div.list-content > h5) {
       &::before,
       & > .list-marker {
-        top: -0.1em;
+        top: -0.05rem;
       }
     }
     &:has(> div.list-content > h6) {
       &::before,
       & > .list-marker {
-        top: -0.1em;
+        top: -0.125rem;
       }
     }
   }
@@ -444,6 +530,14 @@ div.ProseMirror {
   div[data-node-view-root="true"] {
     display: contents;
   }
+}
+
+/* The upstream math stylesheet contains an unscoped paragraph-selection
+ * rule. Keep its math layout styles, but restore the browser/user selection
+ * color everywhere outside an editor. */
+p:not(div.ProseMirror p)::selection,
+p:not(div.ProseMirror p) > *::selection {
+  background-color: revert;
 }
 
 .prosemirror-flat-list {

@@ -16,24 +16,28 @@ import {
   syncAppDocumentTitle,
   syncWindowControlsOverlayState,
 } from './common/pwa-install';
+import { PwaLaunchActions } from './common/pwa-launch-actions';
 import { ErrorBoundary } from './components/feedback/error-boundary';
 import { AppDialogs } from './dialogs/app-dialogs';
+import { PwaOpenInAppPrompt } from './dialogs/pwa-open-in-app-prompt';
 import { AppSidebar } from './layout/app-sidebar';
 import {
   PageAsset,
   PageEditor,
-  PageFatalError,
-  PageNativeFsAuthFailed,
-  PageNativeFsAuthReq,
   PageNativeFsRecovery,
   PageNotFound,
   PageSettings,
   PageWelcome,
-  PageWorkspaceNotFound,
   PageWsHome,
-  PageWsPathNotFound,
 } from './pages';
 import { SaveProtection } from './save-protection';
+
+// Re-exported for the bootstrap entry: launch params must be consumed
+// before the router captures `window.location.search`, or every later
+// navigation re-emits (and a reload replays) the consumed shortcut or
+// deep link.
+export { consumePwaLaunchParams } from './common/pwa-install';
+
 export function App({
   logger,
   store,
@@ -52,6 +56,8 @@ export function App({
           <ErrorBoundary>
             <BrowserAppDocumentSetup />
             <AppDialogs />
+            <PwaOpenInAppPrompt />
+            <PwaLaunchActions />
             <OmniSearch />
             <Toaster position="top-right" />
             <AppErrorHandler rootEmitter={rootEmitter} />
@@ -93,14 +99,10 @@ function routeUsesWorkspaceFileTree(route: AppRouteInfo['route']): boolean {
     case 'ws-home':
       return true;
     case 'welcome':
-    case 'native-fs-auth-req':
-    case 'native-fs-auth-failed':
-    case 'workspace-not-found':
-    case 'ws-path-not-found':
-    case 'fatal-error':
     case 'not-found':
     case 'settings-general':
     case 'settings-workspaces':
+    case 'settings-recovery':
       return false;
     default: {
       const _exhaustiveCheck: never = route;
@@ -132,20 +134,11 @@ function AppRoutes() {
       return <PageWsHome />;
     case 'welcome':
       return <PageWelcome />;
-    case 'native-fs-auth-req':
-      return <PageNativeFsAuthReq />;
-    case 'native-fs-auth-failed':
-      return <PageNativeFsAuthFailed />;
-    case 'workspace-not-found':
-      return <PageWorkspaceNotFound />;
-    case 'ws-path-not-found':
-      return <PageWsPathNotFound />;
-    case 'fatal-error':
-      return <PageFatalError />;
     case 'not-found':
       return <PageNotFound />;
     case 'settings-general':
     case 'settings-workspaces':
+    case 'settings-recovery':
       return <PageSettings />;
 
     default: {

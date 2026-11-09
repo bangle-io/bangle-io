@@ -136,6 +136,49 @@ test('authors, persists, reloads, and navigates wiki links safely', async ({
     .toBe('[[Home|Go home]] and [[Missing]]');
 });
 
+test('resolves spaced wiki targets without rewriting their Markdown', async ({
+  page,
+}) => {
+  const workspaceName = 'spaced-wiki-links';
+  const sourceMarkdown = '[[ Existing.md ]] and [[ Missing.md ]]';
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'Home',
+  });
+  await writeStoredMarkdown(page, workspaceName, 'Existing', 'existing body');
+  await writeStoredMarkdown(page, workspaceName, 'Home', sourceMarkdown);
+  await page.reload({ waitUntil: 'networkidle' });
+
+  const editor = getEditorLocator(page, {});
+  const existing = editor.locator('[data-wiki-link=" Existing.md "]');
+  await expect(existing).toHaveText('Existing');
+  await expect(existing).not.toHaveClass(/wiki-link-unresolved/);
+  await existing.click();
+  await expect(page).toHaveURL(
+    /ws#route=editor&wsPath=spaced-wiki-links%3AExisting\.md$/,
+  );
+  await expect(editor).toContainText('existing body');
+
+  await page.goBack({ waitUntil: 'networkidle' });
+  await expect(page).toHaveURL(
+    /ws#route=editor&wsPath=spaced-wiki-links%3AHome\.md$/,
+  );
+
+  const missing = editor.locator('[data-wiki-link=" Missing.md "]');
+  await expect(missing).toHaveText('Missing');
+  await expect(missing).toHaveClass(/wiki-link-unresolved/);
+  await missing.click();
+  await expect(page).toHaveURL(
+    /ws#route=editor&wsPath=spaced-wiki-links%3AMissing\.md$/,
+  );
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Missing'))
+    .toBe('');
+  await expect
+    .poll(() => readStoredMarkdown(page, workspaceName, 'Home'))
+    .toBe(sourceMarkdown);
+});
+
 test('does not offer the note being edited as a wiki-link suggestion', async ({
   page,
 }) => {

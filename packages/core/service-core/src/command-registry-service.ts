@@ -4,7 +4,11 @@ import {
   type BaseServiceContext,
 } from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
-import type { Command, CommandHandler, CommandKey } from '@bangle.io/types';
+import type {
+  Command,
+  CommandHandler,
+  OmniSearchScope,
+} from '@bangle.io/types';
 
 export type CommandHandlerConfig = { id: string; handler: CommandHandler };
 
@@ -16,7 +20,6 @@ export class CommandRegistryService extends BaseService {
 
   private commands: Map<string, Command> = new Map();
   private handlers: Map<string, CommandHandler> = new Map();
-  private commandKeyMap: WeakMap<Command, CommandKey<string>> = new WeakMap();
 
   constructor(
     context: BaseServiceContext,
@@ -52,25 +55,11 @@ export class CommandRegistryService extends BaseService {
     return Array.from(this.commands.values());
   }
 
-  public getCommandKey(command: Command): CommandKey<string> {
-    const key = this.commandKeyMap.get(command);
-    if (!key) {
-      throw new BaseError({
-        message: `Command "${command.id}" does not have a key.`,
-      });
-    }
-    return key;
-  }
-
   public register(command: Command) {
     if (this.commands.has(command.id)) {
       throw new BaseError({
         message: `Command "${command.id}" is already registered.`,
       });
-    }
-
-    if (!this.commandKeyMap.has(command)) {
-      this.commandKeyMap.set(command, { key: command.id });
     }
 
     this.commands.set(command.id, command);
@@ -104,7 +93,18 @@ export class CommandRegistryService extends BaseService {
     return command;
   }
 
-  public getOmniSearchCommands(): Command[] {
-    return this.getCommands().filter((cmd) => cmd.omniSearch);
+  public getOmniSearchCommands(activeScope: OmniSearchScope): Command[] {
+    return this.getCommands().filter((command) => {
+      switch (command.omniSearch) {
+        case 'global':
+          return true;
+        case 'workspace':
+          return activeScope !== 'global';
+        case 'note':
+          return activeScope === 'note';
+        default:
+          return false;
+      }
+    });
   }
 }

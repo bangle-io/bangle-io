@@ -1,4 +1,6 @@
+import { getEventSenderMetadata } from '@bangle.io/base-utils';
 import {
+  EXTERNAL_FILE_CHANGE_SENDER_TAG,
   FILE_STORAGE_MAX_FILE_SIZE_BYTES,
   WORKSPACE_STORAGE_TYPE,
 } from '@bangle.io/constants';
@@ -122,6 +124,24 @@ describe('FileSystemService', () => {
     expect(notExistsResult).toBe(false);
   });
 
+  it('fileStat returns timestamps for existing files and rejects for missing ones', async () => {
+    const { fileSystem } = await setupFileSystemTest({ controller });
+
+    const stat = await fileSystem.fileStat(EXISTING_FILE);
+    expect(stat.ctime).toBeGreaterThan(0);
+    expect(stat.mtime).toBeGreaterThanOrEqual(stat.ctime);
+
+    await expect(fileSystem.fileStat(NON_EXISTING_FILE)).rejects.toThrow();
+
+    const abortController = new AbortController();
+    abortController.abort();
+    await expect(
+      fileSystem.fileStat(EXISTING_FILE, {
+        signal: abortController.signal,
+      }),
+    ).rejects.toThrow();
+  });
+
   it('exposes the active storage provider file-size limit', async () => {
     const { fileSystem } = await setupFileSystemTest({ controller });
 
@@ -206,6 +226,10 @@ describe('FileSystemService', () => {
       newWsPath: 'test-workspace:renamed-after-settings.md',
     });
     expect(readRevision()).toBeGreaterThan(afterCreateRevision);
+    expect(store.get(fileSystem.$fileRenameEvent)).toMatchObject({
+      oldWsPath: 'test-workspace:created-after-settings.md',
+      wsPath: 'test-workspace:renamed-after-settings.md',
+    });
 
     const afterRenameRevision = readRevision();
     await fileSystem.deleteFile('test-workspace:renamed-after-settings.md');
@@ -296,6 +320,42 @@ describe('FileSystemService', () => {
     ).resolves.toBeUndefined();
   });
 
+  it('rejects cross-workspace batch renames before mutating storage', async () => {
+    const { fileSystem, storage, workspaceOps } = await setupFileSystemTest({
+      controller,
+    });
+    const destinationWsName = 'other-workspace';
+    const destination = `${destinationWsName}:moved.md`;
+    const renameFile = vi.spyOn(storage, 'renameFile');
+
+    await workspaceOps.createWorkspaceInfo({
+      name: destinationWsName,
+      type: WORKSPACE_STORAGE_TYPE.Memory,
+      metadata: {},
+    });
+
+    await expect(
+      fileSystem.renameFiles([
+        { oldWsPath: EXISTING_FILE, newWsPath: destination },
+      ]),
+    ).rejects.toMatchObject({
+      cause: expect.objectContaining({
+        name: 'error::file:invalid-operation',
+        payload: {
+          operation: 'rename',
+          oldWsPath: EXISTING_FILE,
+          newWsPath: destination,
+        },
+      }),
+    });
+
+    expect(renameFile).not.toHaveBeenCalled();
+    await expect(fileSystem.readFileAsText(EXISTING_FILE)).resolves.toBe(
+      'Test content',
+    );
+    await expect(fileSystem.readFile(destination)).resolves.toBeUndefined();
+  });
+
   it('restores completed batch deletes when a later delete fails', async () => {
     const { fileSystem, storage } = await setupFileSystemTest({ controller });
     const first = `${TEST_WS_NAME}:old/one.md`;
@@ -351,5 +411,99 @@ describe('FileSystemService', () => {
     expect(deleteCountDuringWrites).toEqual([before, before, before]);
     // ...and all three land together afterwards.
     expect(store.get(fileSystem.$fileDeleteCount)).toBe(before + paths.length);
+  });
+});
+
+describe('external file change events', () => {
+  const EXTERNAL_SENDER = {
+    id: 'other-source',
+    tag: EXTERNAL_FILE_CHANGE_SENDER_TAG,
+  };
+
+  it('exposes externally tagged file events through $externalFileChangeEvent', async () => {
+    const controller = new AbortController();
+    const testEnv = createTestEnvironment({ controller });
+    const services = testEnv.instantiateAll();
+    await testEnv.mountAll();
+    const { store } = testEnv;
+    const fileSystem = services.fileSystem;
+
+    expect(store.get(fileSystem.$externalFileChangeEvent)).toBeUndefined();
+
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-content-update',
+      wsPath: 'some-ws:one.md',
+      sender: EXTERNAL_SENDER,
+    });
+    expect(store.get(fileSystem.$externalFileChangeEvent)).toEqual({
+      sequence: 1,
+      type: 'file-content-update',
+      wsPath: 'some-ws:one.md',
+    });
+    // External events also feed the regular counters so the file tree and
+    // indexes react to them like any other change.
+    expect(store.get(fileSystem.$fileContentUpdateCount)).toBe(1);
+
+    // Events from this browsing context's own writes never mark the external
+    // atom.
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-content-update',
+      wsPath: 'some-ws:two.md',
+      sender: getEventSenderMetadata({ tag: 'file-system' }),
+    });
+    expect(store.get(fileSystem.$externalFileChangeEvent)).toMatchObject({
+      sequence: 1,
+      wsPath: 'some-ws:one.md',
+    });
+
+    // A normal app write broadcast from another browsing context is just as
+    // external to this editor as a storage-watcher event.
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-content-update',
+      wsPath: 'some-ws:from-other-tab.md',
+      sender: { id: 'other-tab', tag: 'file-system' },
+    });
+    expect(store.get(fileSystem.$externalFileChangeEvent)).toEqual({
+      sequence: 2,
+      type: 'file-content-update',
+      wsPath: 'some-ws:from-other-tab.md',
+    });
+
+    testEnv.rootEmitter.emit('event::file:update', {
+      type: 'file-rename',
+      oldWsPath: 'some-ws:old.md',
+      wsPath: 'some-ws:new.md',
+      sender: { id: 'other-tab', tag: 'file-system' },
+    });
+    // Renames have their own typed atom; content reconciliation only needs a
+    // coarse refresh after the editor has been retargeted.
+    expect(store.get(fileSystem.$externalFileChangeEvent)).toEqual({
+      sequence: 3,
+      type: 'refresh',
+      wsName: 'some-ws',
+    });
+    // The tree re-lists, but this tab's editors are not sent through the
+    // rename event without being told the source is external.
+    expect(store.get(fileSystem.$fileRenameCount)).toBe(1);
+    expect(store.get(fileSystem.$fileRenameEvent)).toEqual({
+      external: true,
+      oldWsPath: 'some-ws:old.md',
+      sequence: 1,
+      wsPath: 'some-ws:new.md',
+    });
+
+    // An externally tagged force-update maps to a coarse refresh, keeping
+    // its workspace scope when the emitter provided one.
+    testEnv.rootEmitter.emit('event::file:force-update', {
+      wsName: 'some-ws',
+      sender: EXTERNAL_SENDER,
+    });
+    expect(store.get(fileSystem.$externalFileChangeEvent)).toEqual({
+      sequence: 4,
+      type: 'refresh',
+      wsName: 'some-ws',
+    });
+
+    controller.abort();
   });
 });

@@ -13,6 +13,7 @@ import { WsPath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue } from 'jotai';
 import { ChevronsRightLeft, Home, MoveHorizontal } from 'lucide-react';
 import React from 'react';
+import { MarkdownFidelityNotice } from '../components/navigation/markdown-fidelity-notice';
 import { NoteBreadcrumb } from '../components/navigation/note-breadcrumb';
 import { WsNameBreadcrumb } from '../components/navigation/ws-name-breadcrumb'; // Import WsNameBreadcrumb
 
@@ -44,7 +45,7 @@ export function AppHeader({ children }: AppHeaderProps) {
         aria-hidden="true"
         className="desktop-titlebar-main-spacer shrink-0"
       />
-      <div className="flex h-full flex-1 items-center justify-between">
+      <div className="flex h-full min-w-0 flex-1 items-center gap-2">
         <ToolbarLeftSection
           showEditorToolbar={showEditorToolbar}
           currentWsPath={currentWsPath?.wsPath}
@@ -83,26 +84,31 @@ function ToolbarLeftSection({
   const coreServices = useCoreServices();
 
   return (
-    <div className="desktop-titlebar-no-drag flex min-w-0 items-center gap-2">
+    <div className="desktop-titlebar-no-drag flex min-w-0 flex-1 items-center gap-2">
       <Sidebar.SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="h-4" />
       {showEditorToolbar && currentWsPath ? (
-        <NoteBreadcrumb
-          wsPath={currentWsPath}
-          wsPaths={wsPaths}
-          onNewNote={({ wsPath }) => {
-            const parent = WsPath.fromString(wsPath).getParent();
-            const path = parent?.path;
+        <>
+          <NoteBreadcrumb
+            wsPath={currentWsPath}
+            wsPaths={wsPaths}
+            onNewNote={({ wsPath }) => {
+              const parent = WsPath.fromString(wsPath).getParent();
+              const path = parent?.path;
 
-            coreServices.commandDispatcher.dispatch(
-              'command::ui:create-note-dialog',
-              {
-                prefillName: path || '',
-              },
-              'AppHeader',
-            );
-          }}
-        />
+              coreServices.commandDispatcher.dispatch(
+                'command::ui:create-note-dialog',
+                {
+                  prefillName: path || '',
+                },
+                'AppHeader',
+              );
+            }}
+          />
+          <div className="shrink-0">
+            <MarkdownFidelityNotice wsPath={currentWsPath} />
+          </div>
+        </>
       ) : currentWsName ? (
         <WsNameBreadcrumb wsName={currentWsName} />
       ) : (
@@ -167,7 +173,7 @@ function ToolbarRightSection({
   };
 
   return (
-    <div className="desktop-titlebar-no-drag flex items-center">
+    <div className="desktop-titlebar-no-drag flex shrink-0 items-center">
       <StarButton
         isStarred={isCurrentWsPathStarred}
         onClick={handleStarClick}

@@ -6,12 +6,14 @@ import { t } from '@bangle.io/translations';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
+  consumePwaLaunchParams: vi.fn(),
   initializeSentry: vi.fn(),
   initializeServices: vi.fn(),
 }));
 
 vi.mock('@bangle.io/app', () => ({
   App: () => null,
+  consumePwaLaunchParams: mocks.consumePwaLaunchParams,
 }));
 
 vi.mock('@bangle.io/initialize-services', async (importOriginal) => ({
@@ -29,6 +31,7 @@ describe('browser entry startup', () => {
     vi.stubGlobal('t', t);
     document.body.innerHTML = '<div id="root"></div>';
     window.history.replaceState(null, '', '/');
+    mocks.consumePwaLaunchParams.mockReset();
     mocks.initializeSentry.mockReset();
     mocks.initializeServices.mockReset();
   });
@@ -61,6 +64,8 @@ describe('browser entry startup', () => {
     );
 
     await import('../main');
+
+    expect(mocks.consumePwaLaunchParams).toHaveBeenCalledWith(window);
 
     await vi.waitFor(
       () => {

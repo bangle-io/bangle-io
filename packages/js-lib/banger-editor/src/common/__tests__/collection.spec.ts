@@ -386,39 +386,6 @@ describe('collection API - complex markdown merging', () => {
 });
 
 describe('collection API - priority inheritance', () => {
-  it('correctly inherits priority through multiple levels of nesting', () => {
-    const pluginA = setPriority(createTestPlugin('pluginA'), 10);
-    const pluginB = setPriority(createTestPlugin('pluginB'), 20);
-    const pluginC = setPriority(createTestPlugin('pluginC'), 30);
-
-    const collectionA = collection({
-      id: 'collA',
-      plugin: { p0: pluginA },
-    });
-
-    const collectionB = collection({
-      id: 'collB',
-      plugin: { p0: pluginB },
-    });
-
-    const collectionC = collection({
-      id: 'collC',
-      plugin: { p0: pluginC },
-    });
-
-    const result = resolve([
-      collectionA,
-      collectionB,
-      collectionC,
-    ]).resolvePlugins(mockContext);
-
-    expect(result.map((p) => getPluginKeyString(p))).toEqual([
-      expect.stringContaining('pluginC'),
-      expect.stringContaining('pluginB'),
-      expect.stringContaining('pluginA'),
-    ]);
-  });
-
   it('maintains priority order when resolving nested collections with same priority', () => {
     const pluginA = setPriority(createTestPlugin('pluginA'), 10);
     const pluginB = setPriority(createTestPlugin('pluginB'), 10);

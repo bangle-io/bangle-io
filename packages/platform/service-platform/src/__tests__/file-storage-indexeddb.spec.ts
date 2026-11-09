@@ -6,6 +6,7 @@ import { FILE_STORAGE_MAX_FILE_SIZE_BYTES } from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { FileStorageIndexedDB } from '../file-storage-indexeddb';
+import { testCrossWorkspaceRenameContract } from './file-storage-rename-contract';
 
 async function setup() {
   const { commonOpts } = createTestEnvironment();
@@ -25,6 +26,8 @@ async function setup() {
 }
 
 describe('FileStorageIndexedDB', () => {
+  testCrossWorkspaceRenameContract(setup);
+
   beforeEach(() => {
     // indexedDB gets cleared in between tests by happy-dom
   });
@@ -90,6 +93,31 @@ describe('FileStorageIndexedDB', () => {
       oldWsPath: oldPath,
       newWsPath: newPath,
     });
+  });
+
+  it('provider contract: rename rejects an existing destination with a typed app error', async () => {
+    const { service, onChange } = await setup();
+    const oldPath = 'myWorkspace:source.txt';
+    const newPath = 'myWorkspace:destination.txt';
+
+    await service.createFile(oldPath, new File(['Source'], 'source.txt'));
+    await service.createFile(
+      newPath,
+      new File(['Destination'], 'destination.txt'),
+    );
+    onChange.mockClear();
+
+    await expect(
+      service.renameFile(oldPath, { newWsPath: newPath }),
+    ).rejects.toMatchObject({
+      cause: expect.objectContaining({
+        name: 'error::file:already-existing',
+        payload: { wsPath: newPath },
+      }),
+    });
+    await expect(service.readFile(oldPath)).resolves.toBeDefined();
+    await expect(service.readFile(newPath)).resolves.toBeDefined();
+    expect(onChange).not.toHaveBeenCalled();
   });
 
   it('should error when writing a non-existent file', async () => {

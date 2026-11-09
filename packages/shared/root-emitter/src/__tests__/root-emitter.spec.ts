@@ -3,10 +3,6 @@ import type { Command } from '@bangle.io/types';
 import { describe, expect, test, vi } from 'vitest';
 import { RootEmitter } from '../index';
 
-test('works', () => {
-  expect(true).toBe(true);
-});
-
 test('RootEmitter should emit and receive events', () => {
   const abortController = new AbortController();
   const emitter = new RootEmitter({

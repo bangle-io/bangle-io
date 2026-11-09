@@ -1,5 +1,6 @@
 import {
   isAValidBanglePackage,
+  isMainModule,
   makeLogger,
   setDifference,
   setup,
@@ -18,7 +19,9 @@ function main() {
     });
 }
 
-void main();
+if (isMainModule(import.meta.url)) {
+  void main();
+}
 
 const ignoredPackages = ({ depName }: { depName: string }) => {
   return depName.startsWith('@types/') || depName.startsWith('@bangle.dev/');
@@ -27,7 +30,7 @@ const ignoredPackages = ({ depName }: { depName: string }) => {
  * Remove unused "dependencies" from packages,  does not run on nodejs type packages
  * bun packages/tooling/custom-scripts/scripts/remove-unused-deps.ts
  */
-async function removeUnusedDeps({
+export async function removeUnusedDeps({
   packagesMap,
 }: Awaited<ReturnType<typeof setup>>): Promise<void> {
   const { default: pMap } = await import('p-map');
@@ -87,7 +90,7 @@ async function removeUnusedDeps({
 }
 
 // does not run on nodejs type packages
-async function removeUnusedAllDeps({
+export async function removeUnusedAllDeps({
   packagesMap,
 }: Awaited<ReturnType<typeof setup>>): Promise<void> {
   const { default: pMap } = await import('p-map');

@@ -404,6 +404,20 @@ export const PRIORITY = {
   medium: 25,
   low: 10,
 
+  // The schema's mark order defines Markdown serialization nesting
+  // (first = outermost). A mark whose content is not escaped (inline code)
+  // must be innermost, or other marks' delimiters end up inside its
+  // backticks — so it sorts after every other mark regardless of the
+  // order collections are registered in.
+  codeMarkSpec: -100,
+
+  // A list item is the fallback owner of the insert-above/below shortcut: a
+  // special block inside the item (heading, blockquote, code block) keeps
+  // handling the key itself, and the list only adds a sibling item when nothing
+  // inner claimed it. Sorting below the default 0 makes that explicit rather
+  // than leaving it to the order collections happen to be registered in.
+  listInsertKeymap: -50,
+
   // -100 to allow default user keymap with 0 priority to run first
   baseKeymap: -100,
 };

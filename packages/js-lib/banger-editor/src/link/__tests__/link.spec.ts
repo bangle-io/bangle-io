@@ -198,7 +198,7 @@ describe('link commands and Markdown', () => {
     );
   });
 
-  it('rejects selections containing inline atoms or incompatible marks', () => {
+  it('rejects selections containing inline atoms, allows code-marked text', () => {
     const wikiNode = schema.nodes.wiki_link?.create({
       target: 'Target',
       label: null,
@@ -223,6 +223,8 @@ describe('link commands and Markdown', () => {
       link.command.createLink('https://example.com')(stateWithWikiLink),
     ).toBe(false);
 
+    // Code no longer excludes other marks (`[`code`](url)` is valid
+    // Markdown), so linking code-marked text is allowed.
     const stateWithCode = stateWith(
       [schema.text('code', [schema.mark('code')])],
       1,
@@ -234,9 +236,9 @@ describe('link commands and Markdown', () => {
         stateWithCode.selection.from,
         stateWithCode.selection.to,
       ),
-    ).toBe(false);
+    ).toBe(true);
     expect(link.command.createLink('https://example.com')(stateWithCode)).toBe(
-      false,
+      true,
     );
   });
 });

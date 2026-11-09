@@ -34,8 +34,8 @@ export function NoteBreadcrumb({
   const showEllipsisFlag = shouldShowEllipsis(segments);
 
   return (
-    <Breadcrumb.Breadcrumb>
-      <Breadcrumb.BreadcrumbList>
+    <Breadcrumb.Breadcrumb className="min-w-0 flex-1 overflow-hidden">
+      <Breadcrumb.BreadcrumbList className="min-w-0 flex-nowrap overflow-hidden">
         {visibleSegments.map((segment, idx) => (
           <BreadcrumbItem
             key={segment.wsPath ?? segment.label}
@@ -74,7 +74,7 @@ function BreadcrumbItem({
 }: BreadcrumbItemProps) {
   return (
     <React.Fragment>
-      <Breadcrumb.BreadcrumbItem>
+      <Breadcrumb.BreadcrumbItem className={isFirst ? 'shrink-0' : 'min-w-0'}>
         {isFirst ? (
           <HomeFolderLink />
         ) : (
@@ -86,11 +86,11 @@ function BreadcrumbItem({
           />
         )}
       </Breadcrumb.BreadcrumbItem>
-      {!isLast && <Breadcrumb.BreadcrumbSeparator />}
+      {!isLast && <Breadcrumb.BreadcrumbSeparator className="shrink-0" />}
       {showEllipsis && (
         <>
           <Breadcrumb.BreadcrumbEllipsis />
-          <Breadcrumb.BreadcrumbSeparator />
+          <Breadcrumb.BreadcrumbSeparator className="shrink-0" />
         </>
       )}
     </React.Fragment>
@@ -148,7 +148,7 @@ function DirectoryDropdown({
         render={
           <Button
             variant="ghost"
-            className="h-auto cursor-pointer px-1 py-0 text-sm hover:underline"
+            className="h-auto min-w-0 cursor-pointer truncate px-1 py-0 text-sm hover:underline"
           >
             {segment.label}
           </Button>

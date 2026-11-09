@@ -1,6 +1,7 @@
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { commandHandlers } from '@bangle.io/command-handlers';
-import { getEnabledCommands } from '@bangle.io/commands';
+import { bangleAppCommands } from '@bangle.io/commands';
+import { createEditorSaveCoordinator } from '@bangle.io/editor';
 import { slot } from '@bangle.io/poor-mans-di';
 import {
   FileStorageMemory,
@@ -11,7 +12,11 @@ import {
 } from '@bangle.io/service-platform/testing';
 import { makeTestCommonOpts } from '@bangle.io/test-utils';
 import { describe, expect, test, vi } from 'vitest';
-import { coreServiceClasses, createServiceSetup } from '../service-setup';
+import {
+  type CoreConfigOverrides,
+  coreServiceClasses,
+  createServiceSetup,
+} from '../service-setup';
 
 const coreServiceSlotIds = [...Object.keys(coreServiceClasses), 'editorEngine'];
 
@@ -24,8 +29,10 @@ const themeManager = {
 
 function makeSetup({
   fileStorageConfig = () => ({ onChange: () => {} }),
+  coreConfigOverrides,
 }: {
   fileStorageConfig?: () => { onChange: () => void };
+  coreConfigOverrides?: CoreConfigOverrides;
 } = {}) {
   const controller = new AbortController();
   const { commonOpts, rootEmitter } = makeTestCommonOpts({ controller });
@@ -33,7 +40,7 @@ function makeSetup({
   const setup = createServiceSetup({
     commonOpts,
     rootEmitter,
-    commands: getEnabledCommands(),
+    commands: bangleAppCommands,
     commandHandlers,
     themeManager,
     shortcutTarget: {
@@ -49,6 +56,8 @@ function makeSetup({
     },
     fileStorageSlots: ['fileStorageMemory'],
     editorEngineId: 'prosemirror',
+    editorSaveCoordinator: createEditorSaveCoordinator(),
+    coreConfigOverrides,
   });
 
   return { setup, controller };
@@ -60,6 +69,23 @@ describe('createServiceSetup', () => {
 
     expect(() => setup.getServices()).toThrow(/instantiate\(\)/);
     expect(() => setup.coreServices()).toThrow(/instantiate\(\)/);
+
+    controller.abort();
+  });
+
+  test('workspace save status does not resolve the editor engine', () => {
+    const inspectBaseConfig = vi.fn<
+      NonNullable<CoreConfigOverrides['workspaceState']>
+    >((base) => {
+      expect(base.hasPendingOrFailedSave('workspace:note.md')).toBe(false);
+      return base;
+    });
+    const { setup, controller } = makeSetup({
+      coreConfigOverrides: { workspaceState: inspectBaseConfig },
+    });
+
+    expect(() => setup.instantiate()).not.toThrow();
+    expect(inspectBaseConfig).toHaveBeenCalledOnce();
 
     controller.abort();
   });
@@ -90,6 +116,7 @@ describe('createServiceSetup', () => {
       },
       fileStorageSlots: [],
       editorEngineId: 'prosemirror',
+      editorSaveCoordinator: createEditorSaveCoordinator(),
     });
 
     controller.abort();
@@ -120,6 +147,7 @@ describe('createServiceSetup', () => {
       },
       fileStorageSlots: [],
       editorEngineId: 'prosemirror',
+      editorSaveCoordinator: createEditorSaveCoordinator(),
     });
 
     controller.abort();
@@ -156,7 +184,7 @@ describe('createServiceSetup', () => {
     const setup = createServiceSetup({
       commonOpts,
       rootEmitter,
-      commands: getEnabledCommands(),
+      commands: bangleAppCommands,
       commandHandlers,
       themeManager,
       shortcutTarget: {
@@ -177,6 +205,7 @@ describe('createServiceSetup', () => {
       },
       fileStorageSlots: ['fileStorageMemory', 'fileStorageMemoryDuplicate'],
       editorEngineId: 'prosemirror',
+      editorSaveCoordinator: createEditorSaveCoordinator(),
     });
 
     expect(() => setup.instantiate()).toThrow(
@@ -208,7 +237,7 @@ describe('createServiceSetup', () => {
     const controller = new AbortController();
     const { commonOpts, rootEmitter } = makeTestCommonOpts({ controller });
 
-    const [excludedCommand] = getEnabledCommands();
+    const [excludedCommand] = bangleAppCommands;
     if (!excludedCommand) {
       throw new Error('Expected at least one enabled command.');
     }
@@ -216,7 +245,7 @@ describe('createServiceSetup', () => {
     const setup = createServiceSetup({
       commonOpts,
       rootEmitter,
-      commands: getEnabledCommands(),
+      commands: bangleAppCommands,
       commandHandlers,
       themeManager,
       shortcutTarget: {
@@ -234,6 +263,7 @@ describe('createServiceSetup', () => {
       },
       fileStorageSlots: ['fileStorageMemory'],
       editorEngineId: 'prosemirror',
+      editorSaveCoordinator: createEditorSaveCoordinator(),
       coreConfigOverrides: {
         commandRegistry: (base) => ({
           ...base,

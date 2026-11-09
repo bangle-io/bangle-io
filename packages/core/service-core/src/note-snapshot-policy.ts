@@ -1,0 +1,118 @@
+const MINUTE_MS = 60_000;
+const HOUR_MS = 60 * MINUTE_MS;
+const DAY_MS = 24 * HOUR_MS;
+const WEEK_MS = 7 * DAY_MS;
+
+/** Hard cap of stored snapshots per workspace. */
+export const NOTE_SNAPSHOT_MAX_PER_WORKSPACE = 50;
+
+/**
+ * Minimum time between two captured snapshots of the same note in one tab.
+ * Between captures, saves skip snapshotting entirely (no extra storage read),
+ * which keeps the hot save path free of overhead.
+ */
+export const NOTE_SNAPSHOT_MIN_CAPTURE_INTERVAL_MS = 2 * MINUTE_MS;
+
+export type SnapshotPolicyEntry = {
+  id: string;
+  wsPath: string;
+  createdAt: number;
+};
+
+/**
+ * Grandfather-father-son age buckets: the closer a snapshot is to now, the
+ * finer the retention granularity. Within one bucket of one note only the
+ * newest snapshot survives.
+ *
+ * - up to 1 hour old: one per 10 minutes
+ * - up to 1 day old: one per hour
+ * - up to 7 days old: one per day
+ * - up to 35 days old: one per week
+ * - older: dropped (except the newest snapshot of each note, which never
+ *   expires by age — only by the workspace cap)
+ */
+function bucketForAge(ageMs: number): string | null {
+  const age = Math.max(0, ageMs);
+  if (age <= HOUR_MS) {
+    return `m${Math.floor(age / (10 * MINUTE_MS))}`;
+  }
+  if (age <= DAY_MS) {
+    return `h${Math.floor(age / HOUR_MS)}`;
+  }
+  if (age <= 7 * DAY_MS) {
+    return `d${Math.floor(age / DAY_MS)}`;
+  }
+  if (age <= 35 * DAY_MS) {
+    return `w${Math.floor(age / WEEK_MS)}`;
+  }
+  return null;
+}
+
+function byNewestFirst(a: SnapshotPolicyEntry, b: SnapshotPolicyEntry): number {
+  return b.createdAt - a.createdAt || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+}
+
+/**
+ * Returns the ids of snapshots to delete for one workspace. Pure and
+ * deterministic for a given `(entries, now)`, and idempotent: running it again
+ * on the surviving set evicts nothing. Because every tab computes the keep-set
+ * from the stored rows with the same rules, concurrent tabs converge, and
+ * deleting an id another tab already deleted is a harmless no-op.
+ */
+export function computeSnapshotEvictions(
+  entries: readonly SnapshotPolicyEntry[],
+  options: { now: number; maxPerWorkspace?: number },
+): string[] {
+  const { now, maxPerWorkspace = NOTE_SNAPSHOT_MAX_PER_WORKSPACE } = options;
+
+  const sorted = [...entries].sort(byNewestFirst);
+
+  const newestPerNote = new Set<string>();
+  const seenNotes = new Set<string>();
+  for (const entry of sorted) {
+    if (!seenNotes.has(entry.wsPath)) {
+      seenNotes.add(entry.wsPath);
+      newestPerNote.add(entry.id);
+    }
+  }
+
+  const evict: string[] = [];
+  const kept: SnapshotPolicyEntry[] = [];
+  const usedBuckets = new Set<string>();
+
+  for (const entry of sorted) {
+    const bucket = bucketForAge(now - entry.createdAt);
+    const bucketKey = bucket === null ? null : `${entry.wsPath}\u0000${bucket}`;
+    const bucketFree = bucketKey !== null && !usedBuckets.has(bucketKey);
+
+    if (newestPerNote.has(entry.id) || bucketFree) {
+      if (bucketKey !== null) {
+        usedBuckets.add(bucketKey);
+      }
+      kept.push(entry);
+    } else {
+      evict.push(entry.id);
+    }
+  }
+
+  let overflow = kept.length - maxPerWorkspace;
+  if (overflow > 0) {
+    // Enforce the workspace cap oldest-first, sacrificing thinning survivors
+    // before touching any note's newest (and therefore only recent) snapshot.
+    const oldestFirst = (a: SnapshotPolicyEntry, b: SnapshotPolicyEntry) =>
+      -byNewestFirst(a, b);
+    const capOrder = [
+      ...kept.filter((entry) => !newestPerNote.has(entry.id)).sort(oldestFirst),
+      ...kept.filter((entry) => newestPerNote.has(entry.id)).sort(oldestFirst),
+    ];
+    for (const entry of capOrder) {
+      if (overflow <= 0) {
+        break;
+      }
+      evict.push(entry.id);
+      overflow -= 1;
+    }
+  }
+
+  return evict;
+}

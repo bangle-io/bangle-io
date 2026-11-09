@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { createBrowserWorkspaceAndNote, pressAppShortcut } from './common';
+import { createBrowserWorkspaceAndNote, openOmniSearch } from './common';
 
 test('delete note command opens confirmation without an intermediate picker', async ({
   page,
@@ -10,11 +10,9 @@ test('delete note command opens confirmation without an intermediate picker', as
     noteName: 'delete-target',
   });
 
-  await pressAppShortcut(page, 'k');
-  await page
-    .getByPlaceholder('Type a command or search...')
-    .fill('Delete Note');
-  await page.getByRole('option', { name: '> Delete Note' }).click();
+  const commandInput = await openOmniSearch(page);
+  await commandInput.fill('Delete Note');
+  await page.getByRole('option', { name: 'Delete Note' }).click();
 
   const confirmation = page.getByRole('alertdialog');
   await expect(confirmation).toBeVisible();
@@ -54,9 +52,9 @@ test('move note dialog accepts directory destinations from the file tree', async
     noteName: 'move-target',
   });
 
-  await pressAppShortcut(page, 'k');
-  await page.getByPlaceholder('Type a command or search...').fill('New Folder');
-  await page.getByRole('option', { name: '> New Folder' }).click();
+  const commandInput = await openOmniSearch(page);
+  await commandInput.fill('New Folder');
+  await page.getByRole('option', { name: 'New Folder' }).click();
 
   const createDirectory = page.getByRole('dialog', {
     name: 'Create Folder',
@@ -115,9 +113,9 @@ test('move note dialog offers folder creation when there is no destination', asy
     noteName: 'root-note',
   });
 
-  await pressAppShortcut(page, 'k');
-  await page.getByPlaceholder('Type a command or search...').fill('Move Note');
-  await page.getByRole('option', { name: '> Move Note' }).click();
+  const commandInput = await openOmniSearch(page);
+  await commandInput.fill('Move Note');
+  await page.getByRole('option', { name: 'Move Note' }).click();
 
   const moveDialog = page.getByRole('dialog', { name: 'Move "root-note"' });
   await expect(moveDialog).toBeVisible();

@@ -4,6 +4,19 @@ on:
   pull_request:
     branches: [main, dev, staging, production]
     types: [opened, reopened, synchronize, ready_for_review]
+    paths-ignore:
+      - 'docs/**'
+      - 'plans/**'
+      - '*.md'
+      - '*.mdx'
+      - '**/AGENTS.md'
+      - '**/AGENTS.mdx'
+      - '**/CHANGELOG.md'
+      - '**/CHANGELOG.mdx'
+      - '**/CONTRIBUTING.md'
+      - '**/CONTRIBUTING.mdx'
+      - '**/README.md'
+      - '**/README.mdx'
 
 concurrency:
   group: cloudflare-pr-preview-${{ github.event.pull_request.number }}
@@ -51,15 +64,16 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
-          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install
 
       - name: Build app
         env:
+          CF_PAGES: '1'
           CF_PAGES_BRANCH: ${{ env.CLOUDFLARE_PREVIEW_BRANCH }}
           CF_PAGES_COMMIT_SHA: ${{ env.PR_HEAD_SHA }}
+          CF_PAGES_URL: ${{ env.CLOUDFLARE_PREVIEW_URL }}
         run: pnpm build
 
       - name: Validate Cloudflare secrets

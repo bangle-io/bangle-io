@@ -110,41 +110,6 @@ export function handleRouteInfo(
       };
     }
 
-    case 'native-fs-auth-failed': {
-      return {
-        route: 'native-fs-auth-failed',
-        payload: { wsName: params.wsName || '' },
-      };
-    }
-
-    case 'native-fs-auth-req': {
-      return {
-        route: 'native-fs-auth-req',
-        payload: { wsName: params.wsName || '' },
-      };
-    }
-
-    case 'workspace-not-found': {
-      return {
-        route: 'workspace-not-found',
-        payload: { wsName: params.wsName || '' },
-      };
-    }
-
-    case 'ws-path-not-found': {
-      return {
-        route: 'ws-path-not-found',
-        payload: { wsPath: params.wsPath || '' },
-      };
-    }
-
-    case 'fatal-error': {
-      return {
-        route: 'fatal-error',
-        payload: { error: new Error(params.error ?? 'Unknown error') },
-      };
-    }
-
     case 'welcome': {
       return { route: 'welcome', payload: {} };
     }
@@ -170,6 +135,16 @@ export function handleRouteInfo(
       };
     }
 
+    case 'settings-recovery': {
+      return {
+        route: 'settings-recovery',
+        payload: {
+          ...(params.returnTo ? { returnTo: params.returnTo } : {}),
+          ...(params.search ? { search: params.search } : {}),
+        },
+      };
+    }
+
     default:
       return { route: 'not-found', payload: { path: route } };
   }
@@ -188,11 +163,7 @@ export function payloadToSearch(
     if (val == null) {
       continue;
     }
-    if (key === 'error' && val instanceof Error) {
-      search[key] = val.message || 'Unknown error';
-    } else {
-      search[key] = String(val);
-    }
+    search[key] = String(val);
   }
 
   return search;

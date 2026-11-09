@@ -1,7 +1,15 @@
 import { TypedBroadcastBus } from '@bangle.io/browser-utils';
 import type { Logger } from '@bangle.io/logger';
 import { Emitter, type EventMessage } from '@bangle.io/mini-js-utils';
-import { CROSS_TAB_EVENTS, RootEmitter } from '@bangle.io/root-emitter';
+import {
+  CROSS_TAB_EVENTS,
+  type CrossTabEvent,
+  RootEmitter,
+} from '@bangle.io/root-emitter';
+
+function isCrossTabEvent(event: string): event is CrossTabEvent {
+  return CROSS_TAB_EVENTS.some((crossTabEvent) => crossTabEvent === event);
+}
 
 export function setupCrossTabComms(
   broadcastChannelName: string,
@@ -20,7 +28,7 @@ export function setupCrossTabComms(
   const subscriber = new Emitter();
 
   publisher.onAll((message) => {
-    if (CROSS_TAB_EVENTS.includes(message.event)) {
+    if (isCrossTabEvent(message.event)) {
       logger.debug('post-cross-tab', message.event);
       broadcastBus.send(message);
     } else {
@@ -31,7 +39,7 @@ export function setupCrossTabComms(
 
   broadcastBus.subscribe((message) => {
     const { data } = message;
-    if ((CROSS_TAB_EVENTS as string[]).includes(data.event)) {
+    if (isCrossTabEvent(data.event)) {
       logger.debug(`received message ${message.senderId}`, data.event);
       subscriber.emit(data.event, data.payload);
     } else {

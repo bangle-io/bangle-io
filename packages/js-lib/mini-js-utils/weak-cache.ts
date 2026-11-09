@@ -2,12 +2,12 @@
  * @param {Function} fn - A unary function whose parameter is non-primitive,
  *                        so that it can be cached using WeakMap
  */
-export function weakCache<R, T extends (arg: any) => R>(
-  fn: T,
+export function weakCache<K extends object, R>(
+  fn: (arg: K) => R,
   debugName?: string,
-): T {
-  const cache = new WeakMap<any, R>();
-  const res = (arg: any): R => {
+): (arg: K) => R {
+  const cache = new WeakMap<K, R>();
+  return (arg: K): R => {
     if (cache.has(arg)) {
       if (debugName) {
         console.debug(debugName, 'cache hit');
@@ -23,6 +23,4 @@ export function weakCache<R, T extends (arg: any) => R>(
 
     return value;
   };
-
-  return res as T;
 }

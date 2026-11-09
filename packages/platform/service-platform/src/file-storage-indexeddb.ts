@@ -19,6 +19,7 @@ import type {
   FileStorageChangeEvent,
 } from '@bangle.io/types';
 import { toFSPathOrThrow, WsPath } from '@bangle.io/ws-path';
+import { assertSameWorkspaceRename } from './file-storage-utils';
 
 type Config = {
   onChange: (event: FileStorageChangeEvent) => void;
@@ -29,8 +30,6 @@ export class FileStorageIndexedDB
   implements BaseFileStorageProvider
 {
   public readonly workspaceType = WORKSPACE_STORAGE_TYPE.Browser;
-  public readonly displayName = 'Browser Storage';
-  public readonly description = "Saves data in your browser's local storage";
   public readonly maxFileSizeBytes = FILE_STORAGE_MAX_FILE_SIZE_BYTES.browser;
 
   private idb = new IndexedDBFileSystem();
@@ -109,10 +108,6 @@ export class FileStorageIndexedDB
     };
   }
 
-  isSupported() {
-    return globalThis.indexedDB != null;
-  }
-
   async listAllFiles(
     wsName: string,
     abortSignal: AbortSignal,
@@ -147,10 +142,23 @@ export class FileStorageIndexedDB
     { newWsPath }: { newWsPath: string },
   ): Promise<void> {
     await this.mountPromise;
+    assertSameWorkspaceRename(wsPath, newWsPath);
     const oldFsPath = toFSPathOrThrow(wsPath);
     const newFsPath = toFSPathOrThrow(newWsPath);
 
-    await this.idb.rename(oldFsPath, newFsPath);
+    try {
+      await this.idb.rename(oldFsPath, newFsPath);
+    } catch (error) {
+      if (
+        error instanceof BaseFileSystemError &&
+        error.code === FILE_ALREADY_EXISTS_ERROR
+      ) {
+        throwAppError('error::file:already-existing', 'File already exists', {
+          wsPath: newWsPath,
+        });
+      }
+      throw error;
+    }
 
     this.emitChange({
       type: 'rename',
@@ -161,19 +169,25 @@ export class FileStorageIndexedDB
 
   async writeFile(wsPath: string, file: File): Promise<void> {
     await this.mountPromise;
-
-    if (!(await this.fileExists(wsPath))) {
-      throwAppError(
-        'error::file-storage:file-does-not-exist',
-        'Cannot write file as it does not exist',
-        {
-          wsPath,
-          storage: this.name,
-        },
-      );
-    }
     const fsPath = toFSPathOrThrow(wsPath);
-    await this.idb.writeFile(fsPath, file);
+    try {
+      await this.idb.writeExistingFile(fsPath, file);
+    } catch (error) {
+      if (
+        error instanceof BaseFileSystemError &&
+        error.code === FILE_NOT_FOUND_ERROR
+      ) {
+        throwAppError(
+          'error::file-storage:file-does-not-exist',
+          'Cannot write file as it does not exist',
+          {
+            wsPath,
+            storage: this.name,
+          },
+        );
+      }
+      throw error;
+    }
 
     this.emitChange({
       type: 'update',

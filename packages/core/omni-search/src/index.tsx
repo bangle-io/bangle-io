@@ -1,4 +1,8 @@
-import { useCoreServices } from '@bangle.io/context';
+import {
+  type EditorAction,
+  type EditorEngineContract,
+  useCoreServices,
+} from '@bangle.io/context';
 import {
   defaultFuzzySearch,
   rankedFuzzySearch,
@@ -12,17 +16,42 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  CommandMenuRow,
   CommandSeparator,
-  KbdShortcut,
 } from '@bangle.io/ui-components';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useAtom, useAtomValue } from 'jotai';
+import { FileText, SquareChevronRight } from 'lucide-react';
 import React, { useMemo } from 'react';
 
 const MAX_COMMANDS_PER_GROUP = 5;
 const MAX_FILES_GLOBAL = 100;
 const MAX_RECENT_FILES = 5;
 const MAX_RECENT_COMMANDS = 3;
+
+const EDITOR_ACTIONS_BY_COMMAND_ID: Readonly<Record<string, EditorAction>> = {
+  'command::editor:toggle-heading-1': {
+    type: 'toggle-heading',
+    level: 1,
+  },
+  'command::editor:toggle-heading-2': {
+    type: 'toggle-heading',
+    level: 2,
+  },
+  'command::editor:toggle-heading-3': {
+    type: 'toggle-heading',
+    level: 3,
+  },
+  'command::editor:insert-table': { type: 'insert-table' },
+};
+
+function isCommandAvailable(
+  commandId: string,
+  editorEngine: EditorEngineContract,
+): boolean {
+  const editorAction = EDITOR_ACTIONS_BY_COMMAND_ID[commandId];
+  return !editorAction || editorEngine.isActionAvailable(editorAction);
+}
 
 type CommandItemProp = {
   id: string;
@@ -43,6 +72,14 @@ type CommandItemProp = {
   onSelect: () => void;
 };
 
+function itemIcon(item: CommandItemProp) {
+  return item.metadata.type === 'command' ? (
+    <SquareChevronRight aria-hidden />
+  ) : (
+    <FileText aria-hidden />
+  );
+}
+
 function CommandGroupSection({
   heading,
   items,
@@ -59,8 +96,11 @@ function CommandGroupSection({
           title={item.title}
           onSelect={item.onSelect}
         >
-          <span>{item.title}</span>
-          {item.keybindings && <KbdShortcut keys={item.keybindings} />}
+          <CommandMenuRow
+            icon={itemIcon(item)}
+            title={item.title}
+            keybindings={item.keybindings}
+          />
         </CommandItem>
       ))}
     </CommandGroup>
@@ -111,7 +151,7 @@ function HomeRoute({
 
     const viewAllCommand: CommandItemProp = {
       id: 'view-all-commands',
-      title: 'View All Commands',
+      title: t.app.omniSearch.viewAllCommands,
       metadata: { type: 'command', cmd: { id: 'view-all-commands', args: {} } },
       onSelect: goToCommandRoute,
     };
@@ -149,13 +189,22 @@ function HomeRoute({
     <>
       {recentFiles.length > 0 && (
         <>
-          <CommandGroupSection heading="Recent Notes" items={recentFiles} />
+          <CommandGroupSection
+            heading={t.app.omniSearch.recentNotesHeading}
+            items={recentFiles}
+          />
           <CommandSeparator />
         </>
       )}
-      <CommandGroupSection heading="> Commands" items={allCommands} />
+      <CommandGroupSection
+        heading={t.app.omniSearch.commandsHeading}
+        items={allCommands}
+      />
       <CommandSeparator />
-      <CommandGroupSection heading="All Files" items={allFiles} />
+      <CommandGroupSection
+        heading={t.app.omniSearch.allFilesHeading}
+        items={allFiles}
+      />
     </>
   );
 }
@@ -194,7 +243,12 @@ function CommandRoute({
     return searchItems(items, search);
   }, [items, search]);
 
-  return <CommandGroupSection heading="> Commands" items={commands} />;
+  return (
+    <CommandGroupSection
+      heading={t.app.omniSearch.commandsHeading}
+      items={commands}
+    />
+  );
 }
 
 function FilteredRoute({
@@ -233,7 +287,7 @@ function FilteredRoute({
 
   return (
     <CommandGroup
-      heading={'Filtered'}
+      heading={t.app.omniSearch.filteredHeading}
       ref={parentRef}
       style={{ height: '428px', overflowY: 'auto' }}
     >
@@ -262,11 +316,11 @@ function FilteredRoute({
               }}
             >
               <CommandItem id={key} title={item.title} onSelect={item.onSelect}>
-                <span>
-                  {item.metadata.type === 'command' ? '> ' : ''}
-                  {item.title}
-                </span>
-                {item.keybindings && <KbdShortcut keys={item.keybindings} />}
+                <CommandMenuRow
+                  icon={itemIcon(item)}
+                  title={item.title}
+                  keybindings={item.keybindings}
+                />
               </CommandItem>
             </div>
           );
@@ -282,12 +336,21 @@ export function OmniSearch() {
     userActivityService,
     workbenchState,
     commandRegistry,
+    editorEngine,
   } = useCoreServices();
-  const commands = useMemo(
-    () => commandRegistry.getOmniSearchCommands(),
-    [commandRegistry],
-  );
   const [open, setOpen] = useAtom(workbenchState.$openOmniSearch);
+  const activeWsName = useAtomValue(workspaceState.$currentWsName);
+  const activeWsPath = useAtomValue(workspaceState.$currentWsPath);
+  const omniSearchScope = activeWsPath
+    ? 'note'
+    : activeWsName
+      ? 'workspace'
+      : 'global';
+  const commands = open
+    ? commandRegistry
+        .getOmniSearchCommands(omniSearchScope)
+        .filter((command) => isCommandAvailable(command.id, editorEngine))
+    : [];
 
   const commandInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -368,11 +431,11 @@ export function OmniSearch() {
         }
       }}
       shouldFilter={false}
-      screenReaderTitle="omni command bar"
+      screenReaderTitle={t.app.omniSearch.dialogTitle}
     >
       <CommandInput
         ref={commandInputRef}
-        placeholder="Type a command or search..."
+        placeholder={t.app.omniSearch.inputPlaceholder}
         value={search}
         onValueChange={(value) => {
           updateSearch(value);
@@ -400,7 +463,7 @@ export function OmniSearch() {
         )}
 
         <CommandEmpty>
-          <span>No results found.</span>
+          <span>{t.app.omniSearch.noResults}</span>
         </CommandEmpty>
       </CommandList>
     </CommandDialog>

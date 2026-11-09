@@ -9,19 +9,17 @@ import {
 import {
   FILE_ALREADY_EXISTS_ERROR,
   FILE_NOT_FOUND_ERROR,
-  RENAME_VERIFICATION_FAILED_ERROR,
   UPSTREAM_ERROR,
 } from './error-codes';
 import { readFileAsText as readFileAsTextHelper } from './read-file-as-text';
 
 function catchUpstream<T>(idbPromise: Promise<T>, errorMessage: string) {
-  return idbPromise.catch((_error) => {
-    return Promise.reject(
-      new IndexedDBFileSystemError({
-        message: errorMessage,
-        code: UPSTREAM_ERROR,
-      }),
-    );
+  return idbPromise.catch((cause: unknown) => {
+    throw new IndexedDBFileSystemError({
+      message: errorMessage,
+      code: UPSTREAM_ERROR,
+      cause,
+    });
   });
 }
 
@@ -157,12 +155,8 @@ export class IndexedDBFileSystem extends BaseFileSystem {
       throw new Error('Keys in opendirRecursive must be array');
     }
 
-    if (dirPath && !dirPath.endsWith('/')) {
-      // biome-ignore lint/style/noParameterAssign: <explanation>
-      dirPath += '/';
-    }
-
-    const result = dirPath ? keys.filter((k) => k.startsWith(dirPath)) : keys;
+    const dirPrefix = dirPath.endsWith('/') ? dirPath : `${dirPath}/`;
+    const result = keys.filter((key) => key.startsWith(dirPrefix));
 
     return result;
   }
@@ -198,39 +192,37 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     this._verifyFilePath(oldFilePath);
     this._verifyFilePath(newFilePath);
 
-    const file = await this.readFile(oldFilePath);
-    let existingFile: File | undefined;
-    try {
-      existingFile = await this.readFile(newFilePath);
-    } catch (error) {
-      if (!(error instanceof BaseFileSystemError)) {
-        throw error;
-      }
-      if (error.code !== FILE_NOT_FOUND_ERROR) {
-        throw error;
-      }
+    const db = await this._db();
+    const transaction = db.transaction(
+      indexedDBFileSystemTableName,
+      'readwrite',
+    );
+    const store = transaction.objectStore(indexedDBFileSystemTableName);
+    const file = await store.get(oldFilePath);
+
+    if (file == null) {
+      await transaction.done;
+      throw new IndexedDBFileSystemError({
+        message: `File "${oldFilePath}" not found`,
+        code: FILE_NOT_FOUND_ERROR,
+      });
     }
 
-    if (existingFile) {
+    const existingFile = await store.get(newFilePath);
+    if (existingFile != null) {
+      await transaction.done;
       throw new IndexedDBFileSystemError({
         message: `Cannot rename; File "${newFilePath}" already exists`,
         code: FILE_ALREADY_EXISTS_ERROR,
       });
     }
-    await this.writeFile(newFilePath, file);
-    // Rename is copy-then-delete: never delete the source until the
-    // destination copy is confirmed readable and complete.
-    await this._verifyRenameDestination(
-      newFilePath,
-      file,
-      ({ message, cause }) =>
-        new IndexedDBFileSystemError({
-          message,
-          code: RENAME_VERIFICATION_FAILED_ERROR,
-          cause,
-        }),
-    );
-    await this.unlink(oldFilePath);
+
+    await store.add(file, newFilePath);
+    await store.delete(oldFilePath);
+    await transaction.done;
+
+    await this._fileMetadata.set(newFilePath, new BaseFileMetadata());
+    await this._fileMetadata.del(oldFilePath);
   }
 
   async stat(filePath: string) {
@@ -270,11 +262,13 @@ export class IndexedDBFileSystem extends BaseFileSystem {
         throw new IndexedDBFileSystemError({
           message: `File "${filePath}" already exists`,
           code: FILE_ALREADY_EXISTS_ERROR,
+          cause: error,
         });
       }
       throw new IndexedDBFileSystemError({
         message: 'Error creating file',
         code: UPSTREAM_ERROR,
+        cause: error,
       });
     }
 
@@ -291,11 +285,36 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     await catchUpstream(prom, 'Error writing data');
     await this._fileMetadata.set(filePath, new BaseFileMetadata());
   }
+
+  async writeExistingFile(filePath: string, data: File) {
+    this._verifyFilePath(filePath);
+    this._verifyFileType(data);
+
+    const db = await this._db();
+    const transaction = db.transaction(
+      indexedDBFileSystemTableName,
+      'readwrite',
+    );
+    const store = transaction.objectStore(indexedDBFileSystemTableName);
+    const existingFile = await store.get(filePath);
+
+    if (existingFile == null) {
+      await transaction.done;
+      throw new IndexedDBFileSystemError({
+        message: `File "${filePath}" not found`,
+        code: FILE_NOT_FOUND_ERROR,
+      });
+    }
+
+    await store.put(data, filePath);
+    await transaction.done;
+    await this._fileMetadata.set(filePath, new BaseFileMetadata());
+  }
 }
 
 export class IndexedDBFileSystemError extends BaseFileSystemError {}
 
-function isArrayOfStrings(arr: any): arr is string[] {
+function isArrayOfStrings(arr: unknown): arr is string[] {
   if (!Array.isArray(arr)) {
     return false;
   }

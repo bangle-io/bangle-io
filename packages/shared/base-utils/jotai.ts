@@ -1,9 +1,10 @@
 import type { Logger } from '@bangle.io/logger';
-import type { BaseError, Validator } from '@bangle.io/mini-js-utils';
+import type { BaseError, JsonValue, Validator } from '@bangle.io/mini-js-utils';
+import { createJsonValueSnapshot } from '@bangle.io/mini-js-utils';
 import type { BaseAppSyncDatabase } from '@bangle.io/types';
 import type { Atom } from 'jotai';
 import { atom } from 'jotai';
-import { atomWithReducer, atomWithStorage, unwrap } from 'jotai/utils';
+import { atomWithReducer, atomWithStorage, RESET, unwrap } from 'jotai/utils';
 import type { SyncStorage } from 'jotai/vanilla/utils/atomWithStorage';
 import { wrapPromiseInAppErrorHandler } from './throw-app-error';
 
@@ -52,24 +53,39 @@ export function atomStorage<TValue>({
 }) {
   const storageKey = `${serviceName}:${inputKey}`;
 
-  const atom = atomWithStorage<TValue>(
+  const canonicalize = (value: unknown): (TValue & JsonValue) | undefined => {
+    const snapshot = createJsonValueSnapshot(value);
+    return snapshot.success && validator.validate(snapshot.value)
+      ? snapshot.value
+      : undefined;
+  };
+
+  const initialValue = canonicalize(initValue);
+  if (initialValue === undefined) {
+    throw new Error(`Invalid initial value for ${storageKey}`);
+  }
+
+  const storageAtom = atomWithStorage<TValue>(
     storageKey,
-    initValue,
+    initialValue,
     {
       getItem: (key) => {
         const result = syncDb.getEntry(key, { tableName: 'sync' });
         if (!result.found) {
-          return initValue;
+          return initialValue;
         }
-        return validator.validate(result.value) ? result.value : initValue;
+        return canonicalize(result.value) ?? initialValue;
       },
       setItem: (key, value) => {
-        if (!validator.validate(value)) {
+        const canonicalValue = canonicalize(value);
+        if (canonicalValue === undefined) {
           logger.error('Invalid value for key', key, value);
           return;
         }
 
-        syncDb.updateEntry(key, () => ({ value }), { tableName: 'sync' });
+        syncDb.updateEntry(key, () => ({ value: canonicalValue }), {
+          tableName: 'sync',
+        });
       },
       removeItem: (key) => syncDb.deleteEntry(key, { tableName: 'sync' }),
       subscribe: (key, callback) => {
@@ -79,15 +95,22 @@ export function atomStorage<TValue>({
           { tableName: 'sync' },
           (change) => {
             if (change.key === key) {
-              if (validator.validate(change.value)) {
-                callback(change.value);
-              } else {
+              if (change.type === 'delete') {
+                callback(initialValue);
+                return;
+              }
+
+              const canonicalValue = canonicalize(change.value);
+              if (canonicalValue === undefined) {
                 logger.error(
                   'Invalid value received for key',
                   key,
                   change.value,
                 );
+                return;
               }
+
+              callback(canonicalValue);
             }
           },
           abortController.signal,
@@ -101,7 +124,40 @@ export function atomStorage<TValue>({
     { getOnInit: true },
   );
 
-  return atom;
+  type Update =
+    | TValue
+    | typeof RESET
+    | ((previous: TValue) => TValue | typeof RESET);
+
+  const isUpdater = (
+    update: Update,
+  ): update is (previous: TValue) => TValue | typeof RESET =>
+    typeof update === 'function';
+
+  return atom(
+    (get) => get(storageAtom),
+    (get, set, update: Update) => {
+      const previousValue = canonicalize(get(storageAtom));
+      if (previousValue === undefined) {
+        logger.error('Invalid current value for key', storageKey);
+        return;
+      }
+      const nextValue = isUpdater(update) ? update(previousValue) : update;
+
+      if (nextValue === RESET) {
+        set(storageAtom, RESET);
+        return;
+      }
+
+      const canonicalValue = canonicalize(nextValue);
+      if (canonicalValue === undefined) {
+        logger.error('Invalid value for key', storageKey, nextValue);
+        return;
+      }
+
+      set(storageAtom, canonicalValue);
+    },
+  );
 }
 
 /**

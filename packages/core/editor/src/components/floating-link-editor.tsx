@@ -28,10 +28,6 @@ export function normalizeHttpUrl(urlString: string): string | undefined {
   return normalizeLinkTarget(urlString)?.href;
 }
 
-export function isValidHttpUrl(urlString: string): boolean {
-  return Boolean(normalizeHttpUrl(urlString));
-}
-
 type LinkEditorProps = {
   value: string;
   onChange: (value: string) => void;
@@ -190,7 +186,7 @@ function LinkEditor({
               <LinkEditorButton
                 disabled={!valid}
                 label={t.app.editor.linkEditor.open}
-                onClick={() => normalizedValue && onOpen(normalizedValue)}
+                onClick={() => normalizedValue && onOpen(value.trim())}
                 onPointerDown={preserveSelection}
                 type="button"
               >

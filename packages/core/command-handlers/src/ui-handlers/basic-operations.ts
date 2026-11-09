@@ -2,7 +2,7 @@ import { throwAppError } from '@bangle.io/base-utils';
 import {
   EDITOR_ENGINE_IDS,
   EDITOR_ENGINE_QUERY_PARAM,
-  EDITOR_ENGINE_SWITCH_SAVE_DRAIN_TIMEOUT_MS,
+  EDITOR_SAVE_DRAIN_TIMEOUT_MS,
   isEditorEngineId,
 } from '@bangle.io/constants';
 import { waitForSaveQueueToDrain } from '@bangle.io/service-core';
@@ -109,7 +109,7 @@ export const basicOperationsHandlers = [
             void (async () => {
               const drained = await waitForSaveQueueToDrain(
                 editorEngine,
-                EDITOR_ENGINE_SWITCH_SAVE_DRAIN_TIMEOUT_MS,
+                EDITOR_SAVE_DRAIN_TIMEOUT_MS,
               );
               if (!drained) {
                 toast.error(t.app.toasts.editorEngineSwitchBlockedBySaves);
@@ -136,6 +136,10 @@ export const basicOperationsHandlers = [
 
   c('command::ui:open-settings-workspaces', ({ navigation }) => {
     navigation.goSettingsPage('settings-workspaces');
+  }),
+
+  c('command::ui:open-settings-recovery', ({ navigation }) => {
+    navigation.goSettingsPage('settings-recovery');
   }),
 
   c(
@@ -192,6 +196,11 @@ export const basicOperationsHandlers = [
   }),
 
   c('command::ui:paste-from-markdown', async ({ editorEngine }) => {
+    const insertMarkdown = editorEngine.captureMarkdownInsertion();
+    if (!insertMarkdown) {
+      toast.error(t.app.toasts.pasteMarkdownFailed);
+      return;
+    }
     let text: string;
     try {
       text = await readTextFromClipboard();
@@ -203,7 +212,7 @@ export const basicOperationsHandlers = [
       toast.error(t.app.toasts.pasteMarkdownEmpty);
       return;
     }
-    if (!editorEngine.insertMarkdownAtSelection(text)) {
+    if (!insertMarkdown(text)) {
       toast.error(t.app.toasts.pasteMarkdownFailed);
     }
   }),

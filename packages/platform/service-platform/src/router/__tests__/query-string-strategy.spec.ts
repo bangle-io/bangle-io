@@ -66,19 +66,6 @@ describe('QueryStringStrategy', () => {
       });
     });
 
-    it('should encode fatal error route', () => {
-      const routeInfo: AppRouteInfo = {
-        route: 'fatal-error',
-        payload: { error: new Error('test error') },
-      };
-
-      const result = strategy.encodeRouteInfo(routeInfo, basePath);
-      expect(result).toEqual({
-        pathname: '/app',
-        search: '?route=fatal-error&error=test+error',
-      });
-    });
-
     it('should handle empty basePath', () => {
       const routeInfo: AppRouteInfo = {
         route: 'welcome',
@@ -117,19 +104,6 @@ describe('QueryStringStrategy', () => {
       expect(result).toEqual({
         route: 'ws-home',
         payload: { wsName: 'test' },
-      });
-    });
-
-    it('should decode fatal error route', () => {
-      const encoded: EncodedRoute = {
-        pathname: '/app',
-        search: '?route=fatal-error&error=test+error',
-      };
-
-      const result = strategy.decodeRouteInfo(encoded, basePath);
-      expect(result).toEqual({
-        route: 'fatal-error',
-        payload: { error: new Error('test error') },
       });
     });
 

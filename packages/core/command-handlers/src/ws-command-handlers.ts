@@ -1,5 +1,11 @@
 // packages/core/command-handlers/src/ws-command-handlers.ts
-import { throwAppError } from '@bangle.io/base-utils';
+import {
+  getAppErrorCause,
+  isAppError,
+  throwAppError,
+} from '@bangle.io/base-utils';
+import { EDITOR_SAVE_DRAIN_TIMEOUT_MS } from '@bangle.io/constants';
+import { waitForSaveQueueToDrain } from '@bangle.io/service-core';
 import { toast } from '@bangle.io/ui-components';
 import { getNextUntitledNoteName, WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { c, getCtx } from './helper';
@@ -41,6 +47,58 @@ function normalizeDestinationDirWsPath(destDirWsPath: string): string {
   const wsName = destDirWsPath.slice(0, separatorIndex);
   const path = destDirWsPath.slice(separatorIndex + 1).replace(/^\/+/, '');
   return path ? WsDirPath.fromParts(wsName, path).wsPath : `${wsName}:`;
+}
+
+function rethrowRelocationError(
+  error: unknown,
+  newWsPath: string,
+  fileName: string,
+  fallbackMessage: string,
+): never {
+  if (isAppError(error)) {
+    if (getAppErrorCause(error)?.name === 'error::file:already-existing') {
+      throwAppError(
+        'error::file:already-existing',
+        t.app.errors.file.alreadyExistsInDest({ fileName }),
+        { wsPath: newWsPath },
+      );
+    }
+    throw error;
+  }
+
+  toast.error(fallbackMessage);
+  throw error;
+}
+
+async function assertSourceSavesDrained(
+  editorEngine: {
+    hasPendingOrFailedSave: (wsPath?: string) => boolean;
+    subscribeToSaveStatus: (
+      listener: () => void,
+      wsPath?: string,
+    ) => () => void;
+  },
+  relocations: readonly { oldWsPath: string; newWsPath: string }[],
+  operation: 'move' | 'rename',
+): Promise<void> {
+  const drainResults = await Promise.all(
+    relocations.map(({ oldWsPath }) =>
+      waitForSaveQueueToDrain(
+        editorEngine,
+        EDITOR_SAVE_DRAIN_TIMEOUT_MS,
+        oldWsPath,
+      ),
+    ),
+  );
+  const blockedIndex = drainResults.findIndex((drained) => !drained);
+  const blockedRelocation = relocations[blockedIndex];
+  if (blockedRelocation) {
+    throwAppError(
+      'error::file:invalid-operation',
+      t.app.errors.file.relocationBlockedByUnsavedChanges,
+      { operation, ...blockedRelocation },
+    );
+  }
 }
 
 export const wsCommandHandlers = [
@@ -87,6 +145,7 @@ export const wsCommandHandlers = [
 
       const filePath = WsPath.assertFile(wsPath);
       const fileNameWithoutExt = filePath.fileNameWithoutExtension;
+      const navigationVersion = navigation.captureNavigationVersion();
 
       try {
         await fileSystem.createFile(
@@ -103,7 +162,12 @@ export const wsCommandHandlers = [
         throw error;
       }
 
-      if (navigate) {
+      // A storage write can outlive the dialog. Do not let its completion
+      // overwrite a navigation made while the write was pending.
+      if (
+        navigate &&
+        navigation.isNavigationVersionCurrent(navigationVersion)
+      ) {
         navigation.goWsPath(wsPath);
       }
     },
@@ -163,7 +227,10 @@ export const wsCommandHandlers = [
 
   c(
     'command::ws:rename-ws-path',
-    async ({ fileSystem, navigation }, { wsPath, newWsPath }) => {
+    async (
+      { editorEngine, fileSystem, userActivityService },
+      { wsPath, newWsPath },
+    ) => {
       const oldPath = WsPath.fromString(wsPath);
       const newPath = WsPath.fromString(newWsPath);
 
@@ -190,26 +257,46 @@ export const wsCommandHandlers = [
       }
 
       const newFilePath = WsPath.assertFile(newWsPath);
-      const needsRedirect =
-        navigation.resolveAtoms().activeWsFilePath?.wsPath === wsPath;
+      if (wsPath === newWsPath) {
+        return;
+      }
 
-      // Keep the open note visible during the rename instead of navigating to
-      // ws-home first (which paints an intermediate screen for the duration of
-      // the async write). Redirect straight to the renamed path once it lands.
+      await assertSourceSavesDrained(
+        editorEngine,
+        [{ oldWsPath: wsPath, newWsPath }],
+        'rename',
+      );
+
+      // Keep the open note visible while the storage write is in flight.
+      // WorkspaceState follows the durable rename event once it lands.
       try {
         await fileSystem.renameFile({
           oldWsPath: wsPath,
           newWsPath,
         });
+      } catch (error) {
+        rethrowRelocationError(
+          error,
+          newWsPath,
+          newFilePath.fileName,
+          t.app.toasts.fileRenameFailed,
+        );
+      }
+
+      const starResult = await userActivityService.relocateStarredItem(
+        oldPath,
+        newPath,
+      );
+      if (starResult === 'failed') {
+        toast.warning(
+          t.app.toasts.fileRenameStarUpdateFailed({
+            fileName: newFilePath.fileName,
+          }),
+        );
+      } else {
         toast.success(
           t.app.toasts.fileRenamed({ fileName: newFilePath.fileName }),
         );
-      } catch (error) {
-        toast.error(t.app.toasts.fileRenameFailed);
-        throw error;
-      }
-      if (needsRedirect) {
-        navigation.goWsPath(newWsPath);
       }
     },
   ),
@@ -217,12 +304,9 @@ export const wsCommandHandlers = [
   c(
     'command::ws:move-ws-path',
     async (
-      { fileSystem, navigation, workspaceState },
+      { editorEngine, fileSystem, userActivityService },
       { wsPath, destDirWsPath },
-      key,
     ) => {
-      const { store } = getCtx(key);
-
       const filePath = WsPath.assertFile(wsPath);
       const destDir = WsPath.fromString(
         normalizeDestinationDirWsPath(destDirWsPath),
@@ -246,42 +330,40 @@ export const wsCommandHandlers = [
         return;
       }
 
-      const existingWsPaths = store
-        .get(workspaceState.$wsPaths)
-        .map((path) => path.wsPath);
-      if (existingWsPaths.includes(newWsPath)) {
-        throwAppError(
-          'error::file:already-existing',
-          t.app.errors.file.alreadyExistsInDest({
-            fileName: filePath.fileName,
-          }),
-          {
-            wsPath: newWsPath,
-          },
-        );
-      }
+      await assertSourceSavesDrained(
+        editorEngine,
+        [{ oldWsPath: wsPath, newWsPath }],
+        'move',
+      );
 
-      const needsRedirect =
-        navigation.resolveAtoms().activeWsFilePath?.wsPath === wsPath;
-
-      // Do not bounce the open note through the workspace-home screen while the
-      // rename is in flight: that navigation happens before the storage write
-      // and paints ws-home for the whole (async) rename. Instead keep showing
-      // the current note until the durable rename lands, then redirect straight
-      // to the new path. The wsPaths update and this redirect settle in the same
-      // microtask, so the moved note never flashes an intermediate screen.
+      // Keep the open note visible while the storage write is in flight.
+      // WorkspaceState follows the durable rename event once it lands.
       try {
         await fileSystem.renameFile({
           oldWsPath: wsPath,
           newWsPath,
         });
-        toast.success(t.app.toasts.fileMoved({ fileName: filePath.fileName }));
       } catch (error) {
-        toast.error(t.app.toasts.fileMoveFailed);
-        throw error;
+        rethrowRelocationError(
+          error,
+          newWsPath,
+          filePath.fileName,
+          t.app.toasts.fileMoveFailed,
+        );
       }
-      if (needsRedirect) {
-        navigation.goWsPath(newWsPath);
+
+      const starResult = await userActivityService.relocateStarredItem(
+        filePath,
+        WsPath.fromString(newWsPath),
+      );
+      if (starResult === 'failed') {
+        toast.warning(
+          t.app.toasts.fileMoveStarUpdateFailed({
+            fileName: filePath.fileName,
+          }),
+        );
+      } else {
+        toast.success(t.app.toasts.fileMoved({ fileName: filePath.fileName }));
       }
     },
   ),
@@ -323,7 +405,7 @@ export const wsCommandHandlers = [
   c(
     'command::ws:rename-directory',
     async (
-      { fileSystem, navigation, workspaceState },
+      { editorEngine, fileSystem, userActivityService, workspaceState },
       { oldDirWsPath, newDirWsPath },
       key,
     ) => {
@@ -368,7 +450,6 @@ export const wsCommandHandlers = [
         return;
       }
 
-      const currentWsPath = navigation.resolveAtoms().activeWsFilePath?.wsPath;
       const pairs = descendants.map((path) => {
         const filePath = WsPath.assertFile(path.wsPath);
         const suffix = filePath.path.slice(oldDir.path.length);
@@ -400,22 +481,28 @@ export const wsCommandHandlers = [
         }
       }
 
-      const redirectTarget = pairs.find(
-        (pair) => pair.oldWsPath === currentWsPath,
-      )?.newWsPath;
+      await assertSourceSavesDrained(editorEngine, pairs, 'rename');
 
       try {
         await fileSystem.renameFiles(pairs);
-        toast.success(
-          t.app.toasts.folderRenamed({ folderName: basename(newDir.path) }),
-        );
       } catch (error) {
         toast.error(t.app.toasts.folderRenameFailed);
         throw error;
       }
 
-      if (redirectTarget) {
-        navigation.goWsPath(redirectTarget);
+      const starResult = await userActivityService.relocateStarredItems(
+        pairs.map(({ oldWsPath, newWsPath }) => ({
+          oldItem: WsPath.fromString(oldWsPath),
+          newItem: WsPath.fromString(newWsPath),
+        })),
+      );
+      const folderName = basename(newDir.path);
+      if (starResult === 'failed') {
+        toast.warning(
+          t.app.toasts.folderRenameStarUpdateFailed({ folderName }),
+        );
+      } else {
+        toast.success(t.app.toasts.folderRenamed({ folderName }));
       }
     },
   ),
@@ -456,6 +543,59 @@ export const wsCommandHandlers = [
   c('command::ws:refresh-file-tree', ({ fileSystem }) => {
     fileSystem.refreshFileTree();
   }),
+
+  c(
+    'command::ws:recover-note-snapshot',
+    async ({ noteSnapshot, fileSystem, navigation }, { snapshotId }) => {
+      const snapshot = await noteSnapshot.getSnapshot(snapshotId);
+      if (!snapshot) {
+        toast.error(t.app.toasts.snapshotNotFound);
+        return;
+      }
+
+      const originalPath = WsPath.fromString(snapshot.wsPath).asFile();
+      if (!originalPath) {
+        toast.error(t.app.toasts.snapshotRecoverFailed);
+        return;
+      }
+
+      // Recovery always lands in a fresh note beside the original — the
+      // current note content is never overwritten. Strip a previous
+      // '-recovered-<n>' suffix so recovering a recovered note doesn't stack.
+      const base =
+        originalPath.fileNameWithoutExtension.replace(/-recovered-\d+$/, '') ||
+        originalPath.fileNameWithoutExtension;
+
+      try {
+        let newWsPath: string | undefined;
+        for (let attempt = 1; attempt <= 100; attempt++) {
+          const candidate = originalPath.replaceFileName(
+            `${base}-recovered-${attempt}${WsPath.DEFAULT_NOTE_EXTENSION}`,
+          ).wsPath;
+          if (!(await fileSystem.exists(candidate))) {
+            newWsPath = candidate;
+            break;
+          }
+        }
+        if (!newWsPath) {
+          toast.error(t.app.toasts.snapshotRecoverFailed);
+          return;
+        }
+
+        await fileSystem.createTextFile(newWsPath, snapshot.content);
+
+        toast.success(
+          t.app.toasts.snapshotRecovered({
+            fileName: WsPath.assertFile(newWsPath).fileName,
+          }),
+        );
+        navigation.goWsPath(newWsPath);
+      } catch (error) {
+        toast.error(t.app.toasts.snapshotRecoverFailed);
+        throw error;
+      }
+    },
+  ),
 
   c(
     'command::ws:clone-note',

@@ -12,10 +12,6 @@ const root = path.resolve(
 
 const stories: StoriesEntry[] = [
   {
-    directory: path.join(root, 'packages/ui/shadcn/src'),
-    titlePrefix: 'ui/shadcn',
-  },
-  {
     directory: path.join(root, 'packages/ui/ui-components/src'),
     titlePrefix: 'ui/ui-components',
   },

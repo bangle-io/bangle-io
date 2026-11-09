@@ -1,3 +1,4 @@
+import { isDarwin } from '@bangle.io/base-utils';
 import type { Logger } from '@bangle.io/logger';
 import {
   type LinkConfig,
@@ -20,6 +21,7 @@ import {
   setupLink,
   setupLinkMenu,
   setupList,
+  setupMath,
   setupParagraph,
   setupPlaceholder,
   setupSelectionMenu,
@@ -36,13 +38,8 @@ import {
   type AssetFilePluginConfig,
   setupAssetFilePlugin,
 } from './asset-file-plugin';
-import {
-  type AssetLinkPluginConfig,
-  setupAssetLinkPlugin,
-} from './asset-link-plugin';
 import { setupCodeHighlight } from './code-highlight';
 import { setupFrontmatterActions } from './frontmatter-actions';
-import { funPlaceholder } from './utils';
 
 /**
  * The date picker is a first-class suggestion surface: `$date` is a real
@@ -59,17 +56,23 @@ export function setupExtensions(
   onOpenLink?: LinkConfig['onOpenLink'],
   wikiLinkConfig?: WikiLinkConfig,
   assetFileConfig?: AssetFilePluginConfig,
-  assetLinkConfig?: AssetLinkPluginConfig,
 ) {
   const link = setupLink({ onOpenLink });
   const frontmatter = setupFrontmatter();
+  const suggestions = setupSuggestions({
+    providerId: 'slash-command',
+    markName: 'slash_command',
+    trigger: '/',
+    markClassName: 'text-pop',
+    // A space ends the slash query (menu closes, text stays) — slash items
+    // are single-word matches, unlike wiki-link queries.
+    endOnWhitespace: true,
+    logger: logger.child('suggestions'),
+  });
   return {
     image: setupImage(),
     ...(assetFileConfig
       ? { assetFilePlugin: setupAssetFilePlugin(assetFileConfig) }
-      : {}),
-    ...(assetLinkConfig
-      ? { assetLinkPlugin: setupAssetLinkPlugin(assetLinkConfig) }
       : {}),
     activeNode: setupActiveNode({
       // 'table': the flash animation re-triggers on every cell move and makes
@@ -92,11 +95,27 @@ export function setupExtensions(
     blockquote: setupBlockquote(),
     bold: setupBold(),
     list: setupList(),
+    math: setupMath({
+      reservedDollarTriggers: [DATE_SUGGESTION.trigger],
+    }),
 
     dragNode: setupDragNode({
       pluginOptions: {
         notDraggableClassName: 'prosemirror-flat-list',
         excludedTags: ['blockquote'],
+        labels: {
+          addBlockLabel: t.app.editor.blockHandle.addBlock,
+          addBelowHint: t.app.editor.blockHandle.addBelowHint,
+          addAboveHint: t.app.editor.blockHandle.addAboveHint({
+            modifier: isDarwin ? '⌥' : 'Alt',
+          }),
+          dragHandleLabel: t.app.editor.blockHandle.dragHandle,
+        },
+        // Open the slash menu on the freshly inserted empty block so the
+        // "+" button lands the user directly in block selection.
+        onBlockAdd: (view) => {
+          suggestions.command.openSuggestion()(view.state, view.dispatch, view);
+        },
       },
     }),
     dropGapCursor: setupDropGapCursor({
@@ -115,19 +134,16 @@ export function setupExtensions(
     history: setupHistory(),
     paragraph: setupParagraph(),
     strike: setupStrike(),
-    suggestions: setupSuggestions({
-      providerId: 'slash-command',
-      markName: 'slash_command',
-      trigger: '/',
-      markClassName: 'text-pop',
-      logger: logger.child('suggestions'),
-    }),
+    suggestions,
     trailingNode: setupTrailingNode(),
     dateSuggestions: setupSuggestions({
       providerId: 'date-picker',
       markName: DATE_SUGGESTION.markName,
       trigger: DATE_SUGGESTION.trigger,
       markClassName: 'text-pop',
+      // This provider has no query: typing past the exact trigger means the
+      // user is entering literal text, so close without consuming the suffix.
+      endOnQuery: true,
       // The suggestion keymap is installed once by the slash-command
       // provider and dispatches by mark name, same as wikiSuggestions.
       installKeymap: false,
@@ -146,7 +162,8 @@ export function setupExtensions(
     underline: setupUnderline(),
     horizontalRule: setupHorizontalRule(),
     placeholder: setupPlaceholder({
-      placeholder: funPlaceholder(),
+      placeholder: t.app.editor.placeholder.emptyDoc,
+      blockPlaceholder: t.app.editor.placeholder.emptyBlock,
     }),
     code: setupCode(),
     codeBlock: setupCodeBlock(),

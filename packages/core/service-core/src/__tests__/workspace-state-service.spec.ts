@@ -1,5 +1,8 @@
 import { throwAppError } from '@bangle.io/base-utils';
-import { WORKSPACE_STORAGE_TYPE } from '@bangle.io/constants';
+import {
+  EXTERNAL_FILE_CHANGE_SENDER_TAG,
+  WORKSPACE_STORAGE_TYPE,
+} from '@bangle.io/constants';
 import { createTestEnvironment } from '@bangle.io/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -22,10 +25,24 @@ function createDeferred<T>() {
 
 async function setupWorkspaceStateService({
   controller = new AbortController(),
+  hasPendingOrFailedSave,
 }: {
   controller?: AbortController;
+  hasPendingOrFailedSave?: (wsPath: string) => boolean;
 } = {}) {
-  const testEnv = createTestEnvironment({ controller });
+  const testEnv = createTestEnvironment({
+    controller,
+    ...(hasPendingOrFailedSave
+      ? {
+          coreConfigOverrides: {
+            workspaceState: (base) => ({
+              ...base,
+              hasPendingOrFailedSave,
+            }),
+          },
+        }
+      : {}),
+  });
   const services = testEnv.instantiateAll();
   await testEnv.mountAll();
 
@@ -100,6 +117,78 @@ describe('WorkspaceStateService $workspaces list', () => {
         .map((ws) => ws.name);
       expect(names).toContain('keep-ws');
       expect(names).not.toContain('delete-ws');
+    });
+  });
+
+  it('preserves the last successful workspace list when a refresh fails', async () => {
+    const testEnv = createTestEnvironment({ controller });
+    const services = testEnv.instantiateAll();
+    await testEnv.mountAll();
+    const store = testEnv.store;
+
+    await services.workspaceOps.createWorkspaceInfo({
+      name: 'keep-ws',
+      type: WORKSPACE_STORAGE_TYPE.Memory,
+      metadata: {},
+    });
+    services.navigation.goWorkspace('keep-ws');
+
+    await vi.waitFor(() => {
+      expect(
+        store.get(services.workspaceState.$workspaceListState),
+      ).toMatchObject({
+        status: 'ready',
+        data: [expect.objectContaining({ name: 'keep-ws' })],
+      });
+      expect(services.workspaceState.resolveAtoms().currentWsName).toBe(
+        'keep-ws',
+      );
+    });
+
+    const lastSuccessfulList = store.get(services.workspaceState.$workspaces);
+    const databaseFailure = new Error('forced workspace refresh failure');
+    const getAllEntriesSpy = vi
+      .spyOn(services.database, 'getAllEntries')
+      .mockImplementation(async () => {
+        throwAppError(
+          'error::database:unknown-error',
+          'Failed to refresh workspace metadata',
+          {
+            error: databaseFailure,
+            databaseName: services.database.name,
+          },
+        );
+      });
+
+    store.set(services.workspaceOps.$workspaceInfoChange, (count) => count + 1);
+
+    await vi.waitFor(() => {
+      expect(store.get(services.workspaceState.$workspaceListState)).toEqual({
+        status: 'error',
+        data: lastSuccessfulList,
+        error: expect.any(Error),
+      });
+    });
+    expect(store.get(services.workspaceState.$workspaces)).toBe(
+      lastSuccessfulList,
+    );
+    expect(services.workspaceState.resolveAtoms().currentWsName).toBe(
+      'keep-ws',
+    );
+    expect(testEnv.commonOpts.emitAppError).toHaveBeenCalledWith(
+      store.get(services.workspaceState.$workspaceListState).error,
+    );
+
+    getAllEntriesSpy.mockRestore();
+    store.set(services.workspaceOps.$workspaceInfoChange, (count) => count + 1);
+
+    await vi.waitFor(() => {
+      expect(
+        store.get(services.workspaceState.$workspaceListState),
+      ).toMatchObject({
+        status: 'ready',
+        data: [expect.objectContaining({ name: 'keep-ws' })],
+      });
     });
   });
 });
@@ -199,6 +288,42 @@ describe('WorkspaceStateService backlink index', () => {
     expect(
       new Set(readFileAsText.mock.calls.map(([wsPath]) => wsPath)),
     ).toEqual(new Set([TARGET, SOURCE_MARKDOWN, SOURCE_WIKI, PLAIN_MENTION]));
+  });
+
+  it('rebuilds backlinks when an external create replaces an existing path', async () => {
+    const { rootEmitter, services, store } = await setupWorkspaceStateService({
+      controller,
+    });
+    await vi.waitUntil(() => {
+      const next = store.get(services.workspaceState.$backlinkIndex);
+      const sources = next.byTargetWsPath.get(TARGET) ?? [];
+      return next.status === 'ready' && sources.length > 0 ? next : undefined;
+    });
+
+    // Atomic temp-to-target commits are reported as creates even when they
+    // replace an existing file. Bypass FileSystemService for the disk write,
+    // then emit the watcher shape that must invalidate content indexes.
+    await services.fileStorageMemory.writeFile(
+      SOURCE_WIKI,
+      new File(['No link now'], 'SourceWiki.md', { type: 'text/plain' }),
+    );
+    rootEmitter.emit('event::file:update', {
+      type: 'file-create',
+      wsPath: SOURCE_WIKI,
+      sender: {
+        id: 'external-watcher',
+        tag: EXTERNAL_FILE_CHANGE_SENDER_TAG,
+      },
+    });
+
+    await vi.waitUntil(() => {
+      const next = store.get(services.workspaceState.$backlinkIndex);
+      const sources = next.byTargetWsPath.get(TARGET) ?? [];
+      return next.status === 'ready' &&
+        sources.map((path) => path.wsPath).join(',') === SOURCE_MARKDOWN
+        ? next
+        : undefined;
+    });
   });
 
   it('reports an error without reusing stale backlink data when a rebuild read fails', async () => {
@@ -355,6 +480,81 @@ describe('WorkspaceStateService file tree updates', () => {
     expect(
       services.workspaceState.resolveAtoms().wsPaths.map((path) => path.wsPath),
     ).toContain(newWsPath);
+  });
+
+  it('replaces a renamed path and follows the active file route', async () => {
+    const { services } = await setupWorkspaceStateService({ controller });
+    const renamedWsPath = `${WS_NAME}:RenamedTarget.md`;
+
+    await services.fileSystem.renameFile({
+      oldWsPath: TARGET,
+      newWsPath: renamedWsPath,
+    });
+
+    await vi.waitFor(() => {
+      expect(services.navigation.resolveAtoms().activeWsFilePath?.wsPath).toBe(
+        renamedWsPath,
+      );
+      expect(
+        services.workspaceState.resolveAtoms().currentWsFilePath?.wsPath,
+      ).toBe(renamedWsPath);
+    });
+    const wsPaths = services.workspaceState
+      .resolveAtoms()
+      .wsPaths.map((path) => path.wsPath);
+    expect(wsPaths).toContain(renamedWsPath);
+    expect(wsPaths).not.toContain(TARGET);
+  });
+
+  it('does not follow a rename when the user is viewing another file', async () => {
+    const { services } = await setupWorkspaceStateService({ controller });
+    const renamedWsPath = `${WS_NAME}:RenamedSource.md`;
+    services.navigation.goWsPath(SOURCE_WIKI);
+
+    await services.fileSystem.renameFile({
+      oldWsPath: TARGET,
+      newWsPath: renamedWsPath,
+    });
+
+    expect(services.navigation.resolveAtoms().activeWsFilePath?.wsPath).toBe(
+      SOURCE_WIKI,
+    );
+    await vi.waitFor(() => {
+      expect(
+        services.workspaceState
+          .resolveAtoms()
+          .wsPaths.map((path) => path.wsPath),
+      ).toContain(renamedWsPath);
+    });
+    expect(services.navigation.resolveAtoms().activeWsFilePath?.wsPath).toBe(
+      SOURCE_WIKI,
+    );
+  });
+
+  it('does not follow an external rename while the active path has an unsaved editor', async () => {
+    const { rootEmitter, services } = await setupWorkspaceStateService({
+      controller,
+      hasPendingOrFailedSave: (wsPath) => wsPath === TARGET,
+    });
+    const renamedWsPath = `${WS_NAME}:ExternallyRenamed.md`;
+
+    rootEmitter.emit('event::file:update', {
+      type: 'file-rename',
+      oldWsPath: TARGET,
+      wsPath: renamedWsPath,
+      sender: { id: 'another-tab', tag: 'file-system' },
+    });
+
+    await vi.waitFor(() => {
+      expect(
+        services.workspaceState
+          .resolveAtoms()
+          .wsPaths.map((path) => path.wsPath),
+      ).toContain(renamedWsPath);
+    });
+    expect(services.navigation.resolveAtoms().activeWsFilePath?.wsPath).toBe(
+      TARGET,
+    );
   });
 
   it('keeps an incremental create when an older full rescan resolves later', async () => {

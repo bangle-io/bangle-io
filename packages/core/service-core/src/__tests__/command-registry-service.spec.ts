@@ -65,6 +65,41 @@ describe('CommandRegistryService', () => {
     expect(retrievedCommand).toEqual(command);
   });
 
+  test('filters omni-search commands by active scope', async () => {
+    const { service } = await setup();
+    const globalCommand = {
+      id: 'globalCommand',
+      keywords: ['global'],
+      omniSearch: 'global',
+      args: null,
+    } as const satisfies Command;
+    const workspaceCommand = {
+      id: 'workspaceCommand',
+      keywords: ['workspace'],
+      omniSearch: 'workspace',
+      args: null,
+    } as const satisfies Command;
+    const noteCommand = {
+      id: 'noteCommand',
+      keywords: ['note'],
+      omniSearch: 'note',
+      args: null,
+    } as const satisfies Command;
+    service.register(globalCommand);
+    service.register(workspaceCommand);
+    service.register(noteCommand);
+
+    expect(
+      service.getOmniSearchCommands('global').map((command) => command.id),
+    ).toEqual(['globalCommand']);
+    expect(
+      service.getOmniSearchCommands('workspace').map((command) => command.id),
+    ).toEqual(['globalCommand', 'workspaceCommand']);
+    expect(
+      service.getOmniSearchCommands('note').map((command) => command.id),
+    ).toEqual(['globalCommand', 'workspaceCommand', 'noteCommand']);
+  });
+
   test('should throw error when registering a duplicate command', async () => {
     const { service } = await setup();
     const command = {

@@ -87,10 +87,12 @@ export class FakeFileHandle {
     keepExistingData?: boolean;
     mode?: string;
   }): Promise<FileSystemWritableFileStream> {
+    // Record the attempt before the support check so tests can observe
+    // failed exclusive attempts (e.g. to assert they are not repeated).
+    this.sawWritableModes.push(options?.mode);
     if (options?.mode !== undefined && !this.supportsWritableMode) {
       throw new TypeError('Unsupported createWritable option: mode');
     }
-    this.sawWritableModes.push(options?.mode);
     if (options?.mode === 'exclusive' && this.openExclusiveWritables > 0) {
       throw new DOMException(
         'The file is already locked by another writable',

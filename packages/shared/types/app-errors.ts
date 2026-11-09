@@ -46,12 +46,6 @@ export type AppError =
       };
     }
   | {
-      name: `error::workspace:invalid-misc-data`;
-      payload: {
-        info: string;
-      };
-    }
-  | {
       name: `error::workspace:not-allowed`;
       payload: {
         wsName?: string;
@@ -72,6 +66,12 @@ export type AppError =
     }
   | {
       name: `error::workspace:native-fs-reconnect-failed`;
+      payload: {
+        wsName: string;
+      };
+    }
+  | {
+      name: `error::workspace:native-fs-locate-failed`;
       payload: {
         wsName: string;
       };

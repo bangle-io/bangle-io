@@ -1,7 +1,7 @@
 import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
 import { TypedBroadcastBus } from '@bangle.io/browser-utils';
 import { BROWSING_CONTEXT_ID } from '@bangle.io/config';
-import { DATABASE_TABLE_NAME, SERVICE_NAME } from '@bangle.io/constants';
+import { SERVICE_NAME } from '@bangle.io/constants';
 import type {
   BaseAppDatabase,
   DatabaseChange,
@@ -14,8 +14,7 @@ export class MemoryDatabaseService
   extends BaseService
   implements BaseAppDatabase
 {
-  private workspaceData: DataMap = new Map();
-  private miscData: DataMap = new Map();
+  private tables = new Map<DatabaseQueryOptions['tableName'], DataMap>();
   private bus!: TypedBroadcastBus<DatabaseChange>;
 
   constructor(context: BaseServiceContext, dependencies: null) {
@@ -32,15 +31,17 @@ export class MemoryDatabaseService
     });
 
     this.addCleanup(() => {
-      this.workspaceData.clear();
-      this.miscData.clear();
+      this.tables.clear();
     });
   }
 
   private getDataMap(tableName: DatabaseQueryOptions['tableName']): DataMap {
-    return tableName === DATABASE_TABLE_NAME.workspaceInfo
-      ? this.workspaceData
-      : this.miscData;
+    let dataMap = this.tables.get(tableName);
+    if (!dataMap) {
+      dataMap = new Map();
+      this.tables.set(tableName, dataMap);
+    }
+    return dataMap;
   }
 
   async getEntry(

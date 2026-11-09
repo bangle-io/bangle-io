@@ -11,6 +11,7 @@ export function shouldReportAppError(appError: AppError): boolean {
     case 'error::file:size-too-large':
     case 'error::file-storage:file-does-not-exist':
     case 'error::workspace:native-fs-auth-needed':
+    case 'error::workspace:native-fs-locate-failed':
     case 'error::workspace:native-fs-reconnect-failed':
     case 'error::workspace:no-note-opened':
     case 'error::workspace:no-notes-found':
@@ -103,7 +104,9 @@ export function AppErrorHandler({ rootEmitter }: { rootEmitter: RootEmitter }) {
             return;
           }
 
+          case 'error::workspace:native-fs-locate-failed':
           case 'error::workspace:native-fs-reconnect-failed': {
+            // Expected user-facing outcomes, not app defects: no Report action.
             toast.error(error.message, {
               duration: 5000,
               cancel: {

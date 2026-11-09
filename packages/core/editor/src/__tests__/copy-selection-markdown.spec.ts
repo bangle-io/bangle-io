@@ -26,9 +26,6 @@ function setup() {
       cleanupStoredFiles: () => {},
       resolveAssetReference: () => undefined,
     },
-    {
-      openAssetLink: () => false,
-    },
   );
   const resolved = resolve(extensions, false, true);
   const schema = new Schema({
@@ -44,10 +41,7 @@ function setup() {
       const state = EditorState.create({
         doc: initialDoc,
         schema,
-        selection: TextSelection.create(
-          initialDoc,
-          initialDoc.content.size - 1,
-        ),
+        selection: TextSelection.atEnd(initialDoc),
       });
       const parsed = markdown.parser.parse(markdownText);
       const inline =
@@ -125,5 +119,13 @@ describe('paste from Markdown round trips', () => {
     const { insertMarkdownAtEnd } = setup();
 
     expect(insertMarkdownAtEnd('Hello', '**world**')).toBe('Hello**world**');
+  });
+
+  it('keeps paragraph boundaries when a multi-block paste extends a tight list item', () => {
+    const { insertMarkdownAtEnd } = setup();
+
+    expect(
+      insertMarkdownAtEnd('- one\n- two', 'pasted first\n\npasted second'),
+    ).toBe('- one\n\n- two\n\n  pasted first\n\n  pasted second');
   });
 });

@@ -10,7 +10,7 @@ import {
   queryPermission,
   requestPermission,
 } from '../permissions';
-import { pickDirectory } from '../picker';
+import { pickDirectory, revealDirectoryLocation } from '../picker';
 import {
   isFileSystemDirectoryHandle,
   supportsFileSystemObserver,
@@ -101,7 +101,26 @@ describe('pickDirectory', () => {
 
     const handle = await pickDirectory({ id: 'bangle-ws' });
     expect(handle).toBe(asRootHandle(dir));
-    expect(picker).toHaveBeenCalledWith({ id: 'bangle-ws', mode: 'readwrite' });
+    expect(picker).toHaveBeenCalledWith({ id: 'bangle-ws' });
+  });
+
+  it('requests readwrite via requestPermission, not the picker mode option', async () => {
+    // Chrome persists explicit requestPermission grants across sessions
+    // (enabling the "Allow on every visit" restore prompt); picker-mode
+    // grants have not reliably been persisted. Keep the upfront prompt on
+    // the requestPermission path.
+    const dir = new FakeDirectoryHandle('picked');
+    dir.permissions = { read: 'granted', readwrite: 'prompt' };
+    const requestPermissionSpy = vi.spyOn(dir, 'requestPermission');
+    const picker = vi.fn(async () => asRootHandle(dir));
+    vi.stubGlobal('showDirectoryPicker', picker);
+
+    await pickDirectory({ id: 'bangle-ws' });
+    expect(picker).toHaveBeenCalledWith(
+      expect.not.objectContaining({ mode: expect.anything() }),
+    );
+    expect(requestPermissionSpy).toHaveBeenCalledWith({ mode: 'readwrite' });
+    expect(dir.permissions.readwrite).toBe('granted');
   });
 
   it('maps user cancellation to userAborted', async () => {
@@ -150,5 +169,54 @@ describe('pickDirectory', () => {
       true,
     );
     expect((error as { cause?: unknown }).cause).toBeInstanceOf(DOMException);
+  });
+});
+
+describe('revealDirectoryLocation', () => {
+  it('throws unsupported when the picker API is missing', async () => {
+    const anchor = asRootHandle(new FakeDirectoryHandle('notes'));
+    const error = await revealDirectoryLocation(anchor).catch((e) => e);
+    expect(isNativeFsError(error, NATIVE_FS_ERROR_CODE.unsupported)).toBe(true);
+  });
+
+  it('anchors the picker at the handle and discards the selection', async () => {
+    const anchor = asRootHandle(new FakeDirectoryHandle('notes'));
+    const picked = new FakeDirectoryHandle('somewhere-else');
+    const requestPermission = vi.spyOn(picked, 'requestPermission');
+    const picker = vi.fn(async () => asRootHandle(picked));
+    vi.stubGlobal('showDirectoryPicker', picker);
+
+    await expect(revealDirectoryLocation(anchor)).resolves.toBeUndefined();
+    expect(picker).toHaveBeenCalledWith({
+      id: 'bangle-locate-workspace',
+      mode: 'read',
+      startIn: anchor,
+    });
+    // A reveal never asks for permission on whatever the user happened to pick.
+    expect(requestPermission).not.toHaveBeenCalled();
+  });
+
+  it('resolves silently when the user cancels the dialog', async () => {
+    const anchor = asRootHandle(new FakeDirectoryHandle('notes'));
+    vi.stubGlobal('showDirectoryPicker', async () => {
+      throw new DOMException('The user aborted a request.', 'AbortError');
+    });
+
+    await expect(revealDirectoryLocation(anchor)).resolves.toBeUndefined();
+  });
+
+  it('maps missing user activation to activationRequired', async () => {
+    const anchor = asRootHandle(new FakeDirectoryHandle('notes'));
+    vi.stubGlobal('showDirectoryPicker', async () => {
+      throw new DOMException(
+        'Must be handling a user gesture to show a file picker.',
+        'SecurityError',
+      );
+    });
+
+    const error = await revealDirectoryLocation(anchor).catch((e) => e);
+    expect(
+      isNativeFsError(error, NATIVE_FS_ERROR_CODE.activationRequired),
+    ).toBe(true);
   });
 });

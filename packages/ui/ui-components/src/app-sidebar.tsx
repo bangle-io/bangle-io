@@ -7,18 +7,19 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  Label,
 } from '@bangle.io/base-ui';
 import { KEYBOARD_SHORTCUTS } from '@bangle.io/constants';
 import {
   ChevronsUpDown,
+  Download,
+  ExternalLink,
   GalleryVerticalEnd,
   Plus,
   Search,
   Settings,
   Star,
 } from 'lucide-react';
-import React, { useId } from 'react';
+import React from 'react';
 import bangleIcon from './bangle-transparent_x512.png';
 import {
   type FileTreeEntry,
@@ -34,7 +35,6 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
-  SidebarInput,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -60,6 +60,7 @@ type Workspace = {
 };
 
 export type AppSidebarProps = {
+  canCreateFiles: boolean;
   onNewWorkspaceClick: () => void;
   onManageWorkspacesClick: () => void;
   workspaces: Workspace[];
@@ -82,6 +83,10 @@ export type AppSidebarProps = {
   onOpenFile: (relativePath: string) => void;
   showNoteFilesOnly: boolean;
   onShowNoteFilesOnlyChange: (showNoteFilesOnly: boolean) => void;
+  expandedFileTreePaths?: readonly string[];
+  onFileTreeDirectoryExpansionChange: (path: string, expanded: boolean) => void;
+  onRevealFileTreePaths: (paths: readonly string[]) => void;
+  onCollapseFileTree: (keepExpandedPaths: readonly string[]) => void;
   /**
    * When set, renders a recoverable error notice above the file tree, e.g.
    * after a failed workspace file scan. The tree below keeps showing the last
@@ -91,6 +96,17 @@ export type AppSidebarProps = {
     message: string;
     retryLabel: string;
     onRetry: () => void;
+  };
+  /**
+   * When set, renders a persistent accent action pill above the sidebar
+   * footer, e.g. "Install app" while the browser offers a PWA install, or
+   * "Open in app" when the installed PWA is available from a browser tab.
+   */
+  pwaAction?: {
+    kind: 'install' | 'open-in-app';
+    label: string;
+    onClick: () => void;
+    disabled?: boolean;
   };
   footerChildren?: React.ReactNode;
   footerTitle?: string;
@@ -198,6 +214,7 @@ function DropdownButton({
 }
 
 export function AppSidebar({
+  canCreateFiles,
   onNewWorkspaceClick,
   onManageWorkspacesClick,
   workspaces,
@@ -212,9 +229,14 @@ export function AppSidebar({
   newNoteFileName,
   onMoveFile,
   onOpenFile,
+  expandedFileTreePaths,
+  onFileTreeDirectoryExpansionChange,
+  onRevealFileTreePaths,
+  onCollapseFileTree,
   showNoteFilesOnly,
   onShowNoteFilesOnlyChange,
   fileTreeNotice,
+  pwaAction,
   footerChildren,
   footerTitle,
   footerSubtitle,
@@ -275,6 +297,7 @@ export function AppSidebar({
               </div>
             )}
             <PierreFileTree
+              canCreateFiles={canCreateFiles}
               activePaths={activeFilePaths}
               filePaths={filePaths}
               getActionsForEntry={getActionsForEntry}
@@ -283,12 +306,17 @@ export function AppSidebar({
               newNoteFileName={newNoteFileName}
               onMoveFile={onMoveFile}
               onOpenFile={onOpenFile}
+              expandedPaths={expandedFileTreePaths}
+              onDirectoryExpansionChange={onFileTreeDirectoryExpansionChange}
+              onRevealPaths={onRevealFileTreePaths}
+              onCollapseAll={onCollapseFileTree}
               showNoteFilesOnly={showNoteFilesOnly}
               onShowNoteFilesOnlyChange={onShowNoteFilesOnlyChange}
             />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      {pwaAction && <SidebarPwaAction {...pwaAction} />}
       {footerChildren && (
         <AppSidebarFooter
           title={footerTitle}
@@ -397,6 +425,36 @@ function SidebarNavGroup({
   );
 }
 
+function SidebarPwaAction({
+  kind,
+  label,
+  onClick,
+  disabled,
+}: {
+  kind: 'install' | 'open-in-app';
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+}) {
+  const Icon = kind === 'install' ? Download : ExternalLink;
+
+  return (
+    <div className="px-3 pt-1">
+      <Button
+        variant="outline"
+        size="sm"
+        disabled={disabled}
+        onClick={onClick}
+        data-testid="sidebar-pwa-action"
+        className="w-full justify-center gap-2 border-pop/40 bg-pop/10 font-medium hover:bg-pop/20"
+      >
+        <Icon aria-hidden="true" className="size-3.5 text-pop" />
+        <span>{label}</span>
+      </Button>
+    </div>
+  );
+}
+
 function AppSidebarFooter({
   children,
   title = 'Bangle.io',
@@ -440,34 +498,25 @@ function CommandButton({
   className?: string;
   onClick: () => void;
 }) {
-  const commandButtonId = useId();
   return (
-    <div
-      // biome-ignore lint/a11y/useSemanticElements: requires div wrapper for proper component styling integration
-      role="button"
-      tabIndex={0}
+    <button
+      type="button"
+      aria-label={t.app.common.searchLabel}
       onClick={onClick}
-      onKeyUp={(e) => e.key === 'Enter' && onClick()}
-      className={cn('w-full cursor-pointer', className)}
+      className={cn('w-full cursor-pointer text-left', className)}
     >
       <SidebarGroup className="p-0">
         <SidebarGroupContent className="relative">
-          <Label htmlFor={commandButtonId} className="sr-only">
-            {t.app.common.searchLabel}
-          </Label>
-          <SidebarInput
-            id={commandButtonId}
-            placeholder={t.app.common.searchInputPlaceholder}
-            className="pointer-events-none h-8 rounded-md bg-background/70 pr-8 pl-8"
-            readOnly
-          />
+          <div className="flex h-8 w-full items-center rounded-md border border-input bg-background/70 pr-8 pl-8 text-muted-foreground text-sm shadow-none">
+            {t.app.common.searchInputPlaceholder}
+          </div>
           <Search className="pointer-events-none absolute top-1/2 left-2 size-4 -translate-y-1/2 select-none opacity-50" />
           <div className="absolute top-1/2 right-2 -translate-y-1/2 rounded-sm opacity-70">
             <KbdShortcut keys={KEYBOARD_SHORTCUTS.toggleOmniSearch.keys} />
           </div>
         </SidebarGroupContent>
       </SidebarGroup>
-    </div>
+    </button>
   );
 }
 

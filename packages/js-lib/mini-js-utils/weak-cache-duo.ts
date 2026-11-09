@@ -5,23 +5,19 @@ import { DuoWeakMap } from './duo-weak-map';
  * @param fn - A function with arity=2 whose parameters are non-primitive,
  * @returns
  */
-export function weakCacheDuo<R, P extends (arg1: any, arg2: any) => R>(
-  fn: P,
-): P {
-  const cache = new DuoWeakMap<any, any, R>();
+export function weakCacheDuo<K1 extends object, K2 extends object, R>(
+  fn: (arg1: K1, arg2: K2) => R,
+): (arg1: K1, arg2: K2) => R {
+  const cache = new DuoWeakMap<K1, K2, R>();
 
-  const res = (arg1: any, arg2: any): R => {
-    let value = cache.get([arg1, arg2]);
-
-    if (value !== undefined) {
-      return value;
+  return (arg1: K1, arg2: K2): R => {
+    if (cache.has([arg1, arg2])) {
+      return cache.get([arg1, arg2]) as R;
     }
 
-    value = fn(arg1, arg2);
+    const value = fn(arg1, arg2);
     cache.set([arg1, arg2], value);
 
     return value;
   };
-
-  return res as P;
 }

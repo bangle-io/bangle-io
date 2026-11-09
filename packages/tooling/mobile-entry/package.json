@@ -52,7 +52,7 @@
     "react-native-webview": "^14.0.1"
   },
   "devDependencies": {
-    "@types/node": "^26.1.0",
-    "@types/react": "^19.2.17"
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.18"
   }
 }

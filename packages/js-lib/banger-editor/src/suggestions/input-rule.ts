@@ -1,4 +1,4 @@
-import { type EditorState, InputRule } from '../pm';
+import { type EditorState, Fragment, InputRule } from '../pm';
 
 // ProseMirror uses the Unicode Character 'OBJECT REPLACEMENT CHARACTER' (U+FFFC) as text representation for
 // leaf nodes, i.e. nodes that don't have any content or text property (e.g. hardBreak, emoji)
@@ -36,16 +36,26 @@ export function triggerInputRule({
       if (!fullMatch || !trigger) {
         return null;
       }
-      // `start`/`end` come from the input-rules plugin and are correct
-      // whether the trigger arrived one keystroke at a time or as a single
-      // inserted chunk (dictation, autocorrect). `match[0]` may include a
-      // boundary character before the trigger — keep it in the document.
-      const triggerStart = start + (fullMatch.length - trigger.length);
+      // `start`/`end` from the input-rules plugin cover only the part of
+      // `match[0]` that already exists in the document; the rest of the
+      // match is the pending text being inserted. Replace the whole range
+      // with (boundary + marked trigger) so the positions can never invert —
+      // slicing the trigger's offset out of `start` breaks when the boundary
+      // character arrives inside a single inserted chunk (" /" via
+      // dictation, autocorrect, or insertText), which used to produce an
+      // inverted replace range and corrupt structured nodes like tables.
+      const boundary = fullMatch.slice(0, fullMatch.length - trigger.length);
       const schema = editorState.schema;
       const mark = schema.mark(markName, { trigger });
       const marks = editorState.selection.$from.marks();
+      const content = boundary
+        ? Fragment.fromArray([
+            schema.text(boundary, marks),
+            schema.text(trigger, [mark, ...marks]),
+          ])
+        : Fragment.from(schema.text(trigger, [mark, ...marks]));
       return editorState.tr
-        .replaceWith(triggerStart, end, schema.text(trigger, [mark, ...marks]))
+        .replaceWith(start, end, content)
         .addStoredMark(mark);
     },
   );

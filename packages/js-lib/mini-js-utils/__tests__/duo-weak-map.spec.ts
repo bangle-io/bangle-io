@@ -2,7 +2,7 @@ import { expect, test } from 'vitest';
 import { DuoWeakMap } from '../duo-weak-map';
 
 test('works 1', () => {
-  const duoMap = new DuoWeakMap<any, any, any>();
+  const duoMap = new DuoWeakMap<object, object, object>();
 
   const key1 = {};
   const key2 = {};
@@ -19,7 +19,7 @@ test('works 1', () => {
 });
 
 test('works 2', () => {
-  const duoMap = new DuoWeakMap<any, any, any>();
+  const duoMap = new DuoWeakMap<object, object, object>();
 
   const key1 = {};
   const key2 = {};

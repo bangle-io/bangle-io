@@ -61,6 +61,8 @@ export type { LinkMenuState } from './link-menu';
 export { $linkMenu, setupLinkMenu } from './link-menu';
 export type { ListKindType } from './list';
 export { setupList } from './list';
+export type { InsertMathOptions, MathConfig } from './math';
+export { serializeMathClipboardText, setupMath } from './math';
 export type { ParagraphConfig } from './paragraph';
 export { setupParagraph } from './paragraph';
 export type { PlaceholderConfig } from './placeholder';
@@ -307,6 +309,7 @@ export {
   replaceSelectedNode,
   safeInsert,
   selectParentNodeOfType,
+  setBlockTypeKeepingLiteralText,
   setParentNodeMarkup,
   setTextSelection,
   setupScrollAndResizeHandlers,
@@ -336,6 +339,7 @@ export {
   removeSuggestMark,
   replaceSuggestMarkWith,
   setupSuggestions,
+  stripSyntheticSuggestionText,
   suggestionKeymap,
   suggestionsMark,
   triggerInputRule,

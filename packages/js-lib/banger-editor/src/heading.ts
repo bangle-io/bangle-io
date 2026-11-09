@@ -7,7 +7,6 @@ import {
   type NodeType,
   type PMNode,
   type Schema,
-  setBlockType,
   textblockTypeInputRule,
 } from './pm';
 import {
@@ -21,6 +20,7 @@ import {
   type KeyCode,
   moveNode,
   type PluginContext,
+  setBlockTypeKeepingLiteralText,
 } from './pm-utils';
 
 export type HeadingConfig = {
@@ -151,7 +151,7 @@ function pluginKeybindings(config: RequiredConfig) {
     const levelBindings = levels.map(
       (level: number): [string | false, Command] => [
         (config as any)[`keyToH${level}`] ?? false,
-        setBlockType(type, { level }),
+        setBlockTypeKeepingLiteralText(type, { level }),
       ],
     );
 
@@ -182,12 +182,11 @@ function toggleHeading(config: RequiredConfig) {
       const { name } = config;
       if (isHeadingActive(config)(state, level)) {
         const para = config.getParagraphNodeType(state.schema);
-        return setBlockType(para)(state, dispatch);
+        return setBlockTypeKeepingLiteralText(para)(state, dispatch);
       }
-      return setBlockType(getNodeType(state.schema, name), { level })(
-        state,
-        dispatch,
-      );
+      return setBlockTypeKeepingLiteralText(getNodeType(state.schema, name), {
+        level,
+      })(state, dispatch);
     };
   };
 }

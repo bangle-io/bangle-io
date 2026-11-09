@@ -19,6 +19,41 @@ afterEach(() => {
 });
 
 describe('wiki-link', () => {
+  it('trims surrounding target whitespace from its display text', () => {
+    const extensions = [setupBase(), setupParagraph(), setupWikiLink()];
+    const resolved = resolve(extensions);
+    const schema = new Schema({
+      nodes: resolved.nodes,
+      marks: resolved.marks,
+    });
+    const wikiLinkNode = schema.nodes.wiki_link;
+    if (!wikiLinkNode) {
+      throw new Error('wiki_link node missing from test schema');
+    }
+    const doc = schema.node('doc', null, [
+      schema.node('paragraph', null, [
+        wikiLinkNode.create({ target: ' Existing.md ', label: null }),
+      ]),
+    ]);
+    const mount = document.createElement('div');
+    document.body.append(mount);
+    const view = new EditorView(
+      { mount },
+      {
+        state: EditorState.create({
+          doc,
+          schema,
+          plugins: resolved.resolvePlugins({ schema }),
+        }),
+      },
+    );
+    editors.push(view);
+
+    const link = view.dom.querySelector('[role="link"]');
+    expect(link?.textContent).toBe('Existing');
+    expect(link?.getAttribute('data-wiki-link')).toBe(' Existing.md ');
+  });
+
   it('uses the configured unresolved aria label for unresolved decorations', () => {
     const extensions = [
       setupBase(),

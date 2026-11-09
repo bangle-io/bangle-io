@@ -32,6 +32,22 @@ export const SETTINGS_PAGE_DEFINITIONS = [
     commandTitle: 'Settings - Workspaces',
     commandKeywords: ['settings', 'preferences', 'workspaces', 'workspace'],
   },
+  {
+    id: 'recovery',
+    route: 'settings-recovery',
+    commandId: 'command::ui:open-settings-recovery',
+    commandTitle: 'Settings - Recover',
+    commandKeywords: [
+      'settings',
+      'recover',
+      'recovery',
+      'snapshot',
+      'snapshots',
+      'history',
+      'backup',
+      'restore',
+    ],
+  },
 ] as const;
 export type SettingsPageDefinition = (typeof SETTINGS_PAGE_DEFINITIONS)[number];
 export type SettingsPageId = SettingsPageDefinition['id'];
@@ -75,11 +91,11 @@ export function isEditorEngineId(value: unknown): value is EditorEngineId {
 }
 export const EDITOR_ENGINE_QUERY_PARAM = 'editorEngine';
 /**
- * Maximum time an editor-engine switch waits for the current tab's writes.
- * Healthy saves settle quickly; reaching this bound indicates a failed save
- * that must keep the tab mounted so its unsaved content remains recoverable.
+ * Maximum time a destructive editor lifecycle or file relocation waits for
+ * the current tab's writes. Healthy saves settle quickly; reaching this bound
+ * indicates a failed save whose in-memory content must remain recoverable.
  */
-export const EDITOR_ENGINE_SWITCH_SAVE_DRAIN_TIMEOUT_MS = 5_000;
+export const EDITOR_SAVE_DRAIN_TIMEOUT_MS = 5_000;
 
 export const WORKSPACE_STORAGE_TYPE = {
   Help: 'helpfs',
@@ -115,6 +131,7 @@ export const SERVICE_NAME = {
   memorySyncDatabaseService: 'memory-sync-database',
   navigationService: 'navigation-service',
   nodeErrorHandlerService: 'node-error-handler',
+  noteSnapshotService: 'note-snapshot',
   shortcutService: 'shortcut',
   testErrorHandlerService: 'test-error-handler',
   userActivityService: 'user-activity',
@@ -125,10 +142,23 @@ export const SERVICE_NAME = {
   editorWService: 'editor-w',
 } as const;
 export const APP_MAIN_CONTENT_PADDING = 'px-4 py-4 pt-0 md:px-6';
+/**
+ * Left gutter for the editor page: wider than the default content padding so
+ * the hover block handle ("+" and drag grip side by side) fits beside the
+ * text. Sections rendered below the editor (e.g. linked mentions) share it so
+ * their content stays aligned with the editor text.
+ */
+export const EDITOR_GUTTER_PADDING_LEFT = 'pl-10 md:pl-14';
 export type ServiceName = (typeof SERVICE_NAME)[keyof typeof SERVICE_NAME];
+/**
+ * Sender tag on `event::file:update` / `event::file:force-update` events that
+ * originated from a storage watcher observing changes made OUTSIDE this app
+ * (sync tools, other editors). Consumers use it to react to external edits
+ * without re-triggering on the app's own writes.
+ */
+export const EXTERNAL_FILE_CHANGE_SENDER_TAG = 'external-file-change';
 export { browserHistoryStateEvents } from './browser-history-events';
 export { commandExcludedServices, commandKeyToContext } from './command';
-export { ROUTES } from './routes';
 export { THEME_MANAGER_CONFIG } from './theme';
 // Note we are stuck with these names because of the indexeddb
 export const DATABASE_TABLE_NAME = {
@@ -136,4 +166,9 @@ export const DATABASE_TABLE_NAME = {
   workspaceInfo: 'WorkspaceInfo',
   // a dump table for all the other information
   misc: 'MiscTable',
+  // metadata of point-in-time note copies kept for user-driven recovery
+  noteSnapshots: 'NoteSnapshots',
+  // the (potentially large) content bodies of note snapshots, keyed by the
+  // same snapshot id, so listing/eviction never has to load content
+  noteSnapshotsContent: 'NoteSnapshotsContent',
 } as const;

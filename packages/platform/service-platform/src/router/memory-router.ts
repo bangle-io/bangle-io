@@ -1,4 +1,8 @@
-import { BaseService, type BaseServiceContext } from '@bangle.io/base-utils';
+import {
+  BaseService,
+  type BaseServiceContext,
+  isPlainObject,
+} from '@bangle.io/base-utils';
 import { SERVICE_NAME } from '@bangle.io/constants';
 import { Emitter } from '@bangle.io/mini-js-utils';
 import type {
@@ -7,6 +11,7 @@ import type {
   PageLifeCycleState,
   RouterState,
 } from '@bangle.io/types';
+import { handleRouteInfo, type SearchRecord } from './common';
 
 export class MemoryRouterService
   extends BaseService
@@ -80,24 +85,37 @@ export class MemoryRouterService
   fromUri(uri: string): AppRouteInfo {
     const pathname = uri.replace(this._basePath, '');
     const match = /^\/memory\/(.+)$/.exec(pathname);
+    const notFound = (): AppRouteInfo => ({
+      route: 'not-found',
+      payload: { path: pathname },
+    });
 
     if (match?.[1]) {
       try {
         const decoded = decodeURIComponent(match[1]);
-        const parsed = JSON.parse(decoded) as AppRouteInfo;
-        return parsed;
+        const parsed: unknown = JSON.parse(decoded);
+        if (
+          !isPlainObject(parsed) ||
+          typeof parsed.route !== 'string' ||
+          !isPlainObject(parsed.payload)
+        ) {
+          return notFound();
+        }
+
+        const params: SearchRecord = {};
+        for (const [key, value] of Object.entries(parsed.payload)) {
+          if (typeof value !== 'string') {
+            return notFound();
+          }
+          params[key] = value;
+        }
+
+        return handleRouteInfo(parsed.route, params);
       } catch {
-        // If parsing fails, return not found
-        return {
-          route: 'not-found',
-          payload: { path: pathname },
-        };
+        return notFound();
       }
     }
 
-    return {
-      route: 'not-found',
-      payload: { path: pathname },
-    };
+    return notFound();
   }
 }

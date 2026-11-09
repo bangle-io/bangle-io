@@ -1,6 +1,8 @@
+import type { WorkspaceStorageType } from '@bangle.io/constants';
+
 type WsPath = string;
 
-interface FileStat {
+export interface FileStat {
   /**
    * The creation timestamp in milliseconds elapsed since January 1, 1970 00:00:00 UTC.
    */
@@ -30,17 +32,29 @@ export type FileStorageChangeEvent =
       wsPath: string;
     };
 
+/**
+ * A storage-provider hint that workspace files changed. Watchers may also
+ * report this app's own writes because platform records do not carry writer
+ * identity. `update` invalidates content at an existing path; `refresh` is the
+ * structural revalidation boundary when the provider only knows "something
+ * changed". A workspace name scopes the refresh when known; absent means
+ * app-wide.
+ */
+export type FileStorageExternalChangeEvent =
+  | {
+      type: 'update';
+      wsPath: string;
+    }
+  | {
+      type: 'refresh';
+      wsName?: string;
+    };
+
 type EmptyObject = Record<string, never>;
 
 export interface BaseFileStorageProvider {
-  readonly description: string;
-  readonly displayName: string;
-  // hide creating a workspace of this type
-  readonly hidden?: boolean;
   readonly maxFileSizeBytes: number;
-  readonly workspaceType: string;
-
-  isSupported: () => boolean | Promise<boolean>;
+  readonly workspaceType: WorkspaceStorageType;
 
   /**
    * Creates a new file. Implementations must reject with
@@ -67,6 +81,12 @@ export interface BaseFileStorageProvider {
     options: EmptyObject,
   ) => Promise<WsPath[]>;
 
+  /**
+   * Renames one file within its workspace without overwriting an existing
+   * destination. Implementations must reject destination conflicts with
+   * `error::file:already-existing` and cross-workspace renames with
+   * `error::file:invalid-operation`.
+   */
   renameFile: (
     wsPath: WsPath,
     options: {
@@ -80,17 +100,6 @@ export interface BaseFileStorageProvider {
   writeFile: (
     wsPath: WsPath,
     file: File,
-    options: {
-      sha?: string;
-    },
+    options: EmptyObject,
   ) => Promise<void>;
-
-  searchFile?: (
-    abortSignal: AbortSignal,
-    options: {
-      query: { pattern: string };
-    },
-  ) => Promise<WsPath[]>;
-
-  searchText?: () => Promise<void>;
 }

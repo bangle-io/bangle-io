@@ -1,7 +1,7 @@
 import { type BaseError, getAppErrorCause } from '@bangle.io/base-utils';
 import { describe, expect, it, vi } from 'vitest';
 import {
-  createEditorSaveQueueStore,
+  createEditorSaveCoordinator,
   EditorSaveQueue,
 } from '../editor-save-queue';
 
@@ -43,6 +43,45 @@ function getFirstEmittedAppError(
 }
 
 describe('EditorSaveQueue', () => {
+  it('reports successful writes only after durability, without letting observers fail a save', async () => {
+    const coordinator = createEditorSaveCoordinator();
+    const saved = vi.fn();
+    const unsubscribe = coordinator.subscribeSuccessfulSave(saved);
+    coordinator.subscribeSuccessfulSave(() => {
+      throw new Error('Observer unavailable');
+    });
+    const write = createDeferred<void>();
+    const errors = vi.fn();
+    const queue = new EditorSaveQueue(() => write.promise, errors, coordinator);
+    queue.enqueue('workspace:private.md', 'private contents');
+    expect(saved).not.toHaveBeenCalled();
+    write.resolve();
+    await vi.waitFor(() => expect(queue.hasPendingOrFailed()).toBe(false));
+    expect(saved.mock.calls).toEqual([[]]);
+    expect(errors).not.toHaveBeenCalled();
+    unsubscribe();
+    queue.enqueue('workspace:private.md', 'new content');
+    await vi.waitFor(() => expect(queue.hasPendingOrFailed()).toBe(false));
+    expect(saved).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not count a failed write as successful activity', async () => {
+    const coordinator = createEditorSaveCoordinator();
+    const saved = vi.fn();
+    coordinator.subscribeSuccessfulSave(saved);
+    const errors = vi.fn();
+    const queue = new EditorSaveQueue(
+      async () => {
+        throw new Error('Disk full');
+      },
+      errors,
+      coordinator,
+    );
+    queue.enqueue('workspace:private.md', 'private contents');
+    await vi.waitFor(() => expect(errors).toHaveBeenCalledOnce());
+    expect(saved).not.toHaveBeenCalled();
+  });
+
   it('notifies subscribers as protection becomes dirty and clean', async () => {
     const write = createDeferred<void>();
     const listener = vi.fn();
@@ -62,6 +101,106 @@ describe('EditorSaveQueue', () => {
     unsubscribe();
     queue.enqueue('workspace:note.md', 'newer');
     expect(listener).toHaveBeenCalledTimes(2);
+  });
+
+  it('notifies a path subscriber when that path drains while another remains dirty', async () => {
+    const sourceWrite = createDeferred<void>();
+    const otherWrite = createDeferred<void>();
+    const queue = new EditorSaveQueue(
+      (wsPath) =>
+        wsPath === 'workspace:source.md'
+          ? sourceWrite.promise
+          : otherWrite.promise,
+      vi.fn(),
+    );
+
+    queue.enqueue('workspace:source.md', 'source');
+    queue.enqueue('workspace:other.md', 'other');
+
+    const sourceListener = vi.fn();
+    const globalListener = vi.fn();
+    queue.subscribe(sourceListener, 'workspace:source.md');
+    queue.subscribe(globalListener);
+
+    sourceWrite.resolve();
+    await vi.waitFor(() => {
+      expect(queue.getStatus('workspace:source.md')).toEqual({
+        status: 'clean',
+      });
+    });
+
+    expect(queue.hasPendingOrFailed()).toBe(true);
+    expect(sourceListener).toHaveBeenCalledTimes(1);
+    expect(globalListener).not.toHaveBeenCalled();
+
+    otherWrite.resolve();
+  });
+
+  it('retries an overtaken in-flight save at the relocated path', async () => {
+    const oldWrite = createDeferred<void>();
+    const writes: Array<{ doc: string; wsPath: string }> = [];
+    const emitAppError = vi.fn();
+    const queue = new EditorSaveQueue((wsPath, doc) => {
+      writes.push({ doc, wsPath });
+      return wsPath === 'workspace:old.md'
+        ? oldWrite.promise
+        : Promise.resolve();
+    }, emitAppError);
+
+    queue.enqueue('workspace:old.md', 'latest content');
+    queue.relocate('workspace:old.md', 'workspace:new.md');
+    oldWrite.reject(new Error('old path disappeared'));
+
+    await vi.waitFor(() => {
+      expect(queue.getStatus('workspace:new.md')).toEqual({ status: 'clean' });
+    });
+    expect(writes).toEqual([
+      { doc: 'latest content', wsPath: 'workspace:old.md' },
+      { doc: 'latest content', wsPath: 'workspace:new.md' },
+    ]);
+    expect(queue.getStatus('workspace:old.md')).toEqual({ status: 'clean' });
+    expect(emitAppError).not.toHaveBeenCalled();
+  });
+
+  it('retires a colliding destination queue and replays source content last', async () => {
+    const sourceWrite = createDeferred<void>();
+    const destinationWrite = createDeferred<void>();
+    const writes: Array<{ doc: string; wsPath: string }> = [];
+    const emitAppError = vi.fn();
+    const queue = new EditorSaveQueue((wsPath, doc) => {
+      writes.push({ doc, wsPath });
+      if (wsPath === 'workspace:old.md') {
+        return sourceWrite.promise;
+      }
+      if (doc === 'stale destination content') {
+        return destinationWrite.promise;
+      }
+      return Promise.resolve();
+    }, emitAppError);
+
+    queue.enqueue('workspace:old.md', 'latest source content');
+    queue.enqueue('workspace:new.md', 'stale destination content');
+
+    expect(() => {
+      queue.relocate('workspace:old.md', 'workspace:new.md');
+    }).not.toThrow();
+
+    sourceWrite.resolve();
+    await flushMicrotasks();
+    expect(writes).toHaveLength(2);
+
+    destinationWrite.reject(new Error('destination write lost rename race'));
+    await vi.waitFor(() => {
+      expect(queue.getStatus('workspace:new.md')).toEqual({ status: 'clean' });
+    });
+
+    expect(writes).toEqual([
+      { doc: 'latest source content', wsPath: 'workspace:old.md' },
+      { doc: 'stale destination content', wsPath: 'workspace:new.md' },
+      { doc: 'latest source content', wsPath: 'workspace:new.md' },
+    ]);
+    expect(queue.getStatus('workspace:old.md')).toEqual({ status: 'clean' });
+    expect(emitAppError).not.toHaveBeenCalled();
   });
 
   it('serializes writes and coalesces rapid edits to the latest pending doc', async () => {
@@ -276,9 +415,9 @@ describe('EditorSaveQueue', () => {
     expect(queue.getStatus('workspace:note.md')).toEqual({ status: 'clean' });
   });
 
-  it('serializes writes across queue instances that share a store', async () => {
+  it('serializes writes across queue instances that share a coordinator', async () => {
     const firstWrite = createDeferred<void>();
-    const store = createEditorSaveQueueStore();
+    const coordinator = createEditorSaveCoordinator();
     const writes: Array<{ doc: string; source: string }> = [];
     const firstQueue = new EditorSaveQueue(
       vi.fn((_: string, doc: string) => {
@@ -286,18 +425,22 @@ describe('EditorSaveQueue', () => {
         return firstWrite.promise;
       }),
       vi.fn(),
-      store,
+      coordinator,
     );
+
+    firstQueue.enqueue('workspace:note.md', 'old service content');
+    expect(coordinator.hasPendingOrFailedSave('workspace:note.md')).toBe(true);
+    expect(coordinator.hasPendingOrFailedSave()).toBe(true);
+
     const secondQueue = new EditorSaveQueue(
       vi.fn((_: string, doc: string) => {
         writes.push({ doc, source: 'second' });
         return Promise.resolve();
       }),
       vi.fn(),
-      store,
+      coordinator,
     );
 
-    firstQueue.enqueue('workspace:note.md', 'old service content');
     secondQueue.enqueue('workspace:note.md', 'new service content');
 
     expect(writes).toEqual([{ doc: 'old service content', source: 'first' }]);
@@ -312,20 +455,68 @@ describe('EditorSaveQueue', () => {
     expect(secondQueue.getStatus('workspace:note.md')).toEqual({
       status: 'clean',
     });
+    expect(coordinator.hasPendingOrFailedSave('workspace:note.md')).toBe(false);
+    expect(coordinator.hasPendingOrFailedSave()).toBe(false);
   });
 
-  it('notifies subscribers across queue instances that share a store', async () => {
+  it('retries a retained failure through the current service graph', async () => {
+    const coordinator = createEditorSaveCoordinator();
+    const oldFailure = new Error('old service graph unavailable');
+    const oldWriter = vi.fn(() => Promise.reject(oldFailure));
+    const oldEmitAppError = vi.fn<(error: BaseError) => void>();
+    const oldQueue = new EditorSaveQueue(
+      oldWriter,
+      oldEmitAppError,
+      coordinator,
+    );
+
+    oldQueue.enqueue('workspace:note.md', 'retained unsaved content');
+    await flushMicrotasks();
+
+    expect(oldQueue.getStatus('workspace:note.md')).toEqual({
+      error: oldFailure,
+      status: 'failed',
+    });
+
+    const currentWriter = vi.fn(() => Promise.resolve());
+    const currentEmitAppError = vi.fn<(error: BaseError) => void>();
+    const currentQueue = new EditorSaveQueue(
+      currentWriter,
+      currentEmitAppError,
+      coordinator,
+    );
+
+    // A retry action retained by the previous UI graph still enters through
+    // its old queue facade. The coordinator must resolve the new graph's
+    // writer when the retained document actually executes.
+    expect(oldQueue.retryFailed('workspace:note.md')).toBe(true);
+    await flushMicrotasks();
+
+    expect(oldWriter).toHaveBeenCalledTimes(1);
+    expect(currentWriter).toHaveBeenCalledWith(
+      'workspace:note.md',
+      'retained unsaved content',
+    );
+    expect(currentQueue.getStatus('workspace:note.md')).toEqual({
+      status: 'clean',
+    });
+    expect(currentEmitAppError).not.toHaveBeenCalled();
+  });
+
+  it('notifies subscribers across queue instances that share a coordinator', async () => {
     const firstWrite = createDeferred<void>();
-    const store = createEditorSaveQueueStore();
+    const coordinator = createEditorSaveCoordinator();
     const firstQueue = new EditorSaveQueue(
       vi.fn(() => firstWrite.promise),
       vi.fn(),
-      store,
+      coordinator,
     );
-    const secondQueue = new EditorSaveQueue(vi.fn(), vi.fn(), store);
-    const secondListener = vi.fn();
 
     firstQueue.enqueue('workspace:note.md', 'old service content');
+
+    const secondQueue = new EditorSaveQueue(vi.fn(), vi.fn(), coordinator);
+    const secondListener = vi.fn();
+
     expect(secondQueue.hasPendingOrFailed()).toBe(true);
 
     const unsubscribe = secondQueue.subscribe(secondListener);
@@ -361,6 +552,25 @@ describe('EditorSaveQueue', () => {
         wsPath: 'workspace:note.md',
       },
     });
+  });
+
+  it('retries every failed save when no path is specified', async () => {
+    const writer = vi
+      .fn<(wsPath: string, doc: string) => Promise<void>>()
+      .mockRejectedValueOnce(new Error('first failed'))
+      .mockRejectedValueOnce(new Error('second failed'))
+      .mockResolvedValue(undefined);
+    const queue = new EditorSaveQueue(writer, vi.fn());
+
+    queue.enqueue('workspace:first.md', 'first');
+    queue.enqueue('workspace:second.md', 'second');
+    await flushMicrotasks();
+
+    expect(queue.retryFailed()).toBe(true);
+    await vi.waitFor(() => {
+      expect(queue.hasPendingOrFailed()).toBe(false);
+    });
+    expect(writer).toHaveBeenCalledTimes(4);
   });
 
   it('wraps non-error writer failures before emitting app errors', async () => {

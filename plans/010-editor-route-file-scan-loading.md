@@ -5,7 +5,7 @@ type: plan
 archived: false
 archived_on:
 created: 2026-07-03
-updated: 2026-07-03
+updated: 2026-07-24
 owner: mixed
 related_prs:
   - https://github.com/bangle-io/bangle-io/pull/587
@@ -29,11 +29,34 @@ a missing note.
 
 ## Current Status
 
+Verified against `main` 2026-07-24: bug still present, and smaller than this
+plan assumed — the error half already landed, only the pending half remains.
+
 - The issue is reproducible in a large real Native FS workspace.
 - A worker prototype confirmed the likely root cause and proved that a
   dedicated route-resolution state can address it.
 - That prototype was intentionally not kept in the working tree because the
   state model and UI semantics need careful review before implementation.
+- `$fileTreeListState` (`ok | native-fs-directory-not-found | error`) now
+  exists but has no pending member and initializes to `ok`, so before the
+  first scan the app asserts the listing is fine while `$rawWsPaths` is empty.
+- `page-editor.tsx` renders `NoteNotFoundView` from the final `else` of its
+  three-way ternary, consulting neither a loading state nor
+  `$fileTreeListState`. A *first* scan that fails therefore shows "Note Not
+  Found"; a failed rescan does not, because `$rawWsPaths` is preserved for the
+  same workspace. The `native-fs-directory-not-found` variant never reaches
+  `PageEditor` at all — `app/src/index.tsx` preempts it with
+  `PageNativeFsRecovery` — and `app-sidebar.tsx` handles only plain `error`.
+- **The `WorkspaceNotFoundView` branch has the same premature-verdict bug, and
+  it fires first.** `!currentWsName` renders workspace-not-found, but
+  `$currentWsName` derives from `$workspaceListState`, which *already* has a
+  `loading` member that `PageEditor` ignores. So on a cold load the first false
+  verdict is "Workspace Not Found", not "Note Not Found". Fixing only the file
+  scan leaves the earlier flash in place — this belongs in Scope.
+- There are no `PageEditor` unit tests. Note that
+  `e2e-tests/src/delete-note-dialog.e2e.ts` asserts the `Note Not Found`
+  heading twice, including after a reload, so it is pinned to the exact branch
+  steps 6-7 replace and will need updating.
 
 ## Scope
 
@@ -41,6 +64,8 @@ a missing note.
   `packages/core/service-core/src/workspace-state-service.ts`.
 - Add a derived current-route file resolution atom, likely shaped like:
   `none | loading | found | missing | error`.
+- Make `PageEditor` respect `$workspaceListState`'s existing `loading` status
+  so the workspace-not-found branch stops firing before the list resolves.
 - Keep the existing `$currentWsPath` API as the "found file only" compatibility
   surface so existing note-only callers do not accidentally start acting on
   unresolved routes.
@@ -79,11 +104,15 @@ a missing note.
 
 ## Implementation Steps
 
-1. Add a private workspace scan atom in `WorkspaceStateService`, for example:
-   `idle`, `loading`, `ready`, and `error`, with `wsName` on non-idle states.
-2. Replace the `wrapPromiseInAppErrorHandler(..., EMPTY_STRING_ARRAY, ...)`
-   scan path with explicit success/error handling so errors can be represented
-   separately from an empty workspace.
+1. Add a `wsName`-keyed scan state to `WorkspaceStateService`: `idle`,
+   `loading`, `ready`, `error`. Prefer extending `$fileTreeListState` with a
+   pending member over a parallel atom, but note `app/src/index.tsx` and
+   `app-sidebar.tsx` both read it and each need a branch. The only current
+   workspace keying is `lastListedWsName`, a mutable field no atom can read.
+   `WorkspaceListState` is the in-repo precedent for the shape.
+2. ~~Replace the `wrapPromiseInAppErrorHandler` scan path with explicit
+   success/error handling.~~ Done: the scan uses explicit success/error
+   callbacks and a failed rescan preserves the last known tree.
 3. Add a public `$currentWsPathResolution` atom:
    - `none` when there is no editor file route;
    - `found` when the route wsPath is present in `$rawWsPaths`;

@@ -22,7 +22,7 @@ export const wsCommands = narrow([
       services: ['workspaceState'],
       commands: ['command::ws:new-note-from-input'],
     },
-    omniSearch: true,
+    omniSearch: 'workspace',
     args: {
       pathPrefix: T.Optional(T.String),
     },
@@ -57,7 +57,12 @@ export const wsCommands = narrow([
     title: 'Rename Directory',
     omniSearch: false,
     dependencies: {
-      services: ['fileSystem', 'navigation', 'workspaceState'],
+      services: [
+        'editorEngine',
+        'fileSystem',
+        'userActivityService',
+        'workspaceState',
+      ],
     },
     args: {
       oldDirWsPath: T.String,
@@ -127,7 +132,9 @@ export const wsCommands = narrow([
     id: 'command::ws:rename-ws-path',
     title: 'Rename Note',
     omniSearch: false,
-    dependencies: { services: ['fileSystem', 'navigation'] },
+    dependencies: {
+      services: ['editorEngine', 'fileSystem', 'userActivityService'],
+    },
     args: {
       wsPath: T.String,
       newWsPath: T.String,
@@ -138,7 +145,7 @@ export const wsCommands = narrow([
     title: 'Move Note',
     omniSearch: false,
     dependencies: {
-      services: ['fileSystem', 'navigation', 'workspaceState'],
+      services: ['editorEngine', 'fileSystem', 'userActivityService'],
     },
     args: {
       wsPath: T.String,
@@ -149,7 +156,7 @@ export const wsCommands = narrow([
     id: 'command::ws:go-ws-home',
     title: 'Go to Workspace Home',
     keywords: ['home', 'workspace', 'go'],
-    omniSearch: true,
+    omniSearch: 'workspace',
     dependencies: { services: ['navigation'] },
     args: null,
   },
@@ -157,23 +164,34 @@ export const wsCommands = narrow([
     id: 'command::ws:refresh-file-tree',
     title: 'Refresh Files',
     keywords: ['refresh', 'reload', 'rescan', 'files', 'file tree'],
-    omniSearch: true,
+    omniSearch: 'workspace',
     dependencies: { services: ['fileSystem'] },
     args: null,
   },
   {
     id: 'command::ws:clone-note',
     title: 'Clone Note',
-    omniSearch: true,
+    omniSearch: 'note',
     keywords: ['clone', 'duplicate', 'copy'],
     dependencies: { services: ['workspaceState', 'fileSystem', 'navigation'] },
     args: null,
   },
   {
+    id: 'command::ws:recover-note-snapshot',
+    title: 'Recover Note Snapshot',
+    omniSearch: false,
+    dependencies: {
+      services: ['noteSnapshot', 'fileSystem', 'navigation'],
+    },
+    args: {
+      snapshotId: T.String,
+    },
+  },
+  {
     id: 'command::ws:daily-note',
     title: 'Open Daily Note',
     keywords: ['daily', 'note', 'today', 'journal'],
-    omniSearch: true,
+    omniSearch: 'workspace',
     dependencies: {
       services: ['workspaceState', 'fileSystem', 'navigation'],
       commands: ['command::ws:create-note'],
@@ -189,7 +207,7 @@ export const wsCommands = narrow([
     dependencies: {
       services: ['workspaceState', 'userActivityService'],
     },
-    omniSearch: true,
+    omniSearch: 'note',
     keybindings: ['ctrl', 'shift', 's'],
     args: {
       wsPath: T.Optional(T.String),

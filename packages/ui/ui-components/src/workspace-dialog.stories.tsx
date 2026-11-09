@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import React, { useRef, useState } from 'react';
 import {
   CreateWorkspaceDialog,
   type CreateWorkspaceDialogProps,
@@ -109,3 +110,33 @@ export const InvalidWsName: Story = {
     validateWorkspace,
   },
 };
+
+export const CreateFailure: Story = {
+  ...Template,
+  args: {
+    ...Template.args,
+  },
+  render: (args: CreateWorkspaceDialogProps) => (
+    <CreateFailureHarness {...args} />
+  ),
+};
+
+function CreateFailureHarness(args: CreateWorkspaceDialogProps) {
+  const attemptCountRef = useRef(0);
+  const [attemptCount, setAttemptCount] = useState(0);
+
+  return (
+    <>
+      <CreateWorkspaceDialog
+        {...args}
+        onDone={async () => {
+          attemptCountRef.current += 1;
+          setAttemptCount(attemptCountRef.current);
+          await new Promise((resolve) => setTimeout(resolve, 100));
+          throw new Error('Workspace storage is unavailable.');
+        }}
+      />
+      <output aria-label="Creation attempts">{attemptCount}</output>
+    </>
+  );
+}

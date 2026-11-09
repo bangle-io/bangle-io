@@ -4,9 +4,10 @@ import {
   createAppError,
 } from '@bangle.io/base-utils';
 import { type EditorEngineId, SERVICE_NAME } from '@bangle.io/constants';
-import type { EditorEngineContract } from '@bangle.io/context';
+import type { EditorAction, EditorEngineContract } from '@bangle.io/context';
 import type { FileSystemService } from '@bangle.io/service-core';
 import { WsPath } from '@bangle.io/ws-path';
+import { atom } from 'jotai';
 
 type EditorEntry = {
   name: string;
@@ -32,6 +33,15 @@ export class EditorWService
   static deps = ['fileSystem'] as const;
 
   public readonly engineId: EditorEngineId = 'wordgard';
+
+  /**
+   * Wordgard renders the note's Markdown source read-only and never rewrites
+   * it, so no note is ever at risk of round-trip reformatting: the fidelity
+   * set is permanently empty.
+   */
+  public readonly $roundTripWarnings = atom<ReadonlySet<string>>(
+    new Set<string>(),
+  );
 
   private editors = new Map<HTMLElement, EditorEntry>();
 
@@ -112,6 +122,10 @@ export class EditorWService
     this.editors.delete(domNode);
   }
 
+  hasReadyEditor(): boolean {
+    return [...this.editors.values()].some((entry) => entry.status === 'ready');
+  }
+
   focusEditor(): void {
     // Read-only stub: nothing focusable to hand the cursor to.
   }
@@ -120,7 +134,15 @@ export class EditorWService
     return null;
   }
 
+  captureMarkdownInsertion(): null {
+    return null;
+  }
+
   insertMarkdownAtSelection(_markdownText: string): boolean {
+    return false;
+  }
+
+  isActionAvailable(_action: EditorAction): boolean {
     return false;
   }
 
@@ -129,14 +151,22 @@ export class EditorWService
     return false;
   }
 
-  retryFailedSave(_wsPath: string): boolean {
+  retryFailedSave(_wsPath?: string): boolean {
     return false;
   }
 
-  subscribeToSaveStatus(_listener: () => void): () => void {
+  subscribeToSaveStatus(_listener: () => void, _wsPath?: string): () => void {
     // Save status can never change; subscribers get a working unsubscribe
     // and no notifications.
     return () => {};
+  }
+
+  toggleHeading(_level: number): boolean {
+    return false;
+  }
+
+  insertTable(): boolean {
+    return false;
   }
 
   toggleHeadingCollapse(): boolean {

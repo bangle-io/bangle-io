@@ -1,8 +1,9 @@
 import { getEventSenderMetadata, type Logger } from '@bangle.io/base-utils';
 import type { ThemeManager } from '@bangle.io/color-scheme-manager';
 import { commandHandlers } from '@bangle.io/command-handlers';
-import { getEnabledCommands } from '@bangle.io/commands';
+import { bangleAppCommands } from '@bangle.io/commands';
 import type { Services } from '@bangle.io/context';
+import type { EditorSaveCoordinator } from '@bangle.io/editor';
 
 import type {
   BaseServiceCommonOptions,
@@ -11,6 +12,10 @@ import type {
 } from '@bangle.io/types';
 import { initializeServices as initializeServices2 } from './initialize-services';
 
+export {
+  createEditorSaveCoordinator,
+  type EditorSaveCoordinator,
+} from '@bangle.io/editor';
 export { readEditorEngineFromUrl } from './initialize-services';
 
 export function initializeServices(
@@ -19,6 +24,7 @@ export function initializeServices(
   store: Store,
   theme: ThemeManager,
   abortSignal: AbortSignal,
+  editorSaveCoordinator: EditorSaveCoordinator,
 ): Promise<Services> {
   const commonOpts: BaseServiceCommonOptions = {
     logger,
@@ -38,9 +44,10 @@ export function initializeServices(
   const services = initializeServices2(
     commonOpts,
     rootEmitter,
-    getEnabledCommands(),
+    bangleAppCommands,
     commandHandlers,
     theme,
+    editorSaveCoordinator,
   );
 
   return services.mountAll().then(() => ({

@@ -9,6 +9,7 @@ import {
   PluginKey,
   PMNode,
   Selection,
+  Transform,
 } from '../pm';
 import {
   clampRange,
@@ -26,6 +27,7 @@ import { store } from '../store';
 export type Suggestion = {
   markName: string;
   trigger: string;
+  synthetic: boolean;
   show: boolean;
   text: string;
   position: number;
@@ -196,10 +198,14 @@ export function pluginSuggestion({
   markName,
   trigger,
   logger,
+  endOnWhitespace = false,
+  endOnQuery = false,
 }: {
   markName: string;
   trigger: string;
   logger?: Logger;
+  endOnWhitespace?: boolean;
+  endOnQuery?: boolean;
 }) {
   return new Plugin({
     key: new PluginKey(`suggestion-${markName}`),
@@ -282,6 +288,32 @@ export function pluginSuggestion({
             }
             logger?.debug('querytext', result?.text);
 
+            if (endOnQuery && result.text !== trigger) {
+              logger?.debug('suggestion:text after trigger ended the query');
+              removeSuggestMark({
+                markName,
+                selection: state.selection,
+                trigger,
+              })(state, view.dispatch, view);
+              return;
+            }
+
+            // Whitespace ends the query for providers that opt in (the
+            // slash menu): the typed text stays in the document, the menu
+            // closes. Providers like wiki links keep spaces in queries.
+            if (
+              endOnWhitespace &&
+              /\s/.test((result.text ?? '').slice(trigger.length))
+            ) {
+              logger?.debug('suggestion:whitespace ended the query');
+              removeSuggestMark({
+                markName,
+                selection: state.selection,
+                trigger,
+              })(state, view.dispatch, view);
+              return;
+            }
+
             if (
               suggestion?.markName === markName &&
               suggestion.text === result.text &&
@@ -290,6 +322,9 @@ export function pluginSuggestion({
               return;
             }
 
+            const activeMark = state.doc
+              .nodeAt(result.start)
+              ?.marks.find((mark) => mark.type === markType);
             setSuggestionForView(state, view, markName, {
               selectedIndex:
                 suggestion?.markName === markName &&
@@ -298,6 +333,7 @@ export function pluginSuggestion({
                   : 0,
               markName,
               trigger,
+              synthetic: activeMark?.attrs.synthetic === true,
               show: true,
               text: result.text ?? '',
               position: result.start,
@@ -349,12 +385,70 @@ function doesQueryHaveTrigger(
   return textContent.includes(trigger);
 }
 
+/**
+ * Programmatically start a suggestion at the current cursor, producing the
+ * same document state as if the user had typed the trigger text — the
+ * suggestion plugin picks the mark up on its next update and shows the UI.
+ * The mark is flagged `synthetic` so Escape removes the trigger text too,
+ * instead of leaving a stray character the user never typed.
+ */
+export function openSuggestion({
+  markName,
+  trigger,
+}: {
+  markName: string;
+  trigger: string;
+}): Command {
+  return (state, dispatch, view) => {
+    const { schema, selection } = state;
+    if (!selection.empty || !isTextSelection(selection)) {
+      return false;
+    }
+    const linkMarkType = schema.marks.link;
+    if (
+      selection.$from.parent.type.spec.code ||
+      selection.$from
+        .marks()
+        .some((mark) => mark.type.spec.code || mark.type === linkMarkType)
+    ) {
+      return false;
+    }
+
+    const mark = schema.mark(markName, { trigger, synthetic: true });
+    const marks = selection.$from.marks();
+    const tr = state.tr
+      .replaceWith(
+        selection.from,
+        selection.to,
+        schema.text(trigger, [mark, ...marks]),
+      )
+      .addStoredMark(mark)
+      .scrollIntoView();
+
+    if (dispatch) {
+      if (view && typeof view.focus === 'function') {
+        view.focus();
+      }
+      dispatch(tr);
+    }
+    return true;
+  };
+}
+
 export function removeSuggestMark({
   markName,
   selection,
+  trigger,
 }: {
   markName: string;
   selection: Selection;
+  /**
+   * The provider's trigger text. Supply it when the query is ending because
+   * the user kept typing: a synthetic trigger is then removed on its own and
+   * everything typed after it stays. Leave it off to abandon the suggestion
+   * outright (Escape, deactivation), which drops the whole synthetic range.
+   */
+  trigger?: string;
 }): Command {
   return (state, dispatch, _view) => {
     const { schema } = state;
@@ -390,6 +484,34 @@ export function removeSuggestMark({
       return false;
     }
 
+    // A synthetic trigger (opened programmatically, e.g. the "+" block
+    // button) was never typed: deactivating it removes the text too, so a
+    // "/" the user never wrote cannot linger in the document. Typed
+    // triggers keep their text and only lose the mark.
+    const activeMark = state.doc
+      .nodeAt(queryMark.start)
+      ?.marks.find((mark) => mark.type === markType);
+    if (activeMark?.attrs.synthetic) {
+      // The mark is inclusive, so once the user types the range covers those
+      // characters too. Deleting all of it would eat what they just typed, so
+      // when a trigger is supplied only the trigger text goes and the rest is
+      // merely unmarked.
+      const triggerEnd =
+        trigger === undefined
+          ? queryMark.end
+          : Math.min(queryMark.start + trigger.length, queryMark.end);
+      const tr = state.tr.delete(queryMark.start, triggerEnd);
+      if (triggerEnd < queryMark.end) {
+        tr.removeMark(
+          queryMark.start,
+          queryMark.end - (triggerEnd - queryMark.start),
+          markType,
+        );
+      }
+      dispatch?.(tr.removeStoredMark(markType).setMeta('addToHistory', false));
+      return true;
+    }
+
     dispatch?.(
       state.tr
         .removeMark(queryMark.start, queryMark.end, markType)
@@ -398,6 +520,38 @@ export function removeSuggestMark({
     );
     return true;
   };
+}
+
+/**
+ * Returns a copy of `doc` without any text carrying a synthetic suggestion
+ * mark. The save path serializes through this so a programmatically opened
+ * trigger (e.g. the "+" block button's "/") can never reach storage, even
+ * when the editor unmounts or a debounced save fires while the menu is
+ * still open.
+ */
+export function stripSyntheticSuggestionText(doc: PMNode): PMNode {
+  const ranges: Array<[number, number]> = [];
+  doc.descendants((node, pos) => {
+    if (
+      node.isText &&
+      node.marks.some(
+        (mark) =>
+          mark.type.spec.group === 'suggestTriggerMarks' &&
+          mark.attrs.synthetic,
+      )
+    ) {
+      ranges.push([pos, pos + node.nodeSize]);
+    }
+    return true;
+  });
+  if (ranges.length === 0) {
+    return doc;
+  }
+  const transform = new Transform(doc);
+  for (const [from, to] of ranges.reverse()) {
+    transform.delete(from, to);
+  }
+  return transform.doc;
 }
 
 /**
@@ -441,9 +595,10 @@ export function replaceSuggestMarkWith({
       return false;
     }
 
+    const suggestionEnd = suggestion.position + suggestion.text.length;
     const [scanRangeStart, scanRangeEnd] = clampRange(
-      state.selection.from - MARK_SCAN_RANGE_PADDING,
-      state.selection.to + MARK_SCAN_RANGE_PADDING,
+      suggestion.position,
+      suggestionEnd,
       state.doc.content.size,
     );
 
@@ -454,7 +609,14 @@ export function replaceSuggestMarkWith({
       scanRangeEnd,
     );
 
-    if (!queryMark) {
+    if (
+      !queryMark ||
+      queryMark.start !== suggestion.position ||
+      queryMark.end !== suggestionEnd ||
+      queryMark.text !== suggestion.text ||
+      state.selection.from < queryMark.start ||
+      state.selection.to > queryMark.end
+    ) {
       return false;
     }
 
@@ -468,31 +630,43 @@ export function replaceSuggestMarkWith({
     }
 
     try {
+      // Caret target in NEW-doc coordinates: nothing before queryMark.start
+      // moves, so the caret belongs right after the inserted content. This
+      // must not go through tr.mapping — the offset is already post-replace,
+      // and mapping it again double-shifts when the inserted content is
+      // longer than the replaced query text.
+      let pos: number;
       if (typeof content === 'string') {
         tr = tr.replaceWith(
           queryMark.start,
           queryMark.end,
           schema.text(content),
         );
+        pos = queryMark.start + content.length;
       } else if (content instanceof Fragment) {
         tr = tr.replaceWith(queryMark.start, queryMark.end, content);
+        pos = queryMark.start + content.size;
       } else if (content instanceof PMNode) {
         if (content.isText) {
           tr = tr.replaceWith(queryMark.start, queryMark.end, content);
+          pos = queryMark.start + content.nodeSize;
         } else if (content.isBlock) {
           tr = safeInsert(content)(tr);
+          pos = tr.mapping.map(queryMark.start + 1);
         } else if (content.isInline) {
           const fragment = Fragment.fromArray([content, schema.text(' ')]);
           tr = tr.replaceWith(queryMark.start, queryMark.end, fragment);
+          pos = queryMark.start + fragment.size;
+        } else {
+          console.warn('Unknown content type, skipping replacement');
+          return false;
         }
       } else {
         console.warn('Unknown content type, skipping replacement');
         return false;
       }
 
-      const pos = tr.mapping.map(
-        queryMark.start + (content instanceof Fragment ? content.size : 1),
-      );
+      pos = Math.min(pos, tr.doc.content.size);
       tr = tr.setSelection(Selection.near(tr.doc.resolve(pos)));
 
       if (dispatch) {

@@ -43,3 +43,6 @@ packages/tooling/e2e-tests/playwright/playwright-report
 .env.sentry-build-plugin
 
 .DS_Store
+
+# Local Cloudflare Worker databases and build state
+.wrangler/
