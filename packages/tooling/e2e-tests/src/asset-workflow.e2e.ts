@@ -176,6 +176,47 @@ function writeStoredPng(
   );
 }
 
+test('mobile toast does not cover the titlebar', async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const workspaceName = `asset-toast-mobile-${testInfo.workerIndex}-${Date.now()}`;
+  await createBrowserWorkspaceAndNote(page, {
+    workspaceName,
+    noteName: 'source',
+  });
+
+  const editor = getEditorLocator(page, {});
+  await editor.click();
+  await page.locator(EDITOR_SELECTOR).evaluate(dispatchAssetPasteEvent);
+
+  const titlebar = page.locator('header.desktop-titlebar-surface').first();
+  const savedToast = page.getByRole('listitem').filter({
+    hasText: 'Saved Extremely Long Image Drop...For Toast UX.PNG + 1 more',
+  });
+  const toaster = page.locator('[data-sonner-toaster]');
+  await expect(savedToast).toBeVisible();
+  await expect(toaster).toHaveAttribute('data-x-position', 'center');
+  await expect(toaster).toHaveAttribute('data-y-position', 'bottom');
+
+  await expect
+    .poll(async () => {
+      const titlebarBox = await titlebar.boundingBox();
+      const toastBox = await savedToast.boundingBox();
+      if (!titlebarBox || !toastBox) {
+        return Number.NEGATIVE_INFINITY;
+      }
+      return toastBox.y - (titlebarBox.y + titlebarBox.height);
+    })
+    .toBeGreaterThanOrEqual(0);
+
+  await page.setViewportSize({ width: 767, height: 844 });
+  await expect(toaster).toHaveAttribute('data-x-position', 'center');
+  await expect(toaster).toHaveAttribute('data-y-position', 'bottom');
+
+  await page.setViewportSize({ width: 768, height: 844 });
+  await expect(toaster).toHaveAttribute('data-x-position', 'right');
+  await expect(toaster).toHaveAttribute('data-y-position', 'top');
+});
+
 test('pastes workspace-backed image and PDF assets, reloads, and opens asset page', async ({
   page,
 }, testInfo) => {

@@ -1,6 +1,7 @@
 import { cx } from '@bangle.io/base-utils';
 import { APP_MAIN_CONTENT_PADDING } from '@bangle.io/constants';
 import { useCoreServices } from '@bangle.io/context';
+import { useIsMobile } from '@bangle.io/ui-components';
 import { useAtomValue } from 'jotai';
 import React from 'react';
 
@@ -36,6 +37,7 @@ export function PageContentContainer({
 }: PageContentContainerProps) {
   const coreServices = useCoreServices();
   const wideEditor = useAtomValue(coreServices.workbenchState.$wideEditor);
+  const isMobile = useIsMobile();
 
   return (
     <main
@@ -43,6 +45,7 @@ export function PageContentContainer({
       className={cx(
         'B-app-page-content flex min-w-0 flex-1 flex-col gap-4',
         respectEditorWidthPreference &&
+          !isMobile &&
           !wideEditor &&
           'mx-auto w-full max-w-(--breakpoint-md)',
         applyPadding && APP_MAIN_CONTENT_PADDING,
