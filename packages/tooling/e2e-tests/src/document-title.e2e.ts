@@ -45,7 +45,9 @@ test('tabs keep their own note titles through renaming and reload', async ({
     noteName: 'Groceries',
   });
   const groceriesUrl = page.url();
-  await getEditorLocator(page, {}).fill(content);
+  const editor = getEditorLocator(page, {});
+  await expect(editor).toHaveAttribute('contenteditable', 'true');
+  await editor.fill(content);
 
   const explorer = page.getByTestId('bangle-file-explorer');
   await explorer.getByLabel('New File', { exact: true }).click();
