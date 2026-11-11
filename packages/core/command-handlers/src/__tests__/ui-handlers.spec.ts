@@ -5,6 +5,7 @@ import {
   EDITOR_ENGINE_QUERY_PARAM,
   type EditorEngineId,
   SETTINGS_PAGE_DEFINITIONS,
+  TEXT_SEARCH_QUERY_MAX_LENGTH,
 } from '@bangle.io/constants';
 import { describe, expect, it, vi } from 'vitest';
 import { setupTest } from './test-utils';
@@ -200,6 +201,62 @@ describe('UI command handlers', () => {
           },
         });
       });
+    });
+  });
+
+  describe('command::ui:search-note-text', () => {
+    it('opens workspace text search with the query and current note hint', async () => {
+      const NOTE_WS_PATH = 'test-ws:daily/journal.md';
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ui:search-note-text',
+        workspaces: [{ name: 'test-ws', notes: [NOTE_WS_PATH] }],
+        autoNavigate: 'ws-path',
+      });
+
+      dispatch('command::ui:search-note-text', { query: '  Aurora  ' });
+
+      await vi.waitFor(() => {
+        expect(services.navigation.resolveAtoms().routeInfo).toEqual({
+          route: 'text-search',
+          payload: {
+            wsName: 'test-ws',
+            query: 'Aurora',
+            preferredWsPath: NOTE_WS_PATH,
+          },
+        });
+      });
+    });
+
+    it('caps the query before navigating', async () => {
+      const { dispatch, services } = await setupTest({
+        targetId: 'command::ui:search-note-text',
+        workspaces: [{ name: 'test-ws', notes: ['test-ws:note.md'] }],
+        autoNavigate: 'workspace',
+      });
+
+      dispatch('command::ui:search-note-text', {
+        query: `  ${'x'.repeat(TEXT_SEARCH_QUERY_MAX_LENGTH + 100)}  `,
+      });
+
+      await vi.waitFor(() => {
+        expect(services.navigation.resolveAtoms().routeInfo).toEqual({
+          route: 'text-search',
+          payload: {
+            wsName: 'test-ws',
+            query: 'x'.repeat(TEXT_SEARCH_QUERY_MAX_LENGTH),
+          },
+        });
+      });
+    });
+
+    it('rejects dispatch without an open workspace', async () => {
+      const { dispatch } = await setupTest({
+        targetId: 'command::ui:search-note-text',
+      });
+
+      expect(() =>
+        dispatch('command::ui:search-note-text', { query: undefined }),
+      ).toThrowError(/No workspace open/);
     });
   });
 

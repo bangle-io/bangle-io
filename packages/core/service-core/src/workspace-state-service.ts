@@ -161,6 +161,9 @@ export class WorkspaceStateService extends BaseService {
    */
   $fileTreeListState = atom<FileTreeListState>(FILE_TREE_LIST_OK);
 
+  /** The workspace whose paths are currently held in the file-tree atoms. */
+  $listedFileTreeWsName = atom<string | undefined>(undefined);
+
   $wsPaths = atom<WsFilePath[]>((get) => {
     return get(this.$rawWsPaths)
       .map((path) => WsPath.fromString(path).asFile())
@@ -482,9 +485,13 @@ export class WorkspaceStateService extends BaseService {
           const createSequenceAtScanStart = this.handledFileCreateSequence;
           if (!wsName) {
             this.lastListedWsName = undefined;
+            set(this.$listedFileTreeWsName, undefined);
             set(this.$rawWsPaths, EMPTY_STRING_ARRAY);
             set(this.$fileTreeListState, FILE_TREE_LIST_OK);
             return;
+          }
+          if (this.lastListedWsName !== wsName) {
+            set(this.$listedFileTreeWsName, undefined);
           }
           this.fileSystem
             .listWorkspaceFiles(wsName, abortController.signal)
@@ -494,6 +501,7 @@ export class WorkspaceStateService extends BaseService {
                   return;
                 }
                 this.lastListedWsName = wsName;
+                set(this.$listedFileTreeWsName, wsName);
                 set(
                   this.$rawWsPaths,
                   this.mergeCreatedWsPathsAfterSequence({
@@ -515,6 +523,7 @@ export class WorkspaceStateService extends BaseService {
                 // trustworthy tree to preserve, so clear it instead of showing
                 // another workspace's files.
                 if (this.lastListedWsName !== wsName) {
+                  set(this.$listedFileTreeWsName, undefined);
                   set(this.$rawWsPaths, EMPTY_STRING_ARRAY);
                 }
                 const appError = isAppError(error)

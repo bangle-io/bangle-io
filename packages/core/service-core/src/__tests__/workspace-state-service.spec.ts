@@ -800,6 +800,9 @@ describe('WorkspaceStateService file tree updates', () => {
 
     // Never present workspace A's files as workspace B's tree.
     expect(services.workspaceState.resolveAtoms().wsPaths).toEqual([]);
+    expect(
+      store.get(services.workspaceState.$listedFileTreeWsName),
+    ).toBeUndefined();
   });
 
   it('exposes a typed recovery state when a native workspace directory is missing', async () => {

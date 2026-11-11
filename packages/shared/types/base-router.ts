@@ -24,6 +24,15 @@ export type AppRouteInfo =
       };
     }
   | {
+      route: 'text-search';
+      metadata?: Record<string, string>;
+      payload: {
+        wsName: string;
+        query?: string;
+        preferredWsPath?: string;
+      };
+    }
+  | {
       route: 'not-found';
       metadata?: Record<string, string>;
       payload: {

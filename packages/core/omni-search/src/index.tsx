@@ -21,7 +21,7 @@ import {
 } from '@bangle.io/ui-components';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useAtom, useAtomValue } from 'jotai';
-import { FileText, SquareChevronRight } from 'lucide-react';
+import { FileText, Search, SquareChevronRight } from 'lucide-react';
 import React, { useMemo } from 'react';
 
 const MAX_COMMANDS_PER_GROUP = 5;
@@ -254,13 +254,19 @@ function CommandRoute({
 function FilteredRoute({
   baseItems,
   search,
+  textSearchQuery,
+  canSearchText,
   recentWsPaths,
   recentCommands,
+  onTextSearch,
 }: {
   baseItems: CommandItemProp[];
   search: string;
+  textSearchQuery: string;
+  canSearchText: boolean;
   recentWsPaths: string[];
   recentCommands: string[];
+  onTextSearch: (query: string) => void;
 }) {
   const parentRef = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
@@ -282,7 +288,27 @@ function FilteredRoute({
   });
 
   if (filteredItems.length === 0) {
-    return null;
+    if (!canSearchText || textSearchQuery.length < 3) {
+      return null;
+    }
+    const title = t.app.omniSearch.searchNoteText({
+      query: textSearchQuery,
+    });
+    return (
+      <CommandGroup heading={t.app.omniSearch.searchActionsHeading}>
+        <CommandItem
+          id="search-note-text"
+          onSelect={() => onTextSearch(textSearchQuery)}
+          title={title}
+        >
+          <CommandMenuRow
+            description={t.app.omniSearch.searchNoteTextDescription}
+            icon={<Search aria-hidden />}
+            title={title}
+          />
+        </CommandItem>
+      </CommandGroup>
+    );
   }
 
   return (
@@ -421,6 +447,20 @@ export function OmniSearch() {
     commandInputRef.current?.focus();
   }, [workbenchState]);
 
+  const runTextSearch = React.useCallback(
+    (query: string) => {
+      setOpen(false);
+      requestAnimationFrame(() => {
+        commandDispatcher.dispatch(
+          'command::ui:search-note-text',
+          { query },
+          'omni-search',
+        );
+      });
+    },
+    [commandDispatcher, setOpen],
+  );
+
   return (
     <CommandDialog
       open={open}
@@ -457,8 +497,11 @@ export function OmniSearch() {
           <FilteredRoute
             baseItems={baseItems}
             search={cleanedSearch}
+            textSearchQuery={search.trim()}
+            canSearchText={Boolean(activeWsName)}
             recentWsPaths={recentWsPaths}
             recentCommands={recentCommands}
+            onTextSearch={runTextSearch}
           />
         )}
 
@@ -482,7 +525,9 @@ function searchItems(
     return items;
   }
 
-  const searchables = items.map((item) => item.title);
+  const searchText = (item: CommandItemProp) =>
+    [item.title, ...(item.keywords ?? [])].join(' ');
+  const searchables = items.map(searchText);
   let fuzzyResults = rankedFuzzySearch(search, searchables, {
     fuzzySearchFunction: substringFuzzySearch,
   });
@@ -501,7 +546,7 @@ function searchItems(
 
   const scoredItems = items
     .map((item) => {
-      const fuzzyMatch = fuzzyResultsMap.get(item.title);
+      const fuzzyMatch = fuzzyResultsMap.get(searchText(item));
       if (!fuzzyMatch) return null;
 
       let finalScore = fuzzyMatch.score;

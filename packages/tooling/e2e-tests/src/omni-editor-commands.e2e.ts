@@ -79,14 +79,26 @@ test('omni search hides editor commands that cannot run', async ({ page }) => {
   await dialog
     .getByPlaceholder('Type a command or search...')
     .fill('toggle heading 1');
-  await expect(dialog.getByText('Toggle Heading 1')).toHaveCount(0);
-  await expect(dialog.getByText('No results found.')).toBeVisible();
+  await expect(
+    dialog.getByRole('option', { name: 'Toggle Heading 1', exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    dialog
+      .getByRole('option')
+      .filter({ hasText: 'Search note text for “toggle heading 1”' }),
+  ).toBeVisible();
 
   await dialog
     .getByPlaceholder('Type a command or search...')
     .fill('insert table');
-  await expect(dialog.getByText('Insert Table')).toHaveCount(0);
-  await expect(dialog.getByText('No results found.')).toBeVisible();
+  await expect(
+    dialog.getByRole('option', { name: 'Insert Table', exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    dialog
+      .getByRole('option')
+      .filter({ hasText: 'Search note text for “insert table”' }),
+  ).toBeVisible();
   await expect(editor.locator('table')).toHaveCount(1);
   await expect(editor.getByRole('heading')).toHaveCount(0);
 });

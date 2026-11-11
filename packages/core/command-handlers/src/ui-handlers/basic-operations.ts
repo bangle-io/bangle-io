@@ -4,6 +4,7 @@ import {
   EDITOR_ENGINE_QUERY_PARAM,
   EDITOR_SAVE_DRAIN_TIMEOUT_MS,
   isEditorEngineId,
+  normalizeTextSearchQuery,
 } from '@bangle.io/constants';
 import { waitForSaveQueueToDrain } from '@bangle.io/service-core';
 import { toast } from '@bangle.io/ui-components';
@@ -141,6 +142,27 @@ export const basicOperationsHandlers = [
   c('command::ui:open-settings-recovery', ({ navigation }) => {
     navigation.goSettingsPage('settings-recovery');
   }),
+
+  c(
+    'command::ui:search-note-text',
+    ({ navigation, workspaceState }, { query }, key) => {
+      const { store } = getCtx(key);
+      const wsName = store.get(workspaceState.$currentWsName);
+      if (!wsName) {
+        throwAppError(
+          'error::workspace:not-opened',
+          t.app.errors.workspace.notOpened,
+          {},
+        );
+      }
+
+      navigation.goTextSearch({
+        wsName,
+        query: normalizeTextSearchQuery(query),
+        preferredWsPath: store.get(workspaceState.$currentWsPath)?.wsPath,
+      });
+    },
+  ),
 
   c(
     'command::ui:toggle-all-files',
