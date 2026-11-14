@@ -53,9 +53,11 @@ for (const viewport of [
     await page.goBack();
     await expect(page).toHaveURL(noteUrl);
     await expect(workspaceHome).toBeVisible();
+    await expect(editor).toHaveAttribute('contenteditable', 'true');
     // Both destinations work with normal keyboard link activation.
     await workspaceHome.focus();
-    await page.keyboard.press('Enter');
+    await expect(workspaceHome).toBeFocused();
+    await workspaceHome.press('Enter');
     await expect(page).toHaveURL(/#route=ws-home&wsName=header-navigation$/);
     await expect(
       page.getByRole('heading', { name: workspaceName, exact: true }),
