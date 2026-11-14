@@ -75,7 +75,8 @@ export interface BaseFileStorageProvider {
 
   readFile: (wsPath: WsPath, options: EmptyObject) => Promise<File | undefined>;
 
-  listAllFiles: (
+  /** Lists file paths and existing directory paths (with trailing slashes). */
+  listAllEntries: (
     wsName: string,
     abortSignal: AbortSignal,
     options: EmptyObject,

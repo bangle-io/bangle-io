@@ -10,6 +10,14 @@ import {
 
 // The repro tree from the reported bug: every directory has a sibling so
 // Pierre does not flatten the chain, plus a root-level note to navigate to.
+describe('collectPierreDirectoryPaths', () => {
+  it('includes explicit empty directories and their ancestors without classifying them as files', () => {
+    expect(
+      collectPierreDirectoryPaths(['empty/', 'todo/inner/', 'docs/note.md']),
+    ).toEqual(['empty', 'todo', 'todo/inner', 'docs']);
+  });
+});
+
 const TREE_PATHS = [
   'archived/misc/note-3.md',
   'archived/nimbus-admin/docs/note-4.md',

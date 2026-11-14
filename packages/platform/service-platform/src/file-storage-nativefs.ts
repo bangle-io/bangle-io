@@ -453,7 +453,7 @@ export class FileStorageNativeFs
     }
   }
 
-  async listAllFiles(
+  async listAllEntries(
     wsName: string,
     abortSignal: AbortSignal,
   ): Promise<string[]> {
@@ -462,7 +462,7 @@ export class FileStorageNativeFs
 
     let relativePaths: string[];
     try {
-      relativePaths = await fs.listFiles({
+      relativePaths = await fs.listEntries({
         signal: abortSignal,
         includeDirectory: isVisibleWorkspaceDirectoryName,
       });

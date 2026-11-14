@@ -17,7 +17,11 @@ import type {
   FileStat,
   ScopedEmitter,
 } from '@bangle.io/types';
-import { isVisibleWorkspaceFilePath, WsPath } from '@bangle.io/ws-path';
+import {
+  isVisibleWorkspaceEntryPath,
+  isVisibleWorkspaceFilePath,
+  WsPath,
+} from '@bangle.io/ws-path';
 import { atom } from 'jotai';
 import type { NoteSnapshotService } from './note-snapshot-service';
 import type { WorkspaceOpsService } from './workspace-ops-service';
@@ -248,6 +252,18 @@ export class FileSystemService extends BaseService {
     this.store.set(this.$fileForceUpdateCount, (count) => count + 1);
   }
 
+  /** Lists visible files and existing directories for the workspace tree. */
+  public async listWorkspaceEntries(
+    wsName: string,
+    abortSignal: AbortSignal = new AbortController().signal,
+  ): Promise<string[]> {
+    return this.listWorkspaceEntriesWithFilter(
+      wsName,
+      abortSignal,
+      isVisibleWorkspaceEntryPath,
+    );
+  }
+
   /**
    * Lists supported visible workspace files, including notes, assets, and other
    * files that the workspace UI can show.
@@ -256,8 +272,10 @@ export class FileSystemService extends BaseService {
     wsName: string,
     abortSignal: AbortSignal = new AbortController().signal,
   ): Promise<string[]> {
-    return this.listWorkspaceFilesWithFilter(wsName, abortSignal, (filePath) =>
-      isVisibleWorkspaceFilePath(filePath.wsPath),
+    return this.listWorkspaceEntriesWithFilter(
+      wsName,
+      abortSignal,
+      (filePath) => isVisibleWorkspaceFilePath(filePath.wsPath),
     );
   }
 
@@ -268,18 +286,19 @@ export class FileSystemService extends BaseService {
     wsName: string,
     abortSignal: AbortSignal = new AbortController().signal,
   ): Promise<string[]> {
-    return this.listWorkspaceFilesWithFilter(
+    return this.listWorkspaceEntriesWithFilter(
       wsName,
       abortSignal,
       (filePath) =>
-        filePath.isNote() && isVisibleWorkspaceFilePath(filePath.wsPath),
+        Boolean(filePath.asFile()?.isNote()) &&
+        isVisibleWorkspaceFilePath(filePath.wsPath),
     );
   }
 
-  private async listWorkspaceFilesWithFilter(
+  private async listWorkspaceEntriesWithFilter(
     wsName: string,
     abortSignal: AbortSignal,
-    predicate: (filePath: ReturnType<typeof WsPath.assertFile>) => boolean,
+    predicate: (path: WsPath) => boolean,
   ): Promise<string[]> {
     await this.mountPromise;
     // A dummy path is used to identify the correct storage service for this workspace.
@@ -288,7 +307,7 @@ export class FileSystemService extends BaseService {
       wsPath: dummyWsPath,
     });
 
-    let wsPaths = await storageService.listAllFiles(wsName, abortSignal, {});
+    let wsPaths = await storageService.listAllEntries(wsName, abortSignal, {});
     wsPaths = wsPaths.filter((r) => {
       const result = WsPath.safeParse(r);
       if (!result.ok) {
@@ -297,12 +316,8 @@ export class FileSystemService extends BaseService {
         );
         return false;
       }
-      const wsPath = result.data;
-      const filePath = wsPath?.asFile();
+      const filePath = result.data;
       if (!filePath) {
-        this.logger.warn(
-          `listWorkspaceFiles: Ignoring file "${r}" as it is not a file path`,
-        );
         return false;
       }
       const isSupported = predicate(filePath);

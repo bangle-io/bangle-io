@@ -97,7 +97,7 @@ describe('FileStorageMemory', () => {
     });
   });
 
-  it('provider contract: listAllFiles only returns files from the exact workspace', async () => {
+  it('provider contract: listAllEntries only returns files from the exact workspace', async () => {
     const { service } = await setup();
 
     await service.createFile('notes:one.md', new File(['one'], 'one.md'));
@@ -107,7 +107,7 @@ describe('FileStorageMemory', () => {
     );
 
     await expect(
-      service.listAllFiles('notes', new AbortController().signal),
+      service.listAllEntries('notes', new AbortController().signal),
     ).resolves.toEqual(['notes:one.md']);
   });
 

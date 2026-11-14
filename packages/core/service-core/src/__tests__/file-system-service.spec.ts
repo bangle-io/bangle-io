@@ -287,6 +287,32 @@ describe('FileSystemService', () => {
     ]);
   });
 
+  it('includes visible directories in tree entries but keeps file consumers file-only', async () => {
+    const { fileSystem, storage } = await setupFileSystemTest({ controller });
+    vi.spyOn(storage, 'listAllEntries').mockResolvedValue([
+      `${TEST_WS_NAME}:empty/`,
+      `${TEST_WS_NAME}:empty/inner/`,
+      `${TEST_WS_NAME}:folder.bundle/`,
+      `${TEST_WS_NAME}:.hidden/`,
+      `${TEST_WS_NAME}:docs/node_modules/`,
+      EXISTING_FILE,
+    ]);
+    await expect(
+      fileSystem.listWorkspaceEntries(TEST_WS_NAME),
+    ).resolves.toEqual([
+      `${TEST_WS_NAME}:empty/`,
+      `${TEST_WS_NAME}:empty/inner/`,
+      `${TEST_WS_NAME}:folder.bundle/`,
+      EXISTING_FILE,
+    ]);
+    await expect(fileSystem.listWorkspaceFiles(TEST_WS_NAME)).resolves.toEqual([
+      EXISTING_FILE,
+    ]);
+    await expect(fileSystem.listNoteFiles(TEST_WS_NAME)).resolves.toEqual([
+      EXISTING_FILE,
+    ]);
+  });
+
   it('rolls back completed batch renames when a later rename fails', async () => {
     const { fileSystem, storage } = await setupFileSystemTest({ controller });
     const first = `${TEST_WS_NAME}:old/one.md`;

@@ -116,7 +116,7 @@ export class FileStorageMemory
     };
   }
 
-  async listAllFiles(
+  async listAllEntries(
     wsName: string,
     abortSignal: AbortSignal,
   ): Promise<string[]> {

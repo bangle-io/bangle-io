@@ -65,6 +65,7 @@ export type AppSidebarProps = {
   onManageWorkspacesClick: () => void;
   workspaces: Workspace[];
   filePaths: string[];
+  directoryPaths?: readonly string[];
   navItems: NavItem[];
   starredItems?: NavItem[];
   onSearchClick?: () => void;
@@ -219,6 +220,7 @@ export function AppSidebar({
   onManageWorkspacesClick,
   workspaces,
   filePaths,
+  directoryPaths,
   navItems,
   starredItems = [],
   onSearchClick = () => {},
@@ -300,6 +302,7 @@ export function AppSidebar({
               canCreateFiles={canCreateFiles}
               activePaths={activeFilePaths}
               filePaths={filePaths}
+              directoryPaths={directoryPaths}
               getActionsForEntry={getActionsForEntry}
               onCreateDirectory={onCreateDirectory}
               onCreateNote={onCreateNote}
