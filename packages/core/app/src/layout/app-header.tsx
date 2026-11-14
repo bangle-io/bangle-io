@@ -3,16 +3,15 @@ import { useCoreServices } from '@bangle.io/context';
 import {
   Breadcrumb,
   Button,
-  buttonVariants,
-  cn,
   Separator,
   Sidebar,
   StarButton,
 } from '@bangle.io/ui-components';
 import { WsPath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue } from 'jotai';
-import { ChevronsRightLeft, Home, MoveHorizontal } from 'lucide-react';
+import { ChevronsRightLeft, MoveHorizontal } from 'lucide-react';
 import React from 'react';
+import { HomeBreadcrumbLink } from '../components/navigation/home-breadcrumb-link';
 import { MarkdownFidelityNotice } from '../components/navigation/markdown-fidelity-notice';
 import { NoteBreadcrumb } from '../components/navigation/note-breadcrumb';
 import { WsNameBreadcrumb } from '../components/navigation/ws-name-breadcrumb'; // Import WsNameBreadcrumb
@@ -112,34 +111,18 @@ function ToolbarLeftSection({
       ) : currentWsName ? (
         <WsNameBreadcrumb wsName={currentWsName} />
       ) : (
-        <HomeBreadcrumb coreServices={coreServices} />
+        <HomeBreadcrumb />
       )}
     </div>
   );
 }
 
-function HomeBreadcrumb({
-  coreServices,
-}: {
-  coreServices: ReturnType<typeof useCoreServices>;
-}) {
+function HomeBreadcrumb() {
   return (
     <Breadcrumb.Breadcrumb>
       <Breadcrumb.BreadcrumbList>
         <Breadcrumb.BreadcrumbItem>
-          <Breadcrumb.BreadcrumbLink
-            className={cn(
-              buttonVariants({ variant: 'ghost', size: 'icon' }),
-              'h-7 w-7',
-            )}
-            href={coreServices.navigation.toUri({
-              route: 'welcome',
-              payload: {},
-            })}
-            title={t.app.common.home}
-          >
-            <Home size={16} />
-          </Breadcrumb.BreadcrumbLink>
+          <HomeBreadcrumbLink />
         </Breadcrumb.BreadcrumbItem>
       </Breadcrumb.BreadcrumbList>
     </Breadcrumb.Breadcrumb>

@@ -20,7 +20,7 @@ test('document title follows note, settings, workspace, and home navigation', as
   await page.getByRole('link', { name: 'Back to app' }).click();
   await expect(page).toHaveTitle('Groceries.md - title-ws - Bangle.io');
 
-  await page.getByRole('link', { name: 'Home', exact: true }).click();
+  await page.getByRole('link', { name: 'Workspace home', exact: true }).click();
   await expect(page).toHaveURL(/#route=ws-home\b/);
   await expect(page).toHaveTitle('title-ws - Bangle.io');
 
@@ -106,7 +106,6 @@ test('workspace names distinguish notes with the same filename', async ({
   });
   await expect(page).toHaveTitle('Tasks.md - title-work - Bangle.io');
 
-  await page.getByRole('link', { name: 'Home', exact: true }).click();
   await page.getByRole('link', { name: 'Home', exact: true }).click();
   await page.getByRole('link', { name: /^title-personal\b/ }).click();
   await expect(page).toHaveTitle('title-personal - Bangle.io');
