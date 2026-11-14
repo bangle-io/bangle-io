@@ -689,3 +689,121 @@ test('an externally deleted note stays mounted while its local save is failed', 
   await expect(editor).toBeVisible();
   await expect(editor).toContainText('local content that has not been saved');
 });
+
+test('existing empty native folders remain usable across reload and external removal', async ({
+  page,
+  browserName,
+}) => {
+  test.skip(
+    browserName !== 'chromium',
+    'NativeFS workspaces are Chromium-only',
+  );
+  await createNativeFsWorkspace(page);
+  await page.evaluate(async (workspaceDir) => {
+    const root = await navigator.storage.getDirectory();
+    const workspace = await root.getDirectoryHandle(workspaceDir);
+    const todo = await workspace.getDirectoryHandle('todo', { create: true });
+    await todo.getDirectoryHandle('inner', { create: true });
+    await workspace.getDirectoryHandle('keep-empty', { create: true });
+    await workspace.getDirectoryHandle('.hidden', { create: true });
+  }, WORKSPACE_DIR);
+  await page.reload();
+
+  const explorer = page.getByTestId('bangle-file-explorer');
+  const keepEmpty = explorer.getByRole('treeitem', { name: /^keep-empty$/ });
+  await expect(keepEmpty).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /todo.*inner/ }),
+  ).toBeVisible();
+  await expect(
+    explorer.getByRole('treeitem', { name: /^\.hidden$/ }),
+  ).toHaveCount(0);
+  await explorer.getByRole('button', { name: 'Show Notes Only' }).click();
+  await expect(keepEmpty).toBeVisible();
+
+  await keepEmpty.focus();
+  await page.keyboard.press('Shift+F10');
+  await expect(
+    page.getByRole('button', { name: 'Rename', exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole('button', { name: 'Delete', exact: true }),
+  ).toHaveCount(0);
+  await page.getByRole('button', { name: 'New Note Here' }).click();
+  await explorer.getByRole('textbox').fill('first.md');
+  await page.keyboard.press('Enter');
+  const editor = getEditorLocator(page, {});
+  await expect(editor).toHaveAttribute('contenteditable', 'true');
+  await editor.fill('A note created inside an existing empty folder');
+  await expect
+    .poll(() =>
+      page.evaluate(async (workspaceDir) => {
+        const root = await navigator.storage.getDirectory();
+        const workspace = await root.getDirectoryHandle(workspaceDir);
+        const folder = await workspace.getDirectoryHandle('keep-empty');
+        const file = await folder.getFileHandle('first.md');
+        return (await file.getFile()).text();
+      }, WORKSPACE_DIR),
+    )
+    .toContain('A note created inside an existing empty folder');
+
+  await page.reload();
+  await expect(getEditorLocator(page, {})).toContainText(
+    'A note created inside an existing empty folder',
+  );
+  // The destination existed empty before the drag; no placeholder note was
+  // needed to reveal it or use it as a durable move target.
+  const destination = explorer.getByRole('treeitem', { name: /todo.*inner/ });
+  await explorer
+    .getByRole('treeitem', { name: /^first\.md$/ })
+    .dragTo(destination);
+  await expect
+    .poll(() =>
+      page.evaluate(async (workspaceDir) => {
+        const root = await navigator.storage.getDirectory();
+        const workspace = await root.getDirectoryHandle(workspaceDir);
+        const todo = await workspace.getDirectoryHandle('todo');
+        const inner = await todo.getDirectoryHandle('inner');
+        try {
+          const file = await inner.getFileHandle('first.md');
+          return (await file.getFile()).text();
+        } catch (error) {
+          if (error instanceof DOMException && error.name === 'NotFoundError') {
+            return undefined;
+          }
+          throw error;
+        }
+      }, WORKSPACE_DIR),
+    )
+    .toContain('A note created inside an existing empty folder');
+  await expect
+    .poll(() =>
+      page.evaluate(async (workspaceDir) => {
+        const root = await navigator.storage.getDirectory();
+        const workspace = await root.getDirectoryHandle(workspaceDir);
+        const folder = await workspace.getDirectoryHandle('keep-empty');
+        const entries: string[] = [];
+        for await (const entry of folder.values()) {
+          entries.push(entry.name);
+        }
+        return entries;
+      }, WORKSPACE_DIR),
+    )
+    .toEqual([]);
+  await page.reload();
+  await expect(getEditorLocator(page, {})).toContainText(
+    'A note created inside an existing empty folder',
+  );
+  await expect(keepEmpty).toBeVisible();
+
+  await page.evaluate(async (workspaceDir) => {
+    const root = await navigator.storage.getDirectory();
+    const workspace = await root.getDirectoryHandle(workspaceDir);
+    await workspace.removeEntry('todo', { recursive: true });
+  }, WORKSPACE_DIR);
+  await simulateWindowRefocus(page);
+  await expect(
+    explorer.getByRole('treeitem', { name: /todo.*inner/ }),
+  ).toHaveCount(0);
+  await expect(keepEmpty).toBeVisible();
+});

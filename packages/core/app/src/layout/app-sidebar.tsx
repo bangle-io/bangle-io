@@ -32,6 +32,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   const activeWsName = useAtomValue(workspaceState.$currentWsName);
   const activeWsPaths = useAtomValue(workspaceState.$activeWsPaths);
   const wsPaths = useAtomValue(workspaceState.$wsPaths);
+  const directoryPaths = useAtomValue(workspaceState.$directoryPaths);
   const noteWsPaths = useAtomValue(workspaceState.$noteWsPaths);
   const starredWsPaths = useAtomValue(userActivityService.$starredWsPaths);
   const fileTreeListState = useAtomValue(workspaceState.$fileTreeListState);
@@ -60,6 +61,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   const getActionsForEntry = useSidebarFileActions({
     activeWsName,
     commandDispatcher,
+    filePaths: wsPaths.map((path) => path.path),
   });
 
   const pwaInstall = usePwaInstall();
@@ -132,6 +134,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
           misc: ws.type,
           isActive: activeWsName === ws.name,
         }))}
+        directoryPaths={directoryPaths}
         filePaths={(showNoteFilesOnly ? noteWsPaths : wsPaths).map(
           (wsPath) => wsPath.path,
         )}

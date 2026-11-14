@@ -601,6 +601,27 @@ describe('listFiles and iterFiles', () => {
     'b/three.txt': '5',
   };
 
+  it('lists empty directories without changing file-only enumeration', async () => {
+    const { fs, root, seeded } = setup({ 'docs/note.md': 'note' });
+    await seeded;
+    const empty = await root.getDirectoryHandle('empty', { create: true });
+    await empty.getDirectoryHandle('nested', { create: true });
+
+    expect((await fs.listEntries()).sort()).toEqual([
+      'docs/',
+      'docs/note.md',
+      'empty/',
+      'empty/nested/',
+    ]);
+    expect(await fs.listFiles()).toEqual(['docs/note.md']);
+    expect(await fs.listEntries({ dirPath: 'empty' })).toEqual([
+      'empty/nested/',
+    ]);
+    expect(
+      await fs.listEntries({ includeDirectory: (name) => name !== 'empty' }),
+    ).toEqual(['docs/', 'docs/note.md']);
+  });
+
   it('lists all files recursively with root-relative paths', async () => {
     const { fs, seeded } = setup(TREE);
     await seeded;

@@ -34,6 +34,7 @@ export {
   getNextUntitledNoteName,
   isIgnoredWorkspacePathSegment,
   isVisibleWorkspaceDirectoryName,
+  isVisibleWorkspaceEntryPath,
   isVisibleWorkspaceFilePath,
 } from './workspace-file-policy';
 export {

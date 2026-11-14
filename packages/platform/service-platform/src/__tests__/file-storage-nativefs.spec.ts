@@ -253,7 +253,7 @@ describe('FileStorageNativeFs', () => {
     ).shouldThrowNotFoundOnRead = true;
 
     await expect(
-      service.listAllFiles('myWorkspace', new AbortController().signal),
+      service.listAllEntries('myWorkspace', new AbortController().signal),
     ).rejects.toMatchObject({
       cause: expect.objectContaining({
         name: 'error::file-storage:file-does-not-exist',
@@ -278,8 +278,8 @@ describe('FileStorageNativeFs', () => {
     await git.getFileHandle('config', { create: true });
 
     await expect(
-      service.listAllFiles('myWorkspace', new AbortController().signal),
-    ).resolves.toEqual(['myWorkspace:docs/keep.md']);
+      service.listAllEntries('myWorkspace', new AbortController().signal),
+    ).resolves.toEqual(['myWorkspace:docs/', 'myWorkspace:docs/keep.md']);
 
     await expect(
       service.readFile('myWorkspace:node_modules/ignored.ts'),
@@ -290,13 +290,34 @@ describe('FileStorageNativeFs', () => {
     expect(git.valuesCalls).toBe(0);
   });
 
+  it('includes existing empty directories without creating placeholder files', async () => {
+    const { service, rootDirHandle } = await setup();
+    const root = rootDirHandle as unknown as FakeDirectoryHandle;
+    const todo = await root.getDirectoryHandle('todo', { create: true });
+    const inner = await todo.getDirectoryHandle('inner', { create: true });
+    await root.getDirectoryHandle('.hidden', { create: true });
+
+    await expect(
+      service.listAllEntries('myWorkspace', new AbortController().signal),
+    ).resolves.toEqual(['myWorkspace:todo/', 'myWorkspace:todo/inner/']);
+    expect(inner.valuesCalls).toBe(1);
+    await expect(
+      service.fileExists('myWorkspace:todo/inner/untitled-1.md'),
+    ).resolves.toBe(false);
+
+    await todo.removeEntry('inner');
+    await expect(
+      service.listAllEntries('myWorkspace', new AbortController().signal),
+    ).resolves.toEqual(['myWorkspace:todo/']);
+  });
+
   it('rejects immediately with an abort error when the signal is already aborted, without reading any directory', async () => {
     const { service, rootDirHandle } = await setup();
     const abortController = new AbortController();
     abortController.abort();
 
     const error = await service
-      .listAllFiles('myWorkspace', abortController.signal)
+      .listAllEntries('myWorkspace', abortController.signal)
       .catch((e: unknown) => e);
 
     expect(isAbortError(error)).toBe(true);
@@ -325,7 +346,7 @@ describe('FileStorageNativeFs', () => {
     await dirB.getFileHandle('b2.md', { create: true });
 
     const error = await service
-      .listAllFiles('myWorkspace', abortController.signal)
+      .listAllEntries('myWorkspace', abortController.signal)
       .catch((e: unknown) => e);
 
     expect(isAbortError(error)).toBe(true);
@@ -347,8 +368,8 @@ describe('FileStorageNativeFs', () => {
     const file = await service.readFile(wsPath);
     expect(await file?.text()).toBe('content');
     await expect(
-      service.listAllFiles('myWorkspace', new AbortController().signal),
-    ).resolves.toEqual([wsPath]);
+      service.listAllEntries('myWorkspace', new AbortController().signal),
+    ).resolves.toEqual(['myWorkspace:dir/', wsPath]);
   });
 
   it('provider contract: writeFile refuses to create a missing file', async () => {

@@ -249,6 +249,7 @@ export interface PierreFileTreeProps {
   className?: string;
   expandedPaths?: readonly string[];
   filePaths: readonly string[];
+  directoryPaths?: readonly string[];
   onDirectoryExpansionChange: (path: string, expanded: boolean) => void;
   onRevealPaths: (paths: readonly string[]) => void;
   onCollapseAll: (keepExpandedPaths: readonly string[]) => void;
@@ -276,6 +277,7 @@ export function PierreFileTree({
   className,
   expandedPaths = EMPTY_PATHS,
   filePaths,
+  directoryPaths: explicitDirectoryPaths = EMPTY_PATHS,
   onDirectoryExpansionChange,
   onRevealPaths,
   onCollapseAll,
@@ -290,11 +292,17 @@ export function PierreFileTree({
 }: PierreFileTreeProps) {
   const rawTreePaths = useMemo(
     () =>
-      [...new Set(filePaths.map((path) => normalizeInputPath(path)))].sort(
-        (left, right) =>
-          left.localeCompare(right, undefined, { sensitivity: 'base' }),
+      [
+        ...new Set([
+          ...filePaths.map((path) => normalizeInputPath(path)),
+          ...explicitDirectoryPaths.map(
+            (path) => `${normalizeInputPath(path)}/`,
+          ),
+        ]),
+      ].sort((left, right) =>
+        left.localeCompare(right, undefined, { sensitivity: 'base' }),
       ),
-    [filePaths],
+    [filePaths, explicitDirectoryPaths],
   );
   const treePathSignature = rawTreePaths.join('\0');
   const stableTreePathsRef = useRef<{
@@ -310,7 +318,10 @@ export function PierreFileTree({
   }
 
   const treePaths = stableTreePathsRef.current?.paths ?? rawTreePaths;
-  const filePathSet = useMemo(() => new Set(treePaths), [treePaths]);
+  const filePathSet = useMemo(
+    () => new Set(filePaths.map(normalizeInputPath)),
+    [filePaths],
+  );
   const activeTreePaths = useMemo(
     () => activePaths.map((path) => normalizeInputPath(path)),
     [activePaths],
