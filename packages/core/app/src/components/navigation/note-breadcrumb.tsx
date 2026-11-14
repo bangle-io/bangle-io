@@ -6,9 +6,9 @@ import {
   cn,
   DropdownMenu,
 } from '@bangle.io/ui-components';
-import { useAtomValue } from 'jotai';
 import { Folder, PlusIcon } from 'lucide-react';
 import React from 'react';
+import { HomeBreadcrumbLink } from './home-breadcrumb-link';
 import {
   type BreadcrumbSegment,
   getSiblingFiles,
@@ -36,6 +36,10 @@ export function NoteBreadcrumb({
   return (
     <Breadcrumb.Breadcrumb className="min-w-0 flex-1 overflow-hidden">
       <Breadcrumb.BreadcrumbList className="min-w-0 flex-nowrap overflow-hidden">
+        <Breadcrumb.BreadcrumbItem className="shrink-0">
+          <HomeBreadcrumbLink />
+        </Breadcrumb.BreadcrumbItem>
+        <Breadcrumb.BreadcrumbSeparator className="shrink-0" />
         {visibleSegments.map((segment, idx) => (
           <BreadcrumbItem
             key={segment.wsPath ?? segment.label}
@@ -76,7 +80,7 @@ function BreadcrumbItem({
     <React.Fragment>
       <Breadcrumb.BreadcrumbItem className={isFirst ? 'shrink-0' : 'min-w-0'}>
         {isFirst ? (
-          <HomeFolderLink />
+          <WorkspaceHomeLink wsName={segment.label} />
         ) : (
           <DirectoryDropdown
             segment={segment}
@@ -97,27 +101,20 @@ function BreadcrumbItem({
   );
 }
 
-function HomeFolderLink() {
+function WorkspaceHomeLink({ wsName }: { wsName: string }) {
   const { navigation } = useCoreServices();
-  const wsName = useAtomValue(navigation.$wsName);
   return (
     <Breadcrumb.BreadcrumbLink
       className={cn(
         buttonVariants({ variant: 'ghost', size: 'icon' }),
         'h-7 w-7',
       )}
-      href={navigation.toUri(
-        wsName
-          ? {
-              route: 'ws-home',
-              payload: { wsName },
-            }
-          : {
-              route: 'welcome',
-              payload: {},
-            },
-      )}
-      title={t.app.common.home}
+      href={navigation.toUri({
+        route: 'ws-home',
+        payload: { wsName },
+      })}
+      title={t.app.common.workspaceHome}
+      aria-label={t.app.common.workspaceHome}
     >
       <Folder size={16} />
     </Breadcrumb.BreadcrumbLink>

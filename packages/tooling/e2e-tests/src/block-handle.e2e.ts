@@ -168,7 +168,7 @@ test('navigating away while the plus menu is open persists no slash', async ({
   // not reach storage.
   await page
     .getByRole('navigation', { name: 'breadcrumb' })
-    .getByRole('link', { name: 'Home' })
+    .getByRole('link', { name: 'Workspace home', exact: true })
     .click();
   await expect(editor).toBeHidden();
   await expect
