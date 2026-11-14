@@ -47,7 +47,7 @@
     "prosemirror-tables": "^1.8.5",
     "prosemirror-test-builder": "^1.1.1",
     "prosemirror-transform": "^1.12.0",
-    "prosemirror-view": "^1.42.0"
+    "prosemirror-view": "^1.42.3"
   },
   "devDependencies": {
     "@types/markdown-it": "^14.1.2"
