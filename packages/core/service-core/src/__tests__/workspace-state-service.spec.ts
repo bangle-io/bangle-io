@@ -567,12 +567,12 @@ describe('WorkspaceStateService file tree updates', () => {
       .wsPaths.map((path) => path.wsPath);
     const blockedScan = createDeferred<string[]>();
     const originalListWorkspaceFiles =
-      services.fileSystem.listWorkspaceFiles.bind(services.fileSystem);
-    let listWorkspaceFilesCalls = 0;
-    vi.spyOn(services.fileSystem, 'listWorkspaceFiles').mockImplementation(
+      services.fileSystem.listWorkspaceEntries.bind(services.fileSystem);
+    let listWorkspaceEntriesCalls = 0;
+    vi.spyOn(services.fileSystem, 'listWorkspaceEntries').mockImplementation(
       (wsName, abortSignal) => {
-        listWorkspaceFilesCalls += 1;
-        if (listWorkspaceFilesCalls === 1) {
+        listWorkspaceEntriesCalls += 1;
+        if (listWorkspaceEntriesCalls === 1) {
           return blockedScan.promise;
         }
         return originalListWorkspaceFiles(wsName, abortSignal);
@@ -580,7 +580,7 @@ describe('WorkspaceStateService file tree updates', () => {
     );
 
     store.set(services.fileSystem.$fileForceUpdateCount, (count) => count + 1);
-    await vi.waitUntil(() => listWorkspaceFilesCalls === 1);
+    await vi.waitUntil(() => listWorkspaceEntriesCalls === 1);
 
     await services.fileSystem.createTextFile(newWsPath, 'Created note');
     services.navigation.goWsPath(newWsPath);
@@ -729,9 +729,9 @@ describe('WorkspaceStateService file tree updates', () => {
 
     let failListCalls = 0;
     const originalListWorkspaceFiles =
-      services.fileSystem.listWorkspaceFiles.bind(services.fileSystem);
+      services.fileSystem.listWorkspaceEntries.bind(services.fileSystem);
     const listSpy = vi
-      .spyOn(services.fileSystem, 'listWorkspaceFiles')
+      .spyOn(services.fileSystem, 'listWorkspaceEntries')
       .mockImplementation(async () => {
         failListCalls += 1;
         throw new Error('forced transient list failure');
@@ -780,8 +780,8 @@ describe('WorkspaceStateService file tree updates', () => {
     });
 
     const originalListWorkspaceFiles =
-      services.fileSystem.listWorkspaceFiles.bind(services.fileSystem);
-    vi.spyOn(services.fileSystem, 'listWorkspaceFiles').mockImplementation(
+      services.fileSystem.listWorkspaceEntries.bind(services.fileSystem);
+    vi.spyOn(services.fileSystem, 'listWorkspaceEntries').mockImplementation(
       async (wsName, abortSignal) => {
         if (wsName === otherWsName) {
           throw new Error('forced list failure while switching workspaces');
@@ -807,7 +807,7 @@ describe('WorkspaceStateService file tree updates', () => {
       controller,
     });
 
-    vi.spyOn(services.fileSystem, 'listWorkspaceFiles').mockImplementation(
+    vi.spyOn(services.fileSystem, 'listWorkspaceEntries').mockImplementation(
       async (wsName) => {
         throwAppError(
           'error::file-storage:file-does-not-exist',
@@ -841,7 +841,7 @@ describe('WorkspaceStateService file tree updates', () => {
       controller,
     });
     const originalListWorkspaceFiles =
-      services.fileSystem.listWorkspaceFiles.bind(services.fileSystem);
+      services.fileSystem.listWorkspaceEntries.bind(services.fileSystem);
     const ignoredWsPaths = [
       `${WS_NAME}:node_modules/pkg/README.md`,
       `${WS_NAME}:.git/hooks/post-commit.md`,
@@ -849,7 +849,7 @@ describe('WorkspaceStateService file tree updates', () => {
     ];
     let callCount = 0;
 
-    vi.spyOn(services.fileSystem, 'listWorkspaceFiles').mockImplementation(
+    vi.spyOn(services.fileSystem, 'listWorkspaceEntries').mockImplementation(
       async (wsName, abortSignal) => {
         callCount += 1;
         return [
@@ -870,5 +870,62 @@ describe('WorkspaceStateService file tree updates', () => {
     expect(atoms.noteWsPaths.map((path) => path.wsPath)).not.toEqual(
       expect.arrayContaining(ignoredWsPaths),
     );
+  });
+});
+
+describe('WorkspaceStateService directory tree entries', () => {
+  it('keeps real directories out of note lists and preserves them on scan failure', async () => {
+    const controller = new AbortController();
+    try {
+      const { services, store } = await setupWorkspaceStateService({
+        controller,
+      });
+      vi.spyOn(services.fileStorageMemory, 'listAllEntries').mockResolvedValue([
+        TARGET,
+        `${WS_NAME}:empty/`,
+        `${WS_NAME}:empty/inner/`,
+      ]);
+      services.fileSystem.refreshFileTree();
+      await vi.waitFor(() => {
+        expect(store.get(services.workspaceState.$directoryPaths)).toEqual([
+          'empty/',
+          'empty/inner/',
+        ]);
+        expect(
+          store
+            .get(services.workspaceState.$wsPaths)
+            .map((path) => path.wsPath),
+        ).toEqual([TARGET]);
+        expect(
+          store
+            .get(services.workspaceState.$noteWsPaths)
+            .map((path) => path.wsPath),
+        ).toEqual([TARGET]);
+      });
+
+      vi.spyOn(services.fileStorageMemory, 'listAllEntries').mockRejectedValue(
+        new Error('temporary directory read failure'),
+      );
+      services.fileSystem.refreshFileTree();
+      await vi.waitFor(() =>
+        expect(
+          store.get(services.workspaceState.$fileTreeListState).status,
+        ).toBe('error'),
+      );
+      expect(store.get(services.workspaceState.$directoryPaths)).toEqual([
+        'empty/',
+        'empty/inner/',
+      ]);
+
+      vi.spyOn(services.fileStorageMemory, 'listAllEntries').mockResolvedValue([
+        TARGET,
+      ]);
+      services.fileSystem.refreshFileTree();
+      await vi.waitFor(() =>
+        expect(store.get(services.workspaceState.$directoryPaths)).toEqual([]),
+      );
+    } finally {
+      controller.abort();
+    }
   });
 });

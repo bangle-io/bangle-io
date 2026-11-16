@@ -437,12 +437,11 @@ export class NativeFs {
   }
 
   /**
-   * Recursively yields root-relative file paths in traversal order. Directory
-   * and file filters are applied before descending, so an excluded
-   * directory's subtree is never read. Aborting the signal throws the
-   * original abort error mid-iteration.
+   * Recursively yields root-relative entries, including empty directories.
+   * Directory paths end with `/`; the starting directory itself is omitted.
+   * Filters prune before descending and aborts retain their original error.
    */
-  async *iterFiles(opts: ListFilesOpts = {}): AsyncGenerator<string> {
+  async *iterEntries(opts: ListFilesOpts = {}): AsyncGenerator<string> {
     const { dirPath = '', signal, includeDirectory, includeFile } = opts;
     const segments = splitPath(dirPath);
     await ensurePermission(this.rootHandle, 'read');
@@ -451,14 +450,32 @@ export class NativeFs {
     try {
       startDir = await this.resolveDirectory(segments, { create: false });
     } catch (error) {
-      throw toNativeFsError(error, `listFiles "${dirPath}"`);
+      throw toNativeFsError(error, `listEntries "${dirPath}"`);
     }
 
-    yield* this.walkFiles(startDir, segments, {
+    yield* this.walkEntries(startDir, segments, {
       signal,
       includeDirectory,
       includeFile,
     });
+  }
+
+  /** Collects files and existing directories in one traversal. */
+  async listEntries(opts: ListFilesOpts = {}): Promise<string[]> {
+    const result: string[] = [];
+    for await (const path of this.iterEntries(opts)) {
+      result.push(path);
+    }
+    return result;
+  }
+
+  /** Recursively yields files only; directory filters still prune subtrees. */
+  async *iterFiles(opts: ListFilesOpts = {}): AsyncGenerator<string> {
+    for await (const path of this.iterEntries(opts)) {
+      if (!path.endsWith('/')) {
+        yield path;
+      }
+    }
   }
 
   /** Convenience wrapper collecting {@link iterFiles} into an array. */
@@ -638,7 +655,7 @@ export class NativeFs {
     }
   }
 
-  private async *walkFiles(
+  private async *walkEntries(
     dir: FileSystemDirectoryHandle,
     pathSegments: readonly string[],
     opts: {
@@ -661,7 +678,8 @@ export class NativeFs {
         }
         if (entry.kind === 'directory') {
           if (opts.includeDirectory?.(entry.name) ?? true) {
-            yield* this.walkFiles(
+            yield `${joinPath([...pathSegments, entry.name])}/`;
+            yield* this.walkEntries(
               entry as FileSystemDirectoryHandle,
               [...pathSegments, entry.name],
               opts,

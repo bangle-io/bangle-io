@@ -27,9 +27,11 @@ type CommandDispatcher = ReturnType<
 export function useSidebarFileActions({
   activeWsName,
   commandDispatcher,
+  canMutateDirectories,
 }: {
   activeWsName: string | undefined;
   commandDispatcher: CommandDispatcher;
+  canMutateDirectories: boolean;
 }) {
   return useMemo(
     () =>
@@ -74,7 +76,7 @@ export function useSidebarFileActions({
             },
           });
 
-          if (dirWsPath) {
+          if (dirWsPath && canMutateDirectories) {
             actions.push({
               id: 'rename-folder',
               label: t.app.components.appSidebar.renameActionTitle,
@@ -100,6 +102,15 @@ export function useSidebarFileActions({
                   'ui',
                 );
               },
+            });
+          }
+
+          if (!canMutateDirectories) {
+            actions.push({
+              id: 'folder-mutations-unavailable',
+              label: t.app.errors.file.nativeFolderMutationUnavailable,
+              disabled: true,
+              onClick: () => {},
             });
           }
 
@@ -279,6 +290,6 @@ export function useSidebarFileActions({
 
         return actions;
       },
-    [activeWsName, commandDispatcher],
+    [activeWsName, commandDispatcher, canMutateDirectories],
   );
 }

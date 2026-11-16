@@ -44,6 +44,19 @@ export function isVisibleWorkspaceDirectoryName(name: string): boolean {
   return !isIgnoredWorkspacePathSegment(name);
 }
 
+/** Visible tree entries include real directories without requiring a file. */
+export function isVisibleWorkspaceEntryPath(wsPath: string | WsPath): boolean {
+  const path = WsPath.safeParse(wsPath).data;
+  const directory = path?.asDir();
+  return directory
+    ? Boolean(directory.path) &&
+        directory.path
+          .split('/')
+          .filter(Boolean)
+          .every(isVisibleWorkspaceDirectoryName)
+    : Boolean(path && isVisibleWorkspaceFilePath(path.wsPath));
+}
+
 export function isVisibleWorkspaceFilePath(
   wsPath: string | WsFilePath,
 ): wsPath is WsFilePath {

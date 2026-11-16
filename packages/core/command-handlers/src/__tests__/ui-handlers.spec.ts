@@ -5,6 +5,7 @@ import {
   EDITOR_ENGINE_QUERY_PARAM,
   type EditorEngineId,
   SETTINGS_PAGE_DEFINITIONS,
+  WORKSPACE_STORAGE_TYPE,
 } from '@bangle.io/constants';
 import { describe, expect, it, vi } from 'vitest';
 import { setupTest } from './test-utils';
@@ -494,6 +495,82 @@ describe('UI command handlers', () => {
       });
     });
   });
+
+  it('offers explicit empty directories and all file ancestors as move targets', async () => {
+    const { dispatch, testEnv, services } = await setupTest({
+      targetId: 'command::ui:move-note-dialog',
+      workspaces: [
+        {
+          name: 'test-ws',
+          notes: ['test-ws:current/source.md', 'test-ws:deep/child/other.md'],
+        },
+      ],
+      autoNavigate: 'ws-path',
+    });
+    const listEntries = services.fileSystem.listWorkspaceEntries.bind(
+      services.fileSystem,
+    );
+    vi.spyOn(services.fileSystem, 'listWorkspaceEntries').mockImplementation(
+      async (...args) => [
+        ...(await listEntries(...args)),
+        'test-ws:empty/',
+        'test-ws:deep/',
+        'test-ws:current/',
+      ],
+    );
+    services.fileSystem.refreshFileTree();
+    await vi.waitFor(() =>
+      expect(
+        testEnv.store.get(services.workspaceState.$directoryPaths),
+      ).toContain('empty/'),
+    );
+
+    dispatch('command::ui:move-note-dialog', {
+      wsPath: 'test-ws:current/source.md',
+    });
+    const dialog = testEnv.store.get(
+      services.workbenchState.$singleSelectDialog,
+    );
+    expect(dialog?.options.map((option) => option.title)).toEqual([
+      'deep/',
+      'deep/child/',
+      'empty/',
+      '/',
+    ]);
+  });
+
+  it.each([
+    'command::ui:rename-directory-dialog',
+    'command::ui:delete-directory-dialog',
+  ] as const)(
+    '%s rejects native folders before opening a misleading dialog',
+    async (targetId) => {
+      const { dispatch, services, testEnv, getCommandResults } =
+        await setupTest({ targetId });
+      await services.workspaceOps.createWorkspaceInfo({
+        name: 'native',
+        type: WORKSPACE_STORAGE_TYPE.NativeFS,
+        metadata: {},
+      });
+      dispatch(targetId, { dirWsPath: 'native:folder/' });
+      await vi.waitFor(() =>
+        expect(
+          getCommandResults().filter((result) => result.type === 'failure'),
+        ).toHaveLength(1),
+      );
+      expect(
+        testEnv.store.get(services.workbenchState.$singleInputDialog),
+      ).toBeUndefined();
+      expect(
+        testEnv.store.get(services.workbenchState.$alertDialog),
+      ).toBeUndefined();
+      expect(testEnv.commonOpts.emitAppError).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: expect.stringContaining('file manager'),
+        }),
+      );
+    },
+  );
 
   describe('command::ui:create-directory-dialog', () => {
     it('should open the new directory dialog and dispatch command::ws:create-directory on name entry', async () => {

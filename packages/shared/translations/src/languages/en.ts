@@ -542,6 +542,8 @@ export const t = {
       },
       file: {
         invalidNotePath: 'Invalid note path provided',
+        nativeFolderMutationUnavailable:
+          'Rename or delete folders in your file manager.',
         invalidNoteName: 'Invalid note name provided',
         cannotMoveDuringRename:
           'Cannot move file during rename operation. Use move command.',

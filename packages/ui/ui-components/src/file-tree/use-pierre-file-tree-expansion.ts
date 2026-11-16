@@ -12,7 +12,9 @@ export function collectPierreDirectoryPaths(
 
   for (const path of paths) {
     const segments = normalizePath(path).split('/');
-    segments.pop();
+    if (!path.endsWith('/')) {
+      segments.pop();
+    }
 
     let accumulated = '';
     for (const segment of segments) {

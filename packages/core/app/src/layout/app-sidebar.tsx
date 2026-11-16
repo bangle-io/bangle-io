@@ -1,4 +1,5 @@
 import { useCoreServices } from '@bangle.io/context';
+import { FileSystemService } from '@bangle.io/service-core';
 import { Sidebar, AppSidebar as UIAppSidebar } from '@bangle.io/ui-components';
 import { getNextUntitledNoteName, WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
@@ -32,6 +33,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   const activeWsName = useAtomValue(workspaceState.$currentWsName);
   const activeWsPaths = useAtomValue(workspaceState.$activeWsPaths);
   const wsPaths = useAtomValue(workspaceState.$wsPaths);
+  const directoryPaths = useAtomValue(workspaceState.$directoryPaths);
   const noteWsPaths = useAtomValue(workspaceState.$noteWsPaths);
   const starredWsPaths = useAtomValue(userActivityService.$starredWsPaths);
   const fileTreeListState = useAtomValue(workspaceState.$fileTreeListState);
@@ -60,6 +62,9 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   const getActionsForEntry = useSidebarFileActions({
     activeWsName,
     commandDispatcher,
+    canMutateDirectories: FileSystemService.supportsDirectoryMutations(
+      workspaces.find((workspace) => workspace.name === activeWsName)?.type,
+    ),
   });
 
   const pwaInstall = usePwaInstall();
@@ -132,6 +137,7 @@ export const AppSidebar = ({ children }: SidebarProps) => {
           misc: ws.type,
           isActive: activeWsName === ws.name,
         }))}
+        directoryPaths={directoryPaths}
         filePaths={(showNoteFilesOnly ? noteWsPaths : wsPaths).map(
           (wsPath) => wsPath.path,
         )}

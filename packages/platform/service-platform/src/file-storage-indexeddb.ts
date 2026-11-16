@@ -108,7 +108,7 @@ export class FileStorageIndexedDB
     };
   }
 
-  async listAllFiles(
+  async listAllEntries(
     wsName: string,
     abortSignal: AbortSignal,
   ): Promise<string[]> {

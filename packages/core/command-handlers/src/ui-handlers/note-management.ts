@@ -3,7 +3,11 @@ import { toast } from '@bangle.io/ui-components';
 import { WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { FilePlus } from 'lucide-react';
 import { c, getCtx } from '../helper';
-import { validateInputPath, writeTextToClipboard } from '../utils';
+import {
+  assertDirectoryMutationSupported,
+  validateInputPath,
+  writeTextToClipboard,
+} from '../utils';
 
 export const noteManagementHandlers = [
   c(
@@ -394,22 +398,29 @@ export const noteManagementHandlers = [
         );
       }
 
-      const dirPaths = [
-        ...new Set(
-          (existingWsPaths || []).map((path) => {
-            const wsPath = WsPath.fromString(path.wsPath);
-            const parent = wsPath.getParent();
-            return parent ? parent.path : '';
-          }),
-        ),
-      ].filter((dirPath) => dirPath !== '');
+      const dirPaths = new Set(
+        store.get(workspaceState.$currentWsName) === oldWsPath.wsName
+          ? store.get(workspaceState.$directoryPaths)
+          : [],
+      );
+      for (const path of existingWsPaths) {
+        if (path.wsName !== oldWsPath.wsName) {
+          continue;
+        }
+        let directory = path.getParent();
+        while (directory && !directory.isRoot) {
+          dirPaths.add(directory.path);
+          directory = directory.getParent();
+        }
+      }
 
       const filePath = WsPath.assertFile(oldWsPath.wsPath);
       const oldDirPath = filePath.getParent()?.path || '';
       const isAtRoot = oldDirPath === '';
 
-      const options = dirPaths
-        .filter((dirPath) => dirPath !== oldDirPath)
+      const options = [...dirPaths]
+        .filter((dirPath) => dirPath !== '' && dirPath !== oldDirPath)
+        .sort((left, right) => left.localeCompare(right))
         .map((dirPath) => ({
           title: dirPath,
           id: dirPath,
@@ -509,7 +520,7 @@ export const noteManagementHandlers = [
 
   c(
     'command::ui:rename-directory-dialog',
-    ({ workbenchState }, { dirWsPath }, key) => {
+    async ({ workbenchState, fileSystem }, { dirWsPath }, key) => {
       const { store, dispatch } = getCtx(key);
       const dirPath = WsPath.fromString(dirWsPath).asDir();
 
@@ -523,6 +534,11 @@ export const noteManagementHandlers = [
         );
       }
 
+      await assertDirectoryMutationSupported(
+        fileSystem,
+        dirPath.wsPath,
+        'rename-directory',
+      );
       store.set(workbenchState.$singleInputDialog, () => {
         return {
           dialogId: 'dialog::rename-directory-dialog',
@@ -579,7 +595,7 @@ export const noteManagementHandlers = [
 
   c(
     'command::ui:delete-directory-dialog',
-    ({ workbenchState }, { dirWsPath }, key) => {
+    async ({ workbenchState, fileSystem }, { dirWsPath }, key) => {
       const { store, dispatch } = getCtx(key);
       const dirPath = WsPath.fromString(dirWsPath).asDir();
 
@@ -593,6 +609,11 @@ export const noteManagementHandlers = [
         );
       }
 
+      await assertDirectoryMutationSupported(
+        fileSystem,
+        dirPath.wsPath,
+        'delete-directory',
+      );
       store.set(workbenchState.$alertDialog, () => {
         return {
           dialogId: 'dialog::delete-directory-alert',

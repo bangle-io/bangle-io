@@ -2,7 +2,10 @@
 /// <reference types="@vitest/browser/matchers" />
 import '@testing-library/jest-dom/vitest';
 import { assertIsDefined, createAppError } from '@bangle.io/base-utils';
-import { EDITOR_SAVE_DRAIN_TIMEOUT_MS } from '@bangle.io/constants';
+import {
+  EDITOR_SAVE_DRAIN_TIMEOUT_MS,
+  WORKSPACE_STORAGE_TYPE,
+} from '@bangle.io/constants';
 import { toast } from '@bangle.io/ui-components';
 import { WsPath } from '@bangle.io/ws-path';
 import { describe, expect, test, vi } from 'vitest';
@@ -625,6 +628,84 @@ describe('WS command handlers', () => {
       );
     });
   });
+
+  test.each([
+    ['rename', false],
+    ['rename', true],
+    ['delete', false],
+    ['delete', true],
+  ] as const)(
+    'rejects native folder %s with populated=%s before mutating files',
+    async (operation, populated) => {
+      const targetId =
+        operation === 'rename'
+          ? 'command::ws:rename-directory'
+          : 'command::ws:delete-directory';
+      const sourcePath = 'test-ws:folder/keep.md';
+      const { dispatch, services, getCommandResults, testEnv } =
+        await setupTest({
+          targetId,
+          workspaces: [
+            { name: 'test-ws', notes: populated ? [sourcePath] : [] },
+          ],
+        });
+      if (populated) {
+        await vi.waitFor(() =>
+          expect(
+            services.workspaceState
+              .resolveAtoms()
+              .wsPaths.map((path) => path.wsPath),
+          ).toContain(sourcePath),
+        );
+      }
+      await services.workspaceOps.updateWorkspaceInfo(
+        'test-ws',
+        (workspace) => ({
+          ...workspace,
+          type: WORKSPACE_STORAGE_TYPE.NativeFS,
+        }),
+      );
+      const rename = vi.spyOn(services.fileSystem, 'renameFiles');
+      const remove = vi.spyOn(services.fileSystem, 'deleteFiles');
+      const success = vi.spyOn(toast, 'success');
+      success.mockClear();
+      if (operation === 'rename') {
+        dispatch('command::ws:rename-directory', {
+          oldDirWsPath: 'test-ws:folder/',
+          newDirWsPath: 'test-ws:renamed/',
+        });
+      } else {
+        dispatch('command::ws:delete-directory', {
+          dirWsPath: 'test-ws:folder/',
+        });
+      }
+      await vi.waitFor(() =>
+        expect(
+          getCommandResults().filter((result) => result.type === 'failure'),
+        ).toHaveLength(1),
+      );
+      expect(rename).not.toHaveBeenCalled();
+      expect(remove).not.toHaveBeenCalled();
+      expect(success).not.toHaveBeenCalled();
+      expect(testEnv.commonOpts.emitAppError).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: expect.stringContaining('file manager'),
+        }),
+      );
+      if (populated) {
+        await services.workspaceOps.updateWorkspaceInfo(
+          'test-ws',
+          (workspace) => ({
+            ...workspace,
+            type: WORKSPACE_STORAGE_TYPE.Memory,
+          }),
+        );
+        await expect(
+          services.fileSystem.readFile(sourcePath),
+        ).resolves.toBeDefined();
+      }
+    },
+  );
 
   describe('command::ws:rename-directory', () => {
     test('blocks the batch while any descendant save cannot drain', async () => {

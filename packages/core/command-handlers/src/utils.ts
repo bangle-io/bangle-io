@@ -1,5 +1,25 @@
 import { throwAppError } from '@bangle.io/base-utils';
+import type { FileSystemService } from '@bangle.io/service-core';
 import { WsPath } from '@bangle.io/ws-path';
+
+/** Folder commands must not report file-batch changes as physical folder mutations. */
+export async function assertDirectoryMutationSupported(
+  fileSystem: Pick<FileSystemService, 'canMutateDirectory'>,
+  wsPath: string,
+  operation: 'rename-directory' | 'delete-directory',
+): Promise<void> {
+  if (!(await fileSystem.canMutateDirectory(wsPath))) {
+    throwAppError(
+      'error::file:invalid-operation',
+      t.app.errors.file.nativeFolderMutationUnavailable,
+      {
+        operation,
+        oldWsPath: wsPath,
+        newWsPath: wsPath,
+      },
+    );
+  }
+}
 
 const MAX_PATH_LENGTH = 255;
 

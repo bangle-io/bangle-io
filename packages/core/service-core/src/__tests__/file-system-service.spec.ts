@@ -114,6 +114,40 @@ describe('FileSystemService', () => {
     controller.abort();
   });
 
+  it('allows only virtual folder mutations and resolves the target workspace policy', async () => {
+    const { fileSystem, workspaceOps } = await setupFileSystemTest({
+      controller,
+    });
+    expect(
+      FileSystemService.supportsDirectoryMutations(
+        WORKSPACE_STORAGE_TYPE.Browser,
+      ),
+    ).toBe(true);
+    expect(
+      FileSystemService.supportsDirectoryMutations(
+        WORKSPACE_STORAGE_TYPE.Memory,
+      ),
+    ).toBe(true);
+    expect(
+      FileSystemService.supportsDirectoryMutations(
+        WORKSPACE_STORAGE_TYPE.NativeFS,
+      ),
+    ).toBe(false);
+    expect(FileSystemService.supportsDirectoryMutations(undefined)).toBe(false);
+    await expect(
+      fileSystem.canMutateDirectory(`${TEST_WS_NAME}:folder/`),
+    ).resolves.toBe(true);
+    await workspaceOps.createWorkspaceInfo({
+      name: 'native',
+      type: WORKSPACE_STORAGE_TYPE.NativeFS,
+      metadata: {},
+    });
+    await expect(fileSystem.canMutateDirectory('native:folder/')).resolves.toBe(
+      false,
+    );
+    await expect(fileSystem.canMutateDirectory('native:')).resolves.toBe(false);
+  });
+
   it('exists should check if a file exists', async () => {
     const { fileSystem } = await setupFileSystemTest({ controller });
 
@@ -284,6 +318,32 @@ describe('FileSystemService', () => {
       `${TEST_WS_NAME}:assets/report.pdf`,
       EXISTING_FILE,
       `${TEST_WS_NAME}:src/component.tsx`,
+    ]);
+  });
+
+  it('includes visible directories in tree entries but keeps file consumers file-only', async () => {
+    const { fileSystem, storage } = await setupFileSystemTest({ controller });
+    vi.spyOn(storage, 'listAllEntries').mockResolvedValue([
+      `${TEST_WS_NAME}:empty/`,
+      `${TEST_WS_NAME}:empty/inner/`,
+      `${TEST_WS_NAME}:folder.bundle/`,
+      `${TEST_WS_NAME}:.hidden/`,
+      `${TEST_WS_NAME}:docs/node_modules/`,
+      EXISTING_FILE,
+    ]);
+    await expect(
+      fileSystem.listWorkspaceEntries(TEST_WS_NAME),
+    ).resolves.toEqual([
+      `${TEST_WS_NAME}:empty/`,
+      `${TEST_WS_NAME}:empty/inner/`,
+      `${TEST_WS_NAME}:folder.bundle/`,
+      EXISTING_FILE,
+    ]);
+    await expect(fileSystem.listWorkspaceFiles(TEST_WS_NAME)).resolves.toEqual([
+      EXISTING_FILE,
+    ]);
+    await expect(fileSystem.listNoteFiles(TEST_WS_NAME)).resolves.toEqual([
+      EXISTING_FILE,
     ]);
   });
 

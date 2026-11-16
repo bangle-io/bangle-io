@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   getNextUntitledNoteName,
   isIgnoredWorkspacePathSegment,
+  isVisibleWorkspaceEntryPath,
   isVisibleWorkspaceFilePath,
 } from '../workspace-file-policy';
 
@@ -84,5 +85,22 @@ describe('getNextUntitledNoteName', () => {
         'untitled-x',
       ]),
     ).toBe('untitled-10');
+  });
+});
+
+describe('isVisibleWorkspaceEntryPath', () => {
+  it('accepts visible directories while retaining file visibility rules', () => {
+    expect(isVisibleWorkspaceEntryPath('garden:empty/')).toBe(true);
+    expect(isVisibleWorkspaceEntryPath('garden:todo/inner/')).toBe(true);
+    expect(isVisibleWorkspaceEntryPath('garden:folder.bundle/')).toBe(true);
+    expect(isVisibleWorkspaceEntryPath('garden:note.md')).toBe(true);
+    expect(isVisibleWorkspaceEntryPath('garden:')).toBe(false);
+    expect(isVisibleWorkspaceEntryPath('garden:.hidden/')).toBe(false);
+    expect(isVisibleWorkspaceEntryPath('garden:docs/node_modules/')).toBe(
+      false,
+    );
+    expect(isVisibleWorkspaceEntryPath('garden:assets/image.png.crswap')).toBe(
+      false,
+    );
   });
 });

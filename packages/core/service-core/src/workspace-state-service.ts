@@ -11,6 +11,7 @@ import { SERVICE_NAME } from '@bangle.io/constants';
 import type { FileStat, WorkspaceInfo } from '@bangle.io/types';
 import {
   createWikiLinkIndex,
+  isVisibleWorkspaceEntryPath,
   isVisibleWorkspaceFilePath,
   type WikiLinkIndex,
   type WsFilePath,
@@ -166,6 +167,14 @@ export class WorkspaceStateService extends BaseService {
       .map((path) => WsPath.fromString(path).asFile())
       .filter((path) => path !== undefined);
   });
+
+  /** Real directories remain visible even when they have no files. */
+  $directoryPaths = atom<string[]>((get) =>
+    get(this.$rawWsPaths).flatMap((path) => {
+      const directory = WsPath.fromString(path).asDir();
+      return directory ? [directory.path] : [];
+    }),
+  );
 
   $noteWsPaths = atom<WsFilePath[]>((get) => {
     return get(this.$wsPaths).filter((path) => path.isMarkdown());
@@ -487,7 +496,7 @@ export class WorkspaceStateService extends BaseService {
             return;
           }
           this.fileSystem
-            .listWorkspaceFiles(wsName, abortController.signal)
+            .listWorkspaceEntries(wsName, abortController.signal)
             .then(
               (paths) => {
                 if (abortController.signal.aborted) {
@@ -667,8 +676,10 @@ export class WorkspaceStateService extends BaseService {
     wsName: string;
   }): string[] {
     let nextPaths = paths.flatMap((wsPath) => {
-      const filePath = this.getVisibleWorkspaceFilePath(wsPath);
-      return filePath?.wsName === wsName ? [filePath.wsPath] : [];
+      const path = WsPath.safeParse(wsPath).data;
+      return path?.wsName === wsName && isVisibleWorkspaceEntryPath(path)
+        ? [path.wsPath]
+        : [];
     });
     for (const [createSequence, createdWsPath] of this
       .createdWsPathsBySequence) {
