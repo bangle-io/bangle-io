@@ -145,7 +145,7 @@ function DirectoryDropdown({
         render={
           <Button
             variant="ghost"
-            className="h-auto min-w-0 cursor-pointer truncate px-1 py-0 text-sm hover:underline"
+            className="block h-auto min-w-0 max-w-full cursor-pointer truncate px-1 py-0 text-sm hover:underline"
           >
             {segment.label}
           </Button>

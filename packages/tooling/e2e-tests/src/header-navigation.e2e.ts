@@ -1,9 +1,42 @@
-import { expect, test } from '@playwright/test';
+import { expect, type Locator, test } from '@playwright/test';
 import {
   createBrowserWorkspaceAndNote,
   getEditorLocator,
   readStoredMarkdown,
 } from './common';
+
+async function expectBreadcrumbControlsContained(breadcrumb: Locator) {
+  await expect
+    .poll(() =>
+      breadcrumb.locator('a, button').evaluateAll((controls) => {
+        const violations: string[] = [];
+        let previousRight = 0;
+        for (const control of controls) {
+          const bounds = control.getBoundingClientRect();
+          const item = control.closest('li')?.getBoundingClientRect();
+          const navigation = control.closest('nav')?.getBoundingClientRect();
+          const name =
+            control.getAttribute('aria-label') ?? control.textContent;
+          if (!item || !navigation) {
+            violations.push(`${name} is missing its breadcrumb container`);
+            continue;
+          }
+          if (
+            bounds.left < Math.max(item.left, navigation.left) - 1 ||
+            bounds.right > Math.min(item.right, navigation.right) + 1
+          ) {
+            violations.push(`${name} extends outside its breadcrumb item`);
+          }
+          if (bounds.left < previousRight - 1) {
+            violations.push(`${name} overlaps the previous breadcrumb control`);
+          }
+          previousRight = bounds.right;
+        }
+        return violations;
+      }),
+    )
+    .toEqual([]);
+}
 
 for (const viewport of [
   { name: 'desktop', width: 1280, height: 800 },
@@ -38,6 +71,36 @@ for (const viewport of [
     await expect
       .poll(() => readStoredMarkdown(page, workspaceName, noteName))
       .toBe(content);
+
+    const directoryDropdown = breadcrumb.getByRole('button', {
+      name: 'November',
+      exact: true,
+    });
+    const noteDropdown = breadcrumb.getByRole('button', {
+      name: 'Weekly plan.md',
+      exact: true,
+    });
+    await expect(directoryDropdown).toHaveAccessibleName('November');
+    await expect(noteDropdown).toHaveAccessibleName('Weekly plan.md');
+    await expectBreadcrumbControlsContained(breadcrumb);
+    if (viewport.name === 'mobile') {
+      await expect
+        .poll(() =>
+          noteDropdown.evaluate(
+            (button) => button.scrollWidth > button.clientWidth,
+          ),
+        )
+        .toBe(true);
+    }
+    await noteDropdown.focus();
+    await expect(noteDropdown).toBeFocused();
+    await noteDropdown.press('Enter');
+    await expect(page.getByRole('menu')).toBeVisible();
+    await expect(
+      page.getByRole('menuitem', { name: 'New Note', exact: true }),
+    ).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('menu')).toHaveCount(0);
 
     // The Home destination is the workspace list even from a nested note.
     await home.click();
