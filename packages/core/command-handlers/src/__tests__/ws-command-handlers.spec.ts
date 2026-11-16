@@ -693,8 +693,15 @@ describe('WS command handlers', () => {
         }),
       );
       if (populated) {
+        await services.workspaceOps.updateWorkspaceInfo(
+          'test-ws',
+          (workspace) => ({
+            ...workspace,
+            type: WORKSPACE_STORAGE_TYPE.Memory,
+          }),
+        );
         await expect(
-          testEnv.instantiateAll().fileStorageMemory.readFile(sourcePath),
+          services.fileSystem.readFile(sourcePath),
         ).resolves.toBeDefined();
       }
     },

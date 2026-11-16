@@ -507,9 +507,10 @@ describe('UI command handlers', () => {
       ],
       autoNavigate: 'ws-path',
     });
-    const memoryStorage = testEnv.instantiateAll().fileStorageMemory;
-    const listEntries = memoryStorage.listAllEntries.bind(memoryStorage);
-    vi.spyOn(memoryStorage, 'listAllEntries').mockImplementation(
+    const listEntries = services.fileSystem.listWorkspaceEntries.bind(
+      services.fileSystem,
+    );
+    vi.spyOn(services.fileSystem, 'listWorkspaceEntries').mockImplementation(
       async (...args) => [
         ...(await listEntries(...args)),
         'test-ws:empty/',
