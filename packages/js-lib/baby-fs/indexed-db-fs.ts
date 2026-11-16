@@ -51,12 +51,13 @@ class FileMetadata {
     });
   };
 
-  // get the metadata, if not exists
+  // Metadata is auxiliary: content mutations have already committed.
   async del(filePath: string) {
-    await catchUpstream(
-      this._db().then((db) => db.delete(metadataTableName, filePath)),
-      'Error deleting metadata',
-    );
+    try {
+      await this._db().then((db) => db.delete(metadataTableName, filePath));
+    } catch (error) {
+      this.warn(error);
+    }
   }
 
   // save the given `fallback` and return it
@@ -64,10 +65,15 @@ class FileMetadata {
     filePath: string,
     fallback: BaseFileMetadata,
   ): Promise<BaseFileMetadata> {
-    const result = await catchUpstream(
-      this._db().then((db) => db.get(metadataTableName, filePath)),
-      'Error reading metadata',
-    );
+    let result: BaseFileMetadata | undefined;
+    try {
+      result = await this._db().then((db) =>
+        db.get(metadataTableName, filePath),
+      );
+    } catch (error) {
+      this.warn(error);
+      return fallback;
+    }
 
     if (result == null) {
       await this.set(filePath, fallback);
@@ -79,9 +85,22 @@ class FileMetadata {
   }
 
   async set(filePath: string, metadata: BaseFileMetadata) {
-    await catchUpstream(
-      this._db().then((db) => db.put(metadataTableName, metadata, filePath)),
-      'Error writing metadata',
+    try {
+      await this._db().then((db) =>
+        db.put(metadataTableName, metadata, filePath),
+      );
+    } catch (error) {
+      this.warn(error);
+    }
+  }
+
+  private warn(error: unknown): void {
+    // This legacy database stores only approximate timestamps. Its failure
+    // cannot undo an already committed content mutation or make a readable
+    // file disappear from existence checks.
+    console.warn(
+      'Unable to access IndexedDB file metadata; file contents are unaffected',
+      error,
     );
   }
 
@@ -228,10 +247,10 @@ export class IndexedDBFileSystem extends BaseFileSystem {
   async stat(filePath: string) {
     this._verifyFilePath(filePath);
     // read file so that if there is an error we throw it
-    await this.readFile(filePath);
+    const file = await this.readFile(filePath);
     const result = await this._fileMetadata.get(
       filePath,
-      new BaseFileMetadata(),
+      new BaseFileMetadata({ mtimeMs: file.lastModified }),
     );
 
     return result;
