@@ -151,6 +151,9 @@ test('Simple Workspace Creation Workflow', async ({ page }) => {
         - list:
           - listitem:
             - link "Home":
+              - /url: /ws#route=welcome
+          - listitem:
+            - link "Workspace home":
               - /url: /ws#route=ws-home&wsName=test-123
           - listitem:
             - button "test-note-1.md"

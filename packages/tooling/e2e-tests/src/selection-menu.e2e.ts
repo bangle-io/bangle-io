@@ -430,7 +430,7 @@ test('creates and modifier-opens a relative Markdown note link', async ({
     .poll(() => readStoredMarkdown(page, workspaceName, 'target'))
     .toBe(targetMarkdown);
 
-  await page.getByRole('link', { name: 'Home' }).click();
+  await page.getByRole('link', { name: 'Workspace home', exact: true }).click();
   await page.getByRole('button', { name: 'New Note' }).click();
   await page.getByLabel('Note name').fill('source');
   await page.getByRole('button', { name: 'Create' }).click();

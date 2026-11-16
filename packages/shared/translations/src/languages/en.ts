@@ -20,6 +20,7 @@ export const t = {
       newWorkspace: 'New Workspace',
       unknown: 'Unknown',
       home: 'Home',
+      workspaceHome: 'Workspace home',
       dismiss: 'Dismiss',
       report: 'Report',
       somethingWentWrong: 'Something went wrong',

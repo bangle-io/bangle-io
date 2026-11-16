@@ -35,7 +35,7 @@ test('starred notes stay visible, ordered, navigable, and persisted in the sideb
     .poll(async () => (await sidebar.boundingBox())?.width)
     .toBe(sidebarWidthBefore);
 
-  await page.getByRole('link', { name: 'Home' }).click();
+  await page.getByRole('link', { name: 'Workspace home', exact: true }).click();
   await page.getByRole('button', { name: 'New Note' }).click();
   await page.getByLabel('Note name').fill(secondNoteName);
   await page.getByRole('button', { name: 'Create' }).click();

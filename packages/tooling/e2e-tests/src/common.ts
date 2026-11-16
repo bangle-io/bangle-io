@@ -362,6 +362,7 @@ export async function createBrowserWorkspaceAndNote(
   await expect
     .poll(() => editor.getAttribute('data-editor-name'))
     .toContain(`${workspaceName}:${fileName}`);
+  await expect(editor).toHaveAttribute('contenteditable', 'true');
 }
 
 export async function createBrowserWorkspace(

@@ -20,7 +20,7 @@ async function createNoteFromHome(page: Page, noteName: string) {
 }
 
 async function goHome(page: Page) {
-  await page.getByRole('link', { name: 'Home', exact: true }).click();
+  await page.getByRole('link', { name: 'Workspace home', exact: true }).click();
   await expect(notesTable(page)).toBeVisible();
 }
 
