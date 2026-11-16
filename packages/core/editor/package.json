@@ -48,7 +48,7 @@
     "katex": "0.16.47",
     "lucide-react": "^1.23.0",
     "prosemirror-highlight": "^0.15.2",
-    "prosemirror-view": "^1.42.0",
+    "prosemirror-view": "^1.42.3",
     "react": "19.2.7",
     "shiki": "^4.3.0"
   },
