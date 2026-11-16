@@ -10,7 +10,7 @@ import { toast } from '@bangle.io/ui-components';
 import { getNextUntitledNoteName, WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { c, getCtx } from './helper';
 
-import { validateInputPath } from './utils';
+import { assertDirectoryMutationSupported, validateInputPath } from './utils';
 
 function assertDirectoryWsPath(wsPath: string, errorPath = wsPath): WsDirPath {
   const dirPath = WsPath.fromString(wsPath).asDir();
@@ -412,6 +412,11 @@ export const wsCommandHandlers = [
       const { store } = getCtx(key);
       const oldDir = assertDirectoryWsPath(oldDirWsPath);
       const newDir = assertDirectoryWsPath(newDirWsPath);
+      await assertDirectoryMutationSupported(
+        fileSystem,
+        oldDir.wsPath,
+        'rename-directory',
+      );
 
       if (oldDir.wsName !== newDir.wsName) {
         throwAppError(
@@ -512,6 +517,11 @@ export const wsCommandHandlers = [
     async ({ fileSystem, workspaceState }, { dirWsPath }, key) => {
       const { store } = getCtx(key);
       const dirPath = assertDirectoryWsPath(dirWsPath);
+      await assertDirectoryMutationSupported(
+        fileSystem,
+        dirPath.wsPath,
+        'delete-directory',
+      );
       const descendants = store
         .get(workspaceState.$wsPaths)
         .filter((path) =>

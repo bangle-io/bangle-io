@@ -76,14 +76,17 @@ function clamp(value: number, min: number, max: number): number {
 
 function getContextMenuStyle(
   context: ContextMenuOpenContext,
-  actionCount: number,
+  actions: readonly FileTreeEntryAction[],
 ): React.CSSProperties {
   if (typeof window === 'undefined') {
     return {};
   }
 
   const { anchorRect } = context;
-  const estimatedMenuHeight = 42 + actionCount * 30;
+  // Disabled explanations wrap, so reserve more room than an action row.
+  const estimatedMenuHeight =
+    42 +
+    actions.reduce((height, action) => height + (action.disabled ? 60 : 30), 0);
   const maxLeft = Math.max(
     CONTEXT_MENU_VIEWPORT_MARGIN,
     window.innerWidth - CONTEXT_MENU_WIDTH - CONTEXT_MENU_VIEWPORT_MARGIN,
@@ -831,7 +834,7 @@ export function PierreFileTree({
               <div
                 className="z-50 overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-lg"
                 data-file-tree-context-menu-root="true"
-                style={getContextMenuStyle(context, actions.length)}
+                style={getContextMenuStyle(context, actions)}
               >
                 <div className="border-border/60 border-b px-2 py-1.5 font-medium text-muted-foreground text-xs">
                   <span className="block truncate">{basename(entry.path)}</span>
@@ -842,7 +845,7 @@ export function PierreFileTree({
                       key={id}
                       type="button"
                       className={cn(
-                        'mt-0.5 flex h-7 w-full items-center gap-2 rounded-sm px-2 text-left text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50',
+                        'mt-0.5 flex min-h-7 w-full items-center gap-2 rounded-sm px-2 text-left text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50',
                         variant === 'destructive' && 'text-destructive',
                       )}
                       disabled={disabled}
@@ -856,7 +859,13 @@ export function PierreFileTree({
                       }}
                     >
                       {Icon && <Icon className="size-4" />}
-                      <span className="truncate">{label}</span>
+                      <span
+                        className={
+                          disabled ? 'whitespace-normal py-1' : 'truncate'
+                        }
+                      >
+                        {label}
+                      </span>
                     </button>
                   ),
                 )}

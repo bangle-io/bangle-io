@@ -114,6 +114,40 @@ describe('FileSystemService', () => {
     controller.abort();
   });
 
+  it('allows only virtual folder mutations and resolves the target workspace policy', async () => {
+    const { fileSystem, workspaceOps } = await setupFileSystemTest({
+      controller,
+    });
+    expect(
+      FileSystemService.supportsDirectoryMutations(
+        WORKSPACE_STORAGE_TYPE.Browser,
+      ),
+    ).toBe(true);
+    expect(
+      FileSystemService.supportsDirectoryMutations(
+        WORKSPACE_STORAGE_TYPE.Memory,
+      ),
+    ).toBe(true);
+    expect(
+      FileSystemService.supportsDirectoryMutations(
+        WORKSPACE_STORAGE_TYPE.NativeFS,
+      ),
+    ).toBe(false);
+    expect(FileSystemService.supportsDirectoryMutations(undefined)).toBe(false);
+    await expect(
+      fileSystem.canMutateDirectory(`${TEST_WS_NAME}:folder/`),
+    ).resolves.toBe(true);
+    await workspaceOps.createWorkspaceInfo({
+      name: 'native',
+      type: WORKSPACE_STORAGE_TYPE.NativeFS,
+      metadata: {},
+    });
+    await expect(fileSystem.canMutateDirectory('native:folder/')).resolves.toBe(
+      false,
+    );
+    await expect(fileSystem.canMutateDirectory('native:')).resolves.toBe(false);
+  });
+
   it('exists should check if a file exists', async () => {
     const { fileSystem } = await setupFileSystemTest({ controller });
 

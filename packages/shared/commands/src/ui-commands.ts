@@ -277,7 +277,7 @@ export const uiCommands = narrow([
     title: 'Rename Directory',
     keywords: ['rename', 'directory', 'folder'],
     dependencies: {
-      services: ['workbenchState'],
+      services: ['workbenchState', 'fileSystem'],
       commands: ['command::ws:rename-directory', 'command::ui:focus-editor'],
     },
     autoFocusEditor: false,
@@ -290,7 +290,7 @@ export const uiCommands = narrow([
     title: 'Delete Directory',
     keywords: ['delete', 'directory', 'folder', 'remove'],
     dependencies: {
-      services: ['workbenchState'],
+      services: ['workbenchState', 'fileSystem'],
       commands: ['command::ws:delete-directory', 'command::ui:focus-editor'],
     },
     autoFocusEditor: false,

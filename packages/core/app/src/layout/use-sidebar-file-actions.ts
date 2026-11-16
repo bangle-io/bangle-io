@@ -27,11 +27,11 @@ type CommandDispatcher = ReturnType<
 export function useSidebarFileActions({
   activeWsName,
   commandDispatcher,
-  filePaths,
+  canMutateDirectories,
 }: {
   activeWsName: string | undefined;
   commandDispatcher: CommandDispatcher;
-  filePaths: readonly string[];
+  canMutateDirectories: boolean;
 }) {
   return useMemo(
     () =>
@@ -76,13 +76,7 @@ export function useSidebarFileActions({
             },
           });
 
-          // Folder mutation commands operate on files, so an empty directory
-          // cannot honestly offer a successful rename or deletion.
-          const directoryPrefix = `${entry.path.replace(/\/+$/, '')}/`;
-          if (
-            dirWsPath &&
-            filePaths.some((path) => path.startsWith(directoryPrefix))
-          ) {
+          if (dirWsPath && canMutateDirectories) {
             actions.push({
               id: 'rename-folder',
               label: t.app.components.appSidebar.renameActionTitle,
@@ -108,6 +102,15 @@ export function useSidebarFileActions({
                   'ui',
                 );
               },
+            });
+          }
+
+          if (!canMutateDirectories) {
+            actions.push({
+              id: 'folder-mutations-unavailable',
+              label: t.app.errors.file.nativeFolderMutationUnavailable,
+              disabled: true,
+              onClick: () => {},
             });
           }
 
@@ -287,6 +290,6 @@ export function useSidebarFileActions({
 
         return actions;
       },
-    [activeWsName, commandDispatcher, filePaths],
+    [activeWsName, commandDispatcher, canMutateDirectories],
   );
 }

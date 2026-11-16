@@ -1,4 +1,5 @@
 import { useCoreServices } from '@bangle.io/context';
+import { FileSystemService } from '@bangle.io/service-core';
 import { Sidebar, AppSidebar as UIAppSidebar } from '@bangle.io/ui-components';
 import { getNextUntitledNoteName, WsDirPath, WsPath } from '@bangle.io/ws-path';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
@@ -61,7 +62,9 @@ export const AppSidebar = ({ children }: SidebarProps) => {
   const getActionsForEntry = useSidebarFileActions({
     activeWsName,
     commandDispatcher,
-    filePaths: wsPaths.map((path) => path.path),
+    canMutateDirectories: FileSystemService.supportsDirectoryMutations(
+      workspaces.find((workspace) => workspace.name === activeWsName)?.type,
+    ),
   });
 
   const pwaInstall = usePwaInstall();

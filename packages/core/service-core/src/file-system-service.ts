@@ -16,6 +16,7 @@ import type {
   EventSenderMetadata,
   FileStat,
   ScopedEmitter,
+  WorkspaceInfo,
 } from '@bangle.io/types';
 import {
   isVisibleWorkspaceEntryPath,
@@ -660,6 +661,36 @@ export class FileSystemService extends BaseService {
         payload: { oldWsPath: pair.oldWsPath, wsPath: pair.newWsPath },
       });
     }
+  }
+
+  /** Only virtual folders can be mutated by the existing file-batch commands. */
+  static supportsDirectoryMutations(
+    type: WorkspaceInfo['type'] | undefined,
+  ): boolean {
+    return (
+      type === WORKSPACE_STORAGE_TYPE.Browser ||
+      type === WORKSPACE_STORAGE_TYPE.Memory
+    );
+  }
+
+  /** Resolves support against the target workspace, independently of the active route. */
+  public async canMutateDirectory(wsPath: string): Promise<boolean> {
+    const directory = WsPath.fromString(wsPath).asDir();
+    if (!directory || directory.isRoot) {
+      return false;
+    }
+    await this.mountPromise;
+    const workspace = await this.dependencies.workspaceOps.getWorkspaceInfo(
+      directory.wsName,
+    );
+    if (!workspace) {
+      throwAppError(
+        'error::workspace:not-found',
+        `Workspace not found: ${directory.wsName}`,
+        { wsName: directory.wsName },
+      );
+    }
+    return FileSystemService.supportsDirectoryMutations(workspace.type);
   }
 
   static _getStorageServiceForType(
