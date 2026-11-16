@@ -30,7 +30,7 @@
   "dependencies": {
     "@bangle.io/markdown-syntax": "workspace:*",
     "@bangle.io/wordgard-utils": "workspace:*",
-    "markdown-it": "14.3.0"
+    "markdown-it": "14.3.3"
   },
   "devDependencies": {
     "@bangle.io/test-utils": "workspace:*",
